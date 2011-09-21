@@ -1,0 +1,76 @@
+package org.logic2j.library.impl.rdb;
+
+import javax.sql.DataSource;
+
+import org.logic2j.PrologImplementor;
+import org.logic2j.TermFactory;
+import org.logic2j.io.parse.DefaultTermFactory;
+import org.logic2j.model.symbol.Struct;
+import org.logic2j.model.symbol.Term;
+import org.logic2j.model.symbol.TermApi;
+
+/**
+ * Base class for RDB access using JDBC.
+ *
+ */
+public class RDBBase {
+
+  /**
+   * A {@link TermFactory} that will parse all strings as atoms 
+   * (especially those starting with uppercase that must not become vars).
+   *
+   */
+  public static class AllStringsAsAtoms extends DefaultTermFactory {
+    private static final TermApi TERM_API = new TermApi();
+
+    public AllStringsAsAtoms(PrologImplementor theProlog) {
+      super(theProlog);
+    }
+
+    @Override
+    public Term parse(CharSequence theExpression) {
+      return new Struct(theExpression.toString());
+    }
+
+    @Override
+    public Term create(Object theObject, FactoryMode theMode) {
+      return TERM_API.valueOf(theObject, FactoryMode.ATOM);
+    }
+
+  }
+
+  private final PrologImplementor prolog;
+  private TermFactory termFactory;
+  private DataSource dataSource;
+
+  public RDBBase(PrologImplementor theProlog, DataSource theDataSource) {
+    this.prolog = theProlog;
+    this.termFactory = new RDBBase.AllStringsAsAtoms(this.prolog);
+    this.dataSource = theDataSource;
+  }
+
+  //---------------------------------------------------------------------------
+  // Accessors
+  //---------------------------------------------------------------------------
+
+  public DataSource getDataSource() {
+    return this.dataSource;
+  }
+
+  public void setDataSource(DataSource theDataSource) {
+    this.dataSource = theDataSource;
+  }
+
+  public TermFactory getTermFactory() {
+    return this.termFactory;
+  }
+
+  public void setTermFactory(TermFactory theTermFactory) {
+    this.termFactory = theTermFactory;
+  }
+
+  public PrologImplementor getProlog() {
+    return this.prolog;
+  }
+
+}
