@@ -7,15 +7,15 @@ import java.util.Map;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.PrologTestBase;
 import org.logic2j.library.impl.io.IOLibrary;
-import org.logic2j.library.impl.rdb.RDBLibrary;
 import org.logic2j.model.symbol.Term;
 
 /**
  */
-// @Ignore
+@Ignore
 public class RDBLibraryTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibraryTest.class);
 
