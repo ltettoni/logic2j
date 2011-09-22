@@ -1,4 +1,4 @@
-   logic4j : Logic Programming for Java
+   logic2j : Logic Programming for Java
    ------------------------------------
 
 This library integrates declarative & logic programming to your Java software.
