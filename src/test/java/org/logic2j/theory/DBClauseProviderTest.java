@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.PrologTestBase;
 import org.logic2j.library.impl.rdb.RDBBase;
@@ -14,8 +15,7 @@ import org.logic2j.model.symbol.Term;
 import org.logic2j.theory.jdbc.DBClauseProvider;
 import org.logic2j.theory.jdbc.UtilReference;
 
-/**
- */
+@Ignore
 public class DBClauseProviderTest extends PrologTestBase {
   private EmbeddedDataSource ds;
   private DBClauseProvider provider;
