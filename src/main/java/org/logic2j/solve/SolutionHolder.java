@@ -23,10 +23,7 @@ import org.logic2j.solve.ioc.UniqueSolutionListener;
  * Depending on the case, the actual calculation of the goal may be performed immediately 
  * (then results are stored and returned as needed), or delayed until access methods are called.
  *
- * TODO maybe something to allow limiting "all" to a reasonable number.
- * TODO method to return several bound values
- * TODO mapping to other data structures than Terms
- * TODO binding to POJOs?
+ * TODO Maybe have a way to allow limiting "all" to a reasonable number.
  * TODO Should this be an interface?
  * 
  * <p/>

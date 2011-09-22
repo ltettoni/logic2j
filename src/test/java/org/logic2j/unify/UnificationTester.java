@@ -12,7 +12,6 @@ import org.logic2j.unify.Unifyer;
 
 /**
  * Support the thorough testing of unification using the {@link Unifyer} interface.
- *
  */
 class UnificationTester {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);

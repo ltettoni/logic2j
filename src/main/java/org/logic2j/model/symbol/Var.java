@@ -38,7 +38,6 @@ public class Var extends Term {
 
   // TODO move these constants to a common place?
   public static final String ANY = "_";
-  // TODO move these constants to a common place?
   public static final Term ANONYMOUS_VAR = new Var();
 
   // the name identifying the var

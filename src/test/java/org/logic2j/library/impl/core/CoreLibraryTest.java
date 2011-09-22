@@ -106,17 +106,6 @@ public class CoreLibraryTest extends PrologTestBase {
     assertEquals(720, getProlog().solve("perm([a,b,c,d,e,f], L)").number());
   }
 
-  /*
-  @Test
-  public void test_copy_term() {
-    // Unify X with a term, then copy X to Y, then fail: X will be deunified. 
-    // Finally take the second branch  of the "or" and succeed: Y must have kept the value!
-    UniqueSolutionHolder sol = assertOneSolution("(X=12, copy_term(X, Y), fail) ; true");
-    assertEquals(null, sol.binding("X"));
-    assertEquals(term(12), sol.binding("Y"));
-  }
-  */
-
   @Test
   public void test_call() {
     assertNoSolution("call(false)");

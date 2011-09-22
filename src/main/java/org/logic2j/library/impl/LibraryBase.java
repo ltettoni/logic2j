@@ -96,7 +96,7 @@ public class LibraryBase implements PLibrary {
   }
 
   /**
-   * TODO Document this!
+   * TODO Document resolveNonVar()
    * @param theTerm
    * @param theVars
    * @param thePrimitiveName
@@ -118,7 +118,7 @@ public class LibraryBase implements PLibrary {
     if (theTerm == null) {
       return null;
     }
-    // TODO isn't the part below this comment exactly as in resolve() / substitute() method?
+    // TODO are the lines below this exactly as in resolve() / substitute() method?
     if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
       Binding binding = ((Var) theTerm).derefToBinding(theVars);
       while (binding.isVar()) {

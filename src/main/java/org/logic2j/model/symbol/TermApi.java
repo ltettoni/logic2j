@@ -93,7 +93,7 @@ public class TermApi {
    * @param theStruct
    * @param theLib2Content
    */
-  // TODO move this to the library manager
+  // TODO Move assignPrimitiveInfo() to LibraryManager
   private void assignPrimitiveInfo(Struct theStruct, LibraryContent theLib2Content) {
     theStruct.assignPrimitiveInfo(theLib2Content);
   }
@@ -148,7 +148,7 @@ public class TermApi {
    * @param theTPathExpression
    * @param theClass 
    */
-  // TODO Maybe it's more parsing than TermApi? Should go to the TermFactory?
+  // TODO Should this go to TermFactory - since we return a new Term
   public <T extends Term> T selectTerm(Term theTerm, String theTPathExpression, Class<T> theClass) {
     if (theTPathExpression.isEmpty()) {
       return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);

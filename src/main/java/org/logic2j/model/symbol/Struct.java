@@ -46,7 +46,8 @@ public class Struct extends Term {
 
   private static final TermApi TERM_API = new TermApi();
 
-  // TODO move these constants to a common place?
+  // TODO Rove these constants to a common place?
+  // TODO Replace all calls to intern() by some factory to initialize our constants
   public static final String FUNCTOR_COMMA = ",".intern();
   public static final String FUNCTOR_SEMICOLON = ";".intern();
   public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]
@@ -66,14 +67,11 @@ public class Struct extends Term {
   public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
   public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
 
-  private String name;
+  private String name; // Always "internalized" with String.intern(), you can compare with == !
   private int arity;
   private Term[] arg;
 
   private PrimitiveInfo primitiveInfo;
-
-  public String roName;
-  public int roArity;
 
   /**
    * Builds a compound, with any number of arguments.
@@ -186,8 +184,6 @@ public class Struct extends Term {
   private void setNameAndArity(String theName, int theArity) {
     this.name = theName.intern();
     this.arity = theArity;
-    this.roName = this.name;
-    this.roArity = this.arity;
   }
 
   /**
@@ -238,11 +234,11 @@ public class Struct extends Term {
   }
 
   public String getPredicateIndicator() {
-    return this.roName + '/' + this.roArity;
+    return this.name + '/' + this.arity;
   }
 
   public String getVarargsPredicateIndicator() {
-    return this.roName + VARARG_PREDICATE_TRAILER;
+    return this.name + VARARG_PREDICATE_TRAILER;
   }
 
   /**
@@ -525,6 +521,7 @@ public class Struct extends Term {
     return new Struct(((Struct) functor).name, elements);
   }
 
+  @SuppressWarnings("unchecked")
   public <Q extends Term, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementClassOrNull) {
     if (theElementClassOrNull == null) {
       theElementClassOrNull = (Class<Q>) Term.class;
@@ -582,6 +579,14 @@ public class Struct extends Term {
     return theVisitor.visit(this);
   }
 
+  /**
+   * Base requirement to unify 2 structures: matching names and arities.
+   * @param that
+   * @return True if this and that Struct have the same name and arity.
+   */
+  public boolean nameAndArityMatch(Struct that) {
+    return this.arity==that.arity && this.name==that.name;
+  }
   //---------------------------------------------------------------------------
   // Core
   //---------------------------------------------------------------------------
@@ -615,4 +620,5 @@ public class Struct extends Term {
     }
     return result;
   }
+
 }

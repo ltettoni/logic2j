@@ -451,7 +451,6 @@ public class Parser implements Serializable {
     throw new InvalidTermException("The following token could not be identified: " + t1.text);
   }
 
-  // TODO make non-recursive?
   private Term exprA0_list() throws InvalidTermException, IOException {
     Term head = expr(true);
     Token t = this.tokenizer.readToken();

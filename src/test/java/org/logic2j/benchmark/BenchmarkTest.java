@@ -17,7 +17,7 @@ public class BenchmarkTest extends PrologTestBase {
   @Test
   public void testHanoi() throws IOException {
     addTheory("test/input/hanoi.pl");
-    // FIXME: Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 500k
+    // TODO: Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 500k
     assertOneSolution("move(7,left,right,center)");
     logger.info("Number of solutions processed: {}", ((DefaultGoalSolver) getProlog().getSolver()).internalCounter);
   }

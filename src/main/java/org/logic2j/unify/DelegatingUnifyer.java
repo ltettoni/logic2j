@@ -15,8 +15,11 @@ import org.logic2j.model.var.VarBindings;
 import org.logic2j.solve.GoalFrame;
 
 /**
- * Unify by delegating to individual methods with exact signatures on {@link Term} subclasses.
- *
+ * A {@link Unifyer} that uses reflecton to determine which method to invoke
+ * to unify 2 concrete {@link Term}s. 
+ * The methods invoked must have the exact signature 
+ * unify(Term term1, Term term2, VarBindings vars1, VarBindings vars2, GoalFrame theGoalFrame)
+ * where the classes of term1 and term2 are the effective final subclasses.
  */
 public class DelegatingUnifyer implements Unifyer {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DelegatingUnifyer.class);
@@ -74,12 +77,18 @@ public class DelegatingUnifyer implements Unifyer {
     return level + "_" + theClass.getName();
   }
 
+  //---------------------------------------------------------------------------
+  // Unification method called by introspection
+  //---------------------------------------------------------------------------
+  
+  // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
+  
   public boolean unify(Struct s1, Struct s2, VarBindings vars1, VarBindings vars2, GoalFrame theGoalFrame) {
-    if (!(s1.roName == s2.roName && s1.roArity == s2.roArity)) {
+    if (!(s1.nameAndArityMatch(s2))) {
       return false;
     }
-    int arity1 = s1.roArity;
-    for (int i = 0; i < arity1; i++) {
+    int arity = s1.getArity();
+    for (int i = 0; i < arity; i++) {
       if (!unify(s1.getArg(i), vars1, s2.getArg(i), vars2, theGoalFrame)) {
         return false;
       }

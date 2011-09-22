@@ -24,12 +24,12 @@ public class Clause {
    * content of either a rule (when it has a body) or a fact 
    * (does not have a body - or has "true" as body), see description of {@link #isFact()}.
    */
-  private Struct content;
+  private final Struct content; // Immutable, not null
 
   /**
    * An empty {@link VarBindings} reserved for unifying this clause with goals.
    */
-  private VarBindings vars;
+  private final VarBindings vars; // Immutable, not null
 
   /**
    * Normalize theClauseTerm to be ready for inference.
@@ -64,7 +64,7 @@ public class Clause {
    */
   public boolean isFact() {
     // TODO Cache this value
-    if (Struct.FUNCTOR_CLAUSE != this.content.roName) {
+    if (Struct.FUNCTOR_CLAUSE != this.content.getName()) {
       return true;
     }
     // We know it's a clause functor, arity must be 2, check the body
@@ -77,7 +77,7 @@ public class Clause {
   }
 
   private boolean isWithClauseFunctor() {
-    return Struct.FUNCTOR_CLAUSE == this.content.roName;
+    return Struct.FUNCTOR_CLAUSE == this.content.getName();
   }
 
   /**

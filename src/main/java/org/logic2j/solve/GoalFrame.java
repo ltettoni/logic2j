@@ -120,7 +120,7 @@ public final class GoalFrame {
   public void clearBindingsToMark() {
     int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
     for (int i = this.trailingVarBindings.size() - 1; i >= indexOfPreviousMark; i--) {
-      final Binding binding = this.trailingVarBindings.remove(i); // TODO is this efficient?
+      final Binding binding = this.trailingVarBindings.remove(i); // TODO Is it efficient to remove() from an ArrayList?
       binding.free();
     }
   }

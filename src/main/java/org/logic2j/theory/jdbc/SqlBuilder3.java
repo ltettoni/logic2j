@@ -75,7 +75,7 @@ public class SqlBuilder3 {
       sb.append(conjunctions());
     }
     if (isSelect() && !this.orders.isEmpty()) {
-      sb.append(" orders by ");
+      sb.append(" order by ");
       sb.append(orderByClause());
     }
     return sb.toString();

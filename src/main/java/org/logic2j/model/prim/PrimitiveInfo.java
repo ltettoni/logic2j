@@ -55,7 +55,7 @@ public class PrimitiveInfo {
     if (debug) {
       logger.debug("PRIMITIVE > invocation of {}", this);
     }
-    final int arity = theGoalStruct.roArity;
+    final int arity = theGoalStruct.getArity();
     final int nbargs = isVarargs() ? 4 : (3 + arity);
     final Object[] args = new Object[nbargs];
     int i = 0;

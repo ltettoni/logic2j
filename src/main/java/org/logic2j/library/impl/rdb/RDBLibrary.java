@@ -17,7 +17,6 @@ import org.logic2j.library.impl.LibraryBase;
 import org.logic2j.library.impl.pojo.PojoLibrary;
 import org.logic2j.library.mgmt.Primitive;
 import org.logic2j.model.InvalidTermException;
-import org.logic2j.model.prim.PLibrary;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
@@ -27,15 +26,15 @@ import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
 import org.logic2j.theory.jdbc.SqlBuilder3;
-import org.logic2j.theory.jdbc.UtilReference;
 import org.logic2j.theory.jdbc.SqlBuilder3.Table;
+import org.logic2j.theory.jdbc.UtilReference;
 import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 import org.logic2j.util.ReflectUtils;
 import org.logic2j.util.SqlRunner;
 
 /**
- * Prolog library {@link PLibrary} that bridges the Prolog engine and
+ * Prolog library that bridges the Prolog engine and
  * a relational database seen as a facts repository.
  *
  */

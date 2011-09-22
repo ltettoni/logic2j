@@ -84,22 +84,6 @@ public class CoreLibrary extends LibraryBase {
     }
   }
 
-  /*
-  // We should not need this any longer
-  @Primitive
-  public void copy_term(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    // Resolve term t1 with current values of variables, and unify with term t2
-    final Term substituteOfT1 = resolve(t1, vars, Term.class);
-    // FIXME: This ugly way to hack the goalFrame so that it will forget free upon deunification! Is this fair?
-    final int sizeBefore = theGoalFrame.trailingVarBindings.size();
-    final boolean unified = unify(t2, vars, substituteOfT1, vars, theGoalFrame);
-    while (theGoalFrame.trailingVarBindings.size() > sizeBefore) {
-      theGoalFrame.trailingVarBindings.remove(theGoalFrame.trailingVarBindings.size()-1);
-    }
-    notifyIfUnified(unified, theGoalFrame, theListener);
-  }
-  */
-
   /**
    * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
    * @param theGoalFrame
@@ -119,7 +103,7 @@ public class CoreLibrary extends LibraryBase {
         return true;
       }
     };
-    // TODO Add testing of call, it's probably not reliable
+    // TODO Need more testing of call/1, quite unsure if this way of doing is reliable
     getProlog().getSolver().solveGoalRecursive(target, vars, theGoalFrame, callListener);
   }
 

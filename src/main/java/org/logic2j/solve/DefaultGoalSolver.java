@@ -48,10 +48,10 @@ public class DefaultGoalSolver implements GoalSolver {
     final Struct goalStruct = (Struct) goalTerm;
     final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
 
-    final String functor = goalStruct.roName;
+    final String functor = goalStruct.getName();
+    final int arity = goalStruct.getArity();
     if (Struct.FUNCTOR_COMMA == functor) {
       // Logical AND
-      final int arity = goalStruct.roArity;
       final SolutionListener[] listeners = new SolutionListener[arity];
       // The last listener is the one of this overall COMMA sequence
       listeners[arity - 1] = theSolutionListener;
@@ -73,15 +73,14 @@ public class DefaultGoalSolver implements GoalSolver {
       solveGoalRecursive(goalStruct.getArg(0), goalVars, callerFrame, listeners[0]);
     } else if (Struct.FUNCTOR_SEMICOLON == functor) {
       // Logical OR
-      final int arity = goalStruct.roArity;
       for (int i = 0; i < arity; i++) {
         // Solve all the left and right-and-sides, sequentially
         solveGoalRecursive(goalStruct.getArg(i), goalVars, callerFrame, theSolutionListener);
       }
     } else if (Struct.FUNCTOR_CALL == functor) {
       // call/1 is handled here for efficiency
-      if (goalStruct.roArity != 1) {
-        throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + goalStruct.getArity());
+      if (arity != 1) {
+        throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }
       Term target = TERM_API.substitute(goalStruct.getArg(0), goalVars, null);
       if (target instanceof Var) {
