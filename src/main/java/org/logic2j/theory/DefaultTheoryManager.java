@@ -63,7 +63,7 @@ public class DefaultTheoryManager implements TheoryManager {
   public TheoryContent load(PLibrary theLibrary) {
     // Load prolog theory from a classloadable resource
     final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
-    String name = libraryClass.getClass().getSimpleName() + ".prolog";
+    String name = libraryClass.getSimpleName() + ".prolog";
     URL contentUrl = libraryClass.getResource(name);
     if (contentUrl != null) {
       Object text;
@@ -73,7 +73,7 @@ public class DefaultTheoryManager implements TheoryManager {
         throw new InvalidTermException("Could not load library from classloadable resource " + name + ": " + e);
       }
       if (text instanceof InputStream) {
-        // FIXME: there will be encoding issues with this way of doing!
+        // FIXME: there will be encoding issues when using InputStream instead of Reader
         Reader reader = new InputStreamReader((InputStream) text);
         return load(reader);
       } else {
