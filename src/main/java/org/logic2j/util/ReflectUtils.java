@@ -50,8 +50,11 @@ public abstract class ReflectUtils {
    */
   public static <T> T safeCastNotNull(String context, Object instance, Class<? extends T> desiredClassOrInterface)
       throws ClassCastException {
+    if (instance==null) {
+      throw new ClassCastException("null value not allowed, expected an instance of " + desiredClassOrInterface + ", while " + context);
+    }
     final String effectiveContext = (context != null) ? context : "casting undescribed object";
-    return safeCastNotNull(effectiveContext, instance, desiredClassOrInterface);
+    return safeCastOrNull(effectiveContext, instance, desiredClassOrInterface);
   }
 
 }
