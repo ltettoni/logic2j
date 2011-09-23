@@ -1,0 +1,34 @@
+<configuration>
+  <property name="log.home" value="logs"/>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%5relative %-5level [%thread]  %msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- 
+  <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
+    <file>once.log</file>
+    <append>false</append>
+    <layout>
+      <pattern>%-5level %msg%n</pattern>
+    </layout>
+  </appender>
+  -->
+  <logger name="org.tettoni.prolog.util.ReportUtils"><level value="info"/></logger>
+  <logger name="org.tettoni.prolog.solve.DefaultGoalSolver"><level value="info"/></logger>
+  <logger name="org.tettoni.prolog.theory.jdbc.DBClauseProvider"><level value="info"/></logger>
+  <logger name="org.tettoni.prolog.library.impl.rdb.RDBLibrary"><level value="debug"/></logger>
+  <logger name="org.tettoni.prolog.model.symbol.SolutionHolder"><level value="debug"/></logger>
+  <logger name="org.tettoni.prolog.solve.IterableSolutionListener"><level value="debug"/></logger>
+
+  <!-- ROOT LEVEL DEFINITION -->
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+    <!-- 
+    <appender-ref ref="ONCE"/>
+     -->
+  </root>
+
+</configuration>
