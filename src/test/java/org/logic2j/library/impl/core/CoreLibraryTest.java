@@ -117,7 +117,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
   @Test
   public void test_clause() throws IOException {
-    addTheory("test/input/test-functional.pl");
+    addTheory("src/test/resources/test-functional.pl");
 
     assertGoalMustFail("clause(X,_)", "clause(_,_)", "clause(1,_)");
     assertNoSolution("clause(a)", "clause(a,b,c)");
@@ -138,7 +138,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
   @Test
   public void test_unify_2() throws IOException {
-    addTheory("test/input/test-functional.pl");
+    addTheory("src/test/resources/test-functional.pl");
 
     assertNSolutions(5, "bool_3t_2f(X)");
     assertNSolutions(3, "bool_3t_2f(X), X=true");

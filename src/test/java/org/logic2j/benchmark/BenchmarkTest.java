@@ -16,7 +16,7 @@ public class BenchmarkTest extends PrologTestBase {
 
   @Test
   public void testHanoi() throws IOException {
-    addTheory("test/input/hanoi.pl");
+    addTheory("src/test/resources/hanoi.pl");
     // TODO: Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 500k
     assertOneSolution("move(7,left,right,center)");
     logger.info("Number of solutions processed: {}", ((DefaultGoalSolver) getProlog().getSolver()).internalCounter);
@@ -25,7 +25,7 @@ public class BenchmarkTest extends PrologTestBase {
   @Ignore
   @Test
   public void testMillionLoops() throws IOException {
-    addTheory("test/input/test-data.pl");
+    addTheory("src/test/resources/test-data.pl");
     long t1 = System.currentTimeMillis();
     assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
     long t2 = System.currentTimeMillis();
@@ -39,7 +39,7 @@ public class BenchmarkTest extends PrologTestBase {
 
   @Test
   public void testProfileMillionLoops() throws IOException {
-    addTheory("test/input/test-data.pl");
+    addTheory("src/test/resources/test-data.pl");
     long t1 = System.currentTimeMillis();
     assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
     long t2 = System.currentTimeMillis();

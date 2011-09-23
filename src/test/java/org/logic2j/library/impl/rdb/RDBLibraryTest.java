@@ -32,13 +32,13 @@ public class RDBLibraryTest extends PrologTestBase {
 
   @Test
   public void test_solver_one() throws Exception {
-    addTheory("test/input/rdb.pl");
+    addTheory("src/test/resources/rdb.pl");
     assertEquals(term("['WG', 'JWG', 'SWG']"), assertOneSolution("solve(wgtypes, X)").binding("X"));
   }
 
   @Test
   public void test_solver() throws Exception {
-    addTheory("test/input/rdb.pl");
+    addTheory("src/test/resources/rdb.pl");
     assertEquals(term(69), assertOneSolution("solve(isoiec, X)").binding("X"));
     assertEquals(term("['WG', 'JWG', 'SWG']"), assertOneSolution("solve(wgtypes, X)").binding("X"));
     assertEquals(null, assertOneSolution("solve(Var, X)").binding("X"));
@@ -75,7 +75,7 @@ public class RDBLibraryTest extends PrologTestBase {
   public void test_newdb_one() throws Exception {
     loadLibrary(new IOLibrary(getProlog()));
     loadLibrary(new RDBLibrary(getProlog()));
-    addTheory("test/input/rdb.pl");
+    addTheory("src/test/resources/rdb.pl");
 
     List<Term> bindings = getProlog().solve("preds(a,X), clause(X, Z), Z\\=true").all().binding("Z");
     logger.info("binding: " + bindings);
@@ -88,7 +88,7 @@ public class RDBLibraryTest extends PrologTestBase {
   public void test_select() throws Exception {
     loadLibrary(new IOLibrary(getProlog()));
     loadLibrary(new RDBLibrary(getProlog()));
-    addTheory("test/input/rdb.pl");
+    addTheory("src/test/resources/rdb.pl");
 
     // Joining against the same table, with matching args
     assertNSolutions(
@@ -166,7 +166,7 @@ public class RDBLibraryTest extends PrologTestBase {
   public void test_real_use_cases() throws Exception {
     loadLibrary(new IOLibrary(getProlog()));
     loadLibrary(new RDBLibrary(getProlog()));
-    addTheory("test/input/rdb.pl");
+    addTheory("src/test/resources/rdb.pl");
 
     assertNSolutions(277, "gd3((isoiec_comm(Com)))");
     assertNSolutions(5348, "gd3((wg(Com)))");
