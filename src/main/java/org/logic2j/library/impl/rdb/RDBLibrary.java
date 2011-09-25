@@ -27,7 +27,6 @@ import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
 import org.logic2j.theory.jdbc.SqlBuilder3;
 import org.logic2j.theory.jdbc.SqlBuilder3.Table;
-import org.logic2j.theory.jdbc.UtilReference;
 import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 import org.logic2j.util.ReflectUtils;
@@ -222,8 +221,6 @@ public class RDBLibrary extends LibraryBase {
   private Object jdbcFromTerm(Term theTerm) {
     if (theTerm instanceof TNumber) {
       return ((TNumber) theTerm).longValue();
-    } else if (UtilReference.isReference(theTerm)) {
-      return UtilReference.parseReference(theTerm);
     } else if (theTerm instanceof Struct) {
       final Struct struct = (Struct) theTerm;
       if (struct.isList()) {

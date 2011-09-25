@@ -6,16 +6,12 @@ import java.sql.SQLException;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.PrologTestBase;
 import org.logic2j.library.impl.rdb.RDBBase;
 import org.logic2j.model.symbol.Struct;
-import org.logic2j.model.symbol.Term;
 import org.logic2j.theory.jdbc.DBClauseProvider;
-import org.logic2j.theory.jdbc.UtilReference;
 
-@Ignore
 public class DBClauseProviderTest extends PrologTestBase {
   private EmbeddedDataSource ds;
   private DBClauseProvider provider;
@@ -24,10 +20,10 @@ public class DBClauseProviderTest extends PrologTestBase {
   @Before
   public void setUp() {
     super.setUp();
-    this.ds = new EmbeddedDataSource();
-    this.ds.setDatabaseName("C:/Soft/Java/db-derby-10.7.1.1-bin/bin/gd30");
-    this.ds.setUser("APP");
-    this.ds.setPassword("APP");
+    ds = new EmbeddedDataSource();
+    ds.setDatabaseName("src/test/db/derby");
+    ds.setUser("APP");
+    ds.setPassword("APP");
     //
     this.provider = new DBClauseProvider(getProlog(), this.ds);
   }
@@ -40,33 +36,25 @@ public class DBClauseProviderTest extends PrologTestBase {
   @Test
   public void test_listMatchingClauses() {
     assertNotNull(this.provider);
-    final Struct theGoal = new Struct("country", "ID", "VAL");
+    final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.listMatchingClauses(theGoal);
   }
 
   @Test
   public void test_listMatchingClauses_withSpecialTransformer() {
     assertNotNull(this.provider);
-    final Struct theGoal = new Struct("country", "ID", "VAL");
-    this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()) {
-      @Override
-      public Term create(Object theObject, FactoryMode theMode) {
-        if (theObject instanceof Number) {
-          // return new TLong(((Number) theObject).longValue());
-          return new Struct(UtilReference.formatReference(((Number) theObject).longValue()));
-        }
-        return super.create(theObject, theMode);
-      }
-    });
+    final Struct theGoal = new Struct("zip_code", "Zip", "City");
+    this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
     this.provider.listMatchingClauses(theGoal);
   }
 
   @Test
   public void test_fromProlog() {
     getProlog().getClauseProviders().add(this.provider);
-    assertNSolutions(262, "country(CountryId, CountryName)");
-    //    assertEquals(term("id154"), assertOneSolution("country(CountryId, 'France')").binding("CountryId"));
-    assertNSolutions(4, "country(CountryId, C), CountryId>500");
+    assertNSolutions(79991, "zip_code(_, _)");
+    assertNSolutions(4, "zip_code('90008', _)");
+    assertNSolutions(102, "zip_code(_, 'LOS ANGELES')");
+    assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
   }
 
 }
