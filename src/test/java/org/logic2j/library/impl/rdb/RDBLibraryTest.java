@@ -19,33 +19,13 @@ package org.logic2j.library.impl.rdb;
 
 import static org.junit.Assert.assertNotNull;
 
-import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.PrologTestBase;
+import org.logic2j.PrologWithDataSourcesTestBase;
 
-/**
- */
-@Ignore
-public class RDBLibraryTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibraryTest.class);
-  private EmbeddedDataSource ds;
-
-  @Override
-  @Before
-  public void setUp() {
-    super.setUp();
-    ds = new EmbeddedDataSource();
-    ds.setDatabaseName("src/test/db/derby");
-    ds.setUser("APP");
-    ds.setPassword("APP");
-    bind("zipdb", ds);
-  }
-
+public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
   @Test
   public void ensureCanGetConnection() throws Exception {
-    assertNotNull(this.ds.getConnection());
+    assertNotNull(zipcodesConnection());
   }
 }

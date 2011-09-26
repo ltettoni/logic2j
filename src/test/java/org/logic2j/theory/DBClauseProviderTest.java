@@ -21,33 +21,26 @@ import static org.junit.Assert.assertNotNull;
 
 import java.sql.SQLException;
 
-import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.Before;
 import org.junit.Test;
-import org.logic2j.PrologTestBase;
+import org.logic2j.PrologWithDataSourcesTestBase;
 import org.logic2j.library.impl.rdb.RDBBase;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.theory.jdbc.DBClauseProvider;
 
-public class DBClauseProviderTest extends PrologTestBase {
-  private EmbeddedDataSource ds;
+public class DBClauseProviderTest extends PrologWithDataSourcesTestBase {
   private DBClauseProvider provider;
 
   @Override
   @Before
   public void setUp() {
     super.setUp();
-    ds = new EmbeddedDataSource();
-    ds.setDatabaseName("src/test/db/derby");
-    ds.setUser("APP");
-    ds.setPassword("APP");
-    //
-    this.provider = new DBClauseProvider(getProlog(), this.ds);
+    this.provider = new DBClauseProvider(getProlog(), zipcodesDataSource());
   }
 
   @Test
   public void test_getConnection() throws SQLException {
-    assertNotNull(this.ds.getConnection());
+    assertNotNull(zipcodesConnection());
   }
 
   @Test
