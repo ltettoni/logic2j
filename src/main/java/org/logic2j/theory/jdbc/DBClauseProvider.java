@@ -36,7 +36,6 @@ import org.logic2j.util.SqlRunner;
 
 /**
  * List {@link Clause}s (facts, no rules) from tables accessed from the JDBC {@link DataSource} API.
- *
  */
 public class DBClauseProvider extends RDBBase implements ClauseProvider {
 

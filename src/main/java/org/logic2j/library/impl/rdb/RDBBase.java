@@ -28,7 +28,6 @@ import org.logic2j.model.symbol.TermApi;
 
 /**
  * Base class for RDB access using JDBC.
- *
  */
 public class RDBBase {
 
