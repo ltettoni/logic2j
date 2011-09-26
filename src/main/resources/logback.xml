@@ -16,12 +16,6 @@
     </layout>
   </appender>
   -->
-  <logger name="org.tettoni.prolog.util.ReportUtils"><level value="info"/></logger>
-  <logger name="org.tettoni.prolog.solve.DefaultGoalSolver"><level value="info"/></logger>
-  <logger name="org.tettoni.prolog.theory.jdbc.DBClauseProvider"><level value="info"/></logger>
-  <logger name="org.tettoni.prolog.library.impl.rdb.RDBLibrary"><level value="debug"/></logger>
-  <logger name="org.tettoni.prolog.model.symbol.SolutionHolder"><level value="debug"/></logger>
-  <logger name="org.tettoni.prolog.solve.IterableSolutionListener"><level value="debug"/></logger>
 
   <!-- ROOT LEVEL DEFINITION -->
   <root level="info">
