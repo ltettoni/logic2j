@@ -1,7 +1,7 @@
    logic2j - Bring Logic to your Java
    ==================================
 
-A library to bring declarative & logic programming to your Java software.
+A library to bring declarative and logic programming to your Java software.
 
 It is designed for first-order predicate formal logic, and includes all necessary
 components to manage Terms and their representations, an inference engine solver,

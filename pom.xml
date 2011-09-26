@@ -4,7 +4,7 @@
   <groupId>org.logic2j</groupId>
   <artifactId>logic2j</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>logic2j : Logic Programming for Java</name>
+  <name>logic2j - Bring Logic to your Java</name>
 
   <build>
     <resources>
@@ -55,10 +55,10 @@
     </dependency>
   </dependencies>
   <url>https://github.com/ltettoni/logic2j</url>
-  <description> logic4j : Logic Programming for Java
+  <description> logic2j : Bring Logic to your Java
    ------------------------------------
 
-This library integrates declarative &amp; logic programming to your Java software.
+A library to bring declarative and logic programming to your Java software.
 
 It is designed for first-order predicate formal logic, and includes all necessary
 components to manage Terms and their representations, an inference engine solver,
