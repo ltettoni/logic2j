@@ -33,7 +33,7 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
   
-  private static final String ZIPCODES_DATABASE_DIR = "src/test/db/derby";
+  private static final String ZIPCODES_DATABASE_DIR = "src/test/db/derby-v10.8.2.1/zipcodes1";
   private static final String DATABASE_USER = "APP"; // "APP" is a good default in Derby, see doc
   private static final String DATABASE_PWD = "APP"; // "APP" is a good default in Derby, see doc
 
