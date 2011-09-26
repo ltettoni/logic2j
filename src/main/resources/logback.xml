@@ -1,13 +1,11 @@
 <configuration>
-  <property name="log.home" value="logs"/>
-
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
       <pattern>%5relative %-5level [%thread]  %msg%n</pattern>
     </layout>
   </appender>
 
-  <!-- 
+  <!-- File appender without date for non-regression comparisons
   <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
     <file>once.log</file>
     <append>false</append>
@@ -17,7 +15,6 @@
   </appender>
   -->
 
-  <!-- ROOT LEVEL DEFINITION -->
   <root level="info">
     <appender-ref ref="CONSOLE"/>
     <!-- 
