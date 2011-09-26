@@ -31,15 +31,22 @@ import org.logic2j.solve.DefaultGoalSolver;
 public class BenchmarkTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
 
+  /**
+   * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 512k
+   * @throws IOException
+   */
   @Test
   public void testHanoi() throws IOException {
     addTheory("src/test/resources/hanoi.pl");
-    // TODO: Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 500k
-    assertOneSolution("move(7,left,right,center)");
+    assertOneSolution("move(7,left,right,center)"); // Watch out this is the limit with Java's ridiculous default stack size
     logger.info("Number of solutions processed: {}", ((DefaultGoalSolver) getProlog().getSolver()).internalCounter);
   }
 
-  @Ignore
+  /**
+   * Takes lots of time and stack - use with parcimony and with -Xss10m
+   * @throws IOException
+   */
+  @Ignore // See note above
   @Test
   public void testMillionLoops() throws IOException {
     addTheory("src/test/resources/test-data.pl");
