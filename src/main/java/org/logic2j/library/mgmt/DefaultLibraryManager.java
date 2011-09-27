@@ -32,6 +32,7 @@ import org.logic2j.model.var.VarBindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.theory.TheoryManager;
+import org.logic2j.util.ReflectUtils;
 
 /**
  */
@@ -171,7 +172,8 @@ public class DefaultLibraryManager implements LibraryManager {
 
   @Override
   public <T extends PLibrary> T getLibrary(Class<T> theClass) {
-    final T pLibrary = (T) this.libraries.get(theClass);
+    final PLibrary lib = this.libraries.get(theClass);
+    final T pLibrary = ReflectUtils.safeCastNotNull("obtaining library of " + theClass, lib, theClass);
     if (pLibrary == null) {
       throw new IllegalArgumentException("No library bound of " + theClass);
     }

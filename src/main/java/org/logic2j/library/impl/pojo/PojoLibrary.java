@@ -64,8 +64,8 @@ public class PojoLibrary extends LibraryBase {
     threadLocalBindings.get().put(theKey, theValue);
   }
 
-  public static <T> T extract(String theKey) {
-    return (T) threadLocalBindings.get().get(theKey);
+  public static Object extract(String theKey) {
+    return threadLocalBindings.get().get(theKey);
   }
 
 }

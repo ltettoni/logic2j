@@ -166,6 +166,7 @@ public class TermApi {
    * @param theClass 
    */
   // TODO Should this go to TermFactory - since we return a new Term
+  @SuppressWarnings("unchecked")
   public <T extends Term> T selectTerm(Term theTerm, String theTPathExpression, Class<T> theClass) {
     if (theTPathExpression.isEmpty()) {
       return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
@@ -207,6 +208,9 @@ public class TermApi {
       if (position >= 1) {
         String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
         return selectTerm(s.getArg(position - 1), levelsTail, theClass);
+      }
+      if (! (theClass.isAssignableFrom(theTerm.getClass()))){
+        throw new ClassCastException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
       }
       return (T) theTerm;
     }
