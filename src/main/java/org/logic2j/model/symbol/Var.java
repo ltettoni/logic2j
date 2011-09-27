@@ -36,7 +36,6 @@ public class Var extends Term {
 
   private static final long serialVersionUID = 1L;
 
-  // TODO move these constants to a common place?
   public static final String ANY = "_";
   public static final Term ANONYMOUS_VAR = new Var();
 

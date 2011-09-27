@@ -46,8 +46,8 @@ public class Struct extends Term {
 
   private static final TermApi TERM_API = new TermApi();
 
-  // TODO Rove these constants to a common place?
-  // TODO Replace all calls to intern() by some factory to initialize our constants
+  // TODO Move these constants to a common place?
+  // TODO Replace all calls to intern() by some factory to initialize our constants. But aren't all java literal strings already internalized?
   public static final String FUNCTOR_COMMA = ",".intern();
   public static final String FUNCTOR_SEMICOLON = ";".intern();
   public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]

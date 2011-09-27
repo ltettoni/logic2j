@@ -32,8 +32,8 @@ import org.logic2j.model.symbol.Var;
 
 /**
  * Variables associated to a Struct.
- * TODO It should be VERY efficient to instantiate {@link VarBindings} from a Struct in a theory, and notably, bindings to (free) Vars should if possible relate to their variable (at least the name). Find a better way than runtime instantiation.
- *
+ * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory.
+ * Find a better way than runtime instantiation.
  */
 public class VarBindings {
   private static final TermApi TERM_API = new TermApi();

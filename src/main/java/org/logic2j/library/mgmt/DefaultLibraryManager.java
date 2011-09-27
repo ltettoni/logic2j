@@ -44,7 +44,7 @@ public class DefaultLibraryManager implements LibraryManager {
    */
   private static final int NB_EXTRA_PARAMS = 3;
 
-  // TODO Should this be a PrologImplementor? If yes it would allow to have Prolog.getLibararyManager moved to PrologImplementor.
+  // TODO Should this be a PrologImplementor instead of Prolog? If so it allows moving Prolog.getLibararyManager to PrologImplementor.
   private final Prolog prolog;
 
   private LibraryContent wholeContent = new LibraryContent();

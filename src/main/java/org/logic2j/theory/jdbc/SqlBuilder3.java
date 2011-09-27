@@ -29,11 +29,10 @@ import java.util.Set;
 import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 
-// TODO: possibility to inject parameter valus at a later stage, when the structure of the SqlBuilder is already created (factorized)
-// TODO: possibility to have a Column being the operand of a Criterion
-// TODO: cannot do subqueries
+// TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
+// TODO: possibility to have a Column on the RHS of a Criterion (e.g. Col1 > Col2)
+// TODO: cannot handle subqueries
 // TODO: cannot express AST expressions (OR, NOT)
-// TODO: no aggregations
 public class SqlBuilder3 {
   // public static final String INSERT = "insert"; Not yet supported
   public static final String SELECT = "select";

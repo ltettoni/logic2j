@@ -55,7 +55,7 @@ public class OperatorManagerBase implements java.io.Serializable, OperatorManage
   /**
    * Register for operators; caches operator by name+type description. Retains insertion order.
    * <p/>
-   * TODO Not 100% sure if 'insertion-order-priority' should be completely replaced
+   * Not 100% sure if 'insertion-order-priority' should be completely replaced
    * by the explicit priority given to operators.
    * 
    * @author ivar.orstavik@hist.no

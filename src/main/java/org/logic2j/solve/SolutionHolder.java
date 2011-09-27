@@ -41,13 +41,11 @@ import org.logic2j.solve.ioc.UniqueSolutionListener;
  * (then results are stored and returned as needed), or delayed until access methods are called.
  *
  * TODO Maybe have a way to allow limiting "all" to a reasonable number.
- * TODO Should this be an interface?
  * 
  * <p/>
  * This type of API for extracting results from a data layer should further be analyzed and
  * compared to other APIs such as JDBC, JNDI, SAX/DOM, or more exotic ones such as 
- * JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs should be considered.
- *
+ * JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
  */
 public class SolutionHolder {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);

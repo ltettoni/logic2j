@@ -24,7 +24,6 @@ import org.logic2j.theory.TheoryManager;
 /**
  * Interface for using Prolog from an application perspective.
  * TODO See if we can minimize the interface (only add if absolutely required, otherwise add to the PrologImplementor)
- * 
  */
 public interface Prolog {
 
