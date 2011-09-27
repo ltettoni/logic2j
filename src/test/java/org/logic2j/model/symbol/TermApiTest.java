@@ -111,6 +111,7 @@ public class TermApiTest {
     assertEquals(0, nbVars);
   }
 
+  // FIXME: works fine when run alone, or with class, but fails when running all test cases at the same time!
   @Test
   public void test_substitute() {
     try {
