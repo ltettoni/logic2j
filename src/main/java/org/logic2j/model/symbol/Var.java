@@ -77,9 +77,8 @@ public class Var extends Term {
   public String getName() {
     if (this.name != null) {
       return this.name;
-    } else {
-      return ANY;
     }
+    return ANY;
   }
 
   @Override
@@ -134,9 +133,8 @@ public class Var extends Term {
           final Var originVar = theBindingsToVars.get(binding);
           if (originVar != null) {
             return originVar;
-          } else {
-            return ANONYMOUS_VAR;
           }
+          return ANONYMOUS_VAR;
         }
         return this;
       default:

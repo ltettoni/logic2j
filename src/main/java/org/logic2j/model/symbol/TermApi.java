@@ -207,12 +207,10 @@ public class TermApi {
       if (position >= 1) {
         String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
         return selectTerm(s.getArg(position - 1), levelsTail, theClass);
-      } else {
-        return (T) theTerm;
       }
-    } else {
-      throw new IllegalArgumentException("Cannot extract \"" + theTPathExpression + "\" from " + theTerm);
+      return (T) theTerm;
     }
+    throw new IllegalArgumentException("Cannot extract \"" + theTPathExpression + "\" from " + theTerm);
   }
 
 }

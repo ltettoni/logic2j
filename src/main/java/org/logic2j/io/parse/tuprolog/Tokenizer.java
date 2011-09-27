@@ -187,9 +187,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
           typeb = super.nextToken();
         } while (typea != '*' || typeb != '/');
         return readNextToken();
-      } else {
-        pushBack();
       }
+      pushBack();
     }
 
     // syntactic charachters
@@ -229,9 +228,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
       int typeb = super.nextToken();
       if (isWhite(typeb) || typeb == '%' || typeb == StreamTokenizer.TT_EOF) {
         return new Token(".", END);
-      } else {
-        pushBack();
       }
+      pushBack();
     }
 
     boolean isNumber = false;
@@ -286,10 +284,9 @@ class Tokenizer extends StreamTokenizer implements Serializable {
           if (typeb == qType) { // escaped '' or "" or ``
             quote.append((char) qType);
             continue;
-          } else {
-            pushBack();
-            break; // otherwise, break on single quote
           }
+          pushBack();
+          break; // otherwise, break on single quote
         }
         if (typea == '\n' || typea == '\r') {
           throw new InvalidTermException("line break in quote not allowed (unless they are escaped \\ first)");

@@ -53,10 +53,6 @@ public class DefaultUnifyer implements Unifyer {
    * @return true when unified.
    */
   private boolean unifyInternal(Term term1, VarBindings vars1, Term term2, VarBindings vars2, GoalFrame theGoalFrame) {
-    // Use "final" to guarantee initialization in all if/then/else paths, 
-    // instead of many return from the middle of the code
-    final boolean result; 
-    
     if (term2 instanceof Var && !(term1 instanceof Var)) {
       return unifyInternal(term2, vars2, term1, vars1, theGoalFrame);
     }
@@ -96,9 +92,8 @@ public class DefaultUnifyer implements Unifyer {
     if (term1 instanceof TNumber) {
       if (term2 instanceof TNumber) {
         return term1.equals(term2);
-      } else {
-        return false;
       }
+      return false;
     } else if (term1 instanceof Struct) {
       if (term2 instanceof Struct) {
         Struct s1 = (Struct) term1;
@@ -117,13 +112,12 @@ public class DefaultUnifyer implements Unifyer {
           }
         }
         return true;
-      } else {
-        return false;
       }
+      return false;
     } else {
       throw new IllegalStateException("Internal bug, term1 is of unexpected " + term1.getClass());
     }
-//    return result;
+    //    return result;
   }
 
   @Override

@@ -223,9 +223,8 @@ public class Parser implements Serializable {
         if (ta != null) {
           leftSide = new IdentifiedTerm(yfx, new Struct(oper.text, leftSide.result, ta.result));
           continue;
-        } else {
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // either YF has priority over YFX or YFX failed
       if (yf >= Operator.OP_LOW) {
@@ -270,11 +269,10 @@ public class Parser implements Serializable {
           Struct xfxStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
-        } else {
-          haveAttemptedXFX = true;
-          logger.warn("Is this normal to pass here in the Parser?");
-          throw new IllegalStateException("Probably not OK to be here in the Parser");
         }
+        haveAttemptedXFX = true;
+        logger.warn("Is this normal to pass here in the Parser?");
+        throw new IllegalStateException("Probably not OK to be here in the Parser");
       }
       // XFY
       if (xfy >= xf && xfy >= left.priority) { //XFY has priority, or XFX has failed
@@ -283,9 +281,8 @@ public class Parser implements Serializable {
           Struct xfyStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfy, xfyStruct);
           continue;
-        } else {
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // XF
       if (xf >= left.priority) {
@@ -299,9 +296,8 @@ public class Parser implements Serializable {
           Struct xfxStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
-        } else {
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       break;
     }
@@ -330,9 +326,8 @@ public class Parser implements Serializable {
         Token t = this.tokenizer.readToken();
         if (t.isNumber()) {
           return new IdentifiedTerm(0, createNumber("-" + t.text));
-        } else {
-          this.tokenizer.unreadToken(t);
         }
+        this.tokenizer.unreadToken(t);
       }
 
       // check that no operator has a priority higher than permitted
@@ -349,28 +344,25 @@ public class Parser implements Serializable {
         IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); //op(fx, n) exprA(n - 1)
         if (found != null) {
           return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
-        } else {
-          haveAttemptedFX = true;
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        haveAttemptedFX = true;
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // FY has priority over FX, or FX has failed
       if (fy >= Operator.OP_LOW) {
         IdentifiedTerm found = exprA(fy, commaIsEndMarker); //op(fy,n) exprA(1200)  or   op(fy,n) exprA(n)
         if (found != null) {
           return new IdentifiedTerm(fy, new Struct(oper.text, found.result));
-        } else {
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // FY has priority over FX, but FY failed
       if (!haveAttemptedFX && fx >= Operator.OP_LOW) {
         IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); //op(fx, n) exprA(n - 1)
         if (found != null) {
           return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
-        } else {
-          throw new IllegalStateException("Should we really get to here in the Parser?");
         }
+        throw new IllegalStateException("Should we really get to here in the Parser?");
       }
     }
     this.tokenizer.unreadToken(oper);

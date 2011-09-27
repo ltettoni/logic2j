@@ -94,9 +94,8 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
   private String formatVar(Var theVar) {
     if (theVar.isAnonymous()) {
       return Var.ANY; // + '_' + theVar.hashCode();
-    } else {
-      return theVar.getName();
     }
+    return theVar.getName();
   }
 
   /**
@@ -115,26 +114,25 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
     // list case
     if (name.equals(Struct.FUNCTOR_LIST) && arity == 2) {
       return ("[" + formatRecursive(theStruct) + "]");
-    } else {
-      String s = (Parser.isAtom(name) ? name : ('\'' + name + '\''));
-      if (arity > 0) {
-        s = s + "(";
-        for (int c = 1; c < arity; c++) {
-          Term arg = theStruct.getArg(c - 1);
-          if (!(arg instanceof Var)) {
-            s = s + arg.toString() + DefaultFormatter.ARG_SEPARATOR;
-          } else {
-            s = s + formatVar((Var) arg) + DefaultFormatter.ARG_SEPARATOR;
-          }
-        }
-        if (!(theStruct.getArg(arity - 1) instanceof Var)) {
-          s = s + theStruct.getArg(arity - 1).toString() + ")";
+    }
+    String s = (Parser.isAtom(name) ? name : ('\'' + name + '\''));
+    if (arity > 0) {
+      s = s + "(";
+      for (int c = 1; c < arity; c++) {
+        Term arg = theStruct.getArg(c - 1);
+        if (!(arg instanceof Var)) {
+          s = s + arg.toString() + DefaultFormatter.ARG_SEPARATOR;
         } else {
-          s = s + formatVar((Var) theStruct.getArg(arity - 1)) + ")";
+          s = s + formatVar((Var) arg) + DefaultFormatter.ARG_SEPARATOR;
         }
       }
-      return s;
+      if (!(theStruct.getArg(arity - 1) instanceof Var)) {
+        s = s + theStruct.getArg(arity - 1).toString() + ")";
+      } else {
+        s = s + formatVar((Var) theStruct.getArg(arity - 1)) + ")";
+      }
     }
+    return s;
   }
 
   private String formatRecursive(Struct theStruct) {
@@ -147,24 +145,22 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
       }
       if (h instanceof Var) {
         return (formatVar((Var) h) + DefaultFormatter.ELEM_SEPARATOR + formatRecursive(tl));
-      } else {
-        return (h.toString() + DefaultFormatter.ELEM_SEPARATOR + formatRecursive(tl));
       }
-    } else {
-      String h0;
-      String t0;
-      if (h instanceof Var) {
-        h0 = formatVar((Var) h);
-      } else {
-        h0 = h.toString();
-      }
-      if (t instanceof Var) {
-        t0 = formatVar((Var) t);
-      } else {
-        t0 = t.toString();
-      }
-      return (h0 + "|" + t0);
+      return (h.toString() + DefaultFormatter.ELEM_SEPARATOR + formatRecursive(tl));
     }
+    String h0;
+    String t0;
+    if (h instanceof Var) {
+      h0 = formatVar((Var) h);
+    } else {
+      h0 = h.toString();
+    }
+    if (t instanceof Var) {
+      t0 = formatVar((Var) t);
+    } else {
+      t0 = t.toString();
+    }
+    return (h0 + "|" + t0);
   }
 
   /**
@@ -192,9 +188,8 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
         return toStringAsArgY(h, op, 0);
       }
       return (toStringAsArgY(h, op, 0) + DefaultFormatter.ARG_SEPARATOR + toStringAsList(tl, op));
-    } else {
-      return (toStringAsArgY(h, op, 0) + "|" + toStringAsArgY(t, op, 0));
     }
+    return (toStringAsArgY(h, op, 0) + "|" + toStringAsArgY(t, op, 0));
   }
 
   private String toStringAsArg(Term theTerm, OperatorManager op, int prio, boolean x) {
@@ -213,9 +208,8 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
     if (name.equals(Struct.FUNCTOR_LIST) && arity == 2) {
       if (theStruct.getLHS() instanceof Struct && ((Struct) theStruct.getLHS()).isEmptyList()) {
         return Struct.FUNCTOR_LIST_EMPTY;
-      } else {
-        return ("[" + toStringAsList(theStruct, op) + "]");
       }
+      return ("[" + toStringAsList(theStruct, op) + "]");
     }
 
     if (arity == 2) {
@@ -231,11 +225,10 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
         if (!name.equals(DefaultFormatter.ARG_SEPARATOR)) {
           return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p) + " " + name
               + " " + toStringAsArgY(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
-        } else {
-          return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p)
-              + DefaultFormatter.ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
-              : ""));
         }
+        return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p)
+            + DefaultFormatter.ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+            : ""));
       }
     } else if (arity == 1) {
       if ((p = op.opPrio(name, Operator.FX)) >= Operator.OP_LOW) {

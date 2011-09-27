@@ -93,13 +93,11 @@ public class DefaultTheoryManager implements TheoryManager {
         // FIXME: there will be encoding issues when using InputStream instead of Reader
         Reader reader = new InputStreamReader((InputStream) text);
         return load(reader);
-      } else {
-        throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
       }
-    } else {
-      logger.warn("Library \"{}\" loaded; no associated theory found", theLibrary);
-      return new TheoryContent();
+      throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
     }
+    logger.warn("Library \"{}\" loaded; no associated theory found", theLibrary);
+    return new TheoryContent();
   }
 
   private TheoryContent addClauses(Parser theParser) {

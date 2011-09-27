@@ -54,9 +54,8 @@ public class DefaultTermFactory implements TermFactory {
     if (theObject instanceof CharSequence) {
       if (theMode == FactoryMode.ATOM) {
         return new Struct(theObject.toString());
-      } else {
-        return parse((CharSequence) theObject);
       }
+      return parse((CharSequence) theObject);
     }
     final Term created = TERM_API.valueOf(theObject, theMode);
     normalize(created);
