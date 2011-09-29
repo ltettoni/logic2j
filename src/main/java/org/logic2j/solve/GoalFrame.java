@@ -137,7 +137,8 @@ public final class GoalFrame {
   public void clearBindingsToMark() {
     int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
     for (int i = this.trailingVarBindings.size() - 1; i >= indexOfPreviousMark; i--) {
-      final Binding binding = this.trailingVarBindings.remove(i); // TODO Is it efficient to remove() from an ArrayList?
+      final Binding binding = this.trailingVarBindings.remove(i); 
+      // TODO Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
       binding.free();
     }
   }

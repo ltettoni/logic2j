@@ -66,7 +66,7 @@ public class TermApiTest {
     assertTrue(s2.getArg(0).staticallyEquals(s2.getArg(1)));
   }
 
-  // TODO Check this more carefully
+  // TODO Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
   @Test
   public void test_staticallyEquals2() {
     //    assertTrue(new Var().staticallyEquals(new Var()));

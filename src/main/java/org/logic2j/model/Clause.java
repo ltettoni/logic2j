@@ -80,7 +80,7 @@ public class Clause {
    * the body is "true".
    */
   public boolean isFact() {
-    // TODO Cache this value
+    // TODO Cache this value, see https://github.com/ltettoni/logic2j/issues/16
     if (Struct.FUNCTOR_CLAUSE != this.content.getName()) {
       return true;
     }

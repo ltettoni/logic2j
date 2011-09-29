@@ -70,7 +70,6 @@ public class DBClauseProvider extends RDBBase implements ClauseProvider {
 
   protected List<Clause> queryForClauses(SqlBuilder3 builder, String predicateName) {
 
-    // TODO Should use a RowProcessor that directly creates clauses?
     List<Clause> clauses = new ArrayList<Clause>();
     List<Object[]> rows;
     try {

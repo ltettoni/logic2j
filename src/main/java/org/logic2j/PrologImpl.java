@@ -75,8 +75,7 @@ public class PrologImpl implements PrologImplementor {
   private OperatorManager operatorManager = new DefaultOperatorManager();
   private GoalSolver solver = new DefaultGoalSolver(this);
   private Unifyer unifyer = new DefaultUnifyer();
-  // TODO Does the clauseProviders belong here or from the GoalSolver where they are solely used???
-  // Note: the first ClauseProvider (at index 0) is always the TheoryManager.
+  // TODO Does the clauseProviders belong here or from the GoalSolver where they are solely used??? See https://github.com/ltettoni/logic2j/issues/17
   private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
   public PrologImpl() {

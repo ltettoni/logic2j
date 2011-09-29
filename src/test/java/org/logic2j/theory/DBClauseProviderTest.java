@@ -80,6 +80,8 @@ public class DBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
     // NO matches
     assertNoSolution("zip_code('00000', 'UNDEFINED')");
+    assertNoSolution("zip_code('90008', 'UNDEFINED')");
+    assertNoSolution("zip_code('00000', 'LOS ANGELES')");
     assertNoSolution("zip_code(X, X)");
   }
 

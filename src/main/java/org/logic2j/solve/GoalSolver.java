@@ -47,7 +47,7 @@ public interface GoalSolver {
    * @param callerFrame
    * @param theSolutionListener
    */
-  // TODO Why should we make it public? Seems not normal
+  // TODO Why should we make this method public? Seems not normal
   public void solveGoalRecursive(final Term goalTerm, final VarBindings goalVars, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 

@@ -32,8 +32,7 @@ import org.logic2j.model.symbol.Var;
 
 /**
  * Variables associated to a Struct.
- * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory.
- * Find a better way than runtime instantiation.
+ * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory. Find a better way than runtime instantiation.
  */
 public class VarBindings {
   private static final TermApi TERM_API = new TermApi();
@@ -44,7 +43,6 @@ public class VarBindings {
   /**
    * Determine how free (unbound) variables will be represented in resulting bindings
    * returned by {@link VarBindings#explicitBindings(FreeVarBehaviour)}.
-   *
    */
   public enum FreeVarBehaviour {
     /**
@@ -62,7 +60,7 @@ public class VarBindings {
     NULL_ENTRY,
 
     /**
-     * 
+     * TBD
      */
     FREE_NOT_SELF,
 

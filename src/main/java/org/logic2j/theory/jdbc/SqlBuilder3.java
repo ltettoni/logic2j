@@ -30,7 +30,7 @@ import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 
 // TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
-// TODO: possibility to have a Column on the RHS of a Criterion (e.g. Col1 > Col2)
+// TODO: possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123)
 // TODO: cannot handle subqueries
 // TODO: cannot express AST expressions (OR, NOT)
 public class SqlBuilder3 {

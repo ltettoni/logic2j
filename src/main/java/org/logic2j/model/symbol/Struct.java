@@ -502,7 +502,7 @@ public class Struct extends Term {
    *
    * If this structure is not a list, null object is returned
    */
-  // TODO Clarify how it works
+  // TODO Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
   public Struct predicateFromPList() {
     assertPList(this);
     final Term functor = getLHS();
