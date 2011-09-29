@@ -9,11 +9,11 @@ of those public databases (so you won't have to load heaps of SQL), whenever pos
 
 The Maven "test" target takes care of unzipping the voluminous binary images.
 
-The directory structure is:
+The directory structure is, for a given DATABASE:
 
-- "db/DATABASE"           contains description, access information, credits, licensing information, of one database.
-- "db/DATABASE/sql"       contains DDL and DML scripts adapted to Derby or, when not possible, 
-                          download site and instructions to adapt to Derby. 
+- "src/test/db/DATABASE/README.txt"     Description, access information, credits, licensing information, of one database.
+- "src/test/db/DATABASE/sql"            SQL DDL and DML scripts adapted to Derby or, when not possible, 
+                                        download site and instructions to adapt them to Derby. 
   
-- "db/DATABASE/derby-vN.zip"   A compressed image of the derby database
-- "db/DATABASE/derby-vN/**"    An Maven auto-expanded image of the database, ready to connect to
+- "src/test/db/DATABASE/derby-vN.zip"   A compressed image of the derby database, when possible.
+- "src/test/db/DATABASE/derby-vN/**"    An Maven auto-expanded image of the database, ready to connect to.
