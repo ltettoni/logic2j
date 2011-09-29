@@ -33,9 +33,11 @@ import org.apache.derby.jdbc.EmbeddedDataSource;
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
   
-  private static final String ZIPCODES_DATABASE_DIR = "src/test/db/derby-v10.8.2.1/zipcodes1";
-  private static final String DATABASE_USER = "APP"; // "APP" is a good default in Derby, see doc
-  private static final String DATABASE_PWD = "APP"; // "APP" is a good default in Derby, see doc
+  private static final String SRC_TEST_DB = "src/test/db";
+  private static final String DERBY_VERSION_STRING = "v10.8.2.1";
+  private static final String ZIPCODES_DERBY_DIR = SRC_TEST_DB + "/zipcodes1/derby-" + DERBY_VERSION_STRING;
+  private static final String DERBY_USER = "APP"; // "APP" is a good default in Derby, see doc
+  private static final String DERBY_PWD = "APP"; // "APP" is a good default in Derby, see doc
 
   private Connection zipcodesConnection = null;
 
@@ -46,8 +48,8 @@ public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
   protected DataSource derbyDataSource(String theDerbyDatabaseDir) {
     final EmbeddedDataSource ds = new EmbeddedDataSource();
     ds.setDatabaseName(theDerbyDatabaseDir);
-    ds.setUser(DATABASE_USER);
-    ds.setPassword(DATABASE_PWD);
+    ds.setUser(DERBY_USER);
+    ds.setPassword(DERBY_PWD);
     return ds;
   }
 
@@ -55,7 +57,7 @@ public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
    * @return A {@link DataSource} to the "zipcodes" reference database.
    */
   protected DataSource zipcodesDataSource() {
-    return derbyDataSource(ZIPCODES_DATABASE_DIR);
+    return derbyDataSource(ZIPCODES_DERBY_DIR);
   }
 
   /**
