@@ -35,9 +35,20 @@ import org.logic2j.theory.jdbc.SqlBuilder3.Table;
 import org.logic2j.util.SqlRunner;
 
 /**
- * List {@link Clause}s (facts, no rules) from tables accessed from the JDBC {@link DataSource} API.
+ * List {@link Clause}s (facts, never rules) from relational database tables or views accessed 
+ * from the JDBC {@link DataSource} API.
+ * When trying to solve the goal "zipcode_city(94101, City)" which yields City='SAN FRANCISCO', 
+ * this class expects a database table or view such as "PRED_ZIPCODE_CITY(INTEGER ARG_0, VARCHAR ARG_1)".
  */
 public class DBClauseProvider extends RDBBase implements ClauseProvider {
+
+  /**
+   * The target database is supposed to implement tables, or (more realistically) views
+   * that start with the following name. The rest of the table or view name will be the
+   * predicate being listed.
+   */
+  private static final String PREDICATE_TABLE_OR_VIEW_HEADER = "pred_";
+  private static final String PREDICATE_COLUMN_HEADER = "arg_";
 
   public DBClauseProvider(PrologImplementor theProlog, DataSource theDataSource) {
     super(theProlog, theDataSource);
@@ -50,7 +61,8 @@ public class DBClauseProvider extends RDBBase implements ClauseProvider {
     builder.setInstruction(SqlBuilder3.SELECT);
     Table table = builder.table(tableName(theGoal));
     for (int i = 0; i < theGoal.getArity(); i++) {
-      builder.addProjection(builder.column(table, "arg_" + i));
+      final String columnName = PREDICATE_COLUMN_HEADER + i;
+      builder.addProjection(builder.column(table, columnName));
     }
     List<Clause> clauses = queryForClauses(builder, predicateName);
     return clauses;
@@ -83,7 +95,7 @@ public class DBClauseProvider extends RDBBase implements ClauseProvider {
   //---------------------------------------------------------------------------
 
   private String tableName(Struct theGoal) {
-    return "pred_" + theGoal.getName();
+    return PREDICATE_TABLE_OR_VIEW_HEADER + theGoal.getName();
   }
 
 }
