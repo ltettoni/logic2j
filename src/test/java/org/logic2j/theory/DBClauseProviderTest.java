@@ -44,14 +44,14 @@ public class DBClauseProviderTest extends PrologWithDataSourcesTestBase {
   }
 
   @Test
-  public void test_listMatchingClauses() {
+  public void listMatchingClauses() {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.listMatchingClauses(theGoal);
   }
 
   @Test
-  public void test_listMatchingClauses_withSpecialTransformer() {
+  public void listMatchingClausesWithSpecialTransformer() {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
@@ -59,12 +59,28 @@ public class DBClauseProviderTest extends PrologWithDataSourcesTestBase {
   }
 
   @Test
-  public void test_fromProlog() {
+  public void matchClausesFromProlog() {
     getProlog().getClauseProviders().add(this.provider);
+    // Matching all
     assertNSolutions(79991, "zip_code(_, _)");
+    assertNSolutions(79991, "zip_code(X, _)");
+    assertNSolutions(79991, "zip_code(_, Y)");
+    assertNSolutions(79991, "zip_code(X, Y)");
+    // Match on first argument
     assertNSolutions(4, "zip_code('90008', _)");
+    assertNSolutions(4, "zip_code('90008', Y)");
+    assertNoSolution("Y=dummy, zip_code('90008', Y)");
+    assertNoSolution("zip_code('90008', Y), Y=dummy");
+    // Match on second argument
     assertNSolutions(102, "zip_code(_, 'LOS ANGELES')");
+    assertNSolutions(102, "zip_code(X, 'LOS ANGELES')");
+    assertNoSolution("X=dummy, zip_code(X, 'LOS ANGELES')");
+    assertNoSolution("zip_code(X, 'LOS ANGELES'), X=dummy");
+    // Match on both arguments
     assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
+    // NO matches
+    assertNoSolution("zip_code('00000', 'UNDEFINED')");
+    assertNoSolution("zip_code(X, X)");
   }
 
 }
