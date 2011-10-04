@@ -45,6 +45,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   protected short index = NO_INDEX;
 
   /** is this term a prolog (alphanumeric) atom? */
+  // TODO Remove this it's only used from one place! Have a separate place (CoreLibrary?) for such methods.
   public abstract boolean isAtom();
 
   /** is this term a prolog list? */

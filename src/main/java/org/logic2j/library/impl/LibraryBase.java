@@ -91,6 +91,7 @@ public class LibraryBase implements PLibrary {
   /**
    * Resolve a Term: when it's a Var, will dereference to its bound value or return the
    * free Var. When it's not a Var, will return the term as is.
+   * TODO: clarify these methods to access terms!!!
    * @param theTerm
    * @param theVars
    * @param theClass
@@ -113,7 +114,8 @@ public class LibraryBase implements PLibrary {
   }
 
   /**
-   * TODO Document resolveNonVar()
+   * Resolve a term that may be a variable, until we found a ground value for it.
+   * If we can't find a ground value, will throw an {@link InvalidTermException}.
    * @param theTerm
    * @param theVars
    * @param thePrimitiveName
