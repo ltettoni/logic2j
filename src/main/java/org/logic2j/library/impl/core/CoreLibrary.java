@@ -36,6 +36,7 @@ import org.logic2j.model.var.VarBindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
+import org.logic2j.util.ReflectUtils;
 
 /**
  * 
@@ -55,7 +56,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Primitive
   public void fail(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars) {
-    // Nothing
+    // Do not propagate a solution - that's all
   }
 
   @Primitive
@@ -74,6 +75,23 @@ public class CoreLibrary extends LibraryBase {
           notifySolution(theGoalFrame, theListener);
         }
       }
+    }
+  }
+  
+  @Primitive
+  public void atomic(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theTerm) {
+    final Term effectiveTerm = resolve(theTerm, vars, Term.class);
+    if (effectiveTerm instanceof Struct || effectiveTerm instanceof TNumber) {
+      notifySolution(theGoalFrame, theListener);
+    }
+  }
+
+
+  @Primitive
+  public void number(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theTerm) {
+    final Term effectiveTerm = resolve(theTerm, vars, Term.class);
+    if (effectiveTerm instanceof TNumber) {
+      notifySolution(theGoalFrame, theListener);
     }
   }
 
@@ -101,6 +119,14 @@ public class CoreLibrary extends LibraryBase {
     }
   }
 
+  @Primitive
+  public void atom_length(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
+    final Struct contentTerm = resolve(t1, vars, Struct.class);
+    final TLong effectiveLengthTerm = createTLong(contentTerm.getName().length());
+    final boolean unified = unify(effectiveLengthTerm, vars, t2, vars, theGoalFrame);
+    notifyIfUnified(unified, theGoalFrame, theListener);
+  }
+  
   /**
    * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
    * @param theGoalFrame
@@ -184,8 +210,9 @@ public class CoreLibrary extends LibraryBase {
   @Primitive
   public void clause(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theHead, Term theBody) {
     final Binding dereferencedBinding = dereferencedBinding(theHead, vars);
-    final Struct realHead = (Struct) dereferencedBinding.getTerm();
+    final Struct realHead =  ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
     for (ClauseProvider cp : getProlog().getClauseProviders()) {
+      // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
       for (Clause clause : cp.listMatchingClauses(realHead)) {
         // Clone the clause so that we can unify against its bindings
         final Clause clauseToUnify = new Clause(clause);
@@ -203,29 +230,29 @@ public class CoreLibrary extends LibraryBase {
     }
   }
 
+  // FIXME: Bug: Expr=..[Pred, Arg]  yields  coco(Com), coco, coco(Com)   (last should be Com only)
   @Primitive(name = "=..")
-  public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theStruct,
-      Term theList) {
-    final Term ts = resolve(theStruct, vars, Term.class);
-    if (ts instanceof Struct) {
-      Struct struct = (Struct) ts;
+  public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term thePredicate, Term theList) {
+    final Term predResolved = resolve(thePredicate, vars, Term.class);
+    if (predResolved instanceof Struct) {
+      Struct struct = (Struct) predResolved;
       ArrayList<Term> elems = new ArrayList<Term>();
-      elems.add(new Struct(struct.getName()));
+      elems.add(new Struct(struct.getName())); // Only copying the functor as an atom, not a deep copy of the struct!
       int arity = struct.getArity();
       for (int i = 0; i < arity; i++) {
         elems.add(struct.getArg(i));
       }
       Struct plist = Struct.createPList(elems);
-      final boolean unified = unify(plist, vars, theList, vars, theGoalFrame);
+      final boolean unified = unify(theList, vars, plist, vars, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
-    } else if (ts instanceof Var) {
+    } else if (predResolved instanceof Var) {
       final Term lst = resolve(theList, vars, Term.class);
       if (!lst.isList()) {
         throw new InvalidTermException("Second argument to =.. must be a List was " + lst);
       }
       Struct lst2 = (Struct) lst;
       Struct flattened = lst2.predicateFromPList();
-      final boolean unified = unify(theStruct, vars, flattened, vars, theGoalFrame);
+      final boolean unified = unify(thePredicate, vars, flattened, vars, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
     }
   }
@@ -239,7 +266,7 @@ public class CoreLibrary extends LibraryBase {
     final boolean unified = unify(t1, vars, evaluated, vars, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
-
+  
   @Primitive(name = ">")
   public void expression_greater_than(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
     t1 = evaluateFunctor(vars, t1);
@@ -345,8 +372,9 @@ public class CoreLibrary extends LibraryBase {
     throw new InvalidTermException("Could not negate because argument " + t1 + " is not TNumber but " + t1.getClass());
   }
 
-  private TNumber createTLong(long num) {
+  private TLong createTLong(long num) {
     return new TLong(num);
   }
-
+  
+  
 }
