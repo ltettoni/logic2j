@@ -462,12 +462,15 @@ public class SqlBuilder3 {
   }
 
   public Criterion criterion(Column theColumn, String theOperator, Object... theScalarOrListValue) {
-    if (theOperator == null || OPERATOR_EQ_OR_IN.equals(theOperator)) {
-      theOperator = equalityOrInOperator(theScalarOrListValue);
+    final String effectiveOperator;
+    if (theOperator==null || OPERATOR_EQ_OR_IN.equals(theOperator)) {
+      effectiveOperator = equalityOrInOperator(theScalarOrListValue);
     } else if (OPERATOR_NOT_EQ_NOR_IN.equals(theOperator)) {
-      theOperator = notEqualityOrInOperator(theScalarOrListValue);
+      effectiveOperator = notEqualityOrInOperator(theScalarOrListValue);
+    } else {
+      effectiveOperator = theOperator;
     }
-    return new Criterion(theColumn, theOperator, theScalarOrListValue);
+    return new Criterion(theColumn, effectiveOperator, theScalarOrListValue);
   }
 
   public SqlBuilder3 addConjunction(Column theColumn, Object... theScalarOrListValue) {

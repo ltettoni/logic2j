@@ -59,7 +59,7 @@ public class DefaultGoalSolver implements GoalSolver {
       logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
     }
     if (!(goalTerm instanceof Struct)) {
-      throw new InvalidTermException("Goal term " + goalTerm + " is not a Struct and cannot be solved");
+      throw new InvalidTermException("Goal \"" + goalTerm + "\" is not a Struct and cannot be solved");
     }
     // Check if goal is a system predicate or a simple one to match against the theory
     final Struct goalStruct = (Struct) goalTerm;
@@ -134,6 +134,7 @@ public class DefaultGoalSolver implements GoalSolver {
       final GoalFrame frameForAttemptingClauses = new GoalFrame(callerFrame);
 
       for (ClauseProvider provider : this.prolog.getClauseProviders()) {
+        // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
         for (Clause clause : provider.listMatchingClauses(goalStruct)) {
 
           if (debug) {
@@ -166,8 +167,8 @@ public class DefaultGoalSolver implements GoalSolver {
           final VarBindings clauseVars = new VarBindings(immutableVars);
           final Term clauseHead = clause.getHead();
           if (debug) {
-            logger.debug("Unifying: goal={}  with  goalVars={}", goalTerm, goalVars);
-            logger.debug("     and: clauseHead={}  with  clauseVars={}", clauseHead, clauseVars);
+            logger.debug("Unifying: goal={}        with  goalVars={}", goalTerm, goalVars);
+            logger.debug("      to: clauseHead={}  with  clauseVars={}", clauseHead, clauseVars);
           }
 
           // Now unify - this is the only place where free variables may become bound, and 
@@ -177,7 +178,7 @@ public class DefaultGoalSolver implements GoalSolver {
           final boolean unified = this.prolog.getUnifyer().unify(goalTerm, goalVars, clauseHead, clauseVars,
               frameForAttemptingClauses);
           if (debug) {
-            logger.debug("      unified=" + unified + ", goalVars={}, clauseVars={}", goalVars, clauseVars);
+            logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", goalVars, clauseVars);
           }
 
           if (unified) {
@@ -190,10 +191,10 @@ public class DefaultGoalSolver implements GoalSolver {
                 frameForAttemptingClauses.raiseUserCanceled();
               }
             } else {
-              if (debug) {
-                logger.debug(">> RECURS: {} is a theorem", clause);
-              }
               final Term newGoalTerm = clause.getBody();
+              if (debug) {
+                logger.debug(">> RECURS: {} is a theorem, body={}", clauseHead, newGoalTerm);
+              }
               solveGoalRecursive(newGoalTerm, clauseVars, frameForAttemptingClauses, theSolutionListener);
               if (debug) {
                 logger.debug("<< RECURS");

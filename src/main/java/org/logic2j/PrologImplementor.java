@@ -35,6 +35,12 @@ public interface PrologImplementor extends Prolog {
 
   public abstract GoalSolver getSolver();
 
+  /**
+   * @return All clause providers, in same order as when registered.
+   * TODO But the actual ordering may not be always needed, it's only important when the same
+   * predicate is available from several providers (not frequent). Could we in certain cases
+   * use multi-threaded access to all clause providers?
+   */
   public abstract List<ClauseProvider> getClauseProviders();
 
   public abstract OperatorManager getOperatorManager();
