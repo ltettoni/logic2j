@@ -40,11 +40,13 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void write(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1) {
-    final Term value = resolve(t1, vars, Term.class);
-    String format = getProlog().getFormatter().format(value);
-    format = FormatUtils.removeApices(format);
-    this.writer.print(format);
+  public void write(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+    for (Term term : terms) {
+      final Term value = resolve(term, vars, Term.class);
+      String format = getProlog().getFormatter().format(value);
+      format = FormatUtils.removeApices(format);
+      this.writer.print(format);
+    }
     notifySolution(theGoalFrame, theListener);
   }
 
@@ -53,4 +55,24 @@ public class IOLibrary extends LibraryBase {
     this.writer.print('\n');
     notifySolution(theGoalFrame, theListener);
   }
+  
+  
+  @Primitive
+  public void log(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+    for (Term term : terms) {
+      final Term value = resolve(term, vars, Term.class);
+      String format = getProlog().getFormatter().format(value);
+      format = FormatUtils.removeApices(format);
+      logger.info(format);
+    }
+    notifySolution(theGoalFrame, theListener);
+  }
+  
+  @Primitive
+  public void nolog(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+    // Do nothing, but succeeds!
+    notifySolution(theGoalFrame, theListener);
+  }
+
+
 }
