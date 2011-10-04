@@ -124,7 +124,7 @@ public class Var extends Term {
       case LIT:
         // For a literal, we keep a reference to the term and to its own variables,
         // so recurse further
-        return binding.getTerm().substitute(binding.getLiteralBindings(), theBindingsToVars);
+        return binding.getTerm().substitute(binding.getLiteralVarBindings(), theBindingsToVars);
       case FREE:
         // Free variable has no value, so substitution ends up on the last 
         // variable of the chain

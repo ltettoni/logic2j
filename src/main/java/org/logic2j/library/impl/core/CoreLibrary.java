@@ -217,7 +217,7 @@ public class CoreLibrary extends LibraryBase {
         // Clone the clause so that we can unify against its bindings
         final Clause clauseToUnify = new Clause(clause);
         final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getVars(), realHead,
-            dereferencedBinding.getLiteralBindings(), theGoalFrame);
+            dereferencedBinding.getLiteralVarBindings(), theGoalFrame);
         if (headUnified) {
           final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getVars(), theBody, vars, theGoalFrame);
           if (bodyUnified) {

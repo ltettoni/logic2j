@@ -178,7 +178,7 @@ public class VarBindings {
             throw new IllegalStateException("Cannot assign null (undefined) var, not all variables of " + this
                 + " are referenced from Term " + this.referer + ", binding " + binding + " can't be assigned a variable name");
           }
-          final Term substitute = TERM_API.substitute(boundTerm, binding.getLiteralBindings(), bindingToVar);
+          final Term substitute = TERM_API.substitute(boundTerm, binding.getLiteralVarBindings(), bindingToVar);
           result.put(varName, substitute);
           break;
         case FREE:
@@ -238,7 +238,7 @@ public class VarBindings {
     // Not found: search deeper through bindings
     for (Binding binding : this.bindings) {
       if (binding.getType() == BindingType.LIT) {
-        VarBindings foundDeeper = binding.getLiteralBindings().findBindings(theVar);
+        VarBindings foundDeeper = binding.getLiteralVarBindings().findBindings(theVar);
         if (foundDeeper != null) {
           return foundDeeper;
         }

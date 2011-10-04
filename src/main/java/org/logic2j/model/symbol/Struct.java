@@ -69,7 +69,7 @@ public class Struct extends Term {
 
   private String name; // Always "internalized" with String.intern(), you can compare with == !
   private int arity;
-  private Term[] arg;
+  private Term[] args;
 
   private PrimitiveInfo primitiveInfo;
 
@@ -80,7 +80,7 @@ public class Struct extends Term {
     this(theFunctor, argList.length);
     int i = 0;
     for (Object element : argList) {
-      this.arg[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
+      this.args[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
     }
   }
 
@@ -91,7 +91,7 @@ public class Struct extends Term {
       if (element == null) {
         throw new InvalidTermException("Cannot create Term from with null argument");
       }
-      this.arg[i++] = element;
+      this.args[i++] = element;
     }
   }
 
@@ -109,8 +109,8 @@ public class Struct extends Term {
    */
   public static Struct createPList(Term h, Term t) {
     Struct result = new Struct(FUNCTOR_LIST, 2);
-    result.arg[0] = h;
-    result.arg[1] = t;
+    result.args[0] = h;
+    result.args[1] = t;
     return result;
   }
 
@@ -141,12 +141,12 @@ public class Struct extends Term {
   private Struct(Term[] argList, int theIndex) {
     this(FUNCTOR_LIST, 2);
     if (theIndex < argList.length) {
-      this.arg[0] = argList[theIndex];
-      this.arg[1] = new Struct(argList, theIndex + 1);
+      this.args[0] = argList[theIndex];
+      this.args[1] = new Struct(argList, theIndex + 1);
     } else {
       // build an empty list
       setNameAndArity(FUNCTOR_LIST_EMPTY, 0);
-      this.arg = null;
+      this.args = null;
     }
   }
 
@@ -156,10 +156,10 @@ public class Struct extends Term {
   public Struct(String theFunctor, Collection<Term> elements) {
     int ary = elements.size();
     setNameAndArity(theFunctor, ary);
-    this.arg = new Term[ary];
+    this.args = new Term[ary];
     int i = 0;
     for (Term element : elements) {
-      this.arg[i++] = element;
+      this.args[i++] = element;
     }
   }
 
@@ -172,7 +172,7 @@ public class Struct extends Term {
     }
     setNameAndArity(theFunctor, theArity);
     if (this.arity > 0) {
-      this.arg = new Term[this.arity];
+      this.args = new Term[this.arity];
     }
   }
 
@@ -207,7 +207,7 @@ public class Struct extends Term {
    * No bound check is done
    */
   public Term getArg(int theIndex) {
-    return this.arg[theIndex];
+    return this.args[theIndex];
   }
 
   /**
@@ -219,7 +219,7 @@ public class Struct extends Term {
     if (this.arity != 2) {
       throw new IllegalArgumentException("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
     }
-    return this.arg[0];
+    return this.args[0];
   }
 
   /**
@@ -230,7 +230,7 @@ public class Struct extends Term {
     if (this.arity != 2) {
       throw new IllegalArgumentException("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
     }
-    return this.arg[1];
+    return this.args[1];
   }
 
   public String getPredicateIndicator() {
@@ -248,7 +248,7 @@ public class Struct extends Term {
    */
   @Deprecated
   public void setArg(int theIndex, Term argument) {
-    this.arg[theIndex] = argument;
+    this.args[theIndex] = argument;
   }
 
   @Override
@@ -274,10 +274,10 @@ public class Struct extends Term {
       throw new InvalidTermException("Could not clone: " + e, e);
     }
     t.setNameAndArity(this.name, this.arity);
-    t.arg = new Term[this.arity];
+    t.args = new Term[this.arity];
     t.primitiveInfo = this.primitiveInfo;
     for (int c = 0; c < this.arity; c++) {
-      t.arg[c] = this.arg[c].cloneIt();
+      t.args[c] = this.args[c].cloneIt();
     }
     return t;
   }
@@ -286,7 +286,7 @@ public class Struct extends Term {
   protected void flattenTerms(Collection<Term> theFlatTerms) {
     this.index = NO_INDEX;
     for (int c = 0; c < this.arity; c++) {
-      Term term = this.arg[c];
+      Term term = this.args[c];
       term.flattenTerms(theFlatTerms);
     }
     theFlatTerms.add(this);
@@ -298,13 +298,13 @@ public class Struct extends Term {
     Term[] newArgs = new Term[this.arity];
     boolean anyChange = false;
     for (int c = 0; c < this.arity; c++) {
-      newArgs[c] = this.arg[c].compact(theFlatTerms);
-      anyChange |= (newArgs[c] != this.arg[c]);
+      newArgs[c] = this.args[c].compact(theFlatTerms);
+      anyChange |= (newArgs[c] != this.args[c]);
     }
     final Struct compacted;
     if (anyChange) {
       compacted = (Struct) this.cloneIt();
-      compacted.arg = newArgs;
+      compacted.args = newArgs;
     } else {
       compacted = this;
     }
@@ -319,7 +319,7 @@ public class Struct extends Term {
   @Override
   public Var findVar(String theVariableName) {
     for (int c = 0; c < this.arity; c++) {
-      final Term term = this.arg[c];
+      final Term term = this.args[c];
       final Var found = term.findVar(theVariableName);
       if (found != null) {
         return found;
@@ -336,8 +336,8 @@ public class Struct extends Term {
     Term[] substArgs = new Term[this.arity]; // Will all arguments after substitution
     boolean anyChange = false;
     for (int i = 0; i < this.arity; i++) {
-      substArgs[i] = this.arg[i].substitute(theBindings, theBindingsToVars);
-      anyChange |= (substArgs[i] != this.arg[i]);
+      substArgs[i] = this.args[i].substitute(theBindings, theBindingsToVars);
+      anyChange |= (substArgs[i] != this.args[i]);
     }
     final Struct substituted;
     if (anyChange) {
@@ -361,7 +361,7 @@ public class Struct extends Term {
     final Struct that = (Struct) theOther;
     if (this.arity == that.arity && this.name == that.name) {
       for (int c = 0; c < this.arity; c++) {
-        if (!this.arg[c].staticallyEquals(that.arg[c])) {
+        if (!this.args[c].staticallyEquals(that.args[c])) {
           return false;
         }
       }
@@ -379,7 +379,7 @@ public class Struct extends Term {
 
     short runningCounter = theIndexOfNextUnindexedVar;
     for (int c = 0; c < this.arity; c++) {
-      runningCounter = this.arg[c].assignVarOffsets(runningCounter);
+      runningCounter = this.args[c].assignVarOffsets(runningCounter);
     }
     this.index = runningCounter;
     return runningCounter;
@@ -396,7 +396,7 @@ public class Struct extends Term {
       this.primitiveInfo = theLib2Content.primitiveMap.get(getVarargsPredicateIndicator());
     }
     for (int c = 0; c < this.arity; c++) {
-      final Term sub = this.arg[c];
+      final Term sub = this.args[c];
       if (sub instanceof Struct) {
         ((Struct) sub).assignPrimitiveInfo(theLib2Content);
       }
@@ -410,7 +410,7 @@ public class Struct extends Term {
       }
     }
     visited.add(this);
-    for (Term term : this.arg) {
+    for (Term term : this.args) {
       if (term instanceof Struct) {
         ((Struct) term).avoidCycle(visited);
       }
@@ -430,7 +430,7 @@ public class Struct extends Term {
 
   @Override
   public boolean isList() {
-    return (this.name.equals(FUNCTOR_LIST) && this.arity == 2 && this.arg[1].isList()) || isEmptyList();
+    return (this.name.equals(FUNCTOR_LIST) && this.arity == 2 && this.args[1].isList()) || isEmptyList();
   }
 
   protected void assertPList(Term thePList) {
@@ -552,13 +552,13 @@ public class Struct extends Term {
     assertPList(this);
     if (isEmptyList()) {
       setNameAndArity(FUNCTOR_LIST, 2);
-      this.arg = new Term[this.arity];
-      this.arg[0] = t;
-      this.arg[1] = Struct.createEmptyPList();
-    } else if (this.arg[1].isList()) {
-      ((Struct) this.arg[1]).append(t);
+      this.args = new Term[this.arity];
+      this.args[0] = t;
+      this.args[1] = Struct.createEmptyPList();
+    } else if (this.args[1].isList()) {
+      ((Struct) this.args[1]).append(t);
     } else {
-      this.arg[1] = t;
+      this.args[1] = t;
     }
   }
 
@@ -568,10 +568,10 @@ public class Struct extends Term {
   void insert(Term t) {
     assertPList(this);
     Struct co = Struct.createEmptyPList();
-    co.arg[0] = getLHS();
-    co.arg[1] = getRHS();
-    this.arg[0] = t;
-    this.arg[1] = co;
+    co.args[0] = getLHS();
+    co.args[1] = getRHS();
+    this.args[0] = t;
+    this.args[1] = co;
   }
 
   @Override
@@ -604,7 +604,7 @@ public class Struct extends Term {
       return false;
     }
     for (int c = 0; c < this.arity; c++) {
-      if (!this.arg[c].equals(that.arg[c])) {
+      if (!this.args[c].equals(that.args[c])) {
         return false;
       }
     }
@@ -616,7 +616,7 @@ public class Struct extends Term {
     int result = this.name.hashCode();
     result ^= this.arity << 8;
     for (int c = 0; c < this.arity; c++) {
-      result ^= this.arg[c].hashCode();
+      result ^= this.args[c].hashCode();
     }
     return result;
   }

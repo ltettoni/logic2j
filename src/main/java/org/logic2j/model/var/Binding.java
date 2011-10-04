@@ -31,7 +31,7 @@ import org.logic2j.solve.GoalFrame;
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
- * type     literalBindings               term           link
+ * type     literalVarBindings            term           link
  * -----------------------------------------------------------------------------------------------------
  * FREE     null                          null(*)        null
  * LIT      vars of the literal term      ref to term    null
@@ -50,7 +50,7 @@ public class Binding implements Cloneable {
 
   private BindingType type;
   private Term term;
-  private VarBindings literalBindings;
+  private VarBindings literalVarBindings;
   private Binding link;
 
   // Ref to the variable associated to this binding in the "owning" Struct. 
@@ -76,7 +76,7 @@ public class Binding implements Cloneable {
     binding.type = BindingType.LIT;
     binding.link = null;
     binding.term = theLiteral;
-    binding.literalBindings = theLiteralBindings;
+    binding.literalVarBindings = theLiteralBindings;
     binding.var = null;
     return binding;
   }
@@ -107,12 +107,12 @@ public class Binding implements Cloneable {
       }
       this.type = BindingType.VAR;
       this.term = null;
-      this.literalBindings = null;
+      this.literalVarBindings = null;
       this.link = targetBinding;
     } else {
       this.type = BindingType.LIT;
       this.term = theTerm;
-      this.literalBindings = theFrame;
+      this.literalVarBindings = theFrame;
       this.link = null;
     }
     // Remember (if asked for)
@@ -136,7 +136,7 @@ public class Binding implements Cloneable {
     this.type = BindingType.FREE;
     // The following is not functionally necessary
     this.term = null;
-    this.literalBindings = null;
+    this.literalVarBindings = null;
     this.link = null;
   }
 
@@ -170,8 +170,8 @@ public class Binding implements Cloneable {
    * {@link Struct}, and this represents the {@link VarBindings} storing the content of those variables.
    * @return The {@link VarBindings} associated to the Term from {@link #getTerm()}.
    */
-  public VarBindings getLiteralBindings() {
-    return this.literalBindings;
+  public VarBindings getLiteralVarBindings() {
+    return this.literalVarBindings;
   }
 
   /**
