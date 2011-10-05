@@ -164,13 +164,13 @@ public class UnifyerTest extends PrologTestBase {
     VarBindings var1 = new VarBindings(t1);
     GoalFrame goalFrame = new GoalFrame();
     this.unifyer.unify(t1, var1, t0, var0, goalFrame);
-    assertEquals("t(X)", TERM_API.substitute(t1, var1, null).toString());
+    assertEquals("t(X)", TERM_API.substitute(t1, var1, null).toString(DEFAULT_FORMATTER));
     assertEquals("{}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
     // Bind var2 to const
     Term t2 = getProlog().term("t(123)");
     VarBindings var2 = new VarBindings(t2);
     this.unifyer.unify(t0, var0, t2, var2, goalFrame);
-    assertEquals("t(123)", TERM_API.substitute(t0, var0, null).toString());
+    assertEquals("t(123)", TERM_API.substitute(t0, var0, null).toString(DEFAULT_FORMATTER));
     assertEquals("{U=123}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
   }
 
@@ -201,8 +201,8 @@ public class UnifyerTest extends PrologTestBase {
     VarBindings var1 = new VarBindings(t1);
     GoalFrame goalFrame = new GoalFrame();
     assertTrue(this.unifyer.unify(t1, var1, t0, var0, goalFrame));
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, var0, null).toString());
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, var1, null).toString());
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, var0, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, var1, null).toString(DEFAULT_FORMATTER));
     assertEquals("{X=[1|_]}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
     assertEquals("{E=1, L2=[2,3], T1=[]}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
     // Bind var2 to const
@@ -210,8 +210,8 @@ public class UnifyerTest extends PrologTestBase {
     Term t2 = getProlog().term("append2([],L2,L2)"); // Body of second hitting clause
     VarBindings var2 = new VarBindings(t2);
     assertTrue(this.unifyer.unify(t1b, var1, t2, var2, goalFrame));
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, var1, null).toString());
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, var2, null).toString());
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, var1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, var2, null).toString(DEFAULT_FORMATTER));
     assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
     assertEquals("{X=[1,2,3]}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
   }

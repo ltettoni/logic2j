@@ -22,7 +22,6 @@ import org.logic2j.PrologImplementor;
 import org.logic2j.io.operator.Operator;
 import org.logic2j.io.operator.OperatorManager;
 import org.logic2j.io.parse.tuprolog.Parser;
-import org.logic2j.model.TermVisitor;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.StructObject;
 import org.logic2j.model.symbol.TDouble;
@@ -31,67 +30,65 @@ import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.Var;
 
 /**
- * Formats terms.
+ * Formats {@link Term}s in a quite classical manner (at least it's readable and looks like Prolog).
  */
-public class DefaultFormatter implements TermVisitor<Void>, Formatter {
-  private StringBuilder sb = new StringBuilder();
-  private final PrologImplementor prolog;
+public class DefaultFormatter implements Formatter {
+  private final PrologImplementor prolog; // When provided, will be able to format using the defined operators
 
   // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
   private static final String ARG_SEPARATOR = ", ".intern();
 
-  // Element separator in lists
+  // Element separator in lists: [a,b,c]
   private static final String ELEM_SEPARATOR = ",".intern();
 
   /**
+   * A {@link Formatter} that will use the defined operators to render structures.
    * @param theProlog
    */
   public DefaultFormatter(PrologImplementor theProlog) {
-    this.prolog = theProlog;
+    prolog = theProlog;
   }
 
+  /**
+   * A {@link Formatter} that won't be capable of using defined operators to 
+   * render predicates. Hence, any structure such as "a,b" will be rendered
+   * as "','(a,b)".
+   */
   public DefaultFormatter() {
     this(null);
   }
 
-  public String formatted() {
-    return this.sb.toString();
+  @Override
+  public String visit(TLong theLong) {
+    return String.valueOf(theLong.longValue());
   }
 
   @Override
-  public Void visit(TLong theLong) {
-    this.sb.append(theLong.longValue());
-    return null;
+  public String visit(TDouble theDouble) {
+    return String.valueOf(theDouble.doubleValue());
   }
 
   @Override
-  public Void visit(TDouble theDouble) {
-    this.sb.append(theDouble.doubleValue());
-    return null;
+  public String visit(Struct theStruct) {
+    return String.valueOf(formatStruct(theStruct));
   }
 
   @Override
-  public Void visit(Struct theStruct) {
-    this.sb.append(formatStruct(theStruct));
-    return null;
+  public String visit(StructObject<?> theStructObject) {
+    final StringBuilder sb = new StringBuilder();
+    sb.append(formatStruct(theStructObject));
+    sb.append('(');
+    sb.append(theStructObject.getObject());
+    sb.append(')');
+    return sb.toString();
   }
 
   @Override
-  public Void visit(StructObject<?> theStructObject) {
-    this.sb.append(formatStruct(theStructObject));
-    this.sb.append('(');
-    this.sb.append(theStructObject.getObject());
-    this.sb.append(')');
-    return null;
+  public String visit(Var theVar) {
+    return String.valueOf(formatVar(theVar));
   }
 
-  @Override
-  public Void visit(Var theVar) {
-    this.sb.append(formatVar(theVar));
-    return null;
-  }
-
-  private String formatVar(Var theVar) {
+  protected String formatVar(Var theVar) {
     if (theVar.isAnonymous()) {
       return Var.ANY; // + '_' + theVar.hashCode();
     }
@@ -263,11 +260,10 @@ public class DefaultFormatter implements TermVisitor<Void>, Formatter {
 
   @Override
   public String format(Term theTerm) {
-    if (this.prolog != null) {
-      return toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
+    if (prolog != null) {
+      return toStringAsArgY(theTerm, prolog.getOperatorManager(), Operator.OP_HIGH);
     }
-    theTerm.accept(this);
-    return this.formatted();
+    return theTerm.accept(this);
   }
 
 }

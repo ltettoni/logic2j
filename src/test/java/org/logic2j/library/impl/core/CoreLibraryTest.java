@@ -18,15 +18,15 @@
 package org.logic2j.library.impl.core;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.PrologTestBase;
+import org.logic2j.solve.SolutionHolder.UniqueSolutionHolder;
 
-/**
- */
 public class CoreLibraryTest extends PrologTestBase {
 
   @Test
@@ -111,6 +111,11 @@ public class CoreLibraryTest extends PrologTestBase {
     assertNoSolution("a(b,c,d) =.. f");
     assertEquals("[a,b,c,d]", assertOneSolution("a(b,c,d) =.. X").binding("X").toString());
     assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
+    UniqueSolutionHolder assertOneSolution = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]");
+    assertEquals("coco(Arg)", assertOneSolution.binding("Expr").toString(DEFAULT_FORMATTER));
+    assertEquals("coco", assertOneSolution.binding("Pred").toString());
+    assertNull(assertOneSolution.binding("Arg"));
+//    assertEquals("Com", assertOneSolution.binding("Arg").toString());
     //    assertEquals("a(b,c)", getProlog().solve("X =.. atom").unique().binding("X").toString());
   }
 
@@ -134,7 +139,7 @@ public class CoreLibraryTest extends PrologTestBase {
   }
 
   @Test
-  public void test_clause() throws IOException {
+  public void clause() throws IOException {
     addTheory("src/test/resources/test-functional.pl");
 
     assertGoalMustFail("clause(X,_)", "clause(_,_)", "clause(1,_)");
@@ -163,5 +168,15 @@ public class CoreLibraryTest extends PrologTestBase {
     assertNSolutions(3, "bool_3t_2f(X), X\\=false");
     assertNSolutions(2, "bool_3t_2f(X), X=false");
     assertNSolutions(2, "bool_3t_2f(X), X\\=true");
+  }
+  
+  @Test
+  public void atom_length() throws Exception {
+    assertOneSolution("atom_length(a, 1)");
+    assertNoSolution("atom_length(ab, 1)");
+    //
+    assertOneSolution("atom_length(abc, X), X=3");
+    // TODO: This fails with an Exception - improve
+    // assertNoSolution("atom_length(X, 3)");
   }
 }

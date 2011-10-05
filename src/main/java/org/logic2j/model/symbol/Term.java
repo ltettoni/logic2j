@@ -20,6 +20,7 @@ package org.logic2j.model.symbol;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 
+import org.logic2j.Formatter;
 import org.logic2j.io.format.DefaultFormatter;
 import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
@@ -103,7 +104,19 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   public short getIndex() {
     return this.index;
   }
+  
 
+  /**
+   * Format using a specific Formatter.
+   * @param theFormatter The Formatter to use to format this Term (and of course
+   * any subclass).
+   * @return The formatted Term
+   */
+  public String toString(Formatter theFormatter) {
+    return accept(theFormatter);
+  }
+
+  
   //---------------------------------------------------------------------------
   // Core
   //---------------------------------------------------------------------------
@@ -121,9 +134,9 @@ public abstract class Term implements java.io.Serializable, Cloneable {
    */
   @Override
   public String toString() {
+    // final DefaultFormatter formatter = new DetailedFormatter();
     final DefaultFormatter formatter = new DefaultFormatter();
-    accept(formatter);
-    return formatter.formatted();
+    return accept(formatter);
   }
 
 }

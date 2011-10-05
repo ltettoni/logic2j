@@ -15,17 +15,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j;
 
-import org.logic2j.model.TermVisitor;
-import org.logic2j.model.symbol.Term;
+package org.logic2j.io.format;
+
+import org.logic2j.model.symbol.Var;
 
 /**
- * Convert Prolog {@link Term} hierarchies to {@link String}s or other streamable representations.
- * We are using the visitor pattern, so a {@link Formatter} is actually a {@link TermVisitor} for Strings.
+ * A formatter with more detailed information, use for debugging.
  */
-public interface Formatter extends TermVisitor<String> {
+public class DetailedFormatter extends DefaultFormatter {
 
-  public String format(Term theTerm);
+  @Override
+  protected String formatVar(Var theVar) {
+    if (theVar.isAnonymous()) {
+      return Var.ANY; // + '_' + theVar.hashCode();
+    }
+    return theVar.getName() + '@' + theVar.getIndex(); 
+  }
 
 }

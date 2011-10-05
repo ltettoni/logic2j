@@ -142,19 +142,24 @@ public class Binding implements Cloneable {
 
   @Override
   public String toString() {
-    final String str;
+    final StringBuilder sb = new StringBuilder();
+    sb.append(this.var);
+    sb.append(':');
+    sb.append(this.type);
+    
     switch (this.type) {
       case LIT:
-        str = "->" + this.term.toString();
+        sb.append("->");
+        sb.append(this.term.toString());
         break;
       case VAR:
-        str = "->" + this.link;
+        sb.append("->");
+        sb.append(this.link);
         break;
       default:
-        str = "";
         break;
     }
-    return this.type + str;
+    return sb.toString();
   }
 
   //---------------------------------------------------------------------------
