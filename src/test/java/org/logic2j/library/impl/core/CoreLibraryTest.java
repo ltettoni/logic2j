@@ -130,12 +130,43 @@ public class CoreLibraryTest extends PrologTestBase {
   }
 
   @Test
-  public void test_call() {
+  public void call() throws IOException {
     assertNoSolution("call(false)");
     assertOneSolution("call(true)");
     assertNSolutions(3, "call(true;true;true)");
     assertGoalMustFail("X=true, X");
     assertGoalMustFail("call(X)");
+    
+    addTheory("src/test/resources/test-functional.pl");
+    String arg = "X";
+    int n = 3;
+    assertNSolutions(n, "call_check(" + arg + ")");
+    assertNSolutions(n, "call(call_check(" + arg + "))");
+    assertNSolutions(n, "call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call(call(call_check(" + arg + "))))");
+    assertNSolutions(n, "call_over_call(call_check(" + arg + "))");
+    assertNSolutions(n, "call_over_call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call_over_call(call_check(" + arg + ")))");
+    //
+    arg = "2";
+    n = 1;
+    assertNSolutions(n, "call_check(" + arg + ")");
+    assertNSolutions(n, "call(call_check(" + arg + "))");
+    assertNSolutions(n, "call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call(call(call_check(" + arg + "))))");
+    assertNSolutions(n, "call_over_call(call_check(" + arg + "))");
+    assertNSolutions(n, "call_over_call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call_over_call(call_check(" + arg + ")))");
+    //
+    arg = "4";
+    n = 0;
+    assertNSolutions(n, "call_check(" + arg + ")");
+    assertNSolutions(n, "call(call_check(" + arg + "))");
+    assertNSolutions(n, "call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call(call(call_check(" + arg + "))))");
+    assertNSolutions(n, "call_over_call(call_check(" + arg + "))");
+    assertNSolutions(n, "call_over_call(call(call_check(" + arg + ")))");
+    assertNSolutions(n, "call(call_over_call(call_check(" + arg + ")))");
   }
 
   @Test

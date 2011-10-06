@@ -74,3 +74,14 @@ bool_3t_2f(true).
 bool_3t_2f(false).
 bool_3t_2f(true).
 bool_3t_2f(false).
+
+
+% Testing a bug: call/1 was not dereferencing variables properly
+call_over_call(Goal) :- call(Goal).   % A "meta" call implemented in Prolog
+call_check(1).
+call_check(2).
+call_check(3).
+
+
+
+
