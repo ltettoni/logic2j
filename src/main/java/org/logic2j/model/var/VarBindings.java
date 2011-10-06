@@ -35,6 +35,9 @@ import org.logic2j.model.symbol.Var;
  * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory. Find a better way than runtime instantiation.
  */
 public class VarBindings {
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(VarBindings.class);
+  private static boolean isDebug = logger.isDebugEnabled();
+  
   private static final TermApi TERM_API = new TermApi();
 
   private final Term referer; // The Term, mostly a Struct, whose Var indexes refer to this VarBindings
@@ -250,10 +253,11 @@ public class VarBindings {
 
   @Override
   public String toString() {
+    final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
     if (isEmpty()) {
-      return this.getClass().getSimpleName() + "(empty)";
+      return this.getClass().getSimpleName() + address + "(empty)";
     }
-    return this.getClass().getSimpleName() + Arrays.asList(this.bindings);
+    return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings);
   }
 
   //---------------------------------------------------------------------------

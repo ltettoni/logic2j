@@ -45,7 +45,9 @@ import org.logic2j.solve.GoalFrame;
  * 
  */
 public class Binding implements Cloneable {
-
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Binding.class);
+  private static final boolean debug = logger.isDebugEnabled();
+  
   // See description of fields in this class' Javadoc, and on getters.
 
   private BindingType type;
@@ -151,6 +153,10 @@ public class Binding implements Cloneable {
       case LIT:
         sb.append("->");
         sb.append(this.term.toString());
+        if (debug) {
+          sb.append('@');
+          sb.append(Integer.toHexString(this.literalVarBindings.hashCode()));
+        }
         break;
       case VAR:
         sb.append("->");
