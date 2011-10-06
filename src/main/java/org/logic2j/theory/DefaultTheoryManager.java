@@ -96,7 +96,7 @@ public class DefaultTheoryManager implements TheoryManager {
       }
       throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
     }
-    logger.warn("Library \"{}\" loaded; no associated theory found", theLibrary);
+    logger.info("Library \"{}\" loaded; no associated theory found", theLibrary);
     return new TheoryContent();
   }
 
