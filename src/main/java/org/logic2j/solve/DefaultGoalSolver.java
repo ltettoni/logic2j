@@ -67,7 +67,7 @@ public class DefaultGoalSolver implements GoalSolver {
 
     final String functor = goalStruct.getName();
     final int arity = goalStruct.getArity();
-    if (Struct.FUNCTOR_COMMA == functor) {
+   if (Struct.FUNCTOR_COMMA == functor) {
       // Logical AND
       final SolutionListener[] listeners = new SolutionListener[arity];
       // The last listener is the one of this overall COMMA sequence
@@ -100,13 +100,18 @@ public class DefaultGoalSolver implements GoalSolver {
         throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }
       Term target = TERM_API.substitute(goalStruct.getArg(0), goalVars, null);
+      VarBindings effectiveGoalVars = goalVars;
+      // Hack
+      if (target!=goalStruct.getArg(0) && effectiveGoalVars.getBinding((short) 0)!=null && effectiveGoalVars.getBinding((short) 0).isLiteral()) {
+        effectiveGoalVars = effectiveGoalVars.getBinding((short) 0).getLiteralVarBindings();
+      }
       if (target instanceof Var) {
         throw new InvalidTermException("Argument to primitive 'call' may not be a variable, was" + target);
       }
       if (debug) {
         logger.debug("Calling FUNCTOR_CALL ------------------ {}", target);
       }
-      solveGoalRecursive(target, goalVars, callerFrame, theSolutionListener);
+      solveGoalRecursive(target, effectiveGoalVars, callerFrame, theSolutionListener);
     } else if (prim != null) {
       // Primitive implemented in Java
       final Object resultOfPrimitive = prim.invoke(goalStruct, goalVars, callerFrame, theSolutionListener);
