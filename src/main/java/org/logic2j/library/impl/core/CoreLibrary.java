@@ -38,9 +38,6 @@ import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
 import org.logic2j.util.ReflectUtils;
 
-/**
- * 
- */
 public class CoreLibrary extends LibraryBase {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
 
@@ -173,7 +170,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Primitive
   public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final VarBindings vars, final Term projection,
-      final Term goal, final Term result) {
+      final Term theGoal, final Term theResult) {
     // Our internal collection of results
     final ArrayList<Term> resultList = new ArrayList<Term>();
 
@@ -192,8 +189,15 @@ public class CoreLibrary extends LibraryBase {
 
     };
 
+    final Term goalResolved = resolve(theGoal, vars, Term.class);
+    VarBindings goalVars = vars;
+    // Hack
+    if (goalResolved!=theGoal && vars.getBinding((short) 0)!=null && vars.getBinding((short) 0).isLiteral()) {
+      goalVars = vars.getBinding((short) 0).getLiteralVarBindings();
+    }
+    
     // Now solve the target goal, this may find several values of course
-    getProlog().getSolver().solveGoalRecursive(goal, vars, new GoalFrame(), solutionListener);
+    getProlog().getSolver().solveGoalRecursive(goalResolved, goalVars, new GoalFrame(), solutionListener);
 
     // Convert all results into a prolog list structure
     // Note on var indexes: all variables present in the projection term will be 
@@ -203,7 +207,7 @@ public class CoreLibrary extends LibraryBase {
     final Struct plist = Struct.createPList(resultList);
 
     // And unify with result
-    final boolean unified = unify(result, vars, plist, vars, theGoalFrame);
+    final boolean unified = unify(theResult, vars, plist, vars, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 
@@ -234,6 +238,11 @@ public class CoreLibrary extends LibraryBase {
   @Primitive(name = "=..")
   public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term thePredicate, Term theList) {
     final Term predResolved = resolve(thePredicate, vars, Term.class);
+    VarBindings predResolvedVars = vars;
+    // Hack
+    if (predResolved!=thePredicate && vars.getBinding((short) 0)!=null && vars.getBinding((short) 0).isLiteral()) {
+      predResolvedVars = vars.getBinding((short) 0).getLiteralVarBindings();
+    }
     if (predResolved instanceof Struct) {
       Struct struct = (Struct) predResolved;
       ArrayList<Term> elems = new ArrayList<Term>();
@@ -243,7 +252,7 @@ public class CoreLibrary extends LibraryBase {
         elems.add(struct.getArg(i));
       }
       Struct plist = Struct.createPList(elems);
-      final boolean unified = unify(theList, vars, plist, vars, theGoalFrame);
+      final boolean unified = unify(theList, vars, plist, predResolvedVars, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
     } else if (predResolved instanceof Var) {
       final Term lst = resolve(theList, vars, Term.class);
