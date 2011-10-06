@@ -526,12 +526,19 @@ public class Struct extends Term {
     if (theElementClassOrNull == null) {
       theElementClassOrNull = (Class<Q>) Term.class;
     }
+    
     final T result;
     if (theCollectionToFillOrNull == null) {
       result = (T) new ArrayList<Q>();
     } else {
       result = theCollectionToFillOrNull;
     }
+    // In case not a list, we just return a Java list with one element
+    if (! this.isList()) {
+      result.add(ReflectUtils.safeCastNotNull("casting single value", this, theElementClassOrNull));
+      return result;
+    }
+    
     Struct runningElement = this;
     int idx = 0;
     while (!runningElement.isEmptyList()) {
