@@ -89,14 +89,15 @@ public class LibraryBase implements PLibrary {
   }
 
   /**
-   * Resolve a Term: when it's a Var, will dereference to its bound value or return the
-   * free Var. When it's not a Var, will return the term as is.
+   * Resolve a Term: when it's a Var, will dereference to its bound value; if it's a free Var, will return it.
+   * When it's not a Var, will return the term as is.
    * TODO: clarify these methods to access terms!!!
    * @param theTerm
    * @param theVars
    * @param theClass
    * @return The term of class theClass
    */
+  // FIXME: big ugly bug: when we dereference until a free var, we need to also return the VarBindings associated to it, otherwise the index is wrong in our current "theVars" !!!!!
   protected <T extends Term> T resolve(Term theTerm, VarBindings theVars, Class<T> theClass) {
     final Term result = TERM_API.substitute(theTerm, theVars, null);
     return ReflectUtils.safeCastNotNull("obtaining resolved term", result, theClass);
