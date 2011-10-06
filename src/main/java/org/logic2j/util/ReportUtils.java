@@ -26,8 +26,8 @@ public class ReportUtils {
   private static boolean isDebug = logger.isDebugEnabled();
 
   public static String shortDescription(Object theInstance) {
-    final String details = isDebug ? ('@' + Integer.toHexString(theInstance.hashCode())) : "";
-    return shortClassName(theInstance) + details;
+    final String address = isDebug ? ('@' + Integer.toHexString(theInstance.hashCode())) : "";
+    return shortClassName(theInstance) + address;
   }
 
   public static String shortClassName(Object theInstance) {
