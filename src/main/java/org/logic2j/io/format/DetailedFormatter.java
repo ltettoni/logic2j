@@ -30,7 +30,7 @@ public class DetailedFormatter extends DefaultFormatter {
     if (theVar.isAnonymous()) {
       return Var.ANY; // + '_' + theVar.hashCode();
     }
-    return theVar.getName() + '@' + theVar.getIndex(); 
+    return theVar.getName() + '@' + theVar.getIndex();
   }
 
 }
