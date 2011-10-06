@@ -21,9 +21,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -43,11 +45,13 @@ import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
 import org.logic2j.theory.jdbc.SqlBuilder3;
+import org.logic2j.theory.jdbc.SqlBuilder3.Column;
 import org.logic2j.theory.jdbc.SqlBuilder3.Table;
 import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 import org.logic2j.util.ReflectUtils;
 import org.logic2j.util.SqlRunner;
+
 
 /**
  * Prolog library that bridges the Prolog engine and
@@ -61,6 +65,11 @@ public class RDBLibrary extends LibraryBase {
    * The name of the tbl/4 predicate to describe a column.
    */
   private static final String TBL_PREDICATE = "tbl";
+  private static final Set<String> ALLOWED_OPERATORS;
+
+  static {
+    ALLOWED_OPERATORS = new HashSet<String>(Arrays.asList(new String[] { "=", "\\=", "<", ">", "=<", ">=" }));
+  }
 
   private TermFactory termFactory;
 
@@ -69,20 +78,31 @@ public class RDBLibrary extends LibraryBase {
     this.termFactory = new RDBBase.AllStringsAsAtoms(theProlog);
   }
 
+
+
+
+
   @Primitive
   public void select(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... theArguments)
       throws SQLException {
     Term theDataSource = theArguments[0];
     Term theExpression = theArguments[1];
+    final DataSource ds = bound(theDataSource, vars, DataSource.class);
+
+    // Watch out - by resolving, the variables remaining free have new offets! We won't be able to bind them in the original goal!!!
+    final Struct conditions = resolve(theExpression, vars, Struct.class);
+
+    // Options
     Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
     boolean isDistinct = optionSet.contains(new Struct("distinct"));
 
-    final DataSource ds = bound(theDataSource, vars, DataSource.class);
-    // Watch out - by resolving, the variables remaining free have new offets! We won't be able to bind them in the original goal!!!
-    final Struct conditions = resolve(theExpression, vars, Struct.class);
+    //
     String resultVar = "Tbl";
+
+
+
     // The goal we are solving
-    Term internalGoal = new Struct("solve", conditions, resultVar);
+    Term internalGoal = new Struct("gd3_solve", conditions, resultVar);
     internalGoal = internalGoal.cloneIt();
     // Watch out this destroys the indexes in the original expression !!!!
     internalGoal = getProlog().getTermFactory().normalize(internalGoal);
@@ -94,14 +114,57 @@ public class RDBLibrary extends LibraryBase {
       throw new InvalidTermException("Internal result must be a Struct");
     }
     Struct plistOfTblPredicates = (Struct) result;
-    logger.debug("Internal solution: {}", plistOfTblPredicates);
+    logger.debug("select/3: Solving {} gives internal solution: {}", plistOfTblPredicates);
     List<Struct> javaListRoot = plistOfTblPredicates.javaListFromPList(new ArrayList<Struct>(), Struct.class);
-    logger.info(CollectionUtils.format("Internal solution:", javaListRoot, 10));
+    logger.info(CollectionUtils.format("Internal solution, list elements:", javaListRoot, 10));
+    Map<String, Term> assignedVarValue = new HashMap<String, Term>();
+    Map<String, String> assignedVarOperator = new HashMap<String, String>();
+    // Count number of references to tables
+    int nbTbl = 0;
+    for (Struct tbls : javaListRoot) {
+      for (Struct pred : tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
+        final String functor = pred.getName();
+        if (functor.equals(TBL_PREDICATE)) {
+          nbTbl++;
+        }
+        // Operator
+        else if (ALLOWED_OPERATORS.contains(functor)) {
+          final Term term1 = TERM_API.selectTerm(pred, "[1]", Term.class);
+          final Term term2 = TERM_API.selectTerm(pred, "[2]", Term.class);
+          final String variableName;
+          final Term value;
+          if (term1 instanceof Var && !(term2 instanceof Var)) {
+            variableName = ((Var) term1).getName();
+            value = term2;
+          } else if (term2 instanceof Var && !(term1 instanceof Var)) {
+            variableName = ((Var) term2).getName();
+            value = term1;
+          } else {
+            throw new UnsupportedOperationException("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
+          }
+          assignedVarValue.put(variableName, value);
+          assignedVarOperator.put(variableName, functor);
+        }
+        // Anything else
+        else {
+          logger.warn("Functor unknown, ignored: \"{}\"", functor);
+        }
+      }
+    }
+    // When there are no table predicates, actually we can just execute the goal that was passed
+    // as argument (i.e. the "select" predicate becomes a pass-through)
+    if (nbTbl == 0) {
+      // Pass through
+      logger.error("select/3 did not extract any reference to a table, while processing expression \"{}\" - no matches", conditions);
+      return;
+    }
+
     // And convert Struct to references to tables, columns and column criteria
     // Meanwhile, check individual predicates
     final SqlBuilder3 builder = new SqlBuilder3();
     List<SqlBuilder3.Criterion> rawColumns = new ArrayList<SqlBuilder3.Criterion>();
     int aliasIndex = 1;
+    final Set<Var> projectVars = new LinkedHashSet<Var>();
     for (Struct tbls : javaListRoot) {
       final String alias = "t" + (aliasIndex++);
       List<Struct> javaList = tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class);
@@ -122,12 +185,34 @@ public class RDBLibrary extends LibraryBase {
           operator = TERM_API.selectTerm(tbl, "tbl[5]", Struct.class).getName();
         }
         final Table table = builder.table(tableName, alias);
+        final Column sqlColumn = builder.column(table, columnName);
         if (valueTerm instanceof Var) {
-          if (((Var) valueTerm).isAnonymous()) {
+          Var var = (Var) valueTerm;
+          if (var.isAnonymous()) {
             // Will ignore any anonymous var
             continue;
           }
-          rawColumns.add(builder.criterion(builder.column(table, columnName), valueTerm));
+          // Check if variable already has a defined value
+          final String varName = var.getName();
+          final Term varValue = assignedVarValue.get(varName);
+          if (varValue == null) {
+            // No value defined for variable - leave as a variable
+            rawColumns.add(builder.criterion(sqlColumn, var));
+          } else {
+            // A variable has a defined value, substitute by its direct value
+            final String specifiedOperator = assignedVarOperator.get(varName);
+            if (specifiedOperator != null) {
+              operator = specifiedOperator;
+            }
+            rawColumns.add(builder.criterion(sqlColumn, sqlOperator(operator), jdbcFromTerm(varValue)));
+            // Although we have a constant value and not a free variable, we will have to project its
+            // _real_ value extracted from the database. In case of "=" this is dubious as the DB will 
+            // of course return the same. But for other operators (e.g. ">"), the real DB value will be needed!
+            final Var originalVar = var;
+            
+            projectVars.add(originalVar);
+            builder.addProjection(sqlColumn);
+          }
         } else {
           // A constant
           rawColumns.add(builder.criterion(builder.column(table, columnName), operator, jdbcFromTerm(valueTerm)));
@@ -137,7 +222,6 @@ public class RDBLibrary extends LibraryBase {
     logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
     // Now collect join conditions: all columns having the same variable
-    Set<Var> projectVars = new LinkedHashSet<Var>();
     CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join clauses
     for (SqlBuilder3.Criterion column : rawColumns) {
       if (column.getOperand()[0] instanceof Var) {
@@ -230,6 +314,24 @@ public class RDBLibrary extends LibraryBase {
       }
     }
   }
+
+
+
+  /**
+   * Translate prolog operators into SQL operator.
+   * @param theOperator
+   * @return The valid SQL operator.
+   */
+  private String sqlOperator(String theOperator) {
+    if ("=<".equals(theOperator)) {
+      return "<=";
+    }
+    if ("\\=".equals(theOperator)) {
+      return "!=";
+    }
+    return theOperator;
+  }
+
 
   /**
    * @param theTerm
