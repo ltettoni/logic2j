@@ -18,7 +18,7 @@ searchableState('Withdrawn').
 availableComRole(chp) :- comm_active(commandTarget).
 availableComRole(sec) :- true.
 availableComRole(sst) :- isoiec_comm(commandTarget).
-availableComRole(mbr) :- comm_category(commandTarget, 'COMACRO_TC').
+availableComRole(mbr) :- comm_category(commandTarget, 'TC').
 availableComRole(obs) :- iso.
 availableComRole(cib) :- test.
 

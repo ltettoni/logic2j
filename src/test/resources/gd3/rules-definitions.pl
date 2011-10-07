@@ -3,8 +3,8 @@
 %---------------------------------------------------------------------------------------------------------------
 
 
-business_definition(tcsccategories,     ['COMACRO_TC', 'COMACRO_SC']).
-business_definition(wgtypes,            ['COMACRO_WG','COMACRO_JWG','COMACRO_SWG']).
+business_definition(tcsccategories,     ['TC', 'SC']).
+business_definition(wgtypes,            ['WG','JWG','SWG']).
 business_definition(coco_names,         ['ISO/CASCO','ISO/COPOLCO','ISO/DEVCO', 'ISO/REMCO', 'ISO/STACO', 'ISO/INFCO']).
 
 
@@ -51,7 +51,7 @@ definitionCommittee(X)  :- comm_title(X, 'Definitions').
 % VR1: Validation of a simple property, independent of context
 %
 %validator('MiniComm.tcNumber', N, N < 2, 'ERROR_DATA', 'TC number must not be below 2').
-validator((comm_category(C, 'COMACRO_TC'), comm_tcnumber(C, N)), N < 2, 'ERROR_DATA', 'TC number must not be below 2').
+validator((comm_category(C, 'TC'), comm_tcnumber(C, N)), N < 2, 'ERROR_DATA', 'TC number must not be below 2').
 validator('MiniComm.scNumber', N, N < 3, 'ERROR_DATA', 'SC number must not be below 3').
 
 
@@ -89,7 +89,7 @@ validator('MiniComm.state', State, (nuclear_energy(commandTarget), not(State='ST
 
 % VR5: Universe-dependent validation: validate a property depending on others such as currently in database: 
 %   BRI2-607: The committee reference is unique
-validator(comm_ref(C, Ref), gd3((comm_category(C2, 'COMACRO_SC'), comm_ref(C2, Ref2), Ref2=Ref)), 'ERROR_DATA', 'Committee reference is already used').
+validator(comm_ref(C, Ref), gd3((comm_category(C2, 'SC'), comm_ref(C2, Ref2), Ref2=Ref)), 'ERROR_DATA', 'Committee reference is already used').
 
 
 % VR5: Universe-dependent validation: validate a property depending on others such as currently in database

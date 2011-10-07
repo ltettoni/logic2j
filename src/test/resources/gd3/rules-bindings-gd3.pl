@@ -31,7 +31,7 @@ remco(55002).
 staco(55008).
 infco(55006).
 % Also still needed for assimilated facts inference - to be removed later on
-casco(X)                :- comm_id(X, 54998).
+% casco(X)                :- comm_id(X, 54998).
 
 
 
@@ -99,6 +99,8 @@ has_gd3_mapping(_ > _).
 gd3(Goal)         :- select(gd30, Goal, normal).
 gd3distinct(Goal) :- select(gd30, Goal, distinct).
 
+gd3(Goal)         :- call(Goal).  % Used by coco(Com)
+
 
 
 %---------------------------------------------------------------------------------------------------------------
@@ -135,6 +137,7 @@ validateAgainstDb(Result) :-
 %---------------------------------------------------------------------------------------------------------------
 
 gd3_solve(Var, Var) :- var(Var), !.
+gd3_solve(X, X) :- number(X), !.
 gd3_solve(Expr, Res)  :- gd3_mapping(Expr, Res), !.
 gd3_solve(X=Value, [[X=Value]]).
 gd3_solve(X\=Value, [[X\=Value]]). % Conversion of Prolog to SQL operator done in the select/3 predicate
@@ -144,13 +147,10 @@ gd3_solve(X>=Value, [[X>=Value]]).
 gd3_solve(X>Value, [[X>Value]]).
 gd3_solve(Expr, Res)  :- business_definition(Expr, Tmp), gd3_solve(Tmp, Res), !.
 gd3_solve(Expr, Res)  :- gd3_definition(Expr, Tmp), gd3_solve(Tmp, Res), !.
-gd3_solve(Expr, Res)  :- prolog_definition(Expr, Tmp), nolog([bind_to, Tmp]), gd3_solve(Tmp, Res), !.
-gd3_solve(Expr, Res)  :- Expr =.. [Pred, Arg], findall(Arg, Expr, Matches), Res=[member(Arg, Matches)], !.  % Used by coco(Com)
+gd3_solve(Expr, Res)  :- prolog_definition(Expr, Tmp), nolog(bind_to, Tmp), gd3_solve(Tmp, Res), !.
+% gd3_solve(Expr, Res)  :- Expr =.. [Pred, Arg], log(pred_arg, Expr, Pred, Arg), findall(Arg, Expr, Matches), Res=[member(Arg, Matches)], !.  % Used by coco(Com)
 gd3_solve((A,B), Res) :- gd3_solve(A, RA), gd3_solve(B, RB), append(RA, RB, Res), !.
 gd3_solve(Expr, Expr) :- nolog([catch_all, Expr]).
-
-
-
 
 
 
@@ -165,8 +165,8 @@ gd3_solve(isoiec, X).
 gd3_solve(comm_originator(Com, 69), X).
 gd3_solve(comm_originator(Com, isoiec), X).
 gd3_solve(comm_category(Com, 'WG'), X).
-gd3_solve((comm_originator(Com, isoiec), comm_category(Com, 'COMACRO_WG')), X).
-gd3_solve((comm_originator(Com, isoiec), comm_category(Com, 'COMACRO_WG'), comm_numbers(Com, _, 27, _)), X).
+gd3_solve((comm_originator(Com, isoiec), comm_category(Com, 'WG')), X).
+gd3_solve((comm_originator(Com, isoiec), comm_category(Com, 'WG'), comm_numbers(Com, _, 27, _)), X).
 
 gd3(comm_originator(Com, 69)).
 
