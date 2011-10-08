@@ -66,7 +66,7 @@ public class CoreLibraryTest extends PrologTestBase {
   }
 
   // TODO Some uncertainties re the behaviour of no-op binding of free vars. To be clarified.
-  @Ignore // See todo above
+  @Ignore // See note above
   @Test
   public void testSolvePrimitivePredicates_behaviour_FREE() {
     assertEquals(term("X"), assertOneSolution("X=X").binding("X"));

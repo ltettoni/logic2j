@@ -69,7 +69,8 @@ public class IsoRDBLibraryTest extends PrologWithDataSourcesTestBase {
    logger.info("Bindings: {}", getProlog().solve(goal).all().bindings());
   }
   
-  @Ignore
+  // Not a real test case - use to log results
+  @Ignore // See note above
   @Test
   public void test_solve_no_db() throws Exception {
     String goal;

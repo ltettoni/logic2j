@@ -104,7 +104,6 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   public short getIndex() {
     return this.index;
   }
-  
 
   /**
    * Format using a specific Formatter.
@@ -116,7 +115,6 @@ public abstract class Term implements java.io.Serializable, Cloneable {
     return accept(theFormatter);
   }
 
-  
   //---------------------------------------------------------------------------
   // Core
   //---------------------------------------------------------------------------
@@ -134,7 +132,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
    */
   @Override
   public String toString() {
-    // final DefaultFormatter formatter = new DetailedFormatter();
+    //     final DefaultFormatter formatter = new DetailedFormatter();
     final DefaultFormatter formatter = new DefaultFormatter();
     return accept(formatter);
   }

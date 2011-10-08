@@ -5,7 +5,7 @@
     </layout>
   </appender>
 
-  <!-- File appender without date for non-regression comparisons
+  <!-- File appender without date/time for non-regression comparisons
   <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
     <file>once.log</file>
     <append>false</append>
@@ -14,6 +14,15 @@
     </layout>
   </appender>
   -->
+  
+  <logger name="org.logic2j.PrologWithDataSourcesTestBase"><level value="info"/></logger>
+  <logger name="org.logic2j.util.SqlRunner"><level value="info"/></logger>
+  <logger name="org.logic2j.library.impl.rdb.RDBLibrary"><level value="info"/></logger>
+  <logger name="org.logic2j.solve.DefaultGoalSolver"><level value="info"/></logger>
+
+  <logger name="org.logic2j.model.var.Binding"><level value="info"/></logger>
+  <logger name="org.logic2j.model.var.VarBindings"><level value="info"/></logger>
+
 
   <root level="info">
     <appender-ref ref="CONSOLE"/>
