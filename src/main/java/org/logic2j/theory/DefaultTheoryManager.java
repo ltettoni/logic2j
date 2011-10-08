@@ -143,7 +143,7 @@ public class DefaultTheoryManager implements TheoryManager {
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   @Override

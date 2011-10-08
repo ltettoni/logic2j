@@ -37,25 +37,40 @@ import org.logic2j.model.var.VarBindings;
 public abstract class Term implements java.io.Serializable, Cloneable {
   private static final long serialVersionUID = 1L;
 
+  /**
+   * A value of index=={@value} means it was not initialized.
+   */
   public static final int NO_INDEX = -1;
-  public static final int ANON_INDEX = -2; // Index of the anonymous variable
 
   /**
-   * Offset into the stackframe, where var value to be found
+   * A value of index=={@value} means this is the anonymous variable.
+   */
+  public static final int ANON_INDEX = -2;
+
+  /**
+   * For {@link Var}s, the index within {@link VarBindings} where the {@link Binding}
+   * of this variable can be found.
+   * Default value is unassigned. 
    */
   protected short index = NO_INDEX;
 
-  /** is this term a prolog (alphanumeric) atom? */
+  /**
+   * @return true if this Term is an atom.
+   */
   // TODO Remove this it's only used from one place! Have a separate place (CoreLibrary?) for such methods.
   public abstract boolean isAtom();
 
-  /** is this term a prolog list? */
+  /**
+   * @return true if this Term denotes a Prolog list.
+   */
   public abstract boolean isList();
 
   //---------------------------------------------------------------------------
   // Graph traversal methods
   // Notice that some traversal is accomplished by the #accept() method and the visitor pattern
   //---------------------------------------------------------------------------
+
+  public abstract <T> T accept(TermVisitor<T> theVisitor);
 
   protected abstract void flattenTerms(Collection<Term> theFlatTerms);
 
@@ -88,6 +103,11 @@ public abstract class Term implements java.io.Serializable, Cloneable {
     return null;
   }
 
+
+  public short getIndex() {
+    return this.index;
+  }
+
   /**
    * @return A deep copy of this Term.
    */
@@ -98,13 +118,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
       throw new InvalidTermException("Could not clone: " + e, e);
     }
   }
-
-  public abstract <T> T accept(TermVisitor<T> theVisitor);
-
-  public short getIndex() {
-    return this.index;
-  }
-
+  
   /**
    * Format using a specific Formatter.
    * @param theFormatter The Formatter to use to format this Term (and of course
@@ -116,7 +130,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   // Require subclass to implement it!

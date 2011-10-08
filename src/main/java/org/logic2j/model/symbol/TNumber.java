@@ -24,13 +24,10 @@ import org.logic2j.model.var.Binding;
 import org.logic2j.model.var.VarBindings;
 
 /**
- *
- * TNumber abstract class represents numbers prolog data type
+ * {@link TNumber}s are numeric {@link Term}s.
  *
  * @see TLong
  * @see TDouble
- *
- * Reviewed by Paolo Contessi: implements Comparable<TNumber>
  */
 public abstract class TNumber extends Term implements Comparable<TNumber> {
 
@@ -46,13 +43,11 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
    */
   public abstract double doubleValue();
 
-  /** is this term a prolog (alphanumeric) atom? */
   @Override
   final public boolean isAtom() {
     return false;
   }
 
-  /** is this term a prolog list? */
   @Override
   final public boolean isList() {
     return false;

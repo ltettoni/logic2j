@@ -47,7 +47,7 @@ public class MatchResult implements Comparable<MatchResult> {
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   @Override

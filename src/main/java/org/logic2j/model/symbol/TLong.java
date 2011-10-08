@@ -51,7 +51,7 @@ public class TLong extends TNumber {
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   @Override
@@ -68,9 +68,10 @@ public class TLong extends TNumber {
     return new Long(this.value).hashCode();
   }
 
-  /**
-   * @author Paolo Contessi
-   */
+  //---------------------------------------------------------------------------
+  // Interface Comparable
+  //---------------------------------------------------------------------------
+
   @Override
   public int compareTo(TNumber that) {
     return (new Long(this.value)).compareTo(that.longValue());

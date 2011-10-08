@@ -36,11 +36,18 @@ public class Var extends Term {
 
   private static final long serialVersionUID = 1L;
 
-  public static final String ANY = "_";
+  public static final String ANY = "_".intern(); // TODO Document this
   public static final Term ANONYMOUS_VAR = new Var();
 
-  // the name identifying the var
-  private String name; // Will be null when variable is ANY
+  /**
+   * The name of the variable, usually starting with uppercase when this Var
+   * was instantiated by the default parser, but when instantiated by {@link #Var(String)}
+   * it may actually be anything (although it may not be the smartest idea).<br/>
+   * A value of null means it's the anonymous variable (even though the anonymous
+   * variable is formatted as "_")<br/>
+   * Note: all variable names are internalized, i.e. it is legal to compare them with ==.
+   */
+  private String name;
 
   /**
    * Creates a variable identified by a name.
@@ -52,33 +59,57 @@ public class Var extends Term {
    * @throws InvalidTermException if n is not a valid Prolog variable name
    */
   public Var(String theName) {
-    if (ANY.equals(theName)) {
-      this.name = null;
-    } else if (Character.isUpperCase(theName.charAt(0)) || (theName.startsWith(ANY))) {
-      this.name = theName.intern();
-    } else {
-      throw new InvalidTermException("Illegal variable name: " + theName);
-    }
+    this.name = theName.intern();
   }
 
   /**
-   * Creates an anonymous variable
-   *
-   *  This is equivalent to build a variable with name _
+   * Create an anonymous variable.
    */
   private Var() {
-    this.name = null;
+    this.name = ANY;
   }
 
   /**
-   * Gets the name of the variable
+   * Gets the name of the variable.
    */
   public String getName() {
-    if (this.name != null) {
-      return this.name;
-    }
-    return ANY;
+    return this.name;
   }
+
+  /**
+   * Tests if this variable is anonymous.
+   */
+  public boolean isAnonymous() {
+    return this.name == ANY;
+  }
+
+  /**
+   * Obtain the current {@link Binding} of this Var from the {@link VarBindings}.
+   * Notice that the variable index must have been assigned, and this var must NOT
+   * be the anonymous variable (that cannot be bound to anyhting).
+   * @param theVarBindings
+   * @return The current binding of this Var.
+   */
+  public Binding derefToBinding(VarBindings theVarBindings) {
+    if (this.index < 0) {
+      // An error situation
+      if (this.index == NO_INDEX) {
+        throw new IllegalStateException("Cannot dereference variable whose offset was not initialized");
+      }
+      if (this.index == ANON_INDEX) {
+        throw new IllegalStateException("Cannot dereference the anonymous variable");
+      }
+    }
+    if (this.index >= theVarBindings.nbBindings()) {
+      throw new IllegalStateException("Bindings " + theVarBindings + " has space for " + theVarBindings.nbBindings()
+          + " vars, trying to dereference " + this + " at index " + this.index);
+    }
+    return theVarBindings.getBinding(this.index);
+  }
+
+  //---------------------------------------------------------------------------
+  // Template methods defined in abstract class Term
+  //---------------------------------------------------------------------------
 
   @Override
   public boolean isAtom() {
@@ -88,15 +119,6 @@ public class Var extends Term {
   @Override
   public boolean isList() {
     return false;
-  }
-
-  //
-
-  /**
-   * Tests if this variable is ANY
-   */
-  public boolean isAnonymous() {
-    return this.name == null;
   }
 
   @Override
@@ -191,37 +213,13 @@ public class Var extends Term {
     return ++theIndexOfNextUnindexedVar;
   }
 
-  /**
-   * Obtain the current {@link Binding} of this Var from the {@link VarBindings}.
-   * Notice that the variable index must have been assigned, and this var must NOT
-   * be the anonymous variable (that cannot be bound to anyhting).
-   * @param theVarBindings
-   * @return The current binding of this Var.
-   */
-  public Binding derefToBinding(VarBindings theVarBindings) {
-    if (this.index < 0) {
-      // An error situation
-      if (this.index == NO_INDEX) {
-        throw new IllegalStateException("Cannot dereference variable whose offset was not initialized");
-      }
-      if (this.index == ANON_INDEX) {
-        throw new IllegalStateException("Cannot dereference the anonymous variable");
-      }
-    }
-    if (this.index >= theVarBindings.nbBindings()) {
-      throw new IllegalStateException("Bindings " + theVarBindings + " has space for " + theVarBindings.nbBindings()
-          + " vars, trying to dereference " + this + " at index " + this.index);
-    }
-    return theVarBindings.getBinding(this.index);
-  }
-
   @Override
   public <T> T accept(TermVisitor<T> theVisitor) {
     return theVisitor.visit(this);
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   @Override

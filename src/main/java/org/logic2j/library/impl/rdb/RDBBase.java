@@ -49,6 +49,7 @@ public class RDBBase {
 
     @Override
     public Term create(Object theObject, FactoryMode theMode) {
+      // Ignore theMode argument, and use forcing of atom instead
       return TERM_API.valueOf(theObject, FactoryMode.ATOM);
     }
 

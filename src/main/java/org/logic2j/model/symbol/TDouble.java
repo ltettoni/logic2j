@@ -51,7 +51,7 @@ public class TDouble extends TNumber {
   }
 
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   @Override
@@ -68,11 +68,12 @@ public class TDouble extends TNumber {
     return new Double(this.value).hashCode();
   }
 
-  /**
-   * @author Paolo Contessi
-   */
+  //---------------------------------------------------------------------------
+  // Interface Comparable
+  //---------------------------------------------------------------------------
+
   @Override
-  public int compareTo(TNumber o) {
-    return (new Double(this.value)).compareTo(o.doubleValue());
+  public int compareTo(TNumber that) {
+    return (new Double(this.value)).compareTo(that.doubleValue());
   }
 }

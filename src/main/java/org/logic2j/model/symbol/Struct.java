@@ -594,8 +594,9 @@ public class Struct extends Term {
   public boolean nameAndArityMatch(Struct that) {
     return this.arity==that.arity && this.name==that.name;
   }
+
   //---------------------------------------------------------------------------
-  // Core
+  // Core java.lang.Object methods
   //---------------------------------------------------------------------------
 
   /**

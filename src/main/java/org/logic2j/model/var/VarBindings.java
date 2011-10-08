@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.logic2j.model.BaseTermVisitor;
 import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
+import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
@@ -40,7 +41,21 @@ public class VarBindings {
   
   private static final TermApi TERM_API = new TermApi();
 
-  private final Term referer; // The Term, mostly a Struct, whose Var indexes refer to this VarBindings
+  /**
+   * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this VarBindings
+   * through their indexes.
+   */
+  private final Term referer;
+  
+  /**
+   * All {@link Binding}s, one per instance of {@link Var}iable.
+   * There are as many bindings as the distinct number of variables in 
+   * the referer Term, i.e. the length of bindings equals the maximum
+   * of all indexes in all {@link Var}s of the referer, plus one.
+   * See also {@link Var#getIndex()}.
+   * This array is never null, but may be empty (length=0) when the
+   * referer Term does not contain any {@link Var}iable.
+   */
   private Binding[] bindings;
 
   /**
@@ -76,15 +91,17 @@ public class VarBindings {
   }
 
   /**
-   * Create VarBindings for a given Term, ususally a Struct.
+   * Instantiate a VarBindings to hold all variables of a given {@link Term}, ususally a {@link Struct}.
    * @param theTerm
    */
   public VarBindings(Term theTerm) {
-    this.referer = theTerm;
+    // Check arguments
     final short index = theTerm.getIndex();
     if (index == Term.NO_INDEX) {
-      throw new InvalidTermException("Cannot create VarBindings for uninitialized term " + theTerm);
+      throw new InvalidTermException("Cannot create VarBindings for uninitialized Term " + theTerm);
     }
+    this.referer = theTerm;
+    // Determine number of distinct variables
     final int nbVars;
     if (theTerm instanceof Var) {
       if (((Var) theTerm).isAnonymous()) {

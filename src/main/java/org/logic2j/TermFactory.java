@@ -17,31 +17,36 @@
  */
 package org.logic2j;
 
+import org.logic2j.model.symbol.Struct;
+import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.symbol.Var;
 
 /**
  * Factory methods to create {@link Term}s from various data of a different nature
  * and representation.
- *
  */
 public interface TermFactory {
 
   public static enum FactoryMode {
     /**
-     * Result must be an atom, may not be a Var.
+     * Result will always be an atom (a non-compound {@link Struct}), may not be a {@link Var}iable.
      */
     ATOM,
+    
     /**
-     * Result may be an atom, a numeric, but not a Var neither a Struct.
+     * Result will be either an atom (a non-compound {@link Struct}), a numeric ({@link TNumber}), 
+     * but not a {@link Var}iable neither a compound.
      */
     LITERAL,
 
     /**
-     * Result may be any Term (atom, number, Var), but not a compound Struct.
+     * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link org.logic2j.model.symbol.Struct}.
      */
     ANY_TERM,
+    
     /**
-     * Result is the outcome of parsing a complex structure.
+     * Result will be the outcome of parsing a complex structure.
      */
     COMPOUND
   }

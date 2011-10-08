@@ -128,7 +128,7 @@ public class TermApi {
     if (theObject == null) {
       throw new InvalidTermException("Cannot create Term from null argument");
     }
-    Term term = null;
+    final Term term;
     if (theObject instanceof Term) {
       term = (Term) theObject;
     } else if (theObject instanceof Integer) {
@@ -144,16 +144,21 @@ public class TermApi {
     } else if (theObject instanceof CharSequence || theObject instanceof Character) {
       // Rudimentary parsing
       final String chars = theObject.toString();
-      if (theMode == FactoryMode.ANY_TERM) {
-        try {
-          // Attempt factorizing a variable
+      if (theMode == FactoryMode.ATOM) {
+        // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
+        term = new Struct(chars);
+      } else {
+        if (Var.ANY.equals(chars)) {
+          term = Var.ANONYMOUS_VAR;
+        } else if (chars.isEmpty()) {
+          // Dubious for real programming, but data sources may contain empty fields, and this is the only way to represent them as a Term
+          term = new Struct("");
+        } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANY)) {
           term = new Var(chars);
-        } catch (InvalidTermException e) {
+        } else {
           // Otherwise it's an atom
           term = new Struct(chars);
         }
-      } else {
-        term = new Struct(chars);
       }
     } else {
       throw new InvalidTermException("Cannot create Term from '" + theObject + "' of " + theObject.getClass());
@@ -209,8 +214,9 @@ public class TermApi {
         String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
         return selectTerm(s.getArg(position - 1), levelsTail, theClass);
       }
-      if (! (theClass.isAssignableFrom(theTerm.getClass()))){
-        throw new ClassCastException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
+      if (!(theClass.isAssignableFrom(theTerm.getClass()))) {
+        throw new ClassCastException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from "
+            + theTerm);
       }
       return (T) theTerm;
     }
