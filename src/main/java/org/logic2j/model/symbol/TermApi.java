@@ -148,12 +148,12 @@ public class TermApi {
         // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
         term = new Struct(chars);
       } else {
-        if (Var.ANY.equals(chars)) {
+        if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
           term = Var.ANONYMOUS_VAR;
         } else if (chars.isEmpty()) {
           // Dubious for real programming, but data sources may contain empty fields, and this is the only way to represent them as a Term
           term = new Struct("");
-        } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANY)) {
+        } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
           term = new Var(chars);
         } else {
           // Otherwise it's an atom

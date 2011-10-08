@@ -18,17 +18,19 @@
 
 package org.logic2j.io.format;
 
+import org.logic2j.Formatter;
 import org.logic2j.model.symbol.Var;
 
 /**
- * A formatter with more detailed information, use for debugging.
+ * A {@link Formatter} with more detailed information, use for debugging.
  */
 public class DetailedFormatter extends DefaultFormatter {
 
   @Override
   protected String formatVar(Var theVar) {
     if (theVar.isAnonymous()) {
-      return Var.ANY; // + '_' + theVar.hashCode();
+      // The anonymous var has no index - won't report it!
+      return Var.ANONYMOUS_VAR_NAME;
     }
     return theVar.getName() + '@' + theVar.getIndex();
   }

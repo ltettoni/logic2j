@@ -68,7 +68,8 @@ public class Clause {
    * @param theOriginal
    */
   public Clause(Clause theOriginal) {
-    this.content = (Struct) theOriginal.content.cloneIt();
+    this.content = theOriginal.content.cloneIt();
+    // Clone the block of variables
     this.vars = new VarBindings(theOriginal.getVars());
   }
 

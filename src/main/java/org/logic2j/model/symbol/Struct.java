@@ -33,8 +33,8 @@ import org.logic2j.model.var.VarBindings;
 import org.logic2j.util.ReflectUtils;
 
 /**
- * Struct class represents both compound prolog term
- * and atom term (considered as 0-arity compound).
+ * Struct class represents either Prolog compound {@link Term}s
+ * or atoms (an atom is represented by a 0-arity compound).
  */
 public class Struct extends Term {
   private static final long serialVersionUID = 1L;
@@ -251,22 +251,59 @@ public class Struct extends Term {
     this.args[theIndex] = argument;
   }
 
-  @Override
-  public boolean isAtom() {
-    return (this.arity == 0 || isEmptyList());
-  }
 
   public PrimitiveInfo getPrimitiveInfo() {
     return this.primitiveInfo;
   }
 
-  //
+  /**
+   * @param theLib2Content
+   */
+  public void assignPrimitiveInfo(LibraryContent theLib2Content) {
+    // Find by exact arity match
+    this.primitiveInfo = theLib2Content.primitiveMap.get(getPredicateIndicator());
+    if (this.primitiveInfo == null) {
+      // Alternate find by wildcard (varargs signature)
+      this.primitiveInfo = theLib2Content.primitiveMap.get(getVarargsPredicateIndicator());
+    }
+    for (int c = 0; c < this.arity; c++) {
+      final Term sub = this.args[c];
+      if (sub instanceof Struct) {
+        ((Struct) sub).assignPrimitiveInfo(theLib2Content);
+      }
+    }
+  }
+
+  public void avoidCycle(List<Term> visited) {
+    for (Term term : visited) {
+      if (term == this) {
+        throw new IllegalStateException("Cycle detected");
+      }
+    }
+    visited.add(this);
+    for (Term term : this.args) {
+      if (term instanceof Struct) {
+        ((Struct) term).avoidCycle(visited);
+      }
+    }
+  }
+
+  //---------------------------------------------------------------------------
+  // Template methods defined in abstract class Term
+  //---------------------------------------------------------------------------
+
+  @Override
+  public boolean isAtom() {
+    return (this.arity == 0 || isEmptyList());
+  }
+
 
   /**
    * Gets a copy of this structure
    */
+  @SuppressWarnings("unchecked") // TODO LT: also unclear here why we get a warning
   @Override
-  public Term cloneIt() {
+  public Struct cloneIt() {
     Struct t;
     try {
       t = (Struct) this.clone();
@@ -303,7 +340,7 @@ public class Struct extends Term {
     }
     final Struct compacted;
     if (anyChange) {
-      compacted = (Struct) this.cloneIt();
+      compacted = this.cloneIt();
       compacted.args = newArgs;
     } else {
       compacted = this;
@@ -318,8 +355,8 @@ public class Struct extends Term {
 
   @Override
   public Var findVar(String theVariableName) {
-    for (int c = 0; c < this.arity; c++) {
-      final Term term = this.args[c];
+    for (int i = 0; i < this.arity; i++) {
+      final Term term = this.args[i];
       final Var found = term.findVar(theVariableName);
       if (found != null) {
         return found;
@@ -383,38 +420,6 @@ public class Struct extends Term {
     }
     this.index = runningCounter;
     return runningCounter;
-  }
-
-  /**
-   * @param theLib2Content
-   */
-  public void assignPrimitiveInfo(LibraryContent theLib2Content) {
-    // Find by exact arity match
-    this.primitiveInfo = theLib2Content.primitiveMap.get(getPredicateIndicator());
-    if (this.primitiveInfo == null) {
-      // Alternate find by wildcard (varargs signature)
-      this.primitiveInfo = theLib2Content.primitiveMap.get(getVarargsPredicateIndicator());
-    }
-    for (int c = 0; c < this.arity; c++) {
-      final Term sub = this.args[c];
-      if (sub instanceof Struct) {
-        ((Struct) sub).assignPrimitiveInfo(theLib2Content);
-      }
-    }
-  }
-
-  public void avoidCycle(List<Term> visited) {
-    for (Term term : visited) {
-      if (term == this) {
-        throw new IllegalStateException("Cycle detected");
-      }
-    }
-    visited.add(this);
-    for (Term term : this.args) {
-      if (term instanceof Struct) {
-        ((Struct) term).avoidCycle(visited);
-      }
-    }
   }
 
   //---------------------------------------------------------------------------
@@ -483,17 +488,6 @@ public class Struct extends Term {
     }
     return count;
   }
-
-  //  /**
-  //   * Gets a list Struct representation, with the functor as first element.
-  //   */
-  //  public Struct toList() {
-  //    Struct t = Struct.createEmptyPList();
-  //    for (int c = this.arity - 1; c >= 0; c--) {
-  //      t = Struct.createPList(this.arg[c], t);
-  //    }
-  //    return new Struct(new Struct(this.name), t);
-  //  }
 
   /**
    * From a Prolog List, obtain a Struct with the first list element as functor,

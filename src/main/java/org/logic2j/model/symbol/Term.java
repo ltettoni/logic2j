@@ -49,8 +49,10 @@ public abstract class Term implements java.io.Serializable, Cloneable {
 
   /**
    * For {@link Var}s, the index within {@link VarBindings} where the {@link Binding}
-   * of this variable can be found.
-   * Default value is unassigned. 
+   * of this variable can be found.<br/>
+   * For a {@link Struct}, the index defines the total number of distinct variables that
+   * can be found, recursively, under all arguments.<br/>
+   * The default value is unassigned. 
    */
   protected short index = NO_INDEX;
 
@@ -111,9 +113,10 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   /**
    * @return A deep copy of this Term.
    */
-  public Term cloneIt() {
+  @SuppressWarnings("unchecked") // TODO LT: unclear why we get a warning. When calling clone() the compiler seems to know the return is Term!?
+  public <T extends Term> T cloneIt() {
     try {
-      return (Term) super.clone();
+      return (T) clone();
     } catch (CloneNotSupportedException e) {
       throw new InvalidTermException("Could not clone: " + e, e);
     }

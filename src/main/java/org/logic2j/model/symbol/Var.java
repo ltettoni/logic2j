@@ -29,14 +29,11 @@ import org.logic2j.model.var.VarBindings;
  * This class represents a variable term.
  * Variables are identified by a name (which must starts with
  * an upper case letter) or the anonymous ('_') name.
- *
- * @see Term
  */
 public class Var extends Term {
-
   private static final long serialVersionUID = 1L;
 
-  public static final String ANY = "_".intern(); // TODO Document this
+  public static final String ANONYMOUS_VAR_NAME = "_".intern(); // TODO Document this
   public static final Term ANONYMOUS_VAR = new Var();
 
   /**
@@ -66,7 +63,7 @@ public class Var extends Term {
    * Create an anonymous variable.
    */
   private Var() {
-    this.name = ANY;
+    this.name = ANONYMOUS_VAR_NAME;
   }
 
   /**
@@ -80,7 +77,7 @@ public class Var extends Term {
    * Tests if this variable is anonymous.
    */
   public boolean isAnonymous() {
-    return this.name == ANY;
+    return this.name == ANONYMOUS_VAR_NAME;
   }
 
   /**
@@ -123,7 +120,7 @@ public class Var extends Term {
 
   @Override
   public Var findVar(String theVariableName) {
-    if (ANY.equals(theVariableName)) {
+    if (ANONYMOUS_VAR_NAME.equals(theVariableName)) {
       throw new IllegalArgumentException("Cannot find the anonymous variable");
     }
     if (theVariableName.equals(getName())) {

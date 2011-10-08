@@ -89,9 +89,6 @@ public class DefaultFormatter implements Formatter {
   }
 
   protected String formatVar(Var theVar) {
-    if (theVar.isAnonymous()) {
-      return Var.ANY; // + '_' + theVar.hashCode();
-    }
     return theVar.getName();
   }
 

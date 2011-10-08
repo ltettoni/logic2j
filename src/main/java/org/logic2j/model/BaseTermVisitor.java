@@ -24,8 +24,11 @@ import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Var;
 
 /**
- * Base implementation of {@link TermVisitor} that does nothing.
- *
+ * Base implementation of {@link TermVisitor} does nothing 
+ * except for {@link Struct}, which are traversed recursively until 
+ * the first accept() returns non-null.<br/> 
+ * Appropriate for searching through structures, or traversing all
+ * assuming null is returned.
  */
 public class BaseTermVisitor<T> implements TermVisitor<T> {
 
@@ -49,8 +52,13 @@ public class BaseTermVisitor<T> implements TermVisitor<T> {
    */
   @Override
   public T visit(Struct theStruct) {
+    // Recurse through children
     for (int i = 0; i < theStruct.getArity(); i++) {
-      theStruct.getArg(i).accept(this);
+      final T result = theStruct.getArg(i).accept(this);
+      // Until the first returning a non-null result
+      if (result!=null) {
+        return result;
+      }
     }
     return null;
   }

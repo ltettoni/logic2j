@@ -25,12 +25,8 @@ import org.logic2j.model.var.VarBindings;
 
 /**
  * {@link TNumber}s are numeric {@link Term}s.
- *
- * @see TLong
- * @see TDouble
  */
 public abstract class TNumber extends Term implements Comparable<TNumber> {
-
   private static final long serialVersionUID = 1L;
 
   /**
@@ -43,6 +39,11 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
    */
   public abstract double doubleValue();
 
+
+  //---------------------------------------------------------------------------
+  // Template methods defined in abstract class Term
+  //---------------------------------------------------------------------------
+
   @Override
   final public boolean isAtom() {
     return false;
@@ -52,8 +53,6 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
   final public boolean isList() {
     return false;
   }
-
-  //
 
   @Override
   protected void flattenTerms(Collection<Term> theFlatTerms) {

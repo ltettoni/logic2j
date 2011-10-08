@@ -55,8 +55,10 @@ public class Binding implements Cloneable {
   private VarBindings literalVarBindings;
   private Binding link;
 
-  // Ref to the variable associated to this binding in the "owning" Struct. 
-  // Note that this is the ref to the last instance of the var in case there are more than one.
+  // Ref to the variable associated to this binding in the "owning" Struct. This is solely 
+  // used for reporting and extracting the "original" variable name from solutions. 
+  // This field is not "functionally" needed
+  // Note that this is the ref to the first instance of the var in case there are more than one.
   private Var var;
 
   /**
@@ -79,7 +81,7 @@ public class Binding implements Cloneable {
     binding.link = null;
     binding.term = theLiteral;
     binding.literalVarBindings = theLiteralBindings;
-    binding.var = null;
+    binding.setVar(null);
     return binding;
   }
 
@@ -87,7 +89,7 @@ public class Binding implements Cloneable {
     try {
       return (Binding) this.clone();
     } catch (CloneNotSupportedException e) {
-      throw new InvalidTermException("Failed cloning: " + e);
+      throw new InvalidTermException("Failed cloning " + this + " : " + e);
     }
   }
 
@@ -145,7 +147,7 @@ public class Binding implements Cloneable {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append(this.var);
+    sb.append(getVar());
     sb.append(':');
     sb.append(this.type);
     

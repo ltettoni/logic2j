@@ -1,1 +1,9 @@
-The model.symbol package defines the Term hierarchy of classes, and the TermApi helper class.
+The model.symbol package contains the Term hierarchy of classes, plus the TermApi helper class.
+The Term hierarchy is an API to the syntactic aspect of the Prolog formalism.
+
+Logic2j uses a particular implementation design for a Prolog engine, named "shared structures".
+This means that Term graphs are immutable and do not store actual values (results) of bindings.
+As a consequence, Terms cannot be directly used for unification or solving, since they are devoid
+of values. Yet they may be shared by recursive solving, unification, and by multiple threads.
+
+Separate structures are used to hold values of terms.

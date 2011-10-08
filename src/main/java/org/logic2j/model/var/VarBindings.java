@@ -33,12 +33,13 @@ import org.logic2j.model.symbol.Var;
 
 /**
  * Variables associated to a Struct.
- * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory. Find a better way than runtime instantiation.
+ * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory. 
+ * Find a better way than runtime instantiation.
  */
 public class VarBindings {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(VarBindings.class);
   private static boolean isDebug = logger.isDebugEnabled();
-  
+
   private static final TermApi TERM_API = new TermApi();
 
   /**
@@ -46,7 +47,7 @@ public class VarBindings {
    * through their indexes.
    */
   private final Term referer;
-  
+
   /**
    * All {@link Binding}s, one per instance of {@link Var}iable.
    * There are as many bindings as the distinct number of variables in 
@@ -91,11 +92,39 @@ public class VarBindings {
   }
 
   /**
+   * {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
+   */
+  private static class SetVarInBindingVisitor extends BaseTermVisitor<Var> {
+
+    private Binding binding;
+    private int index;
+
+    SetVarInBindingVisitor(Binding theBinding, int theIndex) {
+      this.binding = theBinding;
+      this.index = theIndex;
+    }
+
+    @SuppressWarnings("synthetic-access")
+    @Override
+    public Var visit(Var theVar) {
+      if (theVar.getIndex() == index) {
+        binding.setVar(theVar);
+        // Returning non-null will stop useless recursion
+        return theVar;
+      }
+      return null;
+    }
+
+  }
+
+  /**
    * Instantiate a VarBindings to hold all variables of a given {@link Term}, ususally a {@link Struct}.
    * @param theTerm
    */
   public VarBindings(Term theTerm) {
     // Check arguments
+    //
+    // Note: this constructor should be called only with Var or Struct as arguments, but we don't check this. Should we?
     final short index = theTerm.getIndex();
     if (index == Term.NO_INDEX) {
       throw new InvalidTermException("Cannot create VarBindings for uninitialized Term " + theTerm);
@@ -110,30 +139,26 @@ public class VarBindings {
         nbVars = 1;
       }
     } else {
+      // Will be a Struct; in that case the index is the number of vars
       nbVars = index;
     }
+    //
+    // Allocate and initialize all bindings
+    //
     this.bindings = new Binding[nbVars];
     for (int i = 0; i < nbVars; i++) {
-      final int varIndex = i;
-      this.bindings[varIndex] = new Binding();
-      final TermVisitor<Void> setRefToVar = new BaseTermVisitor<Void>() {
-
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public Void visit(Var theVar) {
-          if (theVar.getIndex() == varIndex) {
-            VarBindings.this.bindings[varIndex].setVar(theVar);
-          }
-          return null;
-        }
-
-      };
-      theTerm.accept(setRefToVar);
+      final int varIndex = i; // Need a final var for visitor subclass
+      final Binding binding = new Binding();
+      this.bindings[varIndex] = binding;
+      // Assign Binding.var field 
+      // TODO This is costly see https://github.com/ltettoni/logic2j/issues/26
+      theTerm.accept(new SetVarInBindingVisitor(binding, varIndex));
     }
   }
 
   /**
-   * Copy (cloning) constructor, faster than the one that builds by traversing a term.
+   * Copy (cloning) constructor, used for efficiency since the original one
+   * needs to a complete traversal of the term.
    * @param theOriginal
    */
   public VarBindings(VarBindings theOriginal) {
@@ -250,6 +275,7 @@ public class VarBindings {
   public VarBindings findBindings(Var theVar) {
     int index = 0;
     for (Binding binding : this.bindings) {
+      // FIXEM: dubious use of == instead of static equality
       if (binding.getVar() == theVar && index == theVar.getIndex()) {
         return this;
       }
