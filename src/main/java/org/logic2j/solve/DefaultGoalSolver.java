@@ -24,21 +24,17 @@ import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.prim.PrimitiveInfo;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.symbol.TermApi;
-import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.util.ReportUtils;
 
 /**
  * Solve goals.
- *
  */
 public class DefaultGoalSolver implements GoalSolver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultGoalSolver.class);
   private static final boolean debug = logger.isDebugEnabled();
 
-  private static final TermApi TERM_API = new TermApi();
   public int internalCounter = 0;
   private final PrologImplementor prolog;
 
@@ -99,19 +95,15 @@ public class DefaultGoalSolver implements GoalSolver {
       if (arity != 1) {
         throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }
-      Term target = TERM_API.substitute(goalStruct.getArg(0), theGoalBindings, null);
-      Bindings effectiveGoalVars = theGoalBindings;
-      // Hack
-      if (target!=goalStruct.getArg(0) && effectiveGoalVars.getBinding((short) 0)!=null && effectiveGoalVars.getBinding((short) 0).isLiteral()) {
-        effectiveGoalVars = effectiveGoalVars.getBinding((short) 0).getLiteralBindings();
+      final Bindings effectiveGoalBindings = theGoalBindings.focus(goalStruct.getArg(0), Term.class);
+      if (effectiveGoalBindings==null) {
+        throw new InvalidTermException("Argument to primitive 'call' may not be a free variable, was " + goalStruct.getArg(0));
       }
-      if (target instanceof Var) {
-        throw new InvalidTermException("Argument to primitive 'call' may not be a variable, was" + target);
-      }
+      final Term target = effectiveGoalBindings.getReferrer();
       if (debug) {
         logger.debug("Calling FUNCTOR_CALL ------------------ {}", target);
       }
-      solveGoalRecursive(target, effectiveGoalVars, callerFrame, theSolutionListener);
+      solveGoalRecursive(target, effectiveGoalBindings, callerFrame, theSolutionListener);
     } else if (prim != null) {
       // Primitive implemented in Java
       final Object resultOfPrimitive = prim.invoke(goalStruct, theGoalBindings, callerFrame, theSolutionListener);

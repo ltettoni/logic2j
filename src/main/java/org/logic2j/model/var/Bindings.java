@@ -30,6 +30,7 @@ import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
+import org.logic2j.util.ReflectUtils;
 
 /**
  * Store the actual values of all variables of a {@link Term}, as a list of {@link Binding}s, 
@@ -182,9 +183,57 @@ public class Bindings {
   }
 
 
+  /**
+   * PROTOTYPE
+   * @param theOriginal
+   * @param theTerm
+   */
+  private Bindings(Bindings theOriginal, Term theTerm) {
+    this.referrer = theTerm;
+    final int nbVars = theOriginal.bindings.length;
+    this.bindings = new Binding[nbVars];
+    // All bindings need cloning
+    for (int i = 0; i < nbVars; i++) {
+      this.bindings[i] = theOriginal.bindings[i].cloneIt();
+    }
+  }
+
   //---------------------------------------------------------------------------
   // Methods for extracting values from variable Bindings
   //---------------------------------------------------------------------------
+  
+  /**
+   * Refocus to a particular Term within this {@link Bindings}, returning a new {@link Bindings} with
+   * this Term as its referrer. When Term is a {@link Var}iable, will following through bound variables
+   * until a free or literal is found.
+   * @param theTerm Must be one of the root or sub terms that was used to instantiate this {@link Bindings}
+   * @param theClass
+   * @return null if theTerm was a free {@link Var}iable
+   */
+  public Bindings focus(Term theTerm, Class<? extends Term> theClass) {
+    if (theTerm instanceof Var) {
+      final Var var = (Var)theTerm;
+      if (var.isAnonymous()) {
+        return null;
+      }
+      // Go to fetch the effective variable value if any
+      final Binding finalBinding = var.bindingWithin(this).followLinks();
+      if (finalBinding.getType()==BindingType.LIT) {
+        return new Bindings(finalBinding.getLiteralBindings(), finalBinding.getTerm());
+      } else if (finalBinding.getType()==BindingType.FREE) {
+        return null;
+      } else {
+        throw new IllegalStateException("Should not have been here");
+      }
+    }
+    // Anything else than a Var
+    
+    // Make sure it's of the desired class
+    ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
+    return new Bindings(this, theTerm);
+  }
+
+  
   
   /**
    * Considering this object's current bindings as a snapshot to a solution, extract

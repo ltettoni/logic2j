@@ -65,7 +65,7 @@ public class DefaultUnifyer implements Unifyer {
       if (var1.isAnonymous()) {
         return true;
       }
-      final Binding binding1 = var1.derefToBinding(theBindings1).followLinks();
+      final Binding binding1 = var1.bindingWithin(theBindings1).followLinks();
       // Followed chain to the end until we hit either a FREE or LITERAL binding
       if (binding1.isFree()) {
         // Should not bind to an anonymous variable

@@ -104,7 +104,7 @@ public class Binding implements Cloneable {
     if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
       // Bind Var -> Var, see description at top of class
       final Var other = (Var) theTerm;
-      final Binding targetBinding = other.derefToBinding(theFrame);
+      final Binding targetBinding = other.bindingWithin(theFrame);
       if (targetBinding == this) {
         return;
       }

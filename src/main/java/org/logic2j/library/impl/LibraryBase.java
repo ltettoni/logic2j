@@ -88,6 +88,9 @@ public class LibraryBase implements PLibrary {
     }
   }
 
+  
+
+  
   /**
    * Resolve a Term: when it's a Var, will dereference to its bound value; if it's a free Var, will return it.
    * When it's not a Var, will return the term as is.
@@ -98,14 +101,17 @@ public class LibraryBase implements PLibrary {
    * @return The term of class theClass
    */
   // FIXME: big ugly bug: when we dereference until a free var, we need to also return the Bindings associated to it, otherwise the index is wrong in our current "theBindings" !!!!!
+  @Deprecated // Use Bindings#focus()
   protected <T extends Term> T resolve(Term theTerm, Bindings theBindings, Class<T> theClass) {
     final Term result = TERM_API.substitute(theTerm, theBindings, null);
     return ReflectUtils.safeCastNotNull("obtaining resolved term", result, theClass);
   }
 
+  
+  // TODO assess if needed
   protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
     if (theTerm instanceof Var) {
-      return ((Var) theTerm).derefToBinding(theBindings).followLinks();
+      return ((Var) theTerm).bindingWithin(theBindings).followLinks();
     }
     return Binding.createLiteralBinding(theTerm, theBindings);
   }
@@ -136,7 +142,7 @@ public class LibraryBase implements PLibrary {
     }
     // TODO are the lines below this exactly as in resolve() / substitute() method?
     if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
-      final Binding binding = ((Var) theTerm).derefToBinding(theBindings).followLinks();
+      final Binding binding = ((Var) theTerm).bindingWithin(theBindings).followLinks();
       if (!binding.isLiteral()) {
         return null;
       }

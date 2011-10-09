@@ -83,11 +83,11 @@ public class Var extends Term {
   /**
    * Obtain the current {@link Binding} of this Var from the {@link Bindings}.
    * Notice that the variable index must have been assigned, and this var must NOT
-   * be the anonymous variable (that cannot be bound to anyhting).
+   * be the anonymous variable (that cannot be bound to anything).
    * @param theBindings
    * @return The current binding of this Var.
    */
-  public Binding derefToBinding(Bindings theBindings) {
+  public Binding bindingWithin(Bindings theBindings) {
     if (this.index < 0) {
       // An error situation
       if (this.index == NO_INDEX) {
@@ -137,7 +137,7 @@ public class Var extends Term {
       // Anonymous variable is never bound - won't substitute
       return this;
     }
-    final Binding binding = derefToBinding(theBindings).followLinks();
+    final Binding binding = bindingWithin(theBindings).followLinks();
     switch (binding.getType()) {
       case LIT:
         // For a literal, we have a reference to the literal term and to its own variables,
