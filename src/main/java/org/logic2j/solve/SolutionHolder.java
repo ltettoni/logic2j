@@ -52,7 +52,6 @@ public class SolutionHolder {
 
   /**
    * A relay object to provide access to the results of the (expected) unique solution to a goal.
-   *
    */
   public static class UniqueSolutionHolder {
 
@@ -60,7 +59,6 @@ public class SolutionHolder {
 
     /**
      * @param theSolution 
-     * 
      */
     UniqueSolutionHolder(Solution theSolution) {
       this.solution = theSolution;
@@ -92,7 +90,6 @@ public class SolutionHolder {
 
   /**
    * A relay object to provide access to the results of the (expected) multiple solutions to a goal.
-   *
    */
   public class MultipleSolutionsHolder {
 
