@@ -32,23 +32,22 @@ public interface GoalSolver {
 
   /**
    * The top-level method to solve a high-level goal.
-   * @param goalTerm
-   * @param goalVars
+   * @param theGoalBindings
    * @param callerFrame
    * @param theSolutionListener
    */
-  public void solveGoal(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
+  public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
   /**
    * The lower-level method to solve sub-goals.
-   * @param goalTerm
-   * @param goalVars
+   * @param theGoal
+   * @param theGoalBindings
    * @param callerFrame
    * @param theSolutionListener
    */
   // TODO Why should we make this method public? Seems not normal
-  public void solveGoalRecursive(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
+  public void solveGoalRecursive(final Term theGoal, final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
 }

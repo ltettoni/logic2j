@@ -162,15 +162,15 @@ public class GoalSolverTest extends PrologTestBase {
     final PrologImplementor prolog = new PrologImpl();
     Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
     CountingListener listenerAll = new CountingListener();
-    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listenerAll);
+    getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listenerAll);
     assertEquals(10, listenerAll.counter);
     //
     Max1Listener listener1 = new Max1Listener();
-    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listener1);
+    getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listener1);
     assertEquals(1, listener1.counter);
     //
     Max5Listener listener5 = new Max5Listener();
-    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listener5);
+    getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listener5);
     assertEquals(5, listener5.counter);
   }
 

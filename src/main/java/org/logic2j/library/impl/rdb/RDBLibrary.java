@@ -108,7 +108,7 @@ public class RDBLibrary extends LibraryBase {
     internalGoal = getProlog().getTermFactory().normalize(internalGoal);
     final Bindings internalBindings = new Bindings(internalGoal);
     final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalGoal, internalBindings);
-    getProlog().getSolver().solveGoal(internalGoal, internalBindings, new GoalFrame(), internalListener);
+    getProlog().getSolver().solveGoal(internalBindings, new GoalFrame(), internalListener);
     Term result = internalListener.getSolution().getBinding(resultVar);
     if (!(result instanceof Struct)) {
       throw new InvalidTermException("Internal result must be a Struct");

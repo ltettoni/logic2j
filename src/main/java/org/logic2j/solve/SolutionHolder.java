@@ -109,7 +109,7 @@ public class SolutionHolder {
      */
     public int number() {
       final SolutionListenerBase listener = new SolutionListenerBase();
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int counter = listener.getCounter();
       checkBounds(counter);
@@ -141,7 +141,7 @@ public class SolutionHolder {
         }
 
       };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int size = results.size();
       checkBounds(size);
@@ -162,7 +162,7 @@ public class SolutionHolder {
         }
 
       };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int size = results.size();
       checkBounds(size);
@@ -220,7 +220,7 @@ public class SolutionHolder {
    */
   public UniqueSolutionHolder unique() {
     final UniqueSolutionListener listener = new UniqueSolutionListener(this.goal, this.bindings);
-    this.prolog.getSolver().solveGoal(this.goal, this.bindings, new GoalFrame(), listener);
+    this.prolog.getSolver().solveGoal(this.bindings, new GoalFrame(), listener);
     return new UniqueSolutionHolder(listener.getSolution());
   }
 
@@ -234,8 +234,7 @@ public class SolutionHolder {
         logger.debug("Started producer thread");
         // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
         // and will wait for the main thread to extract it
-        SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
-            listener);
+        SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(), listener);
         logger.debug("Producer thread finishes");
         // Last solution was extracted. Producer's callback won't now be called any more - so to 
         // prevent the consumer for listening forever for the next solution that won't come...

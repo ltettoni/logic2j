@@ -47,13 +47,13 @@ public class DefaultGoalSolver implements GoalSolver {
   }
 
   @Override
-  public void solveGoal(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
+  public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener) {
-    solveGoalRecursive(goalTerm, goalVars, callerFrame, theSolutionListener);
+    solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, callerFrame, theSolutionListener);
   }
 
   @Override
-  public void solveGoalRecursive(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
+  public void solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener) {
     if (debug) {
       logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
@@ -81,26 +81,26 @@ public class DefaultGoalSolver implements GoalSolver {
           public boolean onSolution() {
             DefaultGoalSolver.this.internalCounter++;
             final int index2 = index + 1;
-            solveGoalRecursive(goalStruct.getArg(index2), goalVars, callerFrame, listeners[index2]);
+            solveGoalRecursive(goalStruct.getArg(index2), theGoalBindings, callerFrame, listeners[index2]);
             return true;
           }
         };
       }
       // Solve the first goal, redirecting all solutions to the first listener defined above
-      solveGoalRecursive(goalStruct.getArg(0), goalVars, callerFrame, listeners[0]);
+      solveGoalRecursive(goalStruct.getArg(0), theGoalBindings, callerFrame, listeners[0]);
     } else if (Struct.FUNCTOR_SEMICOLON == functor) {
       // Logical OR
       for (int i = 0; i < arity; i++) {
         // Solve all the left and right-and-sides, sequentially
-        solveGoalRecursive(goalStruct.getArg(i), goalVars, callerFrame, theSolutionListener);
+        solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, callerFrame, theSolutionListener);
       }
     } else if (Struct.FUNCTOR_CALL == functor) {
       // call/1 is handled here for efficiency
       if (arity != 1) {
         throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }
-      Term target = TERM_API.substitute(goalStruct.getArg(0), goalVars, null);
-      Bindings effectiveGoalVars = goalVars;
+      Term target = TERM_API.substitute(goalStruct.getArg(0), theGoalBindings, null);
+      Bindings effectiveGoalVars = theGoalBindings;
       // Hack
       if (target!=goalStruct.getArg(0) && effectiveGoalVars.getBinding((short) 0)!=null && effectiveGoalVars.getBinding((short) 0).isLiteral()) {
         effectiveGoalVars = effectiveGoalVars.getBinding((short) 0).getLiteralBindings();
@@ -114,7 +114,7 @@ public class DefaultGoalSolver implements GoalSolver {
       solveGoalRecursive(target, effectiveGoalVars, callerFrame, theSolutionListener);
     } else if (prim != null) {
       // Primitive implemented in Java
-      final Object resultOfPrimitive = prim.invoke(goalStruct, goalVars, callerFrame, theSolutionListener);
+      final Object resultOfPrimitive = prim.invoke(goalStruct, theGoalBindings, callerFrame, theSolutionListener);
       // Extract necessary objects from our current state
 
       switch (prim.getType()) {
@@ -172,7 +172,7 @@ public class DefaultGoalSolver implements GoalSolver {
           final Bindings clauseVars = new Bindings(immutableVars);
           final Term clauseHead = clause.getHead();
           if (debug) {
-            logger.debug("Unifying: goal={}        with  goalVars={}", goalTerm, goalVars);
+            logger.debug("Unifying: goal={}        with  goalVars={}", goalTerm, theGoalBindings);
             logger.debug("      to: clauseHead={}  with  clauseVars={}", clauseHead, clauseVars);
           }
 
@@ -180,10 +180,10 @@ public class DefaultGoalSolver implements GoalSolver {
           // the trailFrame will remember this.
           // Solutions will be notified from within this method.
           // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-          final boolean unified = this.prolog.getUnifyer().unify(goalTerm, goalVars, clauseHead, clauseVars,
+          final boolean unified = this.prolog.getUnifyer().unify(goalTerm, theGoalBindings, clauseHead, clauseVars,
               frameForAttemptingClauses);
           if (debug) {
-            logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", goalVars, clauseVars);
+            logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
           }
 
           if (unified) {
