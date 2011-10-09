@@ -184,16 +184,13 @@ public class SolutionHolder {
   }
 
   final PrologImplementor prolog;
-  final Term goal;
   final Bindings bindings;
 
   /**
-   * @param theGoal
    * @param theBindings
    */
-  public SolutionHolder(PrologImplementor theProlog, Term theGoal, Bindings theBindings) {
+  public SolutionHolder(PrologImplementor theProlog, Bindings theBindings) {
     this.prolog = theProlog;
-    this.goal = theGoal;
     this.bindings = theBindings;
   }
 
@@ -216,13 +213,13 @@ public class SolutionHolder {
    * @return A relay object to access the unique solution.
    */
   public UniqueSolutionHolder unique() {
-    final UniqueSolutionListener listener = new UniqueSolutionListener(this.goal, this.bindings);
+    final UniqueSolutionListener listener = new UniqueSolutionListener(this.bindings);
     this.prolog.getSolver().solveGoal(this.bindings, new GoalFrame(), listener);
     return new UniqueSolutionHolder(listener.getSolution());
   }
 
   public Iterator<Solution> iterator() {
-    final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goal, SolutionHolder.this.bindings);
+    final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.bindings);
 
     final Runnable prologSolverThread = new Runnable() {
 

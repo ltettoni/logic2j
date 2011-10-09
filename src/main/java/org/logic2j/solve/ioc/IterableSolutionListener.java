@@ -17,7 +17,6 @@
  */
 package org.logic2j.solve.ioc;
 
-import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.Solution;
 
@@ -27,16 +26,13 @@ import org.logic2j.solve.Solution;
  */
 public class IterableSolutionListener implements SolutionListener {
 
-  protected Term goal;
   protected Bindings bindings;
 
   /**
-   * @param theGoal
    * @param theBindings
    */
-  public IterableSolutionListener(Term theGoal, Bindings theBindings) {
+  public IterableSolutionListener(Bindings theBindings) {
     super();
-    this.goal = theGoal;
     this.bindings = theBindings;
   }
 
@@ -99,7 +95,7 @@ public class IterableSolutionListener implements SolutionListener {
 
   @Override
   public boolean onSolution() {
-    final Solution solution = new Solution(this.goal, this.bindings);
+    final Solution solution = new Solution( this.bindings.getReferrer(), this.bindings);
     this.requestSolution.waitUntilAvailable();
     this.provideSolution.available(solution);
     return true;

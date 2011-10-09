@@ -17,7 +17,6 @@
  */
 package org.logic2j.solve.ioc;
 
-import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.IllegalSolutionException;
 import org.logic2j.solve.MissingSolutionException;
@@ -30,12 +29,12 @@ import org.logic2j.solve.Solution;
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 
-  public UniqueSolutionListener(Term theGoal, Bindings theBindings) {
+  public UniqueSolutionListener(Bindings theBindings) {
     // We wish to make sure the first solution is the only one, so we 
     // are going to try to reach further, at least 2 solutions. 
     // Then we will be able to determine for sure if there was actually 
     // only one, or more.
-    super(theGoal, theBindings, 2);
+    super(theBindings, 2);
   }
 
   @Override

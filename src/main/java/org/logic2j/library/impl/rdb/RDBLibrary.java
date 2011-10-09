@@ -107,7 +107,7 @@ public class RDBLibrary extends LibraryBase {
     // Watch out this destroys the indexes in the original expression !!!!
     internalGoal = getProlog().getTermFactory().normalize(internalGoal);
     final Bindings internalBindings = new Bindings(internalGoal);
-    final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalGoal, internalBindings);
+    final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalBindings);
     getProlog().getSolver().solveGoal(internalBindings, new GoalFrame(), internalListener);
     Term result = internalListener.getSolution().getBinding(resultVar);
     if (!(result instanceof Struct)) {

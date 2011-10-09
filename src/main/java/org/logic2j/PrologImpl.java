@@ -184,8 +184,7 @@ public class PrologImpl implements PrologImplementor {
   public SolutionHolder solve(CharSequence theGoal) {
     // Perhaps we could transform the goal into a real clause?
     final Term parsed = term(theGoal);
-    final Bindings bindings = new Bindings(parsed);
-    return new SolutionHolder(this, parsed, bindings);
+    return new SolutionHolder(this, new Bindings(parsed));
   }
 
   @Override
