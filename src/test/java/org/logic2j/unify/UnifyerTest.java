@@ -29,8 +29,8 @@ import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
-import org.logic2j.model.var.VarBindings;
-import org.logic2j.model.var.VarBindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings;
+import org.logic2j.model.var.Bindings.FreeVarBehaviour;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.unify.DefaultUnifyer;
 import org.logic2j.unify.Unifyer;
@@ -113,7 +113,7 @@ public class UnifyerTest extends PrologTestBase {
     tester.setExpectedUnificationResult(true);
     tester.setExpectedNbBindings(0);
     Term term = getProlog().term("X");
-    tester.unify2ways(term, term, new VarBindings(term));
+    tester.unify2ways(term, term, new Bindings(term));
   }
 
   /**
@@ -122,18 +122,18 @@ public class UnifyerTest extends PrologTestBase {
   @Test
   public void testUnifyVarToBoundTerm() { // Once a nasty bug
     Term varA = TERM_API.normalize(new Var("A"), null);
-    VarBindings varsA = new VarBindings(varA);
+    Bindings bindingsA = new Bindings(varA);
     Term tlong = TERM_API.normalize(new TLong(123), null);
-    boolean aToLiteral = this.unifyer.unify(varA, varsA, tlong, new VarBindings(tlong), new GoalFrame());
+    boolean aToLiteral = this.unifyer.unify(varA, bindingsA, tlong, new Bindings(tlong), new GoalFrame());
     logger.info("A={}", varA);
-    logger.info("A={}", TERM_API.substitute(varA, varsA, null));
+    logger.info("A={}", TERM_API.substitute(varA, bindingsA, null));
     assertTrue(aToLiteral);
     Term varX = TERM_API.normalize(new Var("X"), null);
-    VarBindings varsX = new VarBindings(varX);
-    boolean xToA = this.unifyer.unify(varA, varsA, varX, varsX, new GoalFrame());
+    Bindings bindingsX = new Bindings(varX);
+    boolean xToA = this.unifyer.unify(varA, bindingsA, varX, bindingsX, new GoalFrame());
     assertTrue(xToA);
     logger.info("X={}", varX);
-    logger.info("X={}", TERM_API.substitute(varX, varsX, null));
+    logger.info("X={}", TERM_API.substitute(varX, bindingsX, null));
   }
 
   @Test
@@ -144,7 +144,7 @@ public class UnifyerTest extends PrologTestBase {
     TLong two = new TLong(2);
     goalTerm = new Struct(Struct.FUNCTOR_COMMA, new Struct("unify", x, y), new Struct("unify", x, two));
     final Term goalTermCompact = TERM_API.normalize(goalTerm, null);
-    final VarBindings goalVars = new VarBindings(goalTermCompact);
+    final Bindings goalVars = new Bindings(goalTermCompact);
     GoalFrame gf = new GoalFrame();
     this.unifyer.unify(x, goalVars, y, goalVars, gf);
     this.unifyer.unify(x, goalVars, two, goalVars, gf);
@@ -158,62 +158,62 @@ public class UnifyerTest extends PrologTestBase {
   @Test
   public void testExplicitBindings() {
     Term t0 = getProlog().term("t(U)");
-    VarBindings var0 = new VarBindings(t0);
-    // Bind var1 to var
+    Bindings bindings0 = new Bindings(t0);
+    // Bind bindings1 to var
     Term t1 = getProlog().term("t(X)");
-    VarBindings var1 = new VarBindings(t1);
+    Bindings bindings1 = new Bindings(t1);
     GoalFrame goalFrame = new GoalFrame();
-    this.unifyer.unify(t1, var1, t0, var0, goalFrame);
-    assertEquals("t(X)", TERM_API.substitute(t1, var1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    // Bind var2 to const
+    this.unifyer.unify(t1, bindings1, t0, bindings0, goalFrame);
+    assertEquals("t(X)", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    // Bind bindings2 to const
     Term t2 = getProlog().term("t(123)");
-    VarBindings var2 = new VarBindings(t2);
-    this.unifyer.unify(t0, var0, t2, var2, goalFrame);
-    assertEquals("t(123)", TERM_API.substitute(t0, var0, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{U=123}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    Bindings bindings2 = new Bindings(t2);
+    this.unifyer.unify(t0, bindings0, t2, bindings2, goalFrame);
+    assertEquals("t(123)", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
+    assertEquals("{U=123}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
   }
 
   @Test
   public void testExplicitBindings_behaviour() {
     Term t1 = getProlog().term("t(X)");
-    VarBindings var1 = new VarBindings(t1);
-    assertEquals("{}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{}", var1.explicitBindings(FreeVarBehaviour.FREE_NOT_SELF).toString());
-    assertEquals("{X=X}", var1.explicitBindings(FreeVarBehaviour.FREE).toString());
-    assertEquals("{X=null}", var1.explicitBindings(FreeVarBehaviour.NULL_ENTRY).toString());
+    Bindings bindings1 = new Bindings(t1);
+    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.FREE_NOT_SELF).toString());
+    assertEquals("{X=X}", bindings1.explicitBindings(FreeVarBehaviour.FREE).toString());
+    assertEquals("{X=null}", bindings1.explicitBindings(FreeVarBehaviour.NULL_ENTRY).toString());
     //
     //    Term t2 = getProlog().term("t(_)");
-    //    VarBindings var2 = new VarBindings(t2);
-    //    assertEquals("{}", var2.explicitBindings(t1, FreeVarBehaviour.SKIPPED).toString());
-    //    assertEquals("{}", var2.explicitBindings(t1, FreeVarBehaviour.FREE_NOT_SELF).toString());
-    //    assertEquals("{X=X}", var2.explicitBindings(t1, FreeVarBehaviour.FREE).toString());
-    //    assertEquals("{X=null}", var2.explicitBindings(t1, FreeVarBehaviour.NULL_ENTRY).toString());
+    //    Bindings bindings2 = new Bindings(t2);
+    //    assertEquals("{}", bindings2.explicitBindings(t1, FreeVarBehaviour.SKIPPED).toString());
+    //    assertEquals("{}", bindings2.explicitBindings(t1, FreeVarBehaviour.FREE_NOT_SELF).toString());
+    //    assertEquals("{X=X}", bindings2.explicitBindings(t1, FreeVarBehaviour.FREE).toString());
+    //    assertEquals("{X=null}", bindings2.explicitBindings(t1, FreeVarBehaviour.NULL_ENTRY).toString());
   }
 
   @Test
   public void testExplicitBindings2() {
     Term t0 = getProlog().term("append2([1],[2,3],X)");
-    VarBindings var0 = new VarBindings(t0);
-    // Bind var1 to var
+    Bindings bindings0 = new Bindings(t0);
+    // Bind bindings1 to var
     Struct clause = (Struct) getProlog().term("append2([E|T1],L2,[E|T2]) :- append2(T1,L2,T2)");
     Term t1 = clause.getLHS(); // Term of first hitting clause
-    VarBindings var1 = new VarBindings(t1);
+    Bindings bindings1 = new Bindings(t1);
     GoalFrame goalFrame = new GoalFrame();
-    assertTrue(this.unifyer.unify(t1, var1, t0, var0, goalFrame));
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, var0, null).toString(DEFAULT_FORMATTER));
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, var1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{X=[1|_]}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{E=1, L2=[2,3], T1=[]}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    // Bind var2 to const
+    assertTrue(this.unifyer.unify(t1, bindings1, t0, bindings0, goalFrame));
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("{X=[1|_]}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    // Bind bindings2 to const
     Term t1b = clause.getRHS(); // Body of first hitting clause
     Term t2 = getProlog().term("append2([],L2,L2)"); // Body of second hitting clause
-    VarBindings var2 = new VarBindings(t2);
-    assertTrue(this.unifyer.unify(t1b, var1, t2, var2, goalFrame));
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, var1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, var2, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", var1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{X=[1,2,3]}", var0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    Bindings bindings2 = new Bindings(t2);
+    assertTrue(this.unifyer.unify(t1b, bindings1, t2, bindings2, goalFrame));
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, bindings1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, bindings2, null).toString(DEFAULT_FORMATTER));
+    assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{X=[1,2,3]}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
   }
 
   public void assertStaticallyEquals(CharSequence expectedStr, Term theActual) {

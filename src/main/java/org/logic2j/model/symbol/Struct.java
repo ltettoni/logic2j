@@ -29,7 +29,7 @@ import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
 import org.logic2j.model.prim.PrimitiveInfo;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.util.ReflectUtils;
 
 /**
@@ -369,7 +369,7 @@ public class Struct extends Term {
    * If any argument appears to have been cloned, then the complete structure will be cloned.
    */
   @Override
-  protected Term substitute(VarBindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+  protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
     Term[] substArgs = new Term[this.arity]; // Will all arguments after substitution
     boolean anyChange = false;
     for (int i = 0; i < this.arity; i++) {

@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
-import org.logic2j.model.var.VarBindings;
-import org.logic2j.model.var.VarBindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings;
+import org.logic2j.model.var.Bindings.FreeVarBehaviour;
 
 /**
  * Describes one of the solution(s) to a goal; this includes the resolved {@link Term} (with all
@@ -45,11 +45,11 @@ public class Solution {
    * calculate the substituted value of bound variables, i.e. "denormalize" the result
    * and store all bindings as explicit denormalized terms.
    * @param theGoal
-   * @param theVars
+   * @param theBindings
    */
-  public Solution(Term theGoal, VarBindings theVars) {
-    this.solution = TERM_API.substitute(theGoal, theVars, null);
-    this.bindings = theVars.explicitBindings(FreeVarBehaviour.NULL_ENTRY);
+  public Solution(Term theGoal, Bindings theBindings) {
+    this.solution = TERM_API.substitute(theGoal, theBindings, null);
+    this.bindings = theBindings.explicitBindings(FreeVarBehaviour.NULL_ENTRY);
   }
 
   //---------------------------------------------------------------------------

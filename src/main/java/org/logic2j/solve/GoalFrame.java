@@ -24,14 +24,14 @@ import org.logic2j.model.var.Binding;
 import org.logic2j.util.ReportUtils;
 
 /**
- * One stack frame to track goal solving (both unification trailing vars, and 
+ * One stack frame to track goal solving (both unification trailing bindings, and 
  * the "cut" across solving goals and sub-goals).
  * <ul>
  * <li>trailing variables bound by unification, in order to deunify</li>
  * <li>goal solving state to allow "cut"</li>
  * <li>user cancellation</li>
  * </ul>
- * The default constructor instantiates the whole trailing vars stack, and 
+ * The default constructor instantiates the whole trailing bindings stack, and 
  * returns a first node to hold inference and unificaiton state. 
  * The constructor for children is lighter, it shares most of its parent, only
  * redefines new node for local management of the cut.
@@ -53,10 +53,10 @@ public final class GoalFrame {
 
   private final GoalFrame parent; // Boundary condition of top: parent==this
 
-  private final ArrayList<Binding> trailingVarBindings;
+  private final ArrayList<Binding> trailingBindings;
 
   /**
-   * A stack of indexes into {@link #trailingVarBindings} to restore bindings between
+   * A stack of indexes into {@link #trailingBindings} to restore bindings between
    * successive calls to unification. Each unification must call {@link #markForNextBindings()}
    * before starting, then {@link #addBinding(Binding)}, and finally {@link #clearBindingsToMark()}.
    */
@@ -82,11 +82,11 @@ public final class GoalFrame {
    */
   public GoalFrame() {
     this.parent = this; // Boundary condition: loops on itself
-    this.trailingVarBindings = new ArrayList<Binding>(INITIAL_SIZE);
+    this.trailingBindings = new ArrayList<Binding>(INITIAL_SIZE);
     this.bindingMarkBetweenUnify = new Stack<Integer>();
     this.bindingMarkBetweenUnify.ensureCapacity(INITIAL_SIZE);
     this.bindingMarkBetweenUnify.push(0);
-    // State vars dedicated to "cut"
+    // State bindings dedicated to "cut"
     this.nbChildren = 0;
     this.childIndex = UNDEF_INDEX;
     this.cutIndex = UNDEF_INDEX;
@@ -103,9 +103,9 @@ public final class GoalFrame {
     // share the same structures since they are not directly related to the management
     // of cut and user cancellation, but related to inference which is not altered
     // by goal solving boundaries
-    this.trailingVarBindings = theParent.trailingVarBindings;
+    this.trailingBindings = theParent.trailingBindings;
     this.bindingMarkBetweenUnify = theParent.bindingMarkBetweenUnify;
-    // State vars dedicated to "cut"
+    // State bindings dedicated to "cut"
     this.nbChildren = 0; // No children yet
     this.childIndex = theParent.nbChildren; // Our index within our parent goal: 0,1,...
     this.cutIndex = UNDEF_INDEX;
@@ -118,7 +118,7 @@ public final class GoalFrame {
   //---------------------------------------------------------------------------
 
   public void markForNextBindings() {
-    final int upperMark = this.trailingVarBindings.size();
+    final int upperMark = this.trailingBindings.size();
     this.bindingMarkBetweenUnify.push(upperMark);
   }
 
@@ -127,7 +127,7 @@ public final class GoalFrame {
    * @param theBinding
    */
   public void addBinding(Binding theBinding) {
-    this.trailingVarBindings.add(theBinding);
+    this.trailingBindings.add(theBinding);
   }
 
   /**
@@ -136,8 +136,8 @@ public final class GoalFrame {
    */
   public void clearBindingsToMark() {
     int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
-    for (int i = this.trailingVarBindings.size() - 1; i >= indexOfPreviousMark; i--) {
-      final Binding binding = this.trailingVarBindings.remove(i); 
+    for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
+      final Binding binding = this.trailingBindings.remove(i); 
       // TODO Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
       binding.free();
     }
@@ -149,7 +149,7 @@ public final class GoalFrame {
    */
   @Deprecated
   public Object nbBindings() {
-    return this.trailingVarBindings.size() - this.bindingMarkBetweenUnify.peek();
+    return this.trailingBindings.size() - this.bindingMarkBetweenUnify.peek();
   }
 
   //---------------------------------------------------------------------------
@@ -192,12 +192,12 @@ public final class GoalFrame {
   public String toString() {
     StringBuilder sb = new StringBuilder(ReportUtils.shortDescription(this));
     sb.append('{');
-    int size = this.trailingVarBindings.size();
+    int size = this.trailingBindings.size();
     int i = this.bindingMarkBetweenUnify.peek();
     sb.append(i);
     sb.append(':');
     while (i < size) {
-      sb.append(this.trailingVarBindings.get(i));
+      sb.append(this.trailingBindings.get(i));
       sb.append(' ');
       i++;
       sb.append(i);

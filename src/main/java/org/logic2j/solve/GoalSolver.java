@@ -19,7 +19,7 @@ package org.logic2j.solve;
 
 import org.logic2j.PrologImpl;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.ioc.SolutionListener;
 
 /**
@@ -37,7 +37,7 @@ public interface GoalSolver {
    * @param callerFrame
    * @param theSolutionListener
    */
-  public void solveGoal(final Term goalTerm, final VarBindings goalVars, final GoalFrame callerFrame,
+  public void solveGoal(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
   /**
@@ -48,7 +48,7 @@ public interface GoalSolver {
    * @param theSolutionListener
    */
   // TODO Why should we make this method public? Seems not normal
-  public void solveGoalRecursive(final Term goalTerm, final VarBindings goalVars, final GoalFrame callerFrame,
+  public void solveGoalRecursive(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
 }

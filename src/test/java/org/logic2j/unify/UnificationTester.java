@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotNull;
 
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
-import org.logic2j.model.var.VarBindings;
-import org.logic2j.model.var.VarBindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings;
+import org.logic2j.model.var.Bindings.FreeVarBehaviour;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.unify.Unifyer;
 
@@ -39,8 +39,8 @@ class UnificationTester {
 
   public Term left;
   public Term right;
-  public VarBindings leftVars;
-  public VarBindings rightVars;
+  public Bindings leftVars;
+  public Bindings rightVars;
   private GoalFrame frame;
   private Boolean expectedResult = null;
   private Boolean result = null;
@@ -55,29 +55,29 @@ class UnificationTester {
   }
 
   /**
-   * Every term has its own {@link VarBindings}.
+   * Every term has its own {@link Bindings}.
    * @param theLeft
    * @param theRight
    */
   private void init2(Term theLeft, Term theRight) {
     this.left = TERM_API.normalize(theLeft, null);
     this.right = TERM_API.normalize(theRight, null);
-    this.leftVars = new VarBindings(this.left);
-    this.rightVars = new VarBindings(this.right);
+    this.leftVars = new Bindings(this.left);
+    this.rightVars = new Bindings(this.right);
     this.frame = new GoalFrame();
   }
 
   /**
-   * Share same {@link VarBindings} for both terms.
+   * Share same {@link Bindings} for both terms.
    * @param theLeft
    * @param theRight
-   * @param varBindings
+   * @param bindings
    */
-  private void init1(Term theLeft, Term theRight, VarBindings varBindings) {
+  private void init1(Term theLeft, Term theRight, Bindings bindings) {
     this.left = TERM_API.normalize(theLeft, null);
     this.right = TERM_API.normalize(theRight, null);
-    this.leftVars = varBindings;
-    this.rightVars = varBindings;
+    this.leftVars = bindings;
+    this.rightVars = bindings;
     this.frame = new GoalFrame();
   }
 
@@ -149,8 +149,8 @@ class UnificationTester {
     assertEquals("Same post-unification state signatures", signatureLR.toString(), signatureRL.toString());
   }
 
-  public void unify2ways(Term theLeft, Term theRight, VarBindings varBindings) {
-    init1(theLeft, theRight, varBindings);
+  public void unify2ways(Term theLeft, Term theRight, Bindings bindings) {
+    init1(theLeft, theRight, bindings);
     StringBuilder signatureLR = new StringBuilder();
     boolean unifyLR = unifyLR(signatureLR);
     if (unifyLR) {
@@ -167,14 +167,14 @@ class UnificationTester {
 
   /**
    * @param theSignature
-   * @param theVars1
-   * @param theVars2
+   * @param theBindings1
+   * @param theBindings2
    * @param theFrame
    */
-  private void appendSignature(StringBuilder theSignature, VarBindings theVars1, VarBindings theVars2, GoalFrame theFrame) {
-    theSignature.append(theVars1.toString());
+  private void appendSignature(StringBuilder theSignature, Bindings theBindings1, Bindings theBindings2, GoalFrame theFrame) {
+    theSignature.append(theBindings1.toString());
     theSignature.append("  ");
-    theSignature.append(theVars2.toString());
+    theSignature.append(theBindings2.toString());
     theSignature.append("  ");
     theSignature.append(theFrame.toString());
   }
@@ -216,7 +216,7 @@ class UnificationTester {
 
   /**
    * @param theExpectedNbBindings TNumber of effective bindings created by unification, and remembered in the
-   * trailing vars to be deunified.
+   * trailing bindings to be deunified.
    */
   public void setExpectedNbBindings(int theExpectedNbBindings) {
     this.expectedNbBindings = theExpectedNbBindings;

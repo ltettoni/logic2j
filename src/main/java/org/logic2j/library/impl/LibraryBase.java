@@ -29,7 +29,7 @@ import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.util.ReflectUtils;
@@ -49,14 +49,14 @@ public class LibraryBase implements PLibrary {
   /**
    * Convenience shortcut to have the current Prolog engine unifying 2 terms.
    * @param t1
-   * @param vars1
+   * @param theBindings1
    * @param t2
-   * @param vars2
+   * @param theBindings2
    * @param theGoalFrame
    * @return The result of unification.
    */
-  protected boolean unify(Term t1, VarBindings vars1, Term t2, VarBindings vars2, GoalFrame theGoalFrame) {
-    return getProlog().getUnifyer().unify(t1, vars1, t2, vars2, theGoalFrame);
+  protected boolean unify(Term t1, Bindings theBindings1, Term t2, Bindings theBindings2, GoalFrame theGoalFrame) {
+    return getProlog().getUnifyer().unify(t1, theBindings1, t2, theBindings2, theGoalFrame);
   }
 
   protected void deunify(GoalFrame theGoalFrame) {
@@ -93,37 +93,37 @@ public class LibraryBase implements PLibrary {
    * When it's not a Var, will return the term as is.
    * TODO: clarify these methods to access terms!!!
    * @param theTerm
-   * @param theVars
+   * @param theBindings
    * @param theClass
    * @return The term of class theClass
    */
-  // FIXME: big ugly bug: when we dereference until a free var, we need to also return the VarBindings associated to it, otherwise the index is wrong in our current "theVars" !!!!!
-  protected <T extends Term> T resolve(Term theTerm, VarBindings theVars, Class<T> theClass) {
-    final Term result = TERM_API.substitute(theTerm, theVars, null);
+  // FIXME: big ugly bug: when we dereference until a free var, we need to also return the Bindings associated to it, otherwise the index is wrong in our current "theBindings" !!!!!
+  protected <T extends Term> T resolve(Term theTerm, Bindings theBindings, Class<T> theClass) {
+    final Term result = TERM_API.substitute(theTerm, theBindings, null);
     return ReflectUtils.safeCastNotNull("obtaining resolved term", result, theClass);
   }
 
-  protected Binding dereferencedBinding(Term theTerm, VarBindings theVars) {
+  protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
     if (theTerm instanceof Var) {
-      Binding binding = ((Var) theTerm).derefToBinding(theVars);
+      Binding binding = ((Var) theTerm).derefToBinding(theBindings);
       while (binding.isVar()) {
         binding = binding.getLink();
       }
       return binding;
     }
-    return Binding.createLiteralBinding(theTerm, theVars);
+    return Binding.createLiteralBinding(theTerm, theBindings);
   }
 
   /**
    * Resolve a term that may be a variable, until we found a ground value for it.
    * If we can't find a ground value, will throw an {@link InvalidTermException}.
    * @param theTerm
-   * @param theVars
+   * @param theBindings
    * @param thePrimitiveName
    * @return A Term, cannot be a (free) Var
    */
-  protected Term resolveNonVar(Term theTerm, VarBindings theVars, String thePrimitiveName) {
-    final Term result = TERM_API.substitute(theTerm, theVars, null);
+  protected Term resolveNonVar(Term theTerm, Bindings theBindings, String thePrimitiveName) {
+    final Term result = TERM_API.substitute(theTerm, theBindings, null);
     if (result instanceof Var) {
       throw new InvalidTermException("Argument to primitive " + thePrimitiveName + " may not be a variable, was: " + result);
     }
@@ -134,13 +134,13 @@ public class LibraryBase implements PLibrary {
    * Evaluates an expression. Returns null value if the argument
    * is not an evaluable expression
    */
-  protected Term evaluateFunctor(VarBindings theVars, Term theTerm) {
+  protected Term evaluateFunctor(Bindings theBindings, Term theTerm) {
     if (theTerm == null) {
       return null;
     }
     // TODO are the lines below this exactly as in resolve() / substitute() method?
     if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
-      Binding binding = ((Var) theTerm).derefToBinding(theVars);
+      Binding binding = ((Var) theTerm).derefToBinding(theBindings);
       while (binding.isVar()) {
         binding = binding.getLink();
       }
@@ -164,7 +164,7 @@ public class LibraryBase implements PLibrary {
         // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
         return null;
       }
-      return desc.invokeFunctor(struct, theVars);
+      return desc.invokeFunctor(struct, theBindings);
     }
     return null;
   }
@@ -176,7 +176,7 @@ public class LibraryBase implements PLibrary {
     return getProlog().getTermFactory().create(anyObject, FactoryMode.ATOM);
   }
 
-  protected void unifyAndNotify(Var[] theVariables, Object[] theValues, VarBindings theBindings, GoalFrame theGoalFrame,
+  protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, GoalFrame theGoalFrame,
       SolutionListener theListener) {
     final Term[] values = new Term[theValues.length];
     for (int i = 0; i < theValues.length; i++) {

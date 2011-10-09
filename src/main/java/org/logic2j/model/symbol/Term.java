@@ -25,7 +25,7 @@ import org.logic2j.io.format.DefaultFormatter;
 import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 
 /**
  * Term class is the root abstract class for prolog data type
@@ -48,7 +48,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   public static final int ANON_INDEX = -2;
 
   /**
-   * For {@link Var}s, the index within {@link VarBindings} where the {@link Binding}
+   * For {@link Var}s, the index within {@link Bindings} where the {@link Binding}
    * of this variable can be found.<br/>
    * For a {@link Struct}, the index defines the total number of distinct variables that
    * can be found, recursively, under all arguments.<br/>
@@ -83,11 +83,11 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   protected abstract short assignVarOffsets(short theIndexOfNextUnindexedVar);
 
   /**
-   * Internal template method; the public API entry point is {@link TermApi#substitute(Term, VarBindings, IdentityHashMap)}.
+   * Internal template method; the public API entry point is {@link TermApi#substitute(Term, Bindings, IdentityHashMap)}.
    * @param theBindings
-   * @return A possibly new (cloned) term with all non-free vars resolved.
+   * @return A possibly new (cloned) term with all non-free bindings resolved.
    */
-  protected abstract Term substitute(VarBindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars);
+  protected abstract Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars);
 
   /**
    * Find the first instance of {@link Var} by name inside a Term, most often Struct.

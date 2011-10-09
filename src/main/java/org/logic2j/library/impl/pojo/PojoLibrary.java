@@ -25,7 +25,7 @@ import org.logic2j.library.impl.LibraryBase;
 import org.logic2j.library.mgmt.Primitive;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 
@@ -46,12 +46,12 @@ public class PojoLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theBindingName, Term theTarget) {
-    final Struct t1 = resolve(theBindingName, vars, Struct.class);
+  public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
+    final Struct t1 = resolve(theBindingName, theBindings, Struct.class);
     final String name = t1.getName();
     final Object instance = extract(name);
     final Term instanceTerm = createConstantTerm(instance);
-    final boolean unified = unify(instanceTerm, vars, theTarget, vars, theGoalFrame);
+    final boolean unified = unify(instanceTerm, theBindings, theTarget, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 

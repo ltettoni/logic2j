@@ -18,7 +18,7 @@
 package org.logic2j.solve.ioc;
 
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.Solution;
 
 /**
@@ -33,7 +33,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
   private Solution solution;
 
   protected Term goal;
-  protected VarBindings bindings;
+  protected Bindings bindings;
 
   /**
    * Create a {@link SolutionListener} that will enumerate solutions up to theMaxCount
@@ -42,7 +42,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
    * @param theGoal 
    * @param theMaxCount
    */
-  public SingleSolutionListener(Term theGoal, VarBindings theBindings, int theMaxCount) {
+  public SingleSolutionListener(Term theGoal, Bindings theBindings, int theMaxCount) {
     super();
     this.maxCount = theMaxCount;
     this.counter = 0;

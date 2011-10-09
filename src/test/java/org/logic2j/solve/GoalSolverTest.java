@@ -33,7 +33,7 @@ import org.logic2j.PrologTestBase;
 import org.logic2j.PrologImpl.InitLevel;
 import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.GoalSolver;
 import org.logic2j.solve.Solution;
@@ -162,15 +162,15 @@ public class GoalSolverTest extends PrologTestBase {
     final PrologImplementor prolog = new PrologImpl();
     Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
     CountingListener listenerAll = new CountingListener();
-    getProlog().getSolver().solveGoal(term, new VarBindings(term), new GoalFrame(), listenerAll);
+    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listenerAll);
     assertEquals(10, listenerAll.counter);
     //
     Max1Listener listener1 = new Max1Listener();
-    getProlog().getSolver().solveGoal(term, new VarBindings(term), new GoalFrame(), listener1);
+    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listener1);
     assertEquals(1, listener1.counter);
     //
     Max5Listener listener5 = new Max5Listener();
-    getProlog().getSolver().solveGoal(term, new VarBindings(term), new GoalFrame(), listener5);
+    getProlog().getSolver().solveGoal(term, new Bindings(term), new GoalFrame(), listener5);
     assertEquals(5, listener5.counter);
   }
 

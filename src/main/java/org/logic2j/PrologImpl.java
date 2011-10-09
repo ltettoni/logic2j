@@ -30,7 +30,7 @@ import org.logic2j.library.impl.core.CoreLibrary;
 import org.logic2j.library.impl.io.IOLibrary;
 import org.logic2j.library.mgmt.DefaultLibraryManager;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.DefaultGoalSolver;
 import org.logic2j.solve.GoalSolver;
 import org.logic2j.solve.SolutionHolder;
@@ -184,8 +184,8 @@ public class PrologImpl implements PrologImplementor {
   public SolutionHolder solve(CharSequence theGoal) {
     // Perhaps we could transform the goal into a real clause?
     final Term parsed = term(theGoal);
-    final VarBindings vars = new VarBindings(parsed);
-    return new SolutionHolder(this, parsed, vars);
+    final Bindings bindings = new Bindings(parsed);
+    return new SolutionHolder(this, parsed, bindings);
   }
 
   @Override

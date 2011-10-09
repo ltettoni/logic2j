@@ -26,7 +26,7 @@ import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.util.ReportUtils;
 
@@ -47,13 +47,13 @@ public class DefaultGoalSolver implements GoalSolver {
   }
 
   @Override
-  public void solveGoal(final Term goalTerm, final VarBindings goalVars, final GoalFrame callerFrame,
+  public void solveGoal(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener) {
     solveGoalRecursive(goalTerm, goalVars, callerFrame, theSolutionListener);
   }
 
   @Override
-  public void solveGoalRecursive(final Term goalTerm, final VarBindings goalVars, final GoalFrame callerFrame,
+  public void solveGoalRecursive(final Term goalTerm, final Bindings goalVars, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener) {
     if (debug) {
       logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
@@ -100,10 +100,10 @@ public class DefaultGoalSolver implements GoalSolver {
         throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }
       Term target = TERM_API.substitute(goalStruct.getArg(0), goalVars, null);
-      VarBindings effectiveGoalVars = goalVars;
+      Bindings effectiveGoalVars = goalVars;
       // Hack
       if (target!=goalStruct.getArg(0) && effectiveGoalVars.getBinding((short) 0)!=null && effectiveGoalVars.getBinding((short) 0).isLiteral()) {
-        effectiveGoalVars = effectiveGoalVars.getBinding((short) 0).getLiteralVarBindings();
+        effectiveGoalVars = effectiveGoalVars.getBinding((short) 0).getLiteralBindings();
       }
       if (target instanceof Var) {
         throw new InvalidTermException("Argument to primitive 'call' may not be a variable, was" + target);
@@ -167,9 +167,9 @@ public class DefaultGoalSolver implements GoalSolver {
             }
             break;
           }
-
-          final VarBindings immutableVars = clause.getVars();
-          final VarBindings clauseVars = new VarBindings(immutableVars);
+          // Clone the variables so that we won't mutate our current clause's ones
+          final Bindings immutableVars = clause.getBindings();
+          final Bindings clauseVars = new Bindings(immutableVars);
           final Term clauseHead = clause.getHead();
           if (debug) {
             logger.debug("Unifying: goal={}        with  goalVars={}", goalTerm, goalVars);
@@ -205,8 +205,8 @@ public class DefaultGoalSolver implements GoalSolver {
                 logger.debug("<< RECURS");
               }
             }
-            // We have now fired our solution(s), we no longer need our bound vars and can deunify
-            // Go to next solution: start by clearing our trailing vars
+            // We have now fired our solution(s), we no longer need our bound bindings and can deunify
+            // Go to next solution: start by clearing our trailing bindings
             this.prolog.getUnifyer().deunify(frameForAttemptingClauses);
           }
         }

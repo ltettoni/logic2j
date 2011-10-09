@@ -24,8 +24,8 @@ import java.util.Map;
 
 import org.logic2j.PrologImplementor;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
-import org.logic2j.model.var.VarBindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings;
+import org.logic2j.model.var.Bindings.FreeVarBehaviour;
 import org.logic2j.solve.ioc.IterableSolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
@@ -109,7 +109,7 @@ public class SolutionHolder {
      */
     public int number() {
       final SolutionListenerBase listener = new SolutionListenerBase();
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.vars, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int counter = listener.getCounter();
       checkBounds(counter);
@@ -135,13 +135,13 @@ public class SolutionHolder {
 
         @Override
         public boolean onSolution() {
-          Term substituted = SolutionHolder.this.vars.explicitBinding(theVariableName, FreeVarBehaviour.FREE);
+          Term substituted = SolutionHolder.this.bindings.explicitBinding(theVariableName, FreeVarBehaviour.FREE);
           results.add(substituted);
           return super.onSolution();
         }
 
       };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.vars, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int size = results.size();
       checkBounds(size);
@@ -157,12 +157,12 @@ public class SolutionHolder {
 
         @Override
         public boolean onSolution() {
-          results.add(SolutionHolder.this.vars.explicitBindings(FreeVarBehaviour.FREE));
+          results.add(SolutionHolder.this.bindings.explicitBindings(FreeVarBehaviour.FREE));
           return super.onSolution();
         }
 
       };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.vars, new GoalFrame(),
+      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
           listener);
       int size = results.size();
       checkBounds(size);
@@ -188,16 +188,16 @@ public class SolutionHolder {
 
   final PrologImplementor prolog;
   final Term goal;
-  final VarBindings vars;
+  final Bindings bindings;
 
   /**
    * @param theGoal
-   * @param theVars
+   * @param theBindings
    */
-  public SolutionHolder(PrologImplementor theProlog, Term theGoal, VarBindings theVars) {
+  public SolutionHolder(PrologImplementor theProlog, Term theGoal, Bindings theBindings) {
     this.prolog = theProlog;
     this.goal = theGoal;
-    this.vars = theVars;
+    this.bindings = theBindings;
   }
 
   /**
@@ -219,13 +219,13 @@ public class SolutionHolder {
    * @return A relay object to access the unique solution.
    */
   public UniqueSolutionHolder unique() {
-    final UniqueSolutionListener listener = new UniqueSolutionListener(this.goal, this.vars);
-    this.prolog.getSolver().solveGoal(this.goal, this.vars, new GoalFrame(), listener);
+    final UniqueSolutionListener listener = new UniqueSolutionListener(this.goal, this.bindings);
+    this.prolog.getSolver().solveGoal(this.goal, this.bindings, new GoalFrame(), listener);
     return new UniqueSolutionHolder(listener.getSolution());
   }
 
   public Iterator<Solution> iterator() {
-    final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goal, SolutionHolder.this.vars);
+    final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goal, SolutionHolder.this.bindings);
 
     final Runnable prologSolverThread = new Runnable() {
 
@@ -234,7 +234,7 @@ public class SolutionHolder {
         logger.debug("Started producer thread");
         // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
         // and will wait for the main thread to extract it
-        SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.vars, new GoalFrame(),
+        SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.goal, SolutionHolder.this.bindings, new GoalFrame(),
             listener);
         logger.debug("Producer thread finishes");
         // Last solution was extracted. Producer's callback won't now be called any more - so to 

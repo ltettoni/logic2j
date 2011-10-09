@@ -40,7 +40,7 @@ import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.Var;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
@@ -56,7 +56,7 @@ import org.logic2j.util.SqlRunner;
 /**
  * Prolog library that bridges the Prolog engine and
  * a relational database seen as a facts repository.
- * TODO: the {@link #select(SolutionListener, GoalFrame, VarBindings, Term...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO: the {@link #select(SolutionListener, GoalFrame, Bindings, Term...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);
@@ -83,14 +83,14 @@ public class RDBLibrary extends LibraryBase {
 
 
   @Primitive
-  public void select(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... theArguments)
+  public void select(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments)
       throws SQLException {
     Term theDataSource = theArguments[0];
     Term theExpression = theArguments[1];
-    final DataSource ds = bound(theDataSource, vars, DataSource.class);
+    final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
     // Watch out - by resolving, the variables remaining free have new offets! We won't be able to bind them in the original goal!!!
-    final Struct conditions = resolve(theExpression, vars, Struct.class);
+    final Struct conditions = resolve(theExpression, theBindings, Struct.class);
 
     // Options
     Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
@@ -106,7 +106,7 @@ public class RDBLibrary extends LibraryBase {
     internalGoal = internalGoal.cloneIt();
     // Watch out this destroys the indexes in the original expression !!!!
     internalGoal = getProlog().getTermFactory().normalize(internalGoal);
-    final VarBindings internalBindings = new VarBindings(internalGoal);
+    final Bindings internalBindings = new Bindings(internalGoal);
     final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalGoal, internalBindings);
     getProlog().getSolver().solveGoal(internalGoal, internalBindings, new GoalFrame(), internalListener);
     Term result = internalListener.getSolution().getBinding(resultVar);
@@ -250,7 +250,7 @@ public class RDBLibrary extends LibraryBase {
       }
     }
 
-    logger.debug("** Projected vars: {}", projectVars);
+    logger.debug("** Projected bindings: {}", projectVars);
     logger.debug("** Builder       : {}", builder.describe());
 
     // Generate
@@ -285,7 +285,7 @@ public class RDBLibrary extends LibraryBase {
       final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
       // Vars referenced in projections
       Var projectedVars[] = new Var[projectVars.size()];
-      VarBindings originalVarBindings = null;
+      Bindings originalBindings = null;
       int counter = 0;
       for (Var var : projectVars) {
         final Var originalVar = conditions.findVar(var.getName());
@@ -293,16 +293,16 @@ public class RDBLibrary extends LibraryBase {
           throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
         }
         projectedVars[counter] = originalVar;
-        final VarBindings bindingsForVar = vars.findBindings(originalVar);
+        final Bindings bindingsForVar = theBindings.findBindings(originalVar);
         if (bindingsForVar == null) {
-          throw new InvalidTermException("Could no find originalVarBindings for variable " + var.getName());
+          throw new InvalidTermException("Could no find originalBindings for variable " + var.getName());
         }
-        if (originalVarBindings == null) {
+        if (originalBindings == null) {
           // Initialize
-          originalVarBindings = bindingsForVar;
+          originalBindings = bindingsForVar;
         } else {
           // Check
-          if (bindingsForVar != originalVarBindings) {
+          if (bindingsForVar != originalBindings) {
             throw new InvalidTermException("Not all variables share the same bindings - won't be able to unify");
           }
         }
@@ -310,7 +310,7 @@ public class RDBLibrary extends LibraryBase {
       }
       // Generate solutions, one per row
       for (Object[] objects : resultSet) {
-        unifyAndNotify(projectedVars, objects, originalVarBindings, theGoalFrame, theListener);
+        unifyAndNotify(projectedVars, objects, originalBindings, theGoalFrame, theListener);
       }
     }
   }
@@ -360,10 +360,10 @@ public class RDBLibrary extends LibraryBase {
    * @param desiredClassOrInterface
    * @return Unwrap a StructObject bound term to a pojo.
    */
-  private <T> T bound(Term theBinding, VarBindings vars, Class<T> desiredClassOrInterface) {
-    //    final StructObject<T> structObject = resolve(theBinding, vars, StructObject.class);
+  private <T> T bound(Term theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
+    //    final StructObject<T> structObject = resolve(theBinding, bindings, StructObject.class);
     //    final Object instance = structObject.getObject();
-    final Struct bindingName = resolve(theBinding, vars, Struct.class);
+    final Struct bindingName = resolve(theBinding, theBindings, Struct.class);
     final Object instance = PojoLibrary.extract(bindingName.getName());
     return ReflectUtils.safeCastNotNull("unwrapping binding \"" + instance + '"', instance, desiredClassOrInterface);
   }

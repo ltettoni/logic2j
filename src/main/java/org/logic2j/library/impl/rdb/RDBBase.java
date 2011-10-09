@@ -33,7 +33,7 @@ public class RDBBase {
 
   /**
    * A {@link TermFactory} that will parse all strings as atoms 
-   * (especially those starting with uppercase that must not become vars).
+   * (especially those starting with uppercase that must not become bindings).
    */
   public static class AllStringsAsAtoms extends DefaultTermFactory {
     private static final TermApi TERM_API = new TermApi();

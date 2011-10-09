@@ -21,7 +21,7 @@
   <logger name="org.logic2j.solve.DefaultGoalSolver"><level value="info"/></logger>
 
   <logger name="org.logic2j.model.var.Binding"><level value="info"/></logger>
-  <logger name="org.logic2j.model.var.VarBindings"><level value="info"/></logger>
+  <logger name="org.logic2j.model.var.Bindings"><level value="info"/></logger>
 
 
   <root level="info">

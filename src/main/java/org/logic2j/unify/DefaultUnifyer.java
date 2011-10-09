@@ -22,7 +22,7 @@ import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.util.ReportUtils;
 
@@ -34,9 +34,9 @@ import org.logic2j.util.ReportUtils;
 public class DefaultUnifyer implements Unifyer {
 
   @Override
-  public boolean unify(Term term1, VarBindings vars1, Term term2, VarBindings vars2, GoalFrame theGoalFrame) {
+  public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
     theGoalFrame.markForNextBindings();
-    boolean unified = unifyInternal(term1, vars1, term2, vars2, theGoalFrame);
+    boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2, theGoalFrame);
     if (!unified /*&& theGoalFrame != null*/) {
       deunify(theGoalFrame);
     }
@@ -44,17 +44,17 @@ public class DefaultUnifyer implements Unifyer {
   }
 
   /**
-   * Note: orientation of method args tends to be vars ont term1 and literals on term2.
+   * Note: orientation of method args tends to be bindings ont term1 and literals on term2.
    * @param term1
-   * @param vars1
+   * @param theBindings1
    * @param term2
-   * @param vars2
+   * @param theBindings2
    * @param theGoalFrame
    * @return true when unified.
    */
-  private boolean unifyInternal(Term term1, VarBindings vars1, Term term2, VarBindings vars2, GoalFrame theGoalFrame) {
+  private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
     if (term2 instanceof Var && !(term1 instanceof Var)) {
-      return unifyInternal(term2, vars2, term1, vars1, theGoalFrame);
+      return unifyInternal(term2, theBindings2, term1, theBindings1, theGoalFrame);
     }
     if (term1 instanceof Var) {
       // Variable: 
@@ -65,7 +65,7 @@ public class DefaultUnifyer implements Unifyer {
       if (var1.isAnonymous()) {
         return true;
       }
-      Binding binding1 = var1.derefToBinding(vars1);
+      Binding binding1 = var1.derefToBinding(theBindings1);
       while (binding1.isVar()) {
         // Loop on bound variables
         binding1 = binding1.getLink();
@@ -77,13 +77,13 @@ public class DefaultUnifyer implements Unifyer {
           return true;
         }
         // Bind the free var
-        binding1.bindTo(term2, vars2, theGoalFrame);
+        binding1.bindTo(term2, theBindings2, theGoalFrame);
         return true;
       } else if (binding1.isLiteral()) {
         // We have followed term1 to end up with a literal. It may either unify or not depending if
         // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
         // part as term2
-        return unifyInternal(term2, vars2, binding1.getTerm(), binding1.getLiteralVarBindings(), theGoalFrame);
+        return unifyInternal(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings(), theGoalFrame);
       } else {
         throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
       }
@@ -107,7 +107,7 @@ public class DefaultUnifyer implements Unifyer {
         }
         int arity1 = s1.getArity();
         for (int i = 0; i < arity1; i++) {
-          if (!unifyInternal(s1.getArg(i), vars1, s2.getArg(i), vars2, theGoalFrame)) {
+          if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
             return false;
           }
         }

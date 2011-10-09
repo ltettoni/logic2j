@@ -20,7 +20,7 @@ package org.logic2j.model;
 import org.logic2j.Prolog;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.theory.TheoryManager;
 
 /**
@@ -44,9 +44,9 @@ public class Clause {
   private final Struct content; // Immutable, not null
 
   /**
-   * An empty {@link VarBindings} reserved for unifying this clause with goals.
+   * An empty {@link Bindings} reserved for unifying this clause with goals.
    */
-  private final VarBindings vars; // Immutable, not null
+  private final Bindings bindings; // Immutable, not null
 
   /**
    * Normalize theClauseTerm to be ready for inference.
@@ -60,17 +60,17 @@ public class Clause {
     // Any Clause must be normalized otherwise we won't be able to infer on it!
     // Since we don't create via the TermFactory we have to do it here.
     this.content = (Struct) theProlog.getTermFactory().normalize(theClauseTerm);
-    this.vars = new VarBindings(this.content);
+    this.bindings = new Bindings(this.content);
   }
 
   /**
-   * Copy constructor.
+   * Copy constructor. Will clone the clause's content and the current {@link Bindings}.
    * @param theOriginal
    */
   public Clause(Clause theOriginal) {
-    this.content = theOriginal.content.cloneIt();
+    this.content = theOriginal.content.cloneIt(); // TODO LT: Why do we need cloning the content in a structure-sharing design???
     // Clone the block of variables
-    this.vars = new VarBindings(theOriginal.getVars());
+    this.bindings = new Bindings(theOriginal.getBindings());
   }
 
   /**
@@ -133,10 +133,10 @@ public class Clause {
   }
 
   /**
-   * @return the vars
+   * @return the bindings
    */
-  public VarBindings getVars() {
-    return this.vars;
+  public Bindings getBindings() {
+    return this.bindings;
   }
 
   //---------------------------------------------------------------------------

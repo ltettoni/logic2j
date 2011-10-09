@@ -24,7 +24,7 @@ import org.logic2j.io.format.FormatUtils;
 import org.logic2j.library.impl.LibraryBase;
 import org.logic2j.library.mgmt.Primitive;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 
@@ -40,9 +40,9 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void write(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+  public void write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
     for (Term term : terms) {
-      final Term value = resolve(term, vars, Term.class);
+      final Term value = resolve(term, theBindings, Term.class);
       String format = getProlog().getFormatter().format(value);
       format = FormatUtils.removeApices(format);
       this.writer.print(format);
@@ -51,16 +51,16 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void nl(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars) {
+  public void nl(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
     this.writer.print('\n');
     notifySolution(theGoalFrame, theListener);
   }
   
   
   @Primitive
-  public void log(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+  public void log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
     for (Term term : terms) {
-      final Term value = resolve(term, vars, Term.class);
+      final Term value = resolve(term, theBindings, Term.class);
       String format = getProlog().getFormatter().format(value);
       format = FormatUtils.removeApices(format);
       logger.info(format);
@@ -69,7 +69,7 @@ public class IOLibrary extends LibraryBase {
   }
   
   @Primitive
-  public void nolog(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term... terms) {
+  public void nolog(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
     // Do nothing, but succeeds!
     notifySolution(theGoalFrame, theListener);
   }

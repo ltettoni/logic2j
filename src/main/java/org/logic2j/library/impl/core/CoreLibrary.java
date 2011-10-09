@@ -32,7 +32,7 @@ import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
@@ -47,23 +47,23 @@ public class CoreLibrary extends LibraryBase {
 
   @Primitive(name = Struct.FUNCTOR_TRUE)
   // We can't name the method "true" it's a Java reserved word...
-  public void trueFunctor(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars) {
+  public void trueFunctor(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
     notifySolution(theGoalFrame, theListener);
   }
 
   @Primitive
-  public void fail(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars) {
+  public void fail(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
     // Do not propagate a solution - that's all
   }
 
   @Primitive
-  public void var(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1) {
+  public void var(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
     if (t1 instanceof Var) {
       Var var = (Var) t1;
       if (var.isAnonymous()) {
         notifySolution(theGoalFrame, theListener);
       } else {
-        Binding binding = var.derefToBinding(vars);
+        Binding binding = var.derefToBinding(theBindings);
         while (binding.isVar()) {
           binding = binding.getLink();
         }
@@ -76,8 +76,8 @@ public class CoreLibrary extends LibraryBase {
   }
   
   @Primitive
-  public void atomic(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theTerm) {
-    final Term effectiveTerm = resolve(theTerm, vars, Term.class);
+  public void atomic(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
+    final Term effectiveTerm = resolve(theTerm, theBindings, Term.class);
     if (effectiveTerm instanceof Struct || effectiveTerm instanceof TNumber) {
       notifySolution(theGoalFrame, theListener);
     }
@@ -85,29 +85,29 @@ public class CoreLibrary extends LibraryBase {
 
 
   @Primitive
-  public void number(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theTerm) {
-    final Term effectiveTerm = resolve(theTerm, vars, Term.class);
+  public void number(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
+    final Term effectiveTerm = resolve(theTerm, theBindings, Term.class);
     if (effectiveTerm instanceof TNumber) {
       notifySolution(theGoalFrame, theListener);
     }
   }
 
   @Primitive(name = Struct.FUNCTOR_CUT)
-  public void cut(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars) {
+  public void cut(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
     // This is a complex behaviour - read on DefaultGoalSolver
     theGoalFrame.signalCut();
     notifySolution(theGoalFrame, theListener);
   }
 
   @Primitive(name = "=")
-  public void unify(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    final boolean unified = unify(t1, vars, t2, vars, theGoalFrame);
+  public void unify(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    final boolean unified = unify(t1, theBindings, t2, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 
   @Primitive(name = "\\=")
-  public void notUnify(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    final boolean unified = unify(t1, vars, t2, vars, theGoalFrame);
+  public void notUnify(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    final boolean unified = unify(t1, theBindings, t2, theBindings, theGoalFrame);
     if (!unified) {
       notifySolution(theGoalFrame, theListener);
     }
@@ -117,23 +117,23 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void atom_length(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    final Struct contentTerm = resolve(t1, vars, Struct.class);
+  public void atom_length(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    final Struct contentTerm = resolve(t1, theBindings, Struct.class);
     final TLong effectiveLengthTerm = createTLong(contentTerm.getName().length());
-    final boolean unified = unify(effectiveLengthTerm, vars, t2, vars, theGoalFrame);
+    final boolean unified = unify(effectiveLengthTerm, theBindings, t2, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
   
   /**
    * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
    * @param theGoalFrame
-   * @param vars
+   * @param theBindings
    * @param t1
    */
   @Primitive
-  public void call(final SolutionListener theListener, final GoalFrame theGoalFrame, VarBindings vars, Term t1) {
-    // Resolve vars wherever possible
-    final Term target = resolveNonVar(t1, vars, "call");
+  public void call(final SolutionListener theListener, final GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
+    // Resolve bindings wherever possible
+    final Term target = resolveNonVar(t1, theBindings, "call");
     final SolutionListenerBase callListener = new SolutionListenerBase() {
       @SuppressWarnings("synthetic-access")
       // does not affect performance at all
@@ -144,13 +144,13 @@ public class CoreLibrary extends LibraryBase {
       }
     };
     // TODO Need more testing of call/1, quite unsure if this way of doing is reliable
-    getProlog().getSolver().solveGoalRecursive(target, vars, theGoalFrame, callListener);
+    getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
   }
 
   @Primitive(synonyms = "\\+")
-  public void not(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theGoal) {
-    // Resolve vars wherever possible
-    final Term target = resolveNonVar(theGoal, vars, "not");
+  public void not(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theGoal) {
+    // Resolve bindings wherever possible
+    final Term target = resolveNonVar(theGoal, theBindings, "not");
     final class AdHocListener implements SolutionListener {
       public boolean found = false;
 
@@ -162,14 +162,14 @@ public class CoreLibrary extends LibraryBase {
       }
     }
     final AdHocListener callListener = new AdHocListener();
-    getProlog().getSolver().solveGoalRecursive(target, vars, theGoalFrame, callListener);
+    getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
     if (!callListener.found) {
       theListener.onSolution();
     }
   }
 
   @Primitive
-  public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final VarBindings vars, final Term projection,
+  public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term projection,
       final Term theGoal, final Term theResult) {
     // Our internal collection of results
     final ArrayList<Term> resultList = new ArrayList<Term>();
@@ -179,9 +179,9 @@ public class CoreLibrary extends LibraryBase {
 
       @Override
       public boolean onSolution() {
-        // Calculate the substituted goal value (resolve vars)
+        // Calculate the substituted goal value (resolve bindings)
         @SuppressWarnings("synthetic-access")
-        final Term substitute = resolve(projection, vars, Term.class);
+        final Term substitute = resolve(projection, theBindings, Term.class);
         // And add as extra solution
         resultList.add(substitute);
         return true;
@@ -189,11 +189,11 @@ public class CoreLibrary extends LibraryBase {
 
     };
 
-    final Term goalResolved = resolve(theGoal, vars, Term.class);
-    VarBindings goalVars = vars;
+    final Term goalResolved = resolve(theGoal, theBindings, Term.class);
+    Bindings goalVars = theBindings;
     // Hack
-    if (goalResolved!=theGoal && vars.getBinding((short) 0)!=null && vars.getBinding((short) 0).isLiteral()) {
-      goalVars = vars.getBinding((short) 0).getLiteralVarBindings();
+    if (goalResolved!=theGoal && theBindings.getBinding((short) 0)!=null && theBindings.getBinding((short) 0).isLiteral()) {
+      goalVars = theBindings.getBinding((short) 0).getLiteralBindings();
     }
     
     // Now solve the target goal, this may find several values of course
@@ -207,23 +207,23 @@ public class CoreLibrary extends LibraryBase {
     final Struct plist = Struct.createPList(resultList);
 
     // And unify with result
-    final boolean unified = unify(theResult, vars, plist, vars, theGoalFrame);
+    final boolean unified = unify(theResult, theBindings, plist, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 
   @Primitive
-  public void clause(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theHead, Term theBody) {
-    final Binding dereferencedBinding = dereferencedBinding(theHead, vars);
+  public void clause(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theHead, Term theBody) {
+    final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
     final Struct realHead =  ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
     for (ClauseProvider cp : getProlog().getClauseProviders()) {
       // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
       for (Clause clause : cp.listMatchingClauses(realHead)) {
         // Clone the clause so that we can unify against its bindings
         final Clause clauseToUnify = new Clause(clause);
-        final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getVars(), realHead,
-            dereferencedBinding.getLiteralVarBindings(), theGoalFrame);
+        final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead,
+            dereferencedBinding.getLiteralBindings(), theGoalFrame);
         if (headUnified) {
-          final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getVars(), theBody, vars, theGoalFrame);
+          final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings, theGoalFrame);
           if (bodyUnified) {
             notifySolution(theGoalFrame, theListener);
             deunify(theGoalFrame);
@@ -236,12 +236,12 @@ public class CoreLibrary extends LibraryBase {
 
   // FIXME: Bug: Expr=..[Pred, Arg]  yields  coco(Com), coco, coco(Com)   (last should be Com only)
   @Primitive(name = "=..")
-  public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term thePredicate, Term theList) {
-    final Term predResolved = resolve(thePredicate, vars, Term.class);
-    VarBindings predResolvedVars = vars;
+  public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term thePredicate, Term theList) {
+    final Term predResolved = resolve(thePredicate, theBindings, Term.class);
+    Bindings predResolvedVars = theBindings;
     // Hack
-    if (predResolved!=thePredicate && vars.getBinding((short) 0)!=null && vars.getBinding((short) 0).isLiteral()) {
-      predResolvedVars = vars.getBinding((short) 0).getLiteralVarBindings();
+    if (predResolved!=thePredicate && theBindings.getBinding((short) 0)!=null && theBindings.getBinding((short) 0).isLiteral()) {
+      predResolvedVars = theBindings.getBinding((short) 0).getLiteralBindings();
     }
     if (predResolved instanceof Struct) {
       Struct struct = (Struct) predResolved;
@@ -252,34 +252,34 @@ public class CoreLibrary extends LibraryBase {
         elems.add(struct.getArg(i));
       }
       Struct plist = Struct.createPList(elems);
-      final boolean unified = unify(theList, vars, plist, predResolvedVars, theGoalFrame);
+      final boolean unified = unify(theList, theBindings, plist, predResolvedVars, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
     } else if (predResolved instanceof Var) {
-      final Term lst = resolve(theList, vars, Term.class);
+      final Term lst = resolve(theList, theBindings, Term.class);
       if (!lst.isList()) {
         throw new InvalidTermException("Second argument to =.. must be a List was " + lst);
       }
       Struct lst2 = (Struct) lst;
       Struct flattened = lst2.predicateFromPList();
-      final boolean unified = unify(thePredicate, vars, flattened, vars, theGoalFrame);
+      final boolean unified = unify(thePredicate, theBindings, flattened, theBindings, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
     }
   }
 
   @Primitive
-  public void is(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    final Term evaluated = evaluateFunctor(vars, t2);
+  public void is(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    final Term evaluated = evaluateFunctor(theBindings, t2);
     if (evaluated == null) {
       return;
     }
-    final boolean unified = unify(t1, vars, evaluated, vars, theGoalFrame);
+    final boolean unified = unify(t1, theBindings, evaluated, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
   
   @Primitive(name = ">")
-  public void expression_greater_than(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    t1 = evaluateFunctor(vars, t1);
-    t2 = evaluateFunctor(vars, t2);
+  public void expression_greater_than(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
     if (t1 instanceof TNumber && t2 instanceof TNumber) {
       final TNumber val0n = (TNumber) t1;
       final TNumber val1n = (TNumber) t2;
@@ -290,9 +290,9 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Primitive(name = "<")
-  public void expression_lower_than(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    t1 = evaluateFunctor(vars, t1);
-    t2 = evaluateFunctor(vars, t2);
+  public void expression_lower_than(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
     if (t1 instanceof TNumber && t2 instanceof TNumber) {
       final TNumber val0n = (TNumber) t1;
       final TNumber val1n = (TNumber) t2;
@@ -303,9 +303,9 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Primitive(name = "+")
-  public Term plus(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    t1 = evaluateFunctor(vars, t1);
-    t2 = evaluateFunctor(vars, t2);
+  public Term plus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
     if (t1 instanceof TNumber && t2 instanceof TNumber) {
       final TNumber val0n = (TNumber) t1;
       final TNumber val1n = (TNumber) t2;
@@ -319,15 +319,15 @@ public class CoreLibrary extends LibraryBase {
 
   /**
    * @param theGoalFrame
-   * @param vars
+   * @param theBindings
    * @param t1
    * @param t2
    * @return Binary minus (subtract)
    */
   @Primitive(name = "-")
-  public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    t1 = evaluateFunctor(vars, t1);
-    t2 = evaluateFunctor(vars, t2);
+  public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
     if (t1 instanceof TNumber && t2 instanceof TNumber) {
       final TNumber val0n = (TNumber) t1;
       final TNumber val1n = (TNumber) t2;
@@ -341,15 +341,15 @@ public class CoreLibrary extends LibraryBase {
 
   /**
    * @param theGoalFrame
-   * @param vars
+   * @param theBindings
    * @param t1
    * @param t2
    * @return Binary multiply
    */
   @Primitive(name = "*")
-  public Term multiply(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1, Term t2) {
-    t1 = evaluateFunctor(vars, t1);
-    t2 = evaluateFunctor(vars, t2);
+  public Term multiply(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
     if (t1 instanceof TNumber && t2 instanceof TNumber) {
       final TNumber val0n = (TNumber) t1;
       final TNumber val1n = (TNumber) t2;
@@ -363,13 +363,13 @@ public class CoreLibrary extends LibraryBase {
 
   /**
    * @param theGoalFrame
-   * @param vars
+   * @param theBindings
    * @param t1
    * @return Unary minus (negate)
    */
   @Primitive(name = "-")
-  public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term t1) {
-    t1 = evaluateFunctor(vars, t1);
+  public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
+    t1 = evaluateFunctor(theBindings, t1);
     if (t1 instanceof TNumber) {
       TNumber val0n = (TNumber) t1;
       if (val0n instanceof TDouble) {

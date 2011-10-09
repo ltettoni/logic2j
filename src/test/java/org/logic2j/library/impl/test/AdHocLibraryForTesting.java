@@ -23,7 +23,7 @@ import org.logic2j.library.mgmt.Primitive;
 import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 
@@ -37,13 +37,13 @@ public class AdHocLibraryForTesting extends LibraryBase {
   }
 
   @Primitive
-  public void int_range(SolutionListener theListener, GoalFrame theGoalFrame, VarBindings vars, Term theLowerBound,
+  public void int_range(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theLowerBound,
       Term theIterable, Term theUpperBound) {
-    final long lower = resolve(theLowerBound, vars, TNumber.class).longValue();
-    final long upper = resolve(theUpperBound, vars, TNumber.class).longValue();
+    final long lower = resolve(theLowerBound, theBindings, TNumber.class).longValue();
+    final long upper = resolve(theUpperBound, theBindings, TNumber.class).longValue();
     for (long iter = lower; iter <= upper; iter++) {
       final TLong iterTerm = new TLong(iter);
-      final boolean unified = unify(theIterable, vars, iterTerm, vars, theGoalFrame);
+      final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings, theGoalFrame);
       notifyIfUnified(unified, theGoalFrame, theListener);
     }
   }

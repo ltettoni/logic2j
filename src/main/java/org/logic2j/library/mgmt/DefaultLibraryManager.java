@@ -28,7 +28,7 @@ import org.logic2j.model.prim.PrimitiveInfo;
 import org.logic2j.model.prim.PrimitiveInfo.PrimitiveType;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.theory.TheoryManager;
@@ -40,7 +40,7 @@ public class DefaultLibraryManager implements LibraryManager {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);
 
   /**
-   * SolutionListener, GoalFrame, VarBindings, Term, ...
+   * SolutionListener, GoalFrame, Bindings, Term, ...
    */
   private static final int NB_EXTRA_PARAMS = 3;
 
@@ -121,9 +121,9 @@ public class DefaultLibraryManager implements LibraryManager {
               + GoalFrame.class);
         }
         i++;
-        if (!(VarBindings.class.isAssignableFrom(paramTypes[i]))) {
+        if (!(Bindings.class.isAssignableFrom(paramTypes[i]))) {
           throw new IllegalStateException("Argument type at index " + i + " of metohd " + method + " not of proper "
-              + VarBindings.class);
+              + Bindings.class);
         }
         i++;
         boolean varargs = false;

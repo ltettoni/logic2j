@@ -37,7 +37,7 @@ import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
@@ -92,7 +92,7 @@ public class TermApiTest {
     Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
     logger.info("Flat terms of original {}", TERM_API.flatTerms(clause));
     Term t2 = TERM_API.normalize(clause, null);
-    logger.info("Found {} vars", t2.getIndex());
+    logger.info("Found {} bindings", t2.getIndex());
     assertEquals(2, t2.getIndex());
     logger.info("Flat terms of copy     {}", TERM_API.flatTerms(t2));
     assertEquals(clause.toString(), t2.toString());
@@ -116,21 +116,21 @@ public class TermApiTest {
   public void test_substitute() {
     try {
       Term v = Var.ANONYMOUS_VAR;
-      TERM_API.substitute(v, new VarBindings(v), null);
+      TERM_API.substitute(v, new Bindings(v), null);
       fail();
     } catch (InvalidTermException e) {
       // Expected to happen
     }
 
     Term a = this.prolog.term("a");
-    // Empty binding yields same term since no vars to resolve
-    assertSame(a, TERM_API.substitute(a, new VarBindings(a), null));
+    // Empty binding yields same term since no bindings to resolve
+    assertSame(a, TERM_API.substitute(a, new Bindings(a), null));
 
     // Bindings without
-    TERM_API.substitute(a, new VarBindings(a), null);
+    TERM_API.substitute(a, new Bindings(a), null);
 
     Term x = this.prolog.term("X");
-    TERM_API.substitute(x, new VarBindings(x), null);
+    TERM_API.substitute(x, new Bindings(x), null);
   }
 
   @SuppressWarnings("deprecation")

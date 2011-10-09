@@ -32,36 +32,40 @@ import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
 
 /**
- * Variables associated to a Struct.
- * TODO Improve performance: instantiation of {@link VarBindings} from a Struct in a theory. 
+ * Store the actual values of all variables of a {@link Term}, as a list of {@link Binding}s, 
+ * one per {@link Var}iable found within it.<br/>
+ * Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or 
+ * unified. The Term referring to this object is called the "referrer".<br/>
+ * 
+ * TODO Improve performance: instantiation of {@link #Bindings(Term)}. 
  * Find a better way than runtime instantiation.
  */
-public class VarBindings {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(VarBindings.class);
+public class Bindings {
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
   private static boolean isDebug = logger.isDebugEnabled();
 
   private static final TermApi TERM_API = new TermApi();
 
   /**
-   * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this VarBindings
+   * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this Bindings
    * through their indexes.
    */
-  private final Term referer;
+  private final Term referrer;
 
   /**
    * All {@link Binding}s, one per instance of {@link Var}iable.
    * There are as many bindings as the distinct number of variables in 
-   * the referer Term, i.e. the length of bindings equals the maximum
-   * of all indexes in all {@link Var}s of the referer, plus one.
+   * the referrer Term, i.e. the length of bindings equals the maximum
+   * of all indexes in all {@link Var}s of the referrer, plus one.
    * See also {@link Var#getIndex()}.
    * This array is never null, but may be empty (length=0) when the
-   * referer Term does not contain any {@link Var}iable.
+   * referrer Term does not contain any {@link Var}iable.
    */
   private Binding[] bindings;
 
   /**
    * Determine how free (unbound) variables will be represented in resulting bindings
-   * returned by {@link VarBindings#explicitBindings(FreeVarBehaviour)}.
+   * returned by {@link Bindings#explicitBindings(FreeVarBehaviour)}.
    */
   public enum FreeVarBehaviour {
     /**
@@ -118,28 +122,30 @@ public class VarBindings {
   }
 
   /**
-   * Instantiate a VarBindings to hold all variables of a given {@link Term}, ususally a {@link Struct}.
-   * @param theTerm
+   * Instantiate a Bindings to hold all variables of a given {@link Term}, named
+   * further the "referrer", which is ususally a {@link Struct}.
+   * @param theReferrer The Term whose {@link Var}iables refer to this object.
+   * @see Bindings#getReferrer() to further access theTerm
    */
-  public VarBindings(Term theTerm) {
+  public Bindings(Term theReferrer) {
     // Check arguments
     //
     // Note: this constructor should be called only with Var or Struct as arguments, but we don't check this. Should we?
-    final short index = theTerm.getIndex();
+    final short index = theReferrer.getIndex();
     if (index == Term.NO_INDEX) {
-      throw new InvalidTermException("Cannot create VarBindings for uninitialized Term " + theTerm);
+      throw new InvalidTermException("Cannot create Bindings for uninitialized Term " + theReferrer);
     }
-    this.referer = theTerm;
+    this.referrer = theReferrer;
     // Determine number of distinct variables
     final int nbVars;
-    if (theTerm instanceof Var) {
-      if (((Var) theTerm).isAnonymous()) {
+    if (theReferrer instanceof Var) {
+      if (((Var) theReferrer).isAnonymous()) {
         nbVars = 0;
       } else {
         nbVars = 1;
       }
     } else {
-      // Will be a Struct; in that case the index is the number of vars
+      // Will be a Struct; in that case the index is the number of bindings
       nbVars = index;
     }
     //
@@ -152,17 +158,18 @@ public class VarBindings {
       this.bindings[varIndex] = binding;
       // Assign Binding.var field 
       // TODO This is costly see https://github.com/ltettoni/logic2j/issues/26
-      theTerm.accept(new SetVarInBindingVisitor(binding, varIndex));
+      theReferrer.accept(new SetVarInBindingVisitor(binding, varIndex));
     }
   }
 
   /**
    * Copy (cloning) constructor, used for efficiency since the original one
-   * needs to a complete traversal of the term.
-   * @param theOriginal
+   * needs to a complete traversal of the term.<br/>
+   * The referrer of the new Bindings is the same as theOriginal.
+   * @param theOriginal The one to clone from, remains intact.
    */
-  public VarBindings(VarBindings theOriginal) {
-    this.referer = theOriginal.referer;
+  public Bindings(Bindings theOriginal) {
+    this.referrer = theOriginal.referrer;
     int nbVars = theOriginal.bindings.length;
     this.bindings = new Binding[nbVars];
     // All bindings need cloning
@@ -173,7 +180,7 @@ public class VarBindings {
 
   /**
    * @return true when this bindings contains no elements (usually, a Struct has no variables, so this
-   * {@link VarBindings} is empty).
+   * {@link Bindings} is empty).
    */
   public boolean isEmpty() {
     return this.bindings.length == 0;
@@ -185,9 +192,9 @@ public class VarBindings {
    * @return The explicit substituted binding for a given variable.
    */
   public Term explicitBinding(String theVariableName, FreeVarBehaviour theBehaviour) {
-    final Var var = this.referer.findVar(theVariableName);
+    final Var var = this.referrer.findVar(theVariableName);
     if (var == null) {
-      throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + this.referer);
+      throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + this.referrer);
     }
     final Term substitute = TERM_API.substitute(var, this, null);
     return substitute;
@@ -195,7 +202,7 @@ public class VarBindings {
 
   /**
    * @param theBehaviour How to represent free (non-ground) variables
-   * @return All variable bindings resolved, with behaviour as specified for free vars.
+   * @return All variable bindings resolved, with behaviour as specified for free bindings.
    */
   public Map<String, Term> explicitBindings(FreeVarBehaviour theBehaviour) {
     final Map<String, Term> result = new TreeMap<String, Term>();
@@ -209,7 +216,7 @@ public class VarBindings {
     }
     for (Binding binding : this.bindings) {
       if (binding.getVar() == null) {
-        throw new IllegalStateException("VarBindings not properly initialized: Binding " + binding
+        throw new IllegalStateException("Bindings not properly initialized: Binding " + binding
             + " does not refer to Var (null)");
       }
       final String varName = binding.getVar().getName();
@@ -221,9 +228,9 @@ public class VarBindings {
         case LIT:
           if (varName == null) {
             throw new IllegalStateException("Cannot assign null (undefined) var, not all variables of " + this
-                + " are referenced from Term " + this.referer + ", binding " + binding + " can't be assigned a variable name");
+                + " are referenced from Term " + this.referrer + ", binding " + binding + " can't be assigned a variable name");
           }
-          final Term substitute = TERM_API.substitute(boundTerm, binding.getLiteralVarBindings(), bindingToVar);
+          final Term substitute = TERM_API.substitute(boundTerm, binding.getLiteralBindings(), bindingToVar);
           result.put(varName, substitute);
           break;
         case FREE:
@@ -268,11 +275,11 @@ public class VarBindings {
 
   /**
    * Find the local bindings corresponding to one of the variables of the
-   * Struct referred to by this VarBindings.
+   * Struct referred to by this Bindings.
    * @param theVar
    * @return null when not found
    */
-  public VarBindings findBindings(Var theVar) {
+  public Bindings findBindings(Var theVar) {
     int index = 0;
     for (Binding binding : this.bindings) {
       // FIXEM: dubious use of == instead of static equality
@@ -284,7 +291,7 @@ public class VarBindings {
     // Not found: search deeper through bindings
     for (Binding binding : this.bindings) {
       if (binding.getType() == BindingType.LIT) {
-        VarBindings foundDeeper = binding.getLiteralVarBindings().findBindings(theVar);
+        Bindings foundDeeper = binding.getLiteralBindings().findBindings(theVar);
         if (foundDeeper != null) {
           return foundDeeper;
         }
@@ -322,4 +329,12 @@ public class VarBindings {
     return this.bindings[theIndex];
   }
 
+  /**
+   * @return The Term whose variable values are held in this structure, 
+   * actually the one that was provided to the consturctor {@link #Bindings(Term)}.
+   */
+  public Term getReferrer() {
+    return this.referrer;
+  }
+  
 }

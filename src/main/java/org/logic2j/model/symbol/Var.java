@@ -23,7 +23,7 @@ import java.util.IdentityHashMap;
 import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 
 /**
  * This class represents a variable term.
@@ -81,13 +81,13 @@ public class Var extends Term {
   }
 
   /**
-   * Obtain the current {@link Binding} of this Var from the {@link VarBindings}.
+   * Obtain the current {@link Binding} of this Var from the {@link Bindings}.
    * Notice that the variable index must have been assigned, and this var must NOT
    * be the anonymous variable (that cannot be bound to anyhting).
-   * @param theVarBindings
+   * @param theBindings
    * @return The current binding of this Var.
    */
-  public Binding derefToBinding(VarBindings theVarBindings) {
+  public Binding derefToBinding(Bindings theBindings) {
     if (this.index < 0) {
       // An error situation
       if (this.index == NO_INDEX) {
@@ -97,11 +97,11 @@ public class Var extends Term {
         throw new IllegalStateException("Cannot dereference the anonymous variable");
       }
     }
-    if (this.index >= theVarBindings.nbBindings()) {
-      throw new IllegalStateException("Bindings " + theVarBindings + " has space for " + theVarBindings.nbBindings()
-          + " vars, trying to dereference " + this + " at index " + this.index);
+    if (this.index >= theBindings.nbBindings()) {
+      throw new IllegalStateException("Bindings " + theBindings + " has space for " + theBindings.nbBindings()
+          + " bindings, trying to dereference " + this + " at index " + this.index);
     }
-    return theVarBindings.getBinding(this.index);
+    return theBindings.getBinding(this.index);
   }
 
   //---------------------------------------------------------------------------
@@ -130,7 +130,7 @@ public class Var extends Term {
   }
 
   @Override
-  protected Term substitute(VarBindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+  protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
     if (isAnonymous()) {
       // Anonymous variable is never bound - won't substitute
       return this;
@@ -143,7 +143,7 @@ public class Var extends Term {
       case LIT:
         // For a literal, we keep a reference to the term and to its own variables,
         // so recurse further
-        return binding.getTerm().substitute(binding.getLiteralVarBindings(), theBindingsToVars);
+        return binding.getTerm().substitute(binding.getLiteralBindings(), theBindingsToVars);
       case FREE:
         // Free variable has no value, so substitution ends up on the last 
         // variable of the chain

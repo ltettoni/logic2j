@@ -30,7 +30,7 @@ import org.logic2j.TermFactory.FactoryMode;
 import org.logic2j.library.mgmt.LibraryContent;
 import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.util.ReflectUtils;
 
 /**
@@ -87,7 +87,7 @@ public class TermApi {
 
   /**
    * Substitute, recursively, any bound {@link Var}s to their actual values.
-   * This delegates the call to {@link Term#substitute(VarBindings, IdentityHashMap)}. 
+   * This delegates the call to {@link Term#substitute(Bindings, IdentityHashMap)}. 
    * @param theTerm
    * @param theBindings
    * @param theBindingsToVars
@@ -96,7 +96,7 @@ public class TermApi {
    * same refernce is returned.
    * Important note: the caller cannot know if the returned reference was cloned or not, so it must never mutate it!
    */
-  public Term substitute(Term theTerm, final VarBindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars)
+  public Term substitute(Term theTerm, final Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars)
       throws InvalidTermException {
     if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.isEmpty()) {
       // No variables identified in the term, or no variables passed as argument: do not need to substitute

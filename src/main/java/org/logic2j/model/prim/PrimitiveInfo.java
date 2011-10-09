@@ -24,7 +24,7 @@ import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.RecursionException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
@@ -68,7 +68,7 @@ public class PrimitiveInfo {
    * @param theGoalVars 
    * @param theGoalStruct 
    */
-  public Object invoke(Struct theGoalStruct, VarBindings theGoalVars, GoalFrame theGoalFrame, SolutionListener theListener) {
+  public Object invoke(Struct theGoalStruct, Bindings theGoalVars, GoalFrame theGoalFrame, SolutionListener theListener) {
     if (debug) {
       logger.debug("PRIMITIVE > invocation of {}", this);
     }
@@ -123,7 +123,7 @@ public class PrimitiveInfo {
     }
   }
 
-  public Term invokeFunctor(Struct theGoalStruct, VarBindings theGoalVars) {
+  public Term invokeFunctor(Struct theGoalStruct, Bindings theGoalVars) {
     final GoalFrame unusedGoalFrame = null;
     final SolutionListenerBase noListener = null;
     return (Term) invoke(theGoalStruct, theGoalVars, unusedGoalFrame, noListener);

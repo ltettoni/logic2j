@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 
 import org.logic2j.model.var.Binding;
-import org.logic2j.model.var.VarBindings;
+import org.logic2j.model.var.Bindings;
 
 /**
  * {@link TNumber}s are numeric {@link Term}s.
@@ -79,7 +79,7 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
    * No substitution occurs on literals.
    */
   @Override
-  protected Term substitute(VarBindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+  protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
     return this;
   }
 

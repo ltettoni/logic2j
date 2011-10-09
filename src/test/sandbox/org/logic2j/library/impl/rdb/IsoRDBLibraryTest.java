@@ -141,13 +141,13 @@ public class IsoRDBLibraryTest extends PrologWithDataSourcesTestBase {
     assertNSolutions(1, "gd3((comm_parent(46780, Par1))), write(Par1)");
     // Same parent and same var
     assertOneSolution("gd3((comm_parent(46780, Par1), comm_parent(46782, Par1))), write(Par1)");
-    // Same parent on different vars (one solution!)
+    // Same parent on different bindings (one solution!)
     assertOneSolution("gd3((comm_parent(46780, Par1), comm_parent(46782, Par2))), write(Par1), write(' '), write(Par2)");
     // Inexistent WG
     assertNoSolution("gd3((comm_parent(46780, Par1), comm_parent(46781, Par1))), write(Par1)");
     // Has a different parent
     assertNoSolution("gd3((comm_parent(46780, Par1), comm_parent(46778, Par1))), write(Par1)");
-    // All free vars
+    // All free bindings
     assertNSolutions(6461, "gd3((comm_parent(Com, Par1), comm_parent(Par1, Par2)))");
 
     assertNoSolution("gd3((comm_category(123, _)))");
