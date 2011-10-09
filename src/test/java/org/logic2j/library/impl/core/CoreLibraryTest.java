@@ -68,7 +68,7 @@ public class CoreLibraryTest extends PrologTestBase {
   // TODO Some uncertainties re the behaviour of no-op binding of free bindings. To be clarified.
   @Ignore // See note above
   @Test
-  public void testSolvePrimitivePredicates_behaviour_FREE() {
+  public void testSolvePrimitivePredicates_representation_FREE() {
     assertEquals(term("X"), assertOneSolution("X=X").binding("X"));
     assertEquals(term("Y"), assertOneSolution("X=Y").binding("X"));
     assertEquals(term("Y"), assertOneSolution("X=Y").binding("Y"));
@@ -83,7 +83,7 @@ public class CoreLibraryTest extends PrologTestBase {
   }
 
   @Test
-  public void testSolvePrimitivePredicates_behaviour_NULL() {
+  public void testSolvePrimitivePredicates_representation_NULL() {
     assertEquals(null, assertOneSolution("X=X").binding("X"));
     assertEquals(null, assertOneSolution("X=Y").binding("X"));
     assertEquals(null, assertOneSolution("X=Y").binding("Y"));

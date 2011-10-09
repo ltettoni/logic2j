@@ -63,10 +63,7 @@ public class CoreLibrary extends LibraryBase {
       if (var.isAnonymous()) {
         notifySolution(theGoalFrame, theListener);
       } else {
-        Binding binding = var.derefToBinding(theBindings);
-        while (binding.isVar()) {
-          binding = binding.getLink();
-        }
+        final Binding binding = var.derefToBinding(theBindings).followLinks();
         if (!binding.isLiteral()) {
           // Not ending on a literal, we end up on a free var!
           notifySolution(theGoalFrame, theListener);
@@ -82,7 +79,6 @@ public class CoreLibrary extends LibraryBase {
       notifySolution(theGoalFrame, theListener);
     }
   }
-
 
   @Primitive
   public void number(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {

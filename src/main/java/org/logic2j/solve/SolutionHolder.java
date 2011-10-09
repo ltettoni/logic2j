@@ -23,9 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.logic2j.PrologImplementor;
+import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.symbol.TermApi;
+import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.model.var.Bindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.solve.ioc.IterableSolutionListener;
 import org.logic2j.solve.ioc.SolutionListenerBase;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
@@ -49,6 +52,8 @@ import org.logic2j.solve.ioc.UniqueSolutionListener;
  */
 public class SolutionHolder {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
+
+  private static final TermApi TERM_API = new TermApi();
 
   /**
    * A relay object to provide access to the results of the (expected) unique solution to a goal.
@@ -123,7 +128,7 @@ public class SolutionHolder {
     }
 
     /**
-     * Solves the goal and extract the named variable values.
+     * Solves the goal and extract the named variable value(s).
      * @param theVariableName
      */
     public List<Term> binding(final String theVariableName) {
@@ -132,7 +137,13 @@ public class SolutionHolder {
 
         @Override
         public boolean onSolution() {
-          Term substituted = SolutionHolder.this.bindings.explicitBinding(theVariableName, FreeVarBehaviour.FREE);
+          final Bindings bnd = SolutionHolder.this.bindings;
+          final Term term = bnd.getReferrer();
+          final Var var = term.findVar(theVariableName);
+          if (var == null) {
+            throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
+          }
+          final Term substituted = TERM_API.substitute(var, bnd, null);
           results.add(substituted);
           return super.onSolution();
         }
@@ -154,7 +165,7 @@ public class SolutionHolder {
 
         @Override
         public boolean onSolution() {
-          results.add(SolutionHolder.this.bindings.explicitBindings(FreeVarBehaviour.FREE));
+          results.add(SolutionHolder.this.bindings.explicitBindings(FreeVarRepresentation.FREE));
           return super.onSolution();
         }
 

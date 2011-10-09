@@ -17,6 +17,8 @@
  */
 package org.logic2j.model.var;
 
+import org.logic2j.model.symbol.Var;
+
 /**
  * Types of bindings that a variable may have.
  *
@@ -24,19 +26,22 @@ package org.logic2j.model.var;
 public enum BindingType {
 
   /**
-   * Variable linking to this binding is currently free.
+   * The {@link Var}iable associated to a {@link Binding} 
+   * is currently free (unbound).
    */
   FREE,
 
   /**
-   * Variable linking to this binding is bound to a literal term.
+   * The {@link Var}iable associated to a {@link Binding} 
+   * is bound to a literal term. The literal may be a pure constant,
+   * or a Struct which further contains {@link Var}iables.
    */
   LIT,
 
   /**
-   * Variable linking to this binding is linked (bound) to another variable
-   * (which may itself be bound to any of these {@link BindingType}s).
+   * The {@link Var}iable associated to a {@link Binding} is linked (bound) to another variable
+   * (via a linked {@link Binding}), which may itself be bound to any of these {@link BindingType}s).
    */
-  VAR
+  LINK
 
 }

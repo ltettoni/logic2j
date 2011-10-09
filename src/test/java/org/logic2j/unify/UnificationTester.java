@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.model.var.Bindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.unify.Unifyer;
 
@@ -92,9 +92,9 @@ class UnificationTester {
     logger.debug(" leftVars={}", this.leftVars);
     logger.debug(" rightVars={}", this.rightVars);
     logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null),
-        this.leftVars.explicitBindings(FreeVarBehaviour.SKIPPED));
+        this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
     logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null),
-        this.rightVars.explicitBindings(FreeVarBehaviour.SKIPPED));
+        this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
     appendSignature(theSignature, this.leftVars, this.rightVars, this.frame);
     this.result = unified;
     if (this.expectedResult != null) {
@@ -115,9 +115,9 @@ class UnificationTester {
     boolean unified = this.unifyer.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
     logger.debug(" result={}, trailFrame={}", unified, this.frame);
     logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null),
-        this.leftVars.explicitBindings(FreeVarBehaviour.SKIPPED));
+        this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
     logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null),
-        this.rightVars.explicitBindings(FreeVarBehaviour.SKIPPED));
+        this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
     appendSignature(theSignature, this.leftVars, this.rightVars, this.frame);
     this.result = unified;
     if (this.expectedResult != null) {

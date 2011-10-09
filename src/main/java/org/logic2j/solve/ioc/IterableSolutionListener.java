@@ -95,7 +95,7 @@ public class IterableSolutionListener implements SolutionListener {
 
   @Override
   public boolean onSolution() {
-    final Solution solution = new Solution( this.bindings.getReferrer(), this.bindings);
+    final Solution solution = new Solution(this.bindings);
     this.requestSolution.waitUntilAvailable();
     this.provideSolution.available(solution);
     return true;

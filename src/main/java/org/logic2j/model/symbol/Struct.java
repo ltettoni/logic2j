@@ -370,7 +370,7 @@ public class Struct extends Term {
    */
   @Override
   protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
-    Term[] substArgs = new Term[this.arity]; // Will all arguments after substitution
+    final Term[] substArgs = new Term[this.arity]; // All arguments after substitution
     boolean anyChange = false;
     for (int i = 0; i < this.arity; i++) {
       substArgs[i] = this.args[i].substitute(theBindings, theBindingsToVars);

@@ -105,11 +105,7 @@ public class LibraryBase implements PLibrary {
 
   protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
     if (theTerm instanceof Var) {
-      Binding binding = ((Var) theTerm).derefToBinding(theBindings);
-      while (binding.isVar()) {
-        binding = binding.getLink();
-      }
-      return binding;
+      return ((Var) theTerm).derefToBinding(theBindings).followLinks();
     }
     return Binding.createLiteralBinding(theTerm, theBindings);
   }
@@ -140,10 +136,7 @@ public class LibraryBase implements PLibrary {
     }
     // TODO are the lines below this exactly as in resolve() / substitute() method?
     if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
-      Binding binding = ((Var) theTerm).derefToBinding(theBindings);
-      while (binding.isVar()) {
-        binding = binding.getLink();
-      }
+      final Binding binding = ((Var) theTerm).derefToBinding(theBindings).followLinks();
       if (!binding.isLiteral()) {
         return null;
       }

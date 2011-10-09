@@ -98,7 +98,7 @@ public class TermApi {
    */
   public Term substitute(Term theTerm, final Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars)
       throws InvalidTermException {
-    if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.isEmpty()) {
+    if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.getSize()==0) {
       // No variables identified in the term, or no variables passed as argument: do not need to substitute
       return theTerm;
     }

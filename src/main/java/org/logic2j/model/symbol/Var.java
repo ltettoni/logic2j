@@ -97,13 +97,15 @@ public class Var extends Term {
         throw new IllegalStateException("Cannot dereference the anonymous variable");
       }
     }
-    if (this.index >= theBindings.nbBindings()) {
-      throw new IllegalStateException("Bindings " + theBindings + " has space for " + theBindings.nbBindings()
+    if (this.index >= theBindings.getSize()) {
+      throw new IllegalStateException("Bindings " + theBindings + " has space for " + theBindings.getSize()
           + " bindings, trying to dereference " + this + " at index " + this.index);
     }
     return theBindings.getBinding(this.index);
   }
 
+
+  
   //---------------------------------------------------------------------------
   // Template methods defined in abstract class Term
   //---------------------------------------------------------------------------
@@ -135,13 +137,10 @@ public class Var extends Term {
       // Anonymous variable is never bound - won't substitute
       return this;
     }
-    Binding binding = derefToBinding(theBindings);
-    while (binding.isVar()) {
-      binding = binding.getLink();
-    }
+    final Binding binding = derefToBinding(theBindings).followLinks();
     switch (binding.getType()) {
       case LIT:
-        // For a literal, we keep a reference to the term and to its own variables,
+        // For a literal, we have a reference to the literal term and to its own variables,
         // so recurse further
         return binding.getTerm().substitute(binding.getLiteralBindings(), theBindingsToVars);
       case FREE:
@@ -154,9 +153,10 @@ public class Var extends Term {
           }
           return ANONYMOUS_VAR;
         }
+        // Return the free variable
         return this;
       default:
-        // In case of VAR: that's impossible since we have followed the complete linked chain
+        // In case of LINK: that's impossible since we have followed the complete linked chain
         throw new IllegalStateException("substitute() internal error");
     }
   }

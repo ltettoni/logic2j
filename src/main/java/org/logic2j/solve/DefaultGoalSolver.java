@@ -95,7 +95,7 @@ public class DefaultGoalSolver implements GoalSolver {
         solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, callerFrame, theSolutionListener);
       }
     } else if (Struct.FUNCTOR_CALL == functor) {
-      // call/1 is handled here for efficiency
+      // TODO: call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already implemented)
       if (arity != 1) {
         throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
       }

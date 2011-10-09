@@ -65,38 +65,41 @@ public class Bindings {
 
   /**
    * Determine how free (unbound) variables will be represented in resulting bindings
-   * returned by {@link Bindings#explicitBindings(FreeVarBehaviour)}.
+   * returned by {@link Bindings#explicitBindings(FreeVarRepresentation)}.
    */
-  public enum FreeVarBehaviour {
+  public enum FreeVarRepresentation {
     /**
      * Free variables will not be included in result bindings. Asking the value of 
-     * a variable that is not bound to a literal Term is likely to throw an Exception.
+     * a variable that is not bound to a literal Term is likely to throw a {@link RuntimeException}.
      */
     SKIPPED,
 
     /**
-     * Free variables will be represented by the presence of a Map {@link Entry} with the
-     * variable name as the key, and a null value. You are required to use {@link Map#containsKey(Object)}
+     * Free variables will be represented by the existence of a Map {@link Entry} with 
+     * a valid key, and a value equal to null. You are required to use {@link Map#containsKey(Object)}
      * to identify this case, since {@link Map#get(Object)} returning null won't allow you to distinguish between
-     * a free variable or asking the value of an undefined variable.
+     * a free variable (asking for "X" when X is still unbound) or asking the value of an undefined variable
+     * (asking "TOTO" when not in original goal).
      */
-    NULL_ENTRY,
+    NULL,
 
     /**
-     * TBD
+     * Free variables will be reported with their terminal value. If we have the chain of bindings being
+     * X -> Y -> Z, this mode will represent X with the mapping "X"->"Z". 
+     * A particular case is when X is unified to itself (via a loop), then the mapping becomes "X" -> "X" 
+     * which may not be desireable... See FREE_NOT_SELF.
      */
-    FREE_NOT_SELF,
+    FREE,
 
     /**
-     * Free variables will be reported with their terminal value, this means a free X
-     * will be represented by a mapping "X"->"X". A variable X bound to a free variable Y will
-     * be represented as "X"->"Y".
+     * TBD. 
      */
-    FREE
+    FREE_NOT_SELF
+
   }
 
   /**
-   * {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
+   * A {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
    */
   private static class SetVarInBindingVisitor extends BaseTermVisitor<Var> {
 
@@ -170,7 +173,7 @@ public class Bindings {
    */
   public Bindings(Bindings theOriginal) {
     this.referrer = theOriginal.referrer;
-    int nbVars = theOriginal.bindings.length;
+    final int nbVars = theOriginal.bindings.length;
     this.bindings = new Binding[nbVars];
     // All bindings need cloning
     for (int i = 0; i < nbVars; i++) {
@@ -178,96 +181,74 @@ public class Bindings {
     }
   }
 
-  /**
-   * @return true when this bindings contains no elements (usually, a Struct has no variables, so this
-   * {@link Bindings} is empty).
-   */
-  public boolean isEmpty() {
-    return this.bindings.length == 0;
-  }
 
+  //---------------------------------------------------------------------------
+  // Methods for extracting values from variable Bindings
+  //---------------------------------------------------------------------------
+  
   /**
-   * @param theVariableName
-   * @param theBehaviour
-   * @return The explicit substituted binding for a given variable.
+   * Considering this object's current bindings as a snapshot to a solution, extract
+   * the content of the variables and their bound values in a safe place (a Map) so that
+   * inference can resume towards other solutions.
+   * @param theRepresentation How to represent free (non-ground) variables
+   * @return All variable bindings resolved, with representation as specified for free bindings.
    */
-  public Term explicitBinding(String theVariableName, FreeVarBehaviour theBehaviour) {
-    final Var var = this.referrer.findVar(theVariableName);
-    if (var == null) {
-      throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + this.referrer);
-    }
-    final Term substitute = TERM_API.substitute(var, this, null);
-    return substitute;
-  }
-
-  /**
-   * @param theBehaviour How to represent free (non-ground) variables
-   * @return All variable bindings resolved, with behaviour as specified for free bindings.
-   */
-  public Map<String, Term> explicitBindings(FreeVarBehaviour theBehaviour) {
-    final Map<String, Term> result = new TreeMap<String, Term>();
+  public Map<String, Term> explicitBindings(FreeVarRepresentation theRepresentation) {
+    // For every Binding in this object, identify to which Var it finally refers (following linked bindings)
+    // ending up with either null (on a literal), or a real Var (on a free var).
     final IdentityHashMap<Binding, Var> bindingToVar = new IdentityHashMap<Binding, Var>();
     for (Binding binding : this.bindings) {
-      Binding finalBinding = binding;
-      while (finalBinding.isVar()) {
-        finalBinding = finalBinding.getLink();
-      }
+      // Follow linked bindings
+      final Binding finalBinding = binding.followLinks();
+      // At this stage finalBinding may be either literal, or free
       bindingToVar.put(finalBinding, binding.getVar());
     }
+    
+    final Map<String, Term> result = new TreeMap<String, Term>();
     for (Binding binding : this.bindings) {
-      if (binding.getVar() == null) {
+      final Var originalVar = binding.getVar();
+      if (originalVar == null) {
         throw new IllegalStateException("Bindings not properly initialized: Binding " + binding
             + " does not refer to Var (null)");
       }
-      final String varName = binding.getVar().getName();
-      while (binding.isVar()) {
-        binding = binding.getLink();
-      }
-      final Term boundTerm = binding.getTerm();
+      // The original name of our variable
+      final String originalVarName = originalVar.getName();
+      // Now reach the effective lastest binding
+      binding = binding.followLinks();
+      final Var finalVar = binding.getVar();
       switch (binding.getType()) {
         case LIT:
-          if (varName == null) {
+          if (originalVarName == null) {
             throw new IllegalStateException("Cannot assign null (undefined) var, not all variables of " + this
                 + " are referenced from Term " + this.referrer + ", binding " + binding + " can't be assigned a variable name");
           }
+          final Term boundTerm = binding.getTerm();
           final Term substitute = TERM_API.substitute(boundTerm, binding.getLiteralBindings(), bindingToVar);
-          result.put(varName, substitute);
+          // Literals are not unbound terms, they are returned the same way for all types of representations asked
+          result.put(originalVarName, substitute);
           break;
         case FREE:
-          switch (theBehaviour) {
+          switch (theRepresentation) {
             case SKIPPED:
               // Nothing added to the resulting bindings: no Map entry (no key, no value)
               break;
-            case NULL_ENTRY:
+            case NULL:
               // Add one entry with null value
-              result.put(varName, null);
-              break;
-            case FREE_NOT_SELF:
-              if (binding.getVar() == null) {
-                throw new IllegalStateException(
-                    "Oops the binding of a variable does not refer to it's Term var, so we don't have the name of the variable!");
-              }
-              if (!binding.getVar().getName().equals(varName)) {
-                // Avoid reporting "X=null" for free variables or "X=X" as a binding...
-                result.put(varName, binding.getVar());
-              }
+              result.put(originalVarName, null);
               break;
             case FREE:
-              if (binding.getVar() == null) {
-                throw new IllegalStateException(
-                    "Oops the binding of a variable does not refer to it's Term var, so we don't have the name of the variable!");
+              result.put(originalVarName, finalVar);
+              break;
+            case FREE_NOT_SELF:
+              if (originalVar.getName()!=finalVar.getName()) {
+                // Avoid reporting "X=null" for free variables or "X=X" as a binding...
+                result.put(originalVarName, finalVar);
               }
-              result.put(varName, binding.getVar());
               break;
           }
-          //          if (boundTerm != null) {
-          ////          if (boundTerm != null && !((Var) boundTerm).getName().equals(varName)) {
-          //            // Avoid reporting "X=null" for free variables or "X=X" as a binding...
-          //            result.put(varName, boundTerm);
-          //          }
           break;
-        case VAR:
-          throw new IllegalStateException("Should not happen");
+        case LINK:
+          throw new IllegalStateException("Should not happen we have followed links already");
       }
     }
     return result;
@@ -276,13 +257,15 @@ public class Bindings {
   /**
    * Find the local bindings corresponding to one of the variables of the
    * Struct referred to by this Bindings.
+   * TODO This method is only used once from a library - ensure it makes sense and belongs here
    * @param theVar
    * @return null when not found
    */
   public Bindings findBindings(Var theVar) {
+    // Search root level
     int index = 0;
     for (Binding binding : this.bindings) {
-      // FIXEM: dubious use of == instead of static equality
+      // FIXME: dubious use of == instead of static equality
       if (binding.getVar() == theVar && index == theVar.getIndex()) {
         return this;
       }
@@ -301,10 +284,15 @@ public class Bindings {
     return null;
   }
 
+  
+  //---------------------------------------------------------------------------
+  // Methods of java.lang.Object
+  //---------------------------------------------------------------------------
+  
   @Override
   public String toString() {
     final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
-    if (isEmpty()) {
+    if (getSize()==0) {
       return this.getClass().getSimpleName() + address + "(empty)";
     }
     return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings);
@@ -315,15 +303,16 @@ public class Bindings {
   //---------------------------------------------------------------------------
 
   /**
-   * @return The number of bindings.
+   * @return The number of {@link Binding}s held in this object, corresponds to the
+   * number of distinct variables in {@link #getReferrer()}.
    */
-  public int nbBindings() {
+  public int getSize() {
     return this.bindings.length;
   }
 
   /**
    * @param theIndex
-   * @return The {@link Binding} at theIndex
+   * @return The {@link Binding} at theIndex.
    */
   public Binding getBinding(short theIndex) {
     return this.bindings[theIndex];

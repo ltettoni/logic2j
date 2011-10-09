@@ -22,34 +22,40 @@ import java.util.Map;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.model.var.Bindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings.FreeVarRepresentation;
 
 /**
  * Describes one of the solution(s) to a goal; this includes the resolved {@link Term} (with all
  * bound variables substituted to their actual values - only free variables remaining), and
- * all variable bindings exposed.
- * 
+ * all variable bindings exposed.<br/>
+ * If the goal to be solved was g(X, a(Y, Z)) with X already bound to 2, and Z bound to 3 when the goal was
+ * solved, then Solution provides:
+ * Solution:  g(2, a(Y, 3))
+ * Bindings:  {X -> 2, Y -> null, Z -> 3}.
  */
 public class Solution {
   private static final TermApi TERM_API = new TermApi();
 
-  // The resolved goal with all bound variables resovled to their bound terms
-  // If any variable remains they are free.
+  /**
+   * The solution to a goal, expressed as the goal itself  (with all
+   * bound variables substituted to their actual values - only free variables remaining).
+   */
   private final Term solution;
 
-  // The bindings, per variable
+  /**
+   * The bindings, per variable name.
+   */
   private final Map<String, Term> bindings;
 
   /**
    * Build a solution for the current variable bindings. This will
    * calculate the substituted value of bound variables, i.e. "denormalize" the result
    * and store all bindings as explicit denormalized terms.
-   * @param theGoal
    * @param theBindings
    */
-  public Solution(Term theGoal, Bindings theBindings) {
-    this.solution = TERM_API.substitute(theGoal, theBindings, null);
-    this.bindings = theBindings.explicitBindings(FreeVarBehaviour.NULL_ENTRY);
+  public Solution(Bindings theBindings) {
+    this.solution = TERM_API.substitute(theBindings.getReferrer(), theBindings, null);
+    this.bindings = theBindings.explicitBindings(FreeVarRepresentation.NULL);
   }
 
   //---------------------------------------------------------------------------

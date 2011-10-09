@@ -54,7 +54,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
       onSuperfluousSolution();
     }
     logger.debug(" >>>>>>>>> onSolution(), iter=#{}", this.counter);
-    this.solution = new Solution(this.bindings.getReferrer(), this.bindings);
+    this.solution = new Solution(this.bindings);
     this.counter++;
     return this.counter < this.maxCount;
   }

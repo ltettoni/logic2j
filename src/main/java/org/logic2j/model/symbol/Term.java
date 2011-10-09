@@ -85,6 +85,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
   /**
    * Internal template method; the public API entry point is {@link TermApi#substitute(Term, Bindings, IdentityHashMap)}.
    * @param theBindings
+   * @param theBindingsToVars
    * @return A possibly new (cloned) term with all non-free bindings resolved.
    */
   protected abstract Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars);

@@ -22,18 +22,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.logic2j.PrologTestBase;
 import org.logic2j.PrologImpl.InitLevel;
+import org.logic2j.PrologTestBase;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.model.var.Bindings.FreeVarBehaviour;
+import org.logic2j.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.solve.GoalFrame;
-import org.logic2j.unify.DefaultUnifyer;
-import org.logic2j.unify.Unifyer;
 
 /**
  */
@@ -150,7 +148,7 @@ public class UnifyerTest extends PrologTestBase {
     this.unifyer.unify(x, goalVars, two, goalVars, gf);
     logger.info("goalTerm={}", goalTerm);
     logger.info("Vars: {}", goalVars);
-    logger.info("Bindings: {}", goalVars.explicitBindings(FreeVarBehaviour.SKIPPED));
+    logger.info("Bindings: {}", goalVars.explicitBindings(FreeVarRepresentation.SKIPPED));
     logger.info("goalTerm={}", TERM_API.substitute(goalTerm, goalVars, null));
     assertStaticallyEquals("unify(2,2),unify(2,2)", TERM_API.substitute(goalTerm, goalVars, null));
   }
@@ -165,30 +163,30 @@ public class UnifyerTest extends PrologTestBase {
     GoalFrame goalFrame = new GoalFrame();
     this.unifyer.unify(t1, bindings1, t0, bindings0, goalFrame);
     assertEquals("t(X)", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     // Bind bindings2 to const
     Term t2 = getProlog().term("t(123)");
     Bindings bindings2 = new Bindings(t2);
     this.unifyer.unify(t0, bindings0, t2, bindings2, goalFrame);
     assertEquals("t(123)", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{U=123}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{U=123}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
   }
 
   @Test
-  public void testExplicitBindings_behaviour() {
+  public void testExplicitBindings_representation() {
     Term t1 = getProlog().term("t(X)");
     Bindings bindings1 = new Bindings(t1);
-    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{}", bindings1.explicitBindings(FreeVarBehaviour.FREE_NOT_SELF).toString());
-    assertEquals("{X=X}", bindings1.explicitBindings(FreeVarBehaviour.FREE).toString());
-    assertEquals("{X=null}", bindings1.explicitBindings(FreeVarBehaviour.NULL_ENTRY).toString());
-    //
-    //    Term t2 = getProlog().term("t(_)");
-    //    Bindings bindings2 = new Bindings(t2);
-    //    assertEquals("{}", bindings2.explicitBindings(t1, FreeVarBehaviour.SKIPPED).toString());
-    //    assertEquals("{}", bindings2.explicitBindings(t1, FreeVarBehaviour.FREE_NOT_SELF).toString());
-    //    assertEquals("{X=X}", bindings2.explicitBindings(t1, FreeVarBehaviour.FREE).toString());
-    //    assertEquals("{X=null}", bindings2.explicitBindings(t1, FreeVarBehaviour.NULL_ENTRY).toString());
+    assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+    assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
+    assertEquals("{X=X}", bindings1.explicitBindings(FreeVarRepresentation.FREE).toString());
+    assertEquals("{X=null}", bindings1.explicitBindings(FreeVarRepresentation.NULL).toString());
+    // No bindings since no variable in this one:
+    Term t2 = getProlog().term("t(_)");
+    Bindings bindings2 = new Bindings(t2);
+    assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+    assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
+    assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.FREE).toString());
+    assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.NULL).toString());
   }
 
   @Test
@@ -203,8 +201,8 @@ public class UnifyerTest extends PrologTestBase {
     assertTrue(this.unifyer.unify(t1, bindings1, t0, bindings0, goalFrame));
     assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
     assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{X=[1|_]}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{X=[1|_]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+    assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     // Bind bindings2 to const
     Term t1b = clause.getRHS(); // Body of first hitting clause
     Term t2 = getProlog().term("append2([],L2,L2)"); // Body of second hitting clause
@@ -212,8 +210,8 @@ public class UnifyerTest extends PrologTestBase {
     assertTrue(this.unifyer.unify(t1b, bindings1, t2, bindings2, goalFrame));
     assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, bindings1, null).toString(DEFAULT_FORMATTER));
     assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, bindings2, null).toString(DEFAULT_FORMATTER));
-    assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", bindings1.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
-    assertEquals("{X=[1,2,3]}", bindings0.explicitBindings(FreeVarBehaviour.SKIPPED).toString());
+    assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+    assertEquals("{X=[1,2,3]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
   }
 
   public void assertStaticallyEquals(CharSequence expectedStr, Term theActual) {

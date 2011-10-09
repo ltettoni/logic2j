@@ -34,9 +34,8 @@ import org.logic2j.solve.GoalFrame;
  * type     literalBindings               term           link
  * -----------------------------------------------------------------------------------------------------
  * FREE     null                          null(*)        null
- * LIT      bindings of the literal term      ref to term    null
- * VAR      null                          null           ref to a Binding
- *                                                       representing the bound var
+ * LIT      bindings of the literal term  ref to term    null
+ * LINK     null                          null           ref to a Binding representing the bound var
  *
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term" 
  *     member to point to the variable, this allows retrieving its name for reporting 
@@ -47,7 +46,7 @@ import org.logic2j.solve.GoalFrame;
 public class Binding implements Cloneable {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Binding.class);
   private static final boolean debug = logger.isDebugEnabled();
-  
+
   // See description of fields in this class' Javadoc, and on getters.
 
   private BindingType type;
@@ -109,7 +108,7 @@ public class Binding implements Cloneable {
       if (targetBinding == this) {
         return;
       }
-      this.type = BindingType.VAR;
+      this.type = BindingType.LINK;
       this.term = null;
       this.literalBindings = null;
       this.link = targetBinding;
@@ -125,12 +124,18 @@ public class Binding implements Cloneable {
     }
   }
 
-  public boolean isVar() {
-    return this.type == BindingType.VAR;
-  }
-
-  public boolean isLiteral() {
-    return this.type == BindingType.LIT;
+  /**
+   * Follow chains of linked bindings.
+   * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. 
+   * The result is guaranteed to be either {@link #isFree()} or {@link #isLiteral()}.
+   */
+  public Binding followLinks() {
+    Binding result = this;
+    // Maybe we should use isLink() and getters, but be efficient!
+    while (result.type == BindingType.LINK) {
+      result = result.link;
+    }
+    return result;
   }
 
   /**
@@ -144,13 +149,17 @@ public class Binding implements Cloneable {
     this.link = null;
   }
 
+  //---------------------------------------------------------------------------
+  // Core java.lang.Object
+  //---------------------------------------------------------------------------
+
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append(getVar());
     sb.append(':');
     sb.append(this.type);
-    
+
     switch (this.type) {
       case LIT:
         sb.append("->");
@@ -160,7 +169,7 @@ public class Binding implements Cloneable {
           sb.append(Integer.toHexString(this.literalBindings.hashCode()));
         }
         break;
-      case VAR:
+      case LINK:
         sb.append("->");
         sb.append(this.link);
         break;
@@ -189,25 +198,26 @@ public class Binding implements Cloneable {
 
   /**
    * Reference to a bound term: for {@link BindingType#LIT}, this is the literal,
-   * for {@link BindingType#VAR}, it refers to the {@link Term} of subclass {@link Var}.
+   * for {@link BindingType#LINK}, it refers to the {@link Term} of subclass {@link Var}.
    */
   public Term getTerm() {
     return this.term;
-  }
-
-  public Binding getLink() {
-    return this.link;
   }
 
   public Var getVar() {
     return this.var;
   }
 
-  public void setVar(Var theVar) {
+  void setVar(Var theVar) {
     this.var = theVar;
   }
 
   public boolean isFree() {
     return this.type == BindingType.FREE;
   }
+
+  public boolean isLiteral() {
+    return this.type == BindingType.LIT;
+  }
+
 }
