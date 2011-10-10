@@ -111,6 +111,7 @@ public class CoreLibraryTest extends PrologTestBase {
     assertNoSolution("a(b,c,d) =.. f");
     assertEquals("[a,b,c,d]", assertOneSolution("a(b,c,d) =.. X").binding("X").toString());
     assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
+    //
     UniqueSolutionHolder sol = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]");
     assertEquals("coco(Com)", sol.binding("Expr").toString(DEFAULT_FORMATTER));
     assertEquals("coco", sol.binding("Pred").toString());
@@ -203,8 +204,14 @@ public class CoreLibraryTest extends PrologTestBase {
   
   @Test
   public void atom_length() throws Exception {
+    assertOneSolution("X=abc, atom_length(X, 3)");
+//
     assertOneSolution("atom_length(a, 1)");
-    assertNoSolution("atom_length(ab, 1)");
+    assertOneSolution("atom_length(abc, 3)");
+    assertNoSolution("atom_length(abc, 1)");
+    // 
+    assertOneSolution("X=abc, atom_length(X, 3)");
+    assertNoSolution("X=abc, atom_length(X, 1)");
     //
     assertOneSolution("atom_length(abc, X), X=3");
     // TODO: This fails with an Exception - improve

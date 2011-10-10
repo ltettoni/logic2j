@@ -89,24 +89,15 @@ public class LibraryBase implements PLibrary {
   }
 
   
-
-  
   /**
-   * Resolve a Term: when it's a Var, will dereference to its bound value; if it's a free Var, will return it.
-   * When it's not a Var, will return the term as is.
-   * TODO: clarify these methods to access terms!!!
-   * @param theTerm
    * @param theBindings
-   * @param theClass
-   * @return The term of class theClass
+   * @param thePrimitive
    */
-  // FIXME: big ugly bug: when we dereference until a free var, we need to also return the Bindings associated to it, otherwise the index is wrong in our current "theBindings" !!!!!
-  @Deprecated // Use Bindings#focus()
-  protected <T extends Term> T resolve(Term theTerm, Bindings theBindings, Class<T> theClass) {
-    final Term result = TERM_API.substitute(theTerm, theBindings, null);
-    return ReflectUtils.safeCastNotNull("obtaining resolved term", result, theClass);
+  protected void assertValidBindings(Bindings theBindings, String thePrimitive) {
+    if (theBindings.isFreeReferrer()) {
+      throw new IllegalArgumentException("Cannot call primitive " + thePrimitive + " with a free variable goal");
+    }
   }
-
   
   // TODO assess if needed
   protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
@@ -114,22 +105,6 @@ public class LibraryBase implements PLibrary {
       return ((Var) theTerm).bindingWithin(theBindings).followLinks();
     }
     return Binding.createLiteralBinding(theTerm, theBindings);
-  }
-
-  /**
-   * Resolve a term that may be a variable, until we found a ground value for it.
-   * If we can't find a ground value, will throw an {@link InvalidTermException}.
-   * @param theTerm
-   * @param theBindings
-   * @param thePrimitiveName
-   * @return A Term, cannot be a (free) Var
-   */
-  protected Term resolveNonVar(Term theTerm, Bindings theBindings, String thePrimitiveName) {
-    final Term result = TERM_API.substitute(theTerm, theBindings, null);
-    if (result instanceof Var) {
-      throw new InvalidTermException("Argument to primitive " + thePrimitiveName + " may not be a variable, was: " + result);
-    }
-    return result;
   }
 
   /**

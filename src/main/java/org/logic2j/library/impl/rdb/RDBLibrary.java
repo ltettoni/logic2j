@@ -89,16 +89,16 @@ public class RDBLibrary extends LibraryBase {
     Term theExpression = theArguments[1];
     final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
-    // Watch out - by resolving, the variables remaining free have new offets! We won't be able to bind them in the original goal!!!
-    final Struct conditions = resolve(theExpression, theBindings, Struct.class);
-
+    final Bindings expressionBindings = theBindings.focus(theExpression, Struct.class);
+    assertValidBindings(expressionBindings, "select/*");
+    final Struct conditions = (Struct) expressionBindings.getReferrer();
+    
     // Options
     Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
     boolean isDistinct = optionSet.contains(new Struct("distinct"));
 
     //
     String resultVar = "Tbl";
-
 
 
     // The goal we are solving
@@ -361,9 +361,10 @@ public class RDBLibrary extends LibraryBase {
    * @return Unwrap a StructObject bound term to a pojo.
    */
   private <T> T bound(Term theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
-    //    final StructObject<T> structObject = resolve(theBinding, bindings, StructObject.class);
-    //    final Object instance = structObject.getObject();
-    final Struct bindingName = resolve(theBinding, theBindings, Struct.class);
+    final Bindings b = theBindings.focus(theBinding, Struct.class);
+    assertValidBindings(b, "bound");
+    final Struct bindingName = (Struct) b.getReferrer();
+    
     final Object instance = PojoLibrary.extract(bindingName.getName());
     return ReflectUtils.safeCastNotNull("unwrapping binding \"" + instance + '"', instance, desiredClassOrInterface);
   }

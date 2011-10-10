@@ -190,6 +190,9 @@ public class Bindings {
    */
   private Bindings(Bindings theOriginal, Term theTerm) {
     this.referrer = theTerm;
+    // 
+//    this.bindings = theOriginal.bindings;
+    // Cloning - not necessary??
     final int nbVars = theOriginal.bindings.length;
     this.bindings = new Binding[nbVars];
     // All bindings need cloning
@@ -212,16 +215,17 @@ public class Bindings {
    */
   public Bindings focus(Term theTerm, Class<? extends Term> theClass) {
     if (theTerm instanceof Var) {
-      final Var var = (Var)theTerm;
-      if (var.isAnonymous()) {
+      final Var origin = (Var)theTerm;
+      if (origin.isAnonymous()) {
         return null;
       }
       // Go to fetch the effective variable value if any
-      final Binding finalBinding = var.bindingWithin(this).followLinks();
+      final Binding finalBinding = origin.bindingWithin(this).followLinks();
       if (finalBinding.getType()==BindingType.LIT) {
         return new Bindings(finalBinding.getLiteralBindings(), finalBinding.getTerm());
       } else if (finalBinding.getType()==BindingType.FREE) {
-        return null;
+        // Refocus on original var (we now know it is free), keep the same original bindings
+        return new Bindings(this, origin);
       } else {
         throw new IllegalStateException("Should not have been here");
       }
@@ -333,6 +337,15 @@ public class Bindings {
     return null;
   }
 
+  /**
+   * @return true if this {@link Bindings}'s {@link #getReferrer()} is a free variable.
+   */
+  public boolean isFreeReferrer() {
+    if (! (this.referrer instanceof Var)) {
+      return false;
+    }
+    return ((Var)this.referrer).bindingWithin(this).followLinks().isFree();
+  }
   
   //---------------------------------------------------------------------------
   // Methods of java.lang.Object
@@ -374,5 +387,5 @@ public class Bindings {
   public Term getReferrer() {
     return this.referrer;
   }
-  
+
 }

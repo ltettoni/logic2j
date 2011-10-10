@@ -42,7 +42,9 @@ public class IOLibrary extends LibraryBase {
   @Primitive
   public void write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
     for (Term term : terms) {
-      final Term value = resolve(term, theBindings, Term.class);
+      final Bindings b = theBindings.focus(term, Term.class);
+      final Term value = b.getReferrer();
+      
       String format = getProlog().getFormatter().format(value);
       format = FormatUtils.removeApices(format);
       this.writer.print(format);
@@ -60,7 +62,10 @@ public class IOLibrary extends LibraryBase {
   @Primitive
   public void log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
     for (Term term : terms) {
-      final Term value = resolve(term, theBindings, Term.class);
+      final Bindings b = theBindings.focus(term, Term.class);
+      assertValidBindings(b, "write/*");
+      final Term value = b.getReferrer();
+      
       String format = getProlog().getFormatter().format(value);
       format = FormatUtils.removeApices(format);
       logger.info(format);

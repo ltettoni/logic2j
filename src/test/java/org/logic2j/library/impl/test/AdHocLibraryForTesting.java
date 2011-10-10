@@ -39,8 +39,14 @@ public class AdHocLibraryForTesting extends LibraryBase {
   @Primitive
   public void int_range(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theLowerBound,
       Term theIterable, Term theUpperBound) {
-    final long lower = resolve(theLowerBound, theBindings, TNumber.class).longValue();
-    final long upper = resolve(theUpperBound, theBindings, TNumber.class).longValue();
+    final Bindings b1 = theBindings.focus(theLowerBound, TNumber.class);
+    assertValidBindings(b1, "int_range/3");
+    final long lower = ((TNumber)b1.getReferrer()).longValue();
+    
+    final Bindings b2 = theBindings.focus(theUpperBound, TNumber.class);
+    assertValidBindings(b2, "int_range/3");
+    final long upper = ((TNumber)b2.getReferrer()).longValue();
+    
     for (long iter = lower; iter <= upper; iter++) {
       final TLong iterTerm = new TLong(iter);
       final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings, theGoalFrame);

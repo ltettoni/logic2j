@@ -47,11 +47,14 @@ public class PojoLibrary extends LibraryBase {
 
   @Primitive
   public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
-    final Struct t1 = resolve(theBindingName, theBindings, Struct.class);
-    final String name = t1.getName();
+    final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
+    assertValidBindings(nameBindings, "bind/2");
+    final Struct nameTerm = (Struct) nameBindings.getReferrer();
+    
+    final String name = nameTerm.getName();
     final Object instance = extract(name);
     final Term instanceTerm = createConstantTerm(instance);
-    final boolean unified = unify(instanceTerm, theBindings, theTarget, theBindings, theGoalFrame);
+    final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 

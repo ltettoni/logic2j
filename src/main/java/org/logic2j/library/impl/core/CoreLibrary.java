@@ -74,7 +74,9 @@ public class CoreLibrary extends LibraryBase {
   
   @Primitive
   public void atomic(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
-    final Term effectiveTerm = resolve(theTerm, theBindings, Term.class);
+    final Bindings b = theBindings.focus(theTerm, Term.class);
+    assertValidBindings(b, "atomic/1");
+    final Term effectiveTerm = b.getReferrer();
     if (effectiveTerm instanceof Struct || effectiveTerm instanceof TNumber) {
       notifySolution(theGoalFrame, theListener);
     }
@@ -82,7 +84,9 @@ public class CoreLibrary extends LibraryBase {
 
   @Primitive
   public void number(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
-    final Term effectiveTerm = resolve(theTerm, theBindings, Term.class);
+    final Bindings b = theBindings.focus(theTerm, Term.class);
+    assertValidBindings(b, "number/1");
+    final Term effectiveTerm = b.getReferrer();
     if (effectiveTerm instanceof TNumber) {
       notifySolution(theGoalFrame, theListener);
     }
@@ -113,40 +117,47 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void atom_length(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
-    final Struct contentTerm = resolve(t1, theBindings, Struct.class);
-    final TLong effectiveLengthTerm = createTLong(contentTerm.getName().length());
-    final boolean unified = unify(effectiveLengthTerm, theBindings, t2, theBindings, theGoalFrame);
+  public void atom_length(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theAtom, Term theLength) {
+    final Bindings atomBindings = theBindings.focus(theAtom, Struct.class);
+    assertValidBindings(atomBindings, "atom_length/2");
+    final Struct atom = (Struct) atomBindings.getReferrer();
+    
+    final TLong atomLength = createTLong(atom.getName().length());
+    final boolean unified = unify(atomLength, atomBindings, theLength, theBindings, theGoalFrame);
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
   
-  /**
-   * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
-   * @param theGoalFrame
-   * @param theBindings
-   * @param t1
-   */
-  @Primitive
-  public void call(final SolutionListener theListener, final GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
-    // Resolve bindings wherever possible
-    final Term target = resolveNonVar(t1, theBindings, "call");
-    final SolutionListenerBase callListener = new SolutionListenerBase() {
-      @SuppressWarnings("synthetic-access")
-      // does not affect performance at all
-      @Override
-      public boolean onSolution() {
-        notifySolution(theGoalFrame, theListener);
-        return true;
-      }
-    };
-    // TODO Need more testing of call/1, quite unsure if this way of doing is reliable
-    getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
-  }
+//  /**
+//   * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
+//   * @param theGoalFrame
+//   * @param theBindings
+//   * @param t1
+//   */
+//  @Primitive
+//  public void call(final SolutionListener theListener, final GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
+//    // Resolve bindings wherever possible
+//    final Term target = resolveNonVar(t1, theBindings, "call");
+//    final SolutionListenerBase callListener = new SolutionListenerBase() {
+//      @SuppressWarnings("synthetic-access")
+//      // does not affect performance at all
+//      @Override
+//      public boolean onSolution() {
+//        notifySolution(theGoalFrame, theListener);
+//        return true;
+//      }
+//    };
+//    // TODO Need more testing of call/1, quite unsure if this way of doing is reliable
+//    getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
+//  }
 
   @Primitive(synonyms = "\\+")
   public void not(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theGoal) {
-    // Resolve bindings wherever possible
-    final Term target = resolveNonVar(theGoal, theBindings, "not");
+    final Bindings b = theBindings.focus(theGoal, Struct.class);
+    assertValidBindings(b, "\\+/1");
+    final Term target = b.getReferrer();
+    
+    
+//    final Term target = resolveNonVar(theGoal, theBindings, "not");
     final class AdHocListener implements SolutionListener {
       public boolean found = false;
 
@@ -168,12 +179,8 @@ public class CoreLibrary extends LibraryBase {
   public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term projection,
       final Term theGoal, final Term theResult) {
     final Bindings goalBindings = theBindings.focus(theGoal, Term.class);
-    if (goalBindings==null) {
-      throw new IllegalArgumentException("Cannot call findall/3 with goal as a free variable");
-    }
+    assertValidBindings(goalBindings, "findall/3");
     final Term effectiveGoal = goalBindings.getReferrer();
-    
-    
     
     // Define a listener to collect all solutions for the goal specified
     final ArrayList<Term> javaResults = new ArrayList<Term>(); // Our internal collection of results
@@ -218,6 +225,7 @@ public class CoreLibrary extends LibraryBase {
     notifyIfUnified(unified, theGoalFrame, theListener);
   }
 
+ 
   @Primitive
   public void clause(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theHead, Term theBody) {
     final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
@@ -244,10 +252,12 @@ public class CoreLibrary extends LibraryBase {
   @Primitive(name = "=..")
   public void predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term thePredicate, Term theList) {
     Bindings resolvedBindings = theBindings.focus(thePredicate, Term.class);
-    if (resolvedBindings==null) {
+    
+    if (resolvedBindings.isFreeReferrer()) {
       // thePredicate is still free, going ot match from theList
       resolvedBindings = theBindings.focus(theList, Term.class);
-      if (resolvedBindings==null) {
+      assertValidBindings(resolvedBindings, "=../2");
+      if (resolvedBindings.isFreeReferrer()) {
         throw new IllegalArgumentException("Predicate =.. does not accept both arguments as free variable");
       }
       Struct lst2 = (Struct) resolvedBindings.getReferrer();
@@ -269,28 +279,6 @@ public class CoreLibrary extends LibraryBase {
         notifyIfUnified(unified, theGoalFrame, theListener);
       }
     }
-    
-//    if (predResolved instanceof Struct) {
-//      Struct struct = (Struct) predResolved;
-//      ArrayList<Term> elems = new ArrayList<Term>();
-//      elems.add(new Struct(struct.getName())); // Only copying the functor as an atom, not a deep copy of the struct!
-//      int arity = struct.getArity();
-//      for (int i = 0; i < arity; i++) {
-//        elems.add(struct.getArg(i));
-//      }
-//      Struct plist = Struct.createPList(elems);
-//      final boolean unified = unify(theList, theBindings, plist, resolvedBindings, theGoalFrame);
-//      notifyIfUnified(unified, theGoalFrame, theListener);
-//    } else if (predResolved instanceof Var) {
-//      final Term lst = resolve(theList, theBindings, Term.class);
-//      if (!lst.isList()) {
-//        throw new InvalidTermException("Second argument to =.. must be a List was " + lst);
-//      }
-//      Struct lst2 = (Struct) lst;
-//      Struct flattened = lst2.predicateFromPList();
-//      final boolean unified = unify(thePredicate, theBindings, flattened, theBindings, theGoalFrame);
-//      notifyIfUnified(unified, theGoalFrame, theListener);
-//    }
   }
 
   @Primitive
