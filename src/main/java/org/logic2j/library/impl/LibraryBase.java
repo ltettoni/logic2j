@@ -19,7 +19,6 @@ package org.logic2j.library.impl;
 
 import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
-import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.prim.PLibrary;
 import org.logic2j.model.prim.PrimitiveInfo;
 import org.logic2j.model.prim.PrimitiveInfo.PrimitiveType;
@@ -32,7 +31,6 @@ import org.logic2j.model.var.Binding;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
-import org.logic2j.util.ReflectUtils;
 
 /**
  * Base class for libraries.

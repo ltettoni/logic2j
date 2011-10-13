@@ -39,7 +39,7 @@ import org.logic2j.util.ReportUtils;
  * Prolog's most classic way of providing sequence of clauses to the {@link GoalSolver} inference engine:
  * all clauses are parsed and normalized from one or several theories' textual content managed
  * by this class.
- *
+ * TODO Is the name "Manager" correct here???
  */
 public class DefaultTheoryManager implements TheoryManager {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
