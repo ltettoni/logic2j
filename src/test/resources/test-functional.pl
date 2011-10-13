@@ -77,7 +77,7 @@ bool_3t_2f(false).
 
 
 % Testing a bug: call/1 was not dereferencing variables properly
-call_over_call(Goal) :- call(Goal).   % A "meta" call implemented in Prolog
+call_over_call(Goal) :- call(Goal).   % call_over_call is a Prolog clause wrapper to Prolog goal.
 call_check(1).
 call_check(2).
 call_check(3).
