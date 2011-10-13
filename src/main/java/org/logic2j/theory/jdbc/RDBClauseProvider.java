@@ -40,7 +40,7 @@ import org.logic2j.util.SqlRunner;
  * When trying to solve the goal "zipcode_city(94101, City)" which yields City='SAN FRANCISCO', 
  * this class expects a database table or view such as "PRED_ZIPCODE_CITY(INTEGER ARG_0, VARCHAR ARG_1)".
  */
-public class DBClauseProvider extends RDBBase implements ClauseProvider {
+public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
   /**
    * The target database is supposed to implement tables, or (more realistically) views
@@ -50,7 +50,7 @@ public class DBClauseProvider extends RDBBase implements ClauseProvider {
   private static final String PREDICATE_TABLE_OR_VIEW_HEADER = "pred_";
   private static final String PREDICATE_COLUMN_HEADER = "arg_";
 
-  public DBClauseProvider(PrologImplementor theProlog, DataSource theDataSource) {
+  public RDBClauseProvider(PrologImplementor theProlog, DataSource theDataSource) {
     super(theProlog, theDataSource);
   }
 

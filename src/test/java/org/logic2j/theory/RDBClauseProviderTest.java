@@ -26,16 +26,16 @@ import org.junit.Test;
 import org.logic2j.PrologWithDataSourcesTestBase;
 import org.logic2j.library.impl.rdb.RDBBase;
 import org.logic2j.model.symbol.Struct;
-import org.logic2j.theory.jdbc.DBClauseProvider;
+import org.logic2j.theory.jdbc.RDBClauseProvider;
 
-public class DBClauseProviderTest extends PrologWithDataSourcesTestBase {
-  private DBClauseProvider provider;
+public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
+  private RDBClauseProvider provider;
 
   @Override
   @Before
   public void setUp() {
     super.setUp();
-    this.provider = new DBClauseProvider(getProlog(), zipcodesDataSource());
+    this.provider = new RDBClauseProvider(getProlog(), zipcodesDataSource());
   }
 
   @Test
