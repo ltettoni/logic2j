@@ -181,12 +181,18 @@ public class PrologImpl implements PrologImplementor {
   }
 
   @Override
+  public SolutionHolder solve(Term theGoal) {
+    return new SolutionHolder(this, new Bindings(theGoal));
+  }
+
+  @Override
   public SolutionHolder solve(CharSequence theGoal) {
     // Perhaps we could transform the goal into a real clause?
     final Term parsed = term(theGoal);
-    return new SolutionHolder(this, new Bindings(parsed));
+    return solve(parsed);
   }
 
+  
   @Override
   public String toString() {
     return ReportUtils.shortDescription(this);

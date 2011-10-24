@@ -43,6 +43,8 @@ public interface Prolog {
    */
   public abstract SolutionHolder solve(CharSequence theGoal);
 
+  public abstract SolutionHolder solve(Term theGoal);
+
   public abstract TermFactory getTermFactory();
 
   /**
