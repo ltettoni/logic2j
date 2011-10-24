@@ -27,8 +27,6 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.logic2j.PrologImpl;
-import org.logic2j.PrologImplementor;
 import org.logic2j.PrologImpl.InitLevel;
 import org.logic2j.TermFactory.FactoryMode;
 import org.logic2j.io.format.DefaultFormatter;
@@ -79,9 +77,10 @@ public abstract class PrologTestBase {
     SolutionHolder.UniqueSolutionHolder result = null;
     for (int i = 0; i < theGoals.length; i++) {
       final CharSequence goal = theGoals[i];
+      final Term parsed = getProlog().term(goal);
       logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-      SolutionHolder solve = getProlog().solve(goal);
-      result = solve.unique();
+      final SolutionHolder solution = getProlog().solve(parsed);
+      result = solution.unique();
       //      assertEquals(theNumber, result.number());
     }
     return result;
@@ -117,8 +116,9 @@ public abstract class PrologTestBase {
     SolutionHolder solve = null;
     for (int i = 0; i < theGoals.length; i++) {
       final CharSequence goal = theGoals[i];
+      final Term parsed = getProlog().term(goal);
       logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
-      solve = getProlog().solve(goal);
+      solve = getProlog().solve(parsed);
       assertEquals(theNumber, solve.number());
     }
     return solve;
