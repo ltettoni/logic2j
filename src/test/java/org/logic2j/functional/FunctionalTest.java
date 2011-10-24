@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.logic2j.PrologTestBase;
 import org.logic2j.library.impl.io.IOLibrary;
 import org.logic2j.solve.SolutionHolder.MultipleSolutionsHolder;
+import org.logic2j.solve.SolutionHolder.UniqueSolutionHolder;
 import org.logic2j.util.CollectionUtils;
 
 /**
@@ -127,6 +128,14 @@ public class FunctionalTest extends PrologTestBase {
     assertOneSolution("findall(X, a(X), [1,2,3])");
   }
 
+  @Test
+  public void test_findall_bindFreeVars() throws IOException {
+//    UniqueSolutionHolder sol = assertOneSolution("Res=Z");
+    UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
+   assertEquals("[a,X,c]", sol.binding("Res").toString());
+  }
+
+    
   @Test
   public void test_member() throws IOException {
     addTheory("src/test/resources/test-functional.pl");
