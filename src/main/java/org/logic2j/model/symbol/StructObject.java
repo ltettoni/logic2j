@@ -21,7 +21,6 @@ import org.logic2j.model.TermVisitor;
 
 /**
  * A {@link Struct} that holds a wrapped object.
- *
  */
 public class StructObject<T> extends Struct {
   private static final long serialVersionUID = 1L;
