@@ -28,7 +28,7 @@ import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
 import org.logic2j.library.impl.rdb.RDBBase;
 import org.logic2j.model.Clause;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.theory.jdbc.SqlBuilder3.Table;

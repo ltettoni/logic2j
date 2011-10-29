@@ -17,7 +17,7 @@
  */
 package org.logic2j.model.var;
 
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.Var;
@@ -41,7 +41,6 @@ import org.logic2j.solve.GoalFrame;
  *     member to point to the variable, this allows retrieving its name for reporting 
  *     bindings to the application code.
  * </pre>
- * 
  */
 public class Binding implements Cloneable {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Binding.class);

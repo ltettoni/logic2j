@@ -43,7 +43,6 @@ import org.logic2j.util.ReportUtils;
 
 /**
  * Root Prolog API implementation.
- *
  */
 public class PrologImpl implements PrologImplementor {
   /**

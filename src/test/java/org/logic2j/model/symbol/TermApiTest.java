@@ -31,7 +31,7 @@ import org.logic2j.Prolog;
 import org.logic2j.PrologImpl;
 import org.logic2j.PrologImpl.InitLevel;
 import org.logic2j.TermFactory.FactoryMode;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TLong;
 import org.logic2j.model.symbol.Term;

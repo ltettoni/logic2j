@@ -15,13 +15,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.model.prim;
+package org.logic2j.library.mgmt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.logic2j.model.InvalidTermException;
-import org.logic2j.model.RecursionException;
+import org.logic2j.library.PLibrary;
+import org.logic2j.model.exception.InvalidTermException;
+import org.logic2j.model.exception.RecursionException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;

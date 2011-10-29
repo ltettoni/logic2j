@@ -23,9 +23,8 @@ import java.util.Map;
 
 import org.logic2j.LibraryManager;
 import org.logic2j.Prolog;
-import org.logic2j.model.prim.PLibrary;
-import org.logic2j.model.prim.PrimitiveInfo;
-import org.logic2j.model.prim.PrimitiveInfo.PrimitiveType;
+import org.logic2j.library.PLibrary;
+import org.logic2j.library.mgmt.PrimitiveInfo.PrimitiveType;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;

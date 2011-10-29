@@ -20,7 +20,6 @@ package org.logic2j.library.mgmt;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.logic2j.model.prim.PrimitiveInfo;
 
 /**
  *

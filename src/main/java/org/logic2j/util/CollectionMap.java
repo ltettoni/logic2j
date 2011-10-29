@@ -22,12 +22,10 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 
 /**
+ * A Map whose values are collections.
  */
 public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Collection<TypeValue>> {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = -2612104820556647913L;
 
   /**

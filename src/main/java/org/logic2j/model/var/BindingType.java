@@ -21,7 +21,6 @@ import org.logic2j.model.symbol.Var;
 
 /**
  * Types of bindings that a variable may have.
- *
  */
 public enum BindingType {
 

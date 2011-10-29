@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.logic2j.ClauseProvider;
-import org.logic2j.model.prim.PLibrary;
+import org.logic2j.library.PLibrary;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.solve.GoalSolver;

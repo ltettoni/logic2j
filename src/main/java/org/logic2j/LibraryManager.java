@@ -17,8 +17,8 @@
  */
 package org.logic2j;
 
+import org.logic2j.library.PLibrary;
 import org.logic2j.library.mgmt.LibraryContent;
-import org.logic2j.model.prim.PLibrary;
 
 /**
  * An API to manage libraries implementing Prolog features in Java.

@@ -17,9 +17,9 @@
  */
 package org.logic2j.solve.ioc;
 
+import org.logic2j.model.exception.IllegalSolutionException;
+import org.logic2j.model.exception.MissingSolutionException;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.solve.IllegalSolutionException;
-import org.logic2j.solve.MissingSolutionException;
 import org.logic2j.solve.Solution;
 
 /**

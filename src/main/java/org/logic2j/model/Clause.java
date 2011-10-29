@@ -18,6 +18,7 @@
 package org.logic2j.model;
 
 import org.logic2j.Prolog;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;
@@ -32,7 +33,6 @@ import org.logic2j.theory.TheoryManager;
  * <li>A Struct with any functor different from :- (this is recommended and more optimal)</li>
  * <li>A Struct with functor :- and "true" as body (this is less optimal)</li>
  * </ol>
- *
  */
 public class Clause {
 

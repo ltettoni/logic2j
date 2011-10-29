@@ -19,9 +19,9 @@ package org.logic2j.solve;
 
 import org.logic2j.ClauseProvider;
 import org.logic2j.PrologImplementor;
+import org.logic2j.library.mgmt.PrimitiveInfo;
 import org.logic2j.model.Clause;
-import org.logic2j.model.InvalidTermException;
-import org.logic2j.model.prim.PrimitiveInfo;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;

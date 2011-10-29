@@ -27,9 +27,9 @@ import java.net.URL;
 
 import org.logic2j.PrologImplementor;
 import org.logic2j.io.parse.tuprolog.Parser;
+import org.logic2j.library.PLibrary;
 import org.logic2j.model.Clause;
-import org.logic2j.model.InvalidTermException;
-import org.logic2j.model.prim.PLibrary;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.solve.GoalSolver;

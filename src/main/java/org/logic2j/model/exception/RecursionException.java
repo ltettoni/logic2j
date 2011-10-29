@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.model;
+package org.logic2j.model.exception;
 
 /**
  * Recursion error - either too many loops, or a {@link StackOverflowError} was caught somewhere.

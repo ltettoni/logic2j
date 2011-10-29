@@ -20,8 +20,8 @@ package org.logic2j.model.symbol;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 
-import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.var.Binding;
 import org.logic2j.model.var.Bindings;
 

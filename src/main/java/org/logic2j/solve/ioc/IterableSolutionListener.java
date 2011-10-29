@@ -21,12 +21,15 @@ import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.Solution;
 
 /**
- * A {@link SolutionListener} that will focus on the first solution only.
- *
+ * A {@link SolutionListener} that allows the caller of the resolution engine
+ * to enumerates solutions to his goal, like all Prolog APIs do.
+ * This uses synchronization between two threads, the Prolog engine being the producer
+ * thread that calls back this implementation of {@link SolutionListener#onSolution()}, which 
+ * in turn notifies the consumer thread (the caller) of a solution.
  */
 public class IterableSolutionListener implements SolutionListener {
 
-  protected Bindings bindings;
+  private Bindings bindings;
 
   /**
    * @param theBindings
@@ -37,68 +40,37 @@ public class IterableSolutionListener implements SolutionListener {
   }
 
   /**
-   * Synchronized interface with temporal and content exchange between 
-   * two threads.
-   *
-   */
-  public static class SynchronizedInterface<T> {
-    public boolean ready = false;
-    public T content = null;
-
-    /**
-     * Indicate that the other thread can be restart - but without exchanged content.
-     */
-    public synchronized void available() {
-      this.ready = true;
-      this.content = null;
-      this.notify();
-    }
-
-    /**
-     * Indicate that the other thread can be restart - with exchanged content.
-     * @param theContent
-     */
-    public synchronized void available(T theContent) {
-      this.ready = true;
-      this.content = theContent;
-      this.notify();
-    }
-
-    /**
-     * Tell this thread that content (or just a signal without content) is 
-     * expected from the other thread. If nothing is yet ready, this thread
-     * goes to sleep.
-     * @return The content exchanged, or null when none.
-     */
-    public synchronized T waitUntilAvailable() {
-      while (!this.ready) {
-        try {
-          this.wait();
-        } catch (InterruptedException e) {
-          throw new RuntimeException("Exception not handled: " + e, e);
-        }
-      }
-      this.ready = false;
-      return this.content;
-    }
-  }
-
-  /**
    * Interface between the main thread (consumer) and the prolog solver thread (producer).
    */
-  public SynchronizedInterface<Solution> requestSolution = new SynchronizedInterface<Solution>();
+  private SynchronizedInterface<Solution> clientToEngineInterface = new SynchronizedInterface<Solution>();
 
   /**
    * Interface between the prolog solver thread (producer) and the main thread (consumer).
    */
-  public SynchronizedInterface<Solution> provideSolution = new SynchronizedInterface<Solution>();
+  private SynchronizedInterface<Solution> engineToClientInterface = new SynchronizedInterface<Solution>();
 
   @Override
   public boolean onSolution() {
+    // We've got one solution already!
     final Solution solution = new Solution(this.bindings);
-    this.requestSolution.waitUntilAvailable();
-    this.provideSolution.available(solution);
+    // Ask our client to stop requesting more!
+    this.clientToEngineInterface.waitUntilAvailable();
+    // Provide the solution to the client, this wakes him up
+    this.engineToClientInterface.hereIsTheData(solution);
+    // Continue for more solutions
     return true;
+  }
+
+  //---------------------------------------------------------------------------
+  // Accessors
+  //---------------------------------------------------------------------------
+
+  public SynchronizedInterface<Solution> clientToEngineInterface() {
+    return this.clientToEngineInterface;
+  }
+
+  public SynchronizedInterface<Solution> engineToClientInterface() {
+    return this.engineToClientInterface;
   }
 
 }

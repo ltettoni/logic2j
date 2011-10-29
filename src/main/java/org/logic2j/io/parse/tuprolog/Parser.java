@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 import org.logic2j.io.operator.Operator;
 import org.logic2j.io.operator.OperatorManager;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TDouble;
 import org.logic2j.model.symbol.TLong;

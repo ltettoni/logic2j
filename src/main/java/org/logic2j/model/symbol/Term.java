@@ -22,8 +22,8 @@ import java.util.IdentityHashMap;
 
 import org.logic2j.Formatter;
 import org.logic2j.io.format.DefaultFormatter;
-import org.logic2j.model.InvalidTermException;
 import org.logic2j.model.TermVisitor;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.var.Binding;
 import org.logic2j.model.var.Bindings;
 

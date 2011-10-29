@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;

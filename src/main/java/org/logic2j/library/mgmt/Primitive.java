@@ -22,9 +22,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.logic2j.library.PLibrary;
+
 /**
- * Annotate a method that implements a Prolog primitive.
- * 
+ * Annotation to a method that implements a Prolog primitive in a {@link PLibrary}.
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,12 +33,13 @@ public @interface Primitive {
 
   /**
    * When "name" is defined, then the annotated method's name won't be used to register the primitive.
+   * Very useful when the primitive name is not an allowed Java identifier, for example the "=" unification primitive.
    * Otherwise, when name is the default, the method's name becomes the primitive's name.
    */
   String name() default "";
 
   /**
-   * Alternate names.
+   * Alternate names for the primitive.
    */
   String[] synonyms() default {};
 

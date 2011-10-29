@@ -19,9 +19,9 @@ package org.logic2j.library.impl;
 
 import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
-import org.logic2j.model.prim.PLibrary;
-import org.logic2j.model.prim.PrimitiveInfo;
-import org.logic2j.model.prim.PrimitiveInfo.PrimitiveType;
+import org.logic2j.library.PLibrary;
+import org.logic2j.library.mgmt.PrimitiveInfo;
+import org.logic2j.library.mgmt.PrimitiveInfo.PrimitiveType;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;

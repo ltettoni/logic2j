@@ -28,7 +28,7 @@ import java.util.List;
 import org.logic2j.TermFactory;
 import org.logic2j.TermFactory.FactoryMode;
 import org.logic2j.library.mgmt.LibraryContent;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.var.Binding;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.util.ReflectUtils;

@@ -35,7 +35,7 @@ import org.logic2j.TermFactory;
 import org.logic2j.library.impl.LibraryBase;
 import org.logic2j.library.impl.pojo.PojoLibrary;
 import org.logic2j.library.mgmt.Primitive;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TNumber;
 import org.logic2j.model.symbol.Term;

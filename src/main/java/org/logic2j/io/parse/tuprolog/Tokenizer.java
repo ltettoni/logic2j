@@ -43,7 +43,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 
 /**

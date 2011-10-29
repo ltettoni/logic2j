@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.logic2j.PrologImplementor;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
@@ -236,16 +236,18 @@ public class SolutionHolder {
 
       @Override
       public void run() {
-        logger.debug("Started producer thread");
+        logger.debug("Started producer (prolog solver engine) thread");
         // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
         // and will wait for the main thread to extract it
         SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(), listener);
-        logger.debug("Producer thread finishes");
+        logger.debug("Producer (prolog solver engine) thread finishes");
         // Last solution was extracted. Producer's callback won't now be called any more - so to 
         // prevent the consumer for listening forever for the next solution that won't come...
-        // The 2 following lines are exactly the sames as those in the listener's onSolution()
-        listener.requestSolution.waitUntilAvailable();
-        listener.provideSolution.available();
+        // We wait from a last notify from our client
+        listener.clientToEngineInterface().waitUntilAvailable();
+        // And we tell it we are aborting. No solution transferred for this last "hang up" message
+        listener.engineToClientInterface().wakeUp();
+        // Notice the 2 lines above are exactly the sames as those in the listener's onSolution()
       }
     };
     new Thread(prologSolverThread).start();
@@ -256,8 +258,11 @@ public class SolutionHolder {
 
       @Override
       public boolean hasNext() {
-        listener.requestSolution.available();
-        this.solution = listener.provideSolution.waitUntilAvailable();
+        // Now ask engine to run...
+        listener.clientToEngineInterface().wakeUp();
+        // And wait for a solution. Store it in any case we need it in next()
+        this.solution = listener.engineToClientInterface().waitUntilAvailable();
+        // Did it get one?
         return this.solution != null;
       }
 
