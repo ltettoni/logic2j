@@ -29,7 +29,7 @@ import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.util.ReportUtils;
 
 /**
- * Solve goals.
+ * Solve goals - that's the core of the engine.
  */
 public class DefaultGoalSolver implements GoalSolver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultGoalSolver.class);

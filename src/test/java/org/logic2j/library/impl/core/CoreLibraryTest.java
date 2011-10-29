@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.PrologTestBase;
-import org.logic2j.solve.SolutionHolder.UniqueSolutionHolder;
+import org.logic2j.solve.holder.UniqueSolutionHolder;
 
 public class CoreLibraryTest extends PrologTestBase {
 

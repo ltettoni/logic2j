@@ -26,7 +26,6 @@ import org.logic2j.solve.ioc.SolutionListener;
  * Interface allowing {@link PrologImpl} to access the inference engine algorithm,
  * in order to solve goals or invoke primitives.
  * This interface allows to provide various implementations such as plug-ins.
- *
  */
 public interface GoalSolver {
 

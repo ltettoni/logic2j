@@ -18,7 +18,7 @@
 package org.logic2j;
 
 import org.logic2j.model.symbol.Term;
-import org.logic2j.solve.SolutionHolder;
+import org.logic2j.solve.holder.SolutionHolder;
 import org.logic2j.theory.TheoryManager;
 
 /**

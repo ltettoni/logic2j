@@ -35,7 +35,6 @@ import org.logic2j.util.ReportUtils;
  * returns a first node to hold inference and unificaiton state. 
  * The constructor for children is lighter, it shares most of its parent, only
  * redefines new node for local management of the cut.
- * 
  */
 public final class GoalFrame {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GoalFrame.class);

@@ -15,28 +15,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.solve;
+package org.logic2j.solve.holder;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import org.logic2j.PrologImplementor;
-import org.logic2j.model.exception.InvalidTermException;
-import org.logic2j.model.symbol.Term;
 import org.logic2j.model.symbol.TermApi;
-import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Bindings;
-import org.logic2j.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.solve.GoalFrame;
+import org.logic2j.solve.Solution;
 import org.logic2j.solve.ioc.IterableSolutionListener;
-import org.logic2j.solve.ioc.SolutionListenerBase;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
 
 /**
  * Holds state necessary to describe the unique solution or multiple solutions 
  * to a goal; this object lies between the expression of a goal (a request or query) and 
  * the extraction of all aspects of the solution (a response or results).<br/>
+ * IMPORTANT: obtaining a {@link SolutionHolder} usually means that the execution has not yet
+ * started - state is held ready to execute, until you tell what you want!<br/>
  * This object exposes strongly-typed, templated methods to extract results 
  * depending on how the calling code expects them (unique or multiple solutions),
  * and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
@@ -53,170 +49,31 @@ import org.logic2j.solve.ioc.UniqueSolutionListener;
 public class SolutionHolder {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
 
-  private static final TermApi TERM_API = new TermApi();
-
-  /**
-   * A relay object to provide access to the results of the (expected) unique solution to a goal.
-   */
-  public static class UniqueSolutionHolder {
-
-    private Solution solution;
-
-    /**
-     * @param theSolution 
-     */
-    UniqueSolutionHolder(Solution theSolution) {
-      this.solution = theSolution;
-    }
-
-    /**
-     * @param theVariableName
-     * @return The value of var theVariableName
-     * @see Solution#getBinding(String)
-     */
-    public Term binding(String theVariableName) {
-      return this.solution.getBinding(theVariableName);
-    }
-
-    /**
-     * @return All bindings.
-     */
-    public Map<String, Term> bindings() {
-      return this.solution.getBindings();
-    }
-
-    /**
-     * @return The solution as a {@link Term}.
-     */
-    public Term solution() {
-      return this.solution.getSolution();
-    }
-  }
-
-  /**
-   * A relay object to provide access to the results of the (expected) multiple solutions to a goal.
-   */
-  public class MultipleSolutionsHolder {
-
-    MultipleSolutionsHolder() {
-      // Empty
-    }
-
-    private Integer lowest = null;
-    private Integer highest = null;
-
-    /**
-     * Solves the goal and calculate number of results.
-     * @return The number of solutions.
-     */
-    public int number() {
-      final SolutionListenerBase listener = new SolutionListenerBase();
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
-          listener);
-      int counter = listener.getCounter();
-      checkBounds(counter);
-      return counter;
-    }
-
-    private void checkBounds(int counter) {
-      if (this.lowest != null && counter < this.lowest) {
-        throw new IllegalStateException("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
-      }
-      if (this.highest != null && counter > this.highest) {
-        throw new IllegalStateException("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
-      }
-    }
-
-    /**
-     * Solves the goal and extract the named variable value(s).
-     * @param theVariableName
-     */
-    public List<Term> binding(final String theVariableName) {
-      final List<Term> results = new ArrayList<Term>();
-      final SolutionListenerBase listener = new SolutionListenerBase() {
-
-        @Override
-        public boolean onSolution() {
-          final Bindings bnd = SolutionHolder.this.bindings;
-          final Term term = bnd.getReferrer();
-          final Var var = term.findVar(theVariableName);
-          if (var == null) {
-            throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
-          }
-          final Term substituted = TERM_API.substitute(var, bnd, null);
-          results.add(substituted);
-          return super.onSolution();
-        }
-
-      };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
-          listener);
-      int size = results.size();
-      checkBounds(size);
-      return results;
-    }
-
-    /**
-     * Solves the goal and extract all bindings.
-     */
-    public List<Map<String, Term>> bindings() {
-      final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
-      final SolutionListenerBase listener = new SolutionListenerBase() {
-
-        @Override
-        public boolean onSolution() {
-          results.add(SolutionHolder.this.bindings.explicitBindings(FreeVarRepresentation.FREE));
-          return super.onSolution();
-        }
-
-      };
-      SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.bindings, new GoalFrame(),
-          listener);
-      int size = results.size();
-      checkBounds(size);
-      return results;
-    }
-
-    /**
-     * @param theExpectedExactNumber
-     * @return this
-     */
-    public MultipleSolutionsHolder ensureNumber(int theExpectedExactNumber) {
-      this.lowest = this.highest = theExpectedExactNumber;
-      return this;
-    }
-
-    public MultipleSolutionsHolder ensureRange(int thePermissibleLowest, int thePermissibleHighest) {
-      this.lowest = thePermissibleLowest;
-      this.highest = thePermissibleHighest;
-      return this;
-    }
-
-  }
+  static final TermApi TERM_API = new TermApi();
 
   final PrologImplementor prolog;
   final Bindings bindings;
 
-  /**
-   * @param theBindings
-   */
   public SolutionHolder(PrologImplementor theProlog, Bindings theBindings) {
     this.prolog = theProlog;
     this.bindings = theBindings;
   }
 
   /**
-   * @return The value of {@link #all()}.{@link #all.number()}.
+   * Number of solutions - without their content.
+   * @return The value of {@link #all()}.{@link MultipleSolutionsHolder#number()}.
    */
   public int number() {
     return all().number();
   }
 
   /**
-   * @return A relay object to access all solutions. Calling all() does NOT start solving.
+   * Indicate you are interested in all results - calling this method
+   * does NOT start solving.
+   * @return A relay object to access all solutions.
    */
   public MultipleSolutionsHolder all() {
-    return new MultipleSolutionsHolder();
+    return new MultipleSolutionsHolder(this);
   }
 
   /**
@@ -229,6 +86,12 @@ public class SolutionHolder {
     return new UniqueSolutionHolder(listener.getSolution());
   }
 
+  /**
+   * Launch the prolog engine in a separate thread to produce solutions while the main caller 
+   * can consume {@link Solution}s from this {@link Iterator} at its own pace.
+   * This uses the {@link IterableSolutionListener}.
+   * @return An iterator for all solutions.
+   */
   public Iterator<Solution> iterator() {
     final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.bindings);
 

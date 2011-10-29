@@ -24,8 +24,7 @@ import org.logic2j.solve.Solution;
 
 /**
  * A {@link SolutionListener} that will collect only the first solution yet make sure
- * there is no other solution provided by the solver.
- *
+ * there is no other solution provided by the goal solver.
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 

@@ -18,13 +18,12 @@
 package org.logic2j.solve.ioc;
 
 import org.logic2j.Prolog;
-import org.logic2j.solve.SolutionHolder;
+import org.logic2j.solve.holder.SolutionHolder;
 
 /**
  * The core, lowest-level method by which the inference engine provides solutions.
  * For easier programming, consider using {@link Prolog#solve(CharSequence)} and the
- * {@link SolutionHolder}.
- * 
+ * {@link SolutionHolder} API.
  */
 public interface SolutionListener {
 

@@ -37,8 +37,8 @@ import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.GoalSolver;
 import org.logic2j.solve.Solution;
-import org.logic2j.solve.SolutionHolder;
-import org.logic2j.solve.SolutionHolder.UniqueSolutionHolder;
+import org.logic2j.solve.holder.SolutionHolder;
+import org.logic2j.solve.holder.UniqueSolutionHolder;
 import org.logic2j.solve.ioc.SolutionListener;
 
 /**

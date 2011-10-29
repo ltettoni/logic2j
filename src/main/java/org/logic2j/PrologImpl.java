@@ -33,7 +33,7 @@ import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.DefaultGoalSolver;
 import org.logic2j.solve.GoalSolver;
-import org.logic2j.solve.SolutionHolder;
+import org.logic2j.solve.holder.SolutionHolder;
 import org.logic2j.theory.DefaultTheoryManager;
 import org.logic2j.theory.TheoryManager;
 import org.logic2j.unify.DefaultUnifyer;

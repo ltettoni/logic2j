@@ -49,6 +49,9 @@ public class IterableSolutionListener implements SolutionListener {
    */
   private SynchronizedInterface<Solution> engineToClientInterface = new SynchronizedInterface<Solution>();
 
+  /**
+   * Implementation of the core logic2j's callback-based notification of solutions.
+   */
   @Override
   public boolean onSolution() {
     // We've got one solution already!

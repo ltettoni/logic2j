@@ -18,13 +18,15 @@
 package org.logic2j.solve.ioc;
 
 /**
- * A base implementation of {@link SolutionListener} holds a counter of the number of solutions reached,
- * and whose {@link #onSolution()} returns always true (potentially infinite generation).
+ * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached. 
+ * The {@link #onSolution()} method always returns true (potentially allowing for infinite generation).
+ * This class is to ease programming {@link SolutionListener}s in application code. 
  */
 public class SolutionListenerBase implements SolutionListener {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
   private static boolean debug = logger.isDebugEnabled();
 
+  // TODO: timing and logging should rely on AOP not hardcoding
   private long startTime = System.currentTimeMillis();
   private long lastSolutionTime = this.startTime;
   private int counter = 0;

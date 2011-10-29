@@ -21,9 +21,9 @@ import org.logic2j.model.exception.IllegalSolutionException;
 import org.logic2j.model.var.Bindings;
 
 /**
- * A {@link SolutionListener} that will collect only the first solution yet make sure
- * there is no other solution provided by the solver.
- *
+ * A {@link SolutionListener} that will collect only the first solution but won't
+ * care if the goal solver will provide more. It will atually ask the goal solver to stop
+ * generating after the first was issued.
  */
 public class FirstSolutionListener extends SingleSolutionListener {
 

@@ -34,9 +34,9 @@ import org.logic2j.library.PLibrary;
 import org.logic2j.library.impl.pojo.PojoLibrary;
 import org.logic2j.library.mgmt.LibraryContent;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.solve.SolutionHolder;
-import org.logic2j.solve.SolutionHolder.MultipleSolutionsHolder;
-import org.logic2j.solve.SolutionHolder.UniqueSolutionHolder;
+import org.logic2j.solve.holder.MultipleSolutionsHolder;
+import org.logic2j.solve.holder.SolutionHolder;
+import org.logic2j.solve.holder.UniqueSolutionHolder;
 import org.logic2j.theory.TheoryManager;
 
 /**
@@ -74,7 +74,7 @@ public abstract class PrologTestBase {
   }
 
   protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
-    SolutionHolder.UniqueSolutionHolder result = null;
+    UniqueSolutionHolder result = null;
     for (int i = 0; i < theGoals.length; i++) {
       final CharSequence goal = theGoals[i];
       final Term parsed = getProlog().term(goal);
