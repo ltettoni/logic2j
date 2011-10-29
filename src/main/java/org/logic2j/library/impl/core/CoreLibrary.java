@@ -24,7 +24,7 @@ import org.logic2j.PrologImplementor;
 import org.logic2j.library.impl.LibraryBase;
 import org.logic2j.library.mgmt.Primitive;
 import org.logic2j.model.Clause;
-import org.logic2j.model.InvalidTermException;
+import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.TDouble;
 import org.logic2j.model.symbol.TLong;
@@ -176,7 +176,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Primitive
-  public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term projection,
+  public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term theTemplate,
       final Term theGoal, final Term theResult) {
     final Bindings goalBindings = theBindings.focus(theGoal, Term.class);
     assertValidBindings(goalBindings, "findall/3");
@@ -193,8 +193,8 @@ public class CoreLibrary extends LibraryBase {
         
         // FIXME This is most certainly wrong: how can we call substitute on a variable expressed in a different bindings?????
         // The case is : findall(X, Expr, Result) where Expr -> something -> expr(a,b,X,c) 
-        final Term substitute = TERM_API.substitute(projection, goalBindings, null);
-        
+        final Term substitute = TERM_API.substitute(theTemplate, goalBindings, null);
+        // Map<String, Term> explicitBindings = goalBindings.explicitBindings(FreeVarRepresentation.FREE);
         // And add as extra solution
         javaResults.add(substitute);
         return true;
@@ -202,14 +202,6 @@ public class CoreLibrary extends LibraryBase {
 
     };
 
-
-//    final Term goalResolved = resolve(theGoal, theBindings, Term.class);
-//    Bindings goalBindings = theBindings;
-//    // Hack
-//    if (goalResolved!=theGoal && theBindings.getBinding((short) 0)!=null && theBindings.getBinding((short) 0).isLiteral()) {
-//      goalBindings = theBindings.getBinding((short) 0).getLiteralBindings();
-//    }
-    
     // Now solve the target goal, this may find several values of course
     getProlog().getSolver().solveGoalRecursive(effectiveGoal, goalBindings, new GoalFrame(), solutionListener); // TODO: use solveGoal() instead
 
