@@ -44,13 +44,13 @@ import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.solve.ioc.UniqueSolutionListener;
-import org.logic2j.theory.jdbc.SqlBuilder3;
-import org.logic2j.theory.jdbc.SqlBuilder3.Column;
-import org.logic2j.theory.jdbc.SqlBuilder3.Table;
 import org.logic2j.util.CollectionMap;
 import org.logic2j.util.CollectionUtils;
 import org.logic2j.util.ReflectUtils;
+import org.logic2j.util.SqlBuilder3;
 import org.logic2j.util.SqlRunner;
+import org.logic2j.util.SqlBuilder3.Column;
+import org.logic2j.util.SqlBuilder3.Table;
 
 
 /**

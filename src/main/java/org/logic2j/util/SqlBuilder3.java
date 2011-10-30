@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.theory.jdbc;
+package org.logic2j.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.logic2j.util.CollectionMap;
-import org.logic2j.util.CollectionUtils;
 
 // TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
 // TODO: possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123)

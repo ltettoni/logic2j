@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.theory.jdbc;
+package org.logic2j.theory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,8 +31,9 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
-import org.logic2j.theory.jdbc.SqlBuilder3.Table;
+import org.logic2j.util.SqlBuilder3;
 import org.logic2j.util.SqlRunner;
+import org.logic2j.util.SqlBuilder3.Table;
 
 /**
  * List {@link Clause}s (facts, never rules) from relational database tables or views accessed 

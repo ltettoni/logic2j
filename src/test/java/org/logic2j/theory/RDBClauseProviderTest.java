@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.logic2j.PrologWithDataSourcesTestBase;
 import org.logic2j.library.impl.rdb.RDBBase;
 import org.logic2j.model.symbol.Struct;
-import org.logic2j.theory.jdbc.RDBClauseProvider;
 
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   private RDBClauseProvider provider;
