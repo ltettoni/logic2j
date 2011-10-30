@@ -25,7 +25,7 @@ import org.logic2j.solve.GoalSolver;
  * Provide clauses (facts or rules) from various content sources to 
  * the {@link GoalSolver} inference engine.
  * The most typical implementation is that clauses are parsed from one (or several)
- * theories' textual content. Other implementations include database back-ends, or web
+ * theories' textual content. Other implementations include database back-ends, or online
  * resources.<br/>
  * Notice the {@link Iterable} nature of the returned clauses. This allows implementors to
  * return iterable results sets, for example from database cursors. The {@link GoalSolver} does
