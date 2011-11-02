@@ -62,7 +62,7 @@ public class SqlBuilder3 {
    * @return The SQL statement.
    */
   public String getStatement() {
-    this.parameters.clear();
+    this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear them first!
     StringBuilder sb = new StringBuilder(300);
     sb.append(this.instruction);
     sb.append(' ');
@@ -72,6 +72,9 @@ public class SqlBuilder3 {
     if (isSelect()) {
       if (!this.projections.isEmpty()) {
         sb.append(generateProjections());
+        sb.append(' ');
+      } else {
+        sb.append('*');
         sb.append(' ');
       }
       allTables(sb);
@@ -152,7 +155,7 @@ public class SqlBuilder3 {
     if (!isSelect()) {
       throw new UnsupportedOperationException("Cannot generate \"select\" on non-select SqlBuilder3");
     }
-    this.parameters.clear();
+    this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear them first!
     StringBuilder sb = new StringBuilder(300);
     sb.append(this.instruction);
     sb.append(" count(");
@@ -289,7 +292,7 @@ public class SqlBuilder3 {
    * @return "" when theNumber=0, "?" when theNumber=1, otherwise "(?,?,?,?...?)" with
    * as many question marks as argument theNumber
    */
-  public static StringBuilder inlistParamsPlaceholders(int theNumber) {
+  static StringBuilder inlistParamsPlaceholders(int theNumber) {
     final StringBuilder sb = new StringBuilder(1000);
     if (theNumber <= 0) {
       // return empty
@@ -315,7 +318,7 @@ public class SqlBuilder3 {
    * @return An array of theParams, where elements of arrays or collections are flatted
    * out (only the first level). May be empty but never null.
    */
-  public static Object[] flattenedParams(Object... theParams) {
+  static Object[] flattenedParams(Object... theParams) {
     if (theParams == null) {
       return new Object[0];
     }
@@ -339,6 +342,49 @@ public class SqlBuilder3 {
     }
     final Object[] array = sqlParams.toArray(new Object[] {});
     return array;
+  }
+
+  /**
+   * An ugly methods - normally should not be used, but in some cases we have to :-(
+   * @return A flat SQL string
+   */
+  public String getSelectWithInlineParams() {
+    final String selectWithParams = getSelect();
+    final StringBuilder sb = substituteArgPlaceholders(selectWithParams);
+    return sb.toString();
+  }
+
+  public String getSelectCountWithInlineParams() {
+    final String selectWithParams = getSelectCount();
+    final StringBuilder sb = substituteArgPlaceholders(selectWithParams);
+    return sb.toString();
+  }
+
+  private StringBuilder substituteArgPlaceholders(final String selectWithParams) {
+    final StringBuilder sb = new StringBuilder();
+    final int len = selectWithParams.length();
+    int argN = 0;
+    for (int i = 0; i < len; i++) {
+      final char c = selectWithParams.charAt(i);
+      if (c == '?') {
+        sb.append(objectToSqlLiteral(getParameters()[argN]));
+        argN++;
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb;
+  }
+
+  /**
+   * @param theObject
+   * @return A sql literal for the object. Beuarhk.
+   */
+  private Object objectToSqlLiteral(Object theObject) {
+    if (theObject instanceof CharSequence) {
+      return '\'' + String.valueOf(theObject) + '\'';
+    }
+    return String.valueOf(theObject);
   }
 
   //---------------------------------------------------------------------------
@@ -382,7 +428,7 @@ public class SqlBuilder3 {
   }
 
   //---------------------------------------------------------------------------
-  // Core java.lang.Object methods
+  // Core
   //---------------------------------------------------------------------------
 
   @Override
@@ -411,7 +457,7 @@ public class SqlBuilder3 {
     this.parameters = new ArrayList<Object>(theParameters != null ? Arrays.asList(theParameters) : Collections.emptyList());
   }
 
-  private boolean isSelect() {
+  boolean isSelect() {
     return SELECT.equals(this.instruction);
   }
 
@@ -451,6 +497,18 @@ public class SqlBuilder3 {
     return candidate;
   }
 
+  /**
+   * @param theAlias
+   * @param optionUnionAll
+   * @param theSubQueries
+   * @return A union subtable.
+   */
+  public Table tableSubUnion(String theAlias, boolean optionUnionAll, SqlBuilder3... theSubQueries) {
+    Table table = new Table(theSubQueries, optionUnionAll, theAlias);
+    this.tables.add(table);
+    return table;
+  }
+
   public Column column(Table theTable, String theColumnName) {
     return new Column(theTable, theColumnName);
   }
@@ -461,7 +519,7 @@ public class SqlBuilder3 {
 
   public Criterion criterion(Column theColumn, String theOperator, Object... theScalarOrListValue) {
     final String effectiveOperator;
-    if (theOperator==null || OPERATOR_EQ_OR_IN.equals(theOperator)) {
+    if (theOperator == null || OPERATOR_EQ_OR_IN.equals(theOperator)) {
       effectiveOperator = equalityOrInOperator(theScalarOrListValue);
     } else if (OPERATOR_NOT_EQ_NOR_IN.equals(theOperator)) {
       effectiveOperator = notEqualityOrInOperator(theScalarOrListValue);
@@ -507,12 +565,15 @@ public class SqlBuilder3 {
   /**
    * Describe references to a table or view, possibly with an alias.
    *
+   * @version $Id: SqlBuilder3.java,v 1.7 2011-10-14 22:53:46 tettoni Exp $
    */
   public class Table {
 
     public String table;
     public String alias; // Never null, == to table when was not specified
     private int aliasCounter = 0;
+    private SqlBuilder3[] subQueries = null;
+    private boolean optionUnionAll;
 
     public Table(String theTableAndAlias) {
       this(theTableAndAlias, theTableAndAlias);
@@ -522,6 +583,25 @@ public class SqlBuilder3 {
       super();
       this.table = theTable;
       this.alias = theAlias;
+    }
+
+    /**
+     * Table based on sub queries.
+     * @param theSubQueries
+     * @param theOptionUnionAll 
+     * @param theAlias
+     */
+    public Table(SqlBuilder3[] theSubQueries, boolean theOptionUnionAll, String theAlias) {
+      if (theAlias == null || theAlias.length() == 0) {
+        throw new IllegalArgumentException("Subtable alias name is required");
+      }
+      if (theSubQueries == null || theSubQueries.length == 0) {
+        throw new IllegalArgumentException("At least one subtable required");
+      }
+      this.table = "sub_" + theAlias;
+      this.alias = theAlias;
+      this.subQueries = theSubQueries;
+      this.optionUnionAll = theOptionUnionAll;
     }
 
     public boolean exactlyEquals(Table that) {
@@ -534,7 +614,30 @@ public class SqlBuilder3 {
     }
 
     public String declaration() {
-      if (!this.alias.equalsIgnoreCase(this.table)) {
+      if (this.subQueries!=null) {
+        final StringBuilder subTable = new StringBuilder();
+        subTable.append('(');
+        int counter = 0;
+        for (SqlBuilder3 sub : this.subQueries) {
+          if (!sub.isSelect()) {
+            throw new IllegalArgumentException("Only subtables corresponding to select statement allowed, not " + sub.toString());
+          }
+          if (counter > 0) {
+            subTable.append(" union ");
+            if (this.optionUnionAll) {
+              subTable.append("all ");
+            }
+          }
+          subTable.append(sub.getSelect());
+          SqlBuilder3.this.addParameter(sub.getParameters());
+          counter++;
+        }
+        subTable.append(')');
+        subTable.append(' ');
+        subTable.append(this.alias);
+        return subTable.toString();
+      }
+      if (this.alias!=null && !this.alias.equalsIgnoreCase(this.table)) {
         return this.table + ' ' + this.alias;
       }
       return this.table;
@@ -778,21 +881,28 @@ public class SqlBuilder3 {
     }
   }
 
+  /**
+   * @return Multiline description for debugging.
+   */
   public String describe() {
-    final StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
+    final StringBuilder sb = new StringBuilder(this.toString());
     sb.append('\n');
     sb.append(" projections: ");
     sb.append(this.projections);
     sb.append('\n');
-    sb.append(" tables    : ");
+    sb.append(" tables     : ");
     sb.append(this.tables);
     sb.append('\n');
-    sb.append(" joins     : ");
+    sb.append(" joins      : ");
     sb.append(this.join);
     sb.append('\n');
-    sb.append(" criteria  : ");
+    sb.append(" criteria   : ");
     sb.append(this.conjunctions);
+    sb.append('\n');
+    sb.append(" parameters : ");
+    sb.append(this.parameters);
     return sb.toString();
   }
 
 }
+
