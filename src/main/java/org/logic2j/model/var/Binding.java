@@ -126,7 +126,7 @@ public class Binding implements Cloneable {
   /**
    * Follow chains of linked bindings.
    * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. 
-   * The result is guaranteed to be either {@link #isFree()} or {@link #isLiteral()}.
+   * The result is guaranteed to verify either of {@link #isFree()} or {@link #isLiteral()}.
    */
   public Binding followLinks() {
     Binding result = this;
