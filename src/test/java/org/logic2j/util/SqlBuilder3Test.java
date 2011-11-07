@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.logic2j.util.SqlBuilder3.Column;
+import org.logic2j.util.SqlBuilder3.Criterion;
 import org.logic2j.util.SqlBuilder3.Table;
 
 public class SqlBuilder3Test {
@@ -199,5 +200,40 @@ public class SqlBuilder3Test {
     assertEquals(3, sb.getParameters().length);
   }
   
+  @Test
+  public void logicalNot() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    sb.addConjunction(sb.not(sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value")));
+    sb.generateSelect();
+    assertEquals("select * from t1 where not(t1.c1=?)", sb.getSql());
+    assertEquals(1, sb.getParameters().length);
+  }
+  
+  @Test
+  public void logicalAnd() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+    Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+    Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value3");
+    sb.addConjunction(sb.and(c1, c2, c3));
+    sb.generateSelect();
+    assertEquals("select * from t1 where (t1.c1=? and t1.c2=? and t1.c3=?)", sb.getSql());
+    assertEquals(3, sb.getParameters().length);
+  }
+  
+  @Test
+  public void logicalMix() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+    Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+    Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, 1,2,3,4,5);
+    Criterion c4 = sb.criterion(sb.column(sb.table("t2"), "c4"), ">", "value4");
+    Criterion c5 = sb.criterion(sb.column(sb.table("t2"), "c5"), "<", "value3");
+    Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), "like", "value6");
+    sb.addConjunction(sb.or(sb.not(c1), c2, sb.and(c3,c4), sb.not(sb.and(c5,c5))));
+    sb.generateSelect();
+    assertEquals("select * from t1, t2 where (not(t1.c1=?) or t1.c2=? or (t1.c3 in (?,?,?,?,?) and t2.c4>?) or not((t2.c5<? and t2.c5<?)))", sb.getSql());
+    assertEquals(10, sb.getParameters().length);
+  }
 }
 
