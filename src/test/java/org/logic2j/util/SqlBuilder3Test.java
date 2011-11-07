@@ -229,10 +229,10 @@ public class SqlBuilder3Test {
     Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, 1,2,3,4,5);
     Criterion c4 = sb.criterion(sb.column(sb.table("t2"), "c4"), ">", "value4");
     Criterion c5 = sb.criterion(sb.column(sb.table("t2"), "c5"), "<", "value3");
-    Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), "like", "value6");
-    sb.addConjunction(sb.or(sb.not(c1), c2, sb.and(c3,c4), sb.not(sb.and(c5,c5))));
+    Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), " like ", "value6");
+    sb.addConjunction(sb.or(sb.not(c1), c2, sb.and(c3,c4), sb.not(sb.and(c5,c6))));
     sb.generateSelect();
-    assertEquals("select * from t1, t2 where (not(t1.c1=?) or t1.c2=? or (t1.c3 in (?,?,?,?,?) and t2.c4>?) or not((t2.c5<? and t2.c5<?)))", sb.getSql());
+    assertEquals("select * from t1, t2 where (not(t1.c1=?) or t1.c2=? or (t1.c3 in (?,?,?,?,?) and t2.c4>?) or not((t2.c5<? and t2.c6 like ?)))", sb.getSql());
     assertEquals(10, sb.getParameters().length);
   }
 }
