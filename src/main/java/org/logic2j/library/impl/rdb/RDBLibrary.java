@@ -255,12 +255,12 @@ public class RDBLibrary extends LibraryBase {
 
     // Generate
     builder.setDistinct(isDistinct);
-    final String effectiveSql;
     if (builder.getNbProjections() == 0) {
-      effectiveSql = builder.getSelectCount();
+      builder.generateSelectCount();
     } else {
-      effectiveSql = builder.getSelect();
+      builder.generateSelect();
     }
+    final String effectiveSql = builder.getSql();
     logger.debug("SQL   : {}", effectiveSql);
     logger.debug("Params: {}", Arrays.asList(builder.getParameters()));
     // Execution

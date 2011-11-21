@@ -17,10 +17,11 @@
  */
 package org.logic2j.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.logic2j.util.SqlBuilder3.Column;
+import org.logic2j.util.SqlBuilder3.Criterion;
 import org.logic2j.util.SqlBuilder3.Table;
 
 public class SqlBuilder3Test {
@@ -64,16 +65,29 @@ public class SqlBuilder3Test {
   }
 
   @Test
+  public void uninitialized() throws Exception {
+    final SqlBuilder3 sb = new SqlBuilder3();
+    try {
+      assertEquals("select * from ", sb.getSql());
+      fail("Should have thrown  with IllegalStateException");
+    } catch (IllegalStateException e) {
+      // Expected
+    }
+  }
+  
+  @Test
   public void empty() throws Exception {
     final SqlBuilder3 sb = new SqlBuilder3();
-    assertEquals("select * from ", sb.getStatement());
+    sb.generateSelect();
+    assertEquals("select * from ", sb.getSql());
   }
 
   @Test
   public void simple0() throws Exception {
     final SqlBuilder3 sb = new SqlBuilder3();
     sb.addConjunction(sb.column(sb.table("tbl"), "id"), 12);
-    assertEquals("select * from tbl where tbl.id=?", sb.getSelect());
+    sb.generateSelect();
+    assertEquals("select * from tbl where tbl.id=?", sb.getSql());
     assertEquals(1, sb.getParameters().length);
   }
   
@@ -81,7 +95,8 @@ public class SqlBuilder3Test {
   public void simple1() throws Exception {
     final SqlBuilder3 sb = new SqlBuilder3();
     sb.addConjunction(sb.column(sb.table("tbl"), "col"), "val");
-    assertEquals("select * from tbl where tbl.col=?", sb.getSelect());
+    sb.generateSelect();
+    assertEquals("select * from tbl where tbl.col=?", sb.getSql());
     assertEquals(1, sb.getParameters().length);
   }
 
@@ -92,7 +107,8 @@ public class SqlBuilder3Test {
       SqlBuilder3 sb = new SqlBuilder3();
       Column col = sb.column(sb.table("tbl"), "col");
       sb.addConjunction(sb.criterion(col, 3));
-      assertEquals("select * from tbl where tbl.col=?", sb.getSelect());
+      sb.generateSelect();
+      assertEquals("select * from tbl where tbl.col=?", sb.getSql());
       assertEquals(1, sb.getParameters().length);
       final Integer[] expectedParams = new Integer[] { 3 };
       assertEquals(expectedParams, sb.getParameters());
@@ -101,7 +117,8 @@ public class SqlBuilder3Test {
       SqlBuilder3 sb = new SqlBuilder3();
       Column col = sb.column(sb.table("tbl"), "col");
       sb.addConjunction(sb.criterion(col, 'a', 'b', 'c'));
-      assertEquals("select * from tbl where tbl.col in (?,?,?)", sb.getSelect());
+      sb.generateSelect();
+      assertEquals("select * from tbl where tbl.col in (?,?,?)", sb.getSql());
       assertEquals(3, sb.getParameters().length);
       final Character[] expectedParams = new Character[] { 'a', 'b', 'c' };
       assertEquals(expectedParams, sb.getParameters());
@@ -111,7 +128,8 @@ public class SqlBuilder3Test {
       Column col = sb.column(sb.table("tbl"), "col");
       final Integer[] arr = new Integer[] { 5, 6 };
       sb.addConjunction(sb.criterion(col, (Object[]) arr));
-      assertEquals("select * from tbl where tbl.col in (?,?)", sb.getSelect());
+      sb.generateSelect();
+      assertEquals("select * from tbl where tbl.col in (?,?)", sb.getSql());
       assertEquals(2, sb.getParameters().length);
       final Integer[] expectedParams = new Integer[] { 5, 6 };
       assertEquals(expectedParams, sb.getParameters());
@@ -121,7 +139,8 @@ public class SqlBuilder3Test {
       Column col = sb.column(sb.table("tbl"), "col");
       final Integer[] arr = new Integer[] { 5, 6 };
       sb.addConjunction(sb.criterion(col, arr, 4, arr));
-      assertEquals("select * from tbl where tbl.col in (?,?,?,?,?)", sb.getSelect());
+      sb.generateSelect();
+      assertEquals("select * from tbl where tbl.col in (?,?,?,?,?)", sb.getSql());
       assertEquals(5, sb.getParameters().length);
       final Integer[] expectedParams = new Integer[] { 5, 6, 4, 5, 6 };
       assertEquals(expectedParams, sb.getParameters());
@@ -137,7 +156,8 @@ public class SqlBuilder3Test {
     Column col2 = sb.column(sb.table("t2"), "c2");
     sb.addConjunction(sb.criterion(col2, 2));
     sb.addOrderBy(sb.ascending(col2));
-    assertEquals("select * from t1, t2 where t1.c1=? and t2.c2=? order by t2.c2 asc", sb.getSelect());
+    sb.generateSelect();
+    assertEquals("select * from t1, t2 where t1.c1=? and t2.c2=? order by t2.c2 asc", sb.getSql());
   }
 
   @Test
@@ -150,12 +170,14 @@ public class SqlBuilder3Test {
     sb.addConjunction(sb.criterion(col2, 2));
     sb.innerJoin(col, col2);
     sb.innerJoin(sb.column(sb.table("table3", "t3"), "c3"), col);
+    sb.generateSelect();
     assertEquals(
         "select t1.proj1 from table1 t1 inner join table2 t2 on t2.c2=t1.c1 inner join table3 t3 on t3.c3=t1.c1 where t1.c1=? and t2.c2=?",
-        sb.getSelect());
+        sb.getSql());
+    sb.generateSelectCount();
     assertEquals(
         "select count(t1.proj1) from table1 t1 inner join table2 t2 on t2.c2=t1.c1 inner join table3 t3 on t3.c3=t1.c1 where t1.c1=? and t2.c2=?",
-        sb.getSelectCount());
+        sb.getSql());
   }
 
   @Test
@@ -164,7 +186,8 @@ public class SqlBuilder3Test {
     Column col = sb.column(sb.table("table"), "c1");
     Column col2 = sb.column(sb.table("table", "alias"), "c2");
     sb.innerJoin(col, col2);
-    assertEquals("select count(*) from table inner join table alias on alias.c2=table.c1", sb.getSelectCount());
+    sb.generateSelectCount();
+    assertEquals("select count(*) from table inner join table alias on alias.c2=table.c1", sb.getSql());
   }
   
   @Test
@@ -172,9 +195,45 @@ public class SqlBuilder3Test {
     final SqlBuilder3 sb = new SqlBuilder3();
     sb.tableSubUnion("sub", false, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
     logger.info("Union query: {}", sb.describe());
-    assertEquals("select * from (select t1.c1 from t1 where t1.c1=? union select t2.c2 from t2 where t2.c2=? union select t3.c3 from t3 where t3.c3=?) sub", sb.getSelect());
+    sb.generateSelect();
+    assertEquals("select * from (select t1.c1 from t1 where t1.c1=? union select t2.c2 from t2 where t2.c2=? union select t3.c3 from t3 where t3.c3=?) sub", sb.getSql());
     assertEquals(3, sb.getParameters().length);
   }
   
+  @Test
+  public void logicalNot() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    sb.addConjunction(sb.not(sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value")));
+    sb.generateSelect();
+    assertEquals("select * from t1 where not(t1.c1=?)", sb.getSql());
+    assertEquals(1, sb.getParameters().length);
+  }
+  
+  @Test
+  public void logicalAnd() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+    Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+    Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value3");
+    sb.addConjunction(sb.and(c1, c2, c3));
+    sb.generateSelect();
+    assertEquals("select * from t1 where (t1.c1=? and t1.c2=? and t1.c3=?)", sb.getSql());
+    assertEquals(3, sb.getParameters().length);
+  }
+  
+  @Test
+  public void logicalMix() throws Exception {
+    SqlBuilder3 sb = new SqlBuilder3();
+    Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+    Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+    Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, 1,2,3,4,5);
+    Criterion c4 = sb.criterion(sb.column(sb.table("t2"), "c4"), ">", "value4");
+    Criterion c5 = sb.criterion(sb.column(sb.table("t2"), "c5"), "<", "value3");
+    Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), " like ", "value6");
+    sb.addConjunction(sb.or(sb.not(c1), c2, sb.and(c3,c4), sb.not(sb.and(c5,c6))));
+    sb.generateSelect();
+    assertEquals("select * from t1, t2 where (not(t1.c1=?) or t1.c2=? or (t1.c3 in (?,?,?,?,?) and t2.c4>?) or not((t2.c5<? and t2.c6 like ?)))", sb.getSql());
+    assertEquals(10, sb.getParameters().length);
+  }
 }
 

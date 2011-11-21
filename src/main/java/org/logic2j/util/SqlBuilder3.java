@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 // TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
 // TODO: possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123)
 // TODO: cannot handle subqueries
@@ -39,16 +38,22 @@ public class SqlBuilder3 {
 
   public static final String OPERATOR_EQ_OR_IN = "=";
   public static final String OPERATOR_NOT_EQ_NOR_IN = "!=";
+  public static final String OPERATOR_NOT = "not";
+  public static final String OPERATOR_AND = "and";
+  public static final String OPERATOR_OR = "or";
 
   /**
    * One of the constants {@link #SELECT}, {@link #UPDATE} or {@link #DELETE}.
    */
   private String instruction = SELECT; // The default statement is a query
+  private String sql = null; // The text SQL
   private List<Object> parameters = new ArrayList<Object>();
+
+  private boolean inlineParams = false; // When true, will inline all parameters instead of using placehoder '?'
   private boolean distinct = false; // Generate "select distinct ..." or "count(distinct ...)"
 
   public Set<Table> tables = new LinkedHashSet<Table>(); // All tables registered, unique!
-  private List<Criterion> conjunctions = new ArrayList<Criterion>();
+  private List<BaseCriterion> conjunctions = new ArrayList<BaseCriterion>();
   private List<Column> projections = new ArrayList<Column>();
   private List<ColumnOrder> orders = new ArrayList<ColumnOrder>();
 
@@ -58,12 +63,32 @@ public class SqlBuilder3 {
     // Nothing
   }
 
+  //---------------------------------------------------------------------------
+  // Accessors
+  //---------------------------------------------------------------------------
+
   /**
    * @return The SQL statement.
    */
-  public String getStatement() {
+  public String getSql() {
+    ensureInitialized();
+    return this.sql;
+  }
+
+  private void ensureInitialized() {
+    if (this.sql == null) {
+      throw new IllegalStateException("SqlBuilder not initialized - one of the generate*() methods needs to be called first");
+    }
+  }
+
+  //---------------------------------------------------------------------------
+  // Methods
+  //---------------------------------------------------------------------------
+
+  public void generateSelect() {
+    ensureSelect();
     this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear them first!
-    StringBuilder sb = new StringBuilder(300);
+    final StringBuilder sb = new StringBuilder(300);
     sb.append(this.instruction);
     sb.append(' ');
     if (isDistinct()) {
@@ -95,7 +120,32 @@ public class SqlBuilder3 {
       sb.append(" order by ");
       sb.append(orderByClause());
     }
-    return sb.toString();
+    this.sql = sb.toString();
+    substitutePlaceholdersIfAsked();
+  }
+
+  public void generateSelectCount() {
+    ensureSelect();
+    this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear them first!
+    StringBuilder sb = new StringBuilder(300);
+    sb.append(this.instruction);
+    sb.append(" count(");
+    if (isDistinct()) {
+      sb.append("distinct ");
+    }
+    if (!this.projections.isEmpty()) {
+      sb.append(generateProjections());
+    } else {
+      sb.append("*");
+    }
+    sb.append(") ");
+    allTables(sb);
+    if (!this.conjunctions.isEmpty()) {
+      sb.append(" where ");
+      sb.append(conjunctions());
+    }
+    this.sql = sb.toString();
+    substitutePlaceholdersIfAsked();
   }
 
   private void allTables(StringBuilder sb) {
@@ -143,57 +193,7 @@ public class SqlBuilder3 {
     }
 
     sb.append(CollectionUtils.formatSeparated(tableTokens, ", "));
-    //    final Set<Table> unjoinedTables = unjoinedTables();
-    //    sb.append(tables(unjoinedTables));
-    //    if (!this.joinInfo.isEmpty()) {
-    //      sb.append(' ');
-    //      sb.append(joinClauses(unjoinedTables));
-    //    }
   }
-
-  public String getSelectCount() {
-    if (!isSelect()) {
-      throw new UnsupportedOperationException("Cannot generate \"select\" on non-select SqlBuilder3");
-    }
-    this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear them first!
-    StringBuilder sb = new StringBuilder(300);
-    sb.append(this.instruction);
-    sb.append(" count(");
-    if (isDistinct()) {
-      sb.append("distinct ");
-    }
-    if (!this.projections.isEmpty()) {
-      sb.append(generateProjections());
-    } else {
-      sb.append("*");
-    }
-    sb.append(") ");
-    allTables(sb);
-    if (!this.conjunctions.isEmpty()) {
-      sb.append(" where ");
-      sb.append(conjunctions());
-    }
-    return sb.toString();
-  }
-
-  //  private Set<Table> unjoinedTables() {
-  //    final LinkedList<Table> unjoinedTables = new LinkedList<Table>(this.tables);
-  //    for (Iterator<Table> iterator = unjoinedTables.descendingIterator(); iterator.hasNext();) {
-  //      Table elem = iterator.next();
-  //      // Search if this table is referenced in any of the joins
-  //      boolean found = false;
-  //      for (Join ji : this.joinInfo) {
-  //        if (ji.refersTable(elem)) {
-  //          found = true;
-  //          break;
-  //        }
-  //      }
-  //      if (found && unjoinedTables.size() > 1) {
-  //        iterator.remove();
-  //      }
-  //    }
-  //    return new LinkedHashSet<Table>(unjoinedTables);
-  //  }
 
   private CharSequence orderByClause() {
     final List<String> fragments = new ArrayList<String>();
@@ -218,38 +218,12 @@ public class SqlBuilder3 {
     return this.tables.iterator().next().getTable();
   }
 
-  //  private CharSequence tables(Set<Table> unjoinedTables) {
-  //    final List<String> fragments = new ArrayList<String>();
-  //    for (Table table : unjoinedTables) {
-  //      fragments.add(table.declaration());
-  //    }
-  //    return CollectionUtils.formatSeparated(fragments, ", ");
-  //  }
-
-  //  private CharSequence joinClauses(Set<Table> theUnjoinedTables) {
-  //    List<String> fragments = new ArrayList<String>();
-  //    for (Join jInfo : this.joinInfo) {
-  //      fragments.add(jInfo.generate(theUnjoinedTables));
-  //    }
-  //    return CollectionUtils.formatSeparated(fragments, " ");
-  //  }
-
   private Object conjunctions() {
     final List<String> fragments = new ArrayList<String>();
-    for (Criterion conj : this.conjunctions) {
-      fragments.add(conj.sql());
+    for (BaseCriterion elem : this.conjunctions) {
+      fragments.add(elem.sql());
     }
     return CollectionUtils.formatSeparated(fragments, " and ");
-  }
-
-  /**
-   * @return The resulting SQL SELECT (only) statement.
-   */
-  public String getSelect() {
-    if (!isSelect()) {
-      throw new UnsupportedOperationException("Cannot generate \"select\" on non-select SqlBuilder3");
-    }
-    return getStatement();
   }
 
   /**
@@ -284,6 +258,19 @@ public class SqlBuilder3 {
   //---------------------------------------------------------------------------
   // Utility functions
   //---------------------------------------------------------------------------
+
+  private void ensureSelect() {
+    if (!isSelect()) {
+      throw new UnsupportedOperationException("Cannot generate \"select\" on non-select SqlBuilder3");
+    }
+  }
+
+  private void substitutePlaceholdersIfAsked() {
+    if (isInlineParams()) {
+      this.sql = substituteArgPlaceholders(this.sql, this.parameters);
+      this.parameters.clear();
+    }
+  }
 
   /**
    * Generate several "?" parameter placeholders for scalar or vectorial (inlist) parameters.
@@ -344,36 +331,20 @@ public class SqlBuilder3 {
     return array;
   }
 
-  /**
-   * An ugly methods - normally should not be used, but in some cases we have to :-(
-   * @return A flat SQL string
-   */
-  public String getSelectWithInlineParams() {
-    final String selectWithParams = getSelect();
-    final StringBuilder sb = substituteArgPlaceholders(selectWithParams);
-    return sb.toString();
-  }
-
-  public String getSelectCountWithInlineParams() {
-    final String selectWithParams = getSelectCount();
-    final StringBuilder sb = substituteArgPlaceholders(selectWithParams);
-    return sb.toString();
-  }
-
-  private StringBuilder substituteArgPlaceholders(final String selectWithParams) {
+  private String substituteArgPlaceholders(final String selectWithParams, final List<Object> theParams) {
     final StringBuilder sb = new StringBuilder();
     final int len = selectWithParams.length();
     int argN = 0;
     for (int i = 0; i < len; i++) {
       final char c = selectWithParams.charAt(i);
       if (c == '?') {
-        sb.append(objectToSqlLiteral(getParameters()[argN]));
+        sb.append(objectToSqlLiteral(theParams.get(argN)));
         argN++;
       } else {
         sb.append(c);
       }
     }
-    return sb;
+    return sb.toString();
   }
 
   /**
@@ -433,7 +404,17 @@ public class SqlBuilder3 {
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + "(\"" + getStatement() + "\")";
+    final StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
+    sb.append('{');
+    if (this.sql != null) {
+      sb.append("sql=\"");
+      sb.append(this.sql);
+      sb.append("\"");
+    } else {
+      sb.append("no-sql-yet");
+    }
+    sb.append('}');
+    return sb.toString();
   }
 
   //---------------------------------------------------------------------------
@@ -470,6 +451,20 @@ public class SqlBuilder3 {
   }
 
   /**
+   * @return the inlineParams
+   */
+  public boolean isInlineParams() {
+    return this.inlineParams;
+  }
+
+  /**
+   * @param theInlineParams the inlineParams to set
+   */
+  public void setInlineParams(boolean theInlineParams) {
+    this.inlineParams = theInlineParams;
+  }
+
+  /**
    * @return The number of projected columns
    */
   public int getNbProjections() {
@@ -479,6 +474,10 @@ public class SqlBuilder3 {
   public Table table(String theTableName) {
     return table(theTableName, theTableName);
   }
+
+  //---------------------------------------------------------------------------
+  // Factories
+  //---------------------------------------------------------------------------
 
   /**
    * Create and register new table with alias, or obtain previously registered one (with same name or alias).
@@ -529,12 +528,25 @@ public class SqlBuilder3 {
     return new Criterion(theColumn, effectiveOperator, theScalarOrListValue);
   }
 
+  public BaseCriterion not(BaseCriterion theCriterion) {
+    return new LogicalExpression(OPERATOR_NOT, theCriterion);
+  }
+  
+  public BaseCriterion and(BaseCriterion... theCriteria) {
+    return new LogicalExpression(OPERATOR_AND, theCriteria);
+  }
+
+  public BaseCriterion or(BaseCriterion... theCriteria) {
+    return new LogicalExpression(OPERATOR_OR, theCriteria);
+  }
+
+  
   public SqlBuilder3 addConjunction(Column theColumn, Object... theScalarOrListValue) {
     this.conjunctions.add(criterion(theColumn, theScalarOrListValue));
     return this;
   }
 
-  public SqlBuilder3 addConjunction(Criterion theCriterion) {
+  public SqlBuilder3 addConjunction(BaseCriterion theCriterion) {
     this.conjunctions.add(theCriterion);
     return this;
   }
@@ -614,7 +626,7 @@ public class SqlBuilder3 {
     }
 
     public String declaration() {
-      if (this.subQueries!=null) {
+      if (this.subQueries != null) {
         final StringBuilder subTable = new StringBuilder();
         subTable.append('(');
         int counter = 0;
@@ -628,7 +640,8 @@ public class SqlBuilder3 {
               subTable.append("all ");
             }
           }
-          subTable.append(sub.getSelect());
+          sub.generateSelect();
+          subTable.append(sub.getSql());
           SqlBuilder3.this.addParameter(sub.getParameters());
           counter++;
         }
@@ -637,7 +650,7 @@ public class SqlBuilder3 {
         subTable.append(this.alias);
         return subTable.toString();
       }
-      if (this.alias!=null && !this.alias.equalsIgnoreCase(this.table)) {
+      if (this.alias != null && !this.alias.equalsIgnoreCase(this.table)) {
         return this.table + ' ' + this.alias;
       }
       return this.table;
@@ -817,10 +830,41 @@ public class SqlBuilder3 {
     }
   }
 
-  public class Criterion {
+  public abstract class BaseCriterion {
+    public String operator;
+    public abstract String sql();
+  }
+  
+  
+  public class LogicalExpression extends BaseCriterion {
+    public List<BaseCriterion> members = new ArrayList<BaseCriterion>();
+
+    /**
+     * @param theOperator
+     * @param theCriterion
+     */
+    LogicalExpression(String theOperator, BaseCriterion... theCriterion) {
+      this.operator = theOperator;
+      this.members.clear();
+      this.members.addAll(Arrays.asList(theCriterion));
+    }
+
+    @Override
+    public String sql() {
+      if (OPERATOR_NOT.equalsIgnoreCase(this.operator)) {
+        return OPERATOR_NOT + '(' + this.members.get(0).sql() + ')'; 
+      }
+      final List<String> fragments = new ArrayList<String>();
+      for (BaseCriterion element : this.members) {
+        fragments.add(element.sql());
+      }
+      return '(' + CollectionUtils.formatSeparated(fragments, " " + this.operator + " ") + ')';
+    }
+  }
+  
+  public class Criterion extends BaseCriterion {
 
     private Column column;
-    private String operator;
     private Object[] operand;
 
     /**
@@ -839,6 +883,7 @@ public class SqlBuilder3 {
       return this.column + this.operator + Arrays.asList(this.operand);
     }
 
+    @Override
     public String sql() {
       return this.column.sql() + this.operator + addParameter(this.operand);
     }
@@ -904,5 +949,5 @@ public class SqlBuilder3 {
     return sb.toString();
   }
 
-}
 
+}
