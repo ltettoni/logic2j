@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.logic2j.ClauseProvider;
 import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
@@ -68,7 +69,9 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     
     for (int i = 0; i<theGoal.getArity(); i++){
     	if (theGoal.getArg(i).isAtom()){
-    		builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i),SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)theGoal.getArg(i)).getName()));
+    		if (theGoal.getArg(i) instanceof Struct){
+    			builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i),SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)theGoal.getArg(i)).getName()));
+    		}
     	}
     }
     
