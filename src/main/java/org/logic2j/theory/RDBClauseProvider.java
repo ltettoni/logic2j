@@ -65,6 +65,13 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
       final String columnName = PREDICATE_COLUMN_HEADER + i;
       builder.addProjection(builder.column(table, columnName));
     }
+    
+    for (int i = 0; i<theGoal.getArity(); i++){
+    	if (theGoal.getArg(i).isAtom()){
+    		builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i),SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)theGoal.getArg(i)).getName()));
+    	}
+    }
+    
     List<Clause> clauses = queryForClauses(builder, predicateName);
     return clauses;
   }
