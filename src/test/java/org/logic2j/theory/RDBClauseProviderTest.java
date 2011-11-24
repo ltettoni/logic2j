@@ -46,7 +46,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   public void listMatchingClauses() {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
-    this.provider.listMatchingClauses(theGoal);
+    this.provider.listMatchingClauses(theGoal, null);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
-    this.provider.listMatchingClauses(theGoal);
+    this.provider.listMatchingClauses(theGoal,null);
   }
 
   @Test
@@ -78,6 +78,9 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNoSolution("zip_code(X, 'LOS ANGELES'), X=dummy");
     // Match on both arguments
     assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
+    // Match on list testing
+    assertNSolutions(0, "zip_code(['90008',dummy], Y)");
+    assertNoSolution("Y=[dummy,'LOS ANGELES'], zip_code('90008', Y)");
     // NO matches
     assertNoSolution("zip_code('00000', 'UNDEFINED')");
     assertNoSolution("zip_code('90008', 'UNDEFINED')");

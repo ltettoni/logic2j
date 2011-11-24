@@ -224,7 +224,7 @@ public class CoreLibrary extends LibraryBase {
     final Struct realHead =  ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
     for (ClauseProvider cp : getProlog().getClauseProviders()) {
       // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
-      for (Clause clause : cp.listMatchingClauses(realHead)) {
+      for (Clause clause : cp.listMatchingClauses(realHead,theBindings)) {
         // Clone the clause so that we can unify against its bindings
         final Clause clauseToUnify = new Clause(clause);
         final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead,
