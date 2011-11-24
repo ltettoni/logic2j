@@ -19,6 +19,7 @@ package org.logic2j;
 
 import org.logic2j.model.Clause;
 import org.logic2j.model.symbol.Struct;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalSolver;
 
 /**
@@ -44,9 +45,10 @@ public interface ClauseProvider {
    * if returned clauses will actually be useable or not.
    * 
    * @param theGoal
+   * @param 
    * @return An ordered iterable of {@link Clause}s that are 
    * candidates for unifying with theGoal. Allows nice foreach construct!
    */
-  public Iterable<Clause> listMatchingClauses(Struct theGoal);
+  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
 
 }

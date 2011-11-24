@@ -132,7 +132,7 @@ public class DefaultGoalSolver implements GoalSolver {
 
       for (ClauseProvider provider : this.prolog.getClauseProviders()) {
         // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
-        for (Clause clause : provider.listMatchingClauses(goalStruct)) {
+        for (Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
 
           if (debug) {
             logger.debug("Trying clause {}", clause);
