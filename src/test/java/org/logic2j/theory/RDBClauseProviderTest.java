@@ -69,7 +69,10 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNSolutions(0, "zip_code('90008', dummy)");
     assertNSolutions(4, "zip_code('90008', _)");
     assertNSolutions(4, "zip_code('90008', Y)");
+    assertNSolutions(4, "Z='90008', Y=dummy, zip_code(Z, _)");
     assertNoSolution("Y=dummy, zip_code('90008', Y)");
+    assertNoSolution("Y=dummy, Z=other, zip_code('90008', Y)");
+    assertNSolutions(4, "Z=dummy, zip_code('90008', Y)");
     assertNoSolution("zip_code('90008', Y), Y=dummy");
     // Match on second argument
     assertNSolutions(102, "zip_code(_, 'LOS ANGELES')");
