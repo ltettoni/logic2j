@@ -32,6 +32,7 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.symbol.TermApi;
 import org.logic2j.model.symbol.Var;
 import org.logic2j.model.var.Bindings;
 import org.logic2j.util.SqlBuilder3;
@@ -65,50 +66,31 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     SqlBuilder3 builder = new SqlBuilder3();
     builder.setInstruction(SqlBuilder3.SELECT);
     Table table = builder.table(tableName(theGoal));
+    
     for (int i = 0; i < theGoal.getArity(); i++) {
       final String columnName = PREDICATE_COLUMN_HEADER + i;
       builder.addProjection(builder.column(table, columnName));
     }
     
     for (int i = 0; i<theGoal.getArity(); i++){
-    	if (theGoal.getArg(i) instanceof Struct && (theGoal.getArg(i).isAtom() || theGoal.getArg(i).isList())){
-   	    	if (theGoal.getArg(i).isAtom()){
-    			builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)theGoal.getArg(i)).getName()));
+    	Term t = theGoal.getArg(i);
+    	if (t instanceof Var && theGoalBindings!=null) {
+    		t = (new TermApi()).substitute(theGoal.getArg(i), theGoalBindings, null);
+    	}
+    	if (t instanceof Struct && (t.isAtom() || t.isList())){
+   	    	if (t.isAtom()){
+    			builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)t).getName()));
     		}
-   	    	else if(theGoal.getArg(i).isList()){
-   	    		addConjunctionList(builder, table, i, ((Struct)theGoal.getArg(i)).javaListFromPList(new ArrayList<Struct>(), Struct.class));
+   	    	else if(t.isList()){
+   	    		addConjunctionList(builder, table, i, ((Struct)t).javaListFromPList(new ArrayList<Struct>(), Struct.class));
    	    	}
     	}
     	//Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a variable.
-		else if(theGoal.getArg(i) instanceof Var){
-			if (theGoalBindings!=null){
-		    	Struct structValue = null;
-				for (int bindingIndex=0; bindingIndex<theGoalBindings.getSize(); bindingIndex++){
-					if (theGoalBindings.getBinding((short)bindingIndex).getVar().equals(theGoal.getArg(i))){
-						Term tTemp = theGoalBindings.getBinding((short)bindingIndex).getTerm();
-						if (tTemp!=null){
-							if (tTemp instanceof Struct && (tTemp.isList() || tTemp.isAtom())){	
-								structValue = ((Struct)tTemp);
-							}
-						}
-					}
-				}
-				if (structValue!=null){
-					if (structValue.isAtom()){
-						builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i), SqlBuilder3.OPERATOR_EQ_OR_IN, structValue.getName()));
-					}
-					if (structValue.isList()){
-						addConjunctionList(builder, table, i,  structValue.javaListFromPList(new ArrayList<Struct>(), Struct.class));
-					}
-				}
-			}
-		}
     }
     List<Clause> clauses = queryForClauses(builder, predicateName);
     return clauses;
   }
   
-
   
   protected void addConjunctionList(SqlBuilder3 builder, Table table, int columnNumber, ArrayList<Struct> structList){
 	  Object[] listValues = new Object[structList.size()];
@@ -117,7 +99,6 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 	  }
 	  builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + columnNumber), listValues));
   }
-  
   
 
   protected List<Clause> queryForClauses(SqlBuilder3 builder, String predicateName) {
