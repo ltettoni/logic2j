@@ -32,6 +32,7 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.solve.GoalSolver;
 import org.logic2j.util.ReportUtils;
 
@@ -132,8 +133,13 @@ public class DefaultTheoryManager implements TheoryManager {
     this.wholeContent.add(theContent);
   }
 
+  //TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to implement it with those parameters (cf ClauseProvider).
+  /**
+   * 
+   * @param theGoalBindings : is not used in that method, so you can give null as a parameter.
+   */
   @Override
-  public Iterable<Clause> listMatchingClauses(Struct theGoalTerm) {
+  public Iterable<Clause> listMatchingClauses(Struct theGoalTerm, Bindings theGoalBindings) {
     return this.wholeContent.find(theGoalTerm);
   }
 

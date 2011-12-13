@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.logic2j.ClauseProvider;
 import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
@@ -31,6 +32,9 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.symbol.TermApi;
+import org.logic2j.model.symbol.Var;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.util.SqlBuilder3;
 import org.logic2j.util.SqlRunner;
 import org.logic2j.util.SqlBuilder3.Table;
@@ -42,7 +46,8 @@ import org.logic2j.util.SqlBuilder3.Table;
  * this class expects a database table or view such as "PRED_ZIPCODE_CITY(INTEGER ARG_0, VARCHAR ARG_1)".
  */
 public class RDBClauseProvider extends RDBBase implements ClauseProvider {
-
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBClauseProvider.class);
+	
   /**
    * The target database is supposed to implement tables, or (more realistically) views
    * that start with the following name. The rest of the table or view name will be the
@@ -56,18 +61,45 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
   }
 
   @Override
-  public Iterable<Clause> listMatchingClauses(Struct theGoal) {
+  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
     String predicateName = theGoal.getName();
     SqlBuilder3 builder = new SqlBuilder3();
     builder.setInstruction(SqlBuilder3.SELECT);
     Table table = builder.table(tableName(theGoal));
+    
     for (int i = 0; i < theGoal.getArity(); i++) {
       final String columnName = PREDICATE_COLUMN_HEADER + i;
       builder.addProjection(builder.column(table, columnName));
     }
+    
+    for (int i = 0; i<theGoal.getArity(); i++){
+    	Term t = theGoal.getArg(i);
+    	if (t instanceof Var && theGoalBindings!=null) {
+    		t = (new TermApi()).substitute(theGoal.getArg(i), theGoalBindings, null);
+    	}
+    	if (t instanceof Struct && (t.isAtom() || t.isList())){
+   	    	if (t.isAtom()){
+    			builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + i), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)t).getName()));
+    		}
+   	    	else if(t.isList()){
+   	    		addConjunctionList(builder, table, i, ((Struct)t).javaListFromPList(new ArrayList<Struct>(), Struct.class));
+   	    	}
+    	}
+    	//Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a variable.
+    }
     List<Clause> clauses = queryForClauses(builder, predicateName);
     return clauses;
   }
+  
+  
+  protected void addConjunctionList(SqlBuilder3 builder, Table table, int columnNumber, ArrayList<Struct> structList){
+	  Object[] listValues = new Object[structList.size()];
+	  for (int i = 0; i < structList.size(); i++){
+		  listValues[i] = structList.get(i).getName();
+	  }
+	  builder.addConjunction(builder.criterion(builder.column(table, PREDICATE_COLUMN_HEADER + columnNumber), listValues));
+  }
+  
 
   protected List<Clause> queryForClauses(SqlBuilder3 builder, String predicateName) {
 

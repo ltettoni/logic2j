@@ -46,7 +46,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   public void listMatchingClauses() {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
-    this.provider.listMatchingClauses(theGoal);
+    this.provider.listMatchingClauses(theGoal, null);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
-    this.provider.listMatchingClauses(theGoal);
+    this.provider.listMatchingClauses(theGoal,null);
   }
 
   @Test
@@ -66,9 +66,13 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNSolutions(79991, "zip_code(_, Y)");
     assertNSolutions(79991, "zip_code(X, Y)");
     // Match on first argument
+    assertNSolutions(0, "zip_code('90008', dummy)");
     assertNSolutions(4, "zip_code('90008', _)");
     assertNSolutions(4, "zip_code('90008', Y)");
+    assertNSolutions(4, "Z='90008', Y=dummy, zip_code(Z, _)");
     assertNoSolution("Y=dummy, zip_code('90008', Y)");
+    assertNoSolution("Y=dummy, Z=other, zip_code('90008', Y)");
+    assertNSolutions(4, "Z=dummy, zip_code('90008', Y)");
     assertNoSolution("zip_code('90008', Y), Y=dummy");
     // Match on second argument
     assertNSolutions(102, "zip_code(_, 'LOS ANGELES')");
@@ -77,6 +81,9 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNoSolution("zip_code(X, 'LOS ANGELES'), X=dummy");
     // Match on both arguments
     assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
+    // Match on list testing
+    assertNSolutions(0, "zip_code(['90008',dummy], Y)");
+    assertNoSolution("Y=[dummy,'LOS ANGELES'], zip_code('90008', Y)");
     // NO matches
     assertNoSolution("zip_code('00000', 'UNDEFINED')");
     assertNoSolution("zip_code('90008', 'UNDEFINED')");
