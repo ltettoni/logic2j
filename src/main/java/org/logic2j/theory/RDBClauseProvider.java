@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.hamcrest.core.IsInstanceOf;
 import org.logic2j.ClauseProvider;
 import org.logic2j.PrologImplementor;
 import org.logic2j.TermFactory.FactoryMode;
