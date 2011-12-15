@@ -233,6 +233,10 @@ public class Struct extends Term {
     return this.args[1];
   }
 
+  /**
+   * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
+   * @return The predicate's name + '/' + arity
+   */
   public String getPredicateIndicator() {
     return this.name + '/' + this.arity;
   }

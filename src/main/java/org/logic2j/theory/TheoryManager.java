@@ -21,17 +21,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.logic2j.ClauseProvider;
+import org.logic2j.PrologImplementor;
 import org.logic2j.library.PLibrary;
+import org.logic2j.model.Clause;
 import org.logic2j.model.symbol.Struct;
-import org.logic2j.model.symbol.Term;
 import org.logic2j.solve.GoalSolver;
 
 /**
- * An API to manage theories (lists of Prolog facts and clauses expressed as text
- * and parsed into {@link Term}s).
+ * An API to manage theories (lists of Prolog {@link Clause}s (facts or rules) 
+ * expressed as text.
  * The {@link TheoryManager} is an implementation of a {@link ClauseProvider} since it
- * provides sequences of clauses to the {@link GoalSolver} inference engine.
- *
+ * also provides sequences of clauses to the {@link GoalSolver} inference engine.
  */
 public interface TheoryManager extends ClauseProvider {
 
@@ -39,8 +39,19 @@ public interface TheoryManager extends ClauseProvider {
   // Load Theories from various sources into a TheoryContent representation
   //---------------------------------------------------------------------------
 
+  /**
+   * Load the Prolog content associated to a {@link PLibrary}.
+   * @param theLibrary
+   * @return The content of the theory associated to theLibrary
+   */
   public abstract TheoryContent load(PLibrary theLibrary);
 
+  /**
+   * Convenience method to load a File representing a Theory.
+   * @param theFile
+   * @return The content of the theory from theFile.
+   * @throws IOException
+   */
   public abstract TheoryContent load(File theFile) throws IOException;
 
   //---------------------------------------------------------------------------
@@ -53,16 +64,10 @@ public interface TheoryManager extends ClauseProvider {
   public abstract void setTheory(TheoryContent theContent);
 
   /**
-   * @param theContent to add
+   * @param theContent To be added to the {@link PrologImplementor} engine associated.
    */
   public abstract void addTheory(TheoryContent theContent);
 
   public abstract void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
-
-  //  //---------------------------------------------------------------------------
-  //  // Access content of theories currently loaded
-  //  //---------------------------------------------------------------------------
-  //
-  //  public abstract Iterable<Clause> listMatchingClauses(Struct theGoalTerm);
 
 }

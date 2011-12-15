@@ -27,11 +27,11 @@ import org.logic2j.theory.TheoryManager;
 /**
  * A Clause is a {@link Struct} representing a fact or a rule in a theory; 
  * it has extra features for efficient lookup and matching by {@link TheoryManager}s.
- * We implement by composition (wrapping a {@link Struct}), not not derivation.
+ * We implement by composition (by wrapping a {@link Struct}), not by derivation.
  * Facts may be represented in two manners:
  * <ol>
- * <li>A Struct with any functor different from :- (this is recommended and more optimal)</li>
- * <li>A Struct with functor :- and "true" as body (this is less optimal)</li>
+ * <li>A Struct with any functor different from ':-' (this is recommended and more optimal)</li>
+ * <li>A Struct with functor ':-' and "true" as body (this is less optimal because this is actually a rule)</li>
  * </ol>
  */
 public class Clause {
@@ -125,7 +125,7 @@ public class Clause {
   //---------------------------------------------------------------------------
 
   /**
-   * @return The key indicating the predicate of this clause
+   * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.
    */
   public String getPredicateKey() {
     final Struct head = getHead();

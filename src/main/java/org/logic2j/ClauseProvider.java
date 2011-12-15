@@ -19,33 +19,35 @@ package org.logic2j;
 
 import org.logic2j.model.Clause;
 import org.logic2j.model.symbol.Struct;
-import org.logic2j.solve.GoalSolver;
 
 /**
- * Provide clauses (facts or rules) from various content sources to 
- * the {@link GoalSolver} inference engine.
+ * Provide {@link Clause}s (facts or rules) from various content sources to 
+ * the {@link org.logic2j.solve.GoalSolver} inference engine.
  * The most typical implementation is that clauses are parsed from one (or several)
  * theories' textual content. Other implementations include database back-ends, or online
  * resources.<br/>
  * Notice the {@link Iterable} nature of the returned clauses. This allows implementors to
- * return iterable results sets, for example from database cursors. The {@link GoalSolver} does
+ * return iterable results sets, for example from database cursors. The {@link org.logic2j.solve.GoalSolver} does
  * not need all clauses in memory at once!
  * 
- * Contract: The {@link GoalSolver} will never cache the result from
+ * Contract: The {@link org.logic2j.solve.GoalSolver} will never cache the result from
  * {@link #listMatchingClauses(Struct)}, therefore think of caching in case of remote content.
  */
 public interface ClauseProvider {
 
   /**
-   * List clauses (facts or rules) potentially matching the specified goal.
+   * Provide {@link Clause}s (facts or rules) potentially matching theGoal argument, which often
+   * is a Struct with bound or unbound variables.<br/>
    * All clauses that could (but may eventually not) match theGoal must 
-   * be returned by this method. This implies that the match is broader than needed,
-   * and the {@link GoalSolver} will actually determine by unification
-   * if returned clauses will actually be useable or not.
+   * be returned by this method. This implies that the match may be broader than actually needed,
+   * the {@link org.logic2j.solve.GoalSolver} will determine by unification
+   * if {@link Clause}s returned by this method will be eligible for inference.
    * 
    * @param theGoal
-   * @return An ordered iterable of {@link Clause}s that are 
-   * candidates for unifying with theGoal. Allows nice foreach construct!
+   * @return An ordered {@link Iterable} of {@link Clause}s that are 
+   * candidates for unifying with theGoal. Aside from performance aspects, it is not critical to 
+   * return {@link Clause}s whose head would eventually not be used by 
+   * the {@link org.logic2j.solve.GoalSolver}.
    */
   public Iterable<Clause> listMatchingClauses(Struct theGoal);
 

@@ -27,11 +27,14 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.symbol.Struct;
 
 /**
- * Description of the content of a theory: an structured number of {@link Clause}s.
- *
+ * Storage of the content of a theory: a structured list of {@link Clause}s.
  */
 public class TheoryContent {
 
+  /**
+   * Key:   unique key for all clauses whose head is a family, see {@link Clause#getPredicateKey()}.
+   * Value: ordered list of very immutable {@link Clause}s.
+   */
   private Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
 
   /**
@@ -42,31 +45,34 @@ public class TheoryContent {
   }
 
   /**
-   * Add one clause.
+   * Add one {@link Clause}.
    * @param theClause
    */
   public void add(Clause theClause) {
-    final String key = theClause.getPredicateKey();
-    List<Clause> list = this.content.get(key);
-    if (list == null) {
-      list = new ArrayList<Clause>();
-      this.content.put(key, list);
+    final String clauseFamilyKey = theClause.getPredicateKey();
+    List<Clause> family = this.content.get(clauseFamilyKey);
+    if (family == null) {
+      // No Clause yet defined in this family, create one
+      family = new ArrayList<Clause>();
+      this.content.put(clauseFamilyKey, family);
     }
-    list.add(theClause);
+    family.add(theClause);
   }
 
   /**
-   * Add all clauses contained in theExtraContent.
+   * Add all {@link Clause}s contained in theExtraContent. 
+   * Watch out, references are added, Clauses are NOT copied, because of their immutable nature,
+   * they can be shared.
    * @param theExtraContent
    */
   public void add(TheoryContent theExtraContent) {
     for (Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
-      final String key = extraEntry.getKey();
-      List<Clause> extraClauses = extraEntry.getValue();
-      if (this.content.containsKey(key)) {
-        this.content.get(key).addAll(extraClauses);
+      final String clauseFamilyKey = extraEntry.getKey();
+      final List<Clause> clausesToAdd = extraEntry.getValue();
+      if (this.content.containsKey(clauseFamilyKey)) {
+        this.content.get(clauseFamilyKey).addAll(clausesToAdd);
       } else {
-        this.content.put(key, extraClauses);
+        this.content.put(clauseFamilyKey, clausesToAdd);
       }
     }
   }

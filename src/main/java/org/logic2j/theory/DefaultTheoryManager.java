@@ -36,10 +36,10 @@ import org.logic2j.solve.GoalSolver;
 import org.logic2j.util.ReportUtils;
 
 /**
- * Prolog's most classic way of providing sequence of clauses to the {@link GoalSolver} inference engine:
+ * Prolog's most classic way of providing {@link Clause}s to the {@link GoalSolver} inference engine:
  * all clauses are parsed and normalized from one or several theories' textual content managed
  * by this class.
- * TODO Is the name "Manager" correct here???
+ * TODO Does the name "Manager" make sense here?
  */
 public class DefaultTheoryManager implements TheoryManager {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
@@ -132,9 +132,13 @@ public class DefaultTheoryManager implements TheoryManager {
     this.wholeContent.add(theContent);
   }
 
+  /**
+   * @param theGoal
+   * @return All {@link Clause}s from the {@link TheoryContent} that may match theGoal.
+   */
   @Override
-  public Iterable<Clause> listMatchingClauses(Struct theGoalTerm) {
-    return this.wholeContent.find(theGoalTerm);
+  public Iterable<Clause> listMatchingClauses(Struct theGoal) {
+    return this.wholeContent.find(theGoal);
   }
 
   @Override
