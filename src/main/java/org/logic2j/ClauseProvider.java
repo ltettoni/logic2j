@@ -19,6 +19,7 @@ package org.logic2j;
 
 import org.logic2j.model.Clause;
 import org.logic2j.model.symbol.Struct;
+import org.logic2j.model.var.Bindings;
 
 /**
  * Provide {@link Clause}s (facts or rules) from various content sources to 
@@ -31,7 +32,7 @@ import org.logic2j.model.symbol.Struct;
  * not need all clauses in memory at once!
  * 
  * Contract: The {@link org.logic2j.solve.GoalSolver} will never cache the result from
- * {@link #listMatchingClauses(Struct)}, therefore think of caching in case of remote content.
+ * {@link #listMatchingClauses(Struct, Bindings)}, therefore think of caching in case of remote content.
  */
 public interface ClauseProvider {
 
@@ -49,6 +50,6 @@ public interface ClauseProvider {
    * return {@link Clause}s whose head would eventually not be used by 
    * the {@link org.logic2j.solve.GoalSolver}.
    */
-  public Iterable<Clause> listMatchingClauses(Struct theGoal);
+  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
 
 }

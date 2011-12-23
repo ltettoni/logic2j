@@ -56,6 +56,7 @@ public class SqlRunner {
    * @throws SQLException 
    */
   public List<Object[]> query(String theSelect, Object[] theParameters) throws SQLException {
+	  
     if (theParameters == null) {
       theParameters = EMPTY_PARAMS;
     }
@@ -70,7 +71,6 @@ public class SqlRunner {
       Connection conn = this.dataSource.getConnection();
       stmt = this.prepareStatement(conn, theSelect);
       this.fillStatement(stmt, theParameters);
-
       rs = stmt.executeQuery();
 
       result = handle(rs);

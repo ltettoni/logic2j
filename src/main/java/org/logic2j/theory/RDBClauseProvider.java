@@ -31,9 +31,10 @@ import org.logic2j.model.Clause;
 import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
+import org.logic2j.model.var.Bindings;
 import org.logic2j.util.SqlBuilder3;
-import org.logic2j.util.SqlRunner;
 import org.logic2j.util.SqlBuilder3.Table;
+import org.logic2j.util.SqlRunner;
 
 /**
  * List {@link Clause}s (facts, never rules) from relational database tables or views accessed 
@@ -56,7 +57,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
   }
 
   @Override
-  public Iterable<Clause> listMatchingClauses(Struct theGoal) {
+  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
     String predicateName = theGoal.getName();
     SqlBuilder3 builder = new SqlBuilder3();
     builder.setInstruction(SqlBuilder3.SELECT);
