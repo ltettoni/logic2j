@@ -38,6 +38,9 @@ public class SqlBuilder3 {
 
   public static final String OPERATOR_EQ_OR_IN = "=";
   public static final String OPERATOR_NOT_EQ_NOR_IN = "!=";
+  public static final String OPERATOR_NOT = "not";
+  public static final String OPERATOR_AND = "and";
+  public static final String OPERATOR_OR = "or";
 
   /**
    * One of the constants {@link #SELECT}, {@link #UPDATE} or {@link #DELETE}.
@@ -50,7 +53,7 @@ public class SqlBuilder3 {
   private boolean distinct = false; // Generate "select distinct ..." or "count(distinct ...)"
 
   public Set<Table> tables = new LinkedHashSet<Table>(); // All tables registered, unique!
-  private List<Criterion> conjunctions = new ArrayList<Criterion>();
+  private List<BaseCriterion> conjunctions = new ArrayList<BaseCriterion>();
   private List<Column> projections = new ArrayList<Column>();
   private List<ColumnOrder> orders = new ArrayList<ColumnOrder>();
 
@@ -217,7 +220,7 @@ public class SqlBuilder3 {
 
   private Object conjunctions() {
     final List<String> fragments = new ArrayList<String>();
-    for (Criterion conj : this.conjunctions) {
+    for (BaseCriterion conj : this.conjunctions) {
       fragments.add(conj.sql());
     }
     return CollectionUtils.formatSeparated(fragments, " and ");
@@ -525,12 +528,25 @@ public class SqlBuilder3 {
     return new Criterion(theColumn, effectiveOperator, theScalarOrListValue);
   }
 
+  public BaseCriterion not(BaseCriterion theCriterion) {
+    return new LogicalExpression(OPERATOR_NOT, theCriterion);
+  }
+  
+  public BaseCriterion and(BaseCriterion... theCriteria) {
+    return new LogicalExpression(OPERATOR_AND, theCriteria);
+  }
+
+  public BaseCriterion or(BaseCriterion... theCriteria) {
+    return new LogicalExpression(OPERATOR_OR, theCriteria);
+  }
+
+  
   public SqlBuilder3 addConjunction(Column theColumn, Object... theScalarOrListValue) {
     this.conjunctions.add(criterion(theColumn, theScalarOrListValue));
     return this;
   }
 
-  public SqlBuilder3 addConjunction(Criterion theCriterion) {
+  public SqlBuilder3 addConjunction(BaseCriterion theCriterion) {
     this.conjunctions.add(theCriterion);
     return this;
   }
@@ -814,10 +830,41 @@ public class SqlBuilder3 {
     }
   }
 
-  public class Criterion {
+  public abstract class BaseCriterion {
+    public String operator;
+    public abstract String sql();
+  }
+  
+  
+  public class LogicalExpression extends BaseCriterion {
+    public List<BaseCriterion> members = new ArrayList<BaseCriterion>();
+
+    /**
+     * @param theOperator
+     * @param theCriterion
+     */
+    LogicalExpression(String theOperator, BaseCriterion... theCriterion) {
+      this.operator = theOperator;
+      this.members.clear();
+      this.members.addAll(Arrays.asList(theCriterion));
+    }
+
+    @Override
+    public String sql() {
+      if (OPERATOR_NOT.equalsIgnoreCase(this.operator)) {
+        return OPERATOR_NOT + '(' + this.members.get(0).sql() + ')'; 
+      }
+      final List<String> fragments = new ArrayList<String>();
+      for (BaseCriterion element : this.members) {
+        fragments.add(element.sql());
+      }
+      return '(' + CollectionUtils.formatSeparated(fragments, " " + this.operator + " ") + ')';
+    }
+  }
+  
+  public class Criterion extends BaseCriterion {
 
     private Column column;
-    private String operator;
     private Object[] operand;
 
     /**
@@ -836,6 +883,7 @@ public class SqlBuilder3 {
       return this.column + this.operator + Arrays.asList(this.operand);
     }
 
+    @Override
     public String sql() {
       return this.column.sql() + this.operator + addParameter(this.operand);
     }

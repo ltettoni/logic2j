@@ -19,6 +19,8 @@ package org.logic2j.theory;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Before;
@@ -43,7 +45,9 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   }
 
   @Test
-  public void listMatchingClauses() {
+  public void listMatchingClauses() throws IOException {
+    getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+    
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.listMatchingClauses(theGoal, null);
@@ -54,41 +58,43 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     assertNotNull(this.provider);
     final Struct theGoal = new Struct("zip_code", "Zip", "City");
     this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
-    this.provider.listMatchingClauses(theGoal, null);
+    this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
   }
 
   @Test
-  public void matchClausesFromProlog() {
+  public void matchClausesFromProlog() throws IOException {
+    getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+    
     getProlog().getClauseProviders().add(this.provider);
     // Matching all
-    assertNSolutions(79991, "zip_code(_, _)");
-    assertNSolutions(79991, "zip_code(X, _)");
-    assertNSolutions(79991, "zip_code(_, Y)");
-    assertNSolutions(79991, "zip_code(X, Y)");
+    assertNSolutions(79991, "pred_zip_code(_, _)");
+    assertNSolutions(79991, "pred_zip_code(X, _)");
+    assertNSolutions(79991, "pred_zip_code(_, Y)");
+    assertNSolutions(79991, "pred_zip_code(X, Y)");
     // Match on first argument
-    assertNSolutions(0, "zip_code('90008', dummy)");
-    assertNSolutions(4, "zip_code('90008', _)");
-    assertNSolutions(4, "zip_code('90008', Y)");
-    assertNSolutions(4, "Z='90008', Y=dummy, zip_code(Z, _)");
-    assertNoSolution("Y=dummy, zip_code('90008', Y)");
-    assertNoSolution("Y=dummy, Z=other, zip_code('90008', Y)");
-    assertNSolutions(4, "Z=dummy, zip_code('90008', Y)");
-    assertNoSolution("zip_code('90008', Y), Y=dummy");
+    assertNSolutions(0, "pred_zip_code('90008', dummy)");
+    assertNSolutions(4, "pred_zip_code('90008', _)");
+    assertNSolutions(4, "pred_zip_code('90008', Y)");
+    assertNSolutions(4, "Z='90008', Y=dummy, pred_zip_code(Z, _)");
+    assertNoSolution("Y=dummy, pred_zip_code('90008', Y)");
+    assertNoSolution("Y=dummy, Z=other, pred_zip_code('90008', Y)");
+    assertNSolutions(4, "Z=dummy, pred_zip_code('90008', Y)");
+    assertNoSolution("pred_zip_code('90008', Y), Y=dummy");
     // Match on second argument
-    assertNSolutions(102, "zip_code(_, 'LOS ANGELES')");
-    assertNSolutions(102, "zip_code(X, 'LOS ANGELES')");
-    assertNoSolution("X=dummy, zip_code(X, 'LOS ANGELES')");
-    assertNoSolution("zip_code(X, 'LOS ANGELES'), X=dummy");
+    assertNSolutions(102, "pred_zip_code(_, 'LOS ANGELES')");
+    assertNSolutions(102, "pred_zip_code(X, 'LOS ANGELES')");
+    assertNoSolution("X=dummy, pred_zip_code(X, 'LOS ANGELES')");
+    assertNoSolution("pred_zip_code(X, 'LOS ANGELES'), X=dummy");
     // Match on both arguments
-    assertNSolutions(1, "zip_code('90008', 'LOS ANGELES')");
+    assertNSolutions(1, "pred_zip_code('90008', 'LOS ANGELES')");
     // Match on list testing
-    assertNSolutions(0, "zip_code(['90008',dummy], Y)");
-    assertNoSolution("Y=[dummy,'LOS ANGELES'], zip_code('90008', Y)");
+    assertNSolutions(0, "pred_zip_code(['90008',dummy], Y)");
+    assertNoSolution("Y=[dummy,'LOS ANGELES'], pred_zip_code('90008', Y)");
     // NO matches
-    assertNoSolution("zip_code('00000', 'UNDEFINED')");
-    assertNoSolution("zip_code('90008', 'UNDEFINED')");
-    assertNoSolution("zip_code('00000', 'LOS ANGELES')");
-    assertNoSolution("zip_code(X, X)");
+    assertNoSolution("pred_zip_code('00000', 'UNDEFINED')");
+    assertNoSolution("pred_zip_code('90008', 'UNDEFINED')");
+    assertNoSolution("pred_zip_code('00000', 'LOS ANGELES')");
+    assertNoSolution("pred_zip_code(X, X)");
   }
 
 }

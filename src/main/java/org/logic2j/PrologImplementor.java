@@ -31,6 +31,8 @@ import org.logic2j.unify.Unifyer;
  */
 public interface PrologImplementor extends Prolog {
 
+  ClauseProviderResolver getClauseProviderResolver();
+    
   public abstract Unifyer getUnifyer();
 
   public abstract GoalSolver getSolver();

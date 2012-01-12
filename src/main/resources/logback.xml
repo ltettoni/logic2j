@@ -15,13 +15,9 @@
   </appender>
   -->
   
-  <logger name="org.logic2j.PrologWithDataSourcesTestBase"><level value="info"/></logger>
-  <logger name="org.logic2j.util.SqlRunner"><level value="info"/></logger>
-  <logger name="org.logic2j.library.impl.rdb.RDBLibrary"><level value="info"/></logger>
+  <logger name="org.logic2j.theory.RDBClauseProvider"><level value="debug"/></logger>
+  <logger name="org.logic2j.util.SqlBuilder3"><level value="info"/></logger>
   <logger name="org.logic2j.solve.DefaultGoalSolver"><level value="info"/></logger>
-
-  <logger name="org.logic2j.model.var.Binding"><level value="info"/></logger>
-  <logger name="org.logic2j.model.var.Bindings"><level value="info"/></logger>
 
 
   <root level="info">

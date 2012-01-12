@@ -26,6 +26,7 @@ import org.logic2j.io.operator.DefaultOperatorManager;
 import org.logic2j.io.operator.OperatorManager;
 import org.logic2j.io.parse.DefaultTermFactory;
 import org.logic2j.library.impl.LibraryBase;
+import org.logic2j.library.impl.config.ConfigLibrary;
 import org.logic2j.library.impl.core.CoreLibrary;
 import org.logic2j.library.impl.io.IOLibrary;
 import org.logic2j.library.mgmt.DefaultLibraryManager;
@@ -74,6 +75,7 @@ public class PrologImpl implements PrologImplementor {
   private OperatorManager operatorManager = new DefaultOperatorManager();
   private GoalSolver solver = new DefaultGoalSolver(this);
   private Unifyer unifyer = new DefaultUnifyer();
+  private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
   // TODO Does the clauseProviders belong here or from the GoalSolver where they are solely used??? See https://github.com/ltettoni/logic2j/issues/17
   private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
@@ -85,6 +87,8 @@ public class PrologImpl implements PrologImplementor {
     // The first clause provider is always the TheoryManager. Others may be added.
     final TheoryManager tm = new DefaultTheoryManager(this);
     this.clauseProviders.add(tm);
+    // Here we load libs in order
+    libraryManager.loadLibrary(new ConfigLibrary(this));
     if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
       final LibraryBase lib = new CoreLibrary(this);
       this.libraryManager.loadLibrary(lib);
@@ -93,12 +97,26 @@ public class PrologImpl implements PrologImplementor {
       final IOLibrary lib = new IOLibrary(this);
       this.libraryManager.loadLibrary(lib);
     }
+    // FIXME Is this OK to load libs in irrelevant order?
+//    switch(theLevel) {
+//    case L2_BASE_LIBRARIES:
+//        libraryManager.loadLibrary(new IOLibrary(this));
+//    case L1_CORE_LIBRARY:
+//        libraryManager.loadLibrary(new CoreLibrary(this));
+//    default:
+//        libraryManager.loadLibrary(new ConfigLibrary(this));
+//    }
   }
 
   //---------------------------------------------------------------------------
   // Accessors
   //---------------------------------------------------------------------------
 
+  @Override
+  public ClauseProviderResolver getClauseProviderResolver() {
+      return clauseProviderResolver;
+  }
+  
   @Override
   public OperatorManager getOperatorManager() {
     return this.operatorManager;

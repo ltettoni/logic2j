@@ -155,6 +155,8 @@ public class FunctionalTest extends PrologTestBase {
   @Test
   public void test_sumial() throws IOException {
     addTheory("src/test/resources/test-functional.pl");
+    assertEquals(term(15), assertOneSolution("sumial(5, X)").binding("X"));
+    assertEquals(term(55), assertOneSolution("sumial(10, X)").binding("X"));
     assertEquals(term(5050), assertOneSolution("sumial(100, X)").binding("X"));
   }
 

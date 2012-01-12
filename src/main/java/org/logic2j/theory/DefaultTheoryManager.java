@@ -33,7 +33,9 @@ import org.logic2j.model.exception.InvalidTermException;
 import org.logic2j.model.symbol.Struct;
 import org.logic2j.model.symbol.Term;
 import org.logic2j.model.var.Bindings;
+import org.logic2j.solve.GoalFrame;
 import org.logic2j.solve.GoalSolver;
+import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.util.ReportUtils;
 
 /**
@@ -106,13 +108,31 @@ public class DefaultTheoryManager implements TheoryManager {
     //    final Iterator<Term> iterator = theParser.iterator();
     //    while (iterator.hasNext()) {
     Term clauseTerm = theParser.nextTerm(true);
+    Term initializeGoal = null;
     while (clauseTerm != null) {
       //      Term clauseTerm = iterator.next();
       // TODO Dubious we should not need to normalize here.
       logger.debug("Adding clause {}", clauseTerm);
       final Clause cl = new Clause(this.prolog, clauseTerm);
+      if ("initialize".equals(cl.getHead().getName())) {
+          initializeGoal = cl.getBody();
+      } else {
+          prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
+      }
       content.add(cl);
       clauseTerm = theParser.nextTerm(true);
+    }
+    // Invoke the "initialize" goal
+    if (initializeGoal != null) {
+      final Bindings bindings = new Bindings(initializeGoal);
+      final GoalFrame goalFrame = new GoalFrame();
+      final SolutionListener solutionListener = new SolutionListener() {
+        @Override
+        public boolean onSolution() {
+          return false;
+        }
+      };
+      prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
     }
     return content;
   }
