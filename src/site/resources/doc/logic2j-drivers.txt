@@ -31,3 +31,22 @@ The striking differences over tuProlog are:
 - a much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns
 - the API to retrieve or manipulate solutions is more flexible
 
+
+
+Features in more details:
+- Custom Java predicates (primitives) can generate an indefinite number of solutions. 
+  This does not need complex bactracking, content from any collection or iterator can be "pushed" to the inference engine easily.
+
+- The codebase uses state-of-the-art programming patterns such as
+  Inversion of Control
+  Factory / Implementation
+  Hooks and derivation points to extend functionality
+  Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
+  Visitor
+
+- Java 1.6 language and JRE features fully leveraged
+  Generics
+  Varargs
+  Forall and Iterable
+  Static imports
+
