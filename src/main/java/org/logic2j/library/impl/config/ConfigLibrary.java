@@ -6,10 +6,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -24,7 +26,7 @@ import org.logic2j.solve.ioc.SolutionListener;
 import org.logic2j.theory.RDBClauseProvider;
 
 /**
- * 
+ * Preliminary - should be reviewed
  * FIXME: This class should not know of RDBClauseProvider!
  */
 public class ConfigLibrary extends LibraryBase {
@@ -89,11 +91,11 @@ public class ConfigLibrary extends LibraryBase {
                 throw new UnsupportedOperationException("setLogWriter");
             }
 
-//            @Override
-//            public Logger getParentLogger()
-//                    throws SQLFeatureNotSupportedException {
-//                throw new UnsupportedOperationException("getParentLogger");
-//            }
+            @Override
+            public Logger getParentLogger()
+                    throws SQLFeatureNotSupportedException {
+                throw new UnsupportedOperationException("getParentLogger");
+            }
 
             @Override
             public int getLoginTimeout() throws SQLException {
