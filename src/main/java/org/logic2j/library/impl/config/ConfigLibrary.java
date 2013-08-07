@@ -120,6 +120,9 @@ public class ConfigLibrary extends LibraryBase {
             }
         };
         
+        // This is dubious - we instantiate a new ClauseProvider just to save the table metamodel
+        // but we won't have it when needed!!!
+        // This generates a NPE see RDBClauseProviderTest
         RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(),
                 dataSource, prefix);
 
