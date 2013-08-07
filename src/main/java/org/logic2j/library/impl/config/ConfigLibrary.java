@@ -135,10 +135,8 @@ public class ConfigLibrary extends LibraryBase {
             if (!tablesToMap.contains(tableNameLc)) continue;
             ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
             List<String> columnDescription = new ArrayList<String>();
-            int j = 0;
             while (tableColumns.next()) {
                 columnDescription.add(tableColumns.getString(4));
-                j++;
             }
             clauseProvider.saveTableInfo(tableName, columnDescription.toArray(new String[] {}));
             int arity = columnDescription.size();

@@ -46,7 +46,6 @@ import org.logic2j.util.SqlRunner;
  * this class expects a database table or view such as "PRED_ZIPCODE_CITY(INTEGER ARG_0, VARCHAR ARG_1)".
  */
 public class RDBClauseProvider extends RDBBase implements ClauseProvider {
-	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBClauseProvider.class);
 
   /**
    * The target database is supposed to implement tables, or (more realistically) views
