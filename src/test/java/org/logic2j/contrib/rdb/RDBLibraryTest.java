@@ -15,21 +15,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.library.impl.config;
+package org.logic2j.contrib.rdb;
 
-import java.io.File;
-import java.io.IOException;
+import static org.junit.Assert.assertNotNull;
 
-import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologWithDataSourcesTestBase;
+import org.junit.Test;
 
-public class ConfigLibraryTest extends PrologWithDataSourcesTestBase {
+public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
-  // FIXME: pourquoi un main() dans un test case JUnit?
-    public static void main(String[] args) throws IOException {
-        PrologImpl prolog = new PrologImpl();
-        prolog.getTheoryManager().addTheory(prolog.getTheoryManager().load(new File("src/test/resources/test-config.pl")));
-        System.out.println(prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
-    }
-    
+  @Test
+  public void ensureCanGetConnection() throws Exception {
+    assertNotNull(zipcodesConnection());
+  }
 }

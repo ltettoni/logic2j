@@ -15,11 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.library.impl.pojo;
+package org.logic2j.contrib.library.pojo;
 
 import org.junit.Test;
+import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.library.impl.pojo.PojoLibrary;
 
 /**
  */
@@ -35,6 +35,16 @@ public class PojoLibraryTest extends PrologTestBase {
     assertNoSolution("bind(name, a)");
     assertNoSolution("bind(name, name)");
     assertOneSolution("bind(name, value)");
+  }
+
+
+  /**
+   * Helper method for PojoLibrary-related test cases: bind a Java object by name.
+   * @param theKey
+   * @param theValue
+   */
+  protected void bind(String theKey, Object theValue) {
+    PojoLibrary.bind(theKey, theValue);
   }
 
 }

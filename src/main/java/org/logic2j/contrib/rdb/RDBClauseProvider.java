@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.theory;
+package org.logic2j.contrib.rdb;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ import javax.sql.DataSource;
 import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory.FactoryMode;
-import org.logic2j.core.library.impl.rdb.RDBBase;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;

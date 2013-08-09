@@ -26,7 +26,6 @@ import org.logic2j.core.io.operator.DefaultOperatorManager;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.io.parse.DefaultTermFactory;
 import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.library.impl.config.ConfigLibrary;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.library.mgmt.DefaultLibraryManager;
@@ -87,8 +86,20 @@ public class PrologImpl implements PrologImplementor {
     // The first clause provider is always the TheoryManager. Others may be added.
     final TheoryManager tm = new DefaultTheoryManager(this);
     this.clauseProviders.add(tm);
+    
     // Here we load libs in order
-    libraryManager.loadLibrary(new ConfigLibrary(this));
+    
+    /*
+     *  NOTE: the ConfigLibrary was part of the "core" and has been pushed to "contrib" since it was
+     *  only used in rdb-related configuration.
+     *  I comment out this initialization since I don't want the "core" to depend on "contrib".
+     *  We'll have to find a way to allow easy loading of libs upon initialization.
+     *  I would really rely on DI to care about this. 
+     */
+    // (commented out since ConfigLibrary no longer on core): libraryManager.loadLibrary(new ConfigLibrary(this));
+    
+    
+    
     if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
       final LibraryBase lib = new CoreLibrary(this);
       this.libraryManager.loadLibrary(lib);

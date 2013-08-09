@@ -34,7 +34,6 @@ import org.logic2j.core.solve.ioc.SolutionListener;
 
 /**
  * Base class for libraries.
- * 
  */
 public class LibraryBase implements PLibrary {
   protected static final TermApi TERM_API = new TermApi();

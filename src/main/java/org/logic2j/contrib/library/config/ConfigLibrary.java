@@ -1,4 +1,4 @@
-package org.logic2j.core.library.impl.config;
+package org.logic2j.contrib.library.config;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
+import org.logic2j.contrib.rdb.RDBClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -23,7 +24,6 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.ioc.SolutionListener;
-import org.logic2j.core.theory.RDBClauseProvider;
 
 /**
  * Preliminary - should be reviewed

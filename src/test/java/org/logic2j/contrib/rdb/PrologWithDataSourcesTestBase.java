@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core;
+package org.logic2j.contrib.rdb;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.logic2j.core.PrologTestBase;
 
 /**
  * Common base class for testing the Prolog engine with data sources.

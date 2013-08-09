@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.theory;
+package org.logic2j.contrib.rdb;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -26,10 +26,9 @@ import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.PrologWithDataSourcesTestBase;
-import org.logic2j.core.library.impl.rdb.RDBBase;
+import org.logic2j.contrib.rdb.RDBBase;
+import org.logic2j.contrib.rdb.RDBClauseProvider;
 import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.theory.RDBClauseProvider;
 
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   private RDBClauseProvider provider;

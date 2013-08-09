@@ -27,13 +27,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.library.PLibrary;
-import org.logic2j.core.library.impl.pojo.PojoLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solve.holder.MultipleSolutionsHolder;
@@ -160,19 +157,6 @@ public abstract class PrologTestBase {
 
   protected LibraryContent loadLibrary(PLibrary theLibrary) {
     return getProlog().getLibraryManager().loadLibrary(theLibrary);
-  }
-
-  /**
-   * Helper method for test cases: bind a Java object by name.
-   * @param theKey
-   * @param theValue
-   */
-  protected void bind(String theKey, Object theValue) {
-    // At the moment where the bind predicate is...
-    //    final PojoLibrary library = new PojoLibrary(getProlog());
-    //    loadLibrary(library);
-    //    library.bind(key, value);
-    PojoLibrary.bind(theKey, theValue);
   }
 
 }
