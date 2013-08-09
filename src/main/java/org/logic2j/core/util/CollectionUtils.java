@@ -26,7 +26,8 @@ import java.util.Map.Entry;
 
 /**
  * Utilities to format {@link Collection}s, by extension functions are also
- * handling {@link Map}s and arrays. Quite of a nice to have... Not really much
+ * handling {@link Map}s and arrays. 
+ * @note Quite of a nice to have, and not functionally required... Not really much
  * used (only in contribs, and in one test case). We could as well use Guava but
  * do we want dependencies just for that?
  */

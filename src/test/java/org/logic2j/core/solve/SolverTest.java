@@ -43,8 +43,8 @@ import org.logic2j.core.solve.listener.SolutionListener;
  * the {@link SolutionHolder} API to extract solutions (results and bindings).
  * 
  */
-public class GoalSolverTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GoalSolverTest.class);
+public class SolverTest extends PrologTestBase {
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolverTest.class);
 
   @Test
   public void testVeryBasic() {

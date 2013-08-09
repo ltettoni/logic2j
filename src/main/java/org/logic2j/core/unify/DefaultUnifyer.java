@@ -31,7 +31,7 @@ import org.logic2j.core.util.ReportUtils;
  * should always work OK although probably not the best possible implementation.
  *
  */
-public class DefaultUnifyer implements Unifyer {
+public class DefaultUnifyer implements Unifier {
 
   @Override
   public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {

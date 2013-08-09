@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.solve.Solver;
-import org.logic2j.core.unify.Unifyer;
+import org.logic2j.core.unify.Unifier;
 
 /**
  * An interface that Prolog implementations must provide; this goes 
@@ -33,7 +33,7 @@ public interface PrologImplementor extends Prolog {
 
   ClauseProviderResolver getClauseProviderResolver();
     
-  public abstract Unifyer getUnifyer();
+  public abstract Unifier getUnifyer();
 
   public abstract Solver getSolver();
 

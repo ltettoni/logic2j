@@ -22,7 +22,7 @@ import org.logic2j.core.model.var.Bindings;
 
 /**
  * A {@link SolutionListener} that will collect only the first solution but won't
- * care if the goal solver will provide more. It will atually ask the goal solver to stop
+ * care if the goal solver can provide more. It will atually ask the goal solver to stop
  * generating after the first was issued.
  */
 public class FirstSolutionListener extends SingleSolutionListener {
@@ -36,7 +36,7 @@ public class FirstSolutionListener extends SingleSolutionListener {
 
   @Override
   protected void onSuperfluousSolution() {
-    throw new IllegalSolutionException("Should not happen we have asked the SolutionListener to stop after one");
+    throw new IllegalSolutionException("Internal error, this should not happen since we have asked the SolutionListener to stop after one");
   }
 
 }

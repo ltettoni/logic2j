@@ -24,7 +24,7 @@ import org.logic2j.core.solve.listener.SolutionListener;
 
 /**
  * Interface allowing {@link PrologImpl} to access the inference engine algorithm,
- * in order to solve goals or invoke primitives.
+ * in order to solve goals.
  */
 public interface Solver {
 

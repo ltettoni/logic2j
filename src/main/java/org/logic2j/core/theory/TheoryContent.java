@@ -27,22 +27,17 @@ import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.symbol.Struct;
 
 /**
- * Storage of the content of a theory: a structured list of {@link Clause}s.
+ * Storage of the content of a theory: an ordered collection of {@link Clause}s,
+ * with some indexing and structuring added for performance.
  */
 public class TheoryContent {
 
   /**
-   * Key:   unique key for all clauses whose head is a family, see {@link Clause#getPredicateKey()}.
-   * Value: ordered list of very immutable {@link Clause}s.
+   * The data structure to hold our clauses: lists of {@link Clause}s by predicate key.
+   * Key:   unique key for all clauses whose predicate head is a family, see {@link Clause#getPredicateKey()}.
+   * Value: ordered list of very very very immutable {@link Clause}s.
    */
   private Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
-
-  /**
-   * Create with empty content.
-   */
-  public TheoryContent() {
-    super();
-  }
 
   /**
    * Add one {@link Clause}.
@@ -65,7 +60,7 @@ public class TheoryContent {
    * they can be shared.
    * @param theExtraContent
    */
-  public void add(TheoryContent theExtraContent) {
+  public void addAll(TheoryContent theExtraContent) {
     for (Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
       final String clauseFamilyKey = extraEntry.getKey();
       final List<Clause> clausesToAdd = extraEntry.getValue();
@@ -78,7 +73,7 @@ public class TheoryContent {
   }
 
   /**
-   * Retrieve clauses matching theGoalTerm.
+   * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
    * @param theGoalTerm
    * @return An iterable for a foreach() loop.
    */

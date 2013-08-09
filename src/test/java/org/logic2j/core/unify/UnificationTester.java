@@ -25,17 +25,17 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.unify.Unifyer;
+import org.logic2j.core.unify.Unifier;
 
 /**
- * Support the thorough testing of unification using the {@link Unifyer} interface.
+ * Support the thorough testing of unification using the {@link Unifier} interface.
  */
 class UnificationTester {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);
 
   private static final TermApi TERM_API = new TermApi();
 
-  private final Unifyer unifyer;
+  private final Unifier unifier;
 
   public Term left;
   public Term right;
@@ -50,8 +50,8 @@ class UnificationTester {
   /**
    * @param theUnifyer
    */
-  public UnificationTester(Unifyer theUnifyer) {
-    this.unifyer = theUnifyer;
+  public UnificationTester(Unifier theUnifyer) {
+    this.unifier = theUnifyer;
   }
 
   /**
@@ -87,7 +87,7 @@ class UnificationTester {
    */
   private boolean unifyLR(StringBuilder theSignature) {
     logger.info("Unifying {} to {}", this.left, this.right);
-    boolean unified = this.unifyer.unify(this.left, this.leftVars, this.right, this.rightVars, this.frame);
+    boolean unified = this.unifier.unify(this.left, this.leftVars, this.right, this.rightVars, this.frame);
     logger.debug(" result={}, trailFrame={}", unified, this.frame);
     logger.debug(" leftVars={}", this.leftVars);
     logger.debug(" rightVars={}", this.rightVars);
@@ -112,7 +112,7 @@ class UnificationTester {
 
   private boolean unifyRL(StringBuilder theSignature) {
     logger.info("Unifying {} to {}", this.right, this.left);
-    boolean unified = this.unifyer.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
+    boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
     logger.debug(" result={}, trailFrame={}", unified, this.frame);
     logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null),
         this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
@@ -183,7 +183,7 @@ class UnificationTester {
    * Deunify and do some state checking.
    */
   private void deunify() {
-    this.unifyer.deunify(this.frame);
+    this.unifier.deunify(this.frame);
     logger.debug("Deunify, trailFrame={}", this.frame);
     // No more bindings expected
     assertNbBindings(0);

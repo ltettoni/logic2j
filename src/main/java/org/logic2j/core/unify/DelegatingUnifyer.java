@@ -32,13 +32,13 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 
 /**
- * A {@link Unifyer} that uses reflecton to determine which method to invoke
+ * A {@link Unifier} that uses reflecton to determine which method to invoke
  * to unify 2 concrete {@link Term}s. 
  * The methods invoked must have the exact signature 
  * unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame)
  * where the classes of term1 and term2 are the effective final subclasses.
  */
-public class DelegatingUnifyer implements Unifyer {
+public class DelegatingUnifyer implements Unifier {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DelegatingUnifyer.class);
 
   static {

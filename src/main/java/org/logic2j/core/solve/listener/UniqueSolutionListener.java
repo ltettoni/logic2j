@@ -23,13 +23,13 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.Solution;
 
 /**
- * A {@link SolutionListener} that will collect only the first solution yet make sure
+ * A {@link SolutionListener} that will collect only the first solution, yet making sure
  * there is no other solution provided by the goal solver.
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 
   public UniqueSolutionListener(Bindings theBindings) {
-    // We wish to make sure the first solution is the only one, so we 
+    // We wish to make sure the first solution is the ONLY one, so we 
     // are going to try to reach further, at least 2 solutions. 
     // Then we will be able to determine for sure if there was actually 
     // only one, or more.
@@ -45,14 +45,14 @@ public class UniqueSolutionListener extends SingleSolutionListener {
   }
 
   private void onMissingSolution() {
-    // TODO would be nice to have some context information here
-    throw new MissingSolutionException("No solution found, where exactly one was required");
+    // TODO would be really useful to have some context information here, eg. the goal we are trying to solve...
+    throw new MissingSolutionException("No solution found by " + this + ", when exactly one was required");
   }
 
   @Override
   protected void onSuperfluousSolution() {
-    // TODO would be nice to have some context information here
-    throw new IllegalSolutionException("More than one solution found");
+    // FIXME would be really useful to have some context information here, eg. the goal we are trying to solve...
+    throw new IllegalSolutionException("More than one solution found by " + this + ", was expecting exactly one");
   }
 
 }

@@ -22,9 +22,9 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 
 /**
- * Service to unify terms together. Various implementations possible.
+ * Functionality to unify terms together. Various implementations possible.
  */
-public interface Unifyer {
+public interface Unifier {
 
   public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
 

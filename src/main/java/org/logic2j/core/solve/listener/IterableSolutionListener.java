@@ -21,7 +21,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.Solution;
 
 /**
- * A {@link SolutionListener} that allows the caller of the resolution engine
+ * A {@link SolutionListener} that allows the caller of the inference engine
  * to enumerates solutions to his goal, like all Prolog APIs do.
  * This uses synchronization between two threads, the Prolog engine being the producer
  * thread that calls back this implementation of {@link SolutionListener#onSolution()}, which 
@@ -56,7 +56,7 @@ public class IterableSolutionListener implements SolutionListener {
   public Continuation onSolution() {
     // We've got one solution already!
     final Solution solution = new Solution(this.bindings);
-    // Ask our client to stop requesting more!
+    // Ask our client to stop requesting more and wait!
     this.clientToEngineInterface.waitUntilAvailable();
     // Provide the solution to the client, this wakes him up
     this.engineToClientInterface.hereIsTheData(solution);
@@ -76,11 +76,12 @@ public class IterableSolutionListener implements SolutionListener {
     return this.engineToClientInterface;
   }
 
-  
-  /**
-   * Synchronized interface with temporal rendez-vous and data exchange between 
-   * two threads.
-   */
+
+  //---------------------------------------------------------------------------
+  // Synchronized interface with temporal rendez-vous and data exchange between 
+  // two threads.
+  //---------------------------------------------------------------------------
+
   public static class SynchronizedInterface<T> {
     public boolean ready = false;
     public T content = null;

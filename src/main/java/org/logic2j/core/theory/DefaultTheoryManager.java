@@ -150,7 +150,7 @@ public class DefaultTheoryManager implements TheoryManager {
    */
   @Override
   public void addTheory(TheoryContent theContent) {
-    this.wholeContent.add(theContent);
+    this.wholeContent.addAll(theContent);
   }
 
   //TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to implement it with those parameters (cf ClauseProvider).

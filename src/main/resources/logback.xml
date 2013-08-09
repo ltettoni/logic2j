@@ -15,7 +15,7 @@
   </appender>
   -->
   
-  <logger name="org.logic2j.core.core.solve.DefaultGoalSolver" level="info" />
+  <logger name="org.logic2j.core.solve.DefaultSolver" level="info" />
 
   <root level="info">
     <appender-ref ref="CONSOLE"/>

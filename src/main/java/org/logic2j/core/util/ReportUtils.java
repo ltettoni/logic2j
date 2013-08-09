@@ -19,26 +19,18 @@ package org.logic2j.core.util;
 
 /**
  * Utilities for reporting / logging / etc.
+ * @note Just a nice to have - not functionally needed.
  */
 public class ReportUtils {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ReportUtils.class);
-  private static boolean isDebug = logger.isDebugEnabled();
+	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ReportUtils.class);
+	private static boolean isDebug = logger.isDebugEnabled();
 
-  public static String shortDescription(Object theInstance) {
-    final String address = isDebug ? ('@' + Integer.toHexString(theInstance.hashCode())) : "";
-    return shortClassName(theInstance) + address;
-  }
-
-  public static String shortClassName(Object theInstance) {
-    if (theInstance == null) {
-      return null;
-    }
-    String theName = theInstance.getClass().getName();
-    final int lastDot = theName.lastIndexOf('.');
-    if (lastDot >= 0) {
-      return theName.substring(lastDot + 1);
-    }
-    return theName;
-  }
+	public static String shortDescription(Object theInstance) {
+		if (theInstance == null) {
+			return "null";
+		}
+		final String address = isDebug ? ('@' + Integer.toHexString(theInstance.hashCode())) : "";
+		return theInstance.getClass().getSimpleName() + address;
+	}
 
 }
