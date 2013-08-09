@@ -57,7 +57,7 @@ public interface TermFactory {
    * @param theExpression
    * @return A compacted and normalized {@link Term}.
    */
-  public abstract Term parse(CharSequence theExpression);
+   Term parse(CharSequence theExpression);
 
   /**
    * Create a Term from virtually any type of object, in particular a CharSequence;
@@ -66,11 +66,11 @@ public interface TermFactory {
    * @param theMode Kind of Term to instantiate
    * @return A compacted and normalized {@link Term}.
    */
-  public abstract Term create(Object theObject, FactoryMode theMode);
+   Term create(Object theObject, FactoryMode theMode);
 
   /**
    * Normalize a {@link Term} using the current definitions of operators, primitives, etc.
    */
-  public abstract Term normalize(Term theTerm);
+   Term normalize(Term theTerm);
 
 }

@@ -42,7 +42,7 @@ import org.logic2j.core.util.ReflectUtils;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * Root Prolog API implementation.
+ * Reference implementation of logic2j's {@link Prolog} API.
  */
 public class PrologImpl implements PrologImplementor {
   /**

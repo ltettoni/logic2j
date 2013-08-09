@@ -32,13 +32,13 @@ public interface LibraryManager {
    */
   public static final String VARARG_ARITY_INDICATOR = "N";
 
-  public abstract LibraryContent loadLibrary(PLibrary theLibrary);
+  LibraryContent loadLibrary(PLibrary theLibrary);
 
   /**
    * @return The whole library's content.
    */
-  public abstract LibraryContent wholeContent();
+  LibraryContent wholeContent();
 
-  public abstract <T extends PLibrary> T getLibrary(Class<T> theClass);
+  <T extends PLibrary> T getLibrary(Class<T> theClass);
 
 }

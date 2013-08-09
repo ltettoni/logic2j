@@ -130,7 +130,7 @@ public class DefaultSolver implements Solver {
       // For this we need a new TrailFrame
       final GoalFrame frameForAttemptingClauses = new GoalFrame(callerFrame);
 
-      final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().find(goalStruct);
+      final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().providersFor(goalStruct);
       for (ClauseProvider provider : providers) {
         // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
         for (Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {

@@ -27,9 +27,8 @@ import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * First implementation of the unification - this is the development one that
+ * Reference implementation of the unification - this 
  * should always work OK although probably not the best possible implementation.
- *
  */
 public class DefaultUnifyer implements Unifier {
 

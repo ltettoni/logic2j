@@ -44,7 +44,7 @@ public interface TheoryManager extends ClauseProvider {
    * @param theLibrary
    * @return The content of the theory associated to theLibrary
    */
-  public abstract TheoryContent load(PLibrary theLibrary);
+  TheoryContent load(PLibrary theLibrary);
 
   /**
    * Convenience method to load a File representing a Theory.
@@ -52,7 +52,7 @@ public interface TheoryManager extends ClauseProvider {
    * @return The content of the theory from theFile.
    * @throws IOException
    */
-  public abstract TheoryContent load(File theFile) throws IOException;
+  TheoryContent load(File theFile) throws IOException;
 
   //---------------------------------------------------------------------------
   // Alter the current Prolog instance with content from theories
@@ -61,13 +61,13 @@ public interface TheoryManager extends ClauseProvider {
   /**
    * @param theContent to set - will replace any previously defined content.
    */
-  public abstract void setTheory(TheoryContent theContent);
+  void setTheory(TheoryContent theContent);
 
   /**
    * @param theContent To be added to the {@link PrologImplementor} engine associated.
    */
-  public abstract void addTheory(TheoryContent theContent);
+  void addTheory(TheoryContent theContent);
 
-  public abstract void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
+  void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
 
 }

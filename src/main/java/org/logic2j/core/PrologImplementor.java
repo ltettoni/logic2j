@@ -24,31 +24,31 @@ import org.logic2j.core.solve.Solver;
 import org.logic2j.core.unify.Unifier;
 
 /**
- * An interface that Prolog implementations must provide; this goes 
- * beyond the lighter application interface ({@link Prolog}), by exposing accessors
- * to the internal state of the effective implementation.
- *
+ * An interface that Prolog implementations must provide; this goes beyond the
+ * lighter facade interface ({@link Prolog}) intended for client use. This one
+ * exposes accessors to the internal state of the effective implementation.
  */
 public interface PrologImplementor extends Prolog {
 
-  ClauseProviderResolver getClauseProviderResolver();
-    
-  public abstract Unifier getUnifyer();
+	public ClauseProviderResolver getClauseProviderResolver();
 
-  public abstract Solver getSolver();
+	public Unifier getUnifyer();
 
-  /**
-   * @return All clause providers, in same order as when registered.
-   * TODO But the actual ordering may not be always needed, it's only important when the same
-   * predicate is available from several providers (not frequent). Could we in certain cases
-   * use multi-threaded access to all clause providers?
-   */
-  public abstract List<ClauseProvider> getClauseProviders();
+	public Solver getSolver();
 
-  public abstract OperatorManager getOperatorManager();
+	/**
+	 * @return All clause providers, in same order as when registered. TODO But
+	 *         the actual ordering may not be always needed, it's only important
+	 *         when the same predicate is available from several providers (not
+	 *         frequent). Could we in certain cases use multi-threaded access to
+	 *         all clause providers?
+	 */
+	List<ClauseProvider> getClauseProviders();
 
-  public abstract LibraryManager getLibraryManager();
+	OperatorManager getOperatorManager();
 
-  public abstract Formatter getFormatter();
+	LibraryManager getLibraryManager();
+
+	Formatter getFormatter();
 
 }
