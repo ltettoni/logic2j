@@ -76,7 +76,7 @@ public class MultipleSolutionsHolder {
     final SolutionListenerBase listener = new SolutionListenerBase() {
 
       @Override
-      public boolean onSolution() {
+      public Continuation onSolution() {
         final Bindings bnd = MultipleSolutionsHolder.this.solutionHolder.bindings;
         final Term term = bnd.getReferrer();
         final Var var = term.findVar(theVariableName);
@@ -105,7 +105,7 @@ public class MultipleSolutionsHolder {
     final SolutionListenerBase listener = new SolutionListenerBase() {
 
       @Override
-      public boolean onSolution() {
+      public Continuation onSolution() {
         results.add(MultipleSolutionsHolder.this.solutionHolder.bindings.explicitBindings(FreeVarRepresentation.FREE));
         return super.onSolution();
       }

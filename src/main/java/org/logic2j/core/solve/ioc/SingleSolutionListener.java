@@ -50,7 +50,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
   }
 
   @Override
-  public boolean onSolution() {
+  public Continuation onSolution() {
     if (this.counter > 0) {
       // OOps, we already had solutions? This is not desired
       onSuperfluousSolution();
@@ -58,7 +58,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
     logger.debug(" >>>>>>>>> onSolution(), iter=#{}", this.counter);
     this.solution = new Solution(this.bindings);
     this.counter++;
-    return this.counter < this.maxCount;
+    return Continuation.requestContinuationWhen(this.counter < this.maxCount);
   }
 
   /**

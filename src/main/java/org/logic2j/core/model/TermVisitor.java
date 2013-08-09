@@ -25,8 +25,8 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Generic visitor for the {@link Term} hierarchy.
- * For reference, see the visitor pattern.
+ * Generic Visitor for the {@link Term} hierarchy.
+ * For reference, see the Visitor design pattern.
  */
 public interface TermVisitor<T> {
 

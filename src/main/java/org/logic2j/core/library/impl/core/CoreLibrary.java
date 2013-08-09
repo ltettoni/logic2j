@@ -36,6 +36,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.ioc.SolutionListener;
 import org.logic2j.core.solve.ioc.SolutionListenerBase;
+import org.logic2j.core.solve.ioc.SolutionListener.Continuation;
 import org.logic2j.core.util.ReflectUtils;
 
 public class CoreLibrary extends LibraryBase {
@@ -162,10 +163,10 @@ public class CoreLibrary extends LibraryBase {
       public boolean found = false;
 
       @Override
-      public boolean onSolution() {
+      public Continuation onSolution() {
         // Do NOT relay the solution further, just note there was one
         this.found = true;
-        return false; // No need to find further solutions
+        return Continuation.USER_ABORT; // No need to find further solutions
       }
     }
     final AdHocListener callListener = new AdHocListener();
@@ -187,7 +188,7 @@ public class CoreLibrary extends LibraryBase {
     final SolutionListenerBase solutionListener = new SolutionListenerBase() {
 
       @Override
-      public boolean onSolution() {
+      public Continuation onSolution() {
         // Calculate the substituted goal value (resolve bindings)
         @SuppressWarnings("synthetic-access")
         
@@ -197,7 +198,7 @@ public class CoreLibrary extends LibraryBase {
         // Map<String, Term> explicitBindings = goalBindings.explicitBindings(FreeVarRepresentation.FREE);
         // And add as extra solution
         javaResults.add(substitute);
-        return true;
+        return Continuation.CONTINUE;
       }
 
     };

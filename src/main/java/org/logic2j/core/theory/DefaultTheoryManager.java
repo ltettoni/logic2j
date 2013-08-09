@@ -128,8 +128,8 @@ public class DefaultTheoryManager implements TheoryManager {
       final GoalFrame goalFrame = new GoalFrame();
       final SolutionListener solutionListener = new SolutionListener() {
         @Override
-        public boolean onSolution() {
-          return false;
+        public Continuation onSolution() {
+          return Continuation.USER_ABORT;
         }
       };
       prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);

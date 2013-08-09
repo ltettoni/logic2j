@@ -22,7 +22,7 @@ import org.logic2j.core.model.symbol.Term;
 
 /**
  * Convert Prolog {@link Term} hierarchies to {@link String}s or other streamable representations.
- * We are using the visitor pattern, so a {@link Formatter} is actually a {@link TermVisitor} for Strings.
+ * We are using the Visitor design pattern, so a {@link Formatter} is actually a {@link TermVisitor} for Strings.
  * TODO: unless this interface is needed in root package, move this in subpackage
  */
 public interface Formatter extends TermVisitor<String> {

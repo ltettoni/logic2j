@@ -24,12 +24,13 @@ import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Base implementation of {@link TermVisitor} does nothing 
+ * Base implementation of {@link TermVisitor} that does nothing 
  * except for {@link Struct}, which are traversed recursively until 
  * the first accept() returns non-null.<br/> 
+ * Intended to be derived when implementing useful {@link TermVisitor}s.
  * Appropriate for searching through structures, or traversing all.
  */
-public class BaseTermVisitor<T> implements TermVisitor<T> {
+public class TermVisitorBase<T> implements TermVisitor<T> {
 
   @Override
   public T visit(TLong theLong) {

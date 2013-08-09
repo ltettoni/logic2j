@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.logic2j.core.model.BaseTermVisitor;
+import org.logic2j.core.model.TermVisitorBase;
 import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
@@ -39,7 +39,7 @@ import org.logic2j.core.util.ReflectUtils;
  * unified. The Term referring to this object is called the "referrer".<br/>
  * 
  * TODO Improve performance: instantiation of {@link #Bindings(Term)}. 
- * Find a better way than runtime instantiation.
+ * TODO Find a better way than runtime instantiation.
  */
 public class Bindings {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
@@ -102,7 +102,7 @@ public class Bindings {
   /**
    * A {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
    */
-  private static class SetVarInBindingVisitor extends BaseTermVisitor<Var> {
+  private static class SetVarInBindingVisitor extends TermVisitorBase<Var> {
 
     private Binding binding;
     private int index;

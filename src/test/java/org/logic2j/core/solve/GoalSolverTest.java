@@ -40,6 +40,7 @@ import org.logic2j.core.solve.Solution;
 import org.logic2j.core.solve.holder.SolutionHolder;
 import org.logic2j.core.solve.holder.UniqueSolutionHolder;
 import org.logic2j.core.solve.ioc.SolutionListener;
+import org.logic2j.core.solve.ioc.SolutionListener.Continuation;
 
 /**
  * Check {@link Solver} on extremely trivial goals, and also check
@@ -123,9 +124,9 @@ public class GoalSolverTest extends PrologTestBase {
     int counter = 0;
 
     @Override
-    public boolean onSolution() {
+    public Continuation onSolution() {
       this.counter++;
-      return true;
+      return Continuation.CONTINUE;
     }
   }
 
@@ -136,9 +137,9 @@ public class GoalSolverTest extends PrologTestBase {
     int counter = 0;
 
     @Override
-    public boolean onSolution() {
+    public Continuation onSolution() {
       this.counter++;
-      return false;
+      return Continuation.USER_ABORT;
     }
   }
 
@@ -150,10 +151,10 @@ public class GoalSolverTest extends PrologTestBase {
     int counter = 0;
 
     @Override
-    public boolean onSolution() {
+    public Continuation onSolution() {
       this.counter++;
       boolean requestContinue = this.counter < 5;
-      return requestContinue;
+      return Continuation.requestContinuationWhen(requestContinue);
     }
   }
 

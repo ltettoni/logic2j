@@ -21,21 +21,51 @@ import org.logic2j.core.Prolog;
 import org.logic2j.core.solve.holder.SolutionHolder;
 
 /**
- * The core, lowest-level method by which the inference engine provides solutions.
+ * The lowest-level API through which the inference engine provides solutions.
  * For easier programming, consider using {@link Prolog#solve(CharSequence)} and the
  * {@link SolutionHolder} API.
  */
 public interface SolutionListener {
 
+	/**
+	 * Specifies the behaviour that calling code requests to the inference engine
+	 * after a solution was found, via {@link SolutionListener#onSolution()}.
+	 * @author tettoni
+	 */
+	public static enum Continuation {
+		/**
+		 * Value that {@link #onSolution()} must return for the inference engine 
+		 * to continue solving (search for alternate solutions).
+		 */
+		CONTINUE,
+		/**
+		 * Value that {@link #onSolution()} must return for the inference engine 
+		 * to stop solving (ie. means caller requests abort).
+		 */
+		USER_ABORT;
+
+
+		public static Continuation requestContinuationWhen(boolean conditionApplies) {
+			return conditionApplies ? CONTINUE : USER_ABORT;
+        }
+
+		public boolean isContinuing() {
+	        return this==CONTINUE;
+        }
+		public boolean isUserAbort() {
+			return this==USER_ABORT;
+        }
+	}
+	
   /**
    * The inference engine notifies the caller code that a solution 
-   * was demonstrated; the real content to the solution must be
+   * was proven; the real content to the solution must be
    * retrieved from the goal's variables.
    * 
-   * @return The caller must return true for the inference engine to
+   * @return The caller must return {@link #CONTINUE} ({@value SolutionListener#CONTINUE} for the inference engine to
    * continue searching for other solutions, or false
-   * to break (user cancellation) the search for other solutions.
+   * to break the search for other solutions (ie. user cancellation).
    */
-  public boolean onSolution();
+  public Continuation onSolution();
 
 }

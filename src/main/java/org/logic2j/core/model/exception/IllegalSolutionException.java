@@ -17,13 +17,12 @@
  */
 package org.logic2j.core.model.exception;
 
+/**
+ * FIXME Must be documented.
+ */
 public class IllegalSolutionException extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
-  /**
-   * FIXME Must be documented.
-   * @param theMessage
-   */
   public IllegalSolutionException(CharSequence theMessage) {
     super(theMessage.toString());
   }

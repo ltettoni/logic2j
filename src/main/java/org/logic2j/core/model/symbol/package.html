@@ -6,4 +6,4 @@ This means that Term graphs are immutable and do not store actual values (result
 As a consequence, Terms cannot be directly used for unification or solving, since they are devoid
 of values. Yet they may be shared by recursive solving, unification, and by multiple threads.
 
-Separate structures are used to hold values of terms.
+Separate structures are used to hold values of terms, see subpackage "var".

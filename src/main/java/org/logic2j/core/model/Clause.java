@@ -25,7 +25,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
- * A Clause is a {@link Struct} representing a fact or a rule in a theory; 
+ * A Clause is a {@link Struct} representing a fact or a rule in a Theory; 
  * it has extra features for efficient lookup and matching by {@link TheoryManager}s.
  * We implement by composition (by wrapping a {@link Struct}), not by derivation.
  * Facts may be represented in two manners:

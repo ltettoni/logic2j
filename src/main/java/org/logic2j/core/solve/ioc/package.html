@@ -1,7 +1,9 @@
-The solve.ioc package defines the callback mechanism (inversion of control) between the Prolog
-engine and the caller. Solutions are sent from the engine to user code via the SolutionListener interface
+<p>
+Package "solve.ioc" defines the callback mechanism (Iversion of Control design pattern) between the Prolog
+engine and the calling code. Solutions are "sent" from the engine to user code through the SolutionListener interface
 and various implementations are provided.
-
-This is the lowest level for obtaining solutions, but not the most convenient to use. Therefore higher-level
-utilities are also provided to obtain solution and extract useful information from them.
-
+</p>
+<p>
+This is the lowest level for obtaining solutions, but not necessarily the most convenient to use. Therefore higher-level
+utilities are also provided to obtain solution and extract useful information from them, see the SolutionHolder API.
+</p>

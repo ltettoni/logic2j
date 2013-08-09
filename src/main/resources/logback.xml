@@ -5,7 +5,7 @@
     </layout>
   </appender>
 
-  <!-- File appender without date/time for non-regression comparisons
+  <!-- File appender without timestamp for non-regression comparisons
   <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
     <file>once.log</file>
     <append>false</append>
@@ -15,16 +15,13 @@
   </appender>
   -->
   
-  <logger name="org.logic2j.core.core.theory.RDBClauseProvider"><level value="debug"/></logger>
-  <logger name="org.logic2j.contrib.rdb.util.SqlBuilder3"><level value="info"/></logger>
-  <logger name="org.logic2j.core.core.solve.DefaultGoalSolver"><level value="info"/></logger>
-
+  <logger name="org.logic2j.core.core.solve.DefaultGoalSolver" level="info" />
 
   <root level="info">
     <appender-ref ref="CONSOLE"/>
     <!-- 
     <appender-ref ref="ONCE"/>
-     -->
+    -->
   </root>
 
 </configuration>

@@ -26,6 +26,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.ioc.SolutionListener;
+import org.logic2j.core.solve.ioc.SolutionListener.Continuation;
 import org.logic2j.core.util.ReportUtils;
 
 /**
@@ -74,11 +75,11 @@ public class DefaultSolver implements Solver {
         listeners[index] = new SolutionListener() {
 
           @Override
-          public boolean onSolution() {
+          public Continuation onSolution() {
             DefaultSolver.this.internalCounter++;
             final int index2 = index + 1;
             solveGoalRecursive(goalStruct.getArg(index2), theGoalBindings, callerFrame, listeners[index2]);
-            return true;
+            return Continuation.CONTINUE;
           }
         };
       }
@@ -184,8 +185,8 @@ public class DefaultSolver implements Solver {
               if (debug) {
                 logger.debug("{} is a fact", clauseHead);
               }
-              final boolean userContinue = theSolutionListener.onSolution();
-              if (!userContinue) {
+              final boolean userRequestsAbort = theSolutionListener.onSolution().isUserAbort();
+              if (userRequestsAbort) {
                 frameForAttemptingClauses.raiseUserCanceled();
               }
             } else {

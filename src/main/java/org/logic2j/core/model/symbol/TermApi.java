@@ -34,14 +34,10 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.util.ReflectUtils;
 
 /**
- * External facade API to the {@link Term} hierarchy.
- *
+ * Facade API to the {@link Term} hierarchy, to ease their handling.
+ * This class resides in the same pacakge than the {@link Term} subclasses to provide them package-scoped methods.
  */
 public class TermApi {
-
-  public TermApi() {
-    super();
-  }
 
   Collection<Term> flatTerms(Term theTerm) {
     Collection<Term> theFlatTerms = new ArrayList<Term>(20);

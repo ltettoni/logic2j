@@ -65,8 +65,8 @@ public class LibraryBase implements PLibrary {
    * @param theSolutionListener
    */
   protected void notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
-    final boolean userContinue = theSolutionListener.onSolution();
-    if (!userContinue) {
+    final boolean userRequestsAbort = theSolutionListener.onSolution().isUserAbort();
+    if (userRequestsAbort) {
       theGoalFrame.raiseUserCanceled();
     }
   }

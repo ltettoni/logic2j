@@ -19,6 +19,7 @@ package org.logic2j.core.solve.ioc;
 
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.Solution;
+import org.logic2j.core.solve.ioc.SolutionListener.Continuation;
 
 /**
  * A {@link SolutionListener} that allows the caller of the resolution engine
@@ -53,7 +54,7 @@ public class IterableSolutionListener implements SolutionListener {
    * Implementation of the core logic2j's callback-based notification of solutions.
    */
   @Override
-  public boolean onSolution() {
+  public Continuation onSolution() {
     // We've got one solution already!
     final Solution solution = new Solution(this.bindings);
     // Ask our client to stop requesting more!
@@ -61,7 +62,7 @@ public class IterableSolutionListener implements SolutionListener {
     // Provide the solution to the client, this wakes him up
     this.engineToClientInterface.hereIsTheData(solution);
     // Continue for more solutions
-    return true;
+    return Continuation.CONTINUE;
   }
 
   //---------------------------------------------------------------------------

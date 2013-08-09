@@ -20,13 +20,13 @@ package org.logic2j.core.model.var;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Types of bindings that a variable may have.
+ * Types of {@link Binding} that a variable can have at any time of its life cycle.
  */
 public enum BindingType {
 
   /**
    * The {@link Var}iable associated to a {@link Binding} 
-   * is currently free (unbound).
+   * is currently free (ie. has no value, aka is "unbound").
    */
   FREE,
 

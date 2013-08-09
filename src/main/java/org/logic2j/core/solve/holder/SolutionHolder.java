@@ -30,9 +30,11 @@ import org.logic2j.core.solve.ioc.UniqueSolutionListener;
 /**
  * Holds state necessary to describe the unique solution or multiple solutions 
  * to a goal; this object lies between the expression of a goal (a request or query) and 
- * the extraction of all aspects of the solution (a response or results).<br/>
+ * the extraction of all aspects of the solution (a response or results).
+ * <br/>
  * IMPORTANT: obtaining a {@link SolutionHolder} usually means that the execution has not yet
- * started - state is held ready to execute, until you tell what you want!<br/>
+ * started - state is held ready to execute, until you tell what you want!
+ * <br/>
  * This object exposes strongly-typed, templated methods to extract results 
  * depending on how the calling code expects them (unique or multiple solutions),
  * and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>

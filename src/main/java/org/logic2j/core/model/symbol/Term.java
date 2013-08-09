@@ -79,7 +79,7 @@ public abstract class Term implements java.io.Serializable, Cloneable {
 	// ---------------------------------------------------------------------------
 	// Graph traversal methods
 	// Notice that some traversal is accomplished by the #accept() method and
-	// the visitor pattern
+	// the Visitor design pattern
 	// ---------------------------------------------------------------------------
 
 	public abstract <T> T accept(TermVisitor<T> theVisitor);
