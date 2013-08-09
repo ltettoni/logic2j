@@ -38,8 +38,8 @@ import org.logic2j.core.theory.DefaultTheoryManager;
 import org.logic2j.core.theory.TheoryManager;
 import org.logic2j.core.unify.DefaultUnifyer;
 import org.logic2j.core.unify.Unifyer;
-import org.logic2j.util.ReflectUtils;
-import org.logic2j.util.ReportUtils;
+import org.logic2j.core.util.ReflectUtils;
+import org.logic2j.core.util.ReportUtils;
 
 /**
  * Root Prolog API implementation.

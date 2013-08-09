@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.util;
+package org.logic2j.contrib.rdb.util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 /**
  * Execute SQL statements in an IoC manner, guaranteeing proper error handling
  * and resource cleaning.
+ * Highly inspired by Jakarta Commons "dbutils".
  *
  * @version $Id$
  */

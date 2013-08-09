@@ -30,7 +30,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
-import org.logic2j.util.ReflectUtils;
+import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Store the actual values of all variables of a {@link Term}, as a list of {@link Binding}s, 

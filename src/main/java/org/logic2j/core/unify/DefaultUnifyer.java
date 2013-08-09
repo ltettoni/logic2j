@@ -24,7 +24,7 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.util.ReportUtils;
+import org.logic2j.core.util.ReportUtils;
 
 /**
  * First implementation of the unification - this is the development one that

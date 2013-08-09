@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.util;
+package org.logic2j.contrib.rdb.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,10 +26,18 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-// TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
-// TODO: possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123)
-// TODO: cannot handle subqueries
-// TODO: cannot express AST expressions (OR, NOT)
+import org.logic2j.core.util.CollectionUtils;
+
+/**
+ * Generate the lexical part of SQL and array of arguments based on higher-levels components of a query.
+ * 
+ * TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized)
+ * TODO: possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123)
+ * TODO: cannot handle subqueries
+ * TODO: cannot express AST expressions (OR, NOT)
+ * 
+ * @author tettoni
+ */
 public class SqlBuilder3 {
   // public static final String INSERT = "insert"; Not yet supported
   public static final String SELECT = "select";

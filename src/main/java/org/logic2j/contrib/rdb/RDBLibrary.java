@@ -31,6 +31,11 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.logic2j.contrib.library.pojo.PojoLibrary;
+import org.logic2j.contrib.rdb.util.CollectionMap;
+import org.logic2j.contrib.rdb.util.SqlBuilder3;
+import org.logic2j.contrib.rdb.util.SqlRunner;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -44,13 +49,8 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.ioc.SolutionListener;
 import org.logic2j.core.solve.ioc.UniqueSolutionListener;
-import org.logic2j.util.CollectionMap;
-import org.logic2j.util.CollectionUtils;
-import org.logic2j.util.ReflectUtils;
-import org.logic2j.util.SqlBuilder3;
-import org.logic2j.util.SqlRunner;
-import org.logic2j.util.SqlBuilder3.Column;
-import org.logic2j.util.SqlBuilder3.Table;
+import org.logic2j.core.util.CollectionUtils;
+import org.logic2j.core.util.ReflectUtils;
 
 
 /**

@@ -26,7 +26,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.ioc.SolutionListener;
-import org.logic2j.util.ReportUtils;
+import org.logic2j.core.util.ReportUtils;
 
 /**
  * Solve goals - that's the core of the engine.

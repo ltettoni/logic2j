@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import org.logic2j.core.model.var.Binding;
-import org.logic2j.util.ReportUtils;
+import org.logic2j.core.util.ReportUtils;
 
 /**
  * One stack frame to track goal solving (both unification trailing bindings, and 

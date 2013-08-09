@@ -16,7 +16,7 @@
   -->
   
   <logger name="org.logic2j.core.core.theory.RDBClauseProvider"><level value="debug"/></logger>
-  <logger name="org.logic2j.util.SqlBuilder3"><level value="info"/></logger>
+  <logger name="org.logic2j.contrib.rdb.util.SqlBuilder3"><level value="info"/></logger>
   <logger name="org.logic2j.core.core.solve.DefaultGoalSolver"><level value="info"/></logger>
 
 

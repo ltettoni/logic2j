@@ -31,7 +31,7 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.util.ReflectUtils;
+import org.logic2j.core.util.ReflectUtils;
 
 /**
  * External facade API to the {@link Term} hierarchy.

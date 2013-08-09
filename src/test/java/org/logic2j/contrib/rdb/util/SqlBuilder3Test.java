@@ -15,16 +15,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.util;
+package org.logic2j.contrib.rdb.util;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.logic2j.util.CollectionUtils;
-import org.logic2j.util.SqlBuilder3;
-import org.logic2j.util.SqlBuilder3.Column;
-import org.logic2j.util.SqlBuilder3.Criterion;
-import org.logic2j.util.SqlBuilder3.Table;
+import org.logic2j.contrib.rdb.util.SqlBuilder3;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
+import org.logic2j.core.util.CollectionUtils;
 
 public class SqlBuilder3Test {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlBuilder3Test.class);

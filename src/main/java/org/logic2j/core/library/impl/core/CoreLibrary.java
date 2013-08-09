@@ -36,7 +36,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.ioc.SolutionListener;
 import org.logic2j.core.solve.ioc.SolutionListenerBase;
-import org.logic2j.util.ReflectUtils;
+import org.logic2j.core.util.ReflectUtils;
 
 public class CoreLibrary extends LibraryBase {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);

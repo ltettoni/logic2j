@@ -30,7 +30,7 @@ import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.util.ReflectUtils;
+import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Struct class represents either Prolog compound {@link Term}s

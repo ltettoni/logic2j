@@ -15,11 +15,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.util;
+package org.logic2j.core.util;
 
 /**
  * Utilities for reporting / logging / etc.
- *
  */
 public class ReportUtils {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ReportUtils.class);
