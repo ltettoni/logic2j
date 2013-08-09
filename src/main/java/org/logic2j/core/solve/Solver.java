@@ -34,7 +34,7 @@ public interface Solver {
    * @param callerFrame
    * @param theSolutionListener
    */
-  public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
+  void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
   /**
@@ -45,7 +45,7 @@ public interface Solver {
    * @param theSolutionListener
    */
   // TODO Why should we make this method public? Seems not normal
-  public void solveGoalRecursive(final Term theGoal, final Bindings theGoalBindings, final GoalFrame callerFrame,
+  void solveGoalRecursive(final Term theGoal, final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener);
 
 }

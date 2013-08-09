@@ -24,9 +24,9 @@ package org.logic2j.core.io.operator;
  */
 public interface OperatorManager {
 
-  public void addOperator(String theName, String theAssociativityType, int thePriority);
+  void addOperator(String theName, String theAssociativityType, int thePriority);
 
   // TODO Unclear how this is an operation of a "manager"
-  public int opPrio(String name, String type);
+  int opPrio(String name, String type);
 
 }

@@ -26,8 +26,8 @@ import org.logic2j.core.solve.GoalFrame;
  */
 public interface Unifier {
 
-  public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
+  boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
 
-  public void deunify(GoalFrame theGoalFrame);
+  void deunify(GoalFrame theGoalFrame);
 
 }

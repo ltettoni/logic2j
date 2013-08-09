@@ -28,7 +28,7 @@ import org.logic2j.core.model.symbol.Var;
  */
 public interface TermFactory {
 
-  public static enum FactoryMode {
+  static enum FactoryMode {
     /**
      * Result will always be an atom (a non-compound {@link Struct}), may not be a {@link Var}iable.
      */

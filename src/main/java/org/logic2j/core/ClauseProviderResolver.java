@@ -14,9 +14,9 @@ import org.logic2j.core.model.symbol.Struct;
 /**
  * A resolver which will tell which {@link ClauseProvider}s are able to provide {@link Clause}s
  * for a given goal predicate.
- * This is a static registry.
- * This should be refactored in some way, maybe using DI or a more efficient way to obtain all
- * {@link Clause}s matching a given predicate.
+ * @note This should be refactored in some way, maybe using DI or a more efficient way to obtain all
+ * {@link Clause}s matching a given predicate. 
+ * The {@link ClauseProvider#listMatchingClauses(Struct, org.logic2j.core.model.var.Bindings)} is supposed to do the job directly.
  * @note Consider this as work in progress
  * @author Vincent Berthet
  */

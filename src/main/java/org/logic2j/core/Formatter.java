@@ -27,6 +27,6 @@ import org.logic2j.core.model.symbol.Term;
  */
 public interface Formatter extends TermVisitor<String> {
 
-  public String format(Term theTerm);
+  String format(Term theTerm);
 
 }

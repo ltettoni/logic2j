@@ -30,13 +30,13 @@ import org.logic2j.core.model.symbol.Var;
  */
 public interface TermVisitor<T> {
 
-  public T visit(TLong theLong);
+  T visit(TLong theLong);
 
-  public T visit(TDouble theDouble);
+  T visit(TDouble theDouble);
 
-  public T visit(Var theVar);
+  T visit(Var theVar);
 
-  public T visit(Struct theStruct);
+  T visit(Struct theStruct);
 
-  public T visit(StructObject<?> theStructObject);
+  T visit(StructObject<?> theStructObject);
 }

@@ -50,6 +50,6 @@ public interface ClauseProvider {
    * return {@link Clause}s whose head would eventually not be used by 
    * the {@link org.logic2j.core.Solver.solve.Solver}.
    */
-  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
+  Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
 
 }
