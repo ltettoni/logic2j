@@ -28,7 +28,7 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.ioc.SolutionListenerBase;
+import org.logic2j.core.solve.listener.SolutionListenerBase;
 
 /**
  * A relay object to provide access to the results of all the (expected) solutions to a goal.

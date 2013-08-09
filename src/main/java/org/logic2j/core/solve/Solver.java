@@ -20,7 +20,7 @@ package org.logic2j.core.solve;
 import org.logic2j.core.PrologImpl;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.ioc.SolutionListener;
+import org.logic2j.core.solve.listener.SolutionListener;
 
 /**
  * Interface allowing {@link PrologImpl} to access the inference engine algorithm,

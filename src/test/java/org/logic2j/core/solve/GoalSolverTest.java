@@ -28,19 +28,15 @@ import java.util.Map;
 import org.junit.Test;
 import org.logic2j.core.Prolog;
 import org.logic2j.core.PrologImpl;
+import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.Solver;
-import org.logic2j.core.solve.Solution;
 import org.logic2j.core.solve.holder.SolutionHolder;
 import org.logic2j.core.solve.holder.UniqueSolutionHolder;
-import org.logic2j.core.solve.ioc.SolutionListener;
-import org.logic2j.core.solve.ioc.SolutionListener.Continuation;
+import org.logic2j.core.solve.listener.SolutionListener;
 
 /**
  * Check {@link Solver} on extremely trivial goals, and also check

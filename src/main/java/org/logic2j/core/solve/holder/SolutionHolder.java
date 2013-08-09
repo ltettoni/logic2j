@@ -24,8 +24,8 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.Solution;
-import org.logic2j.core.solve.ioc.IterableSolutionListener;
-import org.logic2j.core.solve.ioc.UniqueSolutionListener;
+import org.logic2j.core.solve.listener.IterableSolutionListener;
+import org.logic2j.core.solve.listener.UniqueSolutionListener;
 
 /**
  * Holds state necessary to describe the unique solution or multiple solutions 

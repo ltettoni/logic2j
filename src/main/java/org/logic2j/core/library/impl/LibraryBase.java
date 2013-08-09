@@ -30,7 +30,7 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.ioc.SolutionListener;
+import org.logic2j.core.solve.listener.SolutionListener;
 
 /**
  * Base class for libraries.
