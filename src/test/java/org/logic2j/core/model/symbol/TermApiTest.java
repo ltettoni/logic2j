@@ -50,51 +50,51 @@ public class TermApiTest {
   private static final TermApi TERM_API = new TermApi();
 
   @Test
-  public void test_staticallyEquals() {
-    // Vars are never statically equal ...
-    assertFalse(new Var("X").staticallyEquals(new Var("Y")));
+  public void test_structurallyEquals() {
+    // Vars are never structurally equal ...
+    assertFalse(new Var("X").structurallyEquals(new Var("Y")));
     Var x1 = new Var("X");
     Var x2 = new Var("X");
     // ... even when they have the same name
-    assertFalse(x1.staticallyEquals(x2));
+    assertFalse(x1.structurallyEquals(x2));
     Struct s = new Struct("s", x1, x2);
-    assertFalse(s.getArg(0).staticallyEquals(s.getArg(1)));
+    assertFalse(s.getArg(0).structurallyEquals(s.getArg(1)));
     // After compacting, the 2 X will be same
     Struct s2 = (Struct) TERM_API.compact(s);
     assertNotSame(s, s2);
-    assertFalse(s.staticallyEquals(s2));
-    assertTrue(s2.getArg(0).staticallyEquals(s2.getArg(1)));
+    assertFalse(s.structurallyEquals(s2));
+    assertTrue(s2.getArg(0).structurallyEquals(s2.getArg(1)));
   }
 
   // TODO Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
   @Test
-  public void test_staticallyEquals2() {
-    //    assertTrue(new Var().staticallyEquals(new Var()));
-    //    assertTrue(new Var().staticallyEquals(new Var("_")));
-    //    assertFalse(new Var("X").staticallyEquals(new Var()));
-    //    assertFalse(new Var().staticallyEquals(new Var("X")));
-    //    assertFalse(new Var("X").staticallyEquals(new Var("Y")));
+  public void test_structurallyEquals2() {
+    //    assertTrue(new Var().structurallyEquals(new Var()));
+    //    assertTrue(new Var().structurallyEquals(new Var("_")));
+    //    assertFalse(new Var("X").structurallyEquals(new Var()));
+    //    assertFalse(new Var().structurallyEquals(new Var("X")));
+    //    assertFalse(new Var("X").structurallyEquals(new Var("Y")));
   }
 
   @Test
-  public void test_flatTerms() {
+  public void test_collectTerms() {
     Term term;
     //
     term = new Struct("p", "X", 2);
-    logger.info("Flat terms: {}", TERM_API.flatTerms(term));
+    logger.info("Flat terms: {}", TERM_API.collectTerms(term));
     //
     term = new Struct("a", new Struct("b"), "c");
-    logger.info("Flat terms: {}", TERM_API.flatTerms(term));
+    logger.info("Flat terms: {}", TERM_API.collectTerms(term));
     //
     term = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
-    logger.info("Flat terms: {}", TERM_API.flatTerms(term));
+    logger.info("Flat terms: {}", TERM_API.collectTerms(term));
     //
     Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
-    logger.info("Flat terms of original {}", TERM_API.flatTerms(clause));
+    logger.info("Flat terms of original {}", TERM_API.collectTerms(clause));
     Term t2 = TERM_API.normalize(clause, null);
     logger.info("Found {} bindings", t2.getIndex());
     assertEquals(2, t2.getIndex());
-    logger.info("Flat terms of copy     {}", TERM_API.flatTerms(t2));
+    logger.info("Flat terms of copy     {}", TERM_API.collectTerms(t2));
     assertEquals(clause.toString(), t2.toString());
   }
 

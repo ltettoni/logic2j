@@ -23,50 +23,55 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Factory methods to create {@link Term}s from various data of a different nature
- * and representation.
+ * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or 
+ * streamable representations.
+ * 
+ * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives
+ * registered therein.
+ * @note This interface is still deficient for handling channel streams - some more design needed.
  */
 public interface TermFactory {
 
   static enum FactoryMode {
     /**
-     * Result will always be an atom (a non-compound {@link Struct}), may not be a {@link Var}iable.
+     * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
      */
     ATOM,
     
     /**
-     * Result will be either an atom (a non-compound {@link Struct}), a numeric ({@link TNumber}), 
-     * but not a {@link Var}iable neither a compound.
+     * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), 
+     * but not a {@link Var}iable neither a compound {@link Struct}.
      */
     LITERAL,
 
     /**
-     * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link org.logic2j.core.core.model.symbol.Struct}.
+     * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
      */
     ANY_TERM,
     
     /**
-     * Result will be the outcome of parsing a complex structure.
+     * Result can be any term plus compound structures.
      */
     COMPOUND
   }
 
   /**
-   * Create a Term from a String representation, will use the definitions of 
+   * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence};
+   * this is the highest-level factory. For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
+   * @param theObject
+   * @param theMode Kind of Term to instantiate
+   * @return A compacted and normalized {@link Term}.
+   */
+   // TODO is "create" a good name ?
+   Term create(Object theObject, FactoryMode theMode);
+
+  /**
+   * Create a Term from a character representation, will leverage the definitions of 
    * operators and primitives that currently apply.
    * @param theExpression
    * @return A compacted and normalized {@link Term}.
    */
    Term parse(CharSequence theExpression);
-
-  /**
-   * Create a Term from virtually any type of object, in particular a CharSequence;
-   * this is the highest-level factory. On CharSequence, will call {@link #parse(CharSequence)}.
-   * @param theObject
-   * @param theMode Kind of Term to instantiate
-   * @return A compacted and normalized {@link Term}.
-   */
-   Term create(Object theObject, FactoryMode theMode);
 
   /**
    * Normalize a {@link Term} using the current definitions of operators, primitives, etc.

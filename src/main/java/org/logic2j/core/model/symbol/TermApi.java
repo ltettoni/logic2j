@@ -35,25 +35,26 @@ import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Facade API to the {@link Term} hierarchy, to ease their handling.
- * This class resides in the same pacakge than the {@link Term} subclasses to provide them package-scoped methods.
+ * This class resides in the same package than the {@link Term} subclasses, so they can invoke its package-scoped methods.
+ * See important notes re. Term compaction ({@link #compact(Term)}) and normalization ({@link #normalize(Term, LibraryContent)}.
  */
 public class TermApi {
 
-  Collection<Term> flatTerms(Term theTerm) {
-    Collection<Term> theFlatTerms = new ArrayList<Term>(20);
-    theTerm.flattenTerms(theFlatTerms);
-    return theFlatTerms;
+  Collection<Term> collectTerms(Term theTerm) {
+    final Collection<Term> collected = new ArrayList<Term>();
+    theTerm.collectTermsInto(collected);
+    return collected;
   }
 
   /**
    * Compact a term, this means recursively traversing the term structure
    * and assigning any duplicates substructures to the same references.
    * @param theTerm
-   * @return The compacted term, may be equal to the argument.
+   * @return The compacted term, may be equal to the argument theTerm in case nothing was needed.
    */
-  // TODO Rename to "factorize", since we merge common factors
+  // TODO Rename to "factorize", since we actually merge common factors
   Term compact(Term theTerm) {
-    return theTerm.compact(flatTerms(theTerm));
+    return theTerm.compact(collectTerms(theTerm));
   }
 
   void avoidCycle(Struct theClause) {
@@ -62,15 +63,16 @@ public class TermApi {
   }
 
   short assignVarOffsets(Term theTerm) {
-    return theTerm.assignVarOffsets((short) 0);
+    return theTerm.assignIndexes((short) 0);
   }
 
   /**
-   * Entry point for normalizing terms before they can be used for inference.
-   * Must exclusively be called from {@link TermFactory#normalize(Term)}, with the exception of test cases.
-   * @param theTerm
+   * Entry point for normalizing {@link Term}s before they can be used for inference.<br/>
+   * 
+   * @note This method must EXCLUSIVELY be called from {@link TermFactory#normalize(Term)}, with the exception of test cases.
+   * @param theTerm To be normalized
    * @param theLibraryContent
-   * @return A normalized copy of theTerm
+   * @return A normalized COPY of theTerm
    */
   public Term normalize(Term theTerm, LibraryContent theLibraryContent) {
     final Term compacted = compact(theTerm);

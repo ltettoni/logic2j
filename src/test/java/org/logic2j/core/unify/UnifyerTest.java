@@ -218,9 +218,9 @@ public class UnifyerTest extends PrologTestBase {
 
   public void assertStaticallyEquals(CharSequence expectedStr, Term theActual) {
     Term theExpected = getProlog().term(expectedStr);
-    if (!theExpected.staticallyEquals(theActual)) {
-      assertEquals("Terms are not statically equal", theExpected.toString(), theActual.toString());
-      fail("Terms are not statically equal yet strangely their toString are the same");
+    if (!theExpected.structurallyEquals(theActual)) {
+      assertEquals("Terms are not structurally equal", theExpected.toString(), theActual.toString());
+      fail("Terms are not structurally equal yet strangely their toString are the same");
     }
   }
 
@@ -229,9 +229,9 @@ public class UnifyerTest extends PrologTestBase {
    * @param theActual
    */
   public static void assertStaticallyEquals(Term theExpected, Term theActual) {
-    if (!theExpected.staticallyEquals(theActual)) {
-      assertEquals("Terms are not statically equal", theExpected.toString(), theActual.toString());
-      fail("Terms are not statically equal yet strangely their toString are the same");
+    if (!theExpected.structurallyEquals(theActual)) {
+      assertEquals("Terms are not structurally equal", theExpected.toString(), theActual.toString());
+      fail("Terms are not structurally equal yet strangely their toString are the same");
     }
   }
 

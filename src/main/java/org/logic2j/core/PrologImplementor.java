@@ -20,21 +20,19 @@ package org.logic2j.core;
 import java.util.List;
 
 import org.logic2j.core.io.operator.OperatorManager;
+import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solve.Solver;
 import org.logic2j.core.unify.Unifier;
 
 /**
  * An interface that Prolog implementations must provide; this goes beyond the
- * lighter facade interface ({@link Prolog}) intended for client use. This one
+ * lighter facade interface {@link Prolog} intended for client use. This one
  * exposes accessors to the internal state of the effective implementation.
  */
 public interface PrologImplementor extends Prolog {
 
+	// TODO To be refatored, see comments in class definition
 	ClauseProviderResolver getClauseProviderResolver();
-
-	Unifier getUnifyer();
-
-	Solver getSolver();
 
 	/**
 	 * @return All clause providers, in same order as when registered. TODO But
@@ -45,10 +43,26 @@ public interface PrologImplementor extends Prolog {
 	 */
 	List<ClauseProvider> getClauseProviders();
 
-	OperatorManager getOperatorManager();
-
+	/**
+	 * @return The implementation for managing libraries.
+	 */
 	LibraryManager getLibraryManager();
 
+	/**
+	 * @return The implementation of unification logic.
+	 */
+	Unifier getUnifyer();
+
+	/**
+	 * @return The implementation of inference logic.
+	 */
+	Solver getSolver();
+
+	OperatorManager getOperatorManager();
+
+	/**
+	 * @return The implementation for marshalling {@link Term} hierarchies to various formats.
+	 */
 	Formatter getFormatter();
 
 }

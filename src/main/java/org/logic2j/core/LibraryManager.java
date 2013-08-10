@@ -22,7 +22,7 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 
 /**
  * An API to manage libraries implementing Prolog features in Java.
- * TODO: unless this interface is needed in root package, move this in subpackage
+ * TODO: not sure if this interface definition should reside in main package or a subpackage
  */
 public interface LibraryManager {
 
