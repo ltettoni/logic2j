@@ -19,6 +19,7 @@ package org.logic2j.core;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solve.holder.SolutionHolder;
+import org.logic2j.core.solve.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
@@ -29,28 +30,40 @@ import org.logic2j.core.theory.TheoryManager;
 public interface Prolog {
 
   /**
-   * A shortcut method to create a {@link Term} by delegating instantiation to the current {@link TermFactory}.
+   * The shortcut and preferred method to create a {@link Term} by delegating instantiation to 
+   * the current {@link TermFactory}.
    * @param theSource Any instance of {@link Object} that may be converted to a {@link Term}.
    * @return A valid {@link Term}, ready for unification or inference within the current {@link Prolog} engine.
    */
   Term term(Object theSource);
 
   /**
-   * The entry point for solving a goal (this is the higer-level API, internal solving uses
-   * a listener).
-   * @param theGoal
+   * The highest-level entry point for solving a goal (this is the higer-level API, solving internally uses
+   * a {@link SolutionListener}).
+   * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
+   * @param theGoal To solve, will be parsed into a Term.
    * @return A {@link SolutionHolder} that will allow the caller code to dereference 
    * solution(s) and their bindings (values of variables).
    */
   SolutionHolder solve(CharSequence theGoal);
 
+  /**
+   * Solves a goal.
+   * @param theGoal To solve.
+   * @return A {@link SolutionHolder} that will allow the caller code to dereference 
+   * solution(s) and their bindings (values of variables).
+   */
   SolutionHolder solve(Term theGoal);
 
+  /**
+   * The current factory to parse instantiate {@link Term}s.
+   * @return Our {@link TermFactory}
+   */
   TermFactory getTermFactory();
 
   /**
-   * Needed in order to manage the theories loaded into the engine.
-   * @return The {@link TheoryManager} currently registered.
+   * The current theory manager, will allow calling code to add clauses, load theories, etc.
+   * @return Our {@link TheoryManager}
    */
   TheoryManager getTheoryManager();
 }

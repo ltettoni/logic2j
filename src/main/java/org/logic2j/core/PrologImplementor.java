@@ -30,11 +30,11 @@ import org.logic2j.core.unify.Unifier;
  */
 public interface PrologImplementor extends Prolog {
 
-	public ClauseProviderResolver getClauseProviderResolver();
+	ClauseProviderResolver getClauseProviderResolver();
 
-	public Unifier getUnifyer();
+	Unifier getUnifyer();
 
-	public Solver getSolver();
+	Solver getSolver();
 
 	/**
 	 * @return All clause providers, in same order as when registered. TODO But
