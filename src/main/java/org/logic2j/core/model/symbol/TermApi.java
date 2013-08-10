@@ -37,9 +37,21 @@ import org.logic2j.core.util.ReflectUtils;
  * Facade API to the {@link Term} hierarchy, to ease their handling.
  * This class resides in the same package than the {@link Term} subclasses, so they can invoke its package-scoped methods.
  * See important notes re. Term compaction ({@link #compact(Term)}) and normalization ({@link #normalize(Term, LibraryContent)}.
+ * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods there.
+ * I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
+ * @note Avoid static methods, prefer instantiating this class where needed.
  */
 public class TermApi {
 
+    public boolean isAtom(Term theTerm) {
+        if (! (theTerm instanceof Struct)) {
+            return false;
+        }
+       final Struct s = (Struct) theTerm;
+       return s.getArity() == 0 || s.isEmptyList();
+    }
+    
+    
   Collection<Term> collectTerms(Term theTerm) {
     final Collection<Term> collected = new ArrayList<Term>();
     theTerm.collectTermsInto(collected);
@@ -62,7 +74,7 @@ public class TermApi {
     theClause.avoidCycle(visited);
   }
 
-  short assignVarOffsets(Term theTerm) {
+  short assignIndexes(Term theTerm) {
     return theTerm.assignIndexes((short) 0);
   }
 
@@ -76,7 +88,7 @@ public class TermApi {
    */
   public Term normalize(Term theTerm, LibraryContent theLibraryContent) {
     final Term compacted = compact(theTerm);
-    assignVarOffsets(compacted);
+    assignIndexes(compacted);
     if (theTerm instanceof Struct && theLibraryContent != null) {
       assignPrimitiveInfo((Struct) compacted, theLibraryContent);
     }

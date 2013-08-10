@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.PrologImpl.InitLevel;
+import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
@@ -32,8 +32,6 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.unify.DefaultUnifyer;
-import org.logic2j.core.unify.Unifier;
 
 /**
  */
@@ -164,13 +162,13 @@ public class UnifyerTest extends PrologTestBase {
     Bindings bindings1 = new Bindings(t1);
     GoalFrame goalFrame = new GoalFrame();
     this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame);
-    assertEquals("t(X)", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("t(X)", TERM_API.substitute(t1, bindings1, null).toString());
     assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     // Bind bindings2 to const
     Term t2 = getProlog().term("t(123)");
     Bindings bindings2 = new Bindings(t2);
     this.unifier.unify(t0, bindings0, t2, bindings2, goalFrame);
-    assertEquals("t(123)", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
+    assertEquals("t(123)", TERM_API.substitute(t0, bindings0, null).toString());
     assertEquals("{U=123}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
   }
 
@@ -201,8 +199,8 @@ public class UnifyerTest extends PrologTestBase {
     Bindings bindings1 = new Bindings(t1);
     GoalFrame goalFrame = new GoalFrame();
     assertTrue(this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame));
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, bindings0, null).toString(DEFAULT_FORMATTER));
-    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, bindings1, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, bindings0, null).toString());
+    assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, bindings1, null).toString());
     assertEquals("{X=[1|_]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     // Bind bindings2 to const
@@ -210,8 +208,8 @@ public class UnifyerTest extends PrologTestBase {
     Term t2 = getProlog().term("append2([],L2,L2)"); // Body of second hitting clause
     Bindings bindings2 = new Bindings(t2);
     assertTrue(this.unifier.unify(t1b, bindings1, t2, bindings2, goalFrame));
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, bindings1, null).toString(DEFAULT_FORMATTER));
-    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, bindings2, null).toString(DEFAULT_FORMATTER));
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, bindings1, null).toString());
+    assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, bindings2, null).toString());
     assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
     assertEquals("{X=[1,2,3]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
   }

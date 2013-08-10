@@ -116,14 +116,14 @@ public class FunctionalTest extends PrologTestBase {
   public void test_findall() throws IOException {
     addTheory("src/test/resources/test-functional.pl");
 
-    assertEquals("[]", assertOneSolution("findall(1, fail, L)").binding("L").toString(DEFAULT_FORMATTER));
-    assertEquals("[1]", assertOneSolution("findall(1, true, L)").binding("L").toString(DEFAULT_FORMATTER));
-    assertEquals("[1,1,1]", assertOneSolution("findall(1, (true;true;true), L)").binding("L").toString(DEFAULT_FORMATTER));
-    assertEquals("[a(b),a(b)]", assertOneSolution("findall(a(b), (true;fail;true), L)").binding("L").toString(DEFAULT_FORMATTER));
+    assertEquals("[]", assertOneSolution("findall(1, fail, L)").binding("L").toString());
+    assertEquals("[1]", assertOneSolution("findall(1, true, L)").binding("L").toString());
+    assertEquals("[1,1,1]", assertOneSolution("findall(1, (true;true;true), L)").binding("L").toString());
+    assertEquals("[a(b),a(b)]", assertOneSolution("findall(a(b), (true;fail;true), L)").binding("L").toString());
 
-    assertEquals("[1,2,3]", assertOneSolution("findall(X, a(X), L)").binding("L").toString(DEFAULT_FORMATTER));
-    assertEquals("[b(1),b(2),b(3)]", assertOneSolution("findall(b(X), a(X), L)").binding("L").toString(DEFAULT_FORMATTER));
-    assertEquals("[Z,Z,Z]", assertOneSolution("findall(Z, a(X), L)").binding("L").toString(DEFAULT_FORMATTER));
+    assertEquals("[1,2,3]", assertOneSolution("findall(X, a(X), L)").binding("L").toString());
+    assertEquals("[b(1),b(2),b(3)]", assertOneSolution("findall(b(X), a(X), L)").binding("L").toString());
+    assertEquals("[Z,Z,Z]", assertOneSolution("findall(Z, a(X), L)").binding("L").toString());
     assertNoSolution("findall(X, a(X), [1])");
     assertOneSolution("findall(X, a(X), [1,2,3])");
   }

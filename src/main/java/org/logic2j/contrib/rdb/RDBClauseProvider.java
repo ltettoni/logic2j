@@ -25,8 +25,8 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
-import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
+import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory.FactoryMode;
@@ -34,7 +34,6 @@ import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 
@@ -46,7 +45,7 @@ import org.logic2j.core.model.var.Bindings;
  */
 public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
-  /**
+/**
    * The target database is supposed to implement tables, or (more realistically) views
    * that start with the following name. The rest of the table or view name will be the
    * predicate being listed.
@@ -92,10 +91,11 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     for (int i = 0; i < theGoal.getArity(); i++) {
     	Term t = theGoal.getArg(i);
     	if (t instanceof Var && theGoalBindings!=null) {
-    		t = (new TermApi()).substitute(theGoal.getArg(i), theGoalBindings, null);
+    		t = TERM_API.substitute(theGoal.getArg(i), theGoalBindings, null);
     	}
-    	if (t instanceof Struct && (t.isAtom() || t.isList())){
-   	    	if (t.isAtom()){
+    	final boolean isAtom = TERM_API.isAtom(t);
+    	if (t instanceof Struct && (isAtom || t.isList())){
+   	    	if (isAtom){
     			builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct)t).getName()));
     		}
    	    	else if(t.isList()){

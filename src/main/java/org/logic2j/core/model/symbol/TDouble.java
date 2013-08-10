@@ -20,7 +20,7 @@ package org.logic2j.core.model.symbol;
 import org.logic2j.core.model.TermVisitor;
 
 /**
- * TDouble class represents the double prolog data type
+ * TDouble class represents the double Prolog data type.
  */
 public class TDouble extends TNumber {
   private static final long serialVersionUID = 1L;

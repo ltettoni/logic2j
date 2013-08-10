@@ -99,15 +99,15 @@ public class TermApiTest {
   }
 
   @Test
-  public void test_assignVarOffsets() {
+  public void test_assignIndexes() {
     int nbVars;
-    nbVars = TERM_API.assignVarOffsets(new TLong(2));
+    nbVars = TERM_API.assignIndexes(new TLong(2));
     assertEquals(0, nbVars);
-    nbVars = TERM_API.assignVarOffsets(new Struct("f"));
+    nbVars = TERM_API.assignIndexes(new Struct("f"));
     assertEquals(0, nbVars);
-    nbVars = TERM_API.assignVarOffsets(new Var("X"));
+    nbVars = TERM_API.assignIndexes(new Var("X"));
     assertEquals(1, nbVars);
-    nbVars = TERM_API.assignVarOffsets(new Var("_"));
+    nbVars = TERM_API.assignIndexes(new Var("_"));
     assertEquals(0, nbVars);
   }
 

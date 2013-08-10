@@ -89,7 +89,7 @@ public class Var extends Term {
         if (this.index < 0) {
             // An error situation
             if (this.index == NO_INDEX) {
-                throw new IllegalStateException("Cannot dereference variable whose offset was not initialized");
+                throw new IllegalStateException("Cannot dereference variable whose index was not initialized");
             }
             if (this.index == ANON_INDEX) {
                 throw new IllegalStateException("Cannot dereference the anonymous variable");
@@ -104,11 +104,6 @@ public class Var extends Term {
     // ---------------------------------------------------------------------------
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
-
-    @Override
-    public boolean isAtom() {
-        return false;
-    }
 
     @Override
     public boolean isList() {

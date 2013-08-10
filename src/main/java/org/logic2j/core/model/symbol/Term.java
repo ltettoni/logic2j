@@ -29,7 +29,8 @@ import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 
 /**
- * Term class is the root abstract class for all Prolog data types. The following notions apply on terms, see also the {@link TermApi} class for methods to manage {@link Term}s.
+ * Term class is the root abstract class for all Prolog data types. The following notions apply on terms, see also the {@link TermApi} class for methods to
+ * manage {@link Term}s.
  * <ul>
  * <li>Structural equality, see {@link #structurallyEquals(Term)}</li>
  * <li>Compaction, see {@link #compact(Collection)}</li>
@@ -62,8 +63,9 @@ public abstract class Term implements Serializable, Cloneable {
     protected short index = NO_INDEX;
 
     /**
-     * A {@link Formatter} for the default's {@link #toString()} to render this {@link Term}. Calling {@link #toString()} should be avoided from caller code, use your preferred instance of
-     * {@link Formatter} instead. Yet we need {@link #toString()} to work for the cases of logging and while debugging, so let's use a fixed (static) one.
+     * A {@link Formatter} for the default's {@link #toString()} to render this {@link Term}. Calling {@link #toString()} should be avoided from caller code,
+     * use your preferred instance of {@link Formatter} instead. Yet we need {@link #toString()} to work for the cases of logging and while debugging, so let's
+     * use a fixed (static) one.
      */
     private static final Formatter formatter = new DefaultFormatter();
 
@@ -76,34 +78,24 @@ public abstract class Term implements Serializable, Cloneable {
     // ---------------------------------------------------------------------------
 
     /**
-     * @return true if this Term is an atom.
-     */
-    // TODO Remove this it's only used from two places! Have a separate place
-    // for such methods.
-    public abstract boolean isAtom();
-
-    /**
      * @return true if this Term denotes a Prolog list.
      */
-    // TODO Remove this it's only used from two places! Have a separate place
-    // for such methods.
     public abstract boolean isList();
 
-
     /**
-     * Check structural equality, this means that the names of atoms, functors, arity and numeric values are all equal, that the same variables are referred to, but irrelevant of the bound values of
-     * those variables.
+     * Check structural equality, this means that the names of atoms, functors, arity and numeric values are all equal, that the same variables are referred to,
+     * but irrelevant of the bound values of those variables.
      * 
      * @param theOther
      * @return true when theOther is structurally equal to this. Same references (==) will always yield true.
      */
+    // TODO we only need the "public" scope for Unit Tests, this is not ideal
     public abstract boolean structurallyEquals(Term theOther);
-
 
     public abstract <T> T accept(TermVisitor<T> theVisitor);
 
     // ---------------------------------------------------------------------------
-    // Graph traversal methods
+    // Graph traversal methods, template methods with "protected" scope, user code should use TermApi methods instead.
     // Some traversal are implemented by the Visitor design pattern and the #accept() method
     // ---------------------------------------------------------------------------
 
@@ -115,8 +107,10 @@ public abstract class Term implements Serializable, Cloneable {
     protected abstract void collectTermsInto(Collection<Term> theCollectedTerms);
 
     /**
-     * Compacting will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection.
-     * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal.
+     * Compacting will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection. This will factorize
+     * duplicated atoms, numbers, variables, or even structures that are statically equal.
+     * Internal template method; the public API entry point is {@link TermApi#compact(Term)}.
+     * 
      * @param theCollectedTerms The reference Terms to search for.
      * @return Either this, or a new equivalent but compacted Term.
      */
@@ -124,6 +118,8 @@ public abstract class Term implements Serializable, Cloneable {
 
     /**
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
+     * Internal template method; the public API entry point is {@link TermApi#assignIndexes(Term)}.
+     * 
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
      */
@@ -161,18 +157,6 @@ public abstract class Term implements Serializable, Cloneable {
         return null;
     }
 
-    /**
-     * Format using a specific {@link Formatter}.
-     * 
-     * @note Generally, avoid {@link #toString()} without an argument, prefer this method.
-     * 
-     * @param theFormatter The Formatter to use to format this Term (and of course any subclass).
-     * @return The formatted Term
-     */
-    public String toString(Formatter theFormatter) {
-        return accept(theFormatter);
-    }
-
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
@@ -191,8 +175,7 @@ public abstract class Term implements Serializable, Cloneable {
      * @return A deep copy of this Term.
      */
     @SuppressWarnings("unchecked")
-    // TODO LT: unclear why we get a warning. When calling clone() the compiler
-    // seems to know the return is Term!?
+    // TODO LT: unclear why we get a warning. When calling clone() the compiler seems to know the return is Term!?
     public <T extends Term> T cloneIt() {
         try {
             // This must always work since all children of Term are Cloneable!

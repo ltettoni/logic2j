@@ -30,63 +30,62 @@ import org.logic2j.core.model.symbol.TermApi;
  * Base class for RDB access using JDBC.
  */
 public class RDBBase {
+    protected static final TermApi TERM_API = new TermApi();
 
-  /**
-   * A {@link TermFactory} that will parse all strings as atoms 
-   * (especially those starting with uppercase that must not become bindings).
-   */
-  public static class AllStringsAsAtoms extends DefaultTermFactory {
-    private static final TermApi TERM_API = new TermApi();
+    /**
+     * A {@link TermFactory} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
+     */
+    public static class AllStringsAsAtoms extends DefaultTermFactory {
 
-    public AllStringsAsAtoms(PrologImplementor theProlog) {
-      super(theProlog);
+        public AllStringsAsAtoms(PrologImplementor theProlog) {
+            super(theProlog);
+        }
+
+        @Override
+        public Term parse(CharSequence theExpression) {
+            return new Struct(theExpression.toString());
+        }
+
+        @Override
+        public Term create(Object theObject, FactoryMode theMode) {
+            // Ignore theMode argument, and use forcing of atom instead
+            return TERM_API.valueOf(theObject, FactoryMode.ATOM);
+        }
+
     }
 
-    @Override
-    public Term parse(CharSequence theExpression) {
-      return new Struct(theExpression.toString());
+    private final PrologImplementor prolog;
+    private TermFactory termFactory;
+    private DataSource dataSource;
+
+    public RDBBase(PrologImplementor theProlog, DataSource theDataSource) {
+        this.prolog = theProlog;
+        this.termFactory = new RDBBase.AllStringsAsAtoms(this.prolog);
+        this.dataSource = theDataSource;
     }
 
-    @Override
-    public Term create(Object theObject, FactoryMode theMode) {
-      // Ignore theMode argument, and use forcing of atom instead
-      return TERM_API.valueOf(theObject, FactoryMode.ATOM);
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    public DataSource getDataSource() {
+        return this.dataSource;
     }
 
-  }
+    public void setDataSource(DataSource theDataSource) {
+        this.dataSource = theDataSource;
+    }
 
-  private final PrologImplementor prolog;
-  private TermFactory termFactory;
-  private DataSource dataSource;
+    public TermFactory getTermFactory() {
+        return this.termFactory;
+    }
 
-  public RDBBase(PrologImplementor theProlog, DataSource theDataSource) {
-    this.prolog = theProlog;
-    this.termFactory = new RDBBase.AllStringsAsAtoms(this.prolog);
-    this.dataSource = theDataSource;
-  }
+    public void setTermFactory(TermFactory theTermFactory) {
+        this.termFactory = theTermFactory;
+    }
 
-  //---------------------------------------------------------------------------
-  // Accessors
-  //---------------------------------------------------------------------------
-
-  public DataSource getDataSource() {
-    return this.dataSource;
-  }
-
-  public void setDataSource(DataSource theDataSource) {
-    this.dataSource = theDataSource;
-  }
-
-  public TermFactory getTermFactory() {
-    return this.termFactory;
-  }
-
-  public void setTermFactory(TermFactory theTermFactory) {
-    this.termFactory = theTermFactory;
-  }
-
-  public PrologImplementor getProlog() {
-    return this.prolog;
-  }
+    public PrologImplementor getProlog() {
+        return this.prolog;
+    }
 
 }

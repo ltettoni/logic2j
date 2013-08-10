@@ -302,11 +302,6 @@ public class Struct extends Term {
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
 
-    @Override
-    public boolean isAtom() {
-        return (this.arity == 0 || isEmptyList());
-    }
-
     /**
      * Gets a copy of this structure
      */
@@ -331,6 +326,7 @@ public class Struct extends Term {
 
     /**
      * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this to theCollectedTerms.
+     * Internal template method; the public API entry point is {@link TermApi#collectTerms(Term)}.
      * 
      * @param theCollectedTerms
      */
@@ -522,7 +518,7 @@ public class Struct extends Term {
     public Struct predicateFromPList() {
         assertPList(this);
         final Term functor = getLHS();
-        if (!functor.isAtom()) {
+        if (! TERM_API.isAtom(functor)) {
             return null;
         }
         Struct runningElement = (Struct) getRHS();

@@ -29,7 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
-import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.symbol.Term;
@@ -45,13 +44,6 @@ import org.logic2j.core.theory.TheoryManager;
 public abstract class PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
 
-  /**
-   * The DefaultFormatter that we need to use every time we assume a specific 
-   * value for the toString() representation of a Term.
-   * Use this when you have assertions on a Term's toString() value.
-   */
-  protected final DefaultFormatter DEFAULT_FORMATTER = new DefaultFormatter();
-  
   private PrologImplementor prolog;
 
   protected InitLevel initLevel() {

@@ -113,7 +113,7 @@ public class CoreLibraryTest extends PrologTestBase {
     assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
     //
     UniqueSolutionHolder sol = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]");
-    assertEquals("coco(Com)", sol.binding("Expr").toString(DEFAULT_FORMATTER));
+    assertEquals("coco(Com)", sol.binding("Expr").toString());
     assertEquals("coco", sol.binding("Pred").toString());
     assertNull(sol.binding("Arg"));
 //    assertEquals("Com", sol.binding("Arg").toString());
