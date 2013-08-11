@@ -19,7 +19,7 @@ package org.logic2j.core.unify;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
+import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Functionality to unify terms together. Various implementations possible.

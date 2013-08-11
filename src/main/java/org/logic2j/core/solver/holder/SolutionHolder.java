@@ -15,17 +15,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.solve.holder;
+package org.logic2j.core.solver.holder;
 
 import java.util.Iterator;
 
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.Solution;
-import org.logic2j.core.solve.listener.IterableSolutionListener;
-import org.logic2j.core.solve.listener.UniqueSolutionListener;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.IterableSolutionListener;
+import org.logic2j.core.solver.listener.Solution;
+import org.logic2j.core.solver.listener.UniqueSolutionListener;
 
 /**
  * Holds state necessary to describe the unique solution or multiple solutions to a goal; this object lies between the expression of a goal (a request or query)

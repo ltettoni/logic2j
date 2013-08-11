@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.solve;
+package org.logic2j.core.solver;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -34,9 +34,12 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.holder.SolutionHolder;
-import org.logic2j.core.solve.holder.UniqueSolutionHolder;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.Solver;
+import org.logic2j.core.solver.holder.SolutionHolder;
+import org.logic2j.core.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.solver.listener.Solution;
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Check {@link Solver} on extremely trivial goals, and also check

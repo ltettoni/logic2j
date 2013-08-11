@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.solve;
+package org.logic2j.core.solver;
 
 import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
@@ -25,7 +25,7 @@ import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.util.ReportUtils;
 
 /**

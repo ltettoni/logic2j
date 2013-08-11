@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solve.Solver;
+import org.logic2j.core.solver.Solver;
 import org.logic2j.core.unify.Unifier;
 
 /**

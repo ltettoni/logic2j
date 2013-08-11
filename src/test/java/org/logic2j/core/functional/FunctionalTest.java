@@ -24,8 +24,8 @@ import java.io.IOException;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.library.impl.io.IOLibrary;
-import org.logic2j.core.solve.holder.MultipleSolutionsHolder;
-import org.logic2j.core.solve.holder.UniqueSolutionHolder;
+import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
+import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.util.CollectionUtils;
 
 /**

@@ -18,8 +18,8 @@
 package org.logic2j.core;
 
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solve.holder.SolutionHolder;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.holder.SolutionHolder;
+import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryManager;
 
 /**

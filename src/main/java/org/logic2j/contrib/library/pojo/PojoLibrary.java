@@ -26,8 +26,8 @@ import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  */

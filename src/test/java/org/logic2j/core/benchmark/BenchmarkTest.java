@@ -22,7 +22,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.solve.DefaultSolver;
+import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Benchmarking the Prolog engine (unification, inference engine).

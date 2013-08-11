@@ -15,37 +15,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.solve;
+package org.logic2j.core.solver;
 
-import org.logic2j.core.PrologImpl;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
- * Interface allowing {@link PrologImpl} to access the inference engine algorithm,
- * in order to solve goals.
+ * Interface to access the inference engine algorithm, in order to solve goals.
  */
 public interface Solver {
 
-  /**
-   * The top-level method to solve a high-level goal.
-   * @param theGoalBindings
-   * @param callerFrame
-   * @param theSolutionListener
-   */
-  void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
-      final SolutionListener theSolutionListener);
+    /**
+     * The top-level method to solve a high-level goal.
+     * 
+     * @param theGoalBindings
+     * @param callerFrame
+     * @param theSolutionListener Where to send solutions
+     */
+    void solveGoal(Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
-  /**
-   * The lower-level method to solve sub-goals.
-   * @param theGoal
-   * @param theGoalBindings
-   * @param callerFrame
-   * @param theSolutionListener
-   */
-  // TODO Why should we make this method public? Seems not normal
-  void solveGoalRecursive(final Term theGoal, final Bindings theGoalBindings, final GoalFrame callerFrame,
-      final SolutionListener theSolutionListener);
+    /**
+     * The lower-level method to solve sub-goals.
+     * 
+     * @param theGoal
+     * @param theGoalBindings
+     * @param callerFrame
+     * @param theSolutionListener Where to send solutions
+     */
+    // TODO Why should we make this method public? Seems not normal
+    void solveGoalRecursive(Term theGoal, Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
 }

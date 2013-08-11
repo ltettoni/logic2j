@@ -26,9 +26,9 @@ import org.logic2j.core.model.exception.RecursionException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.listener.SolutionListener;
-import org.logic2j.core.solve.listener.SolutionListenerBase;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.SolutionListener;
+import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
  * Describe a primitive, either a:

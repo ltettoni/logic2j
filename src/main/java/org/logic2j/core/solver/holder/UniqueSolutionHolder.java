@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.logic2j.core.solve.holder;
+package org.logic2j.core.solver.holder;
 
 import java.util.Map;
 
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solve.Solution;
+import org.logic2j.core.solver.listener.Solution;
 
 /**
  * A relay object to provide access to the results of the (expected) unique solution to a goal.

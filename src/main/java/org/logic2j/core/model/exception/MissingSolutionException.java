@@ -17,7 +17,7 @@
  */
 package org.logic2j.core.model.exception;
 
-import org.logic2j.core.solve.listener.UniqueSolutionListener;
+import org.logic2j.core.solver.listener.UniqueSolutionListener;
 
 /**
  * Thrown by {@link UniqueSolutionListener} when no solution could be found and one is required

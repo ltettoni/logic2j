@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.logic2j.core.solve.holder;
+package org.logic2j.core.solver.holder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,8 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.listener.SolutionListenerBase;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
  * A relay object to provide access to the results of all the (expected) solutions to a goal.

@@ -25,7 +25,7 @@ import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.solve.Solver;
+import org.logic2j.core.solver.Solver;
 
 /**
  * An API to manage theories (lists of Prolog {@link Clause}s (facts or rules) 

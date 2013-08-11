@@ -15,10 +15,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.solve.listener;
+package org.logic2j.core.solver.listener;
 
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.Solution;
 
 /**
  * A {@link SolutionListener} that allows the caller of the inference engine

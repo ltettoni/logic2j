@@ -24,8 +24,8 @@ import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solve.GoalFrame;
-import org.logic2j.core.solve.listener.SolutionListener;
+import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  */

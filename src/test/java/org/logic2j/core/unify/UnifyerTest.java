@@ -31,7 +31,7 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
-import org.logic2j.core.solve.GoalFrame;
+import org.logic2j.core.solver.GoalFrame;
 
 /**
  */

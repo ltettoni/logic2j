@@ -32,9 +32,9 @@ import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solve.holder.MultipleSolutionsHolder;
-import org.logic2j.core.solve.holder.SolutionHolder;
-import org.logic2j.core.solve.holder.UniqueSolutionHolder;
+import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
+import org.logic2j.core.solver.holder.SolutionHolder;
+import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.theory.TheoryManager;
 
 /**

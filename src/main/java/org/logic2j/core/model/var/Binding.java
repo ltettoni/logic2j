@@ -21,7 +21,7 @@ import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.solve.GoalFrame;
+import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free, bound, or chaining).
