@@ -20,16 +20,11 @@ package org.logic2j.core.model.exception;
 /**
  * FIXME Must be documented.
  */
-public class IllegalSolutionException extends RuntimeException {
+public class IllegalSolutionException extends PrologException {
   private static final long serialVersionUID = 1L;
 
   public IllegalSolutionException(CharSequence theMessage) {
     super(theMessage.toString());
-  }
-
-  @Override
-  public String getMessage() {
-    return super.getMessage();
   }
 
 }

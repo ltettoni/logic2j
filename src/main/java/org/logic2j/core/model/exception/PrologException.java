@@ -17,19 +17,18 @@
  */
 package org.logic2j.core.model.exception;
 
-import org.logic2j.core.solve.listener.UniqueSolutionListener;
-
 /**
- * Thrown by {@link UniqueSolutionListener} when no solution could be found and one is required
- * by the calling context.
- * 
- * @author tettoni
+ * Root class for all logic2j Prolog Exceptions - all a {@link RuntimeException}s.
  */
-public class MissingSolutionException extends PrologException {
-  private static final long serialVersionUID = 1L;
+public abstract class PrologException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-  public MissingSolutionException(CharSequence theMessage) {
-    super(theMessage.toString());
-  }
+    public PrologException(CharSequence theMessage) {
+        super(theMessage.toString());
+    }
+
+    public PrologException(CharSequence theMessage, Throwable theRootCause) {
+        super(theMessage.toString(), theRootCause);
+    }
 
 }

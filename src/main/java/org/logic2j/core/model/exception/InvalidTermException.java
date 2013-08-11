@@ -23,7 +23,7 @@ import org.logic2j.core.model.symbol.Term;
  * Exception used to indicate that a {@link Term} cannot be parsed from a text, of is
  * used in a context where it should not.
  */
-public class InvalidTermException extends RuntimeException {
+public class InvalidTermException extends PrologException {
 
   private static final long serialVersionUID = -4416801118548866803L;
 

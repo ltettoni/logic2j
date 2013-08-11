@@ -21,7 +21,7 @@ package org.logic2j.core.model.exception;
  * Indicate that recursion limit has been reached by the solver.
  * Caused by either too many loops, or a JVM's {@link StackOverflowError} was caught somewhere.
  */
-public class RecursionException extends RuntimeException {
+public class RecursionException extends PrologException {
 
   private static final long serialVersionUID = -4416801118548866803L;
 
