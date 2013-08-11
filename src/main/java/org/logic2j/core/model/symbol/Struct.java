@@ -325,8 +325,8 @@ public class Struct extends Term {
     }
 
     /**
-     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this to theCollectedTerms.
-     * Internal template method; the public API entry point is {@link TermApi#collectTerms(Term)}.
+     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to theCollectedTerms.
+     * The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
      * 
      * @param theCollectedTerms
      */
@@ -341,28 +341,28 @@ public class Struct extends Term {
     }
 
     @Override
-    protected Term compact(Collection<Term> theCollectedTerms) {
-        // Recursively compact all arguments of this Struct
+    protected Term factorize(Collection<Term> theCollectedTerms) {
+        // Recursively factorize all arguments of this Struct
         final Term[] newArgs = new Term[this.arity];
         boolean anyChange = false;
         for (int i = 0; i < this.arity; i++) {
-            newArgs[i] = this.args[i].compact(theCollectedTerms);
+            newArgs[i] = this.args[i].factorize(theCollectedTerms);
             anyChange |= (newArgs[i] != this.args[i]);
         }
         // Now initialize result - a new Struct only if any change was found below
-        final Struct compacted;
+        final Struct factorized;
         if (anyChange) {
-            compacted = this.cloneIt();
-            compacted.args = newArgs;
+            factorized = this.cloneIt();
+            factorized.args = newArgs;
         } else {
-            compacted = this;
+            factorized = this;
         }
         // If this Struct already has an equivalent in the provided collection, return that one
-        final Term betterEquivalent = compacted.findStructurallyEqualWithin(theCollectedTerms);
+        final Term betterEquivalent = factorized.findStructurallyEqualWithin(theCollectedTerms);
         if (betterEquivalent != null) {
             return betterEquivalent;
         }
-        return compacted;
+        return factorized;
     }
 
     @Override

@@ -141,8 +141,8 @@ public class UnifyerTest extends PrologTestBase {
     Var y = new Var("Y");
     TLong two = new TLong(2);
     goalTerm = new Struct(Struct.FUNCTOR_COMMA, new Struct("unify", x, y), new Struct("unify", x, two));
-    final Term goalTermCompact = TERM_API.normalize(goalTerm, null);
-    final Bindings goalVars = new Bindings(goalTermCompact);
+    final Term goalTermNormalized = TERM_API.normalize(goalTerm, null);
+    final Bindings goalVars = new Bindings(goalTermNormalized);
     GoalFrame gf = new GoalFrame();
     this.unifier.unify(x, goalVars, y, goalVars, gf);
     this.unifier.unify(x, goalVars, two, goalVars, gf);

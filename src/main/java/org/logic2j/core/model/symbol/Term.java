@@ -33,8 +33,9 @@ import org.logic2j.core.model.var.Bindings;
  * manage {@link Term}s.
  * <ul>
  * <li>Structural equality, see {@link #structurallyEquals(Term)}</li>
- * <li>Compaction, see {@link #compact(Collection)}</li>
+ * <li>Factorization, see {@link #factorize(Collection)}</li>
  * <li>Initialization of {@link Var} indexes, see {@link #assignIndexes(short)}</li>
+ * <li>Normaliization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
  * 
  * @see Struct
@@ -100,25 +101,25 @@ public abstract class Term implements Serializable, Cloneable {
     // ---------------------------------------------------------------------------
 
     /**
-     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize the {@link #index} to {@link #NO_INDEX}.
-     * 
+     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link #index} to {@link #NO_INDEX}.
+     * This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Term)}; see a more detailed description there.
      * @param collectedTerms Recipient collection, {@link Term}s add here.
      */
     protected abstract void collectTermsInto(Collection<Term> theCollectedTerms);
 
     /**
-     * Compacting will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection. This will factorize
+     * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection. This will factorize
      * duplicated atoms, numbers, variables, or even structures that are statically equal.
-     * Internal template method; the public API entry point is {@link TermApi#compact(Term)}.
+     * This is an internal template method: the public API entry point is {@link TermApi#factorize(Term)}; see a more detailed description there.
      * 
      * @param theCollectedTerms The reference Terms to search for.
-     * @return Either this, or a new equivalent but compacted Term.
+     * @return Either this, or a new equivalent but factorized Term.
      */
-    protected abstract Term compact(Collection<Term> theCollectedTerms);
+    protected abstract Term factorize(Collection<Term> theCollectedTerms);
 
     /**
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
-     * Internal template method; the public API entry point is {@link TermApi#assignIndexes(Term)}.
+     * This is an internal template method: the public API entry point is {@link TermApi#assignIndexes(Term)}; see a more detailed description there.
      * 
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
@@ -126,7 +127,7 @@ public abstract class Term implements Serializable, Cloneable {
     protected abstract short assignIndexes(short theIndexOfNextNonIndexedVar);
 
     /**
-     * Internal template method; the public API entry point is {@link TermApi#substitute(Term, Bindings, IdentityHashMap)}.
+     * This is an internal template method: the public API entry point is {@link TermApi#substitute(Term, Bindings, IdentityHashMap)}; see a more detailed description there.
      * 
      * @param theBindings
      * @param theBindingsToVars

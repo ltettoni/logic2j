@@ -61,7 +61,7 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
     }
 
     @Override
-    protected Term compact(Collection<Term> theCollectedTerms) {
+    protected Term factorize(Collection<Term> theCollectedTerms) {
         // If this term already has an equivalent in the provided collection,
         // return that one
         final Term alreadyThere = findStructurallyEqualWithin(theCollectedTerms);

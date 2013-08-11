@@ -60,7 +60,7 @@ public interface TermFactory {
    * this is the highest-level factory. For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
    * @param theObject
    * @param theMode Kind of Term to instantiate
-   * @return A compacted and normalized {@link Term}.
+   * @return A factorized and normalized {@link Term}.
    */
    // TODO is "create" a good name ?
    Term create(Object theObject, FactoryMode theMode);
@@ -69,7 +69,7 @@ public interface TermFactory {
    * Create a Term from a character representation, will leverage the definitions of 
    * operators and primitives that currently apply.
    * @param theExpression
-   * @return A compacted and normalized {@link Term}.
+   * @return A factorized and normalized {@link Term}.
    */
    Term parse(CharSequence theExpression);
 
