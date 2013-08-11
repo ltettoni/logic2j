@@ -79,23 +79,30 @@ public class TermApi {
         theClause.avoidCycle(visited);
     }
 
+    /**
+     * Assign the {@link Term#index} value for any {@link Term} hierarchy.
+     * 
+     * @param theTerm
+     * @return The number of variables found (recursively).
+     */
+
     short assignIndexes(Term theTerm) {
-        return theTerm.assignIndexes((short) 0);
+        return theTerm.assignIndexes((short) 0); // Start assigning indexes with zero
     }
 
     /**
-     * Entry point for normalizing {@link Term}s before they can be used for inference.<br/>
+     * Normalize a {@link Term} using the specified definitions of operators, primitives.
      * 
      * @note This method must EXCLUSIVELY be called from {@link TermFactory#normalize(Term)}, with the exception of test cases.
      * @param theTerm To be normalized
-     * @param theLibraryContent
-     * @return A normalized COPY of theTerm
+     * @param theLibraryContent Defines primitives to be recognized
+     * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
      */
     public Term normalize(Term theTerm, LibraryContent theLibraryContent) {
         final Term factorized = factorize(theTerm);
         assignIndexes(factorized);
-        if (theTerm instanceof Struct && theLibraryContent != null) {
-            assignPrimitiveInfo((Struct) factorized, theLibraryContent);
+        if (factorized instanceof Struct && theLibraryContent != null) {
+            ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
         }
         return factorized;
     }
@@ -120,17 +127,8 @@ public class TermApi {
     }
 
     /**
-     * @param theStruct
-     * @param theLib2Content
-     */
-    // TODO Move assignPrimitiveInfo() to LibraryManager
-    private void assignPrimitiveInfo(Struct theStruct, LibraryContent theLib2Content) {
-        theStruct.assignPrimitiveInfo(theLib2Content);
-    }
-
-    /**
-     * Lowest level to factorize an Object into a simple {@link Term}, this can create an atomic Struct, but not parse a prolog term into a compound Struct. For
-     * parsing, you must use the {@link TermFactory}.
+     * Lowest-level factory for simple {@link Term}s from plain Java {@link Object}s. 
+     * @note This method is not for unmarshalling (parsing) from {@link String}s into {@link Term}s; use the {@link TermFactory} instead.
      * 
      * @param theObject
      * @param theMode

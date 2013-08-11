@@ -31,8 +31,8 @@ public class InvalidTermException extends PrologException {
     super(theString);
   }
 
-  public InvalidTermException(String theString, Throwable theTargetException) {
-    super(theString, theTargetException);
+  public InvalidTermException(String theString, Throwable theRootCause) {
+    super(theString, theRootCause);
   }
 
 }

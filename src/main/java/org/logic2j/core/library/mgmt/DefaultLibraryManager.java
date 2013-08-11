@@ -27,6 +27,7 @@ import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solve.GoalFrame;
 import org.logic2j.core.solve.listener.SolutionListener;
@@ -80,10 +81,14 @@ public class DefaultLibraryManager implements LibraryManager {
 
   private void updateWholeContent(LibraryContent loadedContent) {
     this.wholeContent.addAll(loadedContent);
-    // Houston we have a problem - we need to reassign our primitives upon loading libs!
-    Struct.ATOM_TRUE.assignPrimitiveInfo(this.wholeContent);
-    Struct.ATOM_FALSE.assignPrimitiveInfo(this.wholeContent);
-    Struct.ATOM_CUT.assignPrimitiveInfo(this.wholeContent);
+    // TODO Houston we have a problem - we need to reassign our primitives upon loading libs!
+    // It's actually unclear if when we load a new library, the new available functors would influence theories currently loaded.
+    
+    // We need to assignPrimitiveInfo(), but let's use the TermApi directly and invoke normalize() it won't harm to do a little more.
+    final TermApi termApi = new TermApi();
+    termApi.normalize(Struct.ATOM_TRUE, this.wholeContent);
+    termApi.normalize(Struct.ATOM_FALSE, this.wholeContent);
+    termApi.normalize(Struct.ATOM_CUT, this.wholeContent);
   }
 
   private LibraryContent loadLibraryInternal(PLibrary theLibrary) {

@@ -74,7 +74,9 @@ public interface TermFactory {
    Term parse(CharSequence theExpression);
 
   /**
-   * Normalize a {@link Term} using the current definitions of operators, primitives, etc.
+   * Normalize a {@link Term} using the current definitions of operators, primitives.
+   * @param theTerm To be normalized
+   * @return A {@link Term} ready to be used for inference (in a Theory ore as a goal)
    */
    Term normalize(Term theTerm);
 

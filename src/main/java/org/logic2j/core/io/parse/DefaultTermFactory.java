@@ -29,36 +29,40 @@ import org.logic2j.core.model.symbol.TermApi;
  */
 public class DefaultTermFactory implements TermFactory {
 
-  private static final TermApi TERM_API = new TermApi();
-  private final PrologImplementor prolog;
+    private static final TermApi TERM_API = new TermApi();
+    private final PrologImplementor prolog;
 
-  public DefaultTermFactory(PrologImplementor theProlog) {
-    this.prolog = theProlog;
-  }
-
-  @Override
-  public Term normalize(Term theTerm) {
-    return TERM_API.normalize(theTerm, this.prolog.getLibraryManager().wholeContent());
-  }
-
-  @Override
-  public Term parse(CharSequence theExpression) {
-    Parser parser = new Parser(this.prolog.getOperatorManager(), theExpression.toString());
-    final Term parsed = parser.parseSingleTerm();
-    return normalize(parsed);
-  }
-
-  // TODO: be smarter to handle Arrays and Collections, and iterables
-  @Override
-  public Term create(Object theObject, FactoryMode theMode) {
-    if (theObject instanceof CharSequence) {
-      if (theMode == FactoryMode.ATOM) {
-        return new Struct(theObject.toString());
-      }
-      return parse((CharSequence) theObject);
+    public DefaultTermFactory(PrologImplementor theProlog) {
+        this.prolog = theProlog;
     }
-    final Term created = TERM_API.valueOf(theObject, theMode);
-    normalize(created);
-    return created;
-  }
+
+    /**
+     * Calls {@link TermApi#normalize(Term, org.logic2j.core.library.mgmt.LibraryContent)}.
+     */
+    @Override
+    public Term normalize(Term theTerm) {
+        return TERM_API.normalize(theTerm, this.prolog.getLibraryManager().wholeContent());
+    }
+
+    @Override
+    public Term parse(CharSequence theExpression) {
+        final Parser parser = new Parser(this.prolog.getOperatorManager(), theExpression.toString());
+        final Term parsed = parser.parseSingleTerm();
+        final Term normalized = normalize(parsed);
+        return normalized;
+    }
+
+    // TODO: be smarter to handle Arrays and Collections, and Iterables
+    @Override
+    public Term create(Object theObject, FactoryMode theMode) {
+        if (theObject instanceof CharSequence) {
+            if (theMode == FactoryMode.ATOM) {
+                return new Struct(theObject.toString());
+            }
+            return parse((CharSequence) theObject);
+        }
+        final Term created = TERM_API.valueOf(theObject, theMode);
+        final Term normalized = normalize(created);
+        return normalized;
+    }
 }

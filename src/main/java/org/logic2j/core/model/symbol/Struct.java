@@ -267,19 +267,19 @@ public class Struct extends Term {
     }
 
     /**
-     * @param theLib2Content
+     * @param theContent
      */
-    public void assignPrimitiveInfo(LibraryContent theLib2Content) {
+    public void assignPrimitiveInfo(LibraryContent theContent) {
         // Find by exact arity match
-        this.primitiveInfo = theLib2Content.primitiveMap.get(getPredicateIndicator());
+        this.primitiveInfo = theContent.primitiveMap.get(getPredicateIndicator());
         if (this.primitiveInfo == null) {
             // Alternate find by wildcard (varargs signature)
-            this.primitiveInfo = theLib2Content.primitiveMap.get(getVarargsPredicateIndicator());
+            this.primitiveInfo = theContent.primitiveMap.get(getVarargsPredicateIndicator());
         }
         for (int i = 0; i < this.arity; i++) {
-            final Term sub = this.args[i];
-            if (sub instanceof Struct) {
-                ((Struct) sub).assignPrimitiveInfo(theLib2Content);
+            final Term child = this.args[i];
+            if (child instanceof Struct) {
+                ((Struct) child).assignPrimitiveInfo(theContent);
             }
         }
     }

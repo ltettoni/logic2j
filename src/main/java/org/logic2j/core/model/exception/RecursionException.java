@@ -31,8 +31,8 @@ public class RecursionException extends PrologException {
     super(theString);
   }
 
-  public RecursionException(String theString, Throwable theTargetException) {
-    super(theString, theTargetException);
+  public RecursionException(String theString, Throwable theRootCause) {
+    super(theString, theRootCause);
   }
 
 }

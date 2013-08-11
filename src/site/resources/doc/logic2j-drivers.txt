@@ -17,17 +17,17 @@ tuProlog was clearly fitting my requirements and the adoption was fast.
 
 Over time however, a number of limitations appeared, which weren't trivial to workaround. Among them:
 - memory footprint and management of data structures make it difficult to handle large data sets
-- non-shared memory approach does not allow easy extension of the Term API
+- non-shared memory approach does not allow easy extension of the Term API (copying happens very often and is difficult to track)
 - API to retrieve or manipulate solutions is cumbersome
 - codebase lacking best patterns and java generics
 
-Logic2j started as an challenge and proof-of-concept for a more state-of-the-art implementation of a 
-Prolog inference engine, and never aimed to become a Prolog programming environment. 
+Logic2j started as a challenge and proof-of-concept for a more state-of-the-art implementation of a 
+Prolog inference engine, and never aimed to become a full Prolog programming environment. 
 The striking differences over tuProlog are:
 
 - an Inversion-of-Control approach to relay solutions removes the need to keep state for backtracking
 - a shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable - no copies)
-- the performance is overall improved, and result sets of virtually infinite length can be generated without footprint
+- the performance is overall improved, and large solution sets can be generated without footprint since they are enumerated
 - a much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns
 - the API to retrieve or manipulate solutions is more flexible
 
@@ -42,7 +42,7 @@ Features in more details:
   Factory / Implementation
   Hooks and derivation points to extend functionality
   Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
-  Visitor
+  Visitor design pattern
 
 - Java 1.6 language and JRE features fully leveraged
   Generics
