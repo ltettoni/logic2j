@@ -182,7 +182,7 @@ public abstract class Term implements Serializable, Cloneable {
             // This must always work since all children of Term are Cloneable!
             return (T) clone();
         } catch (CloneNotSupportedException e) {
-            // There's no reason to end up here
+            // TODO Should throw a subclass of PrologException
             throw new InvalidTermException("Could not clone: " + e, e);
         }
     }

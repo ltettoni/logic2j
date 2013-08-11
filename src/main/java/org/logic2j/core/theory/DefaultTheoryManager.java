@@ -39,143 +39,143 @@ import org.logic2j.core.solve.listener.SolutionListener;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * Prolog's most classic way of providing {@link Clause}s to the {@link Solver} inference engine:
- * all clauses are parsed and normalized from one or several theories' textual content managed
- * by this class.
- * TODO Does the name "Manager" make sense here?
+ * Prolog's most classic way of providing {@link Clause}s to the {@link Solver} inference engine: all clauses are parsed and normalized from one or several
+ * theories' textual content managed by this class. TODO Does the name "Manager" make sense here?
  */
 public class DefaultTheoryManager implements TheoryManager {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
 
-  private PrologImplementor prolog;
-  private TheoryContent wholeContent = new TheoryContent();
+    private PrologImplementor prolog;
+    private TheoryContent wholeContent = new TheoryContent();
 
-  /**
-   * @param theProlog
-   */
-  public DefaultTheoryManager(PrologImplementor theProlog) {
-    this.prolog = theProlog;
-  }
-
-  public TheoryContent load(CharSequence theTheoryText) {
-    Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
-    //    final Iterator<Term> iterator = parser.iterator();
-    return addClauses(parser);
-  }
-
-  public TheoryContent load(Reader theReader) {
-    Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
-    //    final Iterator<Term> iterator = parser.iterator();
-    return addClauses(parser);
-  }
-
-  @Override
-  public TheoryContent load(File theFile) throws IOException {
-    final FileReader reader = new FileReader(theFile);
-    try {
-      return load(reader);
-    } finally {
-      reader.close();
+    /**
+     * @param theProlog
+     */
+    public DefaultTheoryManager(PrologImplementor theProlog) {
+        this.prolog = theProlog;
     }
-  }
 
-  @Override
-  public TheoryContent load(PLibrary theLibrary) {
-    // Load prolog theory from a classloadable resource
-    final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
-    String name = libraryClass.getSimpleName() + ".prolog";
-    URL contentUrl = libraryClass.getResource(name);
-    if (contentUrl != null) {
-      Object text;
-      try {
-        text = contentUrl.getContent();
-      } catch (IOException e) {
-        throw new InvalidTermException("Could not load library from classloadable resource " + name + ": " + e);
-      }
-      if (text instanceof InputStream) {
-        // FIXME: there will be encoding issues when using InputStream instead of Reader
-        Reader reader = new InputStreamReader((InputStream) text);
-        return load(reader);
-      }
-      throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
+    public TheoryContent load(CharSequence theTheoryText) {
+        Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
+        // final Iterator<Term> iterator = parser.iterator();
+        return addClauses(parser);
     }
-    logger.debug("Library \"{}\" loaded; no associated theory found", theLibrary);
-    return new TheoryContent();
-  }
 
-  private TheoryContent addClauses(Parser theParser) {
-    TheoryContent content = new TheoryContent();
-    //    final Iterator<Term> iterator = theParser.iterator();
-    //    while (iterator.hasNext()) {
-    Term clauseTerm = theParser.nextTerm(true);
-    Term initializeGoal = null;
-    while (clauseTerm != null) {
-      //      Term clauseTerm = iterator.next();
-      // TODO Dubious we should not need to normalize here.
-      logger.debug("Adding clause {}", clauseTerm);
-      final Clause cl = new Clause(this.prolog, clauseTerm);
-      if ("initialize".equals(cl.getHead().getName())) {
-          initializeGoal = cl.getBody();
-      } else {
-          prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
-      }
-      content.add(cl);
-      clauseTerm = theParser.nextTerm(true);
+    public TheoryContent load(Reader theReader) {
+        Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
+        // final Iterator<Term> iterator = parser.iterator();
+        return addClauses(parser);
     }
-    // Invoke the "initialize" goal
-    if (initializeGoal != null) {
-      final Bindings bindings = new Bindings(initializeGoal);
-      final GoalFrame goalFrame = new GoalFrame();
-      final SolutionListener solutionListener = new SolutionListener() {
-        @Override
-        public Continuation onSolution() {
-          return Continuation.USER_ABORT;
+
+    @Override
+    public TheoryContent load(File theFile) throws IOException {
+        final FileReader reader = new FileReader(theFile);
+        try {
+            return load(reader);
+        } finally {
+            reader.close();
         }
-      };
-      prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
     }
-    return content;
-  }
 
-  /**
-   * @param theContent to set - will replace any previously defined content.
-   */
-  @Override
-  public void setTheory(TheoryContent theContent) {
-    this.wholeContent = theContent;
-  }
+    @Override
+    public TheoryContent load(PLibrary theLibrary) {
+        // Load prolog theory from a classloadable resource
+        final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
+        String name = libraryClass.getSimpleName() + ".prolog";
+        URL contentUrl = libraryClass.getResource(name);
+        if (contentUrl != null) {
+            Object text;
+            try {
+                text = contentUrl.getContent();
+            } catch (IOException e) {
+                throw new InvalidTermException("Could not load library from classloadable resource " + name + ": " + e);
+            }
+            if (text instanceof InputStream) {
+                // FIXME: there will be encoding issues when using InputStream instead of Reader
+                Reader reader = new InputStreamReader((InputStream) text);
+                return load(reader);
+            }
+            throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
+        }
+        logger.debug("Library \"{}\" loaded; no associated theory found", theLibrary);
+        return new TheoryContent();
+    }
 
-  /**
-   * @param theContent to add
-   */
-  @Override
-  public void addTheory(TheoryContent theContent) {
-    this.wholeContent.addAll(theContent);
-  }
+    private TheoryContent addClauses(Parser theParser) {
+        TheoryContent content = new TheoryContent();
+        // final Iterator<Term> iterator = theParser.iterator();
+        // while (iterator.hasNext()) {
+        Term clauseTerm = theParser.nextTerm(true);
+        Term initializeGoal = null;
+        while (clauseTerm != null) {
+            // Term clauseTerm = iterator.next();
+            // TODO Dubious we should not need to normalize here.
+            logger.debug("Adding clause {}", clauseTerm);
+            final Clause cl = new Clause(this.prolog, clauseTerm);
+            if ("initialize".equals(cl.getHead().getName())) {
+                initializeGoal = cl.getBody();
+            } else {
+                prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
+            }
+            content.add(cl);
+            clauseTerm = theParser.nextTerm(true);
+        }
+        // Invoke the "initialize" goal
+        if (initializeGoal != null) {
+            final Bindings bindings = new Bindings(initializeGoal);
+            final GoalFrame goalFrame = new GoalFrame();
+            final SolutionListener solutionListener = new SolutionListener() {
+                @Override
+                public Continuation onSolution() {
+                    return Continuation.USER_ABORT;
+                }
+            };
+            prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
+        }
+        return content;
+    }
 
-  //TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to implement it with those parameters (cf ClauseProvider).
-  /**
-   * @param theGoal
-   * @return All {@link Clause}s from the {@link TheoryContent} that may match theGoal.
-   * @param theGoalBindings : is not used in that method, so you can give null as a parameter.
-   */
-  @Override
-  public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
-    return this.wholeContent.find(theGoal);
-  }
+    /**
+     * @param theContent to set - will replace any previously defined content.
+     */
+    @Override
+    public void setTheory(TheoryContent theContent) {
+        this.wholeContent = theContent;
+    }
 
-  @Override
-  public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
-    throw new UnsupportedOperationException("Method assertZ() not implemented");
-  }
+    /**
+     * @param theContent to add
+     */
+    @Override
+    public void addTheory(TheoryContent theContent) {
+        this.wholeContent.addAll(theContent);
+    }
 
-  //---------------------------------------------------------------------------
-  // Core java.lang.Object methods
-  //---------------------------------------------------------------------------
+    // TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to implement it with those
+    // parameters (cf ClauseProvider).
+    /**
+     * @param theGoal
+     * @return All {@link Clause}s from the {@link TheoryContent} that may match theGoal.
+     * @param theGoalBindings : is not used in that method, so you can give null as a parameter.
+     */
+    @Override
+    public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
+        return this.wholeContent.find(theGoal);
+    }
 
-  @Override
-  public String toString() {
-    return ReportUtils.shortDescription(this);
-  }
+    @Override
+    public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
+        // TODO Should throw a subclass of PrologException
+        throw new UnsupportedOperationException("Method assertZ() not implemented");
+    }
+
+    // ---------------------------------------------------------------------------
+    // Core java.lang.Object methods
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return ReportUtils.shortDescription(this);
+    }
 
 }

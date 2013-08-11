@@ -60,9 +60,11 @@ public class MultipleSolutionsHolder {
 
   private void checkBounds(int counter) {
     if (this.lowest != null && counter < this.lowest) {
+        // TODO Should throw a subclass of PrologException
       throw new IllegalStateException("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
     }
     if (this.highest != null && counter > this.highest) {
+        // TODO Should throw a subclass of PrologException
       throw new IllegalStateException("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
     }
   }

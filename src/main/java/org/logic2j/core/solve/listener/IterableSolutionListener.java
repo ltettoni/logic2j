@@ -116,6 +116,7 @@ public class IterableSolutionListener implements SolutionListener {
         try {
           this.wait();
         } catch (InterruptedException e) {
+            // TODO Should throw a subclass of PrologException
           throw new RuntimeException("Exception not handled: " + e, e);
         }
       }

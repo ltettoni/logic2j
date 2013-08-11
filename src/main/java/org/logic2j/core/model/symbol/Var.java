@@ -89,13 +89,16 @@ public class Var extends Term {
         if (this.index < 0) {
             // An error situation
             if (this.index == NO_INDEX) {
+                // TODO Should throw a subclass of PrologException
                 throw new IllegalStateException("Cannot dereference variable whose index was not initialized");
             }
             if (this.index == ANON_INDEX) {
+                // TODO Should throw a subclass of PrologException
                 throw new IllegalStateException("Cannot dereference the anonymous variable");
             }
         }
         if (this.index >= theBindings.getSize()) {
+            // TODO Should throw a subclass of PrologException
             throw new IllegalStateException("Bindings " + theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
         }
         return theBindings.getBinding(this.index);
@@ -113,6 +116,7 @@ public class Var extends Term {
     @Override
     public Var findVar(String theVariableName) {
         if (ANONYMOUS_VAR_NAME.equals(theVariableName)) {
+            // TODO Should throw a subclass of PrologException
             throw new IllegalArgumentException("Cannot find the anonymous variable");
         }
         if (theVariableName.equals(getName())) {
@@ -149,6 +153,7 @@ public class Var extends Term {
         default:
             // In case of LINK: that's impossible since we have followed the
             // complete linked chain
+            // TODO Should throw a subclass of PrologException
             throw new IllegalStateException("substitute() internal error");
         }
     }

@@ -227,6 +227,7 @@ public class Bindings {
         // Refocus on original var (we now know it is free), keep the same original bindings
         return new Bindings(this, origin);
       } else {
+          // TODO Should throw a subclass of PrologException
         throw new IllegalStateException("Should not have been here");
       }
     }
@@ -261,6 +262,7 @@ public class Bindings {
     for (Binding binding : this.bindings) {
       final Var originalVar = binding.getVar();
       if (originalVar == null) {
+          // TODO Should throw a subclass of PrologException
         throw new IllegalStateException("Bindings not properly initialized: Binding " + binding
             + " does not refer to Var (null)");
       }
@@ -272,6 +274,7 @@ public class Bindings {
       switch (binding.getType()) {
         case LIT:
           if (originalVarName == null) {
+              // TODO Should throw a subclass of PrologException
             throw new IllegalStateException("Cannot assign null (undefined) var, not all variables of " + this
                 + " are referenced from Term " + this.referrer + ", binding " + binding + " can't be assigned a variable name");
           }
@@ -301,6 +304,7 @@ public class Bindings {
           }
           break;
         case LINK:
+            // TODO Should throw a subclass of PrologException
           throw new IllegalStateException("Should not happen we have followed links already");
       }
     }

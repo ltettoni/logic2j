@@ -238,19 +238,6 @@ public class SqlBuilder3 {
    * @param theProjections
    * @return The resulting SQL SELECT statement for counting on the specified projection(s).
    */
-  //  public String getCount(String... theProjections) {
-  //    if (!isSelect()) {
-  //      throw new UnsupportedOperationException("Cannot generate \"select count\" on non-select SqlBuilder3");
-  //    }
-  //    if (theProjections == null || theProjections.length == 0) {
-  //      throw new IllegalArgumentException("Projection for counting must not be null or empty");
-  //    }
-  //    String projPrefix = getAlias();
-  //    return getStatement(
-  //        true,
-  //        "count(" + (isDistinct() ? "distinct " : "")
-  //            + CollectionUtils.formatSeparated(prefixedProjections(projPrefix, theProjections), ", ") + ")");
-  //  }
 
   /**
    * @param theParameter

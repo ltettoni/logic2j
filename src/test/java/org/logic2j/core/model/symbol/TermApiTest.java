@@ -147,7 +147,7 @@ public class TermApiTest {
   }
 
   @Test
-  public void test_selections() {
+  public void test_selectTerm() {
     Term term = this.prolog.getTermFactory().create("a(b(c,c2),b2)", FactoryMode.ANY_TERM);
     //
     assertSame(term, TERM_API.selectTerm(term, "", Struct.class));
@@ -180,16 +180,17 @@ public class TermApiTest {
       // OK
     }
     //
-    assertSame(((Struct) term).getArg(0), TERM_API.selectTerm(term, "a/", Struct.class));
-    assertSame(((Struct) term).getArg(0), TERM_API.selectTerm(term, "a[1]", Struct.class));
-    assertSame(((Struct) term).getArg(0), TERM_API.selectTerm(term, "[1]", Struct.class));
-    assertSame(((Struct) term).getArg(0), TERM_API.selectTerm(term, "a/b", Struct.class));
-    assertSame(((Struct) term).getArg(0), TERM_API.selectTerm(term, "a[1]/b", Struct.class));
+    Struct sTerm = (Struct) term;
+    assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a/", Struct.class));
+    assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a[1]", Struct.class));
+    assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "[1]", Struct.class));
+    assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a/b", Struct.class));
+    assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a[1]/b", Struct.class));
     assertEquals(new Struct("b2"), TERM_API.selectTerm(term, "a[2]", Struct.class));
     assertEquals(new Struct("b2"), TERM_API.selectTerm(term, "a[2]/b2", Struct.class));
-    assertSame(((Struct) ((Struct) term).getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b/c", Struct.class));
-    assertSame(((Struct) ((Struct) term).getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b[1]", Struct.class));
-    assertSame(((Struct) ((Struct) term).getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/[1]", Struct.class));
+    assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b/c", Struct.class));
+    assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b[1]", Struct.class));
+    assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/[1]", Struct.class));
     assertEquals(new Struct("c2"), TERM_API.selectTerm(term, "a/b[2]", Struct.class));
   }
 }

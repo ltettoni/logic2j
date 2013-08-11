@@ -64,8 +64,10 @@ public class ConfigLibrary extends LibraryBase {
             @SuppressWarnings("unchecked")
             @Override
             public <T> T unwrap(Class<T> iface) throws SQLException {
-                if (iface == null)
+                if (iface == null) {
+                    // TODO Should throw a subclass of PrologException
                     throw new IllegalArgumentException("Interface argument must not be null");
+                }
                 if (!DataSource.class.equals(iface)) {
                     throw new SQLException(
                             "DataSource of type ["
