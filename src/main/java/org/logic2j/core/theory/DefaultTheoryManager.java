@@ -30,6 +30,7 @@ import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
@@ -165,8 +166,7 @@ public class DefaultTheoryManager implements TheoryManager {
 
     @Override
     public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
-        // TODO Should throw a subclass of PrologException
-        throw new UnsupportedOperationException("Method assertZ() not implemented");
+        throw new PrologNonSpecificError("Method assertZ() not implemented");
     }
 
     // ---------------------------------------------------------------------------

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
@@ -60,12 +61,10 @@ public class MultipleSolutionsHolder {
 
   private void checkBounds(int counter) {
     if (this.lowest != null && counter < this.lowest) {
-        // TODO Should throw a subclass of PrologException
-      throw new IllegalStateException("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
+      throw new PrologNonSpecificError("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
     }
     if (this.highest != null && counter > this.highest) {
-        // TODO Should throw a subclass of PrologException
-      throw new IllegalStateException("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
+      throw new PrologNonSpecificError("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
     }
   }
 

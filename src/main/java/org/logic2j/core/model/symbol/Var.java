@@ -22,11 +22,14 @@ import java.util.IdentityHashMap;
 
 import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologInternalError;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 
 /**
- * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous ('_') name.
+ * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
+ * ('_') name.
  */
 public class Var extends Term {
     private static final long serialVersionUID = 1L;
@@ -37,8 +40,8 @@ public class Var extends Term {
     public static final Term ANONYMOUS_VAR = new Var();
 
     /**
-     * The name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated by
-     * {@link #Var(String)} it may actually be anything (although it may not be the smartest idea).<br/>
+     * The name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
+     * by {@link #Var(String)} it may actually be anything (although it may not be the smartest idea).<br/>
      * A value of null means it's the anonymous variable (even though the anonymous variable is formatted as "_")<br/>
      * Note: all variable names are internalized, i.e. it is legal to compare them with ==.
      */
@@ -48,6 +51,7 @@ public class Var extends Term {
      * Creates a variable identified by a name.
      * 
      * The name must starts with an upper case letter or the underscore. If an underscore is specified as a name, the variable is anonymous.
+     * 
      * @note Internally the {@link #name} is {@link String#intern()}alized so it's OK to compare by reference.
      * @param theName is the name
      * @throws InvalidTermException if n is not a valid Prolog variable name
@@ -65,6 +69,7 @@ public class Var extends Term {
 
     /**
      * Gets the name of the variable.
+     * 
      * @note Names are {@link String#intern()}alized so OK to check by reference
      */
     public String getName() {
@@ -79,8 +84,8 @@ public class Var extends Term {
     }
 
     /**
-     * Obtain the current {@link Binding} of this Var from the {@link Bindings}. Notice that the variable index must have been assigned, and this var must NOT
-     * be the anonymous variable (that cannot be bound to anything).
+     * Obtain the current {@link Binding} of this Var from the {@link Bindings}. Notice that the variable index must have been assigned, and
+     * this var must NOT be the anonymous variable (that cannot be bound to anything).
      * 
      * @param theBindings
      * @return The current binding of this Var.
@@ -89,17 +94,14 @@ public class Var extends Term {
         if (this.index < 0) {
             // An error situation
             if (this.index == NO_INDEX) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalStateException("Cannot dereference variable whose index was not initialized");
+                throw new PrologNonSpecificError("Cannot dereference variable whose index was not initialized");
             }
             if (this.index == ANON_INDEX) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalStateException("Cannot dereference the anonymous variable");
+                throw new PrologInternalError("Cannot dereference the anonymous variable");
             }
         }
         if (this.index >= theBindings.getSize()) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("Bindings " + theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
+            throw new PrologNonSpecificError("Bindings " + theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
         }
         return theBindings.getBinding(this.index);
     }
@@ -116,8 +118,7 @@ public class Var extends Term {
     @Override
     public Var findVar(String theVariableName) {
         if (ANONYMOUS_VAR_NAME.equals(theVariableName)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Cannot find the anonymous variable");
+            throw new PrologInternalError("Cannot find the anonymous variable");
         }
         if (theVariableName.equals(getName())) {
             return this;
@@ -132,13 +133,13 @@ public class Var extends Term {
             return this;
         }
         final Binding binding = bindingWithin(theBindings).followLinks();
-        switch (binding.getType()) {
-        case LIT:
+        if (binding.isLiteral()) {
             // For a literal, we have a reference to the literal term and to its
             // own variables,
             // so recurse further
             return binding.getTerm().substitute(binding.getLiteralBindings(), theBindingsToVars);
-        case FREE:
+        }
+        if (binding.isFree()) {
             // Free variable has no value, so substitution ends up on the last
             // variable of the chain
             if (theBindingsToVars != null) {
@@ -150,12 +151,9 @@ public class Var extends Term {
             }
             // Return the free variable
             return this;
-        default:
-            // In case of LINK: that's impossible since we have followed the
-            // complete linked chain
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("substitute() internal error");
         }
+        // Neither literal nor free? That's not possible.
+        throw new PrologInternalError("substitute() internal error");
     }
 
     /**
@@ -191,8 +189,8 @@ public class Var extends Term {
 
     /**
      * @param theOther
-     * @return true only when references are the same, otherwise two distinct {@link Var}s will always be considered different, despite their name, index, or
-     *         whatever.
+     * @return true only when references are the same, otherwise two distinct {@link Var}s will always be considered different, despite
+     *         their name, index, or whatever.
      */
     @Override
     public boolean structurallyEquals(Term theOther) {

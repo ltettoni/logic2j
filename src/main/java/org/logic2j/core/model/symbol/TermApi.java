@@ -29,6 +29,7 @@ import org.logic2j.core.TermFactory;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.util.ReflectUtils;
@@ -196,8 +197,7 @@ public class TermApi {
             return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
         }
         if (!(theTerm instanceof Struct)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Cannot extract \"" + theTPathExpression + "\" from " + theTerm);
+            throw new PrologNonSpecificError("Cannot extract \"" + theTPathExpression + "\" from " + theTerm);
         }
 
         final Struct s = (Struct) theTerm;
@@ -238,8 +238,7 @@ public class TermApi {
             return selectTerm(s.getArg(position - 1), levelsTail, theClass);
         }
         if (!(theClass.isAssignableFrom(theTerm.getClass()))) {
-            // TODO Should throw a subclass of PrologException
-            throw new ClassCastException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
+            throw new PrologNonSpecificError("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
         }
         return (T) theTerm;
     }

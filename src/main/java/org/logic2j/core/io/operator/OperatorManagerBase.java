@@ -21,6 +21,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 
+import org.logic2j.core.model.exception.PrologNonSpecificError;
+
 /**
  * Base implementation.
  */
@@ -39,8 +41,7 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
         if (thePriority >= Operator.OP_LOW && thePriority <= Operator.OP_HIGH) {
             this.operatorList.addOperator(op);
         } else {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Operator priority not in valid range for " + op);
+            throw new PrologNonSpecificError("Operator priority not in valid range for " + op);
         }
     }
 

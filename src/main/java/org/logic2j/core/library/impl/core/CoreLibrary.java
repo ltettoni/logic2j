@@ -25,6 +25,7 @@ import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TDouble;
 import org.logic2j.core.model.symbol.TLong;
@@ -245,8 +246,7 @@ public class CoreLibrary extends LibraryBase {
             resolvedBindings = theBindings.focus(theList, Term.class);
             assertValidBindings(resolvedBindings, "=../2");
             if (resolvedBindings.isFreeReferrer()) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalArgumentException("Predicate =.. does not accept both arguments as free variable");
+                throw new PrologNonSpecificError("Predicate =.. does not accept both arguments as free variable");
             }
             Struct lst2 = (Struct) resolvedBindings.getReferrer();
             Struct flattened = lst2.predicateFromPList();

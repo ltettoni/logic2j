@@ -25,6 +25,7 @@ import org.logic2j.core.LibraryManager;
 import org.logic2j.core.Prolog;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
@@ -110,25 +111,21 @@ public class DefaultLibraryManager implements LibraryManager {
                 } else if (Void.TYPE.equals(returnType)) {
                     type = PrimitiveType.DIRECTIVE;
                 } else {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalStateException("Unexpected return type " + returnType.getName() + " for primitive " + annotation);
+                    throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + annotation);
                 }
 
                 final int nbMethodParams = paramTypes.length;
                 int i = 0;
                 if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalStateException("Argument type at index " + i + " of metohd " + method + " not of proper " + SolutionListener.class);
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + SolutionListener.class);
                 }
                 i++;
                 if (!(GoalFrame.class.isAssignableFrom(paramTypes[i]))) {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalStateException("Argument type at index " + i + " of metohd " + method + " not of proper " + GoalFrame.class);
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + GoalFrame.class);
                 }
                 i++;
                 if (!(Bindings.class.isAssignableFrom(paramTypes[i]))) {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalStateException("Argument type at index " + i + " of metohd " + method + " not of proper " + Bindings.class);
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + Bindings.class);
                 }
                 i++;
                 boolean varargs = false;
@@ -138,8 +135,7 @@ public class DefaultLibraryManager implements LibraryManager {
                     } else {
                         while (i < nbMethodParams) {
                             if (!(Term.class.isAssignableFrom(paramTypes[i]))) {
-                                // TODO Should throw a subclass of PrologException
-                                throw new IllegalStateException("Argument type at index " + i + " of metohd " + method + " not of proper " + Term.class);
+                                throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + Term.class);
                             }
                             i++;
                         }
@@ -180,8 +176,7 @@ public class DefaultLibraryManager implements LibraryManager {
         final PLibrary lib = this.libraries.get(theClass);
         final T pLibrary = ReflectUtils.safeCastNotNull("obtaining library of " + theClass, lib, theClass);
         if (pLibrary == null) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("No library bound of " + theClass);
+            throw new PrologNonSpecificError("No library bound of " + theClass);
         }
         return pLibrary;
     }

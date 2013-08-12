@@ -33,14 +33,15 @@ import javax.sql.DataSource;
 import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.contrib.rdb.util.CollectionMap;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
-import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
+import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -133,8 +134,7 @@ public class RDBLibrary extends LibraryBase {
                         variableName = ((Var) term2).getName();
                         value = term1;
                     } else {
-                        // TODO Should throw a subclass of PrologException
-                        throw new UnsupportedOperationException("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
+                        throw new PrologNonSpecificError("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
                     }
                     assignedVarValue.put(variableName, value);
                     assignedVarOperator.put(variableName, functor);
@@ -262,12 +262,10 @@ public class RDBLibrary extends LibraryBase {
         if (builder.getNbProjections() == 0) {
             List<Object[]> countOnly = sqlRunner.query(effectiveSql, builder.getParameters());
             if (countOnly.size() != 1) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalStateException("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
+                throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
             }
             if (countOnly.get(0).length != 1) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalStateException("Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
+                throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
             }
             final Number resultSet = (Number) countOnly.get(0)[0];
             int number = resultSet.intValue();
@@ -343,8 +341,7 @@ public class RDBLibrary extends LibraryBase {
             }
             return struct.getName();
         } else {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Cannot convert to SQL parameter: " + theTerm.getClass());
+            throw new PrologNonSpecificError("Cannot convert to SQL parameter: " + theTerm.getClass());
         }
     }
 

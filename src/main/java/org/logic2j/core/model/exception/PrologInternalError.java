@@ -15,32 +15,24 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.model.var;
-
-import org.logic2j.core.model.symbol.Var;
+package org.logic2j.core.model.exception;
 
 /**
- * Types of {@link Binding} that a variable can have at any time of its life cycle.
+ * Indicate an internal error in the Prolog implementation, or a condition that should never have
+ * happened, or some condition that was not specific enough to raise a better exception,
+ * or some condition that requires breaking the execution flow but for which we do not YET have a proper 
+ * Exception class.
  */
-public enum BindingType {
+public class PrologInternalError extends PrologException {
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} 
-   * is currently free (ie. has no value, aka is "unbound").
-   */
-  FREE,
+  private static final long serialVersionUID = 1;
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} 
-   * is bound to a literal term. The literal may be a pure constant,
-   * or a Struct which further contains {@link Var}iables.
-   */
-  LITERAL,
+  public PrologInternalError(String theString) {
+    super(theString);
+  }
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} is linked (bound) to another variable
-   * (via a linked {@link Binding}), which may itself be bound to any of these {@link BindingType}s).
-   */
-  LINK
+  public PrologInternalError(String theString, Throwable theRootCause) {
+    super(theString, theRootCause);
+  }
 
 }

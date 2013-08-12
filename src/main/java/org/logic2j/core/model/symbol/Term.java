@@ -24,7 +24,7 @@ import java.util.IdentityHashMap;
 import org.logic2j.core.Formatter;
 import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.model.TermVisitor;
-import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 
@@ -110,6 +110,7 @@ public abstract class Term implements Serializable, Cloneable {
     /**
      * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection. This will factorize
      * duplicated atoms, numbers, variables, or even structures that are statically equal.
+     * A factorized {@link Struct} will have all occurences of the same {@link Var}iable sharing the same object reference.
      * This is an internal template method: the public API entry point is {@link TermApi#factorize(Term)}; see a more detailed description there.
      * 
      * @param theCollectedTerms The reference Terms to search for.
@@ -182,8 +183,7 @@ public abstract class Term implements Serializable, Cloneable {
             // This must always work since all children of Term are Cloneable!
             return (T) clone();
         } catch (CloneNotSupportedException e) {
-            // TODO Should throw a subclass of PrologException
-            throw new InvalidTermException("Could not clone: " + e, e);
+            throw new PrologNonSpecificError("Could not clone: " + e, e);
         }
     }
 

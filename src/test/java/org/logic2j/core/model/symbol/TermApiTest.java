@@ -32,6 +32,7 @@ import org.logic2j.core.PrologImpl;
 import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
@@ -141,7 +142,7 @@ public class TermApiTest {
     try {
       cyclic.avoidCycle(new ArrayList<Term>());
       fail("Should have thrown an IllegalStateException");
-    } catch (IllegalStateException e) {
+    } catch (PrologNonSpecificError e) {
       // OK
     }
   }

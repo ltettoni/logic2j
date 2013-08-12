@@ -42,6 +42,9 @@ public class DefaultSolver implements Solver {
     this.prolog = theProlog;
   }
 
+  /**
+   * Just calls the other (recursive) method.
+   */
   @Override
   public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
       final SolutionListener theSolutionListener) {

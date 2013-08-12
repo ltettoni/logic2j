@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.solver.listener;
 
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Bindings;
 
 /**
@@ -115,8 +116,7 @@ public class IterableSolutionListener implements SolutionListener {
         try {
           this.wait();
         } catch (InterruptedException e) {
-            // TODO Should throw a subclass of PrologException
-          throw new RuntimeException("Exception not handled: " + e, e);
+          throw new PrologNonSpecificError("Exception not handled: " + e, e);
         }
       }
       this.ready = false;

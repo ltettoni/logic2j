@@ -22,6 +22,7 @@ import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -93,12 +94,11 @@ public class LibraryBase implements PLibrary {
      */
     protected void assertValidBindings(Bindings theBindings, String thePrimitive) {
         if (theBindings.isFreeReferrer()) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Cannot call primitive " + thePrimitive + " with a free variable goal");
+            throw new PrologNonSpecificError("Cannot call primitive " + thePrimitive + " with a free variable goal");
         }
     }
 
-    // TODO assess if needed
+    // TODO assess if needed - used only once
     protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
         if (theTerm instanceof Var) {
             return ((Var) theTerm).bindingWithin(theBindings).followLinks();

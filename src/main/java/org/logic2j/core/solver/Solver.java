@@ -18,6 +18,7 @@
 package org.logic2j.core.solver;
 
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.listener.SolutionListener;
 
@@ -29,7 +30,7 @@ public interface Solver {
     /**
      * The top-level method to solve a high-level goal.
      * 
-     * @param theGoalBindings
+     * @param theGoalBindings Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param callerFrame
      * @param theSolutionListener Where to send solutions
      */

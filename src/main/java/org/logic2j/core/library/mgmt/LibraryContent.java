@@ -20,6 +20,8 @@ package org.logic2j.core.library.mgmt;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.logic2j.core.model.exception.PrologNonSpecificError;
+
 /**
  *
  */
@@ -32,24 +34,21 @@ public class LibraryContent {
 
     public void putDirective(String theKey, PrimitiveInfo theDesc) {
         if (this.directiveMap.containsKey(theKey)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
+            throw new PrologNonSpecificError("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
         }
         this.directiveMap.put(theKey, theDesc);
     }
 
     public void putPredicate(String theKey, PrimitiveInfo theDesc) {
         if (this.predicateMap.containsKey(theKey)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
+            throw new PrologNonSpecificError("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
         }
         this.predicateMap.put(theKey, theDesc);
     }
 
     public void putFunctor(String theKey, PrimitiveInfo theDesc) {
         if (this.functorMap.containsKey(theKey)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
+            throw new PrologNonSpecificError("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
         }
         this.functorMap.put(theKey, theDesc);
     }
@@ -71,8 +70,7 @@ public class LibraryContent {
             break;
         }
         if (this.primitiveMap.containsKey(theKey)) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
+            throw new PrologNonSpecificError("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
         }
         this.primitiveMap.put(theKey, theDesc);
     }

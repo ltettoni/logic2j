@@ -18,23 +18,25 @@
 package org.logic2j.core.model.var;
 
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.solver.GoalFrame;
 
 /**
- * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free, bound, or chaining).
+ * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free,
+ * bound, or chaining).
  * 
  * The properties of a {@link Binding} depend on its type according to the following table:
  * 
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
- * type     literalBindings               term           link
+ * type     literalBindings               term           link                                         var
  * -----------------------------------------------------------------------------------------------------
  * FREE     null                          null(*)        null
- * LIT      bindings of the literal term  ref to term    null
+ * LITERAL      bindings of the literal term  ref to term    null
  * LINK     null                          null           ref to a Binding representing the bound var
  * 
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term" 
@@ -56,7 +58,6 @@ public class Binding implements Cloneable {
     // Ref to the variable associated to this binding in the "owning" Struct. This is solely
     // used for reporting and extracting the "original" variable name from solutions.
     // This field is not "functionally" needed
-    // Note that this is the ref to the first instance of the var in case there are more than one.
     private Var var;
 
     /**
@@ -68,15 +69,16 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * Create one "fake" binding to a literal.
+     * Factory method to create one "fake" binding to a literal.
      * 
      * @param theLiteral
      * @param theLiteralBindings
      * @return This is used to return a pair (Term, Bindings) where needed.
      */
+    // TODO assess if needed - used only once
     public static Binding createLiteralBinding(Term theLiteral, Bindings theLiteralBindings) {
         final Binding binding = new Binding();
-        binding.type = BindingType.LIT;
+        binding.type = BindingType.LITERAL;
         binding.link = null;
         binding.term = theLiteral;
         binding.literalBindings = theLiteralBindings;
@@ -84,6 +86,9 @@ public class Binding implements Cloneable {
         return binding;
     }
 
+    /**
+     * @return A clone of this {@link Binding} without throwing a checked exception.
+     */
     public Binding cloneIt() {
         try {
             return (Binding) this.clone();
@@ -93,15 +98,15 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * Bind a variable to a {@link Term}, may be a literal or another variable.
+     * Bind this to a {@link Term}, may be a literal or another variable.
      * 
      * @param theTerm
-     * @param theGoalFrame
+     * @param theFrame When theTerm is a literal, here are its current value bindings
+     * @param theGoalFrame When non null, will remember this binding for deunification
      */
     public void bindTo(Term theTerm, Bindings theFrame, GoalFrame theGoalFrame) {
         if (!isFree()) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalStateException("Should not bind a non-free Binding!");
+            throw new PrologNonSpecificError("Should never attempt to re-bind a Binding that is not free!");
         }
         if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
             // Bind Var -> Var, see description at top of class
@@ -115,7 +120,7 @@ public class Binding implements Cloneable {
             this.literalBindings = null;
             this.link = targetBinding;
         } else {
-            this.type = BindingType.LIT;
+            this.type = BindingType.LITERAL;
             this.term = theTerm;
             this.literalBindings = theFrame;
             this.link = null;
@@ -127,59 +132,29 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * Follow chains of linked bindings.
-     * 
-     * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to verify either of
-     *         {@link #isFree()} or {@link #isLiteral()}.
-     */
-    public Binding followLinks() {
-        Binding result = this;
-        // Maybe we should use isLink() and getters, but be efficient!
-        while (result.type == BindingType.LINK) {
-            result = result.link;
-        }
-        return result;
-    }
-
-    /**
      * Free the binding, i.e. revert a possibly bound variable to the {@value BindingType#FREE} state.
      */
     public void free() {
         this.type = BindingType.FREE;
-        // The following is not functionally necessary
+        // The following is not functionally necessary but let's have values as documented (useful while debugging)
         this.term = null;
         this.literalBindings = null;
         this.link = null;
     }
 
-    // ---------------------------------------------------------------------------
-    // Core java.lang.Object
-    // ---------------------------------------------------------------------------
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getVar());
-        sb.append(':');
-        sb.append(this.type);
-
-        switch (this.type) {
-        case LIT:
-            sb.append("->");
-            sb.append(this.term.toString());
-            if (debug) {
-                sb.append('@');
-                sb.append(Integer.toHexString(this.literalBindings.hashCode()));
-            }
-            break;
-        case LINK:
-            sb.append("->");
-            sb.append(this.link);
-            break;
-        default:
-            break;
+    /**
+     * Follow chains of linked bindings.
+     * 
+     * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to satisfy
+     *         either of {@link #isFree()} or {@link #isLiteral()}.
+     */
+    public Binding followLinks() {
+        Binding result = this;
+        // Maybe we should use isLink() and getters, but let's be efficient!
+        while (result.type == BindingType.LINK) {
+            result = result.link;
         }
-        return sb.toString();
+        return result;
     }
 
     // ---------------------------------------------------------------------------
@@ -191,8 +166,8 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * When {@link #getType()} is {@link BindingType#LIT}, the {@link #getTerm()} is a literal {@link Struct}, and this represents the {@link Bindings} storing
-     * the content of those variables.
+     * When {@link #getType()} is {@link BindingType#LITERAL}, the {@link #getTerm()} is a literal {@link Struct}, and this represents the
+     * {@link Bindings} storing the content of those variables.
      * 
      * @return The {@link Bindings} associated to the Term from {@link #getTerm()}.
      */
@@ -201,8 +176,8 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * Reference to a bound term: for {@link BindingType#LIT}, this is the literal, for {@link BindingType#LINK}, it refers to the {@link Term} of subclass
-     * {@link Var}.
+     * Reference to a bound term: for {@link BindingType#LITERAL}, this is the literal, for {@link BindingType#LINK}, it refers to the
+     * {@link Term} of subclass {@link Var}.
      */
     public Term getTerm() {
         return this.term;
@@ -221,7 +196,36 @@ public class Binding implements Cloneable {
     }
 
     public boolean isLiteral() {
-        return this.type == BindingType.LIT;
+        return this.type == BindingType.LITERAL;
     }
 
+    // ---------------------------------------------------------------------------
+    // Core java.lang.Object
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(getVar());
+        sb.append(':');
+        sb.append(this.type);
+
+        switch (this.type) {
+        case LITERAL:
+            sb.append("->");
+            sb.append(this.term.toString());
+            if (debug) {
+                sb.append('@');
+                sb.append(Integer.toHexString(this.literalBindings.hashCode()));
+            }
+            break;
+        case LINK:
+            sb.append("->");
+            sb.append(this.link);
+            break;
+        default:
+            break;
+        }
+        return sb.toString();
+    }
 }

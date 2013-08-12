@@ -19,6 +19,7 @@ import org.logic2j.contrib.rdb.RDBClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
@@ -65,8 +66,7 @@ public class ConfigLibrary extends LibraryBase {
             @Override
             public <T> T unwrap(Class<T> iface) throws SQLException {
                 if (iface == null) {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalArgumentException("Interface argument must not be null");
+                    throw new PrologNonSpecificError("Interface argument must not be null");
                 }
                 if (!DataSource.class.equals(iface)) {
                     throw new SQLException(

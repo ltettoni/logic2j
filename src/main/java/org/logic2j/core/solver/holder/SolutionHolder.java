@@ -20,6 +20,7 @@ package org.logic2j.core.solver.holder;
 import java.util.Iterator;
 
 import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
@@ -131,8 +132,7 @@ public class SolutionHolder {
             @Override
             public Solution next() {
                 if (this.solution == null) {
-                    // TODO Should throw a subclass of PrologException
-                    throw new IllegalStateException("Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
+                    throw new PrologNonSpecificError("Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
                 }
                 final Solution toReturn = this.solution;
                 // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext() will fail.
@@ -142,8 +142,7 @@ public class SolutionHolder {
 
             @Override
             public void remove() {
-                // TODO Should throw a subclass of PrologException
-                throw new UnsupportedOperationException("iterator() provides a read-only Term interator, cannot remove elements");
+                throw new PrologNonSpecificError("iterator() provides a read-only Term interator, cannot remove elements");
             }
 
         };

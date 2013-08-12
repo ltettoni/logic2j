@@ -28,6 +28,7 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.util.ReflectUtils;
@@ -224,8 +225,7 @@ public class Struct extends Term {
      */
     public Term getLHS() {
         if (this.arity != 2) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
+            throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
         }
         return this.args[0];
     }
@@ -235,8 +235,7 @@ public class Struct extends Term {
      */
     public Term getRHS() {
         if (this.arity != 2) {
-            // TODO Should throw a subclass of PrologException
-            throw new IllegalArgumentException("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
+            throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
         }
         return this.args[1];
     }
@@ -289,8 +288,7 @@ public class Struct extends Term {
     public void avoidCycle(List<Term> visited) {
         for (Term term : visited) {
             if (term == this) {
-                // TODO Should throw a subclass of PrologException
-                throw new IllegalStateException("Cycle detected");
+                throw new PrologNonSpecificError("Cycle detected");
             }
         }
         visited.add(this);
@@ -465,8 +463,7 @@ public class Struct extends Term {
 
     protected void assertPList(Term thePList) {
         if (!thePList.isList()) {
-            // TODO Should throw a subclass of PrologException
-            throw new UnsupportedOperationException("The structure \"" + thePList + "\" is not a Prolog list.");
+            throw new PrologNonSpecificError("The structure \"" + thePList + "\" is not a Prolog list.");
         }
     }
 
