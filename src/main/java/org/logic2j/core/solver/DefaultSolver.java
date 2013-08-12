@@ -43,7 +43,11 @@ public class DefaultSolver implements Solver {
   }
 
   /**
-   * Just calls the other (recursive) method.
+   * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, GoalFrame, SolutionListener)} method.
+   * The referrer goal to solve is in the callerFrame
+   * @param theGoalBindings
+   * @param callerFrame
+   * @param theSolutionListener
    */
   @Override
   public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame,
