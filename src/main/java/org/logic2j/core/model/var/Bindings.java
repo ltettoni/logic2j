@@ -36,11 +36,13 @@ import org.logic2j.core.util.ReflectUtils;
 /**
  * Store a reference to a {@link Term} together with the actual values of its variables as a list of {@link Binding}s, one per {@link Var}
  * iable found within the Term.<br/>
- * Provide methods to extract values from {@link Var}iables. 
- * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified. 
+ * Provide methods to extract values from {@link Var}iables.
+ * 
+ * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified.
  * @note The Term referring to this object is called the "referrer".<br/>
  * 
- * TODO Improve performance: pre instantiation of {@link #Bindings(Term)} instead of many times during solving. See note on constructor.
+ *       TODO Improve performance: pre instantiation of {@link #Bindings(Term)} instead of many times during solving. See note on
+ *       constructor.
  */
 public class Bindings {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
@@ -175,25 +177,18 @@ public class Bindings {
      * @param theOriginal The one to clone from, remains intact.
      */
     public Bindings(Bindings theOriginal) {
-        this.referrer = theOriginal.referrer;
-        final int nbVars = theOriginal.bindings.length;
-        this.bindings = new Binding[nbVars];
-        // All bindings need cloning
-        for (int i = 0; i < nbVars; i++) {
-            this.bindings[i] = theOriginal.bindings[i].cloneIt();
-        }
+        this(theOriginal, theOriginal.referrer);
     }
 
     /**
-     * PROTOTYPICAL CODE
+     * Clone this {@link Bindings} but with the specified referrer Term instead of the original one.
      * 
      * @param theOriginal
-     * @param theTerm
+     * @param theNewReferrer
      */
-    private Bindings(Bindings theOriginal, Term theTerm) {
-        this.referrer = theTerm;
-        //
-        // Deep cloning - is that necessary??
+    private Bindings(Bindings theOriginal, Term theNewReferrer) {
+        this.referrer = theNewReferrer;
+        // Deep cloning of the individual Binding
         final int nbVars = theOriginal.bindings.length;
         this.bindings = new Binding[nbVars];
         // All bindings need cloning
@@ -207,12 +202,11 @@ public class Bindings {
     // ---------------------------------------------------------------------------
 
     /**
-     * PROTOTYPICAL CODE
-     * Refocus to a particular Term within this {@link Bindings}, returning a new {@link Bindings} with this Term as its referrer. When Term
-     * is a {@link Var} iable, will following through bound variables until a free or literal is found.
+     * Create a new {@link Bindings} with the specified {@link Term} as new Referrer. When Term is a {@link Var} iable, will following
+     * through bound variables until a free or literal is found.
      * 
-     * @param theTerm Must be one of the root or sub terms that was used to instantiate this {@link Bindings}
-     * @param theClass
+     * @param theTerm Must be one of the root or children {@link Term}s that was used to instantiate this {@link Bindings}
+     * @param theClass Of the expected referrer Term
      * @return null if theTerm was a free {@link Var}iable
      */
     public Bindings focus(Term theTerm, Class<? extends Term> theClass) {
@@ -232,7 +226,7 @@ public class Bindings {
                 throw new PrologNonSpecificError("Should not have been here");
             }
         }
-        // Anything else than a Var
+        // Now it's anything else than a Var
 
         // Make sure it's of the desired class
         ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
@@ -256,7 +250,7 @@ public class Bindings {
             // At this stage finalBinding may be either literal, or free
             bindingToInitialVar.put(finalBinding, initialBinding.getVar());
         }
-        
+
         final Map<String, Term> result = new TreeMap<String, Term>();
         for (Binding initialBinding : this.bindings) {
             final Var originalVar = initialBinding.getVar();
@@ -308,6 +302,7 @@ public class Bindings {
     }
 
     /**
+     * Detection of goals in the form of X(...) where X is free.
      * @return true if this {@link Bindings}'s {@link #getReferrer()} is a free variable.
      */
     public boolean isFreeReferrer() {
@@ -319,9 +314,8 @@ public class Bindings {
     }
 
     /**
-     * Find the local bindings corresponding to one of the variables of the Struct referred to by this Bindings. 
-     * FIXME Uh - what does this mean???
-     * TODO This method is only used once from a library - ensure it makes sense and belongs here
+     * Find the local bindings corresponding to one of the variables of the Struct referred to by this Bindings. FIXME Uh - what does this
+     * mean??? TODO This method is only used once from a library - ensure it makes sense and belongs here
      * 
      * @param theVar
      * @return null when not found

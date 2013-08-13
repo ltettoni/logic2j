@@ -30,21 +30,20 @@ public interface Solver {
     /**
      * The top-level method to solve a high-level goal.
      * 
-     * @param theGoalBindings Defines the {@link Term} and the {@link Var} values we are trying to solve.
+     * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param callerFrame
      * @param theSolutionListener Where to send solutions
      */
-    void solveGoal(Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
+    void solveGoal(Bindings theGoal, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
-    /**
-     * The lower-level method to solve sub-goals.
-     * 
-     * @param theGoal
-     * @param theGoalBindings
-     * @param callerFrame
-     * @param theSolutionListener Where to send solutions
-     */
-    // TODO Why should we make this method public? Seems not normal
-    void solveGoalRecursive(Term theGoal, Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
+//    /**
+//     * The lower-level method to solve sub-goals.
+//     * 
+//     * @param theGoalTerm
+//     * @param theGoalBindings
+//     * @param callerFrame
+//     * @param theSolutionListener Where to send solutions
+//     */
+//    void solveGoalRecursive(Term theGoalTerm, Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
 }

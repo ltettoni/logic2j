@@ -34,7 +34,7 @@ public class DefaultOperatorManager extends OperatorManagerBase {
     addOperator("->", Operator.XFY, 1050);
     addOperator(Struct.FUNCTOR_COMMA, Operator.XFY, 1000); // AND
     // addOperator(Struct.FUNCTOR_COMMA, Operator.YFY, 1000); // To implement direct optimization of ','/n but this is quite prototypical
-    addOperator("\\+", Operator.FY, 900);
+    addOperator("\\+", Operator.FY, 900); // Surprisingly enough the operator \+ means "not provable".
     addOperator("not", Operator.FY, 900);
     addOperator("=", Operator.XFX, 700);
     addOperator("\\=", Operator.XFX, 700);

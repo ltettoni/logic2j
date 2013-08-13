@@ -94,6 +94,7 @@ public class LibraryBase implements PLibrary {
      */
     protected void assertValidBindings(Bindings theBindings, String thePrimitive) {
         if (theBindings.isFreeReferrer()) {
+            // TODO should be sort of an InvalidGoalException?
             throw new PrologNonSpecificError("Cannot call primitive " + thePrimitive + " with a free variable goal");
         }
     }

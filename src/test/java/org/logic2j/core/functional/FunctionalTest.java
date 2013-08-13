@@ -71,6 +71,7 @@ public class FunctionalTest extends PrologTestBase {
 
   @Test
   public void test_not() {
+      // Surprisingly enough the operator \+ means "not provable".
     assertOneSolution("not(fail)", "\\+(fail)");
     assertNoSolution("not(true)", "\\+(true)");
   }

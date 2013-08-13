@@ -128,48 +128,24 @@ public class CoreLibrary extends LibraryBase {
         notifyIfUnified(unified, theGoalFrame, theListener);
     }
 
-    // /**
-    // * A possible yet ineffective implementation of call/1. We much prefer have the solver taking care of calls immediately
-    // * @param theGoalFrame
-    // * @param theBindings
-    // * @param t1
-    // */
-    // @Primitive
-    // public void call(final SolutionListener theListener, final GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
-    // // Resolve bindings wherever possible
-    // final Term target = resolveNonVar(t1, theBindings, "call");
-    // final SolutionListenerBase callListener = new SolutionListenerBase() {
-    // @SuppressWarnings("synthetic-access")
-    // // does not affect performance at all
-    // @Override
-    // public boolean onSolution() {
-    // notifySolution(theGoalFrame, theListener);
-    // return true;
-    // }
-    // };
-    // // TODO Need more testing of call/1, quite unsure if this way of doing is reliable
-    // getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
-    // }
-
-    @Primitive(synonyms = "\\+")
+    @Primitive(synonyms = "\\+") // Surprisingly enough the operator \+ means "not provable".
     public void not(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theGoal) {
-        final Bindings b = theBindings.focus(theGoal, Struct.class);
-        assertValidBindings(b, "\\+/1");
-        final Term target = b.getReferrer();
+        final Bindings subGoalBindings = theBindings.focus(theGoal, Struct.class);
+        assertValidBindings(subGoalBindings, "\\+/1");
 
         // final Term target = resolveNonVar(theGoal, theBindings, "not");
-        final class AdHocListener implements SolutionListener {
-            public boolean found = false;
+        final class NegationListener implements SolutionListener {
+            boolean found = false;
 
             @Override
             public Continuation onSolution() {
-                // Do NOT relay the solution further, just note there was one
+                // Do NOT relay the solution further, just remember there was one
                 this.found = true;
-                return Continuation.USER_ABORT; // No need to find further solutions
+                return Continuation.USER_ABORT; // No need to seek for further solutions
             }
         }
-        final AdHocListener callListener = new AdHocListener();
-        getProlog().getSolver().solveGoalRecursive(target, theBindings, theGoalFrame, callListener);
+        final NegationListener callListener = new NegationListener();
+        getProlog().getSolver().solveGoal(subGoalBindings, theGoalFrame, callListener);
         if (!callListener.found) {
             theListener.onSolution();
         }
@@ -177,13 +153,12 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive
     public void findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term theTemplate, final Term theGoal, final Term theResult) {
-        final Bindings goalBindings = theBindings.focus(theGoal, Term.class);
-        assertValidBindings(goalBindings, "findall/3");
-        final Term effectiveGoal = goalBindings.getReferrer();
+        final Bindings subGoalBindings = theBindings.focus(theGoal, Term.class);
+        assertValidBindings(subGoalBindings, "findall/3");
 
         // Define a listener to collect all solutions for the goal specified
         final ArrayList<Term> javaResults = new ArrayList<Term>(); // Our internal collection of results
-        final SolutionListenerBase solutionListener = new SolutionListenerBase() {
+        final SolutionListenerBase adHocListener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
@@ -191,7 +166,7 @@ public class CoreLibrary extends LibraryBase {
                 @SuppressWarnings("synthetic-access")
                 // FIXME This is most certainly wrong: how can we call substitute on a variable expressed in a different bindings?????
                 // The case is : findall(X, Expr, Result) where Expr -> something -> expr(a,b,X,c)
-                final Term substitute = TERM_API.substitute(theTemplate, goalBindings, null);
+                final Term substitute = TERM_API.substitute(theTemplate, subGoalBindings, null);
                 // Map<String, Term> explicitBindings = goalBindings.explicitBindings(FreeVarRepresentation.FREE);
                 // And add as extra solution
                 javaResults.add(substitute);
@@ -201,7 +176,9 @@ public class CoreLibrary extends LibraryBase {
         };
 
         // Now solve the target goal, this may find several values of course
-        getProlog().getSolver().solveGoalRecursive(effectiveGoal, goalBindings, new GoalFrame(), solutionListener); // TODO: use solveGoal() instead
+//        final Term effectiveGoal = subGoalBindings.getReferrer();
+//        getProlog().getSolver().solveGoalRecursive(effectiveGoal, subGoalBindings, new GoalFrame(), adHocListener);
+        getProlog().getSolver().solveGoal(subGoalBindings, new GoalFrame(), adHocListener);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be
