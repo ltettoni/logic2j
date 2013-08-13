@@ -5,8 +5,7 @@
         </encoder>
     </appender>
 
-    <!-- File appender without timestamp for non-regression comparisons
-    -->
+    <!-- File appender without timestamp for non-regression comparisons -->
     <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
         <file>once.log</file>
         <append>false</append>
@@ -14,13 +13,13 @@
             <pattern>%-5level %msg%n</pattern>
         </encoder>
     </appender>
-     
-     
-    <logger name="org.logic2j.core.solver.DefaultSolver" level="debug" />
+
+
+    <logger name="org.logic2j.core.solver.DefaultSolver" level="warn" />
 
     <root level="warn">
         <appender-ref ref="CONSOLE" />
-        <!--  --> <appender-ref ref="ONCE"/>
+        <!-- <appender-ref ref="ONCE"/> -->
     </root>
 
 </configuration>
