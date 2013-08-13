@@ -12,8 +12,8 @@ This is a major rewrite with completely different unification and inference algo
 
 The design guidelines were: close integration from and to Java, minimal dependencies, open and extendable implementation, small footprint, and high performance.
 
-Although close to Prolog, this is NOT a Prolog programming environment, it is just the core engine (but would be a good foundation to build one)...
+Although very close to Prolog, this is NOT a Prolog programming environment, is not intended to be compatible with Prolog specification, this is just the core engine...
 
-More documentation under src/site/resources/doc, and one day in the Wiki...
+Read further documentation at src/site/resources/doc (before there's a proper Wiki).
 
 You must have received a LICENSE.txt file with this software package.
