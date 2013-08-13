@@ -188,7 +188,7 @@ public class CoreLibraryTest extends PrologTestBase {
     System.out.println(assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z"));
     assertEquals(termList(1, 2, 3), assertNSolutions(3, "clause(a(X), true)").binding("X"));
     assertNSolutions(5, "clause(f(_), true)");
-    assertEquals(termList(2), assertNSolutions(1, "clause(c2(X), !)").binding("X"));
+    assertEquals(termList(2), assertNSolutions(1, "clause(cut2(X), !)").binding("X"));
   }
 
   @Test

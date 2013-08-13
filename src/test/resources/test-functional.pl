@@ -1,6 +1,6 @@
 /*
 
-  Functional testing.
+  Functional testing. These predicates are referenced by TestCases: do not alter.
 
 */
 f(a).
@@ -9,6 +9,7 @@ f(_).
 f(c) :- true.
 f(d).
 
+% Predicates a, b, c, d will each have 3 numeric solutions. This is to test the Solver and cut behaviour.
 a(1).
 a(2).
 a(3).
@@ -25,21 +26,27 @@ d(1).
 d(2).
 d(3).
 
-% testing cut behaviour
-c1(1) :- !.
-c1(2).
-c1(3).
+% -----------------------------
+% More testing of cut behaviour
+% -----------------------------
+
+% Cut after 1
+cut1(1) :- !.
+cut1(2).
+cut1(3).
 
 
-c2(1).
-c2(2) :- !.
-c2(3).
+% Cut after 2
+cut2(1).
+cut2(2) :- !.
+cut2(3).
 
-c4 :- a(_).
-c4 :- b(_), !.
-c4.
+% Cut after 4
+cut4 :- a(_).       % 3 solutions
+cut4 :- b(_), !.    % Plus one
+cut4.
 
-d4:-c2(_).d4:-c2(_).
+cut4b:-cut2(_).cut4b:-cut2(_).
 
 
 
@@ -57,12 +64,12 @@ q(4).
 sumial(0, 0) :- !.
 sumial(N, R) :- N1 is N-1, sumial(N1, R1), R is N+R1.
 
-% Special test case using this!
+% Special test case using this
 unifyterms(X, X).
 unifyterms21(A, B) :- unifyterms(A, Tmp), unifyterms(Tmp, B).
 unifyterms22(A, B) :- unifyterms(B, Tmp), unifyterms(Tmp, A).
 
-% Don't remove - used in a test case!
+% Don't remove - used in a test case
 unifyterms3(f(A,B), g(A2,B2)) :- unifyterms(A,A2), unifyterms(B,B2).
 
 % Don't remove - used in a test case!
