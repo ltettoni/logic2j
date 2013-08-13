@@ -28,22 +28,12 @@ import org.logic2j.core.solver.listener.SolutionListener;
 public interface Solver {
 
     /**
-     * The top-level method to solve a high-level goal.
+     * The method to solve a goal.
      * 
      * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param callerFrame
      * @param theSolutionListener Where to send solutions
      */
     void solveGoal(Bindings theGoal, GoalFrame callerFrame, SolutionListener theSolutionListener);
-
-//    /**
-//     * The lower-level method to solve sub-goals.
-//     * 
-//     * @param theGoalTerm
-//     * @param theGoalBindings
-//     * @param callerFrame
-//     * @param theSolutionListener Where to send solutions
-//     */
-//    void solveGoalRecursive(Term theGoalTerm, Bindings theGoalBindings, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
 }

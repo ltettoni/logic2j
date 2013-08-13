@@ -34,7 +34,7 @@ public class DefaultUnifyer implements Unifier {
 
   @Override
   public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
-    theGoalFrame.markForNextBindings();
+    theGoalFrame.markBeforeAddingBindings();
     boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2, theGoalFrame);
     if (!unified /*&& theGoalFrame != null*/) {
       deunify(theGoalFrame);
@@ -117,7 +117,7 @@ public class DefaultUnifyer implements Unifier {
 
   @Override
   public void deunify(GoalFrame theGoalFrame) {
-    theGoalFrame.clearBindingsToMark();
+    theGoalFrame.undoBindingsUntilPreviousMark();
   }
 
   //---------------------------------------------------------------------------

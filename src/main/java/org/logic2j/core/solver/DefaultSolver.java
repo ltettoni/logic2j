@@ -26,6 +26,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.listener.SolutionListener;
+import org.logic2j.core.solver.listener.SolutionListener.Continuation;
 import org.logic2j.core.util.ReportUtils;
 
 /**
@@ -81,8 +82,8 @@ public class DefaultSolver implements Solver {
                     @Override
                     public Continuation onSolution() {
                         DefaultSolver.this.internalCounter++;
-                        final int index2 = index + 1;
-                        solveGoalRecursive(goalStruct.getArg(index2), theGoalBindings, callerFrame, listeners[index2]);
+                        final int nextIndex = index + 1;
+                        solveGoalRecursive(goalStruct.getArg(nextIndex), theGoalBindings, callerFrame, listeners[nextIndex]);
                         return Continuation.CONTINUE;
                     }
                 };
@@ -134,7 +135,7 @@ public class DefaultSolver implements Solver {
 
             // Now ready to iteratively try clause by first attempting to unify with its headTerm
             // For this we need a new TrailFrame
-            final GoalFrame frameForAttemptingClauses = new GoalFrame(callerFrame);
+            final GoalFrame subFrameForClauses = new GoalFrame(callerFrame);
 
             final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().providersFor(goalStruct);
             for (ClauseProvider provider : providers) {
@@ -148,19 +149,19 @@ public class DefaultSolver implements Solver {
                     // This is in case user code returns onSolution()=false (do not continue)
                     // on what happens to be the last normal solution - in this case we can't tell if
                     // we are exiting because user requested it, or because there's no other solution!
-                    if (frameForAttemptingClauses.isUserCanceled()) {
+                    if (subFrameForClauses.isUserCanceled()) {
                         if (debug) {
                             logger.debug("!!! Stopping on SolutionListener's request");
                         }
                         break;
                     }
-                    if (frameForAttemptingClauses.isCut()) {
+                    if (subFrameForClauses.isCut()) {
                         if (debug) {
                             logger.debug("!!! cut found in clause");
                         }
                         break;
                     }
-                    if (frameForAttemptingClauses.hasCutInSiblingSubsequentGoal()) {
+                    if (subFrameForClauses.hasCutInSiblingSubsequentGoal()) {
                         if (debug) {
                             logger.debug("!!! Stopping because of cut in sibling subsequent goal");
                         }
@@ -179,7 +180,7 @@ public class DefaultSolver implements Solver {
                     // the trailFrame will remember this.
                     // Solutions will be notified from within this method.
                     // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-                    final boolean unified = this.prolog.getUnifyer().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, frameForAttemptingClauses);
+                    final boolean unified = this.prolog.getUnifyer().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
                     if (debug) {
                         logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
                     }
@@ -189,23 +190,25 @@ public class DefaultSolver implements Solver {
                             if (debug) {
                                 logger.debug("{} is a fact", clauseHead);
                             }
-                            final boolean userRequestsAbort = theSolutionListener.onSolution().isUserAbort();
-                            if (userRequestsAbort) {
-                                frameForAttemptingClauses.raiseUserCanceled();
+                            // Notify one solution, and handle result if user wants to continue or not.
+                            final Continuation continuation = theSolutionListener.onSolution();
+                            if (continuation.isUserAbort()) {
+                                subFrameForClauses.raiseUserCanceled();
                             }
                         } else {
                             final Term newGoalTerm = clause.getBody();
                             if (debug) {
                                 logger.debug(">> RECURS: {} is a theorem, body={}", clauseHead, newGoalTerm);
                             }
-                            solveGoalRecursive(newGoalTerm, clauseVars, frameForAttemptingClauses, theSolutionListener);
+                            // Solve the body in our current subFrame
+                            solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
                             if (debug) {
                                 logger.debug("<< RECURS");
                             }
                         }
                         // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                         // Go to next solution: start by clearing our trailing bindings
-                        this.prolog.getUnifyer().deunify(frameForAttemptingClauses);
+                        this.prolog.getUnifyer().deunify(subFrameForClauses);
                     }
                 }
                 if (debug) {

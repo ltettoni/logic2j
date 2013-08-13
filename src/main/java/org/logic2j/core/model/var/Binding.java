@@ -125,7 +125,7 @@ public class Binding implements Cloneable {
             this.literalBindings = theFrame;
             this.link = null;
         }
-        // Remember (if asked for)
+        // Remember (if asked for) - but should it be done here, or in the caller code (typically, unifiation?)
         if (theGoalFrame != null) {
             theGoalFrame.addBinding(this);
         }

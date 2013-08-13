@@ -77,7 +77,7 @@ public class FunctionalTest extends PrologTestBase {
   }
 
   @Test
-  public void testOneToStudy() throws IOException {
+  public void cut_OneToStudy() throws IOException {
     addTheory("src/test/resources/test-functional.pl");
     assertNSolutions(3, "a(X), b(Y), !, c(Z)");
   }

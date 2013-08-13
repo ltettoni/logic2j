@@ -65,7 +65,7 @@ public class DelegatingUnifyer implements Unifier {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
           try {
-            theGoalFrame.markForNextBindings();
+            theGoalFrame.markBeforeAddingBindings();
             boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
             if (!unified) {
               deunify(theGoalFrame);
@@ -178,6 +178,6 @@ public class DelegatingUnifyer implements Unifier {
 
   @Override
   public void deunify(GoalFrame theGoalFrame) {
-    theGoalFrame.clearBindingsToMark();
+    theGoalFrame.undoBindingsUntilPreviousMark();
   }
 }

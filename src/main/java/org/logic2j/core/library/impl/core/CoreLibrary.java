@@ -97,6 +97,7 @@ public class CoreLibrary extends LibraryBase {
     public void cut(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
         // This is a complex behaviour - read on DefaultSolver
         theGoalFrame.signalCut();
+        // Cut is a "true" solution to a goal, just notify one as such
         notifySolution(theGoalFrame, theListener);
     }
 

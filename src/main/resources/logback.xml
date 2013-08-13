@@ -1,27 +1,26 @@
 <configuration>
-  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>%5relative %-5level [%thread]  %msg%n</pattern>
-    </layout>
-  </appender>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%5relative %-5level [%thread] %msg%n</pattern>
+        </encoder>
+    </appender>
 
-  <!-- File appender without timestamp for non-regression comparisons
-  <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
-    <file>once.log</file>
-    <append>false</append>
-    <layout>
-      <pattern>%-5level %msg%n</pattern>
-    </layout>
-  </appender>
-  -->
-  
-  <logger name="org.logic2j.core.solver.DefaultSolver" level="info" />
-
-  <root level="warn">
-    <appender-ref ref="CONSOLE"/>
-    <!-- 
-    <appender-ref ref="ONCE"/>
+    <!-- File appender without timestamp for non-regression comparisons
+    <appender name="ONCE" class="ch.qos.logback.core.FileAppender">
+        <file>once.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%-5level %msg%n</pattern>
+        </encoder>
+    </appender>
     -->
-  </root>
+     
+     
+    <logger name="org.logic2j.core.solver.DefaultSolver" level="debug" />
+
+    <root level="warn">
+        <appender-ref ref="CONSOLE" />
+        <!-- <appender-ref ref="ONCE"/> -->
+    </root>
 
 </configuration>

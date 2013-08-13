@@ -21,19 +21,25 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import org.logic2j.core.model.var.Binding;
+import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * One stack frame to track goal solving (both unification trailing bindings, and 
- * the "cut" across solving goals and sub-goals).
+ * One stack-frame to keep track of the goal solving state, and manage the "cut" to prune solution trees.<br/>
+ * Implements logic and data for:
  * <ul>
- * <li>trailing variables bound by unification, in order to deunify</li>
- * <li>goal solving state to allow "cut"</li>
- * <li>user cancellation</li>
+ * <li>remembering which variables have been bound by unification, in order to deunify before next solutions: {@link #trailingBindings}</li>
+ * <li>implementing "cut" (programmatic search tree pruning)</li>
+ * <li>user cancellation (see return value from {@link SolutionListener#onSolution()}</li>
  * </ul>
- * The default constructor instantiates the whole trailing bindings stack, and 
- * returns a first node to hold inference and unificaiton state. 
- * The constructor for children is lighter, it shares most of its parent, only
+ * This class manages BOTH individual stack-frames as well as the complete stack involved when solving one goal.<br/>s
+ * <p/>
+ * TODO:
+ * Why an ArrayList of Binding for trailingBindings and a Stack of integers??? Why not just a LinkedList?
+ * 
+ * The default constructor instantiates the whole trailing bindings stack with one root frame, and 
+ * returns it. 
+ * The constructor for other stack-frames is lighter, it shares most of its parent, only
  * redefines new node for local management of the cut.
  */
 public final class GoalFrame {
@@ -50,15 +56,20 @@ public final class GoalFrame {
    */
   private static final int UNDEF_INDEX = -2;
 
-  private final GoalFrame parent; // Boundary condition of top: parent==this
-
+  /**
+   * Remember {@link Binding}s to be de-unified.
+   */
   private final ArrayList<Binding> trailingBindings;
+
+  private final GoalFrame parent; // Our root stack-frame. The boundary condition is parent==this
+
 
   /**
    * A stack of indexes into {@link #trailingBindings} to restore bindings between
-   * successive calls to unification. Each unification must call {@link #markForNextBindings()}
-   * before starting, then {@link #addBinding(Binding)}, and finally {@link #clearBindingsToMark()}.
+   * successive calls to unification. Each unification must call {@link #markBeforeAddingBindings()}
+   * before starting, then {@link #addBinding(Binding)}, and finally {@link #undoBindingsUntilPreviousMark()}.
    */
+  // TODO see if we can simplify using just a Stack of Binding
   private final Stack<Integer> bindingMarkBetweenUnify;
 
   // Management of the "cut" goal requires breaking pure recursion, to do that we need to track
@@ -66,8 +77,8 @@ public final class GoalFrame {
   // When a "cut" is executed somewhere down the chain of ',' operators:
   // - the parent's cutIndex will be assignd to the child index where the cut happened
   //   (e.g. for "a,b,c,!,d,e", the cutIndex of the parent ',' will be assigned to 2, the index of goal "c")
-  // - then upon backgracking, all goals having the same parent whose childIndex is lower or equal
-  //   than the cutIndex will stop generating solutions any longer.
+  // - then upon backtracking, all goals having the same parent whose childIndex is lower or equal
+  //   than the cutIndex will abort generating solutions any longer.
   private int nbChildren;
   private int childIndex;
   private int cutIndex;
@@ -76,7 +87,7 @@ public final class GoalFrame {
   private boolean userCanceled;
 
   /**
-   * Create a new full stack with a default size, and its root frame.
+   * Create a new full stack with a default size, and its initial (root) stack-frame.
    * This constructor is called only once when a goal needs to be solved.
    */
   public GoalFrame() {
@@ -84,7 +95,7 @@ public final class GoalFrame {
     this.trailingBindings = new ArrayList<Binding>(INITIAL_SIZE);
     this.bindingMarkBetweenUnify = new Stack<Integer>();
     this.bindingMarkBetweenUnify.ensureCapacity(INITIAL_SIZE);
-    this.bindingMarkBetweenUnify.push(0);
+    this.bindingMarkBetweenUnify.push(0); // Initial condition: assumed a mark at 0
     // State bindings dedicated to "cut"
     this.nbChildren = 0;
     this.childIndex = UNDEF_INDEX;
@@ -93,7 +104,7 @@ public final class GoalFrame {
   }
 
   /**
-   * Add a new stack frame on top (as a child of) an existing "parent".
+   * Add a new stack-frame as a child of an existing "parent".
    * @param theParent
    */
   public GoalFrame(GoalFrame theParent) {
@@ -116,13 +127,13 @@ public final class GoalFrame {
   // Management of the unification / deunification stack
   //---------------------------------------------------------------------------
 
-  public void markForNextBindings() {
-    final int upperMark = this.trailingBindings.size();
-    this.bindingMarkBetweenUnify.push(upperMark);
+  public void markBeforeAddingBindings() {
+    final int upperWatermark = this.trailingBindings.size();
+    this.bindingMarkBetweenUnify.push(upperWatermark);
   }
 
   /**
-   * Add (remember) that a binding was done, so that it can be undone by {@link #clearBindingsToMark()}
+   * Add (remember) that a {@link Binding} was done, so that it can be undone by {@link #undoBindingsUntilPreviousMark()}
    * @param theBinding
    */
   public void addBinding(Binding theBinding) {
@@ -130,21 +141,22 @@ public final class GoalFrame {
   }
 
   /**
-   * Reset all bindings that have been added by {@link #addBinding(Binding)} after the last call to
-   * {@link #markForNextBindings()}
+   * Reset all bindings that have been added by {@link #addBinding(Binding)} since the last call to
+   * {@link #markBeforeAddingBindings()}.
+   * @note An initial {@link #markBeforeAddingBindings()} should always be done.
    */
-  public void clearBindingsToMark() {
+  public void undoBindingsUntilPreviousMark() {
     int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
     for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
-      final Binding binding = this.trailingBindings.remove(i); 
+      final Binding toUnbind = this.trailingBindings.remove(i); 
       // TODO Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
-      binding.free();
+      toUnbind.free();
     }
   }
 
   /**
    * @return The number of bindings that would be deunified. 
-   * @deprecated Use only from test cases.
+   * @deprecated Bo be used only from test cases for low-level white-box unit testing of unification.
    */
   @Deprecated
   public Object nbBindings() {
@@ -164,16 +176,16 @@ public final class GoalFrame {
   }
 
   //---------------------------------------------------------------------------
-  // Accessors
+  // Management of the cut (!)
   //---------------------------------------------------------------------------
+  
+  public void signalCut() {
+      this.cutIndex = this.nbChildren - 1;
+      logger.debug("!!! Executed CUT on goalFrame={}, setting cutIndex={}", this, this.cutIndex);
+  }
 
   public boolean isCut() {
     return this.cutIndex != UNDEF_INDEX;
-  }
-
-  public void signalCut() {
-    this.cutIndex = this.nbChildren - 1;
-    logger.debug("!!! Executed CUT on goalFrame={}, setting cutIndex={}", this, this.cutIndex);
   }
 
   /**
