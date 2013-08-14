@@ -45,186 +45,186 @@ import org.logic2j.core.util.ReportUtils;
  * Reference implementation of logic2j's {@link PrologImplementor} API.
  */
 public class PrologImpl implements PrologImplementor {
-	/**
-	 * Describe the level of initialization of the Prolog system, between bare
-	 * minimal, and full-featured.
-	 */
-	public enum InitLevel {
-		/**
-		 * A completely bare prolog engine, not functional for running programs
-		 * (misses base predicates such as true/1, fail/1, !/1 (cut), =/2,
-		 * call/1, not/1, etc. But unification and inference of user predicates
-		 * do work. No libraries loaded at all.
-		 */
-		L0_BARE,
-		/**
-		 * This is the default initialization level, it loads the
-		 * {@link CoreLibrary}, containing (among others), core predicates such
-		 * as true/1, fail/1, !/1 (cut), =/2, call/1, not/1, etc.
-		 */
-		L1_CORE_LIBRARY,
-		/**
-		 * Higher level libraries loaded, such as {@link IOLibrary}.
-		 */
-		L2_BASE_LIBRARIES,
-	}
+    /**
+     * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
+     */
+    public enum InitLevel {
+        /**
+         * A completely bare prolog engine, not functional for running programs (misses base predicates such as true/1,
+         * fail/1, !/1 (cut), =/2, call/1, not/1, etc. But unification and inference of user predicates do work. No
+         * libraries loaded at all.
+         */
+        L0_BARE,
+        /**
+         * This is the default initialization level, it loads the {@link CoreLibrary}, containing (among others), core
+         * predicates such as true/1, fail/1, !/1 (cut), =/2, call/1, not/1, etc.
+         */
+        L1_CORE_LIBRARY,
+        /**
+         * Higher level libraries loaded, such as {@link IOLibrary}.
+         */
+        L2_BASE_LIBRARIES,
+    }
 
-	private TermFactory termFactory = new DefaultTermFactory(this);
-	private Formatter formatter = new DefaultFormatter(this);
-	private LibraryManager libraryManager = new DefaultLibraryManager(this);
-	private OperatorManager operatorManager = new DefaultOperatorManager();
-	private Solver solver = new DefaultSolver(this);
-	private Unifier unifier = new DefaultUnifier();
-	private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
-	// TODO Does the clauseProviders belong here or from the Solver where they
-	// are solely used??? See https://github.com/ltettoni/logic2j/issues/17
-	private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
+    // ---------------------------------------------------------------------------
+    // Define all sub-features of this reference implementation and initialize with default, reference implementations
+    // ---------------------------------------------------------------------------
 
-	public PrologImpl() {
-		this(InitLevel.L1_CORE_LIBRARY);
-	}
+    private TermFactory termFactory = new DefaultTermFactory(this);
+    private Formatter formatter = new DefaultFormatter(this);
+    private LibraryManager libraryManager = new DefaultLibraryManager(this);
+    private OperatorManager operatorManager = new DefaultOperatorManager();
+    private Solver solver = new DefaultSolver(this);
+    private Unifier unifier = new DefaultUnifier();
+    private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
 
-	public PrologImpl(InitLevel theLevel) {
-		// The first clause provider is always the TheoryManager. Others may be
-		// added.
-		final TheoryManager tm = new DefaultTheoryManager(this);
-		this.clauseProviders.add(tm);
+    // TODO Does the clauseProviders belong here or from the Solver where they are solely used??? See
+    // https://github.com/ltettoni/logic2j/issues/17
+    private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
-		// Here we load libs in order
+    /**
+     * Default constructor will only provide an engine with the {@link CoreLibrary} loaded.
+     */
+    public PrologImpl() {
+        this(InitLevel.L1_CORE_LIBRARY);
+    }
 
-		/*
-		 * NOTE: the ConfigLibrary was part of the "core" and has been pushed to
-		 * "contrib" since it was only used in rdb-related configuration. I
-		 * comment out this initialization since I don't want the "core" to
-		 * depend on "contrib". We'll have to find a way to allow easy loading
-		 * of libs upon initialization. I would really rely on DI to care about
-		 * this.
-		 */
-		// (commented out since ConfigLibrary no longer on core):
-		// libraryManager.loadLibrary(new ConfigLibrary(this));
+    /**
+     * Constructor for a specific level of initialization.
+     * 
+     * @param theLevel
+     */
+    public PrologImpl(InitLevel theLevel) {
+        // The first clause provider is always the TheoryManager. Others may be added.
+        final TheoryManager tm = new DefaultTheoryManager(this);
+        this.clauseProviders.add(tm);
 
-		if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
-			final LibraryBase lib = new CoreLibrary(this);
-			this.libraryManager.loadLibrary(lib);
-		}
-		if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
-			final IOLibrary lib = new IOLibrary(this);
-			this.libraryManager.loadLibrary(lib);
-		}
-		// FIXME Is this OK to load libs in irrelevant order?
-		// switch(theLevel) {
-		// case L2_BASE_LIBRARIES:
-		// libraryManager.loadLibrary(new IOLibrary(this));
-		// case L1_CORE_LIBRARY:
-		// libraryManager.loadLibrary(new CoreLibrary(this));
-		// default:
-		// libraryManager.loadLibrary(new ConfigLibrary(this));
-		// }
-	}
+        // Here we load libs in order
 
-	// ---------------------------------------------------------------------------
-	// Accessors
-	// ---------------------------------------------------------------------------
+        /*
+         * NOTE: the ConfigLibrary was part of the "core" and has been pushed to "contrib" since it was only used in
+         * rdb-related configuration. I comment out this initialization since I don't want the "core" to depend on
+         * "contrib". We'll have to find a way to allow easy loading of libs upon initialization. I would really rely on
+         * DI to care about this.
+         */
+        // (commented out since ConfigLibrary no longer on core):
+        // libraryManager.loadLibrary(new ConfigLibrary(this));
 
-	@Override
-	public ClauseProviderResolver getClauseProviderResolver() {
-		return clauseProviderResolver;
-	}
+        if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
+            final LibraryBase lib = new CoreLibrary(this);
+            this.libraryManager.loadLibrary(lib);
+        }
+        if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
+            final IOLibrary lib = new IOLibrary(this);
+            this.libraryManager.loadLibrary(lib);
+        }
+    }
 
-	@Override
-	public OperatorManager getOperatorManager() {
-		return this.operatorManager;
-	}
+    // ---------------------------------------------------------------------------
+    // Implementation of PrologImplementor
+    // ---------------------------------------------------------------------------
 
-	@Override
-	public LibraryManager getLibraryManager() {
-		return this.libraryManager;
-	}
+    @Override
+    public Term term(Object theSource) {
+        return getTermFactory().create(theSource, FactoryMode.ANY_TERM);
+    }
 
-	@Override
-	public TheoryManager getTheoryManager() {
-		return ReflectUtils.safeCastNotNull("getting TheoryManager as first ClauseProvider", this.clauseProviders.get(0), TheoryManager.class);
-	}
+    @Override
+    public SolutionHolder solve(Term theGoal) {
+        return new SolutionHolder(this, new Bindings(theGoal));
+    }
 
-	@Override
-	public TermFactory getTermFactory() {
-		return this.termFactory;
-	}
+    @Override
+    public SolutionHolder solve(CharSequence theGoal) {
+        // Perhaps we could transform the goal into a real clause?
+        final Term parsed = term(theGoal);
+        return solve(parsed);
+    }
 
-	@Override
-	public Formatter getFormatter() {
-		return this.formatter;
-	}
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // You may use DI to inject all sub-features into setters
+    // FIXME: I think that we would have to reinit the full engine everytime one setter is called, since we lack an
+    // "afterPropertiesSet" feature.
+    // ---------------------------------------------------------------------------
 
-	/**
-	 * @return the solver
-	 */
-	@Override
-	public Solver getSolver() {
-		return this.solver;
-	}
+    @Override
+    public TheoryManager getTheoryManager() {
+        // TODO is this normal to look for the first ClauseProvider only??? Seems OK, see constructor.
+        return ReflectUtils.safeCastNotNull("getting TheoryManager of the first ClauseProvider", this.clauseProviders.get(0), TheoryManager.class);
+    }
 
-	/**
-	 * @param theSolver the solver to set
-	 */
-	public void setSolver(Solver theSolver) {
-		this.solver = theSolver;
-	}
+    public TermFactory getTermFactory() {
+        return termFactory;
+    }
 
-	/**
-	 * @return the unifier
-	 */
-	@Override
-	public Unifier getUnifier() {
-		return this.unifier;
-	}
+    public void setTermFactory(TermFactory termFactory) {
+        this.termFactory = termFactory;
+    }
 
-	/**
-	 * @param theUnifier the unifier to set
-	 */
-	public void setUnifier(Unifier theUnifier) {
-		this.unifier = theUnifier;
-	}
+    public Formatter getFormatter() {
+        return formatter;
+    }
 
-	/**
-	 * @return the clauseProviders
-	 */
-	@Override
-	public List<ClauseProvider> getClauseProviders() {
-		return this.clauseProviders;
-	}
+    public void setFormatter(Formatter formatter) {
+        this.formatter = formatter;
+    }
 
-	/**
-	 * @param theClauseProviders the clauseProviders to set
-	 */
-	public void setClauseProviders(List<ClauseProvider> theClauseProviders) {
-		this.clauseProviders = theClauseProviders;
-	}
+    public LibraryManager getLibraryManager() {
+        return libraryManager;
+    }
 
-	// ---------------------------------------------------------------------------
-	// Helper methods
-	// ---------------------------------------------------------------------------
+    public void setLibraryManager(LibraryManager libraryManager) {
+        this.libraryManager = libraryManager;
+    }
 
-	@Override
-	public Term term(Object theSource) {
-		return getTermFactory().create(theSource, FactoryMode.ANY_TERM);
-	}
+    public OperatorManager getOperatorManager() {
+        return operatorManager;
+    }
 
-	@Override
-	public SolutionHolder solve(Term theGoal) {
-		return new SolutionHolder(this, new Bindings(theGoal));
-	}
+    public void setOperatorManager(OperatorManager operatorManager) {
+        this.operatorManager = operatorManager;
+    }
 
-	@Override
-	public SolutionHolder solve(CharSequence theGoal) {
-		// Perhaps we could transform the goal into a real clause?
-		final Term parsed = term(theGoal);
-		return solve(parsed);
-	}
+    public Solver getSolver() {
+        return solver;
+    }
 
-	@Override
-	public String toString() {
-		return ReportUtils.shortDescription(this);
-	}
+    public void setSolver(Solver solver) {
+        this.solver = solver;
+    }
+
+    public Unifier getUnifier() {
+        return unifier;
+    }
+
+    public void setUnifier(Unifier unifier) {
+        this.unifier = unifier;
+    }
+
+    public ClauseProviderResolver getClauseProviderResolver() {
+        return clauseProviderResolver;
+    }
+
+    public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
+        this.clauseProviderResolver = clauseProviderResolver;
+    }
+
+    public List<ClauseProvider> getClauseProviders() {
+        return clauseProviders;
+    }
+
+    public void setClauseProviders(List<ClauseProvider> clauseProviders) {
+        this.clauseProviders = clauseProviders;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Core java.lang.Object methods
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        return ReportUtils.shortDescription(this);
+    }
 
 }

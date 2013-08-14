@@ -26,8 +26,6 @@ import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 
-/**
- */
 public class AdHocLibraryTest extends PrologTestBase {
 
   @Test

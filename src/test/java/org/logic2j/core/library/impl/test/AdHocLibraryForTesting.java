@@ -18,6 +18,7 @@
 package org.logic2j.core.library.impl.test;
 
 import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.TLong;
@@ -28,6 +29,7 @@ import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
+ * A small ad-hoc implementation of a {@link PLibrary} just for testing.
  */
 public class AdHocLibraryForTesting extends LibraryBase {
   static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdHocLibraryForTesting.class);
