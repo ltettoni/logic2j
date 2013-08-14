@@ -18,12 +18,9 @@
 package org.logic2j.core.theory;
 
 import org.junit.Test;
-import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.PrologImpl.InitLevel;
+import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.library.impl.core.CoreLibrary;
-import org.logic2j.core.theory.DefaultTheoryManager;
-import org.logic2j.core.theory.TheoryContent;
-import org.logic2j.core.theory.TheoryManager;
 
 /**
  */

@@ -33,11 +33,6 @@ import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TLong;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.TermApi;
-import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 
 /**

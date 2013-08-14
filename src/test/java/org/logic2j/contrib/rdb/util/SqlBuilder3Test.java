@@ -17,10 +17,10 @@
  */
 package org.logic2j.contrib.rdb.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;

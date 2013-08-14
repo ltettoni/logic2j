@@ -34,7 +34,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solver.GoalFrame;
 
-// TODO replace the use of class UnificationTester by hamcrest assertions
+// TODO replace the use of class UnificationTester by hamctest 1.3 assertions
 public class UnifierTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnifierTest.class);
 

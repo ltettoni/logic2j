@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.logic2j.core.Prolog;
 import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologImpl.InitLevel;
+import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.io.operator.Operator;
 import org.logic2j.core.model.symbol.Term;
 

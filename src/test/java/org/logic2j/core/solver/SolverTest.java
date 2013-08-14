@@ -42,7 +42,6 @@ import org.logic2j.core.solver.listener.SolutionListener;
 /**
  * Check {@link Solver} on extremely trivial goals, and also check
  * the {@link SolutionHolder} API to extract solutions (results and bindings).
- * 
  */
 public class SolverTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolverTest.class);

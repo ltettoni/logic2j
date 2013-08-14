@@ -18,11 +18,8 @@
 package org.logic2j.contrib.library.pojo;
 
 import org.junit.Test;
-import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.core.PrologTestBase;
 
-/**
- */
 public class PojoLibraryTest extends PrologTestBase {
 
   @Test
