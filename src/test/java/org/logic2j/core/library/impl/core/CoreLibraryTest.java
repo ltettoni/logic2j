@@ -17,8 +17,8 @@
  */
 package org.logic2j.core.library.impl.core;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 

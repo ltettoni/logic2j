@@ -17,9 +17,9 @@
  */
 package org.logic2j.core.solver;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,8 +34,6 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
-import org.logic2j.core.solver.Solver;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.solver.listener.Solution;
