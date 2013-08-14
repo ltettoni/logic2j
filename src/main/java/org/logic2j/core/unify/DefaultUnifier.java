@@ -36,6 +36,7 @@ public class DefaultUnifier implements Unifier {
   public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
     theGoalFrame.markBeforeAddingBindings();
     boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2, theGoalFrame);
+    assert(theGoalFrame != null);
     if (!unified /*&& theGoalFrame != null*/) {
       deunify(theGoalFrame);
     }
@@ -43,7 +44,7 @@ public class DefaultUnifier implements Unifier {
   }
 
   /**
-   * Note: orientation of method args tends to be bindings ont term1 and literals on term2.
+   * Note: orientation of method arguments tends to be bindings on term1 and literals on term2.
    * @param term1
    * @param theBindings1
    * @param term2

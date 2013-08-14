@@ -26,8 +26,22 @@ import org.logic2j.core.solver.GoalFrame;
  */
 public interface Unifier {
 
-  boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
+    /**
+     * Unify terms together, term1 with its bindings, and term2 with its bindings.
+     * 
+     * @param term1
+     * @param theBindings1
+     * @param term2
+     * @param theBindings2
+     * @param theGoalFrame To remember that unification was done and allow deunification.
+     * @return true if term1 and term2 could be unified together.
+     */
+    boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
 
-  void deunify(GoalFrame theGoalFrame);
+    /**
+     * Deunify to the last unification that returned true.
+     * @param theGoalFrame
+     */
+    void deunify(GoalFrame theGoalFrame);
 
 }

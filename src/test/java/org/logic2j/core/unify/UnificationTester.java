@@ -25,10 +25,10 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solver.GoalFrame;
-import org.logic2j.core.unify.Unifier;
 
 /**
- * Support the thorough testing of unification using the {@link Unifier} interface.
+ * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase.
+ * TODO replace this class by hamcrest high-level assertions that can be reused
  */
 class UnificationTester {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);
@@ -42,13 +42,13 @@ class UnificationTester {
   public Bindings leftVars;
   public Bindings rightVars;
   private GoalFrame frame;
-  private Boolean expectedResult = null;
-  private Boolean result = null;
+  private Boolean expectedResult = null; // TODO Good candidates for hamcrest
+  private Boolean result = null; // TODO Good candidates for hamcrest
 
   private Integer expectedNbBindings = null;
 
   /**
-   * @param theUnifier
+   * @param theUnifier Implementation to test
    */
   public UnificationTester(Unifier theUnifier) {
     this.unifier = theUnifier;
