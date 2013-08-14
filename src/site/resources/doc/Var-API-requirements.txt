@@ -1,6 +1,11 @@
 Requirements for the API on variables
 -------------------------------------
 
+
+>>>> IDEAS AND WORK IN PROGRESS - THIS IS NOT A DOCUMENTATION! <<<<
+
+
+
 UC 1: make sure term is fully ground (no more free Vars anywhere) and obtain resolved solution.
 
 binding("X").isGround()

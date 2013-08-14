@@ -1,6 +1,9 @@
 Requirements for the API for solutions
 --------------------------------------
 
+>>>> IDEAS AND WORK IN PROGRESS - THIS IS NOT A DOCUMENTATION! <<<<
+
+
 Note: this API must be really reentrant, it may be called 
 - by a client of the engine,
 - from within a prolog-implemented primitive
