@@ -28,6 +28,11 @@ import org.logic2j.core.theory.TheoryManager;
  * see https://github.com/ltettoni/logic2j/issues/8
  */
 public interface Prolog {
+    
+    // ---------------------------------------------------------------------------
+    // Shortcuts or "syntactic sugars" to ease programming. 
+    // The following methods delegate calls to sub-features of the Prolog engine. 
+    // ---------------------------------------------------------------------------
 
   /**
    * The shortcut and preferred method to create a {@link Term} by delegating instantiation to 
@@ -55,6 +60,10 @@ public interface Prolog {
    */
   SolutionHolder solve(Term theGoal);
 
+  // ---------------------------------------------------------------------------
+  // Accessors to the sub-features of the Prolog engine
+  // ---------------------------------------------------------------------------
+  
   /**
    * The current factory to parse instantiate {@link Term}s.
    * @return Our {@link TermFactory}

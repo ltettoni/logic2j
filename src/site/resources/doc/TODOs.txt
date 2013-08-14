@@ -5,3 +5,4 @@ Things possibly to be done:
 - Refactor unit test cases to leverage new JUnit's bundle of hamcrest v1.3
 - There is no Tail Recursion Optimization (TRO) yet
 - Remove ClauseProviderResolver
+- Have a look at Java CDI (JSR ?, JSR 250, instead of Spring) for easier integration with CDI frameworks (see tasks in PrologImpl)

@@ -25,44 +25,48 @@ import org.logic2j.core.solver.Solver;
 import org.logic2j.core.unify.Unifier;
 
 /**
- * An interface that Prolog implementations must provide; this goes beyond the
- * lighter facade interface {@link Prolog} intended for client use. This one
- * exposes accessors to the internal state of the effective implementation.
+ * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog}
+ * intended for client use. This one exposes accessors to the internal state of the effective implementation.
  */
 public interface PrologImplementor extends Prolog {
 
-	// TODO To be refatored, see comments in class definition
-	ClauseProviderResolver getClauseProviderResolver();
+    // ---------------------------------------------------------------------------
+    // Accessors to the sub-features of the Prolog engine
+    // ---------------------------------------------------------------------------
 
-	/**
-	 * @return All clause providers, in same order as when registered. TODO But
-	 *         the actual ordering may not be always needed, it's only important
-	 *         when the same predicate is available from several providers (not
-	 *         frequent). Could we in certain cases use multi-threaded access to
-	 *         all clause providers?
-	 */
-	List<ClauseProvider> getClauseProviders();
+    // TODO To be refatored, see comments in class definition
+    ClauseProviderResolver getClauseProviderResolver();
 
-	/**
-	 * @return The implementation for managing libraries.
-	 */
-	LibraryManager getLibraryManager();
+    /**
+     * @return All clause providers, in same order as when registered. TODO But the actual ordering may not be always
+     *         needed, it's only important when the same predicate is available from several providers (not frequent).
+     *         Could we in certain cases use multi-threaded access to all clause providers?
+     */
+    List<ClauseProvider> getClauseProviders();
 
-	/**
-	 * @return The implementation of unification logic.
-	 */
-	Unifier getUnifier();
+    /**
+     * @return The implementation for managing libraries.
+     */
+    LibraryManager getLibraryManager();
 
-	/**
-	 * @return The implementation of inference logic.
-	 */
-	Solver getSolver();
+    /**
+     * @return The implementation of unification logic.
+     */
+    Unifier getUnifier();
 
-	OperatorManager getOperatorManager();
+    /**
+     * @return The implementation of inference logic.
+     */
+    Solver getSolver();
 
-	/**
-	 * @return The implementation for marshalling {@link Term} hierarchies to various formats.
-	 */
-	Formatter getFormatter();
+    /**
+     * @return The implementation for managing operators.
+     */
+    OperatorManager getOperatorManager();
+
+    /**
+     * @return The implementation for marshalling {@link Term} hierarchies to various formats.
+     */
+    Formatter getFormatter();
 
 }

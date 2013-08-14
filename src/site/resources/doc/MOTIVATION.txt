@@ -45,6 +45,7 @@ Features in more details:
   Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
   Visitor design pattern
   Ease of use integration DI framworks (eg Spring)
+  SLF4j logging
 
 - Java 1.5+ language and JRE features fully leveraged
   Generics
@@ -52,3 +53,5 @@ Features in more details:
   Forall and Iterable
   Static imports
   (closures still very expected to come...)
+
+- Some more "bleeding edge" features that I am prototyping on (CDI, ?)

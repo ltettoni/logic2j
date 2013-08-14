@@ -121,7 +121,8 @@ public class PrologImpl implements PrologImplementor {
     }
 
     // ---------------------------------------------------------------------------
-    // Implementation of PrologImplementor
+    // Implementation of interface Prolog.
+    // These are actually shortcuts or "syntactic sugars".
     // ---------------------------------------------------------------------------
 
     @Override
@@ -144,8 +145,8 @@ public class PrologImpl implements PrologImplementor {
     // ---------------------------------------------------------------------------
     // Accessors
     // You may use DI to inject all sub-features into setters
-    // FIXME: I think that we would have to reinit the full engine everytime one setter is called, since we lack an
-    // "afterPropertiesSet" feature.
+    // TODO I think that we probably have to reinit/load the full engine's configuration everytime one setter is called, but we lack an
+    // "afterPropertiesSet()" feature. We should use the standard @PostConstruct instead.
     // ---------------------------------------------------------------------------
 
     @Override
