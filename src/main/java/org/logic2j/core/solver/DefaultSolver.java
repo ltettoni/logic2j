@@ -180,7 +180,7 @@ public class DefaultSolver implements Solver {
                     // the trailFrame will remember this.
                     // Solutions will be notified from within this method.
                     // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-                    final boolean unified = this.prolog.getUnifyer().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
+                    final boolean unified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
                     if (debug) {
                         logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
                     }
@@ -208,7 +208,7 @@ public class DefaultSolver implements Solver {
                         }
                         // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                         // Go to next solution: start by clearing our trailing bindings
-                        this.prolog.getUnifyer().deunify(subFrameForClauses);
+                        this.prolog.getUnifier().deunify(subFrameForClauses);
                     }
                 }
                 if (debug) {

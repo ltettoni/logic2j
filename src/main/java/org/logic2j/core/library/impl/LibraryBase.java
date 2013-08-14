@@ -55,11 +55,11 @@ public class LibraryBase implements PLibrary {
      * @return The result of unification.
      */
     protected boolean unify(Term t1, Bindings theBindings1, Term t2, Bindings theBindings2, GoalFrame theGoalFrame) {
-        return getProlog().getUnifyer().unify(t1, theBindings1, t2, theBindings2, theGoalFrame);
+        return getProlog().getUnifier().unify(t1, theBindings1, t2, theBindings2, theGoalFrame);
     }
 
     protected void deunify(GoalFrame theGoalFrame) {
-        getProlog().getUnifyer().deunify(theGoalFrame);
+        getProlog().getUnifier().deunify(theGoalFrame);
     }
 
     /**

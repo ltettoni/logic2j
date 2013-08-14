@@ -36,7 +36,7 @@ import org.logic2j.core.solver.Solver;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.theory.DefaultTheoryManager;
 import org.logic2j.core.theory.TheoryManager;
-import org.logic2j.core.unify.DefaultUnifyer;
+import org.logic2j.core.unify.DefaultUnifier;
 import org.logic2j.core.unify.Unifier;
 import org.logic2j.core.util.ReflectUtils;
 import org.logic2j.core.util.ReportUtils;
@@ -74,7 +74,7 @@ public class PrologImpl implements PrologImplementor {
 	private LibraryManager libraryManager = new DefaultLibraryManager(this);
 	private OperatorManager operatorManager = new DefaultOperatorManager();
 	private Solver solver = new DefaultSolver(this);
-	private Unifier unifier = new DefaultUnifyer();
+	private Unifier unifier = new DefaultUnifier();
 	private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
 	// TODO Does the clauseProviders belong here or from the Solver where they
 	// are solely used??? See https://github.com/ltettoni/logic2j/issues/17
@@ -175,15 +175,15 @@ public class PrologImpl implements PrologImplementor {
 	 * @return the unifier
 	 */
 	@Override
-	public Unifier getUnifyer() {
+	public Unifier getUnifier() {
 		return this.unifier;
 	}
 
 	/**
-	 * @param theUnifyer the unifier to set
+	 * @param theUnifier the unifier to set
 	 */
-	public void setUnifyer(Unifier theUnifyer) {
-		this.unifier = theUnifyer;
+	public void setUnifier(Unifier theUnifier) {
+		this.unifier = theUnifier;
 	}
 
 	/**

@@ -51,7 +51,7 @@ public interface PrologImplementor extends Prolog {
 	/**
 	 * @return The implementation of unification logic.
 	 */
-	Unifier getUnifyer();
+	Unifier getUnifier();
 
 	/**
 	 * @return The implementation of inference logic.

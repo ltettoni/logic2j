@@ -48,10 +48,10 @@ class UnificationTester {
   private Integer expectedNbBindings = null;
 
   /**
-   * @param theUnifyer
+   * @param theUnifier
    */
-  public UnificationTester(Unifier theUnifyer) {
-    this.unifier = theUnifyer;
+  public UnificationTester(Unifier theUnifier) {
+    this.unifier = theUnifier;
   }
 
   /**
