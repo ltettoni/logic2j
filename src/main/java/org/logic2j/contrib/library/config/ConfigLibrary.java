@@ -94,6 +94,7 @@ public class ConfigLibrary extends LibraryBase {
             }
 
             @Override
+            // Note: this requires a Java 1.7; this method did not exist in Java 1.6 
             public Logger getParentLogger()
                     throws SQLFeatureNotSupportedException {
                 throw new UnsupportedOperationException("getParentLogger");
