@@ -1,0 +1,54 @@
+Why logic2j?
+------------
+
+I was seeking for a solution to implement business rules within an enterprise IT software architecture.
+Following a detailed study and evaluation of the market, including Drools, ILOG JRules, and other approaches,
+I came up with limited number of use cases. Unfortunately they would defeat the classic memory objects + DSL approach 
+put forward by the RETE and forward-chaining inference engines.
+
+I have a previous experience in functional programming and first-order predicate logic, including Prolog. Thus,
+it occured to me that a backward-chaining demonstration engine, coupled with powerful template / pattern subsitution would
+provide more power to implement a business rules engine targeting heterogeneous IT platforms and data sources.
+
+I sought for an open-source inference engine in Java, with strong ties to the JDK that would (i) provide a simple API
+to invoke predicate logic from Java, and (ii) allow Java-implementated predicates to be called back by the engine.
+Quite expectedly I found several implementations of Prolog, since it is both a language and a programming platform / environment.
+
+tuProlog was clearly fitting my requirements and the adoption was fast.
+
+Over time however, a number of limitations appeared, which weren't trivial to workaround. Among them:
+- memory footprint and management of data structures make it difficult to handle large data sets
+- non-shared memory approach does not allow easy extension of the Term API (copying happens very often and is difficult to track)
+- API to retrieve or manipulate solutions is cumbersome
+- codebase lacking best patterns and java generics
+
+Logic2j started as a challenge and proof-of-concept for a more state-of-the-art implementation of a 
+Prolog inference engine, and never aimed to become a full Prolog programming environment. 
+The striking differences over tuProlog are:
+
+- an Inversion-of-Control approach to relay solutions removes the need to keep state for backtracking
+- a shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable - no copies)
+- the performance is overall improved, and large solution sets can be generated without footprint since they are enumerated
+- a much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns
+- the API to retrieve or manipulate solutions is more flexible
+
+
+
+Features in more details:
+- Custom Java predicates (primitives) can generate an indefinite number of solutions. 
+  This does not need complex bactracking, content from any collection or iterator can be "pushed" to the inference engine easily.
+
+- The codebase aims at or uses state-of-the-art programming patterns such as:
+  Inversion of Control
+  Factory / Interface / Implementation
+  Hooks and derivation points to extend functionality
+  Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
+  Visitor design pattern
+  Ease of use integration DI framworks (eg Spring)
+
+- Java 1.5+ language and JRE features fully leveraged
+  Generics
+  Varargs
+  Forall and Iterable
+  Static imports
+  (closures still very expected to come...)

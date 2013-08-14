@@ -1,3 +1,7 @@
 Things possibly to be done:
+---------------------------
 
-- Using assertions (but read best practices carefully first: http://www.javapractices.com/topic/TopicAction.do?Id=102), they do not replace exceptions.
+- Using Java assertions (but check for recommended / best practices carefully first - and document them), they do not replace exceptions.
+- Refactor unit test cases to leverage new JUnit's bundle of hamcrest v1.3
+- There is no Tail Recursion Optimization (TRO) yet
+- Remove ClauseProviderResolver
