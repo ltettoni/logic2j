@@ -70,7 +70,7 @@ public class SolverTest extends PrologTestBase {
     // Value of a non-bound variable
     assertEquals(null, prolog.solve("Z=Z").unique().binding("Z"));
     assertEquals(null, prolog.solve("Z=Y").unique().binding("Z"));
-    assertEquals(null, prolog.solve("write(Z)").unique().binding("Z"));
+    assertEquals(null, prolog.solve("write(Z_written_from_SolverTest)").unique().binding("Z_written_from_SolverTest"));
     // Obtain values of bound variables
     final UniqueSolutionHolder unique = prolog.solve("X=2, Y=3").unique();
     assertEquals(new TLong(2), unique.binding("X"));
