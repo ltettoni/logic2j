@@ -46,7 +46,7 @@ public class DefaultSolver implements Solver {
     /**
      * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, GoalFrame, SolutionListener)} method. The referrer goal to solve
      * is in the callerFrame
-     *
+     * 
      * @param theGoalBindings
      * @param callerFrame
      * @param theSolutionListener
@@ -139,7 +139,6 @@ public class DefaultSolver implements Solver {
 
             final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().providersFor(goalStruct);
             for (final ClauseProvider provider : providers) {
-                // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
                 for (final Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
 
                     if (debug) {

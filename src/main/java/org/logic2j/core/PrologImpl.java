@@ -77,7 +77,7 @@ public class PrologImpl implements PrologImplementor {
     private Unifier unifier = new DefaultUnifier();
     private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
 
-    // TODO Does the clauseProviders belong here or from the Solver where they are solely used??? See
+    // TODO (issue) Does the clauseProviders belong here or from the Solver where they are solely used??? See
     // https://github.com/ltettoni/logic2j/issues/17
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
@@ -90,7 +90,7 @@ public class PrologImpl implements PrologImplementor {
 
     /**
      * Constructor for a specific level of initialization.
-     *
+     * 
      * @param theLevel
      */
     public PrologImpl(InitLevel theLevel) {

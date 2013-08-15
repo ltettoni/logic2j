@@ -104,7 +104,7 @@ public class Struct extends Term {
 
     /**
      * Static factory (instead of constructor).
-     *
+     * 
      * @return A structure representing an empty list
      */
     public static Struct createEmptyPList() {
@@ -113,7 +113,7 @@ public class Struct extends Term {
 
     /**
      * Static factory (instead of constructor).
-     *
+     * 
      * @return A prolog list providing head and tail
      */
     public static Struct createPList(Term h, Term t) {
@@ -125,7 +125,7 @@ public class Struct extends Term {
 
     /**
      * Static factory to create a Prolog List structure from a Java List.
-     *
+     * 
      * @param theJavaList
      */
     public static Struct createPList(List<Term> theJavaList) {
@@ -188,7 +188,7 @@ public class Struct extends Term {
 
     /**
      * Write major properties of the Struct, and also store read-only fields for efficient access.
-     *
+     * 
      * @param theName
      * @param theArity
      */
@@ -213,7 +213,7 @@ public class Struct extends Term {
 
     /**
      * Gets the i-th element of this structure
-     *
+     * 
      * No bound check is done
      */
     public Term getArg(int theIndex) {
@@ -243,7 +243,7 @@ public class Struct extends Term {
 
     /**
      * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
-     *
+     * 
      * @return The predicate's name + '/' + arity
      */
     public String getPredicateIndicator() {
@@ -256,7 +256,7 @@ public class Struct extends Term {
 
     /**
      * Sets the i-th element of this structure
-     *
+     * 
      * (Only for internal service)
      */
     @Deprecated
@@ -329,7 +329,7 @@ public class Struct extends Term {
     /**
      * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to
      * theCollectedTerms. The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
-     *
+     * 
      * @param theCollectedTerms
      */
     @Override
@@ -471,7 +471,7 @@ public class Struct extends Term {
 
     /**
      * Gets the head of this structure, which is supposed to be a list.
-     *
+     * 
      * <p>
      * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -484,7 +484,7 @@ public class Struct extends Term {
 
     /**
      * Gets the tail of this structure, which is supposed to be a list.
-     *
+     * 
      * <p>
      * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -497,7 +497,7 @@ public class Struct extends Term {
 
     /**
      * Gets the number of elements of this structure, which is supposed to be a list.
-     *
+     * 
      * <p>
      * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -517,11 +517,10 @@ public class Struct extends Term {
     /**
      * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
      * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
-     *
+     * 
      * If this structure is not a list, null object is returned
      */
-    // TODO Clarify how it works, see
-    // https://github.com/ltettoni/logic2j/issues/14
+    // TODO (issue) Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
     public Struct predicateFromPList() {
         assertPList(this);
         final Term functor = getLHS();
@@ -606,7 +605,7 @@ public class Struct extends Term {
 
     /**
      * Base requirement to unify 2 structures: matching names and arities.
-     *
+     * 
      * @param that
      * @return True if this and that Struct have the same name and arity.
      */

@@ -36,7 +36,7 @@ import org.logic2j.core.util.ReportUtils;
  * s
  * <p/>
  * TODO: Why an ArrayList of Binding for trailingBindings and a Stack of integers??? Why not just a LinkedList?
- *
+ * 
  * The default constructor instantiates the whole trailing bindings stack with one root frame, and returns it. The constructor for other
  * stack-frames is lighter, it shares most of its parent, only redefines new node for local management of the cut.
  */
@@ -101,7 +101,7 @@ public final class GoalFrame {
 
     /**
      * Add a new stack-frame as a child of an existing "parent".
-     *
+     * 
      * @param theParent
      */
     public GoalFrame(GoalFrame theParent) {
@@ -131,7 +131,7 @@ public final class GoalFrame {
 
     /**
      * Add (remember) that a {@link Binding} was done, so that it can be undone by {@link #undoBindingsUntilPreviousMark()}
-     *
+     * 
      * @param theBinding
      */
     public void addBinding(Binding theBinding) {
@@ -140,14 +140,14 @@ public final class GoalFrame {
 
     /**
      * Reset all bindings that have been added by {@link #addBinding(Binding)} since the last call to {@link #markBeforeAddingBindings()}.
-     *
+     * 
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public void undoBindingsUntilPreviousMark() {
         final int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
         for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
             final Binding toUnbind = this.trailingBindings.remove(i);
-            // TODO Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
+            // TODO (issue) Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
             toUnbind.free();
         }
     }

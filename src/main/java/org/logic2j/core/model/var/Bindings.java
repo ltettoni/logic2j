@@ -37,10 +37,10 @@ import org.logic2j.core.util.ReflectUtils;
  * Store a reference to a {@link Term} together with the actual values of its variables as a list of {@link Binding}s, one per {@link Var}
  * iable found within the Term.<br/>
  * Provide methods to extract values from {@link Var}iables.
- *
+ * 
  * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified.
  * @note The Term referring to this object is called the "referrer".<br/>
- *
+ * 
  *       TODO Improve performance: pre instantiation of {@link #Bindings(Term)} instead of many times during solving. See note on
  *       constructor.
  */
@@ -132,7 +132,7 @@ public class Bindings {
     /**
      * Instantiate a {@link Bindings} to hold the values of all {@link Var}iables of a given {@link Term}, named further the "referrer",
      * which is ususally a {@link Struct}.
-     *
+     * 
      * @note This constructor needs quite a lot of processing - there should be ways to optimize it
      * @param theReferrer The Term whose {@link Var}iables's values are to be found in this object.
      * @see Bindings#getReferrer() to further access theTerm
@@ -165,7 +165,7 @@ public class Bindings {
             final Binding binding = new Binding();
             this.bindings[varIndex] = binding;
             // Assign Binding.var field
-            // TODO This is costly see https://github.com/ltettoni/logic2j/issues/26
+            // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
             theReferrer.accept(new VisitorToAssignVarWithinBinding(binding, varIndex));
         }
     }
@@ -173,7 +173,7 @@ public class Bindings {
     /**
      * Deep copy (cloning) constructor, used for efficiency since the original one needs to a costly traversal of the {@link Term}.<br/>
      * The referrer of the new Bindings is the same as theOriginal.
-     *
+     * 
      * @param theOriginal The one to clone from, remains intact.
      */
     public Bindings(Bindings theOriginal) {
@@ -182,7 +182,7 @@ public class Bindings {
 
     /**
      * Clone this {@link Bindings} but with the specified referrer Term instead of the original one.
-     *
+     * 
      * @param theOriginal
      * @param theNewReferrer
      */
@@ -204,7 +204,7 @@ public class Bindings {
     /**
      * Create a new {@link Bindings} with the specified {@link Term} as new Referrer. When Term is a {@link Var} iable, will following
      * through bound variables until a free or literal is found.
-     *
+     * 
      * @param theTerm Must be one of the root or children {@link Term}s that was used to instantiate this {@link Bindings}
      * @param theClass Of the expected referrer Term
      * @return null if theTerm was a free {@link Var}iable
@@ -236,7 +236,7 @@ public class Bindings {
     /**
      * Considering this object's current bindings as a snapshot to a solution, extract the content of the variables and their bound values
      * in a safe place (a Map) so that inference can resume towards other solutions.
-     *
+     * 
      * @param theRepresentation How to represent free (non-ground) variables
      * @return All variable bindings resolved, represented as specified for the case of free bindings.
      */
@@ -303,7 +303,7 @@ public class Bindings {
 
     /**
      * Detection of goals in the form of X(...) where X is free.
-     *
+     * 
      * @return true if this {@link Bindings}'s {@link #getReferrer()} is a free variable.
      */
     public boolean isFreeReferrer() {
@@ -317,7 +317,7 @@ public class Bindings {
     /**
      * Find the local bindings corresponding to one of the variables of the Struct referred to by this Bindings. FIXME Uh - what does this
      * mean??? TODO This method is only used once from a library - ensure it makes sense and belongs here
-     *
+     * 
      * @param theVar
      * @return null when not found
      */
