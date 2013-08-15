@@ -138,7 +138,7 @@ public class CoreLibraryTest extends PrologTestBase {
         assertGoalMustFail("X=true, X");
         assertGoalMustFail("call(X)");
 
-        addTheory("src/test/resources/test-functional.pl");
+        addTheoryFromTestResourceDir("test-functional.pl");
         String arg = "X";
         int n = 3;
         assertNSolutions(n, "call_check(" + arg + ")");
@@ -172,7 +172,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void clause() throws IOException {
-        addTheory("src/test/resources/test-functional.pl");
+        addTheoryFromTestResourceDir("test-functional.pl");
 
         assertGoalMustFail("clause(X,_)", "clause(_,_)", "clause(1,_)");
         assertNoSolution("clause(a)", "clause(a,b,c)");
@@ -193,7 +193,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void unify_2() throws IOException {
-        addTheory("src/test/resources/test-functional.pl");
+        addTheoryFromTestResourceDir("test-functional.pl");
 
         assertNSolutions(5, "bool_3t_2f(X)");
         assertNSolutions(3, "bool_3t_2f(X), X=true");

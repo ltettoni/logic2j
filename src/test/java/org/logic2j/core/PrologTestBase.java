@@ -35,13 +35,16 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
  * Base class for tests.
- *
+ * 
  */
 public abstract class PrologTestBase {
+    private static final String TEST_RESOURCES_DIR = "src/test/resources";
+
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
 
     private PrologImplementor prolog;
@@ -114,7 +117,7 @@ public abstract class PrologTestBase {
 
     /**
      * Factory.
-     *
+     * 
      * @param theObject
      * @return A single Term, corresponding to theObject.
      */
@@ -124,7 +127,7 @@ public abstract class PrologTestBase {
 
     /**
      * Utility factory.
-     *
+     * 
      * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.
      */
@@ -137,12 +140,17 @@ public abstract class PrologTestBase {
     }
 
     /**
-     * @param theFilename A String denoting the file path, should be a {@link File}, yes it's inelegant, but this is a test helper!
+     * @param theFile To be loaded
      * @throws IOException
      */
-    protected void addTheory(String theFilename) throws IOException {
-        final TheoryManager mgr = getProlog().getTheoryManager();
-        mgr.addTheory(mgr.load(new File(theFilename)));
+    private void addTheory(File theFile) throws IOException {
+        final TheoryManager manager = getProlog().getTheoryManager();
+        final TheoryContent load = manager.load(theFile);
+        manager.addTheory(load);
+    }
+
+    protected void addTheoryFromTestResourceDir(String theFilename) throws IOException {
+        addTheory(new File(TEST_RESOURCES_DIR, theFilename));
     }
 
     protected LibraryContent loadLibrary(PLibrary theLibrary) {
