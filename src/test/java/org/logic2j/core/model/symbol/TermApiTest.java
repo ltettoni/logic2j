@@ -37,7 +37,7 @@ import org.logic2j.core.model.var.Bindings;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
- *
+ * 
  */
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
@@ -62,7 +62,7 @@ public class TermApiTest {
         assertTrue(s2.getArg(0).structurallyEquals(s2.getArg(1)));
     }
 
-    // TODO Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
+    // TODO (issue) Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
     @Test
     public void structurallyEquals2() {
         // assertTrue(new Var().structurallyEquals(new Var()));

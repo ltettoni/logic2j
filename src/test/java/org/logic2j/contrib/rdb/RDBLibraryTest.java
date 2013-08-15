@@ -19,12 +19,14 @@ package org.logic2j.contrib.rdb;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
     @Test
-    public void ensureCanGetConnection() throws Exception {
+    public void ensureCanGetConnection() throws SQLException {
         assertNotNull(zipcodesConnection());
     }
 }

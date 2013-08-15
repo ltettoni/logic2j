@@ -29,7 +29,7 @@ import org.logic2j.core.library.impl.core.CoreLibrary;
 public class AdHocLibraryTest extends PrologTestBase {
 
     @Test
-    public void getLibrary() throws Exception {
+    public void getLibrary()  {
         AdHocLibraryForTesting library;
         try {
             library = getProlog().getLibraryManager().getLibrary(AdHocLibraryForTesting.class);

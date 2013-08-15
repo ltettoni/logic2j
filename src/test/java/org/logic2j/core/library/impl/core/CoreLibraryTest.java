@@ -203,7 +203,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void atom_length() throws Exception {
+    public void atom_length()  {
         assertOneSolution("X=abc, atom_length(X, 3)");
         //
         assertOneSolution("atom_length(a, 1)");
@@ -214,7 +214,15 @@ public class CoreLibraryTest extends PrologTestBase {
         assertNoSolution("X=abc, atom_length(X, 1)");
         //
         assertOneSolution("atom_length(abc, X), X=3");
-        // TODO: This fails with an Exception - improve
-        // assertNoSolution("atom_length(X, 3)");
+
+    }
+
+    /**
+     * FIXME: This fails with an Exception - check what proper behaviour should be and fix
+     */
+    @Ignore
+    @Test
+    public void atom_length_free_var() {
+        assertNoSolution("atom_length(X, 3)");
     }
 }

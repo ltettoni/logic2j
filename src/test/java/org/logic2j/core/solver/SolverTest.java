@@ -141,7 +141,7 @@ public class SolverTest extends PrologTestBase {
 
     /**
      * Will request user cancellation after 5 solutions were found.
-     *
+     * 
      */
     static class Max5Listener implements SolutionListener {
         int counter = 0;
@@ -155,7 +155,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     @Test
-    public void userCancel() throws InterruptedException {
+    public void userCancel() {
         final PrologImplementor prolog = new PrologImpl();
         final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
