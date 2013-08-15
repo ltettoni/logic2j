@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,7 +35,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
     /**
      * Create a {@link SolutionListener} that will enumerate solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
-     * 
+     *
      * @param theBindings
      * @param theMaxCount The maximal number of solutions to ask the inference engine; specify 1 to only look for the first, irrelevant
      *            whether there might be others; specify 2 to if you want the first and make sure there are no others (the inference engine
@@ -51,7 +51,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
 
     /**
      * Will invoke {@link #onSuperfluousSolution()} if there are more than one solution.
-     * 
+     *
      * @return {@link Continuation#CONTINUE} while the maximal number of solutions is not reached.
      */
     @Override

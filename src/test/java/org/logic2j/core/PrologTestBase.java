@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,7 +39,7 @@ import org.logic2j.core.theory.TheoryManager;
 
 /**
  * Base class for tests.
- * 
+ *
  */
 public abstract class PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
@@ -66,8 +66,7 @@ public abstract class PrologTestBase {
 
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;
-        for (int i = 0; i < theGoals.length; i++) {
-            final CharSequence goal = theGoals[i];
+        for (final CharSequence goal : theGoals) {
             final Term parsed = getProlog().term(goal);
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
             final SolutionHolder solution = getProlog().solve(parsed);
@@ -87,11 +86,11 @@ public abstract class PrologTestBase {
     }
 
     protected void assertGoalMustFail(CharSequence... theGoals) {
-        for (int i = 0; i < theGoals.length; i++) {
+        for (final CharSequence theGoal : theGoals) {
             try {
-                getProlog().solve(theGoals[i]).number();
+                getProlog().solve(theGoal).number();
                 fail("Goal should have failed and did not: \"" + theGoals + '"');
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 // Normal
             }
         }
@@ -104,8 +103,7 @@ public abstract class PrologTestBase {
      */
     private SolutionHolder assertInternal(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
-        for (int i = 0; i < theGoals.length; i++) {
-            final CharSequence goal = theGoals[i];
+        for (final CharSequence goal : theGoals) {
             final Term parsed = getProlog().term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
             solve = getProlog().solve(parsed);
@@ -116,7 +114,7 @@ public abstract class PrologTestBase {
 
     /**
      * Factory.
-     * 
+     *
      * @param theObject
      * @return A single Term, corresponding to theObject.
      */
@@ -126,14 +124,14 @@ public abstract class PrologTestBase {
 
     /**
      * Utility factory.
-     * 
+     *
      * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.
      */
     protected List<Term> termList(Object... elements) {
         final List<Term> result = new ArrayList<Term>(elements.length);
-        for (int i = 0; i < elements.length; i++) {
-            result.add(term(elements[i]));
+        for (final Object element : elements) {
+            result.add(term(element));
         }
         return result;
     }
@@ -143,7 +141,7 @@ public abstract class PrologTestBase {
      * @throws IOException
      */
     protected void addTheory(String theFilename) throws IOException {
-        TheoryManager mgr = getProlog().getTheoryManager();
+        final TheoryManager mgr = getProlog().getTheoryManager();
         mgr.addTheory(mgr.load(new File(theFilename)));
     }
 

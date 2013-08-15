@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -90,7 +90,7 @@ public class PrologImpl implements PrologImplementor {
 
     /**
      * Constructor for a specific level of initialization.
-     * 
+     *
      * @param theLevel
      */
     public PrologImpl(InitLevel theLevel) {
@@ -153,64 +153,72 @@ public class PrologImpl implements PrologImplementor {
         return ReflectUtils.safeCastNotNull("getting TheoryManager of the first ClauseProvider", this.clauseProviders.get(0), TheoryManager.class);
     }
 
+    @Override
     public TermFactory getTermFactory() {
-        return termFactory;
+        return this.termFactory;
     }
 
     public void setTermFactory(TermFactory termFactory) {
         this.termFactory = termFactory;
     }
 
+    @Override
     public Formatter getFormatter() {
-        return formatter;
+        return this.formatter;
     }
 
     public void setFormatter(Formatter formatter) {
         this.formatter = formatter;
     }
 
+    @Override
     public LibraryManager getLibraryManager() {
-        return libraryManager;
+        return this.libraryManager;
     }
 
     public void setLibraryManager(LibraryManager libraryManager) {
         this.libraryManager = libraryManager;
     }
 
+    @Override
     public OperatorManager getOperatorManager() {
-        return operatorManager;
+        return this.operatorManager;
     }
 
     public void setOperatorManager(OperatorManager operatorManager) {
         this.operatorManager = operatorManager;
     }
 
+    @Override
     public Solver getSolver() {
-        return solver;
+        return this.solver;
     }
 
     public void setSolver(Solver solver) {
         this.solver = solver;
     }
 
+    @Override
     public Unifier getUnifier() {
-        return unifier;
+        return this.unifier;
     }
 
     public void setUnifier(Unifier unifier) {
         this.unifier = unifier;
     }
 
+    @Override
     public ClauseProviderResolver getClauseProviderResolver() {
-        return clauseProviderResolver;
+        return this.clauseProviderResolver;
     }
 
     public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
         this.clauseProviderResolver = clauseProviderResolver;
     }
 
+    @Override
     public List<ClauseProvider> getClauseProviders() {
-        return clauseProviders;
+        return this.clauseProviders;
     }
 
     public void setClauseProviders(List<ClauseProvider> clauseProviders) {

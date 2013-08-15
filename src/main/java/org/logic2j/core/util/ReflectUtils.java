@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -20,14 +20,14 @@ package org.logic2j.core.util;
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
  * micro-helper to java.lang.reflect.
- * 
+ *
  * @version $Revision: 1.24 $
  */
 public abstract class ReflectUtils {
 
     /**
      * Dynamic runtime checking of an instance against a class or interface; tolerates null values.
-     * 
+     *
      * @param context Contextual information to be reported, in case of an exception being thrown, to the beginning of the exception's
      *            message. Typical use case would be safeCastOrNull("Downloading " + this, eventDate, Date.class).
      * @param instance The instance to check, can be null.
@@ -50,7 +50,7 @@ public abstract class ReflectUtils {
 
     /**
      * Dynamic runtime checking of an instance against a class or interface; does now allow null values.
-     * 
+     *
      * @param context Contextual information to be reported, in case of an exception being thrown, to the beginning of the exception's
      *            message. Typical use case would be safeCastNotNull("Obtaining PMDB API", api, PMDB.class).
      * @param instance The instance to check, must not be null

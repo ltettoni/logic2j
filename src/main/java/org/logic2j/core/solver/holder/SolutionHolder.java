@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,9 +37,9 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
  * multiple solutions), and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
  * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed),
  * or delayed until access methods are called.
- * 
+ *
  * TODO Maybe have a way to allow limiting "all" to a reasonable number.
- * 
+ *
  * <p/>
  * This type of API for extracting results from a data layer should further be analyzed and compared to other APIs such as JDBC, JNDI,
  * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
@@ -59,7 +59,7 @@ public class SolutionHolder {
 
     /**
      * Number of solutions - without their content.
-     * 
+     *
      * @return The value of {@link #all()}.{@link MultipleSolutionsHolder#number()}.
      */
     public int number() {
@@ -68,7 +68,7 @@ public class SolutionHolder {
 
     /**
      * Indicate you are interested in all results - calling this method does NOT start solving.
-     * 
+     *
      * @return A relay object to access all solutions.
      */
     public MultipleSolutionsHolder all() {
@@ -77,7 +77,7 @@ public class SolutionHolder {
 
     /**
      * Solves the goal, and holds the solution for further dereferencing.
-     * 
+     *
      * @return A relay object to access the unique solution.
      */
     public UniqueSolutionHolder unique() {
@@ -89,7 +89,7 @@ public class SolutionHolder {
     /**
      * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link Solution}s from this
      * {@link Iterator} at its own pace. This uses the {@link IterableSolutionListener}.
-     * 
+     *
      * @return An iterator for all solutions.
      */
     public Iterator<Solution> iterator() {

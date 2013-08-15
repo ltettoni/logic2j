@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -26,7 +26,7 @@ import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Benchmarking the Prolog engine (unification, inference engine).
- * 
+ *
  */
 public class BenchmarkTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
@@ -34,7 +34,7 @@ public class BenchmarkTest extends PrologTestBase {
     /**
      * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
      * 512k
-     * 
+     *
      * @throws IOException
      */
     @Test
@@ -46,7 +46,7 @@ public class BenchmarkTest extends PrologTestBase {
 
     /**
      * Takes lots of time and stack - use with parcimony and with -Xss10m
-     * 
+     *
      * @throws IOException
      */
     @Ignore
@@ -68,15 +68,15 @@ public class BenchmarkTest extends PrologTestBase {
     @Test
     public void profileMillionLoops() throws IOException {
         addTheory("src/test/resources/test-data.pl");
-        long t1 = System.currentTimeMillis();
+        final long t1 = System.currentTimeMillis();
         assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
-        long t2 = System.currentTimeMillis();
+        final long t2 = System.currentTimeMillis();
         logger.info("Elapse {}", t2 - t1);
     }
 
     // FIXME Why a main()?
     public static void main(String[] args) throws InterruptedException, IOException {
-        BenchmarkTest benchmarkTest = new BenchmarkTest();
+        final BenchmarkTest benchmarkTest = new BenchmarkTest();
         benchmarkTest.setUp();
         Thread.sleep(20000);
         benchmarkTest.millionLoops();

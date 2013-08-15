@@ -38,25 +38,25 @@ public class ConfigLibrary extends LibraryBase {
 
     @Primitive
     public void rdb_config(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
-        String driver = ((Struct) theArguments[0]).getName();
+        final String driver = ((Struct) theArguments[0]).getName();
         final String connectionString = ((Struct) theArguments[1]).getName();
-        String username = ((Struct) theArguments[2]).getName();
-        String password = ((Struct) theArguments[3]).getName();
-        String prefix = ((Struct) theArguments[4]).getName();
-        Set<String> tablesToMap = new HashSet<String>();
+        final String username = ((Struct) theArguments[2]).getName();
+        final String password = ((Struct) theArguments[3]).getName();
+        final String prefix = ((Struct) theArguments[4]).getName();
+        final Set<String> tablesToMap = new HashSet<String>();
         if (theArguments.length > 5 && theArguments[5].isList()) {
-            for (Struct struct : ((Struct) theArguments[5]).javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
+            for (final Struct struct : ((Struct) theArguments[5]).javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
                 tablesToMap.add(struct.getName().toLowerCase());
             }
         }
 
         try {
             Class.forName(driver);
-        } catch (ClassNotFoundException exception) {
+        } catch (final ClassNotFoundException exception) {
             exception.printStackTrace();
         }
 
-        DataSource dataSource = new DataSource() {
+        final DataSource dataSource = new DataSource() {
 
             @SuppressWarnings("unchecked")
             @Override
@@ -115,24 +115,25 @@ public class ConfigLibrary extends LibraryBase {
         // This is dubious - we instantiate a new ClauseProvider just to save the table metamodel
         // but we won't have it when needed!!!
         // This generates a NPE see RDBClauseProviderTest
-        RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(), dataSource, prefix);
+        final RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(), dataSource, prefix);
 
-        DatabaseMetaData dmd = dataSource.getConnection(username, password).getMetaData();
-        ResultSet tables = dmd.getTables(null, null, "%", null);
+        final DatabaseMetaData dmd = dataSource.getConnection(username, password).getMetaData();
+        final ResultSet tables = dmd.getTables(null, null, "%", null);
         while (tables.next()) {
-            String tableName = tables.getString(3);
+            final String tableName = tables.getString(3);
             logger.debug("DB introspection found table \"{}\"", tableName);
-            String tableNameLc = tableName.toLowerCase();
-            if (!tablesToMap.contains(tableNameLc))
+            final String tableNameLc = tableName.toLowerCase();
+            if (!tablesToMap.contains(tableNameLc)) {
                 continue;
-            ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
-            List<String> columnDescription = new ArrayList<String>();
+            }
+            final ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
+            final List<String> columnDescription = new ArrayList<String>();
             while (tableColumns.next()) {
                 columnDescription.add(tableColumns.getString(4));
             }
             clauseProvider.saveTableInfo(tableName, columnDescription.toArray(new String[] {}));
-            int arity = columnDescription.size();
-            String predicateKey = prefix + tableNameLc + '/' + arity;
+            final int arity = columnDescription.size();
+            final String predicateKey = prefix + tableNameLc + '/' + arity;
             getProlog().getClauseProviderResolver().register(predicateKey, clauseProvider);
             tableColumns.close();
         }

@@ -48,13 +48,13 @@ import org.logic2j.core.model.symbol.Struct;
 
 /**
  * BNF for tuProlog
- * 
+ *
  * part 1: Lexer digit ::= 0 .. 9 lc_letter ::= a .. z uc_letter ::= A .. Z | _ symbol ::= \ | $ | & | ^ | @ | # | . | , | : | ; | = | < | >
  * | + | - | * | / | ~
- * 
+ *
  * letter ::= digit | lc_letter | uc_letter integer ::= { digit }+ float ::= { digit }+ . { digit }+ [ E|e [ +|- ] { digit }+ ] atom ::=
  * lc_letter { letter }* | ! variable ::= uc_letter { letter }*
- * 
+ *
  * from the super class, the super.nextToken() returns and updates the following relevant fields: - if the next token is a collection of
  * wordChars, the type returned is TT_WORD and the value is put into the field sval. - if the next token is an ordinary char, the type
  * returned is the same as the unicode int value of the ordinary character - other characters should be handled as ordinary characters.
@@ -68,7 +68,7 @@ class Tokenizer extends StreamTokenizer implements Serializable {
     }
 
     // used to enable pushback from the parser. Not in any way connected with pushBack2 and super.pushBack().
-    private LinkedList<Token> tokenList = new LinkedList<Token>();
+    private final LinkedList<Token> tokenList = new LinkedList<Token>();
 
     // used in the double lookahead check that . following ints is a fraction marker or end marker (pushback() only works on one level)
     private PushBack pushBack2 = null;
@@ -215,7 +215,7 @@ class Tokenizer extends StreamTokenizer implements Serializable {
         }
 
         if (typea == '.') { // check that '.' as end token is followed by a layout character, see ISO Standard 6.4.8 endnote
-            int typeb = super.nextToken();
+            final int typeb = super.nextToken();
             if (isWhite(typeb) || typeb == '%' || typeb == StreamTokenizer.TT_EOF) {
                 return new Token(".", END);
             }
@@ -226,14 +226,14 @@ class Tokenizer extends StreamTokenizer implements Serializable {
 
         // variable, atom or number
         if (typea == TT_WORD) {
-            char firstChar = svala.charAt(0);
+            final char firstChar = svala.charAt(0);
             // variable
             if (Character.isUpperCase(firstChar) || '_' == firstChar) {
                 return new Token(svala, VARIABLE);
             } else if (firstChar >= '0' && firstChar <= '9') {
                 isNumber = true; // set type to number and handle later
             } else { // otherwise, it must be an atom (or wrong)
-                int typeb = super.nextToken(); // lookahead 1 to identify what type of atom
+                final int typeb = super.nextToken(); // lookahead 1 to identify what type of atom
                 pushBack(); // this does not skip whitespaces, only readNext does so.
                 if (typeb == '(') {
                     return new Token(svala, ATOM | FUNCTOR);
@@ -248,18 +248,18 @@ class Tokenizer extends StreamTokenizer implements Serializable {
         // quotes
         if (typea == '\'' || typea == '\"' || typea == '`') {
             int qType = typea;
-            StringBuffer quote = new StringBuffer();
+            final StringBuffer quote = new StringBuffer();
             while (true) { // run through entire quote and added body to quote buffer
                 typea = super.nextToken();
                 svala = this.sval;
                 // continuation escape sequence
                 if (typea == '\\') {
-                    int typeb = super.nextToken();
+                    final int typeb = super.nextToken();
                     if (typeb == '\n') {
                         continue;
                     }
                     if (typeb == '\r') {
-                        int typec = super.nextToken();
+                        final int typec = super.nextToken();
                         if (typec == '\n') {
                             continue; // continuation escape sequence marker \\r\n
                         }
@@ -270,7 +270,7 @@ class Tokenizer extends StreamTokenizer implements Serializable {
                 }
                 // double '' or "" or ``
                 if (typea == qType) {
-                    int typeb = super.nextToken();
+                    final int typeb = super.nextToken();
                     if (typeb == qType) { // escaped '' or "" or ``
                         quote.append((char) qType);
                         continue;
@@ -289,14 +289,14 @@ class Tokenizer extends StreamTokenizer implements Serializable {
                 }
             }
 
-            String quoteBody = quote.toString();
+            final String quoteBody = quote.toString();
 
             qType = qType == '\'' ? SQ_SEQUENCE : qType == '\"' ? DQ_SEQUENCE : SQ_SEQUENCE;
             if (qType == SQ_SEQUENCE) {
                 if (Parser.isAtom(quoteBody)) {
                     qType = ATOM;
                 }
-                int typeb = super.nextToken(); // lookahead 1 to identify what type of quote
+                final int typeb = super.nextToken(); // lookahead 1 to identify what type of quote
                 pushBack(); // nextToken() does not skip whitespaces, only readNext does so.
                 if (typeb == '(') {
                     return new Token(quoteBody, qType | FUNCTOR);
@@ -309,7 +309,7 @@ class Tokenizer extends StreamTokenizer implements Serializable {
         if (Arrays.binarySearch(GRAPHIC_CHARS, (char) typea) >= 0) {
 
             // the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
-            StringBuffer symbols = new StringBuffer();
+            final StringBuffer symbols = new StringBuffer();
             int typeb = typea;
             // String svalb = null;
             while (Arrays.binarySearch(GRAPHIC_CHARS, (char) typeb) >= 0) {
@@ -354,8 +354,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
                 }
 
                 // lookahead 1
-                int typeb = super.nextToken();
-                String svalb = this.sval;
+                final int typeb = super.nextToken();
+                final String svalb = this.sval;
 
                 // 1.b ordinary integers
                 if (typeb != '.' && typeb != '\'') { // i.e. not float or character constant
@@ -365,8 +365,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
 
                 // 1.c character code constant
                 if (typeb == '\'' && "0".equals(svala)) {
-                    int typec = super.nextToken(); // lookahead 2
-                    String svalc = this.sval;
+                    final int typec = super.nextToken(); // lookahead 2
+                    final String svalc = this.sval;
                     int intVal;
                     if ((intVal = isCharacterCodeConstantToken(typec, svalc)) != -1) {
                         return new Token("" + intVal, INTEGER);
@@ -385,8 +385,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
                 }
 
                 // lookahead 2
-                int typec = super.nextToken();
-                String svalc = this.sval;
+                final int typec = super.nextToken();
+                final String svalc = this.sval;
 
                 // 2.c check that the next token after '.' is a possible fraction
                 if (typec != TT_WORD) { // if its not, the period is an End period
@@ -403,10 +403,10 @@ class Tokenizer extends StreamTokenizer implements Serializable {
 
                 if (exponent >= 1) { // the float must have a valid exponent
                     if (exponent == svalc.length() - 1) { // the exponent must be signed exponent
-                        int typeb2 = super.nextToken();
+                        final int typeb2 = super.nextToken();
                         if (typeb2 == '+' || typeb2 == '-') {
-                            int typec2 = super.nextToken();
-                            String svalc2 = this.sval;
+                            final int typec2 = super.nextToken();
+                            final String svalc2 = this.sval;
                             if (typec2 == TT_WORD) {
                                 // verify the remaining parts of the float and return
                                 Long.parseLong(svalc.substring(0, exponent));
@@ -420,7 +420,7 @@ class Tokenizer extends StreamTokenizer implements Serializable {
                 Double.parseDouble(svala + "." + svalc);
                 return new Token(svala + "." + svalc, FLOAT);
 
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 // return more info on what was wrong with the number given ?
                 throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number at line: " + lineno());
             }
@@ -429,8 +429,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param typec
      * @param svalc
      * @return the intValue of the next character token, -1 if invalid needs a lookahead if typec is \

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -48,9 +48,9 @@ public class DefaultLibraryManager implements LibraryManager {
     // TODO Should this be a PrologImplementor instead of Prolog? If so it allows moving Prolog.getLibararyManager to PrologImplementor.
     private final Prolog prolog;
 
-    private LibraryContent wholeContent = new LibraryContent();
+    private final LibraryContent wholeContent = new LibraryContent();
 
-    private Map<Class<? extends PLibrary>, PLibrary> libraries = new HashMap<Class<? extends PLibrary>, PLibrary>();
+    private final Map<Class<? extends PLibrary>, PLibrary> libraries = new HashMap<Class<? extends PLibrary>, PLibrary>();
 
     /**
      * @param theProlog
@@ -98,7 +98,7 @@ public class DefaultLibraryManager implements LibraryManager {
         final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
 
         // Load all annotated methods
-        for (Method method : libraryClass.getMethods()) {
+        for (final Method method : libraryClass.getMethods()) {
             final Primitive annotation = method.getAnnotation(Primitive.class);
             if (annotation != null) {
                 final Class<?>[] paramTypes = method.getParameterTypes();
@@ -152,7 +152,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 content.putPrimitive(key1, desc);
 
                 // All other accepted synonyms for this primitive
-                for (String synonym : annotation.synonyms()) {
+                for (final String synonym : annotation.synonyms()) {
                     final String key2 = synonym + '/' + arityIndicator;
                     final PrimitiveInfo desc2 = new PrimitiveInfo(type, theLibrary, primitiveName, method, varargs);
                     content.putPrimitive(key2, desc2);

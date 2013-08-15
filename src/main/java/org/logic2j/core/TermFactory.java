@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -24,7 +24,7 @@ import org.logic2j.core.model.symbol.Var;
 
 /**
  * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or streamable representations.
- * 
+ *
  * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives registered therein.
  * @note This interface is still deficient for handling channel streams - some more design needed.
  */
@@ -56,7 +56,7 @@ public interface TermFactory {
     /**
      * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence}; this is the highest-level factory.
      * For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
-     * 
+     *
      * @param theObject
      * @param theMode Kind of Term to instantiate
      * @return A factorized and normalized {@link Term}.
@@ -66,7 +66,7 @@ public interface TermFactory {
 
     /**
      * Create a Term from a character representation, will leverage the definitions of operators and primitives that currently apply.
-     * 
+     *
      * @param theExpression
      * @return A factorized and normalized {@link Term}.
      */
@@ -74,7 +74,7 @@ public interface TermFactory {
 
     /**
      * Normalize a {@link Term} using the current definitions of operators, primitives.
-     * 
+     *
      * @param theTerm To be normalized
      * @return A {@link Term} ready to be used for inference (in a Theory ore as a goal)
      */

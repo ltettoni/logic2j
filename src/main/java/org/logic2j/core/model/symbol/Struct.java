@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -86,7 +86,7 @@ public class Struct extends Term {
     public Struct(String theFunctor, Object... argList) throws InvalidTermException {
         this(theFunctor, argList.length);
         int i = 0;
-        for (Object element : argList) {
+        for (final Object element : argList) {
             this.args[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
         }
     }
@@ -94,7 +94,7 @@ public class Struct extends Term {
     public Struct(String theFunctor, Term... argList) throws InvalidTermException {
         this(theFunctor, argList.length);
         int i = 0;
-        for (Term element : argList) {
+        for (final Term element : argList) {
             if (element == null) {
                 throw new InvalidTermException("Cannot create Term from with null argument");
             }
@@ -104,7 +104,7 @@ public class Struct extends Term {
 
     /**
      * Static factory (instead of constructor).
-     * 
+     *
      * @return A structure representing an empty list
      */
     public static Struct createEmptyPList() {
@@ -113,11 +113,11 @@ public class Struct extends Term {
 
     /**
      * Static factory (instead of constructor).
-     * 
+     *
      * @return A prolog list providing head and tail
      */
     public static Struct createPList(Term h, Term t) {
-        Struct result = new Struct(FUNCTOR_LIST, 2);
+        final Struct result = new Struct(FUNCTOR_LIST, 2);
         result.args[0] = h;
         result.args[1] = t;
         return result;
@@ -125,11 +125,11 @@ public class Struct extends Term {
 
     /**
      * Static factory to create a Prolog List structure from a Java List.
-     * 
+     *
      * @param theJavaList
      */
     public static Struct createPList(List<Term> theJavaList) {
-        int size = theJavaList.size();
+        final int size = theJavaList.size();
         if (size == 0) {
             return Struct.createEmptyPList();
         }
@@ -164,11 +164,11 @@ public class Struct extends Term {
      * Builds a compound, with a linked list of arguments
      */
     public Struct(String theFunctor, Collection<Term> elements) {
-        int ary = elements.size();
+        final int ary = elements.size();
         setNameAndArity(theFunctor, ary);
         this.args = new Term[ary];
         int i = 0;
-        for (Term element : elements) {
+        for (final Term element : elements) {
             this.args[i++] = element;
         }
     }
@@ -188,7 +188,7 @@ public class Struct extends Term {
 
     /**
      * Write major properties of the Struct, and also store read-only fields for efficient access.
-     * 
+     *
      * @param theName
      * @param theArity
      */
@@ -213,7 +213,7 @@ public class Struct extends Term {
 
     /**
      * Gets the i-th element of this structure
-     * 
+     *
      * No bound check is done
      */
     public Term getArg(int theIndex) {
@@ -243,7 +243,7 @@ public class Struct extends Term {
 
     /**
      * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
-     * 
+     *
      * @return The predicate's name + '/' + arity
      */
     public String getPredicateIndicator() {
@@ -256,7 +256,7 @@ public class Struct extends Term {
 
     /**
      * Sets the i-th element of this structure
-     * 
+     *
      * (Only for internal service)
      */
     @Deprecated
@@ -287,13 +287,13 @@ public class Struct extends Term {
     }
 
     public void avoidCycle(List<Term> visited) {
-        for (Term term : visited) {
+        for (final Term term : visited) {
             if (term == this) {
                 throw new PrologNonSpecificError("Cycle detected");
             }
         }
         visited.add(this);
-        for (Term term : this.args) {
+        for (final Term term : this.args) {
             if (term instanceof Struct) {
                 ((Struct) term).avoidCycle(visited);
             }
@@ -314,7 +314,7 @@ public class Struct extends Term {
         Struct t;
         try {
             t = (Struct) this.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new InvalidTermException("Could not clone: " + e, e);
         }
         t.setNameAndArity(this.name, this.arity);
@@ -329,7 +329,7 @@ public class Struct extends Term {
     /**
      * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to
      * theCollectedTerms. The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
-     * 
+     *
      * @param theCollectedTerms
      */
     @Override
@@ -471,7 +471,7 @@ public class Struct extends Term {
 
     /**
      * Gets the head of this structure, which is supposed to be a list.
-     * 
+     *
      * <p>
      * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -484,7 +484,7 @@ public class Struct extends Term {
 
     /**
      * Gets the tail of this structure, which is supposed to be a list.
-     * 
+     *
      * <p>
      * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -497,7 +497,7 @@ public class Struct extends Term {
 
     /**
      * Gets the number of elements of this structure, which is supposed to be a list.
-     * 
+     *
      * <p>
      * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -517,7 +517,7 @@ public class Struct extends Term {
     /**
      * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
      * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
-     * 
+     *
      * If this structure is not a list, null object is returned
      */
     // TODO Clarify how it works, see
@@ -592,7 +592,7 @@ public class Struct extends Term {
      */
     void insert(Term t) {
         assertPList(this);
-        Struct co = Struct.createEmptyPList();
+        final Struct co = Struct.createEmptyPList();
         co.args[0] = getLHS();
         co.args[1] = getRHS();
         this.args[0] = t;
@@ -606,7 +606,7 @@ public class Struct extends Term {
 
     /**
      * Base requirement to unify 2 structures: matching names and arities.
-     * 
+     *
      * @param that
      * @return True if this and that Struct have the same name and arity.
      */

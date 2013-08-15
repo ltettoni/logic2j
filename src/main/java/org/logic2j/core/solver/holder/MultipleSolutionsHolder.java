@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -47,7 +47,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Start solving, indicating you are not interested by the actual solutions nor bindings, only their number.
-     * 
+     *
      * @return The number of solutions.
      */
     public int number() {
@@ -69,7 +69,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Solves the goal and extract, for every solution, the binding for a given variable by name.
-     * 
+     *
      * @param theVariableName
      */
     public List<Term> binding(final String theVariableName) {
@@ -91,14 +91,14 @@ public class MultipleSolutionsHolder {
 
         };
         this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
-        int size = results.size();
+        final int size = results.size();
         checkBounds(size);
         return results;
     }
 
     /**
      * Solves the goal and extract, for every solution, all bindings for all variables.
-     * 
+     *
      * @result An ordered list of bindings
      */
     public List<Map<String, Term>> bindings() {
@@ -113,14 +113,14 @@ public class MultipleSolutionsHolder {
 
         };
         this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
-        int size = results.size();
+        final int size = results.size();
         checkBounds(size);
         return results;
     }
 
     /**
      * Set internal bounds to make sure the next goal to solve has exactly the specified number of solutions.
-     * 
+     *
      * @param theExpectedExactNumber
      * @return this
      */
@@ -131,7 +131,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Set internal bounds to make sure the next goal to solve has a number of solutions between the specified bounds, inclusive.
-     * 
+     *
      * @param thePermissibleLowest
      * @param thePermissibleHighest
      * @return this

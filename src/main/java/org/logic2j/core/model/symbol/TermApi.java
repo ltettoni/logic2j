@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,7 +38,7 @@ import org.logic2j.core.util.ReflectUtils;
  * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
  * subclasses, so they can invoke its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Term)}) and
  * normalization ({@link #normalize(Term, LibraryContent)} .
- * 
+ *
  * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods
  *       there. I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
  * @note Avoid static methods, prefer instantiating this class where needed.
@@ -56,7 +56,7 @@ public class TermApi {
     /**
      * Recursively collect all terms at and under theTerm, and also initialize their {@link #index} to {@link #NO_INDEX}. For example for a
      * structure "s(a,b(c),d(b(a)),X,X,Y)", the result will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
-     * 
+     *
      * @param theTerm
      * @return A collection of terms, never empty. Same terms may appear multiple times.
      */
@@ -69,7 +69,7 @@ public class TermApi {
     /**
      * Factorize a {@link Term}, this means recursively traversing the {@link Term} structure and assigning any duplicates substructures to
      * the same references.
-     * 
+     *
      * @param theTerm
      * @return The factorized term, may be same as argument theTerm in case nothing was needed, or a new object.
      */
@@ -79,13 +79,13 @@ public class TermApi {
     }
 
     void avoidCycle(Struct theClause) {
-        List<Term> visited = new ArrayList<Term>(20);
+        final List<Term> visited = new ArrayList<Term>(20);
         theClause.avoidCycle(visited);
     }
 
     /**
      * Assign the {@link Term#index} value for any {@link Term} hierarchy.
-     * 
+     *
      * @param theTerm
      * @return The number of variables found (recursively).
      */
@@ -96,7 +96,7 @@ public class TermApi {
 
     /**
      * Normalize a {@link Term} using the specified definitions of operators, primitives.
-     * 
+     *
      * @note This method must EXCLUSIVELY be called from {@link TermFactory#normalize(Term)}, with the exception of test cases.
      * @param theTerm To be normalized
      * @param theLibraryContent Defines primitives to be recognized
@@ -114,7 +114,7 @@ public class TermApi {
     /**
      * Substitute, recursively, any bound {@link Var}s to their actual values. This delegates the call to
      * {@link Term#substitute(Bindings, IdentityHashMap)}.
-     * 
+     *
      * @param theTerm
      * @param theBindings
      * @param theBindingsToVars
@@ -133,9 +133,9 @@ public class TermApi {
 
     /**
      * Lowest-level factory for simple {@link Term}s from plain Java {@link Object}s.
-     * 
+     *
      * @note This method is not for unmarshalling (parsing) from {@link String}s into {@link Term}s; use the {@link TermFactory} instead.
-     * 
+     *
      * @param theObject
      * @param theMode
      * @return An instance of a subclass of {@link Term}.
@@ -187,10 +187,10 @@ public class TermApi {
 
     /**
      * Extract one {@link Term} from within another ({@link Struct}) using a rudimentary XPath-like expression language.
-     * 
+     *
      * @param theTerm To select from
      * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
-     * 
+     *
      * @param theClass The {@link Term} class or one of its subclass that the desired returned object should be.
      */
     // TODO Should this go to TermFactory instead? - since we return a new Term
@@ -237,7 +237,7 @@ public class TermApi {
             }
         }
         if (position >= 1) {
-            String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
+            final String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
             return selectTerm(s.getArg(position - 1), levelsTail, theClass);
         }
         if (!(theClass.isAssignableFrom(theTerm.getClass()))) {

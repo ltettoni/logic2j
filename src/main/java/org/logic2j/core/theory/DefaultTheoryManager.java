@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,7 +46,7 @@ import org.logic2j.core.util.ReportUtils;
 public class DefaultTheoryManager implements TheoryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
 
-    private PrologImplementor prolog;
+    private final PrologImplementor prolog;
     private TheoryContent wholeContent = new TheoryContent();
 
     /**
@@ -57,13 +57,13 @@ public class DefaultTheoryManager implements TheoryManager {
     }
 
     public TheoryContent load(CharSequence theTheoryText) {
-        Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
+        final Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
         // final Iterator<Term> iterator = parser.iterator();
         return addClauses(parser);
     }
 
     public TheoryContent load(Reader theReader) {
-        Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
+        final Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
         // final Iterator<Term> iterator = parser.iterator();
         return addClauses(parser);
     }
@@ -82,18 +82,18 @@ public class DefaultTheoryManager implements TheoryManager {
     public TheoryContent load(PLibrary theLibrary) {
         // Load prolog theory from a classloadable resource
         final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
-        String name = libraryClass.getSimpleName() + ".prolog";
-        URL contentUrl = libraryClass.getResource(name);
+        final String name = libraryClass.getSimpleName() + ".prolog";
+        final URL contentUrl = libraryClass.getResource(name);
         if (contentUrl != null) {
             Object text;
             try {
                 text = contentUrl.getContent();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new InvalidTermException("Could not load library from classloadable resource " + name + ": " + e);
             }
             if (text instanceof InputStream) {
                 // FIXME: there will be encoding issues when using InputStream instead of Reader
-                Reader reader = new InputStreamReader((InputStream) text);
+                final Reader reader = new InputStreamReader((InputStream) text);
                 return load(reader);
             }
             throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
@@ -103,7 +103,7 @@ public class DefaultTheoryManager implements TheoryManager {
     }
 
     private TheoryContent addClauses(Parser theParser) {
-        TheoryContent content = new TheoryContent();
+        final TheoryContent content = new TheoryContent();
         // final Iterator<Term> iterator = theParser.iterator();
         // while (iterator.hasNext()) {
         Term clauseTerm = theParser.nextTerm(true);
@@ -116,7 +116,7 @@ public class DefaultTheoryManager implements TheoryManager {
             if ("initialize".equals(cl.getHead().getName())) {
                 initializeGoal = cl.getBody();
             } else {
-                prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
+                this.prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
             }
             content.add(cl);
             clauseTerm = theParser.nextTerm(true);
@@ -131,7 +131,7 @@ public class DefaultTheoryManager implements TheoryManager {
                     return Continuation.USER_ABORT;
                 }
             };
-            prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
+            this.prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
         }
         return content;
     }

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,11 +30,11 @@ import org.logic2j.core.util.CollectionUtils;
 
 /**
  * Generate the lexical part of SQL and array of arguments based on higher-levels components of a query.
- * 
+ *
  * TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized) TODO:
  * possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123) TODO: cannot handle subqueries
  * TODO: cannot express AST expressions (OR, NOT)
- * 
+ *
  * @author tettoni
  */
 public class SqlBuilder3 {
@@ -60,11 +60,11 @@ public class SqlBuilder3 {
     private boolean distinct = false; // Generate "select distinct ..." or "count(distinct ...)"
 
     public Set<Table> tables = new LinkedHashSet<Table>(); // All tables registered, unique!
-    private List<BaseCriterion> conjunctions = new ArrayList<BaseCriterion>();
-    private List<Column> projections = new ArrayList<Column>();
-    private List<ColumnOrder> orders = new ArrayList<ColumnOrder>();
+    private final List<BaseCriterion> conjunctions = new ArrayList<BaseCriterion>();
+    private final List<Column> projections = new ArrayList<Column>();
+    private final List<ColumnOrder> orders = new ArrayList<ColumnOrder>();
 
-    private List<Join> join = new ArrayList<Join>();
+    private final List<Join> join = new ArrayList<Join>();
 
     public SqlBuilder3() {
         // Nothing
@@ -136,7 +136,7 @@ public class SqlBuilder3 {
         ensureSelect();
         this.parameters.clear(); // This is quite ugly - while generating (not while registering) we do addParameter() so we need to clear
                                  // them first!
-        StringBuilder sb = new StringBuilder(300);
+        final StringBuilder sb = new StringBuilder(300);
         sb.append(this.instruction);
         sb.append(" count(");
         if (isDistinct()) {
@@ -161,9 +161,9 @@ public class SqlBuilder3 {
         final CollectionMap<Table, Table> map = new CollectionMap<SqlBuilder3.Table, SqlBuilder3.Table>();
         final CollectionMap<Table, Join> mapJoin = new CollectionMap<SqlBuilder3.Table, SqlBuilder3.Join>();
         // Register joined tables
-        for (Join j : this.join) {
-            Table left = j.leftColumn.getTable();
-            Table right = j.rightColumn.getTable();
+        for (final Join j : this.join) {
+            final Table left = j.leftColumn.getTable();
+            final Table right = j.rightColumn.getTable();
             if (map.containsKey(left)) {
                 map.add(left, right);
                 mapJoin.add(left, j);
@@ -176,7 +176,7 @@ public class SqlBuilder3 {
             }
         }
         // Now for all non-joined tables, only add them if not already listed with the joined ones.
-        for (Table tbl : this.tables) {
+        for (final Table tbl : this.tables) {
             if (!map.contains(tbl)) {
                 map.getOrCreate(tbl);
             }
@@ -184,18 +184,18 @@ public class SqlBuilder3 {
 
         sb.append("from ");
         // All the tables that do not need a join
-        List<String> tableTokens = new ArrayList<String>();
-        for (Entry<Table, Collection<Table>> entry : map.entrySet()) {
+        final List<String> tableTokens = new ArrayList<String>();
+        for (final Entry<Table, Collection<Table>> entry : map.entrySet()) {
             if (entry.getValue().isEmpty()) {
                 tableTokens.add(entry.getKey().declaration());
             }
         }
 
         // Now all those that need a join
-        for (Entry<Table, Collection<Join>> entry : mapJoin.entrySet()) {
-            List<String> joinTokens = new ArrayList<String>();
+        for (final Entry<Table, Collection<Join>> entry : mapJoin.entrySet()) {
+            final List<String> joinTokens = new ArrayList<String>();
             joinTokens.add(entry.getKey().declaration());
-            for (Join jn : entry.getValue()) {
+            for (final Join jn : entry.getValue()) {
                 joinTokens.add(jn.generate(entry.getKey()));
             }
             tableTokens.add(CollectionUtils.formatSeparated(joinTokens, " "));
@@ -206,7 +206,7 @@ public class SqlBuilder3 {
 
     private CharSequence orderByClause() {
         final List<String> fragments = new ArrayList<String>();
-        for (ColumnOrder order : this.orders) {
+        for (final ColumnOrder order : this.orders) {
             fragments.add(order.toString());
         }
         return CollectionUtils.formatSeparated(fragments, ", ");
@@ -214,7 +214,7 @@ public class SqlBuilder3 {
 
     private CharSequence generateProjections() {
         final List<String> fragments = new ArrayList<String>();
-        for (Column proj : this.projections) {
+        for (final Column proj : this.projections) {
             fragments.add(proj.toString());
         }
         return CollectionUtils.formatSeparated(fragments, ", ");
@@ -229,7 +229,7 @@ public class SqlBuilder3 {
 
     private Object conjunctions() {
         final List<String> fragments = new ArrayList<String>();
-        for (BaseCriterion conj : this.conjunctions) {
+        for (final BaseCriterion conj : this.conjunctions) {
             fragments.add(conj.sql());
         }
         return CollectionUtils.formatSeparated(fragments, " and ");
@@ -270,7 +270,7 @@ public class SqlBuilder3 {
 
     /**
      * Generate several "?" parameter placeholders for scalar or vectorial (inlist) parameters.
-     * 
+     *
      * @param theNumber 0 for no parameter, 1 for a scalar parameter, >1 for vectorial parameters, this implies the INlist operator.
      * @return "" when theNumber=0, "?" when theNumber=1, otherwise "(?,?,?,?...?)" with as many question marks as argument theNumber
      */
@@ -296,7 +296,7 @@ public class SqlBuilder3 {
     /**
      * Flatten out parameters of arrays and collections: in case one element is itself an array or collection, all its first level elements
      * will be added to the returned collection.
-     * 
+     *
      * @param theParams
      * @return An array of theParams, where elements of arrays or collections are flatted out (only the first level). May be empty but never
      *         null.
@@ -307,13 +307,13 @@ public class SqlBuilder3 {
         }
         final ArrayList<Object> sqlParams = new ArrayList<Object>();
         // Flatten out collections and arrays
-        for (Object param : theParams) {
+        for (final Object param : theParams) {
             if (param instanceof Object[]) {
-                for (Object p : (Object[]) param) {
+                for (final Object p : (Object[]) param) {
                     sqlParams.add(p);
                 }
             } else if (param instanceof Collection<?>) {
-                for (Object p : (Collection<?>) param) {
+                for (final Object p : (Collection<?>) param) {
                     sqlParams.add(p);
                 }
             } else {
@@ -365,7 +365,7 @@ public class SqlBuilder3 {
     private String equalityOrInOperator(Object[] theScalarOrListValue) {
         if (theScalarOrListValue.length == 1) {
             if (theScalarOrListValue[0] instanceof Collection<?>) {
-                int size = ((Collection<?>) theScalarOrListValue[0]).size();
+                final int size = ((Collection<?>) theScalarOrListValue[0]).size();
                 if (size > 1) {
                     return " in ";
                 }
@@ -381,7 +381,7 @@ public class SqlBuilder3 {
     private String notEqualityOrInOperator(Object[] theScalarOrListValue) {
         if (theScalarOrListValue.length == 1) {
             if (theScalarOrListValue[0] instanceof Collection<?>) {
-                int size = ((Collection<?>) theScalarOrListValue[0]).size();
+                final int size = ((Collection<?>) theScalarOrListValue[0]).size();
                 if (size > 1) {
                     return " not in ";
                 }
@@ -477,14 +477,14 @@ public class SqlBuilder3 {
 
     /**
      * Create and register new table with alias, or obtain previously registered one (with same name or alias).
-     * 
+     *
      * @param theTableName
      * @param theAlias
      * @return A new or previously-registered Table.
      */
     public Table table(String theTableName, String theAlias) {
         final Table candidate = new Table(theTableName, theAlias);
-        for (Table elem : this.tables) {
+        for (final Table elem : this.tables) {
             if (elem.exactlyEquals(candidate)) {
                 return elem;
             }
@@ -500,7 +500,7 @@ public class SqlBuilder3 {
      * @return A union subtable.
      */
     public Table tableSubUnion(String theAlias, boolean optionUnionAll, SqlBuilder3... theSubQueries) {
-        Table table = new Table(theSubQueries, optionUnionAll, theAlias);
+        final Table table = new Table(theSubQueries, optionUnionAll, theAlias);
         this.tables.add(table);
         return table;
     }
@@ -572,7 +572,7 @@ public class SqlBuilder3 {
 
     /**
      * Describe references to a table or view, possibly with an alias.
-     * 
+     *
      * @version $Id: SqlBuilder3.java,v 1.7 2011-10-14 22:53:46 tettoni Exp $
      */
     public class Table {
@@ -595,7 +595,7 @@ public class SqlBuilder3 {
 
         /**
          * Table based on sub queries.
-         * 
+         *
          * @param theSubQueries
          * @param theOptionUnionAll
          * @param theAlias
@@ -627,7 +627,7 @@ public class SqlBuilder3 {
                 final StringBuilder subTable = new StringBuilder();
                 subTable.append('(');
                 int counter = 0;
-                for (SqlBuilder3 sub : this.subQueries) {
+                for (final SqlBuilder3 sub : this.subQueries) {
                     if (!sub.isSelect()) {
                         throw new IllegalArgumentException("Only subtables corresponding to select statement allowed, not " + sub.toString());
                     }
@@ -692,7 +692,7 @@ public class SqlBuilder3 {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            Table other = (Table) obj;
+            final Table other = (Table) obj;
             if (!getOuterType().equals(other.getOuterType())) {
                 return false;
             }
@@ -795,8 +795,8 @@ public class SqlBuilder3 {
 
     public class Column {
 
-        private Table table;
-        private String columnName;
+        private final Table table;
+        private final String columnName;
 
         /**
          * @param theTable
@@ -849,7 +849,7 @@ public class SqlBuilder3 {
                 return OPERATOR_NOT + '(' + this.members.get(0).sql() + ')';
             }
             final List<String> fragments = new ArrayList<String>();
-            for (BaseCriterion element : this.members) {
+            for (final BaseCriterion element : this.members) {
                 fragments.add(element.sql());
             }
             return '(' + CollectionUtils.formatSeparated(fragments, " " + this.operator + " ") + ')';
@@ -858,8 +858,8 @@ public class SqlBuilder3 {
 
     public class Criterion extends BaseCriterion {
 
-        private Column column;
-        private Object[] operand;
+        private final Column column;
+        private final Object[] operand;
 
         /**
          * @param theColumn
@@ -898,8 +898,8 @@ public class SqlBuilder3 {
 
     public class ColumnOrder {
 
-        private Column column;
-        private String direction;
+        private final Column column;
+        private final String direction;
 
         /**
          * @param theColumn

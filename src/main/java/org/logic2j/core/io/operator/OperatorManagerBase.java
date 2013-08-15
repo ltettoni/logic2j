@@ -30,7 +30,7 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
     private static final long serialVersionUID = 1L;
 
     /** current known operators */
-    private OperatorRegister operatorList = new OperatorRegister();
+    private final OperatorRegister operatorList = new OperatorRegister();
 
     /**
      * Creates a new operator. If the operator is already provided, it replaces it with the new one
@@ -58,18 +58,18 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
      * Register for operators; caches operator by name+type description. Retains insertion order.
      * <p/>
      * Not 100% sure if 'insertion-order-priority' should be completely replaced by the explicit priority given to operators.
-     * 
+     *
      * @author ivar.orstavik@hist.no
      */
     static class OperatorRegister {
         // map of operators by name and type
         // key is the nameType of an operator (for example ":-xfx") - value is an Operator
-        private HashMap<String, Operator> nameTypeToKey = new HashMap<String, Operator>();
-        private LinkedHashSet<Operator> operators = new LinkedHashSet<Operator>();
+        private final HashMap<String, Operator> nameTypeToKey = new HashMap<String, Operator>();
+        private final LinkedHashSet<Operator> operators = new LinkedHashSet<Operator>();
 
         public boolean addOperator(Operator op) {
             final String nameTypeKey = op.name + op.type;
-            Operator matchingOp = this.nameTypeToKey.get(nameTypeKey);
+            final Operator matchingOp = this.nameTypeToKey.get(nameTypeKey);
             if (matchingOp != null) {
                 this.operators.remove(matchingOp); // removes found match from the main list
             }

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,11 +43,11 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * A {@link Formatter} that will use the defined operators to render structures.
-     * 
+     *
      * @param theProlog
      */
     public DefaultFormatter(PrologImplementor theProlog) {
-        prolog = theProlog;
+        this.prolog = theProlog;
     }
 
     /**
@@ -94,7 +94,7 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * Gets the string representation of this structure
-     * 
+     *
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
      */
     private String formatStruct(Struct theStruct) {
@@ -112,7 +112,7 @@ public class DefaultFormatter implements Formatter {
         if (arity > 0) {
             s = s + "(";
             for (int c = 1; c < arity; c++) {
-                Term arg = theStruct.getArg(c - 1);
+                final Term arg = theStruct.getArg(c - 1);
                 if (!(arg instanceof Var)) {
                     s = s + arg.toString() + DefaultFormatter.ARG_SEPARATOR;
                 } else {
@@ -129,10 +129,10 @@ public class DefaultFormatter implements Formatter {
     }
 
     private String formatRecursive(Struct theStruct) {
-        Term h = theStruct.getLHS();
-        Term t = theStruct.getRHS();
+        final Term h = theStruct.getLHS();
+        final Term t = theStruct.getRHS();
         if (t.isList()) {
-            Struct tl = (Struct) t;
+            final Struct tl = (Struct) t;
             if (tl.isEmptyList()) {
                 return h.toString();
             }
@@ -171,10 +171,10 @@ public class DefaultFormatter implements Formatter {
     }
 
     private String toStringAsList(Struct theStruct, OperatorManager op) {
-        Term h = theStruct.getLHS();
-        Term t = theStruct.getRHS();
+        final Term h = theStruct.getLHS();
+        final Term t = theStruct.getRHS();
         if (t.isList()) {
-            Struct tl = (Struct) t;
+            final Struct tl = (Struct) t;
             if (tl.isEmptyList()) {
                 return toStringAsArgY(h, op, 0);
             }
@@ -190,7 +190,7 @@ public class DefaultFormatter implements Formatter {
         if (theTerm instanceof StructObject<?>) {
             return theTerm.toString();
         }
-        Struct theStruct = (Struct) theTerm;
+        final Struct theStruct = (Struct) theTerm;
         int p = 0;
         String v = "";
         final String name = theStruct.getName();
@@ -249,8 +249,8 @@ public class DefaultFormatter implements Formatter {
 
     @Override
     public String format(Term theTerm) {
-        if (prolog != null) {
-            return toStringAsArgY(theTerm, prolog.getOperatorManager(), Operator.OP_HIGH);
+        if (this.prolog != null) {
+            return toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
         }
         return theTerm.accept(this);
     }

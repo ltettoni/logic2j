@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,10 +46,10 @@ public class DefaultUnifier implements Unifier {
     /**
      * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even if it eventually
      * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
-     * 
+     *
      * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is
      *       symmetric.
-     * 
+     *
      * @param term1
      * @param theBindings1
      * @param term2
@@ -66,7 +66,7 @@ public class DefaultUnifier implements Unifier {
             // - when anonymous, unifies
             // - when free, bind it
             // - when bound, follow VARs until end of chain
-            Var var1 = (Var) term1;
+            final Var var1 = (Var) term1;
             if (var1.isAnonymous()) {
                 return true;
             }
@@ -97,8 +97,8 @@ public class DefaultUnifier implements Unifier {
             return false;
         } else if (term1 instanceof Struct) {
             if (term2 instanceof Struct) {
-                Struct s1 = (Struct) term1;
-                Struct s2 = (Struct) term2;
+                final Struct s1 = (Struct) term1;
+                final Struct s2 = (Struct) term2;
                 if (!(s1.nameAndArityMatch(s2))) {
                     return false;
                 }
@@ -106,7 +106,7 @@ public class DefaultUnifier implements Unifier {
                     // Must unify same (sub?) classes of Struct
                     return false;
                 }
-                int arity1 = s1.getArity();
+                final int arity1 = s1.getArity();
                 for (int i = 0; i < arity1; i++) {
                     if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
                         return false;

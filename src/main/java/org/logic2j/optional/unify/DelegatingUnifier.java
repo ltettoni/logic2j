@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,13 +43,13 @@ public class DelegatingUnifier implements Unifier {
     static {
         final Map<String, Method> methodMap = new TreeMap<String, Method>();
 
-        for (Method method : DelegatingUnifier.class.getMethods()) {
+        for (final Method method : DelegatingUnifier.class.getMethods()) {
             if ("unify".equals(method.getName())) {
-                Class<?>[] parameterTypes = method.getParameterTypes();
+                final Class<?>[] parameterTypes = method.getParameterTypes();
 
-                String key1 = classKey(parameterTypes[0]);
-                String key2 = classKey(parameterTypes[2]);
-                String key = key1 + '-' + key2;
+                final String key1 = classKey(parameterTypes[0]);
+                final String key2 = classKey(parameterTypes[2]);
+                final String key = key1 + '-' + key2;
                 methodMap.put(key, method);
             }
         }
@@ -58,20 +58,20 @@ public class DelegatingUnifier implements Unifier {
 
     @Override
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
-        for (Method method : this.getClass().getMethods()) {
+        for (final Method method : this.getClass().getMethods()) {
             if ("unify".equals(method.getName())) {
-                Class<?>[] parameterTypes = method.getParameterTypes();
+                final Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
                     try {
                         theGoalFrame.markBeforeAddingBindings();
-                        boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
+                        final boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
                         if (!unified) {
                             deunify(theGoalFrame);
                         }
                         return unified;
-                    } catch (InvocationTargetException e) {
+                    } catch (final InvocationTargetException e) {
                         throw new InvalidTermException("Could not determine or invoke unification method: " + e.getTargetException());
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         throw new InvalidTermException("Could not determine or invoke unification method: " + e);
                     }
                 }
@@ -103,7 +103,7 @@ public class DelegatingUnifier implements Unifier {
         if (!(s1.nameAndArityMatch(s2))) {
             return false;
         }
-        int arity = s1.getArity();
+        final int arity = s1.getArity();
         for (int i = 0; i < arity; i++) {
             if (!unify(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
                 return false;

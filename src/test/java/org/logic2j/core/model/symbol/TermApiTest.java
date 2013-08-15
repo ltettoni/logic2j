@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,7 +37,7 @@ import org.logic2j.core.model.var.Bindings;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
- * 
+ *
  */
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
@@ -49,14 +49,14 @@ public class TermApiTest {
     public void structurallyEquals() {
         // Vars are never structurally equal ...
         assertFalse(new Var("X").structurallyEquals(new Var("Y")));
-        Var x1 = new Var("X");
-        Var x2 = new Var("X");
+        final Var x1 = new Var("X");
+        final Var x2 = new Var("X");
         // ... even when they have the same name
         assertFalse(x1.structurallyEquals(x2));
-        Struct s = new Struct("s", x1, x2);
+        final Struct s = new Struct("s", x1, x2);
         assertFalse(s.getArg(0).structurallyEquals(s.getArg(1)));
         // After factorization, the 2 X will be same
-        Struct s2 = (Struct) TERM_API.factorize(s);
+        final Struct s2 = (Struct) TERM_API.factorize(s);
         assertNotSame(s, s2);
         assertFalse(s.structurallyEquals(s2));
         assertTrue(s2.getArg(0).structurallyEquals(s2.getArg(1)));
@@ -85,9 +85,9 @@ public class TermApiTest {
         term = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
         logger.info("Flat terms: {}", TERM_API.collectTerms(term));
         //
-        Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
+        final Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
         logger.info("Flat terms of original {}", TERM_API.collectTerms(clause));
-        Term t2 = TERM_API.normalize(clause, null);
+        final Term t2 = TERM_API.normalize(clause, null);
         logger.info("Found {} bindings", t2.getIndex());
         assertEquals(2, t2.getIndex());
         logger.info("Flat terms of copy     {}", TERM_API.collectTerms(t2));
@@ -111,72 +111,72 @@ public class TermApiTest {
     @Test
     public void substitute() {
         try {
-            Term v = Var.ANONYMOUS_VAR;
+            final Term v = Var.ANONYMOUS_VAR;
             TERM_API.substitute(v, new Bindings(v), null);
             fail();
-        } catch (InvalidTermException e) {
+        } catch (final InvalidTermException e) {
             // Expected to happen
         }
 
-        Term a = this.prolog.term("a");
+        final Term a = this.prolog.term("a");
         // Empty binding yields same term since no bindings to resolve
         assertSame(a, TERM_API.substitute(a, new Bindings(a), null));
 
         // Bindings without
         TERM_API.substitute(a, new Bindings(a), null);
 
-        Term x = this.prolog.term("X");
+        final Term x = this.prolog.term("X");
         TERM_API.substitute(x, new Bindings(x), null);
     }
 
     @SuppressWarnings("deprecation")
     @Test
     public void avoidCycle() {
-        Struct cyclic = new Struct("s", Struct.createEmptyPList());
+        final Struct cyclic = new Struct("s", Struct.createEmptyPList());
         cyclic.setArg(0, cyclic);
         try {
             cyclic.avoidCycle(new ArrayList<Term>());
             fail("Should have thrown an IllegalStateException");
-        } catch (PrologNonSpecificError e) {
+        } catch (final PrologNonSpecificError e) {
             // OK
         }
     }
 
     @Test
     public void selectTerm() {
-        Term term = this.prolog.getTermFactory().create("a(b(c,c2),b2)", FactoryMode.ANY_TERM);
+        final Term term = this.prolog.getTermFactory().create("a(b(c,c2),b2)", FactoryMode.ANY_TERM);
         //
         assertSame(term, TERM_API.selectTerm(term, "", Struct.class));
         assertSame(term, TERM_API.selectTerm(term, "a", Struct.class));
         try {
             TERM_API.selectTerm(term, "a[-1]", Struct.class);
             fail("Should fail");
-        } catch (InvalidTermException e) {
+        } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
             TERM_API.selectTerm(term, "a[0]", Struct.class);
             fail("Should fail");
-        } catch (InvalidTermException e) {
+        } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
             TERM_API.selectTerm(term, "a[4]", Struct.class);
             fail("Should fail");
-        } catch (InvalidTermException e) {
+        } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
             TERM_API.selectTerm(term, "z", Struct.class);
             fail("Should fail");
-        } catch (InvalidTermException e) {
+        } catch (final InvalidTermException e) {
             // OK
         }
         //
-        Struct sTerm = (Struct) term;
+        final Struct sTerm = (Struct) term;
         assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a/", Struct.class));
         assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a[1]", Struct.class));
         assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "[1]", Struct.class));

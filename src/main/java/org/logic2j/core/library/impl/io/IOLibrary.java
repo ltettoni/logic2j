@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -40,7 +40,7 @@ public class IOLibrary extends LibraryBase {
 
     @Primitive
     public void write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
-        for (Term term : terms) {
+        for (final Term term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
             final Term value = b.getReferrer();
 
@@ -59,7 +59,7 @@ public class IOLibrary extends LibraryBase {
 
     @Primitive
     public void log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
-        for (Term term : terms) {
+        for (final Term term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
             assertValidBindings(b, "write/*");
             final Term value = b.getReferrer();

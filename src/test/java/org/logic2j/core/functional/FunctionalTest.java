@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -82,7 +82,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void change() throws IOException {
-        IOLibrary library = new IOLibrary(getProlog());
+        final IOLibrary library = new IOLibrary(getProlog());
         loadLibrary(library);
         addTheory("src/test/resources/dollar.pl");
         assertNSolutions(292, "change([H,Q,D,N,P])");
@@ -129,7 +129,7 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void findall_bindFreeVars() throws IOException {
         // UniqueSolutionHolder sol = assertOneSolution("Res=Z");
-        UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
+        final UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
         assertEquals("[a,X,c]", sol.binding("Res").toString());
     }
 
@@ -143,7 +143,7 @@ public class FunctionalTest extends PrologTestBase {
 
         assertEquals("[1,2,3]", assertOneSolution("append([1],[2,3],X)").binding("X").toString());
 
-        MultipleSolutionsHolder all = assertNSolutions(3, "append(X,Y,[1,2])");
+        final MultipleSolutionsHolder all = assertNSolutions(3, "append(X,Y,[1,2])");
         assertEquals(termList("[]", "[1]", "[1,2]"), all.binding("X"));
         assertEquals(termList("[1,2]", "[2]", "[]"), all.binding("Y"));
     }
@@ -168,7 +168,7 @@ public class FunctionalTest extends PrologTestBase {
 
     /**
      * Sometimes (when?) X is bound to a term containing a unified var to another of our
-     * 
+     *
      * @throws IOException
      */
     @Test

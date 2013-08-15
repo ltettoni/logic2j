@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -33,22 +33,22 @@ public class AdHocLibraryTest extends PrologTestBase {
         AdHocLibraryForTesting library;
         try {
             library = getProlog().getLibraryManager().getLibrary(AdHocLibraryForTesting.class);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Expected to not find it
         }
         library = new AdHocLibraryForTesting(getProlog());
         loadLibrary(library);
         // Now we must find it - the same
-        AdHocLibraryForTesting library2 = getProlog().getLibraryManager().getLibrary(AdHocLibraryForTesting.class);
+        final AdHocLibraryForTesting library2 = getProlog().getLibraryManager().getLibrary(AdHocLibraryForTesting.class);
         assertSame(library, library2);
         // But not another
-        CoreLibrary library3 = getProlog().getLibraryManager().getLibrary(CoreLibrary.class);
+        final CoreLibrary library3 = getProlog().getLibraryManager().getLibrary(CoreLibrary.class);
         assertNotSame(library, library3);
     }
 
     @Test
     public void int_range() {
-        PrologImplementor prolog = getProlog();
+        final PrologImplementor prolog = getProlog();
         prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(prolog));
 
         assertEquals(termList(12, 13, 14), assertNSolutions(3, "int_range(12, X, 14)").binding("X"));

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 
 /**
  * Utilities to format {@link Collection}s, by extension functions are also handling {@link Map}s and arrays.
- * 
+ *
  * @note Quite of a nice to have, and not functionally required... Not really much used (only in contribs, and in one test case). We could
  *       as well use Guava but do we want dependencies just for that?
  */
@@ -39,7 +39,7 @@ public final class CollectionUtils {
     /**
      * Format a collection using it's element's {@link String#valueOf(java.lang.Object)} method, but inserting a separator between
      * consecutive elements, and not surrounding the result by any braket, brace or parenthesis.
-     * 
+     *
      * @param theCollection The collection to format. Must not be null.
      * @param theSeparator The string used to interleave between consecutive elements. May be "" to pack elements together. Normally use a
      *            space around, e.g. " OR ". If null, then the empty string is used.
@@ -68,7 +68,7 @@ public final class CollectionUtils {
     /**
      * Format an array using it's element's {@link String#valueOf(java.lang.Object)} method, but inserting a separator between consecutive
      * elements, and not surrounding the result by any braket, brace or parenthesis.
-     * 
+     *
      * @param theArray The array to format. Must not be null.
      * @param theSeparator The string used to interleave between consecutive elements. May be "" to pack elements together. Normally use a
      *            space around, e.g. " OR ". If null, then the empty string is used.
@@ -96,7 +96,7 @@ public final class CollectionUtils {
 
     /**
      * Format a collection, array, or map (internal method).
-     * 
+     *
      * @param theLabel
      * @param coll
      * @param maxNumberReported
@@ -133,7 +133,7 @@ public final class CollectionUtils {
             return sb.toString();
         }
 
-        for (Object element : coll) {
+        for (final Object element : coll) {
             // Statistics
             final Class<?> theElementClass = (element != null) ? element.getClass() : null;
             Integer nbrOfThisClass = instancesByClass.get(theElementClass);
@@ -184,7 +184,7 @@ public final class CollectionUtils {
 
         if (!className.endsWith("Map")) {
             // Report number of classes
-            for (Entry<Class<?>, Integer> entry : instancesByClass.entrySet()) {
+            for (final Entry<Class<?>, Integer> entry : instancesByClass.entrySet()) {
                 final Class<?> key = entry.getKey();
                 final Integer value = entry.getValue();
                 sb.append(", ");
@@ -200,7 +200,7 @@ public final class CollectionUtils {
     /**
      * Generate a usually multiline String reporting a collection's elements. If the collection is a Map.entrySet(), actually if elements
      * are instances of Map.Entry then their key is reported instead of the element's index.
-     * 
+     *
      * @param theLabel A label to display first, as is without change. If null, "" is used.
      * @param coll A collection whose elements will be listed (if not too large)
      * @param maxNumberReported The maximum number of elements to report in case of large collections, or 0 to report all whatever the size.
@@ -221,7 +221,7 @@ public final class CollectionUtils {
 
     /**
      * Generate a usually multiline String reporting an array's elements.
-     * 
+     *
      * @param theLabel See related function.
      * @param array See related function.
      * @param maxNumberReported See related function.
@@ -241,7 +241,7 @@ public final class CollectionUtils {
 
     /**
      * Generate a usually multiline String reporting a Map's entries.
-     * 
+     *
      * @param theLabel See related function.
      * @param map See related function.
      * @param maxNumberReported See related function.

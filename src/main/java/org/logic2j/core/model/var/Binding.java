@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,9 +27,9 @@ import org.logic2j.core.solver.GoalFrame;
 /**
  * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free,
  * bound, or chaining).
- * 
+ *
  * The properties of a {@link Binding} depend on its type according to the following table:
- * 
+ *
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ import org.logic2j.core.solver.GoalFrame;
  * FREE     null                          null(*)        null
  * LITERAL      bindings of the literal term  ref to term    null
  * LINK     null                          null           ref to a Binding representing the bound var
- * 
- * (*) In case of a variable, there is a method in Bindings that post-assigns the "term" 
- *     member to point to the variable, this allows retrieving its name for reporting 
+ *
+ * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
+ *     member to point to the variable, this allows retrieving its name for reporting
  *     bindings to the application code.
  * </pre>
  */
@@ -70,7 +70,7 @@ public class Binding implements Cloneable {
 
     /**
      * Factory method to create one "fake" binding to a literal.
-     * 
+     *
      * @param theLiteral
      * @param theLiteralBindings
      * @return This is used to return a pair (Term, Bindings) where needed.
@@ -92,14 +92,14 @@ public class Binding implements Cloneable {
     public Binding cloneIt() {
         try {
             return (Binding) this.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new InvalidTermException("Failed cloning " + this + " : " + e);
         }
     }
 
     /**
      * Bind this to a {@link Term}, may be a literal or another variable.
-     * 
+     *
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
      * @param theGoalFrame When non null, will remember this binding for deunification
@@ -144,7 +144,7 @@ public class Binding implements Cloneable {
 
     /**
      * Follow chains of linked bindings.
-     * 
+     *
      * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to satisfy
      *         either of {@link #isFree()} or {@link #isLiteral()}.
      */
@@ -168,7 +168,7 @@ public class Binding implements Cloneable {
     /**
      * When {@link #getType()} is {@link BindingType#LITERAL}, the {@link #getTerm()} is a literal {@link Struct}, and this represents the
      * {@link Bindings} storing the content of those variables.
-     * 
+     *
      * @return The {@link Bindings} associated to the Term from {@link #getTerm()}.
      */
     public Bindings getLiteralBindings() {

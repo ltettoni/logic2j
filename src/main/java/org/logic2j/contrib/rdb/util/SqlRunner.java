@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -32,7 +32,7 @@ import javax.sql.DataSource;
 /**
  * Execute SQL statements in an IoC manner, guaranteeing proper error handling and resource cleaning. Highly inspired by Jakarta Commons
  * "dbutils".
- * 
+ *
  * @version $Id$
  */
 public class SqlRunner {
@@ -68,14 +68,14 @@ public class SqlRunner {
             logger.debug(" parameters=" + Arrays.asList(theParameters));
         }
         try {
-            Connection conn = this.dataSource.getConnection();
+            final Connection conn = this.dataSource.getConnection();
             stmt = this.prepareStatement(conn, theSelect);
             this.fillStatement(stmt, theParameters);
             rs = stmt.executeQuery();
 
             result = handle(rs);
 
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             if (DEBUG_ENABLED) {
                 logger.debug("Caught exception \"" + e + "\", going to rethrow");
             }
@@ -85,14 +85,14 @@ public class SqlRunner {
                 if (rs != null) {
                     rs.close();
                 }
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 // Quiet
             }
             try {
                 if (stmt != null) {
                     stmt.close();
                 }
-            } catch (SQLException ignored) {
+            } catch (final SQLException ignored) {
                 // Quiet
             }
             // Should we close the connection here??? (return it to the pool in case of a pooled connection?)
@@ -110,10 +110,10 @@ public class SqlRunner {
      * @throws SQLException
      */
     private List<Object[]> handle(ResultSet theResultSet) throws SQLException {
-        List<Object[]> result = new ArrayList<Object[]>();
+        final List<Object[]> result = new ArrayList<Object[]>();
 
-        ResultSetMetaData meta = theResultSet.getMetaData();
-        int cols = meta.getColumnCount();
+        final ResultSetMetaData meta = theResultSet.getMetaData();
+        final int cols = meta.getColumnCount();
         while (theResultSet.next()) {
             result.add(toArray(theResultSet, cols));
         }
@@ -153,18 +153,18 @@ public class SqlRunner {
 
     /**
      * Throws a new exception with a more informative error message.
-     * 
+     *
      * @param cause The original exception that will be chained to the new exception when it's rethrown.
-     * 
+     *
      * @param sql The query that was executing when the exception happened.
-     * 
+     *
      * @param params The query replacement paramaters; <code>null</code> is a valid value to pass in.
-     * 
+     *
      * @throws SQLException
      */
     protected void rethrow(SQLException cause, String sql, Object[] params) throws SQLException {
 
-        StringBuffer msg = new StringBuffer(cause.getMessage());
+        final StringBuffer msg = new StringBuffer(cause.getMessage());
 
         msg.append(", query=\"");
         msg.append(sql);
@@ -176,7 +176,7 @@ public class SqlRunner {
             msg.append(Arrays.asList(params));
         }
 
-        SQLException e = new SQLException(msg.toString());
+        final SQLException e = new SQLException(msg.toString());
         e.setNextException(cause);
 
         throw e;

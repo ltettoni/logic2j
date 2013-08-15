@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,7 +46,7 @@ public class DefaultSolver implements Solver {
     /**
      * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, GoalFrame, SolutionListener)} method. The referrer goal to solve
      * is in the callerFrame
-     * 
+     *
      * @param theGoalBindings
      * @param callerFrame
      * @param theSolutionListener
@@ -138,9 +138,9 @@ public class DefaultSolver implements Solver {
             final GoalFrame subFrameForClauses = new GoalFrame(callerFrame);
 
             final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().providersFor(goalStruct);
-            for (ClauseProvider provider : providers) {
+            for (final ClauseProvider provider : providers) {
                 // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
-                for (Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
+                for (final Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
 
                     if (debug) {
                         logger.debug("Trying clause {}", clause);

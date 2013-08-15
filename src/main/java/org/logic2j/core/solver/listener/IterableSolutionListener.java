@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,7 +27,7 @@ import org.logic2j.core.model.var.Bindings;
  */
 public class IterableSolutionListener implements SolutionListener {
 
-    private Bindings bindings;
+    private final Bindings bindings;
 
     /**
      * @param theBindings
@@ -40,12 +40,12 @@ public class IterableSolutionListener implements SolutionListener {
     /**
      * Interface between the main thread (consumer) and the prolog solver thread (producer).
      */
-    private SynchronizedInterface<Solution> clientToEngineInterface = new SynchronizedInterface<Solution>();
+    private final SynchronizedInterface<Solution> clientToEngineInterface = new SynchronizedInterface<Solution>();
 
     /**
      * Interface between the prolog solver thread (producer) and the main thread (consumer).
      */
-    private SynchronizedInterface<Solution> engineToClientInterface = new SynchronizedInterface<Solution>();
+    private final SynchronizedInterface<Solution> engineToClientInterface = new SynchronizedInterface<Solution>();
 
     /**
      * Implementation of the core logic2j's callback-based notification of solutions.
@@ -94,7 +94,7 @@ public class IterableSolutionListener implements SolutionListener {
 
         /**
          * Indicate that the peer thread can be restart - with exchanged data.
-         * 
+         *
          * @param theContent
          */
         public synchronized void hereIsTheData(T theContent) {
@@ -106,14 +106,14 @@ public class IterableSolutionListener implements SolutionListener {
         /**
          * Tell this thread that content (or just a signal without content) is expected from the other thread. If nothing is yet ready, this
          * thread goes to sleep.
-         * 
+         *
          * @return The content exchanged, or null when none.
          */
         public synchronized T waitUntilAvailable() {
             while (!this.ready) {
                 try {
                     this.wait();
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     throw new PrologNonSpecificError("Exception not handled: " + e, e);
                 }
             }

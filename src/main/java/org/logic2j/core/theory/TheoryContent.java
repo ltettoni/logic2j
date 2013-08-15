@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,11 +35,11 @@ public class TheoryContent {
      * The data structure to hold our clauses: lists of {@link Clause}s by predicate key. Key: unique key for all clauses whose predicate
      * head is a family, see {@link Clause#getPredicateKey()}. Value: ordered list of very very very immutable {@link Clause}s.
      */
-    private Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
+    private final Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
 
     /**
      * Add one {@link Clause}.
-     * 
+     *
      * @param theClause
      */
     public void add(Clause theClause) {
@@ -56,11 +56,11 @@ public class TheoryContent {
     /**
      * Add all {@link Clause}s contained in theExtraContent. Watch out, references are added, Clauses are NOT copied, because of their
      * immutable nature, they can be shared.
-     * 
+     *
      * @param theExtraContent
      */
     public void addAll(TheoryContent theExtraContent) {
-        for (Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
+        for (final Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
             final String clauseFamilyKey = extraEntry.getKey();
             final List<Clause> clausesToAdd = extraEntry.getValue();
             if (this.content.containsKey(clauseFamilyKey)) {
@@ -73,7 +73,7 @@ public class TheoryContent {
 
     /**
      * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
-     * 
+     *
      * @param theGoalTerm
      * @return An iterable for a foreach() loop.
      */

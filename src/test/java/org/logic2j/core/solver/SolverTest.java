@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -58,13 +58,13 @@ public class SolverTest extends PrologTestBase {
         try {
             prolog.solve("1=2").unique();
             fail("There was no solution, unique() should have failed because it immediately solves the goal (unlike all()).");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Expected
         }
         try {
             prolog.solve("2=2").unique().binding("X");
             fail("There was one solution, but no variable X, variable() should have failed.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Expected
         }
         // Value of a non-bound variable
@@ -93,7 +93,7 @@ public class SolverTest extends PrologTestBase {
         try {
             prolog.solve("2=2").all().binding("X");
             fail("There was one solution, but no variable X, variable() should have failed.");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // Expected
         }
         //
@@ -103,7 +103,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void iterator() throws InterruptedException {
         final Prolog prolog = new PrologImpl();
-        Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
+        final Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
         assertNotNull(iterator);
         int counter = 0;
         while (iterator.hasNext()) {
@@ -141,7 +141,7 @@ public class SolverTest extends PrologTestBase {
 
     /**
      * Will request user cancellation after 5 solutions were found.
-     * 
+     *
      */
     static class Max5Listener implements SolutionListener {
         int counter = 0;
@@ -149,7 +149,7 @@ public class SolverTest extends PrologTestBase {
         @Override
         public Continuation onSolution() {
             this.counter++;
-            boolean requestContinue = this.counter < 5;
+            final boolean requestContinue = this.counter < 5;
             return Continuation.requestContinuationWhen(requestContinue);
         }
     }
@@ -157,16 +157,16 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void userCancel() throws InterruptedException {
         final PrologImplementor prolog = new PrologImpl();
-        Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
-        CountingListener listenerAll = new CountingListener();
+        final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
+        final CountingListener listenerAll = new CountingListener();
         getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listenerAll);
         assertEquals(10, listenerAll.counter);
         //
-        Max1Listener listener1 = new Max1Listener();
+        final Max1Listener listener1 = new Max1Listener();
         getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listener1);
         assertEquals(1, listener1.counter);
         //
-        Max5Listener listener5 = new Max5Listener();
+        final Max5Listener listener5 = new Max5Listener();
         getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listener5);
         assertEquals(5, listener5.counter);
     }

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,7 +46,7 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Convenience shortcut to have the current Prolog engine unifying 2 terms.
-     * 
+     *
      * @param t1
      * @param theBindings1
      * @param t2
@@ -64,7 +64,7 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Notify theSolutionListener that a solution has been found.
-     * 
+     *
      * @param theSolutionListener
      */
     protected void notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
@@ -77,7 +77,7 @@ public class LibraryBase implements PLibrary {
     /**
      * When unified is true, call {@link #notifySolution(GoalFrame, SolutionListener)}, and then call {@link #deunify(GoalFrame)}. Otherwise
      * nothing is done.
-     * 
+     *
      * @param unified
      * @param theGoalFrame
      * @param theListener
@@ -155,7 +155,7 @@ public class LibraryBase implements PLibrary {
         for (int i = 0; i < theValues.length; i++) {
             values[i] = createConstantTerm(theValues[i]);
         }
-        boolean unified = unify(new Struct("group", theVariables), theBindings, new Struct("group", values), theBindings, theGoalFrame);
+        final boolean unified = unify(new Struct("group", theVariables), theBindings, new Struct("group", values), theBindings, theGoalFrame);
         notifyIfUnified(unified, theGoalFrame, theListener);
     }
 

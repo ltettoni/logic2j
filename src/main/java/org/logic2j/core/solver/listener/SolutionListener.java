@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,7 +29,7 @@ public interface SolutionListener {
     /**
      * Specifies the behaviour that calling code requests to the inference engine after a solution was found, via
      * {@link SolutionListener#onSolution()}.
-     * 
+     *
      * @author tettoni
      */
     static enum Continuation {
@@ -58,7 +58,7 @@ public interface SolutionListener {
     /**
      * The inference engine notifies the caller code that a solution was proven; the real content to the solution must be retrieved from the
      * goal's variables.
-     * 
+     *
      * @return The caller must return {@link #CONTINUE} for the inference engine to continue searching for other solutions, or
      *         {@link #USER_ABORT} to break the search for other solutions (ie. user cancellation).
      */

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -36,7 +36,7 @@ import org.logic2j.core.util.ReportUtils;
  * s
  * <p/>
  * TODO: Why an ArrayList of Binding for trailingBindings and a Stack of integers??? Why not just a LinkedList?
- * 
+ *
  * The default constructor instantiates the whole trailing bindings stack with one root frame, and returns it. The constructor for other
  * stack-frames is lighter, it shares most of its parent, only redefines new node for local management of the cut.
  */
@@ -76,7 +76,7 @@ public final class GoalFrame {
     // - then upon backtracking, all goals having the same parent whose childIndex is lower or equal
     // than the cutIndex will abort generating solutions any longer.
     private int nbChildren;
-    private int childIndex;
+    private final int childIndex;
     private int cutIndex;
 
     // Becomes true when user requested to cancel solutions
@@ -101,7 +101,7 @@ public final class GoalFrame {
 
     /**
      * Add a new stack-frame as a child of an existing "parent".
-     * 
+     *
      * @param theParent
      */
     public GoalFrame(GoalFrame theParent) {
@@ -131,7 +131,7 @@ public final class GoalFrame {
 
     /**
      * Add (remember) that a {@link Binding} was done, so that it can be undone by {@link #undoBindingsUntilPreviousMark()}
-     * 
+     *
      * @param theBinding
      */
     public void addBinding(Binding theBinding) {
@@ -140,11 +140,11 @@ public final class GoalFrame {
 
     /**
      * Reset all bindings that have been added by {@link #addBinding(Binding)} since the last call to {@link #markBeforeAddingBindings()}.
-     * 
+     *
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public void undoBindingsUntilPreviousMark() {
-        int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
+        final int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
         for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
             final Binding toUnbind = this.trailingBindings.remove(i);
             // TODO Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
@@ -199,9 +199,9 @@ public final class GoalFrame {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ReportUtils.shortDescription(this));
+        final StringBuilder sb = new StringBuilder(ReportUtils.shortDescription(this));
         sb.append('{');
-        int size = this.trailingBindings.size();
+        final int size = this.trailingBindings.size();
         int i = this.bindingMarkBetweenUnify.peek();
         sb.append(i);
         sb.append(':');

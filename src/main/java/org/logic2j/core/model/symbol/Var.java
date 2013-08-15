@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -45,13 +45,13 @@ public class Var extends Term {
      * A value of null means it's the anonymous variable (even though the anonymous variable is formatted as "_")<br/>
      * Note: all variable names are internalized, i.e. it is legal to compare them with ==.
      */
-    private String name;
+    private final String name;
 
     /**
      * Creates a variable identified by a name.
-     * 
+     *
      * The name must starts with an upper case letter or the underscore. If an underscore is specified as a name, the variable is anonymous.
-     * 
+     *
      * @note Internally the {@link #name} is {@link String#intern()}alized so it's OK to compare by reference.
      * @param theName is the name
      * @throws InvalidTermException if n is not a valid Prolog variable name
@@ -69,7 +69,7 @@ public class Var extends Term {
 
     /**
      * Gets the name of the variable.
-     * 
+     *
      * @note Names are {@link String#intern()}alized so OK to check by reference
      */
     public String getName() {
@@ -86,7 +86,7 @@ public class Var extends Term {
     /**
      * Obtain the current {@link Binding} of this Var from the {@link Bindings}. Notice that the variable index must have been assigned, and
      * this var must NOT be the anonymous variable (that cannot be bound to anything).
-     * 
+     *
      * @param theBindings
      * @return The current binding of this Var.
      */
@@ -158,7 +158,7 @@ public class Var extends Term {
 
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
-     * 
+     *
      * @param theCollectedTerms
      */
     @Override

@@ -52,7 +52,7 @@ import org.logic2j.core.model.symbol.Var;
 
 /**
  * This class defines a parser of Prolog terms and sentences.
- * 
+ *
  * <pre>
  * term ::= exprA(1200)
  * exprA(n) ::= exprB(n) { op(yfx,n) exprA(n-1) |
@@ -74,7 +74,7 @@ import org.logic2j.core.model.symbol.Var;
  *              '[' [ exprA(1200) { ',' exprA(1200) }* [ '|' exprA(1200) ] ] ']' |
  *              '(' { exprA(1200) }* ')'
  *              '{' { exprA(1200) }* '}'
- * 
+ *
  * op(type,n) ::= ATOM_PATTERN | { symbol }+
  * </pre>
  */
@@ -115,19 +115,19 @@ public class Parser implements Serializable {
 
     /**
      * Parses next term from the stream built on string.
-     * 
+     *
      * @param endNeeded <tt>true</tt> if it is required to parse the end token (a period), <tt>false</tt> otherwise.
      * @throws InvalidTermException if a syntax error is found.
      */
     public Term nextTerm(boolean endNeeded) throws InvalidTermException {
         try {
-            Token t = this.tokenizer.readToken();
+            final Token t = this.tokenizer.readToken();
             if (t.isEOF()) {
                 return null;
             }
 
             this.tokenizer.unreadToken(t);
-            Term term = expr(false);
+            final Term term = expr(false);
             if (term == null) {
                 throw new InvalidTermException("The parser was unable to finish.");
             }
@@ -137,19 +137,19 @@ public class Parser implements Serializable {
             }
 
             return term;
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new InvalidTermException("An I/O error occured.");
         }
     }
 
     public Term parseSingleTerm() throws InvalidTermException {
         try {
-            Token t = this.tokenizer.readToken();
+            final Token t = this.tokenizer.readToken();
             if (t.isEOF()) {
                 throw new InvalidTermException("Term starts with EOF");
             }
             this.tokenizer.unreadToken(t);
-            Term term = expr(false);
+            final Term term = expr(false);
             if (term == null) {
                 throw new InvalidTermException("Term is null");
             }
@@ -157,7 +157,7 @@ public class Parser implements Serializable {
                 throw new InvalidTermException("The entire term could not be parsed, parsing failed before the end, stopped after \"" + term + '"');
             }
             return term;
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             throw new InvalidTermException("An I/O error occured");
         }
     }
@@ -217,7 +217,7 @@ public class Parser implements Serializable {
 
             // YFX has priority over YF
             if (yfx >= yf && yfx >= Operator.OP_LOW) {
-                IdentifiedTerm ta = exprA(yfx - 1, commaIsEndMarker);
+                final IdentifiedTerm ta = exprA(yfx - 1, commaIsEndMarker);
                 if (ta != null) {
                     leftSide = new IdentifiedTerm(yfx, new Struct(oper.text, leftSide.result, ta.result));
                     continue;
@@ -262,9 +262,9 @@ public class Parser implements Serializable {
             // XFX
             boolean haveAttemptedXFX = false;
             if (xfx >= xfy && xfx >= xf && xfx >= left.priority) { // XFX has priority
-                IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
+                final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
                 if (found != null) {
-                    Struct xfxStruct = new Struct(oper.text, left.result, found.result);
+                    final Struct xfxStruct = new Struct(oper.text, left.result, found.result);
                     left = new IdentifiedTerm(xfx, xfxStruct);
                     continue;
                 }
@@ -274,9 +274,9 @@ public class Parser implements Serializable {
             }
             // XFY
             if (xfy >= xf && xfy >= left.priority) { // XFY has priority, or XFX has failed
-                IdentifiedTerm found = exprA(xfy, commaIsEndMarker);
+                final IdentifiedTerm found = exprA(xfy, commaIsEndMarker);
                 if (found != null) {
-                    Struct xfyStruct = new Struct(oper.text, left.result, found.result);
+                    final Struct xfyStruct = new Struct(oper.text, left.result, found.result);
                     left = new IdentifiedTerm(xfy, xfyStruct);
                     continue;
                 }
@@ -289,9 +289,9 @@ public class Parser implements Serializable {
 
             // XFX did not have top priority, but XFY failed
             if (!haveAttemptedXFX && xfx >= left.priority) {
-                IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
+                final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
                 if (found != null) {
-                    Struct xfxStruct = new Struct(oper.text, left.result, found.result);
+                    final Struct xfxStruct = new Struct(oper.text, left.result, found.result);
                     left = new IdentifiedTerm(xfx, xfxStruct);
                     continue;
                 }
@@ -306,7 +306,7 @@ public class Parser implements Serializable {
     /**
      * Parses and returns a valid 'leftside' of an expression. If the left side starts with a prefix, it consumes other expressions with a
      * lower priority than itself. If the left side does not have a prefix it must be an expr0.
-     * 
+     *
      * @param commaIsEndMarker used when the leftside is part of an argument list of expressions
      * @param maxPriority operators with a higher priority than this will effectivly end the expression
      * @return a wrapper of: 1. term correctly structured and 2. the priority of its root operator
@@ -314,13 +314,13 @@ public class Parser implements Serializable {
      */
     private IdentifiedTerm exprC(boolean commaIsEndMarker, int maxPriority) throws InvalidTermException, IOException {
         // 1. prefix expression
-        Token oper = this.tokenizer.readToken();
+        final Token oper = this.tokenizer.readToken();
         if (oper.isOperator(commaIsEndMarker)) {
             int fx = this.opManager.opPrio(oper.text, Operator.FX);
             int fy = this.opManager.opPrio(oper.text, Operator.FY);
 
             if (oper.text.equals("-")) {
-                Token t = this.tokenizer.readToken();
+                final Token t = this.tokenizer.readToken();
                 if (t.isNumber()) {
                     return new IdentifiedTerm(0, createNumber("-" + t.text));
                 }
@@ -338,7 +338,7 @@ public class Parser implements Serializable {
             // FX has priority over FY
             boolean haveAttemptedFX = false;
             if (fx >= fy && fx >= Operator.OP_LOW) {
-                IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
+                final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
                 if (found != null) {
                     return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
                 }
@@ -347,7 +347,7 @@ public class Parser implements Serializable {
             }
             // FY has priority over FX, or FX has failed
             if (fy >= Operator.OP_LOW) {
-                IdentifiedTerm found = exprA(fy, commaIsEndMarker); // op(fy,n) exprA(1200) or op(fy,n) exprA(n)
+                final IdentifiedTerm found = exprA(fy, commaIsEndMarker); // op(fy,n) exprA(1200) or op(fy,n) exprA(n)
                 if (found != null) {
                     return new IdentifiedTerm(fy, new Struct(oper.text, found.result));
                 }
@@ -355,7 +355,7 @@ public class Parser implements Serializable {
             }
             // FY has priority over FX, but FY failed
             if (!haveAttemptedFX && fx >= Operator.OP_LOW) {
-                IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
+                final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
                 if (found != null) {
                     return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
                 }
@@ -368,7 +368,7 @@ public class Parser implements Serializable {
     }
 
     private Term exprA0() throws InvalidTermException, IOException {
-        Token t1 = this.tokenizer.readToken();
+        final Token t1 = this.tokenizer.readToken();
 
         if (t1.isType(INTEGER)) {
             return parseInteger(t1.text); // todo moved method to TNumber
@@ -387,8 +387,8 @@ public class Parser implements Serializable {
                 return new Struct(t1.text);
             }
 
-            String functor = t1.text;
-            Token t2 = this.tokenizer.readToken(); // reading left par
+            final String functor = t1.text;
+            final Token t2 = this.tokenizer.readToken(); // reading left par
             if (!t2.isType(LPAR)) {
                 throw new InvalidTermException("bug in parsing process. Something identified as functor misses its first left parenthesis");// todo
                                                                                                                                             // check
@@ -396,8 +396,8 @@ public class Parser implements Serializable {
                                                                                                                                             // be
                                                                                                                                             // skipped
             }
-            LinkedList<Term> a = exprA0_arglist(); // reading arguments
-            Token t3 = this.tokenizer.readToken();
+            final LinkedList<Term> a = exprA0_arglist(); // reading arguments
+            final Token t3 = this.tokenizer.readToken();
             if (t3.isType(RPAR)) {
                 return new Struct(functor, a);
             }
@@ -405,7 +405,7 @@ public class Parser implements Serializable {
         }
 
         if (t1.isType(LPAR)) {
-            Term term = expr(false);
+            final Term term = expr(false);
             if (this.tokenizer.readToken().isType(RPAR)) {
                 return term;
             }
@@ -413,13 +413,13 @@ public class Parser implements Serializable {
         }
 
         if (t1.isType(LBRA)) {
-            Token t2 = this.tokenizer.readToken();
+            final Token t2 = this.tokenizer.readToken();
             if (t2.isType(RBRA)) {
                 return Struct.createEmptyPList();
             }
 
             this.tokenizer.unreadToken(t2);
-            Term term = exprA0_list();
+            final Term term = exprA0_list();
             if (this.tokenizer.readToken().isType(RBRA)) {
                 return term;
             }
@@ -433,7 +433,7 @@ public class Parser implements Serializable {
             }
 
             this.tokenizer.unreadToken(t2);
-            Term arg = expr(false);
+            final Term arg = expr(false);
             t2 = this.tokenizer.readToken();
             if (t2.isType(RBRA2)) {
                 return new Struct("{}", arg);
@@ -445,8 +445,8 @@ public class Parser implements Serializable {
     }
 
     private Term exprA0_list() throws InvalidTermException, IOException {
-        Term head = expr(true);
-        Token t = this.tokenizer.readToken();
+        final Term head = expr(true);
+        final Token t = this.tokenizer.readToken();
         if (Struct.LIST_SEPARATOR.equals(t.text)) {
             return Struct.createPList(head, exprA0_list());
         }
@@ -461,16 +461,16 @@ public class Parser implements Serializable {
     }
 
     private LinkedList<Term> exprA0_arglist() throws InvalidTermException, IOException {
-        Term head = expr(true);
-        Token t = this.tokenizer.readToken();
+        final Term head = expr(true);
+        final Token t = this.tokenizer.readToken();
         if (Struct.LIST_SEPARATOR.equals(t.text)) {
-            LinkedList<Term> l = exprA0_arglist();
+            final LinkedList<Term> l = exprA0_arglist();
             l.addFirst(head);
             return l;
         }
         if (")".equals(t.text)) {
             this.tokenizer.unreadToken(t);
-            LinkedList<Term> l = new LinkedList<Term>();
+            final LinkedList<Term> l = new LinkedList<Term>();
             l.add(head);
             return l;
         }
@@ -480,19 +480,19 @@ public class Parser implements Serializable {
     // commodity methods to parse numbers
 
     TNumber parseInteger(String s) {
-        long num = Long.parseLong(s);
+        final long num = Long.parseLong(s);
         return new TLong(num);
     }
 
     TDouble parseFloat(String s) {
-        double num = Double.parseDouble(s);
+        final double num = Double.parseDouble(s);
         return new TDouble(num);
     }
 
     TNumber createNumber(String s) {
         try {
             return parseInteger(s);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return parseFloat(s);
         }
     }

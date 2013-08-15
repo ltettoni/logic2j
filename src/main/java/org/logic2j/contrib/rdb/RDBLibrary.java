@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -80,8 +80,8 @@ public class RDBLibrary extends LibraryBase {
 
     @Primitive
     public void select(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
-        Term theDataSource = theArguments[0];
-        Term theExpression = theArguments[1];
+        final Term theDataSource = theArguments[0];
+        final Term theExpression = theArguments[1];
         final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
         final Bindings expressionBindings = theBindings.focus(theExpression, Struct.class);
@@ -89,11 +89,11 @@ public class RDBLibrary extends LibraryBase {
         final Struct conditions = (Struct) expressionBindings.getReferrer();
 
         // Options
-        Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
-        boolean isDistinct = optionSet.contains(new Struct("distinct"));
+        final Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
+        final boolean isDistinct = optionSet.contains(new Struct("distinct"));
 
         //
-        String resultVar = "Tbl";
+        final String resultVar = "Tbl";
 
         // The goal we are solving
         Term internalGoal = new Struct("gd3_solve", conditions, resultVar);
@@ -103,20 +103,20 @@ public class RDBLibrary extends LibraryBase {
         final Bindings internalBindings = new Bindings(internalGoal);
         final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalBindings);
         getProlog().getSolver().solveGoal(internalBindings, new GoalFrame(), internalListener);
-        Term result = internalListener.getSolution().getBinding(resultVar);
+        final Term result = internalListener.getSolution().getBinding(resultVar);
         if (!(result instanceof Struct)) {
             throw new InvalidTermException("Internal result must be a Struct");
         }
-        Struct plistOfTblPredicates = (Struct) result;
+        final Struct plistOfTblPredicates = (Struct) result;
         logger.debug("select/3: Solving {} gives internal solution: {}", plistOfTblPredicates);
-        List<Struct> javaListRoot = plistOfTblPredicates.javaListFromPList(new ArrayList<Struct>(), Struct.class);
+        final List<Struct> javaListRoot = plistOfTblPredicates.javaListFromPList(new ArrayList<Struct>(), Struct.class);
         logger.info(CollectionUtils.format("Internal solution, list elements:", javaListRoot, 10));
-        Map<String, Term> assignedVarValue = new HashMap<String, Term>();
-        Map<String, String> assignedVarOperator = new HashMap<String, String>();
+        final Map<String, Term> assignedVarValue = new HashMap<String, Term>();
+        final Map<String, String> assignedVarOperator = new HashMap<String, String>();
         // Count number of references to tables
         int nbTbl = 0;
-        for (Struct tbls : javaListRoot) {
-            for (Struct pred : tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
+        for (final Struct tbls : javaListRoot) {
+            for (final Struct pred : tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
                 final String functor = pred.getName();
                 if (functor.equals(TBL_PREDICATE)) {
                     nbTbl++;
@@ -156,13 +156,13 @@ public class RDBLibrary extends LibraryBase {
         // And convert Struct to references to tables, columns and column criteria
         // Meanwhile, check individual predicates
         final SqlBuilder3 builder = new SqlBuilder3();
-        List<SqlBuilder3.Criterion> rawColumns = new ArrayList<SqlBuilder3.Criterion>();
+        final List<SqlBuilder3.Criterion> rawColumns = new ArrayList<SqlBuilder3.Criterion>();
         int aliasIndex = 1;
         final Set<Var> projectVars = new LinkedHashSet<Var>();
-        for (Struct tbls : javaListRoot) {
+        for (final Struct tbls : javaListRoot) {
             final String alias = "t" + (aliasIndex++);
-            List<Struct> javaList = tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class);
-            for (Struct tbl : javaList) {
+            final List<Struct> javaList = tbls.javaListFromPList(new ArrayList<Struct>(), Struct.class);
+            for (final Struct tbl : javaList) {
                 // Check predicate received must be "tbl" with arity of 4
                 if (!tbl.getName().equals(TBL_PREDICATE)) {
                     throw new InvalidTermException("Predicate must be \"tbl\" not " + tbl.getName());
@@ -181,7 +181,7 @@ public class RDBLibrary extends LibraryBase {
                 final Table table = builder.table(tableName, alias);
                 final Column sqlColumn = builder.column(table, columnName);
                 if (valueTerm instanceof Var) {
-                    Var var = (Var) valueTerm;
+                    final Var var = (Var) valueTerm;
                     if (var.isAnonymous()) {
                         // Will ignore any anonymous var
                         continue;
@@ -216,11 +216,11 @@ public class RDBLibrary extends LibraryBase {
         logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
         // Now collect join conditions: all columns having the same variable
-        CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join
+        final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join
                                                                                                                               // clauses
-        for (SqlBuilder3.Criterion column : rawColumns) {
+        for (final SqlBuilder3.Criterion column : rawColumns) {
             if (column.getOperand()[0] instanceof Var) {
-                Var var = (Var) column.getOperand()[0];
+                final Var var = (Var) column.getOperand()[0];
                 projectVars.add(var);
                 columnsPerVariable.add(var.getName(), column);
             }
@@ -228,10 +228,10 @@ public class RDBLibrary extends LibraryBase {
         logger.debug("** colPerVar: {}", columnsPerVariable);
 
         // Every variable referenced contributes one projection. If more than on column for same variable (-->join), use only first of them
-        for (Collection<SqlBuilder3.Criterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
+        for (final Collection<SqlBuilder3.Criterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
             builder.addProjection(clausesOfOneJoinExpression.iterator().next().getColumn());
             if (clausesOfOneJoinExpression.size() >= 2) {
-                List<SqlBuilder3.Criterion> toJoin = new ArrayList<SqlBuilder3.Criterion>(clausesOfOneJoinExpression);
+                final List<SqlBuilder3.Criterion> toJoin = new ArrayList<SqlBuilder3.Criterion>(clausesOfOneJoinExpression);
                 for (int i = 1; i < toJoin.size(); i++) {
                     builder.innerJoin(toJoin.get(0).getColumn(), toJoin.get(i).getColumn());
                 }
@@ -239,7 +239,7 @@ public class RDBLibrary extends LibraryBase {
         }
 
         // Collect criteria (where value is constant)
-        for (SqlBuilder3.Criterion column : rawColumns) {
+        for (final SqlBuilder3.Criterion column : rawColumns) {
             if (!(column.getOperand()[0] instanceof Var)) {
                 builder.addConjunction(column);
             }
@@ -261,7 +261,7 @@ public class RDBLibrary extends LibraryBase {
         // Execution
         final SqlRunner sqlRunner = new SqlRunner(ds);
         if (builder.getNbProjections() == 0) {
-            List<Object[]> countOnly = sqlRunner.query(effectiveSql, builder.getParameters());
+            final List<Object[]> countOnly = sqlRunner.query(effectiveSql, builder.getParameters());
             if (countOnly.size() != 1) {
                 throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
             }
@@ -277,10 +277,10 @@ public class RDBLibrary extends LibraryBase {
         } else {
             final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
             // Vars referenced in projections
-            Var projectedVars[] = new Var[projectVars.size()];
+            final Var projectedVars[] = new Var[projectVars.size()];
             Bindings originalBindings = null;
             int counter = 0;
-            for (Var var : projectVars) {
+            for (final Var var : projectVars) {
                 final Var originalVar = conditions.findVar(var.getName());
                 if (originalVar == null) {
                     throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
@@ -302,7 +302,7 @@ public class RDBLibrary extends LibraryBase {
                 counter++;
             }
             // Generate solutions, one per row
-            for (Object[] objects : resultSet) {
+            for (final Object[] objects : resultSet) {
                 unifyAndNotify(projectedVars, objects, originalBindings, theGoalFrame, theListener);
             }
         }
@@ -310,7 +310,7 @@ public class RDBLibrary extends LibraryBase {
 
     /**
      * Translate prolog operators into SQL operator.
-     * 
+     *
      * @param theOperator
      * @return The valid SQL operator.
      */
@@ -334,8 +334,8 @@ public class RDBLibrary extends LibraryBase {
         } else if (theTerm instanceof Struct) {
             final Struct struct = (Struct) theTerm;
             if (struct.isList()) {
-                Set<Object> javaList = new HashSet<Object>();
-                for (Term t : struct.javaListFromPList(new ArrayList<Term>(), Term.class)) {
+                final Set<Object> javaList = new HashSet<Object>();
+                for (final Term t : struct.javaListFromPList(new ArrayList<Term>(), Term.class)) {
                     javaList.add(jdbcFromTerm(t));
                 }
                 return javaList;

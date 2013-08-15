@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,9 +30,9 @@ public class SqlBuilder3Test {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlBuilder3Test.class);
 
     private SqlBuilder3 simple(String tbl, String col, Object value) {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Table table = sb.table(tbl);
-        Column column = sb.column(table, col);
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Table table = sb.table(tbl);
+        final Column column = sb.column(table, col);
         sb.addProjection(column);
         if (value != null) {
             sb.addConjunction(sb.criterion(column, value));
@@ -42,7 +42,7 @@ public class SqlBuilder3Test {
 
     /**
      * Testing internals.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -56,7 +56,7 @@ public class SqlBuilder3Test {
 
     /**
      * Testing internals.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -74,7 +74,7 @@ public class SqlBuilder3Test {
         try {
             assertEquals("select * from ", sb.getSql());
             fail("Should have thrown  with IllegalStateException");
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             // Expected
         }
     }
@@ -108,8 +108,8 @@ public class SqlBuilder3Test {
     @Test
     public void simple2() throws Exception {
         {
-            SqlBuilder3 sb = new SqlBuilder3();
-            Column col = sb.column(sb.table("tbl"), "col");
+            final SqlBuilder3 sb = new SqlBuilder3();
+            final Column col = sb.column(sb.table("tbl"), "col");
             sb.addConjunction(sb.criterion(col, 3));
             sb.generateSelect();
             assertEquals("select * from tbl where tbl.col=?", sb.getSql());
@@ -118,8 +118,8 @@ public class SqlBuilder3Test {
             assertEquals(expectedParams, sb.getParameters());
         }
         {
-            SqlBuilder3 sb = new SqlBuilder3();
-            Column col = sb.column(sb.table("tbl"), "col");
+            final SqlBuilder3 sb = new SqlBuilder3();
+            final Column col = sb.column(sb.table("tbl"), "col");
             sb.addConjunction(sb.criterion(col, 'a', 'b', 'c'));
             sb.generateSelect();
             assertEquals("select * from tbl where tbl.col in (?,?,?)", sb.getSql());
@@ -128,8 +128,8 @@ public class SqlBuilder3Test {
             assertEquals(expectedParams, sb.getParameters());
         }
         {
-            SqlBuilder3 sb = new SqlBuilder3();
-            Column col = sb.column(sb.table("tbl"), "col");
+            final SqlBuilder3 sb = new SqlBuilder3();
+            final Column col = sb.column(sb.table("tbl"), "col");
             final Integer[] arr = new Integer[] { 5, 6 };
             sb.addConjunction(sb.criterion(col, (Object[]) arr));
             sb.generateSelect();
@@ -139,8 +139,8 @@ public class SqlBuilder3Test {
             assertEquals(expectedParams, sb.getParameters());
         }
         {
-            SqlBuilder3 sb = new SqlBuilder3();
-            Column col = sb.column(sb.table("tbl"), "col");
+            final SqlBuilder3 sb = new SqlBuilder3();
+            final Column col = sb.column(sb.table("tbl"), "col");
             final Integer[] arr = new Integer[] { 5, 6 };
             sb.addConjunction(sb.criterion(col, arr, 4, arr));
             sb.generateSelect();
@@ -153,10 +153,10 @@ public class SqlBuilder3Test {
 
     @Test
     public void multipleTables() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Column col = sb.column(sb.table("t1"), "c1");
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Column col = sb.column(sb.table("t1"), "c1");
         sb.addConjunction(sb.criterion(col, 1));
-        Column col2 = sb.column(sb.table("t2"), "c2");
+        final Column col2 = sb.column(sb.table("t2"), "c2");
         sb.addConjunction(sb.criterion(col2, 2));
         sb.addOrderBy(sb.ascending(col2));
         sb.generateSelect();
@@ -165,11 +165,11 @@ public class SqlBuilder3Test {
 
     @Test
     public void join() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Column col = sb.column(sb.table("table1", "t1"), "c1");
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Column col = sb.column(sb.table("table1", "t1"), "c1");
         sb.addConjunction(sb.criterion(col, 1));
         sb.addProjection(sb.column(sb.table("table1", "t1"), "proj1"));
-        Column col2 = sb.column(sb.table("table2", "t2"), "c2");
+        final Column col2 = sb.column(sb.table("table2", "t2"), "c2");
         sb.addConjunction(sb.criterion(col2, 2));
         sb.innerJoin(col, col2);
         sb.innerJoin(sb.column(sb.table("table3", "t3"), "c3"), col);
@@ -181,9 +181,9 @@ public class SqlBuilder3Test {
 
     @Test
     public void joinSameTable() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Column col = sb.column(sb.table("table"), "c1");
-        Column col2 = sb.column(sb.table("table", "alias"), "c2");
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Column col = sb.column(sb.table("table"), "c1");
+        final Column col2 = sb.column(sb.table("table", "alias"), "c2");
         sb.innerJoin(col, col2);
         sb.generateSelectCount();
         assertEquals("select count(*) from table inner join table alias on alias.c2=table.c1", sb.getSql());
@@ -201,7 +201,7 @@ public class SqlBuilder3Test {
 
     @Test
     public void logicalNot() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
+        final SqlBuilder3 sb = new SqlBuilder3();
         sb.addConjunction(sb.not(sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value")));
         sb.generateSelect();
         assertEquals("select * from t1 where not(t1.c1=?)", sb.getSql());
@@ -210,10 +210,10 @@ public class SqlBuilder3Test {
 
     @Test
     public void logicalAnd() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
-        Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
-        Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value3");
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+        final Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+        final Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value3");
         sb.addConjunction(sb.and(c1, c2, c3));
         sb.generateSelect();
         assertEquals("select * from t1 where (t1.c1=? and t1.c2=? and t1.c3=?)", sb.getSql());
@@ -222,13 +222,13 @@ public class SqlBuilder3Test {
 
     @Test
     public void logicalMix() throws Exception {
-        SqlBuilder3 sb = new SqlBuilder3();
-        Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
-        Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
-        Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, 1, 2, 3, 4, 5);
-        Criterion c4 = sb.criterion(sb.column(sb.table("t2"), "c4"), ">", "value4");
-        Criterion c5 = sb.criterion(sb.column(sb.table("t2"), "c5"), "<", "value3");
-        Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), " like ", "value6");
+        final SqlBuilder3 sb = new SqlBuilder3();
+        final Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
+        final Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
+        final Criterion c3 = sb.criterion(sb.column(sb.table("t1"), "c3"), SqlBuilder3.OPERATOR_EQ_OR_IN, 1, 2, 3, 4, 5);
+        final Criterion c4 = sb.criterion(sb.column(sb.table("t2"), "c4"), ">", "value4");
+        final Criterion c5 = sb.criterion(sb.column(sb.table("t2"), "c5"), "<", "value3");
+        final Criterion c6 = sb.criterion(sb.column(sb.table("t2"), "c6"), " like ", "value6");
         sb.addConjunction(sb.or(sb.not(c1), c2, sb.and(c3, c4), sb.not(sb.and(c5, c6))));
         sb.generateSelect();
         assertEquals("select * from t1, t2 where (not(t1.c1=?) or t1.c2=? or (t1.c3 in (?,?,?,?,?) and t2.c4>?) or not((t2.c5<? and t2.c6 like ?)))", sb.getSql());

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -50,8 +50,8 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
      */
     // private static final String PREDICATE_TABLE_OR_VIEW_HEADER = "pred_";
     // private static final String PREDICATE_COLUMN_HEADER = "arg_";
-    private HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
-    private String prefix;
+    private final HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
+    private final String prefix;
 
     public RDBClauseProvider(PrologImplementor theProlog, DataSource theDataSource, String prefix) {
         super(theProlog, theDataSource);
@@ -73,12 +73,12 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
     @Override
     public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
-        String predicateName = theGoal.getName();
-        SqlBuilder3 builder = new SqlBuilder3();
+        final String predicateName = theGoal.getName();
+        final SqlBuilder3 builder = new SqlBuilder3();
         builder.setInstruction(SqlBuilder3.SELECT);
-        String tableName = tableName(theGoal);
-        Table table = builder.table(tableName);
-        String[] columnName = this.readTableInfo(tableName);
+        final String tableName = tableName(theGoal);
+        final Table table = builder.table(tableName);
+        final String[] columnName = this.readTableInfo(tableName);
 
         for (int i = 0; i < theGoal.getArity(); i++) {
             builder.addProjection(builder.column(table, columnName[i]));
@@ -100,12 +100,12 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
             // Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a
             // variable.
         }
-        List<Clause> clauses = queryForClauses(builder, predicateName);
+        final List<Clause> clauses = queryForClauses(builder, predicateName);
         return clauses;
     }
 
     protected void addConjunctionList(SqlBuilder3 builder, Table table, int columnNumber, ArrayList<Struct> structList) {
-        Object[] listValues = new Object[structList.size()];
+        final Object[] listValues = new Object[structList.size()];
         for (int i = 0; i < structList.size(); i++) {
             listValues[i] = structList.get(i).getName();
         }
@@ -114,21 +114,21 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
     protected List<Clause> queryForClauses(SqlBuilder3 builder, String predicateName) {
 
-        List<Clause> clauses = new ArrayList<Clause>();
+        final List<Clause> clauses = new ArrayList<Clause>();
         List<Object[]> rows;
         try {
             builder.generateSelect();
             rows = new SqlRunner(getDataSource()).query(builder.getSql(), builder.getParameters());
-            for (Object[] row : rows) {
-                Term[] args = new Term[row.length];
+            for (final Object[] row : rows) {
+                final Term[] args = new Term[row.length];
                 for (int i = 0; i < row.length; i++) {
-                    Object object = row[i];
+                    final Object object = row[i];
                     args[i] = getTermFactory().create(object, FactoryMode.ANY_TERM);
                 }
                 final Clause cl = new Clause(getProlog(), new Struct(predicateName, args));
                 clauses.add(cl);
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new InvalidTermException("Exception not handled: " + e, e);
         }
         return clauses;

@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -60,7 +60,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public void var(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
         if (t1 instanceof Var) {
-            Var var = (Var) t1;
+            final Var var = (Var) t1;
             if (var.isAnonymous()) {
                 notifySolution(theGoalFrame, theListener);
             } else {
@@ -198,9 +198,9 @@ public class CoreLibrary extends LibraryBase {
     public void clause(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theHead, Term theBody) {
         final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
         final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
-        for (ClauseProvider cp : getProlog().getClauseProviders()) {
+        for (final ClauseProvider cp : getProlog().getClauseProviders()) {
             // TODO See if we could parallelize instead of sequential iteration, see https://github.com/ltettoni/logic2j/issues/18
-            for (Clause clause : cp.listMatchingClauses(realHead, theBindings)) {
+            for (final Clause clause : cp.listMatchingClauses(realHead, theBindings)) {
                 // Clone the clause so that we can unify against its bindings
                 final Clause clauseToUnify = new Clause(clause);
                 final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getLiteralBindings(), theGoalFrame);
@@ -227,21 +227,21 @@ public class CoreLibrary extends LibraryBase {
             if (resolvedBindings.isFreeReferrer()) {
                 throw new PrologNonSpecificError("Predicate =.. does not accept both arguments as free variable");
             }
-            Struct lst2 = (Struct) resolvedBindings.getReferrer();
-            Struct flattened = lst2.predicateFromPList();
+            final Struct lst2 = (Struct) resolvedBindings.getReferrer();
+            final Struct flattened = lst2.predicateFromPList();
             final boolean unified = unify(thePredicate, theBindings, flattened, resolvedBindings, theGoalFrame);
             notifyIfUnified(unified, theGoalFrame, theListener);
         } else {
             final Term predResolved = resolvedBindings.getReferrer();
             if (predResolved instanceof Struct) {
-                Struct struct = (Struct) predResolved;
-                ArrayList<Term> elems = new ArrayList<Term>();
+                final Struct struct = (Struct) predResolved;
+                final ArrayList<Term> elems = new ArrayList<Term>();
                 elems.add(new Struct(struct.getName())); // Only copying the functor as an atom, not a deep copy of the struct!
-                int arity = struct.getArity();
+                final int arity = struct.getArity();
                 for (int i = 0; i < arity; i++) {
                     elems.add(struct.getArg(i));
                 }
-                Struct plist = Struct.createPList(elems);
+                final Struct plist = Struct.createPList(elems);
                 final boolean unified = unify(theList, theBindings, plist, resolvedBindings, theGoalFrame);
                 notifyIfUnified(unified, theGoalFrame, theListener);
             }
@@ -353,7 +353,7 @@ public class CoreLibrary extends LibraryBase {
     public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
         t1 = evaluateFunctor(theBindings, t1);
         if (t1 instanceof TNumber) {
-            TNumber val0n = (TNumber) t1;
+            final TNumber val0n = (TNumber) t1;
             if (val0n instanceof TDouble) {
                 return new TDouble(val0n.doubleValue() * -1);
             } else if (val0n instanceof TLong) {

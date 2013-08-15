@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -95,16 +95,16 @@ public class PrimitiveInfo {
             }
         }
         try {
-            Object result = getMethod().invoke(getLibrary(), args);
+            final Object result = getMethod().invoke(getLibrary(), args);
             if (debug) {
                 logger.debug("PRIMITIVE < result={}", result);
             }
             return result;
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw e;
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new InvalidTermException("Could not access method " + getMethod(), e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable targetException = e.getTargetException();
             if (targetException instanceof RecursionException) {
                 // If we already have trouble in recursivity, don't add further exceptions - just rethrow.

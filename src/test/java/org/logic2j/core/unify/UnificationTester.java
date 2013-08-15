@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -56,7 +56,7 @@ class UnificationTester {
 
     /**
      * Every term has its own {@link Bindings}.
-     * 
+     *
      * @param theLeft
      * @param theRight
      */
@@ -70,7 +70,7 @@ class UnificationTester {
 
     /**
      * Share same {@link Bindings} for both terms.
-     * 
+     *
      * @param theLeft
      * @param theRight
      * @param bindings
@@ -85,12 +85,12 @@ class UnificationTester {
 
     /**
      * Execute the unification and do some state checking if expected results have been defined.
-     * 
+     *
      * @return The unification result
      */
     private boolean unifyLR(StringBuilder theSignature) {
         logger.info("Unifying {} to {}", this.left, this.right);
-        boolean unified = this.unifier.unify(this.left, this.leftVars, this.right, this.rightVars, this.frame);
+        final boolean unified = this.unifier.unify(this.left, this.leftVars, this.right, this.rightVars, this.frame);
         logger.debug(" result={}, trailFrame={}", unified, this.frame);
         logger.debug(" leftVars={}", this.leftVars);
         logger.debug(" rightVars={}", this.rightVars);
@@ -113,7 +113,7 @@ class UnificationTester {
 
     private boolean unifyRL(StringBuilder theSignature) {
         logger.info("Unifying {} to {}", this.right, this.left);
-        boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
+        final boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
         logger.debug(" result={}, trailFrame={}", unified, this.frame);
         logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
@@ -134,13 +134,13 @@ class UnificationTester {
 
     public void unify2ways(Term theLeft, Term theRight) {
         init2(theLeft, theRight);
-        StringBuilder signatureLR = new StringBuilder();
-        boolean unifyLR = unifyLR(signatureLR);
+        final StringBuilder signatureLR = new StringBuilder();
+        final boolean unifyLR = unifyLR(signatureLR);
         if (unifyLR) {
             deunify();
         }
-        StringBuilder signatureRL = new StringBuilder();
-        boolean unifyRL = unifyRL(signatureRL);
+        final StringBuilder signatureRL = new StringBuilder();
+        final boolean unifyRL = unifyRL(signatureRL);
         if (unifyRL) {
             deunify();
         }
@@ -150,13 +150,13 @@ class UnificationTester {
 
     public void unify2ways(Term theLeft, Term theRight, Bindings bindings) {
         init1(theLeft, theRight, bindings);
-        StringBuilder signatureLR = new StringBuilder();
-        boolean unifyLR = unifyLR(signatureLR);
+        final StringBuilder signatureLR = new StringBuilder();
+        final boolean unifyLR = unifyLR(signatureLR);
         if (unifyLR) {
             deunify();
         }
-        StringBuilder signatureRL = new StringBuilder();
-        boolean unifyRL = unifyRL(signatureRL);
+        final StringBuilder signatureRL = new StringBuilder();
+        final boolean unifyRL = unifyRL(signatureRL);
         if (unifyRL) {
             deunify();
         }
@@ -190,7 +190,7 @@ class UnificationTester {
 
     /**
      * Assert on expected unification result.
-     * 
+     *
      * @param theExpectedResult
      */
     private void assertUnificationResult(boolean theExpectedResult) {
