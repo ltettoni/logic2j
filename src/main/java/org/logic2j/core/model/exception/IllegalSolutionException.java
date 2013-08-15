@@ -21,10 +21,10 @@ package org.logic2j.core.model.exception;
  * FIXME Must be documented.
  */
 public class IllegalSolutionException extends PrologException {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public IllegalSolutionException(CharSequence theMessage) {
-    super(theMessage.toString());
-  }
+    public IllegalSolutionException(CharSequence theMessage) {
+        super(theMessage.toString());
+    }
 
 }

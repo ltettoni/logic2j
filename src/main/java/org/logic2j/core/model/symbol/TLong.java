@@ -23,62 +23,62 @@ import org.logic2j.core.model.TermVisitor;
  * TLong class represents the long Prolog data type.
  */
 public class TLong extends TNumber {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private long value;
+    private long value;
 
-  public TLong(long v) {
-    this.value = v;
-  }
-
-  public TLong(int v) {
-    this.value = v;
-  }
-
-  @Override
-  final public double doubleValue() {
-    return this.value;
-  }
-
-  @Override
-  final public long longValue() {
-    return this.value;
-  }
-
-  //---------------------------------------------------------------------------
-  // Template methods defined in abstract class Term
-  //---------------------------------------------------------------------------
-
-  @Override
-  public <T> T accept(TermVisitor<T> theVisitor) {
-    return theVisitor.visit(this);
-  }
-
-  //---------------------------------------------------------------------------
-  // Core java.lang.Object methods
-  //---------------------------------------------------------------------------
-
-  @Override
-  public boolean equals(Object other) {
-    if (!(other instanceof TLong)) {
-      return false;
+    public TLong(long v) {
+        this.value = v;
     }
-    final TLong that = (TLong) other;
-    return this.value == that.value;
-  }
 
-  @Override
-  public int hashCode() {
-    return new Long(this.value).hashCode();
-  }
+    public TLong(int v) {
+        this.value = v;
+    }
 
-  //---------------------------------------------------------------------------
-  // Interface Comparable
-  //---------------------------------------------------------------------------
+    @Override
+    final public double doubleValue() {
+        return this.value;
+    }
 
-  @Override
-  public int compareTo(TNumber that) {
-    return (new Long(this.value)).compareTo(that.longValue());
-  }
+    @Override
+    final public long longValue() {
+        return this.value;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Template methods defined in abstract class Term
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public <T> T accept(TermVisitor<T> theVisitor) {
+        return theVisitor.visit(this);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Core java.lang.Object methods
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof TLong)) {
+            return false;
+        }
+        final TLong that = (TLong) other;
+        return this.value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return new Long(this.value).hashCode();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Interface Comparable
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public int compareTo(TNumber that) {
+        return (new Long(this.value)).compareTo(that.longValue());
+    }
 
 }

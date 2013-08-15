@@ -40,8 +40,8 @@ import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * Prolog's most classic way of providing {@link Clause}s to the {@link Solver} inference engine: all clauses are parsed and normalized from one or several
- * theories' textual content managed by this class. TODO Does the name "Manager" make sense here?
+ * Prolog's most classic way of providing {@link Clause}s to the {@link Solver} inference engine: all clauses are parsed and normalized from
+ * one or several theories' textual content managed by this class. TODO Does the name "Manager" make sense here?
  */
 public class DefaultTheoryManager implements TheoryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
@@ -152,7 +152,8 @@ public class DefaultTheoryManager implements TheoryManager {
         this.wholeContent.addAll(theContent);
     }
 
-    // TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to implement it with those
+    // TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to
+    // implement it with those
     // parameters (cf ClauseProvider).
     /**
      * @param theGoal

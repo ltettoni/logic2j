@@ -23,56 +23,56 @@ import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
- * Interface for using Prolog from an application perspective.
- * TODO See if we can minimize the interface (only add if absolutely required, otherwise add to the PrologImplementor), 
- * see https://github.com/ltettoni/logic2j/issues/8
+ * Interface for using Prolog from an application perspective. TODO See if we can minimize the interface (only add if absolutely required,
+ * otherwise add to the PrologImplementor), see https://github.com/ltettoni/logic2j/issues/8
  */
 public interface Prolog {
-    
+
     // ---------------------------------------------------------------------------
-    // Shortcuts or "syntactic sugars" to ease programming. 
-    // The following methods delegate calls to sub-features of the Prolog engine. 
+    // Shortcuts or "syntactic sugars" to ease programming.
+    // The following methods delegate calls to sub-features of the Prolog engine.
     // ---------------------------------------------------------------------------
 
-  /**
-   * The shortcut and preferred method to create a {@link Term} by delegating instantiation to 
-   * the current {@link TermFactory}.
-   * @param theSource Any instance of {@link Object} that may be converted to a {@link Term}.
-   * @return A valid {@link Term}, ready for unification or inference within the current {@link Prolog} engine.
-   */
-  Term term(Object theSource);
+    /**
+     * The shortcut and preferred method to create a {@link Term} by delegating instantiation to the current {@link TermFactory}.
+     * 
+     * @param theSource Any instance of {@link Object} that may be converted to a {@link Term}.
+     * @return A valid {@link Term}, ready for unification or inference within the current {@link Prolog} engine.
+     */
+    Term term(Object theSource);
 
-  /**
-   * The highest-level entry point for solving a goal (this is the higer-level API, solving internally uses
-   * a {@link SolutionListener}).
-   * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
-   * @param theGoal To solve, will be parsed into a Term.
-   * @return A {@link SolutionHolder} that will allow the caller code to dereference 
-   * solution(s) and their bindings (values of variables).
-   */
-  SolutionHolder solve(CharSequence theGoal);
+    /**
+     * The highest-level entry point for solving a goal (this is the higer-level API, solving internally uses a {@link SolutionListener}).
+     * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
+     * 
+     * @param theGoal To solve, will be parsed into a Term.
+     * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
+     */
+    SolutionHolder solve(CharSequence theGoal);
 
-  /**
-   * Solves a goal.
-   * @param theGoal To solve.
-   * @return A {@link SolutionHolder} that will allow the caller code to dereference 
-   * solution(s) and their bindings (values of variables).
-   */
-  SolutionHolder solve(Term theGoal);
+    /**
+     * Solves a goal.
+     * 
+     * @param theGoal To solve.
+     * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
+     */
+    SolutionHolder solve(Term theGoal);
 
-  // ---------------------------------------------------------------------------
-  // Accessors to the sub-features of the Prolog engine
-  // ---------------------------------------------------------------------------
-  
-  /**
-   * The current factory to parse instantiate {@link Term}s.
-   * @return Our {@link TermFactory}
-   */
-  TermFactory getTermFactory();
+    // ---------------------------------------------------------------------------
+    // Accessors to the sub-features of the Prolog engine
+    // ---------------------------------------------------------------------------
 
-  /**
-   * The current theory manager, will allow calling code to add clauses, load theories, etc.
-   * @return Our {@link TheoryManager}
-   */
-  TheoryManager getTheoryManager();
+    /**
+     * The current factory to parse instantiate {@link Term}s.
+     * 
+     * @return Our {@link TermFactory}
+     */
+    TermFactory getTermFactory();
+
+    /**
+     * The current theory manager, will allow calling code to add clauses, load theories, etc.
+     * 
+     * @return Our {@link TheoryManager}
+     */
+    TheoryManager getTheoryManager();
 }

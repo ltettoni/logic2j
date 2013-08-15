@@ -43,7 +43,6 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
 
-
     @Override
     final public boolean isList() {
         return false;

@@ -18,21 +18,21 @@
 package org.logic2j.core.model.exception;
 
 /**
- * Indicate that recursion limit has been reached by the solver.
- * Caused by either too many loops, or a JVM's {@link StackOverflowError} was caught somewhere.
+ * Indicate that recursion limit has been reached by the solver. Caused by either too many loops, or a JVM's {@link StackOverflowError} was
+ * caught somewhere.
  */
 public class RecursionException extends PrologException {
 
-  private static final long serialVersionUID = -4416801118548866803L;
+    private static final long serialVersionUID = -4416801118548866803L;
 
-  public boolean stackOverflow = false;
+    public boolean stackOverflow = false;
 
-  public RecursionException(String theString) {
-    super(theString);
-  }
+    public RecursionException(String theString) {
+        super(theString);
+    }
 
-  public RecursionException(String theString, Throwable theRootCause) {
-    super(theString, theRootCause);
-  }
+    public RecursionException(String theString, Throwable theRootCause) {
+        super(theString, theRootCause);
+    }
 
 }

@@ -28,46 +28,46 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.solver.Solver;
 
 /**
- * An API to manage theories (lists of Prolog {@link Clause}s (facts or rules) 
- * expressed as text.
- * The {@link TheoryManager} is an implementation of a {@link ClauseProvider} since it
- * also provides sequences of clauses to the {@link Solver} inference engine.
+ * An API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text. The {@link TheoryManager} is an
+ * implementation of a {@link ClauseProvider} since it also provides sequences of clauses to the {@link Solver} inference engine.
  */
 public interface TheoryManager extends ClauseProvider {
 
-  //---------------------------------------------------------------------------
-  // Load Theories from various sources into a TheoryContent representation
-  //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Load Theories from various sources into a TheoryContent representation
+    // ---------------------------------------------------------------------------
 
-  /**
-   * Load the Prolog content associated to a {@link PLibrary}.
-   * @param theLibrary
-   * @return The content of the theory associated to theLibrary
-   */
-  TheoryContent load(PLibrary theLibrary);
+    /**
+     * Load the Prolog content associated to a {@link PLibrary}.
+     * 
+     * @param theLibrary
+     * @return The content of the theory associated to theLibrary
+     */
+    TheoryContent load(PLibrary theLibrary);
 
-  /**
-   * Convenience method to load a File representing a Theory.
-   * @param theFile
-   * @return The content of the theory from theFile.
-   * @throws IOException
-   */
-  TheoryContent load(File theFile) throws IOException;
+    /**
+     * Convenience method to load a File representing a Theory.
+     * 
+     * @param theFile
+     * @return The content of the theory from theFile.
+     * @throws IOException
+     */
+    TheoryContent load(File theFile) throws IOException;
 
-  //---------------------------------------------------------------------------
-  // Alter the current Prolog instance with content from theories
-  //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Alter the current Prolog instance with content from theories
+    // ---------------------------------------------------------------------------
 
-  /**
-   * @param theContent to set - will replace any previously defined content.
-   */
-  void setTheory(TheoryContent theContent);
+    /**
+     * @param theContent to set - will replace any previously defined content.
+     */
+    void setTheory(TheoryContent theContent);
 
-  /**
-   * @param theContent To be added to the {@link PrologImplementor} engine associated.
-   */
-  void addTheory(TheoryContent theContent);
+    /**
+     * @param theContent To be added to the {@link PrologImplementor} engine associated.
+     */
+    void addTheory(TheoryContent theContent);
 
-  void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
+    void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
 
 }

@@ -129,7 +129,8 @@ public class CoreLibrary extends LibraryBase {
         notifyIfUnified(unified, theGoalFrame, theListener);
     }
 
-    @Primitive(synonyms = "\\+") // Surprisingly enough the operator \+ means "not provable".
+    @Primitive(synonyms = "\\+")
+    // Surprisingly enough the operator \+ means "not provable".
     public void not(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theGoal) {
         final Bindings subGoalBindings = theBindings.focus(theGoal, Struct.class);
         assertValidBindings(subGoalBindings, "\\+/1");
@@ -177,8 +178,8 @@ public class CoreLibrary extends LibraryBase {
         };
 
         // Now solve the target goal, this may find several values of course
-//        final Term effectiveGoal = subGoalBindings.getReferrer();
-//        getProlog().getSolver().solveGoalRecursive(effectiveGoal, subGoalBindings, new GoalFrame(), adHocListener);
+        // final Term effectiveGoal = subGoalBindings.getReferrer();
+        // getProlog().getSolver().solveGoalRecursive(effectiveGoal, subGoalBindings, new GoalFrame(), adHocListener);
         getProlog().getSolver().solveGoal(subGoalBindings, new GoalFrame(), adHocListener);
 
         // Convert all results into a prolog list structure

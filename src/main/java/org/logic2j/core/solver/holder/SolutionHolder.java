@@ -29,20 +29,20 @@ import org.logic2j.core.solver.listener.Solution;
 import org.logic2j.core.solver.listener.UniqueSolutionListener;
 
 /**
- * Holds state necessary to describe the unique solution or multiple solutions to a goal; this object lies between the expression of a goal (a request or query)
- * and the extraction of all aspects of the solution (a response or results). <br/>
- * IMPORTANT: obtaining a {@link SolutionHolder} usually means that the execution has not yet started - state is held ready to execute, until you tell what you
- * want! <br/>
- * This object exposes strongly-typed, templated methods to extract results depending on how the calling code expects them (unique or multiple solutions), and
- * the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
- * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed), or delayed until
- * access methods are called.
+ * Holds state necessary to describe the unique solution or multiple solutions to a goal; this object lies between the expression of a goal
+ * (a request or query) and the extraction of all aspects of the solution (a response or results). <br/>
+ * IMPORTANT: obtaining a {@link SolutionHolder} usually means that the execution has not yet started - state is held ready to execute,
+ * until you tell what you want! <br/>
+ * This object exposes strongly-typed, templated methods to extract results depending on how the calling code expects them (unique or
+ * multiple solutions), and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
+ * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed),
+ * or delayed until access methods are called.
  * 
  * TODO Maybe have a way to allow limiting "all" to a reasonable number.
  * 
  * <p/>
- * This type of API for extracting results from a data layer should further be analyzed and compared to other APIs such as JDBC, JNDI, SAX/DOM, or more exotic
- * ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
+ * This type of API for extracting results from a data layer should further be analyzed and compared to other APIs such as JDBC, JNDI,
+ * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
  */
 public class SolutionHolder {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
@@ -87,8 +87,8 @@ public class SolutionHolder {
     }
 
     /**
-     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link Solution}s from this {@link Iterator} at its
-     * own pace. This uses the {@link IterableSolutionListener}.
+     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link Solution}s from this
+     * {@link Iterator} at its own pace. This uses the {@link IterableSolutionListener}.
      * 
      * @return An iterator for all solutions.
      */
@@ -135,7 +135,8 @@ public class SolutionHolder {
                     throw new PrologNonSpecificError("Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
                 }
                 final Solution toReturn = this.solution;
-                // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext() will fail.
+                // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext()
+                // will fail.
                 this.solution = null;
                 return toReturn;
             }

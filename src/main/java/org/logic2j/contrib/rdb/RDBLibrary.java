@@ -55,8 +55,8 @@ import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository. TODO: the
- * {@link #select(SolutionListener, GoalFrame, Bindings, Term...)} method should actually take the goal and create a constraint graph, then transform the graph
- * into SQL.
+ * {@link #select(SolutionListener, GoalFrame, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
+ * transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);
@@ -216,7 +216,8 @@ public class RDBLibrary extends LibraryBase {
         logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
         // Now collect join conditions: all columns having the same variable
-        CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join clauses
+        CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join
+                                                                                                                              // clauses
         for (SqlBuilder3.Criterion column : rawColumns) {
             if (column.getOperand()[0] instanceof Var) {
                 Var var = (Var) column.getOperand()[0];

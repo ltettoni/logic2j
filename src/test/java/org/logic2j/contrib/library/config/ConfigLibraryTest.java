@@ -25,11 +25,11 @@ import org.logic2j.core.PrologImpl;
 
 public class ConfigLibraryTest extends PrologWithDataSourcesTestBase {
 
-	// FIXME: Why a main() in a JUnit TestCase?
-	public static void main(String[] args) throws IOException {
-		PrologImpl prolog = new PrologImpl();
-		prolog.getTheoryManager().addTheory(prolog.getTheoryManager().load(new File("src/test/resources/test-config.pl")));
-		System.out.println(prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
-	}
+    // FIXME: Why a main() in a JUnit TestCase?
+    public static void main(String[] args) throws IOException {
+        PrologImpl prolog = new PrologImpl();
+        prolog.getTheoryManager().addTheory(prolog.getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+        System.out.println(prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
+    }
 
 }

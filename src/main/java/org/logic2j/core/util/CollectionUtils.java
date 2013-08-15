@@ -25,254 +25,238 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Utilities to format {@link Collection}s, by extension functions are also
- * handling {@link Map}s and arrays. 
- * @note Quite of a nice to have, and not functionally required... Not really much
- * used (only in contribs, and in one test case). We could as well use Guava but
- * do we want dependencies just for that?
+ * Utilities to format {@link Collection}s, by extension functions are also handling {@link Map}s and arrays.
+ * 
+ * @note Quite of a nice to have, and not functionally required... Not really much used (only in contribs, and in one test case). We could
+ *       as well use Guava but do we want dependencies just for that?
  */
 public final class CollectionUtils {
 
-	private CollectionUtils() {
-		// Forbid instantiation: this class is a set of static function
-	}
+    private CollectionUtils() {
+        // Forbid instantiation: this class is a set of static function
+    }
 
-	/**
-	 * Format a collection using it's element's
-	 * {@link String#valueOf(java.lang.Object)} method, but inserting a
-	 * separator between consecutive elements, and not surrounding the result by
-	 * any braket, brace or parenthesis.
-	 * 
-	 * @param theCollection The collection to format. Must not be null.
-	 * @param theSeparator The string used to interleave between consecutive
-	 *            elements. May be "" to pack elements together. Normally use a
-	 *            space around, e.g. " OR ". If null, then the empty string is
-	 *            used.
-	 * @return A formatter string, never null. May span several lines depending
-	 *         on the element's toString() or on the separator value.
-	 * @throws IllegalArgumentException If coll is null.
-	 */
-	public static String formatSeparated(Collection<? extends Object> theCollection, String theSeparator) {
-		if (theCollection == null) {
-			throw new IllegalArgumentException("Cannot format null collection");
-		}
-		String separator = theSeparator;
-		if (separator == null) {
-			separator = "";
-		}
-		final StringBuffer sb = new StringBuffer();
-		for (final Iterator<? extends Object> iter = theCollection.iterator(); iter.hasNext();) {
-			final String element = String.valueOf(iter.next());
-			sb.append(element);
-			if (iter.hasNext()) {
-				sb.append(separator);
-			}
-		}
-		return sb.toString();
-	}
+    /**
+     * Format a collection using it's element's {@link String#valueOf(java.lang.Object)} method, but inserting a separator between
+     * consecutive elements, and not surrounding the result by any braket, brace or parenthesis.
+     * 
+     * @param theCollection The collection to format. Must not be null.
+     * @param theSeparator The string used to interleave between consecutive elements. May be "" to pack elements together. Normally use a
+     *            space around, e.g. " OR ". If null, then the empty string is used.
+     * @return A formatter string, never null. May span several lines depending on the element's toString() or on the separator value.
+     * @throws IllegalArgumentException If coll is null.
+     */
+    public static String formatSeparated(Collection<? extends Object> theCollection, String theSeparator) {
+        if (theCollection == null) {
+            throw new IllegalArgumentException("Cannot format null collection");
+        }
+        String separator = theSeparator;
+        if (separator == null) {
+            separator = "";
+        }
+        final StringBuffer sb = new StringBuffer();
+        for (final Iterator<? extends Object> iter = theCollection.iterator(); iter.hasNext();) {
+            final String element = String.valueOf(iter.next());
+            sb.append(element);
+            if (iter.hasNext()) {
+                sb.append(separator);
+            }
+        }
+        return sb.toString();
+    }
 
-	/**
-	 * Format an array using it's element's
-	 * {@link String#valueOf(java.lang.Object)} method, but inserting a
-	 * separator between consecutive elements, and not surrounding the result by
-	 * any braket, brace or parenthesis.
-	 * 
-	 * @param theArray The array to format. Must not be null.
-	 * @param theSeparator The string used to interleave between consecutive
-	 *            elements. May be "" to pack elements together. Normally use a
-	 *            space around, e.g. " OR ". If null, then the empty string is
-	 *            used.
-	 * @return A formatter string, never null. May span several lines depending
-	 *         on the element's toString() or on the separator value.
-	 * @throws IllegalArgumentException If coll is null.
-	 */
-	public static String formatSeparated(Object[] theArray, String theSeparator) {
-		if (theArray == null) {
-			throw new IllegalArgumentException("Cannot format null array");
-		}
-		String separator = theSeparator;
-		if (separator == null) {
-			separator = "";
-		}
-		final StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < theArray.length; i++) {
-			final String element = String.valueOf(theArray[i]);
-			sb.append(element);
-			if (i < theArray.length - 1) {
-				sb.append(separator);
-			}
-		}
-		return sb.toString();
-	}
+    /**
+     * Format an array using it's element's {@link String#valueOf(java.lang.Object)} method, but inserting a separator between consecutive
+     * elements, and not surrounding the result by any braket, brace or parenthesis.
+     * 
+     * @param theArray The array to format. Must not be null.
+     * @param theSeparator The string used to interleave between consecutive elements. May be "" to pack elements together. Normally use a
+     *            space around, e.g. " OR ". If null, then the empty string is used.
+     * @return A formatter string, never null. May span several lines depending on the element's toString() or on the separator value.
+     * @throws IllegalArgumentException If coll is null.
+     */
+    public static String formatSeparated(Object[] theArray, String theSeparator) {
+        if (theArray == null) {
+            throw new IllegalArgumentException("Cannot format null array");
+        }
+        String separator = theSeparator;
+        if (separator == null) {
+            separator = "";
+        }
+        final StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < theArray.length; i++) {
+            final String element = String.valueOf(theArray[i]);
+            sb.append(element);
+            if (i < theArray.length - 1) {
+                sb.append(separator);
+            }
+        }
+        return sb.toString();
+    }
 
-	/**
-	 * Format a collection, array, or map (internal method).
-	 * 
-	 * @param theLabel
-	 * @param coll
-	 * @param maxNumberReported
-	 * @param theClassName
-	 * @return The formatted collection, spans multiple lines.
-	 */
-	private static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported, String theClassName) {
-		final boolean showCollectionIndexes = false;
-		final int half = (maxNumberReported == 0) ? 10000 : ((maxNumberReported - 1) / 2) + 1;
+    /**
+     * Format a collection, array, or map (internal method).
+     * 
+     * @param theLabel
+     * @param coll
+     * @param maxNumberReported
+     * @param theClassName
+     * @return The formatted collection, spans multiple lines.
+     */
+    private static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported, String theClassName) {
+        final boolean showCollectionIndexes = false;
+        final int half = (maxNumberReported == 0) ? 10000 : ((maxNumberReported - 1) / 2) + 1;
 
-		String label = theLabel;
-		if (label == null) {
-			label = "";
-		}
+        String label = theLabel;
+        if (label == null) {
+            label = "";
+        }
 
-		final Map<Class<?>, Integer> instancesByClass = new HashMap<Class<?>, Integer>();
-		final StringBuffer sb = new StringBuffer(label);
+        final Map<Class<?>, Integer> instancesByClass = new HashMap<Class<?>, Integer>();
+        final StringBuffer sb = new StringBuffer(label);
 
-		if (label.length() > 0) {
-			sb.append(' ');
-		}
+        if (label.length() > 0) {
+            sb.append(' ');
+        }
 
-		final int size = (coll != null) ? coll.size() : 0;
+        final int size = (coll != null) ? coll.size() : 0;
 
-		if (size > 0) {
-			sb.append('\n');
-		}
+        if (size > 0) {
+            sb.append('\n');
+        }
 
-		int counter = 0;
-		boolean shownEllipsis = false;
+        int counter = 0;
+        boolean shownEllipsis = false;
 
-		if (coll == null) {
-			sb.append("null Collection or Map");
-			return sb.toString();
-		}
+        if (coll == null) {
+            sb.append("null Collection or Map");
+            return sb.toString();
+        }
 
-		for (Object element : coll) {
-			// Statistics
-			final Class<?> theElementClass = (element != null) ? element.getClass() : null;
-			Integer nbrOfThisClass = instancesByClass.get(theElementClass);
+        for (Object element : coll) {
+            // Statistics
+            final Class<?> theElementClass = (element != null) ? element.getClass() : null;
+            Integer nbrOfThisClass = instancesByClass.get(theElementClass);
 
-			if (nbrOfThisClass == null) {
-				nbrOfThisClass = Integer.valueOf(0);
-			}
-			nbrOfThisClass = Integer.valueOf(nbrOfThisClass.intValue() + 1);
-			instancesByClass.put(theElementClass, nbrOfThisClass);
+            if (nbrOfThisClass == null) {
+                nbrOfThisClass = Integer.valueOf(0);
+            }
+            nbrOfThisClass = Integer.valueOf(nbrOfThisClass.intValue() + 1);
+            instancesByClass.put(theElementClass, nbrOfThisClass);
 
-			// Report
-			if (counter < half || counter >= size - half) {
-				if (element instanceof Map.Entry<?, ?>) {
-					final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) element;
-					if (entry.getValue() instanceof Collection<?>) {
-						final int colLSize = ((Collection<?>) entry.getValue()).size();
-						sb.append(" " + entry.getKey() + '[' + colLSize + "]=" + entry.getValue() + '\n');
-					} else {
-						sb.append(" " + entry.getKey() + '=' + entry.getValue() + '\n');
-					}
-				} else {
-					sb.append(' ');
-					if (showCollectionIndexes) {
-						sb.append('[');
-						sb.append(counter);
-						sb.append("]=");
-					}
-					sb.append(String.valueOf(element));
-					sb.append('\n');
-				}
-			} else {
-				if (!shownEllipsis) {
-					sb.append(" [" + (half) + '-' + (size - half - 1) + "]=(" + (size - half - half) + " skipped)\n");
-				}
-				shownEllipsis = true;
-			}
-			counter++;
-		}
+            // Report
+            if (counter < half || counter >= size - half) {
+                if (element instanceof Map.Entry<?, ?>) {
+                    final Map.Entry<?, ?> entry = (Map.Entry<?, ?>) element;
+                    if (entry.getValue() instanceof Collection<?>) {
+                        final int colLSize = ((Collection<?>) entry.getValue()).size();
+                        sb.append(" " + entry.getKey() + '[' + colLSize + "]=" + entry.getValue() + '\n');
+                    } else {
+                        sb.append(" " + entry.getKey() + '=' + entry.getValue() + '\n');
+                    }
+                } else {
+                    sb.append(' ');
+                    if (showCollectionIndexes) {
+                        sb.append('[');
+                        sb.append(counter);
+                        sb.append("]=");
+                    }
+                    sb.append(String.valueOf(element));
+                    sb.append('\n');
+                }
+            } else {
+                if (!shownEllipsis) {
+                    sb.append(" [" + (half) + '-' + (size - half - 1) + "]=(" + (size - half - half) + " skipped)\n");
+                }
+                shownEllipsis = true;
+            }
+            counter++;
+        }
 
-		// Special case for Arrays$ArrayList
-		String className = theClassName;
-		if ("Arrays$ArrayList".equals(className)) {
-			className = "Object[]";
-		}
-		sb.append(className);
-		sb.append(" size=");
-		sb.append(size);
+        // Special case for Arrays$ArrayList
+        String className = theClassName;
+        if ("Arrays$ArrayList".equals(className)) {
+            className = "Object[]";
+        }
+        sb.append(className);
+        sb.append(" size=");
+        sb.append(size);
 
-		if (!className.endsWith("Map")) {
-			// Report number of classes
-			for (Entry<Class<?>, Integer> entry : instancesByClass.entrySet()) {
-				final Class<?> key = entry.getKey();
-				final Integer value = entry.getValue();
-				sb.append(", ");
-				sb.append(value);
-				sb.append(' ');
-				sb.append(key.getClass().getSimpleName());
-			}
-		}
-		sb.append('.');
-		return sb.toString();
-	}
+        if (!className.endsWith("Map")) {
+            // Report number of classes
+            for (Entry<Class<?>, Integer> entry : instancesByClass.entrySet()) {
+                final Class<?> key = entry.getKey();
+                final Integer value = entry.getValue();
+                sb.append(", ");
+                sb.append(value);
+                sb.append(' ');
+                sb.append(key.getClass().getSimpleName());
+            }
+        }
+        sb.append('.');
+        return sb.toString();
+    }
 
-	/**
-	 * Generate a usually multiline String reporting a collection's elements. If
-	 * the collection is a Map.entrySet(), actually if elements are instances of
-	 * Map.Entry then their key is reported instead of the element's index.
-	 * 
-	 * @param theLabel A label to display first, as is without change. If null,
-	 *            "" is used.
-	 * @param coll A collection whose elements will be listed (if not too large)
-	 * @param maxNumberReported The maximum number of elements to report in case
-	 *            of large collections, or 0 to report all whatever the size.
-	 * @return A usually multiline String describing the collection. This can be
-	 *         logged, or output to System.out, for instance. If the collection
-	 *         is empty, one line is output. If the collection is large, only
-	 *         the first and last elements are output, while "..." is shown in
-	 *         the middle.
-	 */
-	public static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported) {
-		String label = theLabel;
-		if (coll == null) {
-			if (label == null) {
-				label = "";
-			}
-			return label + " null Collection";
-		}
-		return format(label, coll, maxNumberReported, coll.getClass().getSimpleName());
-	}
+    /**
+     * Generate a usually multiline String reporting a collection's elements. If the collection is a Map.entrySet(), actually if elements
+     * are instances of Map.Entry then their key is reported instead of the element's index.
+     * 
+     * @param theLabel A label to display first, as is without change. If null, "" is used.
+     * @param coll A collection whose elements will be listed (if not too large)
+     * @param maxNumberReported The maximum number of elements to report in case of large collections, or 0 to report all whatever the size.
+     * @return A usually multiline String describing the collection. This can be logged, or output to System.out, for instance. If the
+     *         collection is empty, one line is output. If the collection is large, only the first and last elements are output, while "..."
+     *         is shown in the middle.
+     */
+    public static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported) {
+        String label = theLabel;
+        if (coll == null) {
+            if (label == null) {
+                label = "";
+            }
+            return label + " null Collection";
+        }
+        return format(label, coll, maxNumberReported, coll.getClass().getSimpleName());
+    }
 
-	/**
-	 * Generate a usually multiline String reporting an array's elements.
-	 * 
-	 * @param theLabel See related function.
-	 * @param array See related function.
-	 * @param maxNumberReported See related function.
-	 * @return See related function.
-	 * @see #format(String, Collection, int)
-	 */
-	public static String format(String theLabel, Object[] array, int maxNumberReported) {
-		String label = theLabel;
-		if (array == null) {
-			if (label == null) {
-				label = "";
-			}
-			return label + " null Object[]";
-		}
-		return format(label, Arrays.asList(array), maxNumberReported, "Object[]");
-	}
+    /**
+     * Generate a usually multiline String reporting an array's elements.
+     * 
+     * @param theLabel See related function.
+     * @param array See related function.
+     * @param maxNumberReported See related function.
+     * @return See related function.
+     * @see #format(String, Collection, int)
+     */
+    public static String format(String theLabel, Object[] array, int maxNumberReported) {
+        String label = theLabel;
+        if (array == null) {
+            if (label == null) {
+                label = "";
+            }
+            return label + " null Object[]";
+        }
+        return format(label, Arrays.asList(array), maxNumberReported, "Object[]");
+    }
 
-	/**
-	 * Generate a usually multiline String reporting a Map's entries.
-	 * 
-	 * @param theLabel See related function.
-	 * @param map See related function.
-	 * @param maxNumberReported See related function.
-	 * @return See related function.
-	 * @see #format(String, Collection, int)
-	 */
-	public static String format(String theLabel, Map<?, ?> map, int maxNumberReported) {
-		String label = theLabel;
-		if (map == null) {
-			if (label == null) {
-				label = "";
-			}
-			return label + " null Map";
-		}
-		return format(label, map.entrySet(), maxNumberReported, map.getClass().getSimpleName());
-	}
+    /**
+     * Generate a usually multiline String reporting a Map's entries.
+     * 
+     * @param theLabel See related function.
+     * @param map See related function.
+     * @param maxNumberReported See related function.
+     * @return See related function.
+     * @see #format(String, Collection, int)
+     */
+    public static String format(String theLabel, Map<?, ?> map, int maxNumberReported) {
+        String label = theLabel;
+        if (map == null) {
+            if (label == null) {
+                label = "";
+            }
+            return label + " null Map";
+        }
+        return format(label, map.entrySet(), maxNumberReported, map.getClass().getSimpleName());
+    }
 
 }

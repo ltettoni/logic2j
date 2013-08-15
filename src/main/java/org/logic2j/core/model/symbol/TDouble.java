@@ -23,61 +23,61 @@ import org.logic2j.core.model.TermVisitor;
  * TDouble class represents the double Prolog data type.
  */
 public class TDouble extends TNumber {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private double value;
+    private double value;
 
-  public TDouble(double v) {
-    this.value = v;
-  }
-
-  public TDouble(float v) {
-    this.value = v;
-  }
-
-  @Override
-  final public double doubleValue() {
-    return this.value;
-  }
-
-  @Override
-  final public long longValue() {
-    return (long) this.value;
-  }
-
-  //---------------------------------------------------------------------------
-  // Template methods defined in abstract class Term
-  //---------------------------------------------------------------------------
-
-  @Override
-  public <T> T accept(TermVisitor<T> theVisitor) {
-    return theVisitor.visit(this);
-  }
-
-  //---------------------------------------------------------------------------
-  // Core java.lang.Object methods
-  //---------------------------------------------------------------------------
-
-  @Override
-  public boolean equals(Object other) {
-    if (!(other instanceof TDouble)) {
-      return false;
+    public TDouble(double v) {
+        this.value = v;
     }
-    final TDouble that = (TDouble) other;
-    return this.value == that.value;
-  }
 
-  @Override
-  public int hashCode() {
-    return new Double(this.value).hashCode();
-  }
+    public TDouble(float v) {
+        this.value = v;
+    }
 
-  //---------------------------------------------------------------------------
-  // Interface Comparable
-  //---------------------------------------------------------------------------
+    @Override
+    final public double doubleValue() {
+        return this.value;
+    }
 
-  @Override
-  public int compareTo(TNumber that) {
-    return (new Double(this.value)).compareTo(that.doubleValue());
-  }
+    @Override
+    final public long longValue() {
+        return (long) this.value;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Template methods defined in abstract class Term
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public <T> T accept(TermVisitor<T> theVisitor) {
+        return theVisitor.visit(this);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Core java.lang.Object methods
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof TDouble)) {
+            return false;
+        }
+        final TDouble that = (TDouble) other;
+        return this.value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return new Double(this.value).hashCode();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Interface Comparable
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public int compareTo(TNumber that) {
+        return (new Double(this.value)).compareTo(that.doubleValue());
+    }
 }

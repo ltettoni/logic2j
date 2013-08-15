@@ -27,20 +27,17 @@ import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
- * Preliminary - should be reviewed
- * FIXME: This class should not know of RDBClauseProvider!
+ * Preliminary - should be reviewed FIXME: This class should not know of RDBClauseProvider!
  */
 public class ConfigLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConfigLibrary.class);
-    
+
     public ConfigLibrary(PrologImplementor theProlog) {
         super(theProlog);
     }
 
     @Primitive
-    public void rdb_config(SolutionListener theListener,
-            GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments)
-            throws SQLException {
+    public void rdb_config(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
         String driver = ((Struct) theArguments[0]).getName();
         final String connectionString = ((Struct) theArguments[1]).getName();
         String username = ((Struct) theArguments[2]).getName();
@@ -48,8 +45,7 @@ public class ConfigLibrary extends LibraryBase {
         String prefix = ((Struct) theArguments[4]).getName();
         Set<String> tablesToMap = new HashSet<String>();
         if (theArguments.length > 5 && theArguments[5].isList()) {
-            for (Struct struct : ((Struct) theArguments[5]).javaListFromPList(
-                    new ArrayList<Struct>(), Struct.class)) {
+            for (Struct struct : ((Struct) theArguments[5]).javaListFromPList(new ArrayList<Struct>(), Struct.class)) {
                 tablesToMap.add(struct.getName().toLowerCase());
             }
         }
@@ -59,7 +55,7 @@ public class ConfigLibrary extends LibraryBase {
         } catch (ClassNotFoundException exception) {
             exception.printStackTrace();
         }
-        
+
         DataSource dataSource = new DataSource() {
 
             @SuppressWarnings("unchecked")
@@ -69,11 +65,7 @@ public class ConfigLibrary extends LibraryBase {
                     throw new PrologNonSpecificError("Interface argument must not be null");
                 }
                 if (!DataSource.class.equals(iface)) {
-                    throw new SQLException(
-                            "DataSource of type ["
-                                    + getClass().getName()
-                                    + "] can only be unwrapped as [javax.sql.DataSource], not as ["
-                                    + iface.getName());
+                    throw new SQLException("DataSource of type [" + getClass().getName() + "] can only be unwrapped as [javax.sql.DataSource], not as [" + iface.getName());
                 }
                 return (T) this;
             }
@@ -94,9 +86,8 @@ public class ConfigLibrary extends LibraryBase {
             }
 
             @Override
-            // Note: this requires a Java 1.7; this method did not exist in Java 1.6 
-            public Logger getParentLogger()
-                    throws SQLFeatureNotSupportedException {
+            // Note: this requires a Java 1.7; this method did not exist in Java 1.6
+            public Logger getParentLogger() throws SQLFeatureNotSupportedException {
                 throw new UnsupportedOperationException("getParentLogger");
             }
 
@@ -111,10 +102,8 @@ public class ConfigLibrary extends LibraryBase {
             }
 
             @Override
-            public Connection getConnection(String username, String password)
-                    throws SQLException {
-                return DriverManager.getConnection(connectionString, username,
-                        password);
+            public Connection getConnection(String username, String password) throws SQLException {
+                return DriverManager.getConnection(connectionString, username, password);
             }
 
             @Override
@@ -122,12 +111,11 @@ public class ConfigLibrary extends LibraryBase {
                 return DriverManager.getConnection(connectionString);
             }
         };
-        
+
         // This is dubious - we instantiate a new ClauseProvider just to save the table metamodel
         // but we won't have it when needed!!!
         // This generates a NPE see RDBClauseProviderTest
-        RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(),
-                dataSource, prefix);
+        RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(), dataSource, prefix);
 
         DatabaseMetaData dmd = dataSource.getConnection(username, password).getMetaData();
         ResultSet tables = dmd.getTables(null, null, "%", null);
@@ -135,7 +123,8 @@ public class ConfigLibrary extends LibraryBase {
             String tableName = tables.getString(3);
             logger.debug("DB introspection found table \"{}\"", tableName);
             String tableNameLc = tableName.toLowerCase();
-            if (!tablesToMap.contains(tableNameLc)) continue;
+            if (!tablesToMap.contains(tableNameLc))
+                continue;
             ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
             List<String> columnDescription = new ArrayList<String>();
             while (tableColumns.next()) {

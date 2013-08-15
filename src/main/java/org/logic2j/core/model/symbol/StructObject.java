@@ -23,26 +23,26 @@ import org.logic2j.core.model.TermVisitor;
  * A {@link Struct} that holds a wrapped object.
  */
 public class StructObject<T> extends Struct {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private T wrapped;
+    private T wrapped;
 
-  /**
-   * @param theString
-   * @param theObject
-   */
-  public StructObject(String theString, T theObject) {
-    super(theString);
-    this.wrapped = theObject;
-  }
+    /**
+     * @param theString
+     * @param theObject
+     */
+    public StructObject(String theString, T theObject) {
+        super(theString);
+        this.wrapped = theObject;
+    }
 
-  public T getObject() {
-    return this.wrapped;
-  }
+    public T getObject() {
+        return this.wrapped;
+    }
 
-  @Override
-  public <U> U accept(TermVisitor<U> theVisitor) {
-    return theVisitor.visit(this);
-  }
+    @Override
+    public <U> U accept(TermVisitor<U> theVisitor) {
+        return theVisitor.visit(this);
+    }
 
 }

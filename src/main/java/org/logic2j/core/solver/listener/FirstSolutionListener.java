@@ -21,22 +21,21 @@ import org.logic2j.core.model.exception.IllegalSolutionException;
 import org.logic2j.core.model.var.Bindings;
 
 /**
- * A {@link SolutionListener} that will collect only the first solution but won't
- * care if the goal solver can provide more. It will atually ask the goal solver to stop
- * generating after the first was issued.
+ * A {@link SolutionListener} that will collect only the first solution but won't care if the goal solver can provide more. It will atually
+ * ask the goal solver to stop generating after the first was issued.
  */
 public class FirstSolutionListener extends SingleSolutionListener {
 
-  public FirstSolutionListener(Bindings theBindings) {
-    // We are only interested in the first result so we will tell the SolutionListener
-    // to stop the solver after the first solution. Using this argument we won't be
-    // able to tell if there are actually more, or not. But we are not interested.
-    super(theBindings, 1);
-  }
+    public FirstSolutionListener(Bindings theBindings) {
+        // We are only interested in the first result so we will tell the SolutionListener
+        // to stop the solver after the first solution. Using this argument we won't be
+        // able to tell if there are actually more, or not. But we are not interested.
+        super(theBindings, 1);
+    }
 
-  @Override
-  protected void onSuperfluousSolution() {
-    throw new IllegalSolutionException("Internal error, this should not happen since we have asked the SolutionListener to stop after one");
-  }
+    @Override
+    protected void onSuperfluousSolution() {
+        throw new IllegalSolutionException("Internal error, this should not happen since we have asked the SolutionListener to stop after one");
+    }
 
 }

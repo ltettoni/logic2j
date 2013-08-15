@@ -36,111 +36,110 @@ import org.logic2j.core.solver.listener.SolutionListenerBase;
  */
 public class MultipleSolutionsHolder {
 
-  private final SolutionHolder solutionHolder;
+    private final SolutionHolder solutionHolder;
 
-  MultipleSolutionsHolder(SolutionHolder theSolutionHolder) {
-    this.solutionHolder = theSolutionHolder;
-  }
-
-  private Integer lowest = null;
-  private Integer highest = null;
-
-  /**
-   * Start solving, indicating you are not interested by the actual solutions nor bindings,
-   * only their number.
-   * @return The number of solutions.
-   */
-  public int number() {
-    final SolutionListenerBase listener = new SolutionListenerBase();
-    this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(),
-        listener);
-    final int counter = listener.getCounter();
-    checkBounds(counter);
-    return counter;
-  }
-
-  private void checkBounds(int counter) {
-    if (this.lowest != null && counter < this.lowest) {
-      throw new PrologNonSpecificError("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
+    MultipleSolutionsHolder(SolutionHolder theSolutionHolder) {
+        this.solutionHolder = theSolutionHolder;
     }
-    if (this.highest != null && counter > this.highest) {
-      throw new PrologNonSpecificError("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
+
+    private Integer lowest = null;
+    private Integer highest = null;
+
+    /**
+     * Start solving, indicating you are not interested by the actual solutions nor bindings, only their number.
+     * 
+     * @return The number of solutions.
+     */
+    public int number() {
+        final SolutionListenerBase listener = new SolutionListenerBase();
+        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        final int counter = listener.getCounter();
+        checkBounds(counter);
+        return counter;
     }
-  }
 
-  /**
-   * Solves the goal and extract, for every solution, the binding for a given variable by name.
-   * @param theVariableName
-   */
-  public List<Term> binding(final String theVariableName) {
-    final List<Term> results = new ArrayList<Term>();
-    final SolutionListenerBase listener = new SolutionListenerBase() {
-
-      @Override
-      public Continuation onSolution() {
-        final Bindings bnd = MultipleSolutionsHolder.this.solutionHolder.bindings;
-        final Term term = bnd.getReferrer();
-        final Var var = term.findVar(theVariableName);
-        if (var == null) {
-          throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
+    private void checkBounds(int counter) {
+        if (this.lowest != null && counter < this.lowest) {
+            throw new PrologNonSpecificError("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
         }
-        final Term substituted = SolutionHolder.TERM_API.substitute(var, bnd, null);
-        results.add(substituted);
-        return super.onSolution();
-      }
+        if (this.highest != null && counter > this.highest) {
+            throw new PrologNonSpecificError("Number of solutions was expected to be at most " + this.highest + " but was " + counter);
+        }
+    }
 
-    };
-    this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(),
-        listener);
-    int size = results.size();
-    checkBounds(size);
-    return results;
-  }
+    /**
+     * Solves the goal and extract, for every solution, the binding for a given variable by name.
+     * 
+     * @param theVariableName
+     */
+    public List<Term> binding(final String theVariableName) {
+        final List<Term> results = new ArrayList<Term>();
+        final SolutionListenerBase listener = new SolutionListenerBase() {
 
-  /**
-   *  Solves the goal and extract, for every solution, all bindings for all variables.
-   *  @result An ordered list of bindings
-   */
-  public List<Map<String, Term>> bindings() {
-    final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
-    final SolutionListenerBase listener = new SolutionListenerBase() {
+            @Override
+            public Continuation onSolution() {
+                final Bindings bnd = MultipleSolutionsHolder.this.solutionHolder.bindings;
+                final Term term = bnd.getReferrer();
+                final Var var = term.findVar(theVariableName);
+                if (var == null) {
+                    throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
+                }
+                final Term substituted = SolutionHolder.TERM_API.substitute(var, bnd, null);
+                results.add(substituted);
+                return super.onSolution();
+            }
 
-      @Override
-      public Continuation onSolution() {
-        results.add(MultipleSolutionsHolder.this.solutionHolder.bindings.explicitBindings(FreeVarRepresentation.FREE));
-        return super.onSolution();
-      }
+        };
+        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        int size = results.size();
+        checkBounds(size);
+        return results;
+    }
 
-    };
-    this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(),
-        listener);
-    int size = results.size();
-    checkBounds(size);
-    return results;
-  }
+    /**
+     * Solves the goal and extract, for every solution, all bindings for all variables.
+     * 
+     * @result An ordered list of bindings
+     */
+    public List<Map<String, Term>> bindings() {
+        final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
+        final SolutionListenerBase listener = new SolutionListenerBase() {
 
-  /**
-   * Set internal bounds to make sure the next goal to solve has exactly the specified number
-   * of solutions.
-   * @param theExpectedExactNumber
-   * @return this
-   */
-  public MultipleSolutionsHolder ensureNumber(int theExpectedExactNumber) {
-    this.lowest = this.highest = theExpectedExactNumber;
-    return this;
-  }
+            @Override
+            public Continuation onSolution() {
+                results.add(MultipleSolutionsHolder.this.solutionHolder.bindings.explicitBindings(FreeVarRepresentation.FREE));
+                return super.onSolution();
+            }
 
-  /**
-   * Set internal bounds to make sure the next goal to solve has a number of solutions
-   * between the specified bounds, inclusive.
-   * @param thePermissibleLowest
-   * @param thePermissibleHighest
-   * @return this
-   */
-  public MultipleSolutionsHolder ensureRange(int thePermissibleLowest, int thePermissibleHighest) {
-    this.lowest = thePermissibleLowest;
-    this.highest = thePermissibleHighest;
-    return this;
-  }
+        };
+        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        int size = results.size();
+        checkBounds(size);
+        return results;
+    }
+
+    /**
+     * Set internal bounds to make sure the next goal to solve has exactly the specified number of solutions.
+     * 
+     * @param theExpectedExactNumber
+     * @return this
+     */
+    public MultipleSolutionsHolder ensureNumber(int theExpectedExactNumber) {
+        this.lowest = this.highest = theExpectedExactNumber;
+        return this;
+    }
+
+    /**
+     * Set internal bounds to make sure the next goal to solve has a number of solutions between the specified bounds, inclusive.
+     * 
+     * @param thePermissibleLowest
+     * @param thePermissibleHighest
+     * @return this
+     */
+    public MultipleSolutionsHolder ensureRange(int thePermissibleLowest, int thePermissibleHighest) {
+        this.lowest = thePermissibleLowest;
+        this.highest = thePermissibleHighest;
+        return this;
+    }
 
 }

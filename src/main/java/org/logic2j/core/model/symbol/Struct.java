@@ -221,7 +221,8 @@ public class Struct extends Term {
     }
 
     /**
-     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0. It is assumed that the term MUST have an arity of 2, because when there's a LHS, there's also a RHS!
+     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0. It is assumed that the term MUST have an arity of 2, because
+     *         when there's a LHS, there's also a RHS!
      */
     public Term getLHS() {
         if (this.arity != 2) {
@@ -326,8 +327,8 @@ public class Struct extends Term {
     }
 
     /**
-     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to theCollectedTerms.
-     * The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
+     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to
+     * theCollectedTerms. The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
      * 
      * @param theCollectedTerms
      */
@@ -414,8 +415,8 @@ public class Struct extends Term {
             return false;
         }
         final Struct that = (Struct) theOther;
-        // Arity and names must match. 
-        if (this.arity == that.arity && this.name == that.name) {  // Names are {@link String#intern()}alized so OK to check by reference
+        // Arity and names must match.
+        if (this.arity == that.arity && this.name == that.name) { // Names are {@link String#intern()}alized so OK to check by reference
             for (int i = 0; i < this.arity; i++) {
                 if (!this.args[i].structurallyEquals(that.args[i])) {
                     return false;
@@ -427,7 +428,8 @@ public class Struct extends Term {
     }
 
     /**
-     * For {@link Struct}s, the {@link Term#index} will be the maximal index of any variables that can be found, recursively, under all arguments.
+     * For {@link Struct}s, the {@link Term#index} will be the maximal index of any variables that can be found, recursively, under all
+     * arguments.
      */
     @Override
     protected short assignIndexes(short theIndexOfNextNonIndexedVar) {
@@ -471,7 +473,8 @@ public class Struct extends Term {
      * Gets the head of this structure, which is supposed to be a list.
      * 
      * <p>
-     * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an <code>UnsupportedOperationException</code>
+     * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
+     * <code>UnsupportedOperationException</code>
      * </p>
      */
     public Term listHead() {
@@ -483,7 +486,8 @@ public class Struct extends Term {
      * Gets the tail of this structure, which is supposed to be a list.
      * 
      * <p>
-     * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an <code>UnsupportedOperationException</code>
+     * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
+     * <code>UnsupportedOperationException</code>
      * </p>
      */
     public Struct listTail() {
@@ -495,7 +499,8 @@ public class Struct extends Term {
      * Gets the number of elements of this structure, which is supposed to be a list.
      * 
      * <p>
-     * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an <code>UnsupportedOperationException</code>
+     * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
+     * <code>UnsupportedOperationException</code>
      * </p>
      */
     public int listSize() {
@@ -510,7 +515,8 @@ public class Struct extends Term {
     }
 
     /**
-     * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
+     * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
+     * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
      * 
      * If this structure is not a list, null object is returned
      */
@@ -519,7 +525,7 @@ public class Struct extends Term {
     public Struct predicateFromPList() {
         assertPList(this);
         final Term functor = getLHS();
-        if (! TERM_API.isAtom(functor)) {
+        if (!TERM_API.isAtom(functor)) {
             return null;
         }
         Struct runningElement = (Struct) getRHS();
@@ -613,8 +619,8 @@ public class Struct extends Term {
     // ---------------------------------------------------------------------------
 
     /**
-     * @param other 
-     * @return Structures are {@link #equals(Object)} if other is a Struct of same arity, name, and all params are equal too. 
+     * @param other
+     * @return Structures are {@link #equals(Object)} if other is a Struct of same arity, name, and all params are equal too.
      */
     @Override
     public boolean equals(Object other) {
@@ -622,7 +628,7 @@ public class Struct extends Term {
             return false;
         }
         final Struct that = (Struct) other;
-        if (!(this.arity == that.arity && this.name == that.name)) {  // Names are {@link String#intern()}alized so OK to check by reference
+        if (!(this.arity == that.arity && this.name == that.name)) { // Names are {@link String#intern()}alized so OK to check by reference
             return false;
         }
         for (int i = 0; i < this.arity; i++) {

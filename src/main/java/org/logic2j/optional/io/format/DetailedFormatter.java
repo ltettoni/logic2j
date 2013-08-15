@@ -27,13 +27,13 @@ import org.logic2j.core.model.symbol.Var;
  */
 public class DetailedFormatter extends DefaultFormatter {
 
-  @Override
-  protected String formatVar(Var theVar) {
-    if (theVar.isAnonymous()) {
-      // The anonymous variable has no index - won't report it!
-      return Var.ANONYMOUS_VAR_NAME;
+    @Override
+    protected String formatVar(Var theVar) {
+        if (theVar.isAnonymous()) {
+            // The anonymous variable has no index - won't report it!
+            return Var.ANONYMOUS_VAR_NAME;
+        }
+        return theVar.getName() + '@' + theVar.getIndex();
     }
-    return theVar.getName() + '@' + theVar.getIndex();
-  }
 
 }

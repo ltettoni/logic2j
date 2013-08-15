@@ -27,68 +27,68 @@ import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.symbol.Struct;
 
 /**
- * Storage of the content of a theory: an ordered collection of {@link Clause}s,
- * with some indexing and structuring added for performance.
+ * Storage of the content of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.
  */
 public class TheoryContent {
 
-  /**
-   * The data structure to hold our clauses: lists of {@link Clause}s by predicate key.
-   * Key:   unique key for all clauses whose predicate head is a family, see {@link Clause#getPredicateKey()}.
-   * Value: ordered list of very very very immutable {@link Clause}s.
-   */
-  private Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
+    /**
+     * The data structure to hold our clauses: lists of {@link Clause}s by predicate key. Key: unique key for all clauses whose predicate
+     * head is a family, see {@link Clause#getPredicateKey()}. Value: ordered list of very very very immutable {@link Clause}s.
+     */
+    private Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
 
-  /**
-   * Add one {@link Clause}.
-   * @param theClause
-   */
-  public void add(Clause theClause) {
-    final String clauseFamilyKey = theClause.getPredicateKey();
-    List<Clause> family = this.content.get(clauseFamilyKey);
-    if (family == null) {
-      // No Clause yet defined in this family, create one
-      family = new ArrayList<Clause>();
-      this.content.put(clauseFamilyKey, family);
+    /**
+     * Add one {@link Clause}.
+     * 
+     * @param theClause
+     */
+    public void add(Clause theClause) {
+        final String clauseFamilyKey = theClause.getPredicateKey();
+        List<Clause> family = this.content.get(clauseFamilyKey);
+        if (family == null) {
+            // No Clause yet defined in this family, create one
+            family = new ArrayList<Clause>();
+            this.content.put(clauseFamilyKey, family);
+        }
+        family.add(theClause);
     }
-    family.add(theClause);
-  }
 
-  /**
-   * Add all {@link Clause}s contained in theExtraContent. 
-   * Watch out, references are added, Clauses are NOT copied, because of their immutable nature,
-   * they can be shared.
-   * @param theExtraContent
-   */
-  public void addAll(TheoryContent theExtraContent) {
-    for (Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
-      final String clauseFamilyKey = extraEntry.getKey();
-      final List<Clause> clausesToAdd = extraEntry.getValue();
-      if (this.content.containsKey(clauseFamilyKey)) {
-        this.content.get(clauseFamilyKey).addAll(clausesToAdd);
-      } else {
-        this.content.put(clauseFamilyKey, clausesToAdd);
-      }
+    /**
+     * Add all {@link Clause}s contained in theExtraContent. Watch out, references are added, Clauses are NOT copied, because of their
+     * immutable nature, they can be shared.
+     * 
+     * @param theExtraContent
+     */
+    public void addAll(TheoryContent theExtraContent) {
+        for (Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
+            final String clauseFamilyKey = extraEntry.getKey();
+            final List<Clause> clausesToAdd = extraEntry.getValue();
+            if (this.content.containsKey(clauseFamilyKey)) {
+                this.content.get(clauseFamilyKey).addAll(clausesToAdd);
+            } else {
+                this.content.put(clauseFamilyKey, clausesToAdd);
+            }
+        }
     }
-  }
 
-  /**
-   * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
-   * @param theGoalTerm
-   * @return An iterable for a foreach() loop.
-   */
-  public Iterable<Clause> find(Struct theGoalTerm) {
-    final String key = theGoalTerm.getPredicateIndicator();
-    final List<Clause> list = this.content.get(key);
-    if (list == null) {
-      // Predicate not registered in this theory content, return empty, it's not a failure condition
-      return Collections.emptyList();
+    /**
+     * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
+     * 
+     * @param theGoalTerm
+     * @return An iterable for a foreach() loop.
+     */
+    public Iterable<Clause> find(Struct theGoalTerm) {
+        final String key = theGoalTerm.getPredicateIndicator();
+        final List<Clause> list = this.content.get(key);
+        if (list == null) {
+            // Predicate not registered in this theory content, return empty, it's not a failure condition
+            return Collections.emptyList();
+        }
+        return list;
     }
-    return list;
-  }
 
-  @Override
-  public String toString() {
-    return this.getClass().getSimpleName() + '(' + this.content + ')';
-  }
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '(' + this.content + ')';
+    }
 }

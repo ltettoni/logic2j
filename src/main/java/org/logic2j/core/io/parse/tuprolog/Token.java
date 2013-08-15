@@ -31,51 +31,51 @@ import java.io.Serializable;
  * This class represents a token read by the prolog term tokenizer
  */
 class Token implements Serializable {
-  private static final long serialVersionUID = 1L;
-  // token textual representation
-  String text;
-  // token type and attribute
-  int type;
+    private static final long serialVersionUID = 1L;
+    // token textual representation
+    String text;
+    // token type and attribute
+    int type;
 
-  public Token(String seq_, int type_) {
-    this.text = seq_;
-    this.type = type_;
-  }
-
-  /**
-   * @return Type flag
-   */
-  public int getType() {
-    return this.type & TYPEMASK;
-  }
-
-  /**
-   * @return Attribute flag could be FUNCTOR, OPERATOR or EOF
-   */
-  private int getAttribute() {
-    return this.type & ATTRMASK;
-  }
-
-  public boolean isOperator(boolean commaIsEndMarker) {
-    if (commaIsEndMarker && ",".equals(this.text)) {
-      return false;
+    public Token(String seq_, int type_) {
+        this.text = seq_;
+        this.type = type_;
     }
-    return getAttribute() == OPERATOR;
-  }
 
-  public boolean isFunctor() {
-    return getAttribute() == FUNCTOR;
-  }
+    /**
+     * @return Type flag
+     */
+    public int getType() {
+        return this.type & TYPEMASK;
+    }
 
-  public boolean isNumber() {
-    return this.type == INTEGER || this.type == FLOAT;
-  }
+    /**
+     * @return Attribute flag could be FUNCTOR, OPERATOR or EOF
+     */
+    private int getAttribute() {
+        return this.type & ATTRMASK;
+    }
 
-  boolean isEOF() {
-    return getAttribute() == EOF;
-  }
+    public boolean isOperator(boolean commaIsEndMarker) {
+        if (commaIsEndMarker && ",".equals(this.text)) {
+            return false;
+        }
+        return getAttribute() == OPERATOR;
+    }
 
-  boolean isType(int theType) {
-    return getType() == theType;
-  }
+    public boolean isFunctor() {
+        return getAttribute() == FUNCTOR;
+    }
+
+    public boolean isNumber() {
+        return this.type == INTEGER || this.type == FLOAT;
+    }
+
+    boolean isEOF() {
+        return getAttribute() == EOF;
+    }
+
+    boolean isType(int theType) {
+        return getType() == theType;
+    }
 }

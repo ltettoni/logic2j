@@ -133,8 +133,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     /**
-     * First unify A to TInt(123), then Unify X to A, make sure X binds to
-     * TInt(123)
+     * First unify A to TInt(123), then Unify X to A, make sure X binds to TInt(123)
      */
     @Test
     public void testUnifyVarToBoundTerm() { // Once a nasty bug

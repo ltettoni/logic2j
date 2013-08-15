@@ -35,12 +35,12 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.util.ReflectUtils;
 
 /**
- * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term} subclasses, so they can invoke
- * its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Term)}) and normalization ({@link #normalize(Term, LibraryContent)}
- * .
+ * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
+ * subclasses, so they can invoke its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Term)}) and
+ * normalization ({@link #normalize(Term, LibraryContent)} .
  * 
- * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods there. I find it
- *       acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
+ * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods
+ *       there. I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
  * @note Avoid static methods, prefer instantiating this class where needed.
  */
 public class TermApi {
@@ -54,8 +54,8 @@ public class TermApi {
     }
 
     /**
-     * Recursively collect all terms at and under theTerm, and also initialize their {@link #index} to {@link #NO_INDEX}. For example for a structure
-     * "s(a,b(c),d(b(a)),X,X,Y)", the result will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
+     * Recursively collect all terms at and under theTerm, and also initialize their {@link #index} to {@link #NO_INDEX}. For example for a
+     * structure "s(a,b(c),d(b(a)),X,X,Y)", the result will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
      * 
      * @param theTerm
      * @return A collection of terms, never empty. Same terms may appear multiple times.
@@ -67,7 +67,8 @@ public class TermApi {
     }
 
     /**
-     * Factorize a {@link Term}, this means recursively traversing the {@link Term} structure and assigning any duplicates substructures to the same references.
+     * Factorize a {@link Term}, this means recursively traversing the {@link Term} structure and assigning any duplicates substructures to
+     * the same references.
      * 
      * @param theTerm
      * @return The factorized term, may be same as argument theTerm in case nothing was needed, or a new object.
@@ -111,14 +112,15 @@ public class TermApi {
     }
 
     /**
-     * Substitute, recursively, any bound {@link Var}s to their actual values. This delegates the call to {@link Term#substitute(Bindings, IdentityHashMap)}.
+     * Substitute, recursively, any bound {@link Var}s to their actual values. This delegates the call to
+     * {@link Term#substitute(Bindings, IdentityHashMap)}.
      * 
      * @param theTerm
      * @param theBindings
      * @param theBindingsToVars
-     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain variables. When no
-     *         variables are bound, then the same refernce is returned. Important note: the caller cannot know if the returned reference was cloned or not, so
-     *         it must never mutate it!
+     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
+     *         variables. When no variables are bound, then the same refernce is returned. Important note: the caller cannot know if the
+     *         returned reference was cloned or not, so it must never mutate it!
      */
     public Term substitute(Term theTerm, final Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) throws InvalidTermException {
         if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.getSize() == 0) {
@@ -167,7 +169,8 @@ public class TermApi {
                 if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
                     result = Var.ANONYMOUS_VAR;
                 } else if (chars.isEmpty()) {
-                    // Dubious for real programming, but data sources may contain empty fields, and this is the only way to represent them as a Term
+                    // Dubious for real programming, but data sources may contain empty fields, and this is the only way to represent them
+                    // as a Term
                     result = new Struct("");
                 } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
                     result = new Var(chars);

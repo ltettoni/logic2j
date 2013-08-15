@@ -20,19 +20,18 @@ package org.logic2j.core.model.exception;
 import org.logic2j.core.model.symbol.Term;
 
 /**
- * Exception used to indicate that a {@link Term} cannot be parsed from a text, of is
- * used in a context where it should not.
+ * Exception used to indicate that a {@link Term} cannot be parsed from a text, of is used in a context where it should not.
  */
 public class InvalidTermException extends PrologException {
 
-  private static final long serialVersionUID = -4416801118548866803L;
+    private static final long serialVersionUID = -4416801118548866803L;
 
-  public InvalidTermException(String theString) {
-    super(theString);
-  }
+    public InvalidTermException(String theString) {
+        super(theString);
+    }
 
-  public InvalidTermException(String theString, Throwable theRootCause) {
-    super(theString, theRootCause);
-  }
+    public InvalidTermException(String theString, Throwable theRootCause) {
+        super(theString, theRootCause);
+    }
 
 }

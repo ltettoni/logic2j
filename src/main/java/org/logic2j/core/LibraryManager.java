@@ -21,24 +21,24 @@ import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 
 /**
- * An API to manage libraries implementing Prolog features in Java.
- * TODO: not sure if this interface definition should reside in main package or a subpackage
+ * An API to manage libraries implementing Prolog features in Java. TODO: not sure if this interface definition should reside in main
+ * package or a subpackage
  */
 public interface LibraryManager {
 
-  /**
-   * Indicate the arity of a variable arguments predicate, such as write/N.
-   * (this is an extension to classic Prolog where only fixed arity is supported).
-   */
-  static final String VARARG_ARITY_INDICATOR = "N";
+    /**
+     * Indicate the arity of a variable arguments predicate, such as write/N. (this is an extension to classic Prolog where only fixed arity
+     * is supported).
+     */
+    static final String VARARG_ARITY_INDICATOR = "N";
 
-  LibraryContent loadLibrary(PLibrary theLibrary);
+    LibraryContent loadLibrary(PLibrary theLibrary);
 
-  /**
-   * @return The whole library's content.
-   */
-  LibraryContent wholeContent();
+    /**
+     * @return The whole library's content.
+     */
+    LibraryContent wholeContent();
 
-  <T extends PLibrary> T getLibrary(Class<T> theClass);
+    <T extends PLibrary> T getLibrary(Class<T> theClass);
 
 }

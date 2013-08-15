@@ -20,39 +20,38 @@ package org.logic2j.core.io.operator;
 import java.io.Serializable;
 
 /**
- * This class defines a tuProlog operator, in terms of a name,
- * a type, and a  priority.
+ * This class defines a tuProlog operator, in terms of a name, a type, and a priority.
  */
 final public class Operator implements Serializable {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  // TODO Probably this should become an enum
-  public static final String FX = "fx"; // prefix non-associative - (i.e. --5 not possible)
-  public static final String FY = "fy"; // prefix associative
-  public static final String XF = "xf"; // postfix non-associative
-  public static final String XFX = "xfx"; // infix non-associative =, is, < (i.e. no nesting)
-  public static final String XFY = "xfy"; // infix right-associative , (for subgoals)
-  public static final String YF = "yf"; // postfix associative
-  public static final String YFX = "yfx"; // infix left-associative +, -, *
-  public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
+    // TODO Probably this should become an enum
+    public static final String FX = "fx"; // prefix non-associative - (i.e. --5 not possible)
+    public static final String FY = "fy"; // prefix associative
+    public static final String XF = "xf"; // postfix non-associative
+    public static final String XFX = "xfx"; // infix non-associative =, is, < (i.e. no nesting)
+    public static final String XFY = "xfy"; // infix right-associative , (for subgoals)
+    public static final String YF = "yf"; // postfix associative
+    public static final String YFX = "yfx"; // infix left-associative +, -, *
+    public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
 
-  /** highest operator priority */
-  public static final int OP_HIGH = 1200;
-  /** lowest operator priority */
-  public static final int OP_LOW = 1;
+    /** highest operator priority */
+    public static final int OP_HIGH = 1200;
+    /** lowest operator priority */
+    public static final int OP_LOW = 1;
 
-  /** operator name */
-  String name;
+    /** operator name */
+    String name;
 
-  /** priority */
-  int prio;
+    /** priority */
+    int prio;
 
-  /** xf, yf, fx, fy, xfx, xfy, yfx, (yfy) */
-  String type;
+    /** xf, yf, fx, fy, xfx, xfy, yfx, (yfy) */
+    String type;
 
-  public Operator(String theName, String theType, int thePrio) {
-    this.name = theName;
-    this.type = theType;
-    this.prio = thePrio;
-  }
+    public Operator(String theName, String theType, int thePrio) {
+        this.name = theName;
+        this.type = theType;
+        this.prio = thePrio;
+    }
 }

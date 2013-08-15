@@ -75,7 +75,8 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
-     * When unified is true, call {@link #notifySolution(GoalFrame, SolutionListener)}, and then call {@link #deunify(GoalFrame)}. Otherwise nothing is done.
+     * When unified is true, call {@link #notifySolution(GoalFrame, SolutionListener)}, and then call {@link #deunify(GoalFrame)}. Otherwise
+     * nothing is done.
      * 
      * @param unified
      * @param theGoalFrame

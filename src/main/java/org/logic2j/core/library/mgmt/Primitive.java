@@ -31,16 +31,16 @@ import org.logic2j.core.library.PLibrary;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Primitive {
 
-  /**
-   * When "name" is defined, then the annotated method's name won't be used to register the primitive.
-   * Very useful when the primitive name is not an allowed Java identifier, for example the "=" unification primitive.
-   * Otherwise, when name is the default, the method's name becomes the primitive's name.
-   */
-  String name() default "";
+    /**
+     * When "name" is defined, then the annotated method's name won't be used to register the primitive. Very useful when the primitive name
+     * is not an allowed Java identifier, for example the "=" unification primitive. Otherwise, when name is the default, the method's name
+     * becomes the primitive's name.
+     */
+    String name() default "";
 
-  /**
-   * Alternate names for the primitive.
-   */
-  String[] synonyms() default {};
+    /**
+     * Alternate names for the primitive.
+     */
+    String[] synonyms() default {};
 
 }

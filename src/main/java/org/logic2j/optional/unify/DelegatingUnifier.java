@@ -33,151 +33,149 @@ import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.unify.Unifier;
 
 /**
- * A {@link Unifier} that uses reflecton to determine which method to invoke
- * to unify 2 concrete {@link Term}s. 
- * The methods invoked must have the exact signature 
- * unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame)
- * where the classes of term1 and term2 are the effective final subclasses.
+ * A {@link Unifier} that uses reflecton to determine which method to invoke to unify 2 concrete {@link Term}s. The methods invoked must
+ * have the exact signature unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) where the
+ * classes of term1 and term2 are the effective final subclasses.
  */
 public class DelegatingUnifier implements Unifier {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DelegatingUnifier.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DelegatingUnifier.class);
 
-  static {
-    final Map<String, Method> methodMap = new TreeMap<String, Method>();
+    static {
+        final Map<String, Method> methodMap = new TreeMap<String, Method>();
 
-    for (Method method : DelegatingUnifier.class.getMethods()) {
-      if ("unify".equals(method.getName())) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
+        for (Method method : DelegatingUnifier.class.getMethods()) {
+            if ("unify".equals(method.getName())) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
 
-        String key1 = classKey(parameterTypes[0]);
-        String key2 = classKey(parameterTypes[2]);
-        String key = key1 + '-' + key2;
-        methodMap.put(key, method);
-      }
-    }
-    logger.info("MethodMap: {}", methodMap);
-  }
-
-  @Override
-  public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
-    for (Method method : this.getClass().getMethods()) {
-      if ("unify".equals(method.getName())) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
-          try {
-            theGoalFrame.markBeforeAddingBindings();
-            boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
-            if (!unified) {
-              deunify(theGoalFrame);
+                String key1 = classKey(parameterTypes[0]);
+                String key2 = classKey(parameterTypes[2]);
+                String key = key1 + '-' + key2;
+                methodMap.put(key, method);
             }
-            return unified;
-          } catch (InvocationTargetException e) {
-            throw new InvalidTermException("Could not determine or invoke unification method: " + e.getTargetException());
-          } catch (Exception e) {
-            throw new InvalidTermException("Could not determine or invoke unification method: " + e);
-          }
         }
-      }
+        logger.info("MethodMap: {}", methodMap);
     }
-    throw new InvalidTermException("Could not determine or invoke unification method");
-  }
 
-  /**
-   * @param theClass
-   */
-  private static String classKey(Class<?> theClass) {
-    int level = 0;
-    Class<?> c = theClass;
-    while (c != Object.class) {
-      level++;
-      c = c.getSuperclass();
+    @Override
+    public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
+        for (Method method : this.getClass().getMethods()) {
+            if ("unify".equals(method.getName())) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
+                    try {
+                        theGoalFrame.markBeforeAddingBindings();
+                        boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
+                        if (!unified) {
+                            deunify(theGoalFrame);
+                        }
+                        return unified;
+                    } catch (InvocationTargetException e) {
+                        throw new InvalidTermException("Could not determine or invoke unification method: " + e.getTargetException());
+                    } catch (Exception e) {
+                        throw new InvalidTermException("Could not determine or invoke unification method: " + e);
+                    }
+                }
+            }
+        }
+        throw new InvalidTermException("Could not determine or invoke unification method");
     }
-    return level + "_" + theClass.getName();
-  }
 
-  //---------------------------------------------------------------------------
-  // Unification method called by introspection
-  //---------------------------------------------------------------------------
-  
-  // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
-  
-  public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    if (!(s1.nameAndArityMatch(s2))) {
-      return false;
+    /**
+     * @param theClass
+     */
+    private static String classKey(Class<?> theClass) {
+        int level = 0;
+        Class<?> c = theClass;
+        while (c != Object.class) {
+            level++;
+            c = c.getSuperclass();
+        }
+        return level + "_" + theClass.getName();
     }
-    int arity = s1.getArity();
-    for (int i = 0; i < arity; i++) {
-      if (!unify(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
-        return false;
-      }
-    }
-    return true;
-  }
 
-  public boolean unify(Struct term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return false;
-  }
+    // ---------------------------------------------------------------------------
+    // Unification method called by introspection
+    // ---------------------------------------------------------------------------
 
-  public boolean unify(Struct term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    // Second term is var, we prefer have it first
-    return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
-  }
+    // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
 
-  public boolean unify(TNumber term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return false;
-  }
-
-  public boolean unify(TNumber term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return term1.equals(term2);
-  }
-
-  public boolean unify(TNumber term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    // Second term is var, we prefer have it first
-    return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
-  }
-
-  public boolean unify(Var term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
-  }
-
-  public boolean unify(Var term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
-  }
-
-  public boolean unify(Var term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
-  }
-
-  private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-    // Variable: 
-    // - when anonymous, unifies
-    // - when free, bind it
-    // - when bound, follow VARs until end of chain
-    if (var1.isAnonymous()) {
-      return true;
-    }
-    final Binding binding1 = var1.bindingWithin(theBindings1).followLinks();
-    // Followed chain to the end until we hit either a FREE or LITERAL binding
-    if (binding1.isFree()) {
-      // Should not bind to an anonymous variable
-      if ((term2 instanceof Var) && ((Var) term2).isAnonymous()) {
+    public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        if (!(s1.nameAndArityMatch(s2))) {
+            return false;
+        }
+        int arity = s1.getArity();
+        for (int i = 0; i < arity; i++) {
+            if (!unify(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
+                return false;
+            }
+        }
         return true;
-      }
-      // Bind the free var
-      binding1.bindTo(term2, theBindings2, theGoalFrame);
-      return true;
-    } else if (binding1.isLiteral()) {
-      // We have followed term1 to end up with a literal. It may either unify or not depending if
-      // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
-      // part as term2
-      return unify(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings(), theGoalFrame);
-    } else {
-      throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
     }
-  }
 
-  @Override
-  public void deunify(GoalFrame theGoalFrame) {
-    theGoalFrame.undoBindingsUntilPreviousMark();
-  }
+    public boolean unify(Struct term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return false;
+    }
+
+    public boolean unify(Struct term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        // Second term is var, we prefer have it first
+        return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
+    }
+
+    public boolean unify(TNumber term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return false;
+    }
+
+    public boolean unify(TNumber term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return term1.equals(term2);
+    }
+
+    public boolean unify(TNumber term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        // Second term is var, we prefer have it first
+        return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
+    }
+
+    public boolean unify(Var term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    }
+
+    public boolean unify(Var term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    }
+
+    public boolean unify(Var term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    }
+
+    private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        // Variable:
+        // - when anonymous, unifies
+        // - when free, bind it
+        // - when bound, follow VARs until end of chain
+        if (var1.isAnonymous()) {
+            return true;
+        }
+        final Binding binding1 = var1.bindingWithin(theBindings1).followLinks();
+        // Followed chain to the end until we hit either a FREE or LITERAL binding
+        if (binding1.isFree()) {
+            // Should not bind to an anonymous variable
+            if ((term2 instanceof Var) && ((Var) term2).isAnonymous()) {
+                return true;
+            }
+            // Bind the free var
+            binding1.bindTo(term2, theBindings2, theGoalFrame);
+            return true;
+        } else if (binding1.isLiteral()) {
+            // We have followed term1 to end up with a literal. It may either unify or not depending if
+            // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
+            // part as term2
+            return unify(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings(), theGoalFrame);
+        } else {
+            throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
+        }
+    }
+
+    @Override
+    public void deunify(GoalFrame theGoalFrame) {
+        theGoalFrame.undoBindingsUntilPreviousMark();
+    }
 }

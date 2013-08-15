@@ -8,7 +8,7 @@
       </encoder>
    </appender>
 
-   <!-- File appender without timestamp for non-regression comparisons -->
+   <!-- File appender without timestamp for non-regression comparisons
    <appender name="nonregression" class="ch.qos.logback.core.FileAppender">
       <file>last.log</file>
       <append>false</append>
@@ -16,7 +16,7 @@
          <pattern>%-5level %msg%n</pattern>
       </encoder>
    </appender>
-
+   -->
 
    <logger name="org.logic2j" level="info" />
    <logger name="org.logic2j.core.solver.DefaultSolver" level="info" />

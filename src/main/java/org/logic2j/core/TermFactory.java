@@ -23,61 +23,61 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or 
- * streamable representations.
+ * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or streamable representations.
  * 
- * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives
- * registered therein.
+ * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives registered therein.
  * @note This interface is still deficient for handling channel streams - some more design needed.
  */
 public interface TermFactory {
 
-  static enum FactoryMode {
-    /**
-     * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
-     */
-    ATOM,
-    
-    /**
-     * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), 
-     * but not a {@link Var}iable neither a compound {@link Struct}.
-     */
-    LITERAL,
+    static enum FactoryMode {
+        /**
+         * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
+         */
+        ATOM,
+
+        /**
+         * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), but not a {@link Var}iable neither a
+         * compound {@link Struct}.
+         */
+        LITERAL,
+
+        /**
+         * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
+         */
+        ANY_TERM,
+
+        /**
+         * Result can be any term plus compound structures.
+         */
+        COMPOUND
+    }
 
     /**
-     * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
+     * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence}; this is the highest-level factory.
+     * For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
+     * 
+     * @param theObject
+     * @param theMode Kind of Term to instantiate
+     * @return A factorized and normalized {@link Term}.
      */
-    ANY_TERM,
-    
+    // TODO is "create" a good name ?
+    Term create(Object theObject, FactoryMode theMode);
+
     /**
-     * Result can be any term plus compound structures.
+     * Create a Term from a character representation, will leverage the definitions of operators and primitives that currently apply.
+     * 
+     * @param theExpression
+     * @return A factorized and normalized {@link Term}.
      */
-    COMPOUND
-  }
+    Term parse(CharSequence theExpression);
 
-  /**
-   * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence};
-   * this is the highest-level factory. For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
-   * @param theObject
-   * @param theMode Kind of Term to instantiate
-   * @return A factorized and normalized {@link Term}.
-   */
-   // TODO is "create" a good name ?
-   Term create(Object theObject, FactoryMode theMode);
-
-  /**
-   * Create a Term from a character representation, will leverage the definitions of 
-   * operators and primitives that currently apply.
-   * @param theExpression
-   * @return A factorized and normalized {@link Term}.
-   */
-   Term parse(CharSequence theExpression);
-
-  /**
-   * Normalize a {@link Term} using the current definitions of operators, primitives.
-   * @param theTerm To be normalized
-   * @return A {@link Term} ready to be used for inference (in a Theory ore as a goal)
-   */
-   Term normalize(Term theTerm);
+    /**
+     * Normalize a {@link Term} using the current definitions of operators, primitives.
+     * 
+     * @param theTerm To be normalized
+     * @return A {@link Term} ready to be used for inference (in a Theory ore as a goal)
+     */
+    Term normalize(Term theTerm);
 
 }

@@ -23,8 +23,8 @@ import org.junit.Test;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
-  @Test
-  public void ensureCanGetConnection() throws Exception {
-    assertNotNull(zipcodesConnection());
-  }
+    @Test
+    public void ensureCanGetConnection() throws Exception {
+        assertNotNull(zipcodesConnection());
+    }
 }

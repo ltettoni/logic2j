@@ -18,12 +18,10 @@
 package org.logic2j.core.library;
 
 /**
- * A library of Prolog primitives implemented in Java, as
- * methods of a single class. Usually {@link PLibrary}es come together
- * with an associated theory of Prolog rules and facts, associated as a 
- * classloadable resource. Low-level predicates are implemented in Java
- * and high-level or facade predicates are expressed as Prolog rules.
+ * A library of Prolog primitives implemented in Java, as methods of a single class. Usually {@link PLibrary}es come together with an
+ * associated theory of Prolog rules and facts, associated as a classloadable resource. Low-level predicates are implemented in Java and
+ * high-level or facade predicates are expressed as Prolog rules.
  */
 public interface PLibrary {
-  // Marker interface. Maybe one day we may define some methods.
+    // Marker interface. Maybe one day we may define some methods.
 }

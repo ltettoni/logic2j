@@ -40,6 +40,7 @@ public interface Unifier {
 
     /**
      * Deunify to the last unification that returned true.
+     * 
      * @param theGoalFrame
      */
     void deunify(GoalFrame theGoalFrame);

@@ -32,43 +32,44 @@ import org.logic2j.core.solver.listener.SolutionListener;
 /**
  */
 public class PojoLibrary extends LibraryBase {
-  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
+    private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
 
-    @Override
-    protected Map<String, Object> initialValue() {
-      return new TreeMap<String, Object>();
+        @Override
+        protected Map<String, Object> initialValue() {
+            return new TreeMap<String, Object>();
+        }
+
+    };
+
+    public PojoLibrary(PrologImplementor theProlog) {
+        super(theProlog);
     }
 
-  };
+    @Primitive
+    public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
+        final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
+        assertValidBindings(nameBindings, "bind/2");
+        final Struct nameTerm = (Struct) nameBindings.getReferrer();
 
-  public PojoLibrary(PrologImplementor theProlog) {
-    super(theProlog);
-  }
+        final String name = nameTerm.getName();
+        final Object instance = extract(name);
+        final Term instanceTerm = createConstantTerm(instance);
+        final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings, theGoalFrame);
+        notifyIfUnified(unified, theGoalFrame, theListener);
+    }
 
-  @Primitive
-  public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
-    final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
-    assertValidBindings(nameBindings, "bind/2");
-    final Struct nameTerm = (Struct) nameBindings.getReferrer();
-    
-    final String name = nameTerm.getName();
-    final Object instance = extract(name);
-    final Term instanceTerm = createConstantTerm(instance);
-    final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings, theGoalFrame);
-    notifyIfUnified(unified, theGoalFrame, theListener);
-  }
+    /**
+     * A utility method to emulate calling the bind/2 predicate from Java.
+     * 
+     * @param theKey
+     * @param theValue
+     */
+    public static void bind(String theKey, Object theValue) {
+        threadLocalBindings.get().put(theKey, theValue);
+    }
 
-  /**
-   * A utility method to emulate calling the bind/2 predicate from Java.
-   * @param theKey
-   * @param theValue
-   */
-  public static void bind(String theKey, Object theValue) {
-    threadLocalBindings.get().put(theKey, theValue);
-  }
-
-  public static Object extract(String theKey) {
-    return threadLocalBindings.get().get(theKey);
-  }
+    public static Object extract(String theKey) {
+        return threadLocalBindings.get().get(theKey);
+    }
 
 }

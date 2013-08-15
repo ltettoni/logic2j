@@ -100,8 +100,7 @@ public abstract class PrologTestBase {
     /**
      * @param theNumber
      * @param theGoals
-     * @return The {@link SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null
-     *         if no goal specified.
+     * @return The {@link SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private SolutionHolder assertInternal(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
@@ -128,8 +127,7 @@ public abstract class PrologTestBase {
     /**
      * Utility factory.
      * 
-     * @param elements
-     *            The elements of the list to parse as Terms
+     * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.
      */
     protected List<Term> termList(Object... elements) {
@@ -141,9 +139,7 @@ public abstract class PrologTestBase {
     }
 
     /**
-     * @param theFilename
-     *            A String denoting the file path, should be a {@link File}, yes it's inelegant, but this is a test
-     *            helper!
+     * @param theFilename A String denoting the file path, should be a {@link File}, yes it's inelegant, but this is a test helper!
      * @throws IOException
      */
     protected void addTheory(String theFilename) throws IOException {

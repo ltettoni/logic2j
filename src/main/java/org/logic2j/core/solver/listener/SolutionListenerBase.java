@@ -17,44 +17,43 @@
  */
 package org.logic2j.core.solver.listener;
 
-
 /**
- * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached. 
- * The {@link #onSolution()} method always returns true (dangerously allowing for potential infinite generation).
- * Derive from this class to ease the programming of {@link SolutionListener}s in application code.
+ * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached. The {@link #onSolution()}
+ * method always returns true (dangerously allowing for potential infinite generation). Derive from this class to ease the programming of
+ * {@link SolutionListener}s in application code.
  */
 public class SolutionListenerBase implements SolutionListener {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
 
-  // TODO: timing and logging should use on AOP instead, not hardcoding here
-  private long startTime = System.currentTimeMillis();
-  private long lastSolutionTime = this.startTime;
-  
-  /**
-   * Number of solutions (so far).
-   */
-  private int counter = 0;
+    // TODO: timing and logging should use on AOP instead, not hardcoding here
+    private long startTime = System.currentTimeMillis();
+    private long lastSolutionTime = this.startTime;
 
-  @Override
-  public Continuation onSolution() {
-    if (logger.isDebugEnabled()) {
-      logger.debug(" onSolution(), iter=#{}", this.counter);
+    /**
+     * Number of solutions (so far).
+     */
+    private int counter = 0;
+
+    @Override
+    public Continuation onSolution() {
+        if (logger.isDebugEnabled()) {
+            logger.debug(" onSolution(), iter=#{}", this.counter);
+        }
+        this.lastSolutionTime = System.currentTimeMillis();
+        this.counter++;
+        return Continuation.CONTINUE;
     }
-    this.lastSolutionTime = System.currentTimeMillis();
-    this.counter++;
-    return Continuation.CONTINUE;
-  }
 
-  //---------------------------------------------------------------------------
-  // Accessors
-  //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
 
-  public int getCounter() {
-    return this.counter;
-  }
+    public int getCounter() {
+        return this.counter;
+    }
 
-  public long elapse() {
-    return this.lastSolutionTime - this.startTime;
-  }
+    public long elapse() {
+        return this.lastSolutionTime - this.startTime;
+    }
 
 }

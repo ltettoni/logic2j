@@ -18,19 +18,18 @@
 package org.logic2j.core.model.exception;
 
 /**
- * Indicate some condition that requires breaking the execution flow but for which we do not YET have a proper 
- * Exception class.
+ * Indicate some condition that requires breaking the execution flow but for which we do not YET have a proper Exception class.
  */
 public class PrologNonSpecificError extends PrologException {
 
-  private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
-  public PrologNonSpecificError(String theString) {
-    super(theString);
-  }
+    public PrologNonSpecificError(String theString) {
+        super(theString);
+    }
 
-  public PrologNonSpecificError(String theString, Throwable theRootCause) {
-    super(theString, theRootCause);
-  }
+    public PrologNonSpecificError(String theString, Throwable theRootCause) {
+        super(theString, theRootCause);
+    }
 
 }

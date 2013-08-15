@@ -21,12 +21,12 @@ import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.symbol.Term;
 
 /**
- * Marshall Prolog {@link Term} hierarchies to streamable representations, currently {@link String}s.
- * We are using the Visitor design pattern, so a {@link Formatter} is actually a {@link TermVisitor} for Strings.
- * TODO: not sure if this interface definition should reside in main package or a subpackage
+ * Marshall Prolog {@link Term} hierarchies to streamable representations, currently {@link String}s. We are using the Visitor design
+ * pattern, so a {@link Formatter} is actually a {@link TermVisitor} for Strings. TODO: not sure if this interface definition should reside
+ * in main package or a subpackage
  */
 public interface Formatter extends TermVisitor<String> {
 
-  String format(Term theTerm);
+    String format(Term theTerm);
 
 }

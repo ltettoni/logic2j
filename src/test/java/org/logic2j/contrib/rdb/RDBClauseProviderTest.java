@@ -29,74 +29,77 @@ import org.junit.Test;
 import org.logic2j.core.model.symbol.Struct;
 
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
-  private RDBClauseProvider provider;
+    private RDBClauseProvider provider;
 
-  @Override
-  @Before
-  public void setUp() {
-    super.setUp();
-    this.provider = new RDBClauseProvider(getProlog(), zipcodesDataSource());
-  }
+    @Override
+    @Before
+    public void setUp() {
+        super.setUp();
+        this.provider = new RDBClauseProvider(getProlog(), zipcodesDataSource());
+    }
 
-  @Test
-  public void test_getConnection() throws SQLException {
-    assertNotNull(zipcodesConnection());
-  }
+    @Test
+    public void test_getConnection() throws SQLException {
+        assertNotNull(zipcodesConnection());
+    }
 
-  @Ignore // NPE see  ConfigLibrary
-  @Test
-  public void listMatchingClauses() throws IOException {
-    getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
-    
-    assertNotNull(this.provider);
-    final Struct theGoal = new Struct("zip_code", "Zip", "City");
-    this.provider.listMatchingClauses(theGoal, null);
-  }
+    @Ignore
+    // NPE see ConfigLibrary
+    @Test
+    public void listMatchingClauses() throws IOException {
+        getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
 
-  @Ignore // NPE see  ConfigLibrary
-  @Test
-  public void listMatchingClausesWithSpecialTransformer() {
-    assertNotNull(this.provider);
-    final Struct theGoal = new Struct("zip_code", "Zip", "City");
-    this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
-    this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
-  }
+        assertNotNull(this.provider);
+        final Struct theGoal = new Struct("zip_code", "Zip", "City");
+        this.provider.listMatchingClauses(theGoal, null);
+    }
 
-  @Ignore // NPE see  ConfigLibrary
-  @Test
-  public void matchClausesFromProlog() throws IOException {
-    getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
-    
-    getProlog().getClauseProviders().add(this.provider);
-    // Matching all
-    assertNSolutions(79991, "pred_zip_code(_, _)");
-    assertNSolutions(79991, "pred_zip_code(X, _)");
-    assertNSolutions(79991, "pred_zip_code(_, Y)");
-    assertNSolutions(79991, "pred_zip_code(X, Y)");
-    // Match on first argument
-    assertNSolutions(0, "pred_zip_code('90008', dummy)");
-    assertNSolutions(4, "pred_zip_code('90008', _)");
-    assertNSolutions(4, "pred_zip_code('90008', Y)");
-    assertNSolutions(4, "Z='90008', Y=dummy, pred_zip_code(Z, _)");
-    assertNoSolution("Y=dummy, pred_zip_code('90008', Y)");
-    assertNoSolution("Y=dummy, Z=other, pred_zip_code('90008', Y)");
-    assertNSolutions(4, "Z=dummy, pred_zip_code('90008', Y)");
-    assertNoSolution("pred_zip_code('90008', Y), Y=dummy");
-    // Match on second argument
-    assertNSolutions(102, "pred_zip_code(_, 'LOS ANGELES')");
-    assertNSolutions(102, "pred_zip_code(X, 'LOS ANGELES')");
-    assertNoSolution("X=dummy, pred_zip_code(X, 'LOS ANGELES')");
-    assertNoSolution("pred_zip_code(X, 'LOS ANGELES'), X=dummy");
-    // Match on both arguments
-    assertNSolutions(1, "pred_zip_code('90008', 'LOS ANGELES')");
-    // Match on list testing
-    assertNSolutions(0, "pred_zip_code(['90008',dummy], Y)");
-    assertNoSolution("Y=[dummy,'LOS ANGELES'], pred_zip_code('90008', Y)");
-    // NO matches
-    assertNoSolution("pred_zip_code('00000', 'UNDEFINED')");
-    assertNoSolution("pred_zip_code('90008', 'UNDEFINED')");
-    assertNoSolution("pred_zip_code('00000', 'LOS ANGELES')");
-    assertNoSolution("pred_zip_code(X, X)");
-  }
+    @Ignore
+    // NPE see ConfigLibrary
+    @Test
+    public void listMatchingClausesWithSpecialTransformer() {
+        assertNotNull(this.provider);
+        final Struct theGoal = new Struct("zip_code", "Zip", "City");
+        this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(getProlog()));
+        this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
+    }
+
+    @Ignore
+    // NPE see ConfigLibrary
+    @Test
+    public void matchClausesFromProlog() throws IOException {
+        getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+
+        getProlog().getClauseProviders().add(this.provider);
+        // Matching all
+        assertNSolutions(79991, "pred_zip_code(_, _)");
+        assertNSolutions(79991, "pred_zip_code(X, _)");
+        assertNSolutions(79991, "pred_zip_code(_, Y)");
+        assertNSolutions(79991, "pred_zip_code(X, Y)");
+        // Match on first argument
+        assertNSolutions(0, "pred_zip_code('90008', dummy)");
+        assertNSolutions(4, "pred_zip_code('90008', _)");
+        assertNSolutions(4, "pred_zip_code('90008', Y)");
+        assertNSolutions(4, "Z='90008', Y=dummy, pred_zip_code(Z, _)");
+        assertNoSolution("Y=dummy, pred_zip_code('90008', Y)");
+        assertNoSolution("Y=dummy, Z=other, pred_zip_code('90008', Y)");
+        assertNSolutions(4, "Z=dummy, pred_zip_code('90008', Y)");
+        assertNoSolution("pred_zip_code('90008', Y), Y=dummy");
+        // Match on second argument
+        assertNSolutions(102, "pred_zip_code(_, 'LOS ANGELES')");
+        assertNSolutions(102, "pred_zip_code(X, 'LOS ANGELES')");
+        assertNoSolution("X=dummy, pred_zip_code(X, 'LOS ANGELES')");
+        assertNoSolution("pred_zip_code(X, 'LOS ANGELES'), X=dummy");
+        // Match on both arguments
+        assertNSolutions(1, "pred_zip_code('90008', 'LOS ANGELES')");
+        // Match on list testing
+        assertNSolutions(0, "pred_zip_code(['90008',dummy], Y)");
+        assertNoSolution("Y=[dummy,'LOS ANGELES'], pred_zip_code('90008', Y)");
+        // NO matches
+        assertNoSolution("pred_zip_code('00000', 'UNDEFINED')");
+        assertNoSolution("pred_zip_code('90008', 'UNDEFINED')");
+        assertNoSolution("pred_zip_code('00000', 'LOS ANGELES')");
+        assertNoSolution("pred_zip_code(X, X)");
+    }
 
 }

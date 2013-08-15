@@ -28,35 +28,35 @@ import org.logic2j.core.solver.listener.Solution;
  */
 public class UniqueSolutionHolder {
 
-  private Solution solution;
+    private Solution solution;
 
-  /**
-   * @param theSolution 
-   */
-  UniqueSolutionHolder(Solution theSolution) {
-    this.solution = theSolution;
-  }
+    /**
+     * @param theSolution
+     */
+    UniqueSolutionHolder(Solution theSolution) {
+        this.solution = theSolution;
+    }
 
-  /**
-   * @param theVariableName
-   * @return The value of var theVariableName
-   * @see Solution#getBinding(String)
-   */
-  public Term binding(String theVariableName) {
-    return this.solution.getBinding(theVariableName);
-  }
+    /**
+     * @param theVariableName
+     * @return The value of var theVariableName
+     * @see Solution#getBinding(String)
+     */
+    public Term binding(String theVariableName) {
+        return this.solution.getBinding(theVariableName);
+    }
 
-  /**
-   * @return All bindings.
-   */
-  public Map<String, Term> bindings() {
-    return this.solution.getBindings();
-  }
+    /**
+     * @return All bindings.
+     */
+    public Map<String, Term> bindings() {
+        return this.solution.getBindings();
+    }
 
-  /**
-   * @return The solution as a {@link Term}.
-   */
-  public Term solution() {
-    return this.solution.getSolution();
-  }
+    /**
+     * @return The solution as a {@link Term}.
+     */
+    public Term solution() {
+        return this.solution.getSolution();
+    }
 }

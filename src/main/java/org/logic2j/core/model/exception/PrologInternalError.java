@@ -18,21 +18,20 @@
 package org.logic2j.core.model.exception;
 
 /**
- * Indicate an internal error in the Prolog implementation, or a condition that should never have
- * happened, or some condition that was not specific enough to raise a better exception,
- * or some condition that requires breaking the execution flow but for which we do not YET have a proper 
- * Exception class.
+ * Indicate an internal error in the Prolog implementation, or a condition that should never have happened, or some condition that was not
+ * specific enough to raise a better exception, or some condition that requires breaking the execution flow but for which we do not YET have
+ * a proper Exception class.
  */
 public class PrologInternalError extends PrologException {
 
-  private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
-  public PrologInternalError(String theString) {
-    super(theString);
-  }
+    public PrologInternalError(String theString) {
+        super(theString);
+    }
 
-  public PrologInternalError(String theString, Throwable theRootCause) {
-    super(theString, theRootCause);
-  }
+    public PrologInternalError(String theString, Throwable theRootCause) {
+        super(theString, theRootCause);
+    }
 
 }

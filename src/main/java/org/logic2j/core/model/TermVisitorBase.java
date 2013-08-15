@@ -24,49 +24,48 @@ import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Var;
 
 /**
- * Base implementation of {@link TermVisitor} that does nothing 
- * except for {@link Struct}, which are traversed recursively until 
- * the first accept() returns non-null.<br/> 
- * Intended to be derived when implementing useful {@link TermVisitor}s.
- * Appropriate for searching through structures, or traversing all.
+ * Base implementation of {@link TermVisitor} that does nothing except for {@link Struct}, which are traversed recursively until the first
+ * accept() returns non-null.<br/>
+ * Intended to be derived when implementing useful {@link TermVisitor}s. Appropriate for searching through structures, or traversing all.
  */
 public class TermVisitorBase<T> implements TermVisitor<T> {
 
-  @Override
-  public T visit(TLong theLong) {
-    return null;
-  }
-
-  @Override
-  public T visit(TDouble theDouble) {
-    return null;
-  }
-
-  @Override
-  public T visit(Var theVar) {
-    return null;
-  }
-
-  /**
-   * Delegate to all subelements, will traverse children in depth-first order 
-   * starting with 0, 1, ... until the last OR until the first that returns a non-null result.
-   * @return The first returning a non-null result breaks the traveral of children and the result is returned.
-   */
-  @Override
-  public T visit(Struct theStruct) {
-    // Recurse through children
-    for (int i = 0; i < theStruct.getArity(); i++) {
-      final T result = theStruct.getArg(i).accept(this);
-      // Until the first returning a non-null result
-      if (result!=null) {
-        return result;
-      }
+    @Override
+    public T visit(TLong theLong) {
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  public T visit(StructObject<?> theStructObject) {
-    return null;
-  }
+    @Override
+    public T visit(TDouble theDouble) {
+        return null;
+    }
+
+    @Override
+    public T visit(Var theVar) {
+        return null;
+    }
+
+    /**
+     * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... until the last OR until the first
+     * that returns a non-null result.
+     * 
+     * @return The first returning a non-null result breaks the traveral of children and the result is returned.
+     */
+    @Override
+    public T visit(Struct theStruct) {
+        // Recurse through children
+        for (int i = 0; i < theStruct.getArity(); i++) {
+            final T result = theStruct.getArg(i).accept(this);
+            // Until the first returning a non-null result
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public T visit(StructObject<?> theStructObject) {
+        return null;
+    }
 }

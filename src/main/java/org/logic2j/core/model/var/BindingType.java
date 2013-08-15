@@ -24,23 +24,21 @@ import org.logic2j.core.model.symbol.Var;
  */
 public enum BindingType {
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} 
-   * is currently free (ie. has no value, aka is "unbound").
-   */
-  FREE,
+    /**
+     * The {@link Var}iable associated to a {@link Binding} is currently free (ie. has no value, aka is "unbound").
+     */
+    FREE,
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} 
-   * is bound to a literal term. The literal may be a pure constant,
-   * or a Struct which further contains {@link Var}iables.
-   */
-  LITERAL,
+    /**
+     * The {@link Var}iable associated to a {@link Binding} is bound to a literal term. The literal may be a pure constant, or a Struct
+     * which further contains {@link Var}iables.
+     */
+    LITERAL,
 
-  /**
-   * The {@link Var}iable associated to a {@link Binding} is linked (bound) to another variable
-   * (via a linked {@link Binding}), which may itself be bound to any of these {@link BindingType}s).
-   */
-  LINK
+    /**
+     * The {@link Var}iable associated to a {@link Binding} is linked (bound) to another variable (via a linked {@link Binding}), which may
+     * itself be bound to any of these {@link BindingType}s).
+     */
+    LINK
 
 }

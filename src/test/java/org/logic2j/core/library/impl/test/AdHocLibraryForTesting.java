@@ -32,27 +32,26 @@ import org.logic2j.core.solver.listener.SolutionListener;
  * A small ad-hoc implementation of a {@link PLibrary} just for testing.
  */
 public class AdHocLibraryForTesting extends LibraryBase {
-  static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdHocLibraryForTesting.class);
+    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdHocLibraryForTesting.class);
 
-  public AdHocLibraryForTesting(PrologImplementor theProlog) {
-    super(theProlog);
-  }
-
-  @Primitive
-  public void int_range(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theLowerBound,
-      Term theIterable, Term theUpperBound) {
-    final Bindings b1 = theBindings.focus(theLowerBound, TNumber.class);
-    assertValidBindings(b1, "int_range/3");
-    final long lower = ((TNumber)b1.getReferrer()).longValue();
-    
-    final Bindings b2 = theBindings.focus(theUpperBound, TNumber.class);
-    assertValidBindings(b2, "int_range/3");
-    final long upper = ((TNumber)b2.getReferrer()).longValue();
-    
-    for (long iter = lower; iter <= upper; iter++) {
-      final TLong iterTerm = new TLong(iter);
-      final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings, theGoalFrame);
-      notifyIfUnified(unified, theGoalFrame, theListener);
+    public AdHocLibraryForTesting(PrologImplementor theProlog) {
+        super(theProlog);
     }
-  }
+
+    @Primitive
+    public void int_range(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theLowerBound, Term theIterable, Term theUpperBound) {
+        final Bindings b1 = theBindings.focus(theLowerBound, TNumber.class);
+        assertValidBindings(b1, "int_range/3");
+        final long lower = ((TNumber) b1.getReferrer()).longValue();
+
+        final Bindings b2 = theBindings.focus(theUpperBound, TNumber.class);
+        assertValidBindings(b2, "int_range/3");
+        final long upper = ((TNumber) b2.getReferrer()).longValue();
+
+        for (long iter = lower; iter <= upper; iter++) {
+            final TLong iterTerm = new TLong(iter);
+            final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings, theGoalFrame);
+            notifyIfUnified(unified, theGoalFrame, theListener);
+        }
+    }
 }

@@ -27,8 +27,7 @@ import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * Reference implementation of the unification - this must always work OK although probably not the best possible
- * implementation.
+ * Reference implementation of the unification - this must always work OK although probably not the best possible implementation.
  */
 public class DefaultUnifier implements Unifier {
 
@@ -45,9 +44,11 @@ public class DefaultUnifier implements Unifier {
     }
 
     /**
-     * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even
-     * if it eventually cannot succeed and will return false. You MUST make sure to deunify if it returned false.
-     * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is symmetric.
+     * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even if it eventually
+     * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
+     * 
+     * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is
+     *       symmetric.
      * 
      * @param term1
      * @param theBindings1

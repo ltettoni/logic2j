@@ -22,26 +22,26 @@ import org.logic2j.core.PrologTestBase;
 
 public class PojoLibraryTest extends PrologTestBase {
 
-  @Test
-  public void test_bind() throws Exception {
-    loadLibrary(new PojoLibrary(getProlog()));
-    bind("name", "value");
-    //
-    assertOneSolution("bind(name, X), X=value");
-    assertNoSolution("bind(name, X), X=some_other");
-    assertNoSolution("bind(name, a)");
-    assertNoSolution("bind(name, name)");
-    assertOneSolution("bind(name, value)");
-  }
+    @Test
+    public void test_bind() throws Exception {
+        loadLibrary(new PojoLibrary(getProlog()));
+        bind("name", "value");
+        //
+        assertOneSolution("bind(name, X), X=value");
+        assertNoSolution("bind(name, X), X=some_other");
+        assertNoSolution("bind(name, a)");
+        assertNoSolution("bind(name, name)");
+        assertOneSolution("bind(name, value)");
+    }
 
-
-  /**
-   * Helper method for PojoLibrary-related test cases: bind a Java object by name.
-   * @param theKey
-   * @param theValue
-   */
-  protected void bind(String theKey, Object theValue) {
-    PojoLibrary.bind(theKey, theValue);
-  }
+    /**
+     * Helper method for PojoLibrary-related test cases: bind a Java object by name.
+     * 
+     * @param theKey
+     * @param theValue
+     */
+    protected void bind(String theKey, Object theValue) {
+        PojoLibrary.bind(theKey, theValue);
+    }
 
 }

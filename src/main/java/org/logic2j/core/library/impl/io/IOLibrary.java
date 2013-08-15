@@ -28,60 +28,60 @@ import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 public class IOLibrary extends LibraryBase {
-	static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IOLibrary.class);
+    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IOLibrary.class);
 
-	private static final String QUOTE = "'";
+    private static final String QUOTE = "'";
 
-	final PrintStream writer = System.out;
+    final PrintStream writer = System.out;
 
-	public IOLibrary(PrologImplementor theProlog) {
-		super(theProlog);
-	}
+    public IOLibrary(PrologImplementor theProlog) {
+        super(theProlog);
+    }
 
-	@Primitive
-	public void write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
-		for (Term term : terms) {
-			final Bindings b = theBindings.focus(term, Term.class);
-			final Term value = b.getReferrer();
+    @Primitive
+    public void write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+        for (Term term : terms) {
+            final Bindings b = theBindings.focus(term, Term.class);
+            final Term value = b.getReferrer();
 
-			String format = getProlog().getFormatter().format(value);
-			format = IOLibrary.unquote(format);
-			this.writer.print(format);
-		}
-		notifySolution(theGoalFrame, theListener);
-	}
+            String format = getProlog().getFormatter().format(value);
+            format = IOLibrary.unquote(format);
+            this.writer.print(format);
+        }
+        notifySolution(theGoalFrame, theListener);
+    }
 
-	@Primitive
-	public void nl(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
-		this.writer.print('\n');
-		notifySolution(theGoalFrame, theListener);
-	}
+    @Primitive
+    public void nl(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
+        this.writer.print('\n');
+        notifySolution(theGoalFrame, theListener);
+    }
 
-	@Primitive
-	public void log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
-		for (Term term : terms) {
-			final Bindings b = theBindings.focus(term, Term.class);
-			assertValidBindings(b, "write/*");
-			final Term value = b.getReferrer();
+    @Primitive
+    public void log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+        for (Term term : terms) {
+            final Bindings b = theBindings.focus(term, Term.class);
+            assertValidBindings(b, "write/*");
+            final Term value = b.getReferrer();
 
-			String format = getProlog().getFormatter().format(value);
-			format = IOLibrary.unquote(format);
-			logger.info(format);
-		}
-		notifySolution(theGoalFrame, theListener);
-	}
+            String format = getProlog().getFormatter().format(value);
+            format = IOLibrary.unquote(format);
+            logger.info(format);
+        }
+        notifySolution(theGoalFrame, theListener);
+    }
 
-	@Primitive
-	public void nolog(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
-		// Do nothing, but succeeds!
-		notifySolution(theGoalFrame, theListener);
-	}
+    @Primitive
+    public void nolog(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+        // Do nothing, but succeeds!
+        notifySolution(theGoalFrame, theListener);
+    }
 
-	private static String unquote(String st) {
-		if (st.startsWith(QUOTE) && st.endsWith(QUOTE)) {
-			return st.substring(1, st.length() - 1);
-		}
-		return st;
-	}
+    private static String unquote(String st) {
+        if (st.startsWith(QUOTE) && st.endsWith(QUOTE)) {
+            return st.substring(1, st.length() - 1);
+        }
+        return st;
+    }
 
 }

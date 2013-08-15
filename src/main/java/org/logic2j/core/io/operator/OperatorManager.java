@@ -19,14 +19,14 @@ package org.logic2j.core.io.operator;
 
 /**
  * This class manages Prolog operators.
- *
+ * 
  * @see Operator
  */
 public interface OperatorManager {
 
-  void addOperator(String theName, String theAssociativityType, int thePriority);
+    void addOperator(String theName, String theAssociativityType, int thePriority);
 
-  // TODO Unclear how this is an operation of a "manager"
-  int opPrio(String name, String type);
+    // TODO Unclear how this is an operation of a "manager"
+    int opPrio(String name, String type);
 
 }

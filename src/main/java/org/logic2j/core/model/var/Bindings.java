@@ -303,6 +303,7 @@ public class Bindings {
 
     /**
      * Detection of goals in the form of X(...) where X is free.
+     * 
      * @return true if this {@link Bindings}'s {@link #getReferrer()} is a free variable.
      */
     public boolean isFreeReferrer() {

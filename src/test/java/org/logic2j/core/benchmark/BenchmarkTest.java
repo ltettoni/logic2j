@@ -26,55 +26,59 @@ import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Benchmarking the Prolog engine (unification, inference engine).
- *
+ * 
  */
 public class BenchmarkTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
 
-  /**
-   * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous 512k
-   * @throws IOException
-   */
-  @Test
-  public void testHanoi() throws IOException {
-    addTheory("src/test/resources/hanoi.pl");
-    assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
-    logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
-  }
+    /**
+     * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
+     * 512k
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testHanoi() throws IOException {
+        addTheory("src/test/resources/hanoi.pl");
+        assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
+        logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
+    }
 
-  /**
-   * Takes lots of time and stack - use with parcimony and with -Xss10m
-   * @throws IOException
-   */
-  @Ignore // See note above
-  @Test
-  public void testMillionLoops() throws IOException {
-    addTheory("src/test/resources/test-data.pl");
-    long t1 = System.currentTimeMillis();
-    assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
-    long t2 = System.currentTimeMillis();
-    logger.info("Elapse {}", t2 - t1);
+    /**
+     * Takes lots of time and stack - use with parcimony and with -Xss10m
+     * 
+     * @throws IOException
+     */
+    @Ignore
+    // See note above
+    @Test
+    public void testMillionLoops() throws IOException {
+        addTheory("src/test/resources/test-data.pl");
+        long t1 = System.currentTimeMillis();
+        assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
+        long t2 = System.currentTimeMillis();
+        logger.info("Elapse {}", t2 - t1);
 
-    t1 = System.currentTimeMillis();
-    assertNSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
-    t2 = System.currentTimeMillis();
-    logger.info("Elapse {}", t2 - t1);
-  }
+        t1 = System.currentTimeMillis();
+        assertNSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
+        t2 = System.currentTimeMillis();
+        logger.info("Elapse {}", t2 - t1);
+    }
 
-  @Test
-  public void testProfileMillionLoops() throws IOException {
-    addTheory("src/test/resources/test-data.pl");
-    long t1 = System.currentTimeMillis();
-    assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
-    long t2 = System.currentTimeMillis();
-    logger.info("Elapse {}", t2 - t1);
-  }
+    @Test
+    public void testProfileMillionLoops() throws IOException {
+        addTheory("src/test/resources/test-data.pl");
+        long t1 = System.currentTimeMillis();
+        assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
+        long t2 = System.currentTimeMillis();
+        logger.info("Elapse {}", t2 - t1);
+    }
 
-  public static void main(String[] args) throws InterruptedException, IOException {
-    BenchmarkTest benchmarkTest = new BenchmarkTest();
-    benchmarkTest.setUp();
-    Thread.sleep(20000);
-    benchmarkTest.testMillionLoops();
-  }
+    public static void main(String[] args) throws InterruptedException, IOException {
+        BenchmarkTest benchmarkTest = new BenchmarkTest();
+        benchmarkTest.setUp();
+        Thread.sleep(20000);
+        benchmarkTest.testMillionLoops();
+    }
 
 }

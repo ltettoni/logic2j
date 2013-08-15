@@ -22,36 +22,36 @@ import org.logic2j.core.model.exception.MissingSolutionException;
 import org.logic2j.core.model.var.Bindings;
 
 /**
- * A {@link SolutionListener} that will collect only the first solution, yet making sure
- * there is no other solution provided by the goal solver.
+ * A {@link SolutionListener} that will collect only the first solution, yet making sure there is no other solution provided by the goal
+ * solver.
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 
-  public UniqueSolutionListener(Bindings theBindings) {
-    // We wish to make sure the first solution is the ONLY one, so we 
-    // are going to try to reach further, at least 2 solutions. 
-    // Then we will be able to determine for sure if there was actually 
-    // only one, or more.
-    super(theBindings, 2);
-  }
-
-  @Override
-  public Solution getSolution() {
-    if (getNbSolutions() < 1) {
-      onMissingSolution();
+    public UniqueSolutionListener(Bindings theBindings) {
+        // We wish to make sure the first solution is the ONLY one, so we
+        // are going to try to reach further, at least 2 solutions.
+        // Then we will be able to determine for sure if there was actually
+        // only one, or more.
+        super(theBindings, 2);
     }
-    return super.getSolution();
-  }
 
-  private void onMissingSolution() {
-    // TODO would be really useful to have some context information here, eg. the goal we are trying to solve...
-    throw new MissingSolutionException("No solution found by " + this + ", when exactly one was required");
-  }
+    @Override
+    public Solution getSolution() {
+        if (getNbSolutions() < 1) {
+            onMissingSolution();
+        }
+        return super.getSolution();
+    }
 
-  @Override
-  protected void onSuperfluousSolution() {
-    // FIXME would be really useful to have some context information here, eg. the goal we are trying to solve...
-    throw new IllegalSolutionException("More than one solution found by " + this + ", was expecting exactly one");
-  }
+    private void onMissingSolution() {
+        // TODO would be really useful to have some context information here, eg. the goal we are trying to solve...
+        throw new MissingSolutionException("No solution found by " + this + ", when exactly one was required");
+    }
+
+    @Override
+    protected void onSuperfluousSolution() {
+        // FIXME would be really useful to have some context information here, eg. the goal we are trying to solve...
+        throw new IllegalSolutionException("More than one solution found by " + this + ", was expecting exactly one");
+    }
 
 }
