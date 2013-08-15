@@ -24,7 +24,12 @@ import org.logic2j.core.model.symbol.Var;
 
 /**
  * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or streamable representations.
- *
+ * 
+ * TODO Should become bidirectional: be extended towards marshalling Terms into Java objects or streamable representations (currently
+ * covered by the {@link Formatter}). Currently we have a Term->String in {@link Formatter}, String->Term and Object->Term in
+ * {@link TermFactory}, and nothing for Term->Object. Should we split by direction (in vs. out), or by type of representation (Stream vs.
+ * Pojo).
+ * 
  * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives registered therein.
  * @note This interface is still deficient for handling channel streams - some more design needed.
  */
@@ -56,7 +61,7 @@ public interface TermFactory {
     /**
      * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence}; this is the highest-level factory.
      * For a {@link CharSequence}, this will call {@link #parse(CharSequence)}.
-     *
+     * 
      * @param theObject
      * @param theMode Kind of Term to instantiate
      * @return A factorized and normalized {@link Term}.
@@ -66,7 +71,7 @@ public interface TermFactory {
 
     /**
      * Create a Term from a character representation, will leverage the definitions of operators and primitives that currently apply.
-     *
+     * 
      * @param theExpression
      * @return A factorized and normalized {@link Term}.
      */
@@ -74,7 +79,7 @@ public interface TermFactory {
 
     /**
      * Normalize a {@link Term} using the current definitions of operators, primitives.
-     *
+     * 
      * @param theTerm To be normalized
      * @return A {@link Term} ready to be used for inference (in a Theory ore as a goal)
      */

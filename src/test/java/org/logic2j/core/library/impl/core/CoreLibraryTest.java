@@ -67,7 +67,6 @@ public class CoreLibraryTest extends PrologTestBase {
 
     // TODO Some uncertainties re the behaviour of no-op binding of free bindings. To be clarified.
     @Ignore
-    // See note above
     @Test
     public void solvePrimitivePredicates_representation_FREE() {
         assertEquals(term("X"), assertOneSolution("X=X").binding("X"));
