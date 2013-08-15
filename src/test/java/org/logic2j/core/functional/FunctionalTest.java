@@ -28,13 +28,11 @@ import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.util.CollectionUtils;
 
-/**
- */
 public class FunctionalTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
 
     @Test
-    public void test_01_core_primitives() {
+    public void core_primitives() {
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "true", //
                 "true, true", //
@@ -57,7 +55,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_NArityAndOr() throws IOException {
+    public void nArityAndOr() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "','(true)", //
@@ -70,7 +68,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_not() {
+    public void not() {
         // Surprisingly enough the operator \+ means "not provable".
         assertOneSolution("not(fail)", "\\+(fail)");
         assertNoSolution("not(true)", "\\+(true)");
@@ -83,7 +81,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_change() throws IOException {
+    public void change() throws IOException {
         IOLibrary library = new IOLibrary(getProlog());
         loadLibrary(library);
         addTheory("src/test/resources/dollar.pl");
@@ -91,7 +89,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_rules() throws IOException {
+    public void rules() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
 
         assertNSolutions(1, "cut1(_)", "a(X), b(Y), c(Z), !", "p(X), X=4");
@@ -113,7 +111,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_findall() throws IOException {
+    public void findall() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
 
         assertEquals("[]", assertOneSolution("findall(1, fail, L)").binding("L").toString());
@@ -129,14 +127,14 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_findall_bindFreeVars() throws IOException {
+    public void findall_bindFreeVars() throws IOException {
         // UniqueSolutionHolder sol = assertOneSolution("Res=Z");
         UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
         assertEquals("[a,X,c]", sol.binding("Res").toString());
     }
 
     @Test
-    public void test_member() throws IOException {
+    public void member() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
 
         assertOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
@@ -151,7 +149,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_sumial() throws IOException {
+    public void sumial() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
         assertEquals(term(15), assertOneSolution("sumial(5, X)").binding("X"));
         assertEquals(term(55), assertOneSolution("sumial(10, X)").binding("X"));
@@ -159,7 +157,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void test_unify2() throws IOException {
+    public void unify2() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
         assertOneSolution("unifyterms(X,X)");
         assertEquals(term(123), assertOneSolution("unifyterms21(X,123)").binding("X"));
@@ -174,7 +172,7 @@ public class FunctionalTest extends PrologTestBase {
      * @throws IOException
      */
     @Test
-    public void test_relink_vars() throws IOException {
+    public void relink_vars() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
         // Below, Y must be equal to g(123,X), but does not solve to X!
         assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").binding("Y"));

@@ -47,12 +47,12 @@ public class SolverTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolverTest.class);
 
     @Test
-    public void testVeryBasic() {
+    public void veryBasic() {
         assertEquals(null, assertOneSolution("X=X").binding("X"));
     }
 
     @Test
-    public void test_unique() {
+    public void unique() {
         final Prolog prolog = new PrologImpl(InitLevel.L2_BASE_LIBRARIES);
         //
         try {
@@ -85,7 +85,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     @Test
-    public void test_multiple() {
+    public void multiple() {
         final Prolog prolog = new PrologImpl();
         // Nothing should be actually solved by calling all()
         prolog.solve("1=2").all();
@@ -101,7 +101,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     @Test
-    public void test_iterator() throws InterruptedException {
+    public void iterator() throws InterruptedException {
         final Prolog prolog = new PrologImpl();
         Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
         assertNotNull(iterator);
@@ -155,7 +155,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     @Test
-    public void test_userCancel() throws InterruptedException {
+    public void userCancel() throws InterruptedException {
         final PrologImplementor prolog = new PrologImpl();
         Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
         CountingListener listenerAll = new CountingListener();

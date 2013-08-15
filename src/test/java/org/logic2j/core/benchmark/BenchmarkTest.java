@@ -38,7 +38,7 @@ public class BenchmarkTest extends PrologTestBase {
      * @throws IOException
      */
     @Test
-    public void testHanoi() throws IOException {
+    public void hanoi() throws IOException {
         addTheory("src/test/resources/hanoi.pl");
         assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
         logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
@@ -52,7 +52,7 @@ public class BenchmarkTest extends PrologTestBase {
     @Ignore
     // See note above
     @Test
-    public void testMillionLoops() throws IOException {
+    public void millionLoops() throws IOException {
         addTheory("src/test/resources/test-data.pl");
         long t1 = System.currentTimeMillis();
         assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
@@ -66,7 +66,7 @@ public class BenchmarkTest extends PrologTestBase {
     }
 
     @Test
-    public void testProfileMillionLoops() throws IOException {
+    public void profileMillionLoops() throws IOException {
         addTheory("src/test/resources/test-data.pl");
         long t1 = System.currentTimeMillis();
         assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
@@ -74,11 +74,12 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("Elapse {}", t2 - t1);
     }
 
+    // FIXME Why a main()?
     public static void main(String[] args) throws InterruptedException, IOException {
         BenchmarkTest benchmarkTest = new BenchmarkTest();
         benchmarkTest.setUp();
         Thread.sleep(20000);
-        benchmarkTest.testMillionLoops();
+        benchmarkTest.millionLoops();
     }
 
 }

@@ -39,7 +39,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     }
 
     @Test
-    public void test_getConnection() throws SQLException {
+    public void getConnection() throws SQLException {
         assertNotNull(zipcodesConnection());
     }
 

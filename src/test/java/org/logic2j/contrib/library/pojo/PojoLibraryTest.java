@@ -23,7 +23,7 @@ import org.logic2j.core.PrologTestBase;
 public class PojoLibraryTest extends PrologTestBase {
 
     @Test
-    public void test_bind() throws Exception {
+    public void bind() throws Exception {
         loadLibrary(new PojoLibrary(getProlog()));
         bind("name", "value");
         //

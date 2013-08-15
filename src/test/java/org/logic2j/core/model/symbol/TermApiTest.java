@@ -46,7 +46,7 @@ public class TermApiTest {
     private static final TermApi TERM_API = new TermApi();
 
     @Test
-    public void test_structurallyEquals() {
+    public void structurallyEquals() {
         // Vars are never structurally equal ...
         assertFalse(new Var("X").structurallyEquals(new Var("Y")));
         Var x1 = new Var("X");
@@ -64,7 +64,7 @@ public class TermApiTest {
 
     // TODO Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
     @Test
-    public void test_structurallyEquals2() {
+    public void structurallyEquals2() {
         // assertTrue(new Var().structurallyEquals(new Var()));
         // assertTrue(new Var().structurallyEquals(new Var("_")));
         // assertFalse(new Var("X").structurallyEquals(new Var()));
@@ -73,7 +73,7 @@ public class TermApiTest {
     }
 
     @Test
-    public void test_collectTerms() {
+    public void collectTerms() {
         Term term;
         //
         term = new Struct("p", "X", 2);
@@ -95,7 +95,7 @@ public class TermApiTest {
     }
 
     @Test
-    public void test_assignIndexes() {
+    public void assignIndexes() {
         int nbVars;
         nbVars = TERM_API.assignIndexes(new TLong(2));
         assertEquals(0, nbVars);
@@ -109,7 +109,7 @@ public class TermApiTest {
 
     // FIXME: works fine when run alone, or with class, but fails when running all test cases at the same time!
     @Test
-    public void test_substitute() {
+    public void substitute() {
         try {
             Term v = Var.ANONYMOUS_VAR;
             TERM_API.substitute(v, new Bindings(v), null);
@@ -131,7 +131,7 @@ public class TermApiTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void test_avoidCycle() {
+    public void avoidCycle() {
         Struct cyclic = new Struct("s", Struct.createEmptyPList());
         cyclic.setArg(0, cyclic);
         try {
@@ -143,7 +143,7 @@ public class TermApiTest {
     }
 
     @Test
-    public void test_selectTerm() {
+    public void selectTerm() {
         Term term = this.prolog.getTermFactory().create("a(b(c,c2),b2)", FactoryMode.ANY_TERM);
         //
         assertSame(term, TERM_API.selectTerm(term, "", Struct.class));

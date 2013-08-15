@@ -33,7 +33,7 @@ public class TheoryTest extends PrologTestBase {
     }
 
     @Test
-    public void testLoadTheory() {
+    public void loadTheory() {
         final TheoryManager theoryManager = new DefaultTheoryManager(getProlog());
         final TheoryContent content = theoryManager.load(new CoreLibrary(getProlog()));
         logger.info("Loaded theory: {}", content);

@@ -35,21 +35,21 @@ public class ParsingAndFormattingTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
 
     @Test
-    public void test_parsing() {
+    public void parsing() {
         final Prolog prolog = new PrologImpl(InitLevel.L0_BARE);
         logger.info("Term: {}", prolog.term("p(X,Y) :- a;b,c,d"));
         logger.info("Term: {}", prolog.term("[1,2,3]"));
     }
 
     @Test
-    public void test_parseNarityOperator() {
+    public void parseNarityOperator() {
         final PrologImplementor prolog = new PrologImpl();
         prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
         logger.info("Result: {}", prolog.term("a oo b oo c oo d"));
     }
 
     @Test
-    public void test_formatting() {
+    public void formatting() {
         final Prolog prolog = new PrologImpl(InitLevel.L0_BARE);
         Term t;
         //

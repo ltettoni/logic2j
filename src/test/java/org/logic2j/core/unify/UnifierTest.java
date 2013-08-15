@@ -56,7 +56,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyAnonymousToAnonymous() {
+    public void unifyAnonymousToAnonymous() {
         // 2 anonymous
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(0);
@@ -64,7 +64,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyVarToAnonymous() {
+    public void unifyVarToAnonymous() {
         // Var against anonymous (must unify without any binding)
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(0);
@@ -72,7 +72,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyAnonymousToAtom() {
+    public void unifyAnonymousToAtom() {
         // Anonymous against literal
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(0);
@@ -80,7 +80,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyVarToAtom() {
+    public void unifyVarToAtom() {
         // Left to right unification
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(1);
@@ -88,7 +88,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyAtomToAtom() {
+    public void unifyAtomToAtom() {
         // No unification on 2 different literals
         tester.setExpectedUnificationResult(false);
         tester.setExpectedNbBindings(0);
@@ -96,7 +96,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyStructToStruct_1() {
+    public void unifyStructToStruct_1() {
         // Must deunify automatically when unification fails
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(1);
@@ -104,7 +104,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyStructToStruct_2() {
+    public void unifyStructToStruct_2() {
         // Must deunify automatically when unification fails
         tester.setExpectedUnificationResult(false);
         tester.setExpectedNbBindings(0);
@@ -112,7 +112,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyOne() {
+    public void unifyOne() {
         // Var against anonymous (must unify without any binding)
         tester.setExpectedUnificationResult(true);
         tester.setExpectedNbBindings(0);
@@ -123,7 +123,7 @@ public class UnifierTest extends PrologTestBase {
      * Unifying X=X used to create a loop binding onto itself!
      */
     @Test
-    public void testUnifyToItself() {
+    public void unifyToItself() {
         // Test unifying X to X, should not create a binding that loops on
         // itself
         tester.setExpectedUnificationResult(true);
@@ -136,7 +136,7 @@ public class UnifierTest extends PrologTestBase {
      * First unify A to TInt(123), then Unify X to A, make sure X binds to TInt(123)
      */
     @Test
-    public void testUnifyVarToBoundTerm() { // Once a nasty bug
+    public void unifyVarToBoundTerm() { // Once a nasty bug
         Term varA = TERM_API.normalize(new Var("A"), null);
         Bindings bindingsA = new Bindings(varA);
         Term tlong = TERM_API.normalize(new TLong(123), null);
@@ -147,7 +147,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyVarToVar() {
+    public void unifyVarToVar() {
         Term varA = TERM_API.normalize(new Var("A"), null);
         Bindings bindingsA = new Bindings(varA);
         Term varX = TERM_API.normalize(new Var("X"), null);
@@ -159,7 +159,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testUnifyMoreDifficult() {
+    public void unifyMoreDifficult() {
         Struct goalTerm;
         Var x = new Var("X");
         Var y = new Var("Y");
@@ -178,7 +178,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testExplicitBindings_1() {
+    public void explicitBindings_1() {
         // Bind bindings1 to var
         Term t0 = getProlog().term("t(U)");
         Bindings bindings0 = new Bindings(t0);
@@ -191,7 +191,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testExplicitBindings_2() {
+    public void explicitBindings_2() {
         GoalFrame goalFrame = new GoalFrame();
         // Bind bindings2 to const
         Term t0 = getProlog().term("t(U)");
@@ -204,7 +204,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testExplicitBindings_representation_1() {
+    public void explicitBindings_representation_1() {
         Term t1 = getProlog().term("t(X)");
         Bindings bindings1 = new Bindings(t1);
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
@@ -214,7 +214,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     @Test
-    public void testExplicitBindings_representation_2() {
+    public void explicitBindings_representation_2() {
         // No bindings since no variable in this one:
         Term t2 = getProlog().term("t(_)");
         Bindings bindings2 = new Bindings(t2);
@@ -226,7 +226,7 @@ public class UnifierTest extends PrologTestBase {
 
     // TODO Try to understand what I was trying to test here - I can't any longer. Refactor then in 2 tests, each calling unify() once...
     @Test
-    public void testExplicitBindings2() {
+    public void explicitBindings2() {
         Term t0 = getProlog().term("append2([1],[2,3],X)");
         Bindings bindings0 = new Bindings(t0);
         // Bind bindings1 to var

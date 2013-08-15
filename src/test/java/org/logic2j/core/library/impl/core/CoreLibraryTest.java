@@ -30,12 +30,12 @@ import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 public class CoreLibraryTest extends PrologTestBase {
 
     @Test
-    public void test_reproduce_error() throws IOException {
+    public void reproduce_error() throws IOException {
         // Nothing at the moment
     }
 
     @Test
-    public void test_unify() {
+    public void unify() {
         final String[] SINGLE_SOLUTION_GOALS = new String[] { "2=2", //
                 "X=2", //
                 "2\\=4", //
@@ -56,7 +56,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void test_var() {
+    public void var() {
         assertOneSolution("var(_)");
         assertOneSolution("var(V)");
         assertNoSolution("var(1)");
@@ -69,7 +69,7 @@ public class CoreLibraryTest extends PrologTestBase {
     @Ignore
     // See note above
     @Test
-    public void testSolvePrimitivePredicates_representation_FREE() {
+    public void solvePrimitivePredicates_representation_FREE() {
         assertEquals(term("X"), assertOneSolution("X=X").binding("X"));
         assertEquals(term("Y"), assertOneSolution("X=Y").binding("X"));
         assertEquals(term("Y"), assertOneSolution("X=Y").binding("Y"));
@@ -84,7 +84,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void testSolvePrimitivePredicates_representation_NULL() {
+    public void solvePrimitivePredicates_representation_NULL() {
         assertEquals(null, assertOneSolution("X=X").binding("X"));
         assertEquals(null, assertOneSolution("X=Y").binding("X"));
         assertEquals(null, assertOneSolution("X=Y").binding("Y"));
@@ -99,7 +99,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void test_is() {
+    public void is() {
         assertEquals(term(6), assertOneSolution("X is 2+4").binding("X"));
         assertEquals(term(-5), assertOneSolution("X is 5-10").binding("X"));
         assertEquals(term(-12), assertOneSolution("X is -12").binding("X"));
@@ -108,7 +108,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void test_predicate2PList() {
+    public void predicate2PList() {
         assertNoSolution("a(b,c,d) =.. f");
         assertEquals("[a,b,c,d]", assertOneSolution("a(b,c,d) =.. X").binding("X").toString());
         assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
@@ -122,12 +122,12 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void test_reverse() {
+    public void reverse() {
         assertEquals(term("[c,b,a]"), getProlog().solve("reverse([a,b,c], L)").unique().binding("L"));
     }
 
     @Test
-    public void test_perm() {
+    public void perm() {
         assertEquals(720, getProlog().solve("perm([a,b,c,d,e,f], L)").number());
     }
 
@@ -193,7 +193,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void test_unify_2() throws IOException {
+    public void unify_2() throws IOException {
         addTheory("src/test/resources/test-functional.pl");
 
         assertNSolutions(5, "bool_3t_2f(X)");
