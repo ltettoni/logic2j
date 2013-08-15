@@ -26,7 +26,7 @@ import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Benchmarking the Prolog engine (unification, inference engine).
- *
+ * 
  */
 public class BenchmarkTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
@@ -34,7 +34,7 @@ public class BenchmarkTest extends PrologTestBase {
     /**
      * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
      * 512k
-     *
+     * 
      * @throws IOException
      */
     @Test
@@ -44,25 +44,40 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
     }
 
-    /**
-     * Takes lots of time and stack - use with parcimony and with -Xss10m
-     *
-     * @throws IOException
-     */
-    @Ignore
-    // See note above
     @Test
-    public void millionLoops() throws IOException {
+    public void thousandLoops() throws IOException {
         addTheory("src/test/resources/test-data.pl");
+        // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
-        assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
+        assertNSolutions(1000, "int10(_),int10(_),int10(_)");
         long t2 = System.currentTimeMillis();
-        logger.info("Elapse {}", t2 - t1);
-
+        logger.info("1000 iterations, elapse {}", t2 - t1);
+        // Using ternary operator ","
         t1 = System.currentTimeMillis();
         assertNSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
         t2 = System.currentTimeMillis();
-        logger.info("Elapse {}", t2 - t1);
+        logger.info("1000 iterations, elapse {}", t2 - t1);
+    }
+
+    /**
+     * Takes lots of time and stack - use with parcimony and with -Xss10m. By defaut we @Ignore this test.
+     * 
+     * @throws IOException
+     */
+    @Ignore
+    @Test
+    public void millionLoops() throws IOException {
+        addTheory("src/test/resources/test-data.pl");
+        // Using regular binary operator ","
+        long t1 = System.currentTimeMillis();
+        assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
+        long t2 = System.currentTimeMillis();
+        logger.info("1000000 iterations, elapse {}", t2 - t1);
+        // Using n-ary operator ","
+        t1 = System.currentTimeMillis();
+        assertNSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
+        t2 = System.currentTimeMillis();
+        logger.info("1000000 iterations, elapse {}", t2 - t1);
     }
 
     @Test
