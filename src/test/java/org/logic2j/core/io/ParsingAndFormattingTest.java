@@ -29,7 +29,7 @@ import org.logic2j.core.model.symbol.Term;
 
 /**
  * Test parsing and formatting.
- *
+ * 
  */
 public class ParsingAndFormattingTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
@@ -55,7 +55,7 @@ public class ParsingAndFormattingTest {
         //
         t = prolog.term("'An atom'");
         logger.info("Formatted: {}", t);
-        assertEquals("'An atom'", t.toString());
+        assertEquals("Uppercase atom must be quoted", "'An atom'", t.toString());
         //
         t = prolog.term("t('A')");
         logger.info("Formatted: {}", t);

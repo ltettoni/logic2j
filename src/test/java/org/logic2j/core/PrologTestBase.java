@@ -39,13 +39,13 @@ import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
- * Base class for tests.
- * 
+ * Base class for tests, initiazlize a fresh {@link PrologImpl} on every method (level of init is {@link InitLevel#L1_CORE_LIBRARY}, and
+ * provides utility methods.
  */
 public abstract class PrologTestBase {
-    private static final String TEST_RESOURCES_DIR = "src/test/resources";
-
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
+
+    private static final String TEST_RESOURCES_DIR = "src/test/resources";
 
     private PrologImplementor prolog;
 
@@ -67,6 +67,12 @@ public abstract class PrologTestBase {
         return this.prolog;
     }
 
+    /**
+     * Make sure there is only one solution to goals.
+     * 
+     * @param theGoals All goals to check for
+     * @return The UniqueSolutionHolder holding the solution
+     */
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
@@ -74,20 +80,32 @@ public abstract class PrologTestBase {
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
             final SolutionHolder solution = getProlog().solve(parsed);
             result = solution.unique();
-            // assertEquals(theNumber, result.number());
         }
         return result;
-        // return assertInternal(1, theGoals).unique();
     }
 
+    /**
+     * Make sure there are no soutions.
+     * 
+     * @param theGoals All goals to check for
+     * @return
+     */
     protected SolutionHolder assertNoSolution(CharSequence... theGoals) {
-        return assertInternal(0, theGoals);
+        return internalAssert(0, theGoals);
     }
 
+    /**
+     * Make sure there are exatly theNumber of solutions.
+     * 
+     * @param theNumber
+     * @param theGoals All goals to check for
+     * @return
+     */
     protected MultipleSolutionsHolder assertNSolutions(int theNumber, CharSequence... theGoals) {
-        return assertInternal(theNumber, theGoals).all();
+        return internalAssert(theNumber, theGoals).all();
     }
 
+    // FIXME Not good, should use direct Junit and @Expected
     protected void assertGoalMustFail(CharSequence... theGoals) {
         for (final CharSequence theGoal : theGoals) {
             try {
@@ -104,13 +122,13 @@ public abstract class PrologTestBase {
      * @param theGoals
      * @return The {@link SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
-    private SolutionHolder assertInternal(int theNumber, CharSequence... theGoals) {
+    private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
         for (final CharSequence goal : theGoals) {
             final Term parsed = getProlog().term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
             solve = getProlog().solve(parsed);
-            assertEquals(theNumber, solve.number());
+            assertEquals("Goal " + goal + " did has different number of solutions", theNumber, solve.number());
         }
         return solve;
     }

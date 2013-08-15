@@ -43,7 +43,7 @@ Features in more details:
   Factory / Interface / Implementation
   Hooks and derivation points to extend functionality
   Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
-  Visitor design pattern
+  Easier API to manage Term structures (Visitor design pattern, expression-based selection à la XPath)
   Ease of use integration DI framworks (eg Spring)
   SLF4j logging
 
