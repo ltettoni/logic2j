@@ -73,6 +73,8 @@ public class DefaultTheoryManager implements TheoryManager {
         final FileReader reader = new FileReader(theFile);
         try {
             return load(reader);
+        } catch (final InvalidTermException e) {
+            throw new PrologNonSpecificError("Theory could not be loaded from file \"" + theFile + "\" into " + this.prolog + ": " + e, e);
         } finally {
             reader.close();
         }
