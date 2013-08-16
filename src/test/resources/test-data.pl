@@ -1,5 +1,9 @@
 /*
-  Functional and performance testing.
+
+        Data fixtures for functional and performance testing.
+
+        Convention:
+                intN(I) will bind integers from 0 to N-1
 */
 
 

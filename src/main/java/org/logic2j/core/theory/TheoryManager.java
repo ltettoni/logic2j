@@ -38,16 +38,17 @@ public interface TheoryManager extends ClauseProvider {
     // ---------------------------------------------------------------------------
 
     /**
-     * Load the Prolog content associated to a {@link PLibrary}.
-     *
-     * @param theLibrary
-     * @return The content of the theory associated to theLibrary
+     * Load the Prolog {@link TheoryContent} associated to a {@link PLibrary}.
+     * 
+     * @param theLibrary The instance of library whose content must be loaded.
+     * @return The content of the theory associated to theLibrary, this is a resource that resides in the same package as the
+     *         {@link PLibrary} implementation, has the library name and extension ".prolog"
      */
     TheoryContent load(PLibrary theLibrary);
 
     /**
-     * Convenience method to load a File representing a Theory.
-     *
+     * Convenience method to load the {@link TheoryContent} from a File defining a theory.
+     * 
      * @param theFile
      * @return The content of the theory from theFile.
      * @throws IOException
