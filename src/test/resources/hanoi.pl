@@ -1,3 +1,8 @@
+/*
+        The towers of Hanoi
+*/
+
+
 inform(X,Y) :- 
     write('Move top disk from '), 
     write(X), 

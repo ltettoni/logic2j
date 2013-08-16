@@ -1,7 +1,5 @@
 /*
-
   Functional and performance testing.
-
 */
 
 

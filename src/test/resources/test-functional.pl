@@ -1,7 +1,5 @@
 /*
-
   Functional testing. These predicates are referenced by TestCases: do not alter.
-
 */
 f(a).
 f(b) :- true.

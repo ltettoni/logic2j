@@ -1,7 +1,5 @@
 /*
-
-  Testing the unification.
-
+        Testing the unification.
 */
 
 bind3_12(X,X,Y).
@@ -12,4 +10,3 @@ bind2_11(X,X).
 
 
 arg1(f(X), X).
-

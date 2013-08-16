@@ -1,5 +1,8 @@
 
-% This simple Prolog program checks or generates change adding up to a dollar consisting of half-dollars, quarters, dimes, nickels, and pennies. 
+/*
+        This simple Prolog program checks or generates change 
+        adding up to a dollar consisting of half-dollars, quarters, dimes, nickels, and pennies.
+*/ 
 
 change([H,Q,D,N,P]) :- 
     member(H,[0,1,2]),                      /* Half-dollars */ 
