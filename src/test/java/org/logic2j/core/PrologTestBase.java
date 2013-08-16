@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +171,18 @@ public abstract class PrologTestBase {
 
     protected void addTheoryFromTestResourceDir(String theFilename) throws IOException {
         addTheory(new File(TEST_RESOURCES_DIR, theFilename));
+    }
+
+    protected File[] allTheoryFilesFromTestResourceDir() {
+        FilenameFilter filesOnly = new FilenameFilter() {
+
+            @Override
+            public boolean accept(File dir, String name) {
+                final File file = new File(dir, name);
+                return file.canRead() && file.isFile();
+            }
+        };
+        return new File(TEST_RESOURCES_DIR).listFiles(filesOnly);
     }
 
     protected LibraryContent loadLibrary(PLibrary theLibrary) {
