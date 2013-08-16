@@ -17,6 +17,9 @@
  */
 package org.logic2j.core.theory;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.Test;
 import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.PrologTestBase;
@@ -32,11 +35,26 @@ public class TheoryTest extends PrologTestBase {
         return InitLevel.L0_BARE;
     }
 
+    /**
+     * This is making sure all test theories are loadable (no syntax issue, etc).
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void loadAllTestTheories() throws IOException {
+        final File[] allTheoryFilesFromTestResourceDir = allTheoryFilesFromTestResourceDir();
+        for (File theory : allTheoryFilesFromTestResourceDir) {
+            final TheoryManager theoryManager = new DefaultTheoryManager(getProlog());
+            final TheoryContent content = theoryManager.load(theory);
+            logger.info("Loaded library: {}", content);
+        }
+    }
+
     @Test
     public void loadTheory() {
         final TheoryManager theoryManager = new DefaultTheoryManager(getProlog());
         final TheoryContent content = theoryManager.load(new CoreLibrary(getProlog()));
-        logger.info("Loaded theory: {}", content);
+        logger.info("Loaded library: {}", content);
     }
 
 }
