@@ -19,7 +19,6 @@ package org.logic2j.contrib.rdb;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -47,7 +46,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     // NPE see ConfigLibrary
     @Test
     public void listMatchingClauses() throws IOException {
-        getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+        addTheoryFromTestResourceDir("test-config.pl");
 
         assertNotNull(this.provider);
         final Struct theGoal = new Struct("zip_code", "Zip", "City");
@@ -68,7 +67,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     // NPE see ConfigLibrary
     @Test
     public void matchClausesFromProlog() throws IOException {
-        getProlog().getTheoryManager().addTheory(getProlog().getTheoryManager().load(new File("src/test/resources/test-config.pl")));
+        addTheoryFromTestResourceDir("test-config.pl");
 
         getProlog().getClauseProviders().add(this.provider);
         // Matching all

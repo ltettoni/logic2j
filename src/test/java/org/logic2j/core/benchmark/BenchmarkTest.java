@@ -89,12 +89,4 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("Elapse {}", t2 - t1);
     }
 
-    // FIXME Why a main()?
-    public static void main(String[] args) throws InterruptedException, IOException {
-        final BenchmarkTest benchmarkTest = new BenchmarkTest();
-        benchmarkTest.setUp();
-        Thread.sleep(20000);
-        benchmarkTest.millionLoops();
-    }
-
 }

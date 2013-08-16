@@ -17,19 +17,17 @@
  */
 package org.logic2j.contrib.library.config;
 
-import java.io.File;
-import java.io.IOException;
+import org.junit.Test;
+import org.logic2j.core.PrologTestBase;
 
-import org.logic2j.contrib.rdb.PrologWithDataSourcesTestBase;
-import org.logic2j.core.PrologImpl;
+public class ConfigLibraryTest extends PrologTestBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConfigLibraryTest.class);
 
-public class ConfigLibraryTest extends PrologWithDataSourcesTestBase {
-
-    // FIXME: Why a main() in a JUnit TestCase?
-    public static void main(String[] args) throws IOException {
-        final PrologImpl prolog = new PrologImpl();
-        prolog.getTheoryManager().addTheory(prolog.getTheoryManager().load(new File("src/test/resources/test-config.pl")));
-        System.out.println(prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
+    // FIXME what is this supposed to do - used to be a main() I have converted to a test method
+    @Test
+    public void undefined() throws Exception {
+        addTheoryFromTestResourceDir("test-config.pl");
+        logger.info("undefined test result: {}", getProlog().solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
+        // FIXME No assertions?
     }
-
 }

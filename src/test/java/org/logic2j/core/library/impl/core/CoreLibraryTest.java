@@ -185,7 +185,7 @@ public class CoreLibraryTest extends PrologTestBase {
         assertNSolutions(3, "clause(a(X), Z)");
         assertNSolutions(3, "clause(a(X), Z), Z=true");
         assertEquals(termList(true, true, true), assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z"));
-        System.out.println(assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z"));
+        assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z");
         assertEquals(termList(1, 2, 3), assertNSolutions(3, "clause(a(X), true)").binding("X"));
         assertNSolutions(5, "clause(f(_), true)");
         assertEquals(termList(2), assertNSolutions(1, "clause(cut2(X), !)").binding("X"));
@@ -203,7 +203,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void atom_length()  {
+    public void atom_length() {
         assertOneSolution("X=abc, atom_length(X, 3)");
         //
         assertOneSolution("atom_length(a, 1)");

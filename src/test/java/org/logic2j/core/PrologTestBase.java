@@ -45,7 +45,7 @@ import org.logic2j.core.theory.TheoryManager;
 public abstract class PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
 
-    private static final String TEST_RESOURCES_DIR = "src/test/resources";
+    protected static final String TEST_RESOURCES_DIR = "src/test/resources";
 
     private PrologImplementor prolog;
 
@@ -165,6 +165,7 @@ public abstract class PrologTestBase {
         final TheoryManager manager = getProlog().getTheoryManager();
         final TheoryContent load = manager.load(theFile);
         manager.addTheory(load);
+        logger.debug("Loaded theory from: {}", theFile);
     }
 
     protected void addTheoryFromTestResourceDir(String theFilename) throws IOException {
