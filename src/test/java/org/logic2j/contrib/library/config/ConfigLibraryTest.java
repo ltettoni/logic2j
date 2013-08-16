@@ -25,7 +25,7 @@ public class ConfigLibraryTest extends PrologTestBase {
 
     // FIXME what is this supposed to do - used to be a main() I have converted to a test method
     @Test
-    public void undefined() throws Exception {
+    public void undefined() {
         addTheoryFromTestResourceDir("test-config.pl");
         logger.info("undefined test result: {}", getProlog().solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
         // FIXME No assertions?

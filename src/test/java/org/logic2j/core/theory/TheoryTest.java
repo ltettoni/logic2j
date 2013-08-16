@@ -25,8 +25,6 @@ import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 
-/**
- */
 public class TheoryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TheoryTest.class);
 
@@ -37,8 +35,6 @@ public class TheoryTest extends PrologTestBase {
 
     /**
      * This is making sure all test theories are loadable (no syntax issue, etc).
-     * 
-     * @throws IOException
      */
     @Test
     public void loadAllTestTheories() throws IOException {

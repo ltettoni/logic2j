@@ -30,7 +30,7 @@ import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 public class CoreLibraryTest extends PrologTestBase {
 
     @Test
-    public void reproduce_error() throws IOException {
+    public void reproduce_error() {
         // Nothing at the moment
     }
 
@@ -131,7 +131,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void call() throws IOException {
+    public void call() {
         assertNoSolution("call(false)");
         assertOneSolution("call(true)");
         assertNSolutions(3, "call(true;true;true)");
@@ -171,7 +171,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void clause() throws IOException {
+    public void clause() {
         addTheoryFromTestResourceDir("test-functional.pl");
 
         assertGoalMustFail("clause(X,_)", "clause(_,_)", "clause(1,_)");
@@ -192,7 +192,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void unify_2() throws IOException {
+    public void unify_2() {
         addTheoryFromTestResourceDir("test-functional.pl");
 
         assertNSolutions(5, "bool_3t_2f(X)");

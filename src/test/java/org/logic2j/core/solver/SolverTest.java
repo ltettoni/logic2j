@@ -101,7 +101,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     @Test
-    public void iterator() throws InterruptedException {
+    public void iterator() {
         final Prolog prolog = new PrologImpl();
         final Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
         assertNotNull(iterator);

@@ -32,6 +32,7 @@ import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.SolutionHolder;
@@ -160,7 +161,7 @@ public abstract class PrologTestBase {
 
     /**
      * @param theFile To be loaded
-     * @throws IOException
+     * 
      */
     private void addTheory(File theFile) throws IOException {
         final TheoryManager manager = getProlog().getTheoryManager();
@@ -169,8 +170,13 @@ public abstract class PrologTestBase {
         logger.debug("Loaded theory from: {}", theFile);
     }
 
-    protected void addTheoryFromTestResourceDir(String theFilename) throws IOException {
-        addTheory(new File(TEST_RESOURCES_DIR, theFilename));
+    protected void addTheoryFromTestResourceDir(String theFilename) {
+        try {
+            addTheory(new File(TEST_RESOURCES_DIR, theFilename));
+        } catch (IOException e) {
+            // Avoid bothernig with checked IOException in our TestCases (since this is a helper method, let's help)
+            throw new PrologNonSpecificError("Could not load Theory from " + theFilename + ": " + e);
+        }
     }
 
     protected File[] allTheoryFilesFromTestResourceDir() {

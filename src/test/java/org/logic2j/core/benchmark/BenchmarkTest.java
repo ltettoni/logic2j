@@ -17,8 +17,6 @@
  */
 package org.logic2j.core.benchmark;
 
-import java.io.IOException;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
@@ -34,18 +32,16 @@ public class BenchmarkTest extends PrologTestBase {
     /**
      * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
      * 512k
-     * 
-     * @throws IOException
      */
     @Test
-    public void hanoi() throws IOException {
+    public void hanoi() {
         addTheoryFromTestResourceDir("hanoi.pl");
         assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
         logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
     }
 
     @Test
-    public void thousandLoops() throws IOException {
+    public void thousandLoops() {
         addTheoryFromTestResourceDir("test-data.pl");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
@@ -62,11 +58,11 @@ public class BenchmarkTest extends PrologTestBase {
     /**
      * Takes lots of time and stack - use with parcimony and with -Xss10m. By defaut we @Ignore this test.
      * 
-     * @throws IOException
+     * 
      */
     @Ignore
     @Test
-    public void millionLoops() throws IOException {
+    public void millionLoops() {
         addTheoryFromTestResourceDir("test-data.pl");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
@@ -81,7 +77,7 @@ public class BenchmarkTest extends PrologTestBase {
     }
 
     @Test
-    public void profileMillionLoops() throws IOException {
+    public void profileMillionLoops() {
         addTheoryFromTestResourceDir("test-data.pl");
         final long t1 = System.currentTimeMillis();
         assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");

@@ -45,7 +45,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     @Ignore
     // NPE see ConfigLibrary
     @Test
-    public void listMatchingClauses() throws IOException {
+    public void listMatchingClauses() {
         addTheoryFromTestResourceDir("test-config.pl");
 
         assertNotNull(this.provider);
@@ -66,7 +66,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     @Ignore
     // NPE see ConfigLibrary
     @Test
-    public void matchClausesFromProlog() throws IOException {
+    public void matchClausesFromProlog() {
         addTheoryFromTestResourceDir("test-config.pl");
 
         getProlog().getClauseProviders().add(this.provider);
