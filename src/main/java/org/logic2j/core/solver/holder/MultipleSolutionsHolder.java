@@ -42,13 +42,13 @@ public class MultipleSolutionsHolder {
         this.solutionHolder = theSolutionHolder;
     }
 
-    private Integer lowest = null;
-    private Integer highest = null;
+    private Integer lowest = null; // FIXME to document
+    private Integer highest = null; // FIXME to document
 
     /**
-     * Start solving, indicating you are not interested by the actual solutions nor bindings, only their number.
-     *
-     * @return The number of solutions.
+     * Start solving butindicating you are not interested by the actual solutions nor bindings, only their number.
+     * 
+     * @return The number of solutions
      */
     public int number() {
         final SolutionListenerBase listener = new SolutionListenerBase();
@@ -68,17 +68,19 @@ public class MultipleSolutionsHolder {
     }
 
     /**
-     * Solves the goal and extract, for every solution, the binding for a given variable by name.
-     *
+     * Solves the goal and extract, for every solution, the value for a given variable by name.
+     * 
      * @param theVariableName
      */
     public List<Term> binding(final String theVariableName) {
         final List<Term> results = new ArrayList<Term>();
+
+        final Bindings bindings = this.solutionHolder.bindings;
         final SolutionListenerBase listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                final Bindings bnd = MultipleSolutionsHolder.this.solutionHolder.bindings;
+                final Bindings bnd = bindings;
                 final Term term = bnd.getReferrer();
                 final Var var = term.findVar(theVariableName);
                 if (var == null) {
@@ -90,7 +92,7 @@ public class MultipleSolutionsHolder {
             }
 
         };
-        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        this.solutionHolder.prolog.getSolver().solveGoal(bindings, new GoalFrame(), listener);
         final int size = results.size();
         checkBounds(size);
         return results;
@@ -98,7 +100,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Solves the goal and extract, for every solution, all bindings for all variables.
-     *
+     * 
      * @result An ordered list of bindings
      */
     public List<Map<String, Term>> bindings() {
@@ -120,7 +122,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Set internal bounds to make sure the next goal to solve has exactly the specified number of solutions.
-     *
+     * 
      * @param theExpectedExactNumber
      * @return this
      */
@@ -131,7 +133,7 @@ public class MultipleSolutionsHolder {
 
     /**
      * Set internal bounds to make sure the next goal to solve has a number of solutions between the specified bounds, inclusive.
-     *
+     * 
      * @param thePermissibleLowest
      * @param thePermissibleHighest
      * @return this

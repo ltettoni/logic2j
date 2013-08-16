@@ -27,8 +27,10 @@ import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 /**
  * Describes one of the solution(s) to a goal; this includes the resolved {@link Term} (with all bound variables substituted to their actual
  * values - only free variables remaining), and all variable bindings exposed.<br/>
- * If the goal to be solved was g(X, a(Y, Z)) with X already bound to 2, and Z bound to 3 when the goal was solved, then Solution provides:
- * Solution: g(2, a(Y, 3)) Bindings: {X -> 2, Y -> null, Z -> 3}.
+ * The internal storage is denormalized at the time the object is instantiated, see {@link #Solution(Bindings)}.
+ * If the goal to be solved was
+ * g(X, a(Y, Z)) with X already bound to 2, and Z bound to 3 when the goal was solved, then Solution provides: {@link #getSolution()}==g(2,
+ * a(Y, 3)) , {@link #getBindings()}=={X -> 2, Y -> null, Z -> 3} , {@link #getBinding(String)}==2 when argument is "X".
  */
 public class Solution {
     private static final TermApi TERM_API = new TermApi();
@@ -47,7 +49,10 @@ public class Solution {
     /**
      * Build a solution for the current variable bindings. This will calculate the substituted value of bound variables, i.e. "denormalize"
      * the result and store all bindings as explicit denormalized terms.
-     *
+     * 
+     * @note This costs a little: in logic2j the solver is very efficient, but extracting results is a little more costly. This is caused by
+     *       the shared-structures approach.
+     * 
      * @param theBindings
      */
     public Solution(Bindings theBindings) {

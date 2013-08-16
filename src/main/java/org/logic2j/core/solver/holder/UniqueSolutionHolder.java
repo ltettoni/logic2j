@@ -25,6 +25,7 @@ import org.logic2j.core.solver.listener.Solution;
 
 /**
  * A relay object to provide access to the results of the (expected) unique solution to a goal.
+ * TODO Should it be templated to the type of the solution?
  */
 public class UniqueSolutionHolder {
 
