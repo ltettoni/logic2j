@@ -56,7 +56,7 @@ class UnificationTester {
 
     /**
      * Every term has its own {@link Bindings}.
-     *
+     * 
      * @param theLeft
      * @param theRight
      */
@@ -70,7 +70,7 @@ class UnificationTester {
 
     /**
      * Share same {@link Bindings} for both terms.
-     *
+     * 
      * @param theLeft
      * @param theRight
      * @param bindings
@@ -85,7 +85,7 @@ class UnificationTester {
 
     /**
      * Execute the unification and do some state checking if expected results have been defined.
-     *
+     * 
      * @return The unification result
      */
     private boolean unifyLR(StringBuilder theSignature) {
@@ -190,7 +190,7 @@ class UnificationTester {
 
     /**
      * Assert on expected unification result.
-     *
+     * 
      * @param theExpectedResult
      */
     private void assertUnificationResult(boolean theExpectedResult) {

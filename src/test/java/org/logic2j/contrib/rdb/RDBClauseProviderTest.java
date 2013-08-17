@@ -19,7 +19,6 @@ package org.logic2j.contrib.rdb;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Before;

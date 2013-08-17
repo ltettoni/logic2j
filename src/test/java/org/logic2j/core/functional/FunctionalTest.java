@@ -19,8 +19,6 @@ package org.logic2j.core.functional;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.library.impl.io.IOLibrary;
