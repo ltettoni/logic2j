@@ -55,6 +55,12 @@ public interface TheoryManager extends ClauseProvider {
      */
     TheoryContent load(File theFile) throws IOException;
 
+    /**
+     * @return The current resolver
+     */
+    // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
+    ClauseProviderResolver getClauseProviderResolver();
+
     // ---------------------------------------------------------------------------
     // Alter the current Prolog instance with content from theories
     // ---------------------------------------------------------------------------

@@ -134,7 +134,7 @@ public class ConfigLibrary extends LibraryBase {
             clauseProvider.saveTableInfo(tableName, columnDescription.toArray(new String[] {}));
             final int arity = columnDescription.size();
             final String predicateKey = prefix + tableNameLc + '/' + arity;
-            getProlog().getClauseProviderResolver().register(predicateKey, clauseProvider);
+            getProlog().getTheoryManager().getClauseProviderResolver().register(predicateKey, clauseProvider);
             tableColumns.close();
         }
         tables.close();

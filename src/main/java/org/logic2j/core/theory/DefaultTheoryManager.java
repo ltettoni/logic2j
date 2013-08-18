@@ -48,6 +48,7 @@ public class DefaultTheoryManager implements TheoryManager {
 
     private final PrologImplementor prolog;
     private TheoryContent wholeContent = new TheoryContent();
+    private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
 
     /**
      * @param theProlog
@@ -106,8 +107,6 @@ public class DefaultTheoryManager implements TheoryManager {
 
     private TheoryContent addClauses(Parser theParser) {
         final TheoryContent content = new TheoryContent();
-        // final Iterator<Term> iterator = theParser.iterator();
-        // while (iterator.hasNext()) {
         Term clauseTerm = theParser.nextTerm(true);
         Term initializeGoal = null;
         while (clauseTerm != null) {
@@ -118,7 +117,7 @@ public class DefaultTheoryManager implements TheoryManager {
             if ("initialize".equals(cl.getHead().getName())) {
                 initializeGoal = cl.getBody();
             } else {
-                this.prolog.getClauseProviderResolver().register(cl.getPredicateKey(), this);
+                this.clauseProviderResolver.register(cl.getPredicateKey(), this);
             }
             content.add(cl);
             clauseTerm = theParser.nextTerm(true);
@@ -139,14 +138,6 @@ public class DefaultTheoryManager implements TheoryManager {
     }
 
     /**
-     * @param theContent to set - will replace any previously defined content.
-     */
-    @Override
-    public void setTheory(TheoryContent theContent) {
-        this.wholeContent = theContent;
-    }
-
-    /**
      * @param theContent to add
      */
     @Override
@@ -154,22 +145,44 @@ public class DefaultTheoryManager implements TheoryManager {
         this.wholeContent.addAll(theContent);
     }
 
-    // TODO => Check if the parameter theGoalBindings may be used because up to now it is declared in that method only because it has to
-    // implement it with those
-    // parameters (cf ClauseProvider).
+    @Override
+    public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
+        throw new PrologNonSpecificError("Method assertZ() not implemented");
+    }
+
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    /**
+     * @param theContent to set - will replace any previously defined content.
+     */
+    @Override
+    public void setTheory(TheoryContent theContent) {
+        this.wholeContent = theContent;
+    }
+
+    @Override
+    public ClauseProviderResolver getClauseProviderResolver() {
+        return this.clauseProviderResolver;
+    }
+
+    public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
+        this.clauseProviderResolver = clauseProviderResolver;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Implementation of ClauseProvider
+    // ---------------------------------------------------------------------------
+
     /**
      * @param theGoal
+     * @param theGoalBindings Not used in this method
      * @return All {@link Clause}s from the {@link TheoryContent} that may match theGoal.
-     * @param theGoalBindings : is not used in that method, so you can give null as a parameter.
      */
     @Override
     public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
         return this.wholeContent.find(theGoal);
-    }
-
-    @Override
-    public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
-        throw new PrologNonSpecificError("Method assertZ() not implemented");
     }
 
     // ---------------------------------------------------------------------------

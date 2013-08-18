@@ -137,7 +137,7 @@ public class DefaultSolver implements Solver {
             // For this we need a new TrailFrame
             final GoalFrame subFrameForClauses = new GoalFrame(callerFrame);
 
-            final Iterable<ClauseProvider> providers = this.prolog.getClauseProviderResolver().providersFor(goalStruct);
+            final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
             for (final ClauseProvider provider : providers) {
                 for (final Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
 

@@ -34,9 +34,6 @@ public interface PrologImplementor extends Prolog {
     // Accessors to the sub-features of the Prolog engine
     // ---------------------------------------------------------------------------
 
-    // TODO To be refatored, see comments in class definition
-    ClauseProviderResolver getClauseProviderResolver();
-
     /**
      * @return All clause providers, in same order as when registered. TODO But the actual ordering may not be always needed, it's only
      *         important when the same predicate is available from several providers (not frequent). Could we in certain cases use

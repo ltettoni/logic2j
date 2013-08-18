@@ -1,13 +1,14 @@
 /**
  *
  */
-package org.logic2j.core;
+package org.logic2j.core.theory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.symbol.Struct;
 

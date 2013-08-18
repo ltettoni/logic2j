@@ -75,7 +75,6 @@ public class PrologImpl implements PrologImplementor {
     private OperatorManager operatorManager = new DefaultOperatorManager();
     private Solver solver = new DefaultSolver(this);
     private Unifier unifier = new DefaultUnifier();
-    private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
 
     // TODO (issue) Does the clauseProviders belong here or from the Solver where they are solely used??? See
     // https://github.com/ltettoni/logic2j/issues/17
@@ -205,15 +204,6 @@ public class PrologImpl implements PrologImplementor {
 
     public void setUnifier(Unifier unifier) {
         this.unifier = unifier;
-    }
-
-    @Override
-    public ClauseProviderResolver getClauseProviderResolver() {
-        return this.clauseProviderResolver;
-    }
-
-    public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
-        this.clauseProviderResolver = clauseProviderResolver;
     }
 
     @Override
