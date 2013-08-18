@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 
-import org.logic2j.core.LibraryManager;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
@@ -40,9 +39,15 @@ public class Struct extends Term {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Indicate the arity of a variable arguments predicate, such as write/N. (this is an extension to classic Prolog where only fixed arity
+     * is supported).
+     */
+    public static final String VARARG_ARITY_SIGNATURE = "N";
+
+    /**
      * Terminates a vararg predicate description: write/N
      */
-    private static final String VARARG_PREDICATE_TRAILER = "/" + LibraryManager.VARARG_ARITY_SIGNATURE;
+    private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
     private static final TermApi TERM_API = new TermApi();
 
