@@ -63,7 +63,7 @@ public class Clause {
     }
 
     /**
-     * Copy constructor. Will clone the clause's content and the current {@link Bindings}.
+     * Copy constructor. Will clone the {@link Clause}'s content and the current {@link Bindings}.
      * 
      * @param theOriginal
      */
