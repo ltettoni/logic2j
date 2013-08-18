@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;

@@ -27,7 +27,6 @@ import javax.sql.DataSource;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.Clause;
@@ -36,6 +35,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.theory.ClauseProvider;
 
 /**
  * List {@link Clause}s (facts, never rules) from relational database tables or views accessed from the JDBC {@link DataSource} API. When

@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.solver;
 
-import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.model.Clause;
@@ -27,6 +26,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListener.Continuation;
+import org.logic2j.core.theory.ClauseProvider;
 import org.logic2j.core.util.ReportUtils;
 
 /**

@@ -27,7 +27,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.library.PLibrary;

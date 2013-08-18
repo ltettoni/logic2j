@@ -19,7 +19,6 @@ package org.logic2j.core.library.impl.core;
 
 import java.util.ArrayList;
 
-import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -37,6 +36,7 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
+import org.logic2j.core.theory.ClauseProvider;
 import org.logic2j.core.util.ReflectUtils;
 
 public class CoreLibrary extends LibraryBase {
