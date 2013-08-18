@@ -115,17 +115,17 @@ public class CoreLibraryTest extends PrologTestBase {
         assertEquals("coco", sol.binding("Pred").toString());
         assertNull(sol.binding("Arg"));
         // assertEquals("Com", sol.binding("Arg").toString());
-        // assertEquals("a(b,c)", getProlog().solve("X =.. atom").unique().binding("X").toString());
+        // assertEquals("a(b,c)", prolog.solve("X =.. atom").unique().binding("X").toString());
     }
 
     @Test
     public void reverse() {
-        assertEquals(term("[c,b,a]"), getProlog().solve("reverse([a,b,c], L)").unique().binding("L"));
+        assertEquals(term("[c,b,a]"), prolog.solve("reverse([a,b,c], L)").unique().binding("L"));
     }
 
     @Test
     public void perm() {
-        assertEquals(720, getProlog().solve("perm([a,b,c,d,e,f], L)").number());
+        assertEquals(720, prolog.solve("perm([a,b,c,d,e,f], L)").number());
     }
 
     @Test

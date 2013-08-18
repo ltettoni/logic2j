@@ -23,8 +23,8 @@ import org.logic2j.core.PrologTestBase;
 public class PojoLibraryTest extends PrologTestBase {
 
     @Test
-    public void bind()  {
-        loadLibrary(new PojoLibrary(getProlog()));
+    public void bind() {
+        loadLibrary(new PojoLibrary(prolog));
         bind("name", "value");
         //
         assertOneSolution("bind(name, X), X=value");
@@ -36,7 +36,7 @@ public class PojoLibraryTest extends PrologTestBase {
 
     /**
      * Helper method for PojoLibrary-related test cases: bind a Java object by name.
-     *
+     * 
      * @param theKey
      * @param theValue
      */

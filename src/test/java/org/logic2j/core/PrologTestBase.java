@@ -52,7 +52,10 @@ public abstract class PrologTestBase {
 
     protected static final String TEST_RESOURCES_DIR = "src/test/resources";
 
-    private PrologImplementation prolog;
+    /**
+     * Will be initialized for every test method, as per {@link #initLevel()}
+     */
+    protected PrologImplementation prolog;
 
     /**
      * @return Use only the core library - no extra features loaded.
@@ -87,9 +90,9 @@ public abstract class PrologTestBase {
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = getProlog().term(goal);
+            final Term parsed = prolog.term(goal);
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-            final SolutionHolder solution = getProlog().solve(parsed);
+            final SolutionHolder solution = prolog.solve(parsed);
             result = solution.unique();
         }
         return result;
@@ -120,7 +123,7 @@ public abstract class PrologTestBase {
     protected void assertGoalMustFail(CharSequence... theGoals) {
         for (final CharSequence theGoal : theGoals) {
             try {
-                getProlog().solve(theGoal).number();
+                prolog.solve(theGoal).number();
                 fail("Goal should have failed and did not: \"" + theGoals + '"');
             } catch (final RuntimeException e) {
                 // Normal
@@ -136,9 +139,9 @@ public abstract class PrologTestBase {
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = getProlog().term(goal);
+            final Term parsed = prolog.term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
-            solve = getProlog().solve(parsed);
+            solve = prolog.solve(parsed);
             assertEquals("Goal " + goal + " did has different number of solutions", theNumber, solve.number());
         }
         return solve;
@@ -151,7 +154,7 @@ public abstract class PrologTestBase {
      * @return A single Term, corresponding to theObject.
      */
     protected Term term(Object theObject) {
-        return getProlog().getTermFactory().create(theObject, FactoryMode.ANY_TERM);
+        return prolog.getTermFactory().create(theObject, FactoryMode.ANY_TERM);
     }
 
     /**
@@ -173,7 +176,7 @@ public abstract class PrologTestBase {
      * 
      */
     private void loadTheory(File theFile) throws IOException {
-        final TheoryManager manager = getProlog().getTheoryManager();
+        final TheoryManager manager = prolog.getTheoryManager();
         final TheoryContent load = manager.load(theFile);
         manager.addTheory(load);
         logger.debug("Loaded theory from: {}", theFile);
@@ -201,7 +204,7 @@ public abstract class PrologTestBase {
     }
 
     protected LibraryContent loadLibrary(PLibrary theLibrary) {
-        return getProlog().getLibraryManager().loadLibrary(theLibrary);
+        return prolog.getLibraryManager().loadLibrary(theLibrary);
     }
 
 }

@@ -20,37 +20,39 @@ package org.logic2j.core.io;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.logic2j.core.Prolog;
-import org.logic2j.core.impl.PrologReferenceImplementation;
-import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.io.operator.Operator;
 import org.logic2j.core.model.symbol.Term;
 
 /**
  * Test parsing and formatting.
- * 
  */
-public class ParsingAndFormattingTest {
+public class ParsingAndFormattingTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
+
+    /**
+     * No need for special init for only testing parsing and formatting.
+     */
+    @Override
+    protected InitLevel initLevel() {
+        return InitLevel.L0_BARE;
+    }
 
     @Test
     public void parsing() {
-        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
         logger.info("Term: {}", prolog.term("p(X,Y) :- a;b,c,d"));
         logger.info("Term: {}", prolog.term("[1,2,3]"));
     }
 
     @Test
     public void parseNarityOperator() {
-        final PrologImplementation prolog = new PrologReferenceImplementation();
         prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
         logger.info("Result: {}", prolog.term("a oo b oo c oo d"));
     }
 
     @Test
     public void formatting() {
-        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
         Term t;
         //
         t = prolog.term("'An atom'");

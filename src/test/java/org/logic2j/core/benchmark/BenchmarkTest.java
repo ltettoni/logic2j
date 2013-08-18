@@ -37,7 +37,7 @@ public class BenchmarkTest extends PrologTestBase {
     public void hanoi() {
         loadTheoryFromTestResourceDir("hanoi.pl");
         assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
-        logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
+        logger.info("Number of solutions processed: {}", ((DefaultSolver) prolog.getSolver()).internalCounter);
     }
 
     @Test
