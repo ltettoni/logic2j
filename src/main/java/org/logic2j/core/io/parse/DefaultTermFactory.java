@@ -17,8 +17,8 @@
  */
 package org.logic2j.core.io.parse;
 
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
@@ -30,9 +30,9 @@ import org.logic2j.core.model.symbol.TermApi;
 public class DefaultTermFactory implements TermFactory {
 
     private static final TermApi TERM_API = new TermApi();
-    private final PrologImplementor prolog;
+    private final PrologImplementation prolog;
 
-    public DefaultTermFactory(PrologImplementor theProlog) {
+    public DefaultTermFactory(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 

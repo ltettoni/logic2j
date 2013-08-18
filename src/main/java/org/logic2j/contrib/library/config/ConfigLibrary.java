@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.logic2j.contrib.rdb.RDBClauseProvider;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
@@ -32,7 +32,7 @@ import org.logic2j.core.solver.listener.SolutionListener;
 public class ConfigLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConfigLibrary.class);
 
-    public ConfigLibrary(PrologImplementor theProlog) {
+    public ConfigLibrary(PrologImplementation theProlog) {
         super(theProlog);
     }
 

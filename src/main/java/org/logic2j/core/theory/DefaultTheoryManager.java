@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.logic2j.core.ClauseProvider;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
@@ -49,7 +49,7 @@ import org.logic2j.core.util.ReportUtils;
 public class DefaultTheoryManager implements TheoryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
 
-    private final PrologImplementor prolog;
+    private final PrologImplementation prolog;
     private TheoryContent wholeContent = new TheoryContent();
     private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
@@ -59,7 +59,7 @@ public class DefaultTheoryManager implements TheoryManager {
      * 
      * @param theProlog
      */
-    public DefaultTheoryManager(PrologImplementor theProlog) {
+    public DefaultTheoryManager(PrologImplementation theProlog) {
         this.prolog = theProlog;
         this.clauseProviders.add(this);
     }

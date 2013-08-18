@@ -36,8 +36,8 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.exception.InvalidTermException;
@@ -73,7 +73,7 @@ public class RDBLibrary extends LibraryBase {
 
     private TermFactory termFactory;
 
-    public RDBLibrary(PrologImplementor theProlog) {
+    public RDBLibrary(PrologImplementation theProlog) {
         super(theProlog);
         this.termFactory = new RDBBase.AllStringsAsAtoms(theProlog);
     }

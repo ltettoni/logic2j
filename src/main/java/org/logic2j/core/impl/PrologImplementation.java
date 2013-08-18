@@ -15,8 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core;
+package org.logic2j.core.impl;
 
+import org.logic2j.core.Formatter;
+import org.logic2j.core.LibraryManager;
+import org.logic2j.core.Prolog;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.Solver;
@@ -26,7 +29,7 @@ import org.logic2j.core.unify.Unifier;
  * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog} intended for client
  * use. This one exposes accessors to the internal state of the effective implementation.
  */
-public interface PrologImplementor extends Prolog {
+public interface PrologImplementation extends Prolog {
 
     // ---------------------------------------------------------------------------
     // Accessors to the sub-features of the Prolog engine

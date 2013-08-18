@@ -28,8 +28,8 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.ClauseProvider;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
@@ -53,12 +53,12 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     private final HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
     private final String prefix;
 
-    public RDBClauseProvider(PrologImplementor theProlog, DataSource theDataSource, String prefix) {
+    public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource, String prefix) {
         super(theProlog, theDataSource);
         this.prefix = prefix;
     }
 
-    public RDBClauseProvider(PrologImplementor theProlog, DataSource theDataSource) {
+    public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource) {
         super(theProlog, theDataSource);
         this.prefix = "";
     }

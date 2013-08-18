@@ -18,7 +18,7 @@
 package org.logic2j.core.io.format;
 
 import org.logic2j.core.Formatter;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.operator.Operator;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.io.parse.tuprolog.Parser;
@@ -33,7 +33,7 @@ import org.logic2j.core.model.symbol.Var;
  * Formats {@link Term}s in a quite classical manner (at least it's readable and looks like Prolog).
  */
 public class DefaultFormatter implements Formatter {
-    private final PrologImplementor prolog; // When provided, will be able to format using the defined operators
+    private final PrologImplementation prolog; // When provided, will be able to format using the defined operators
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
     private static final String ARG_SEPARATOR = ", ".intern();
@@ -46,7 +46,7 @@ public class DefaultFormatter implements Formatter {
      *
      * @param theProlog
      */
-    public DefaultFormatter(PrologImplementor theProlog) {
+    public DefaultFormatter(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 

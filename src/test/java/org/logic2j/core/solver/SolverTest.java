@@ -27,10 +27,10 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.logic2j.core.Prolog;
-import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologImpl.InitLevel;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
@@ -53,7 +53,7 @@ public class SolverTest extends PrologTestBase {
 
     @Test
     public void unique() {
-        final Prolog prolog = new PrologImpl(InitLevel.L2_BASE_LIBRARIES);
+        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L2_BASE_LIBRARIES);
         //
         try {
             prolog.solve("1=2").unique();
@@ -86,7 +86,7 @@ public class SolverTest extends PrologTestBase {
 
     @Test
     public void multiple() {
-        final Prolog prolog = new PrologImpl();
+        final Prolog prolog = new PrologReferenceImplementation();
         // Nothing should be actually solved by calling all()
         prolog.solve("1=2").all();
 
@@ -102,7 +102,7 @@ public class SolverTest extends PrologTestBase {
 
     @Test
     public void iterator() {
-        final Prolog prolog = new PrologImpl();
+        final Prolog prolog = new PrologReferenceImplementation();
         final Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
         assertNotNull(iterator);
         int counter = 0;
@@ -156,7 +156,7 @@ public class SolverTest extends PrologTestBase {
 
     @Test
     public void userCancel() {
-        final PrologImplementor prolog = new PrologImpl();
+        final PrologImplementation prolog = new PrologReferenceImplementation();
         final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
         getProlog().getSolver().solveGoal(new Bindings(term), new GoalFrame(), listenerAll);

@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 
 public class AdHocLibraryTest extends PrologTestBase {
@@ -48,7 +48,7 @@ public class AdHocLibraryTest extends PrologTestBase {
 
     @Test
     public void int_range() {
-        final PrologImplementor prolog = getProlog();
+        final PrologImplementation prolog = getProlog();
         prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(prolog));
 
         assertEquals(termList(12, 13, 14), assertNSolutions(3, "int_range(12, X, 14)").binding("X"));

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.logic2j.core.ClauseProvider;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.solver.Solver;
@@ -85,7 +85,7 @@ public interface TheoryManager extends ClauseProvider {
     void setTheory(TheoryContent theContent);
 
     /**
-     * @param theContent To be added to the {@link PrologImplementor} engine associated.
+     * @param theContent To be added to the {@link PrologImplementation} engine associated.
      */
     void addTheory(TheoryContent theContent);
 

@@ -28,9 +28,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.logic2j.core.Prolog;
-import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Bindings;
@@ -42,7 +42,7 @@ import org.logic2j.core.model.var.Bindings;
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
 
-    private final Prolog prolog = new PrologImpl(InitLevel.L0_BARE);
+    private final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
     private static final TermApi TERM_API = new TermApi();
 
     @Test

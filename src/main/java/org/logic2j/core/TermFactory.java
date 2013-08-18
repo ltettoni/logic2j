@@ -17,6 +17,7 @@
  */
 package org.logic2j.core;
 
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -30,7 +31,7 @@ import org.logic2j.core.model.symbol.Var;
  * {@link TermFactory}, and nothing for Term->Object. Should we split by direction (in vs. out), or by type of representation (Stream vs.
  * Pojo).
  * 
- * @note A TermFactory must know its {@link PrologImplementor}, because it has to identify operators and primitives registered therein.
+ * @note A TermFactory must know its {@link PrologImplementation}, because it has to identify operators and primitives registered therein.
  * @note This interface is still deficient for handling channel streams - some more design needed.
  */
 public interface TermFactory {

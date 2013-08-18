@@ -19,8 +19,8 @@ package org.logic2j.contrib.rdb;
 
 import javax.sql.DataSource;
 
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.DefaultTermFactory;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
@@ -37,7 +37,7 @@ public class RDBBase {
      */
     public static class AllStringsAsAtoms extends DefaultTermFactory {
 
-        public AllStringsAsAtoms(PrologImplementor theProlog) {
+        public AllStringsAsAtoms(PrologImplementation theProlog) {
             super(theProlog);
         }
 
@@ -54,11 +54,11 @@ public class RDBBase {
 
     }
 
-    private final PrologImplementor prolog;
+    private final PrologImplementation prolog;
     private TermFactory termFactory;
     private DataSource dataSource;
 
-    public RDBBase(PrologImplementor theProlog, DataSource theDataSource) {
+    public RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
         this.prolog = theProlog;
         this.termFactory = new RDBBase.AllStringsAsAtoms(this.prolog);
         this.dataSource = theDataSource;
@@ -84,7 +84,7 @@ public class RDBBase {
         this.termFactory = theTermFactory;
     }
 
-    public PrologImplementor getProlog() {
+    public PrologImplementation getProlog() {
         return this.prolog;
     }
 

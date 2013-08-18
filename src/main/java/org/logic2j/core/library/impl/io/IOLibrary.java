@@ -19,7 +19,7 @@ package org.logic2j.core.library.impl.io;
 
 import java.io.PrintStream;
 
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Term;
@@ -34,7 +34,7 @@ public class IOLibrary extends LibraryBase {
 
     final PrintStream writer = System.out;
 
-    public IOLibrary(PrologImplementor theProlog) {
+    public IOLibrary(PrologImplementation theProlog) {
         super(theProlog);
     }
 

@@ -15,8 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core;
+package org.logic2j.core.impl;
 
+import org.logic2j.core.Formatter;
+import org.logic2j.core.LibraryManager;
+import org.logic2j.core.TermFactory;
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.io.operator.DefaultOperatorManager;
@@ -38,9 +41,9 @@ import org.logic2j.core.unify.Unifier;
 import org.logic2j.core.util.ReportUtils;
 
 /**
- * Reference implementation of logic2j's {@link PrologImplementor} API.
+ * Reference implementation of logic2j's {@link PrologImplementation} API.
  */
-public class PrologImpl implements PrologImplementor {
+public class PrologReferenceImplementation implements PrologImplementation {
     /**
      * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
      */
@@ -76,7 +79,7 @@ public class PrologImpl implements PrologImplementor {
     /**
      * Default constructor will only provide an engine with the {@link CoreLibrary} loaded.
      */
-    public PrologImpl() {
+    public PrologReferenceImplementation() {
         this(InitLevel.L1_CORE_LIBRARY);
     }
 
@@ -85,7 +88,7 @@ public class PrologImpl implements PrologImplementor {
      * 
      * @param theLevel
      */
-    public PrologImpl(InitLevel theLevel) {
+    public PrologReferenceImplementation(InitLevel theLevel) {
         // Here we load libs in order
 
         /*

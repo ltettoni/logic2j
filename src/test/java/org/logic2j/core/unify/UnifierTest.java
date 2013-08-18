@@ -23,8 +23,8 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;

@@ -19,7 +19,7 @@ package org.logic2j.core.solver.holder;
 
 import java.util.Iterator;
 
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
@@ -49,10 +49,10 @@ public class SolutionHolder {
 
     static final TermApi TERM_API = new TermApi();
 
-    final PrologImplementor prolog;
+    final PrologImplementation prolog;
     final Bindings bindings;
 
-    public SolutionHolder(PrologImplementor theProlog, Bindings theBindings) {
+    public SolutionHolder(PrologImplementation theProlog, Bindings theBindings) {
         this.prolog = theProlog;
         this.bindings = theBindings;
     }

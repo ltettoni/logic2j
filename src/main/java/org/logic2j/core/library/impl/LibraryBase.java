@@ -17,8 +17,8 @@
  */
 package org.logic2j.core.library.impl;
 
-import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
@@ -38,9 +38,9 @@ import org.logic2j.core.solver.listener.SolutionListener;
  */
 public class LibraryBase implements PLibrary {
     protected static final TermApi TERM_API = new TermApi();
-    private final PrologImplementor prolog;
+    private final PrologImplementation prolog;
 
-    public LibraryBase(PrologImplementor theProlog) {
+    public LibraryBase(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 
@@ -166,7 +166,7 @@ public class LibraryBase implements PLibrary {
     /**
      * @return the prolog
      */
-    protected PrologImplementor getProlog() {
+    protected PrologImplementation getProlog() {
         return this.prolog;
     }
 

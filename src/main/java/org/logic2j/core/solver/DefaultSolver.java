@@ -18,7 +18,7 @@
 package org.logic2j.core.solver;
 
 import org.logic2j.core.ClauseProvider;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
@@ -37,9 +37,9 @@ public class DefaultSolver implements Solver {
     private static final boolean debug = logger.isDebugEnabled();
 
     public int internalCounter = 0;
-    private final PrologImplementor prolog;
+    private final PrologImplementation prolog;
 
-    public DefaultSolver(PrologImplementor theProlog) {
+    public DefaultSolver(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 

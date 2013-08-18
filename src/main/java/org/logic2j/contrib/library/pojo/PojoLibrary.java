@@ -20,7 +20,7 @@ package org.logic2j.contrib.library.pojo;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Struct;
@@ -41,7 +41,7 @@ public class PojoLibrary extends LibraryBase {
 
     };
 
-    public PojoLibrary(PrologImplementor theProlog) {
+    public PojoLibrary(PrologImplementation theProlog) {
         super(theProlog);
     }
 

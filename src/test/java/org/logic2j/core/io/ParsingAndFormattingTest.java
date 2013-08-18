@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.Prolog;
-import org.logic2j.core.PrologImpl;
-import org.logic2j.core.PrologImpl.InitLevel;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.io.operator.Operator;
 import org.logic2j.core.model.symbol.Term;
 
@@ -36,21 +36,21 @@ public class ParsingAndFormattingTest {
 
     @Test
     public void parsing() {
-        final Prolog prolog = new PrologImpl(InitLevel.L0_BARE);
+        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
         logger.info("Term: {}", prolog.term("p(X,Y) :- a;b,c,d"));
         logger.info("Term: {}", prolog.term("[1,2,3]"));
     }
 
     @Test
     public void parseNarityOperator() {
-        final PrologImplementor prolog = new PrologImpl();
+        final PrologImplementation prolog = new PrologReferenceImplementation();
         prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
         logger.info("Result: {}", prolog.term("a oo b oo c oo d"));
     }
 
     @Test
     public void formatting() {
-        final Prolog prolog = new PrologImpl(InitLevel.L0_BARE);
+        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
         Term t;
         //
         t = prolog.term("'An atom'");

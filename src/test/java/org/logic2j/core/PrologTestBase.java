@@ -28,8 +28,10 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.logic2j.core.PrologImpl.InitLevel;
 import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
@@ -41,7 +43,7 @@ import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
- * Base class for tests, initiazlize a fresh {@link PrologImpl} on every method (level of init is {@link InitLevel#L1_CORE_LIBRARY}, and
+ * Base class for tests, initiazlize a fresh {@link PrologReferenceImplementation} on every method (level of init is {@link InitLevel#L1_CORE_LIBRARY}, and
  * provides utility methods.
  */
 public abstract class PrologTestBase {
@@ -49,7 +51,7 @@ public abstract class PrologTestBase {
 
     protected static final String TEST_RESOURCES_DIR = "src/test/resources";
 
-    private PrologImplementor prolog;
+    private PrologImplementation prolog;
 
     protected InitLevel initLevel() {
         return InitLevel.L1_CORE_LIBRARY;
@@ -57,7 +59,7 @@ public abstract class PrologTestBase {
 
     @Before
     public void setUp() {
-        this.prolog = new PrologImpl(initLevel());
+        this.prolog = new PrologReferenceImplementation(initLevel());
     }
 
     @After
@@ -65,7 +67,7 @@ public abstract class PrologTestBase {
         this.prolog = null;
     }
 
-    protected PrologImplementor getProlog() {
+    protected PrologImplementation getProlog() {
         return this.prolog;
     }
 

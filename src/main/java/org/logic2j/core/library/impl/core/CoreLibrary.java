@@ -20,7 +20,7 @@ package org.logic2j.core.library.impl.core;
 import java.util.ArrayList;
 
 import org.logic2j.core.ClauseProvider;
-import org.logic2j.core.PrologImplementor;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.Clause;
@@ -42,7 +42,7 @@ import org.logic2j.core.util.ReflectUtils;
 public class CoreLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
 
-    public CoreLibrary(PrologImplementor theProlog) {
+    public CoreLibrary(PrologImplementation theProlog) {
         super(theProlog);
     }
 
