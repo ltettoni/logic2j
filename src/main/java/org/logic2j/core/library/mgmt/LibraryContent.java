@@ -20,17 +20,18 @@ package org.logic2j.core.library.mgmt;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 
 /**
- *
+ * Describe the content of a {@link PLibrary}: its primitives, directives, functors and predicates.
  */
 public class LibraryContent {
 
-    public Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
-    public Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
-    public Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
-    public Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
+    private Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
+    private Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
+    private Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
+    private Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
 
     public void putDirective(String theKey, PrimitiveInfo theDesc) {
         if (this.directiveMap.containsKey(theKey)) {
@@ -53,10 +54,6 @@ public class LibraryContent {
         this.functorMap.put(theKey, theDesc);
     }
 
-    /**
-     * @param theKey
-     * @param theDesc
-     */
     public void putPrimitive(String theKey, PrimitiveInfo theDesc) {
         switch (theDesc.getType()) {
         case DIRECTIVE:
@@ -76,6 +73,8 @@ public class LibraryContent {
     }
 
     /**
+     * Merge the content of theLoadedContent into this, by adding all directives, primitives, functors adn predicates.
+     * 
      * @param theLoadedContent
      */
     public void addAll(LibraryContent theLoadedContent) {
@@ -83,6 +82,14 @@ public class LibraryContent {
         this.predicateMap.putAll(theLoadedContent.predicateMap);
         this.functorMap.putAll(theLoadedContent.functorMap);
         this.primitiveMap.putAll(theLoadedContent.primitiveMap);
+    }
+
+    /**
+     * @param thePredicateSignature
+     * @return The {@link PrimitiveInfo} for the specified primitive's signature, or null when not registered in this {@link LibraryContent}
+     */
+    public PrimitiveInfo getPrimitive(String thePredicateSignature) {
+        return this.primitiveMap.get(thePredicateSignature);
     }
 
 }
