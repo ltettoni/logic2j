@@ -92,23 +92,27 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void rules() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(3, "a(X)");
 
-        assertNSolutions(1, "cut1(_)", "a(X), b(Y), c(Z), !", "p(X), X=4");
-
-        assertNSolutions(2, "cut2(_)");
-        assertNSolutions(3, "p(_)", "p(X)", "a(X), !, b(Y)", "a(X), b(Y), !, c(Z)", "!, a(X), b(Y), !, c(Z)");
-        assertNSolutions(0, "pc(X)");
-        assertNSolutions(3, "p(X), X>1");
-        // Highly suspicious goal here - should provide 0 results - seems cut does not work at this level!
-        // assertNSolutions(0, "p(X), !, X>1");
-
-        assertNSolutions(1, "a(X), !, cut1(Y)");
-        assertNSolutions(4, "cut4", "cut4b");
         assertNSolutions(5, "f(Q)");
 
         assertNSolutions(9, "a(X), b(Y)", "true, a(X), b(Y)", "a(X), b(Y), true", "a(X), true, b(Y)", "a(X), !, b(Y), c(Z)", "a(X), !, !, b(Y), c(Z)");
 
         assertNSolutions(27, "a(X), b(Y), c(Z)", "!, a(X), b(Y), c(Z)", "!, true, !, a(X), b(Y), c(Z)");
+    }
+
+    @Test
+    public void cut() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(1, "cut1(_)", "a(X), !", "a(X), b(Y), c(Z), !", "p(X), X=4");
+
+        assertNSolutions(2, "cut2(_)");
+        assertNSolutions(3, "p(_)", "p(X)", "a(X), !, b(Y)", "a(X), b(Y), !, c(Z)", "!, a(X), b(Y), !, c(Z)");
+        assertNSolutions(0, "pc(X)");
+        assertNSolutions(3, "p(X), X>1");
+
+        assertNSolutions(1, "a(X), !, cut1(Y)");
+        assertNSolutions(4, "cut4", "cut4b");
     }
 
     @Test

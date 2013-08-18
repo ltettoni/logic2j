@@ -36,8 +36,6 @@ import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
-/**
- */
 public class DefaultLibraryManager implements LibraryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);
 

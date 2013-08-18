@@ -49,15 +49,16 @@ cut4.
 cut4b:-cut2(_).cut4b:-cut2(_).
 
 
-
-p(X)  :-int5(X),X>1.
-pc(X) :-int5(X),!,X>1.
+p(X)  :- int5(X), X>1.
+pc(X) :- int5(X), !, X>1.
 
 int5(0).
 int5(1).
 int5(2).
 int5(3).
 int5(4).
+
+int5_rule(X) :- int5(X).
 
 
 % The sum equivalent of factorial. To test recursivity without oveflowing numeric values.
