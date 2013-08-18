@@ -47,7 +47,7 @@ public class Clause {
     private final Bindings bindings; // Immutable, not null
 
     /**
-     * Normalize theClauseTerm to be ready for inference.
+     * Make a Term (must be a Struct) read for inference, this requires to normalize it.
      * 
      * @param theProlog
      * @param theClauseTerm
