@@ -18,6 +18,7 @@
 package org.logic2j.core.library.mgmt;
 
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
+import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
@@ -72,11 +74,29 @@ public class DefaultLibraryManager implements LibraryManager {
         }
         final LibraryContent extraContent = loadLibraryInternal(theLibrary);
         mergeExtraContent(extraContent);
-        // Load the theory text associated to the library
-        // TODO the logic of finding the source of the Theory belongs here, not in TheoryManager
-        final TheoryManager theoryManager = this.prolog.getTheoryManager();
-        theoryManager.addTheory(theoryManager.load(theLibrary));
+
+        // Load the theory text associated to the library, if any
+        final URL associatedTheory = locationOfAssociatedTheory(theLibrary);
+        if (associatedTheory != null) {
+            final TheoryManager theoryManager = this.prolog.getTheoryManager();
+            TheoryContent theory = theoryManager.load(associatedTheory);
+            theoryManager.addTheory(theory);
+            logger.debug("Library \"{}\" loaded with extra content from {}", theLibrary, associatedTheory);
+        } else {
+            logger.debug("Library \"{}\" loaded; no associated theory found", theLibrary);
+        }
         return extraContent;
+    }
+
+    /**
+     * @param theLibrary
+     * @return
+     */
+    private URL locationOfAssociatedTheory(PLibrary theLibrary) {
+        final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
+        final String name = libraryClass.getSimpleName() + ".prolog";
+        final URL contentUrl = libraryClass.getResource(name);
+        return contentUrl;
     }
 
     /**

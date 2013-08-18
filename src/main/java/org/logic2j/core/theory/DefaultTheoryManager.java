@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
-import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
@@ -87,29 +86,20 @@ public class DefaultTheoryManager implements TheoryManager {
         }
     }
 
-    // FIXME Move this off TheoryManager into LibraryManager
     @Override
-    public TheoryContent load(PLibrary theLibrary) {
-        // Load prolog theory from a classloadable resource
-        final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
-        final String name = libraryClass.getSimpleName() + ".prolog";
-        final URL contentUrl = libraryClass.getResource(name);
-        if (contentUrl != null) {
-            Object text;
-            try {
-                text = contentUrl.getContent();
-            } catch (final IOException e) {
-                throw new InvalidTermException("Could not load library from classloadable resource " + name + ": " + e);
-            }
-            if (text instanceof InputStream) {
-                // FIXME: there will be encoding issues when using InputStream instead of Reader
-                final Reader reader = new InputStreamReader((InputStream) text);
-                return load(reader);
-            }
-            throw new InvalidTermException("Could not load library from classloadable resource " + name + ": could not getContent()");
+    public TheoryContent load(URL theTheory) {
+        Object text;
+        try {
+            text = theTheory.getContent();
+        } catch (final IOException e) {
+            throw new InvalidTermException("Could not load theory from resource " + theTheory + ": " + e);
         }
-        logger.debug("Library \"{}\" loaded; no associated theory found", theLibrary);
-        return new TheoryContent();
+        if (text instanceof InputStream) {
+            // FIXME: there will be encoding issues when using InputStream instead of Reader
+            final Reader reader = new InputStreamReader((InputStream) text);
+            return load(reader);
+        }
+        throw new InvalidTermException("Could not load theory from resource " + theTheory + ": could not getContent()");
     }
 
     private TheoryContent loadAllClauses(Parser theParser) {
@@ -134,14 +124,13 @@ public class DefaultTheoryManager implements TheoryManager {
         // TODO should be done elsewhere
         if (specialInitializeGoalBody != null) {
             final Bindings bindings = new Bindings(specialInitializeGoalBody);
-            final GoalFrame goalFrame = new GoalFrame();
             final SolutionListener solutionListener = new SolutionListener() {
                 @Override
                 public Continuation onSolution() {
                     return Continuation.USER_ABORT;
                 }
             };
-            this.prolog.getSolver().solveGoal(bindings, goalFrame, solutionListener);
+            this.prolog.getSolver().solveGoal(bindings, new GoalFrame(), solutionListener);
         }
         return content;
     }
@@ -157,14 +146,6 @@ public class DefaultTheoryManager implements TheoryManager {
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
-
-    /**
-     * @param theContent to set - will replace any previously defined content.
-     */
-    @Override
-    public void setTheory(TheoryContent theContent) {
-        this.wholeContent = theContent;
-    }
 
     @Override
     public ClauseProviderResolver getClauseProviderResolver() {

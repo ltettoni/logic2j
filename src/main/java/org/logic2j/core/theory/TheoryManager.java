@@ -19,9 +19,10 @@ package org.logic2j.core.theory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
-import org.logic2j.core.library.PLibrary;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.solver.Solver;
 
@@ -30,8 +31,7 @@ import org.logic2j.core.solver.Solver;
  * {@link ClauseProvider} since it provides sequences of clauses to the {@link Solver} inference engine.
  * Provide methods for:
  * <ul>
- * <li>Loading theory files</li>
- * <li>Loading {@link PLibrary} and their associated features (primitives, operators, {@link Clause}s</li>
+ * <li>Loading theory files or resources</li>
  * <li>(future)Assert and retracting {@link Clause}s</li>
  * </ul>
  */
@@ -42,23 +42,20 @@ public interface TheoryManager extends ClauseProvider {
     // ---------------------------------------------------------------------------
 
     /**
-     * Load the Prolog {@link TheoryContent} associated to a {@link PLibrary}.
-     * 
-     * @param theLibrary The instance of library whose content must be loaded.
-     * @return The content of the theory associated to theLibrary, this is a resource that resides in the same package as the
-     *         {@link PLibrary} implementation, has the library name and extension ".prolog"
-     */
-    // FIXME Move this off TheoryManager into LibraryManager
-    TheoryContent load(PLibrary theLibrary);
-
-    /**
-     * Convenience method to load the {@link TheoryContent} from a File defining a theory.
+     * Convenience method to load the {@link TheoryContent} from a File defining a theory; this only loads and return the content, use
+     * {@link #addTheory(TheoryContent)} to make it available to the {@link PrologImplementation}.
      * 
      * @param theFile
      * @return The content of the theory from theFile.
      * @throws IOException
      */
     TheoryContent load(File theFile) throws IOException;
+
+    /**
+     * @param theTheory
+     * @return
+     */
+    TheoryContent load(URL theTheory);
 
     /**
      * @return The current resolver
@@ -79,12 +76,7 @@ public interface TheoryManager extends ClauseProvider {
     // ---------------------------------------------------------------------------
 
     /**
-     * @param theContent to set - will replace any previously defined content.
-     */
-    void setTheory(TheoryContent theContent);
-
-    /**
-     * @param theContent To be merged into this.
+     * @param theContent To be merged into this and made available to the {@link PrologImplementation}.
      */
     void addTheory(TheoryContent theContent);
 
