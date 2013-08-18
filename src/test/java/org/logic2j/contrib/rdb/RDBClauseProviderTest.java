@@ -45,7 +45,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     // NPE see ConfigLibrary
     @Test
     public void listMatchingClauses() {
-        loadTheoryFromTestResourceDir("test-config.pl");
+        loadTheoryFromTestResourcesDir("test-config.pl");
 
         assertNotNull(this.provider);
         final Struct theGoal = new Struct("zip_code", "Zip", "City");
@@ -66,7 +66,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     // NPE see ConfigLibrary
     @Test
     public void matchClausesFromProlog() {
-        loadTheoryFromTestResourceDir("test-config.pl");
+        loadTheoryFromTestResourcesDir("test-config.pl");
 
         prolog.getTheoryManager().getClauseProviders().add(this.provider);
         // Matching all

@@ -20,6 +20,7 @@ package org.logic2j.core.io.parse;
 import org.logic2j.core.TermFactory;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
+import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
@@ -37,7 +38,7 @@ public class DefaultTermFactory implements TermFactory {
     }
 
     /**
-     * Calls {@link TermApi#normalize(Term, org.logic2j.core.library.mgmt.LibraryContent)}.
+     * Calls {@link TermApi#normalize(Term, LibraryContent)}.
      */
     @Override
     public Term normalize(Term theTerm) {

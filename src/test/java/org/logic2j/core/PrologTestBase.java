@@ -182,12 +182,18 @@ public abstract class PrologTestBase {
         logger.debug("Loaded theory from: {}", theFile);
     }
 
-    protected void loadTheoryFromTestResourceDir(String theFilename) {
+    /**
+     * Syntactic sugar to load a theory located in the src/test/resources directory.
+     * Also wraps the checked {@link IOException} into a {@link PrologNonSpecificError} runtime exception in case of problem.
+     * 
+     * @param theTheoryFile
+     */
+    protected void loadTheoryFromTestResourcesDir(String theTheoryFile) {
         try {
-            loadTheory(new File(TEST_RESOURCES_DIR, theFilename));
+            loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
         } catch (IOException e) {
             // Avoid bothernig with checked IOException in our TestCases (since this is a helper method, let's help)
-            throw new PrologNonSpecificError("Could not load Theory from " + theFilename + ": " + e);
+            throw new PrologNonSpecificError("Could not load Theory from " + theTheoryFile + ": " + e);
         }
     }
 

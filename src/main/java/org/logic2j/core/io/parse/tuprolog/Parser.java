@@ -52,7 +52,7 @@ import org.logic2j.core.model.symbol.Var;
 
 /**
  * This class defines a parser of Prolog terms and sentences.
- *
+ * 
  * <pre>
  * term ::= exprA(1200)
  * exprA(n) ::= exprB(n) { op(yfx,n) exprA(n-1) |
@@ -74,7 +74,7 @@ import org.logic2j.core.model.symbol.Var;
  *              '[' [ exprA(1200) { ',' exprA(1200) }* [ '|' exprA(1200) ] ] ']' |
  *              '(' { exprA(1200) }* ')'
  *              '{' { exprA(1200) }* '}'
- *
+ * 
  * op(type,n) ::= ATOM_PATTERN | { symbol }+
  * </pre>
  */
@@ -115,10 +115,11 @@ public class Parser implements Serializable {
 
     /**
      * Parses next term from the stream built on string.
-     *
+     * 
      * @param endNeeded <tt>true</tt> if it is required to parse the end token (a period), <tt>false</tt> otherwise.
      * @throws InvalidTermException if a syntax error is found.
      */
+    // TODO I would prefer that the parser exposes an Iterable instead of a direct method
     public Term nextTerm(boolean endNeeded) throws InvalidTermException {
         try {
             final Token t = this.tokenizer.readToken();
@@ -306,7 +307,7 @@ public class Parser implements Serializable {
     /**
      * Parses and returns a valid 'leftside' of an expression. If the left side starts with a prefix, it consumes other expressions with a
      * lower priority than itself. If the left side does not have a prefix it must be an expr0.
-     *
+     * 
      * @param commaIsEndMarker used when the leftside is part of an argument list of expressions
      * @param maxPriority operators with a higher priority than this will effectivly end the expression
      * @return a wrapper of: 1. term correctly structured and 2. the priority of its root operator

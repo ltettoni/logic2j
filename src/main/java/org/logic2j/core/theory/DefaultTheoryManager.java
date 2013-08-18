@@ -66,17 +66,17 @@ public class DefaultTheoryManager implements TheoryManager {
     public TheoryContent load(CharSequence theTheoryText) {
         final Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
         // final Iterator<Term> iterator = parser.iterator();
-        return addClauses(parser);
+        return loadAllClauses(parser);
     }
 
     public TheoryContent load(Reader theReader) {
         final Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
-        // final Iterator<Term> iterator = parser.iterator();
-        return addClauses(parser);
+        return loadAllClauses(parser);
     }
 
     @Override
     public TheoryContent load(File theFile) throws IOException {
+        // TODO Should use a LineNumberReader to improve error reporting further down
         final FileReader reader = new FileReader(theFile);
         try {
             return load(reader);
@@ -87,6 +87,7 @@ public class DefaultTheoryManager implements TheoryManager {
         }
     }
 
+    // FIXME Move this off TheoryManager into LibraryManager
     @Override
     public TheoryContent load(PLibrary theLibrary) {
         // Load prolog theory from a classloadable resource
@@ -111,26 +112,28 @@ public class DefaultTheoryManager implements TheoryManager {
         return new TheoryContent();
     }
 
-    private TheoryContent addClauses(Parser theParser) {
+    private TheoryContent loadAllClauses(Parser theParser) {
         final TheoryContent content = new TheoryContent();
         Term clauseTerm = theParser.nextTerm(true);
-        Term initializeGoal = null;
+        Term specialInitializeGoalBody = null; // Body of the last clause whose head is "initialize"
         while (clauseTerm != null) {
-            // Term clauseTerm = iterator.next();
-            // TODO Dubious we should not need to normalize here.
-            logger.debug("Adding clause {}", clauseTerm);
+            logger.debug("Parsed clause: {}", clauseTerm);
             final Clause cl = new Clause(this.prolog, clauseTerm);
+
+            // Handling of the "initialize" special clause - we should provide IoC callback for that, not inline code!!!
             if ("initialize".equals(cl.getHead().getName())) {
-                initializeGoal = cl.getBody();
+                specialInitializeGoalBody = cl.getBody();
             } else {
+                // TODO Resgistration of indexes should be done elsewhere
                 this.clauseProviderResolver.register(cl.getPredicateKey(), this);
             }
             content.add(cl);
             clauseTerm = theParser.nextTerm(true);
         }
         // Invoke the "initialize" goal
-        if (initializeGoal != null) {
-            final Bindings bindings = new Bindings(initializeGoal);
+        // TODO should be done elsewhere
+        if (specialInitializeGoalBody != null) {
+            final Bindings bindings = new Bindings(specialInitializeGoalBody);
             final GoalFrame goalFrame = new GoalFrame();
             final SolutionListener solutionListener = new SolutionListener() {
                 @Override

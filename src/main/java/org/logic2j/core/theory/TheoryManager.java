@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.solver.Solver;
@@ -49,6 +48,7 @@ public interface TheoryManager extends ClauseProvider {
      * @return The content of the theory associated to theLibrary, this is a resource that resides in the same package as the
      *         {@link PLibrary} implementation, has the library name and extension ".prolog"
      */
+    // FIXME Move this off TheoryManager into LibraryManager
     TheoryContent load(PLibrary theLibrary);
 
     /**
@@ -84,7 +84,7 @@ public interface TheoryManager extends ClauseProvider {
     void setTheory(TheoryContent theContent);
 
     /**
-     * @param theContent To be added to the {@link PrologImplementation} engine associated.
+     * @param theContent To be merged into this.
      */
     void addTheory(TheoryContent theContent);
 

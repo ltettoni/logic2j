@@ -25,7 +25,7 @@ import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.io.operator.DefaultOperatorManager;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.io.parse.DefaultTermFactory;
-import org.logic2j.core.library.impl.LibraryBase;
+import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.library.mgmt.DefaultLibraryManager;
@@ -101,11 +101,11 @@ public class PrologReferenceImplementation implements PrologImplementation {
         // libraryManager.loadLibrary(new ConfigLibrary(this));
 
         if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
-            final LibraryBase lib = new CoreLibrary(this);
+            final PLibrary lib = new CoreLibrary(this);
             this.libraryManager.loadLibrary(lib);
         }
         if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
-            final IOLibrary lib = new IOLibrary(this);
+            final PLibrary lib = new IOLibrary(this);
             this.libraryManager.loadLibrary(lib);
         }
     }

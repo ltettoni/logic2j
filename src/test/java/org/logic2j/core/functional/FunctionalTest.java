@@ -57,7 +57,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void nArityAndOr() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "','(true)", //
                 "','(true, true)", //
@@ -77,7 +77,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void cut_OneToStudy() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(3, "a(X), b(Y), !, c(Z)");
     }
 
@@ -85,13 +85,13 @@ public class FunctionalTest extends PrologTestBase {
     public void changeForOneDollar() {
         final IOLibrary library = new IOLibrary(prolog);
         loadLibrary(library);
-        loadTheoryFromTestResourceDir("dollar.pl");
+        loadTheoryFromTestResourcesDir("dollar.pl");
         assertNSolutions(292, "change([H,Q,D,N,P])");
     }
 
     @Test
     public void rules() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
 
         assertNSolutions(1, "cut1(_)", "a(X), b(Y), c(Z), !", "p(X), X=4");
 
@@ -113,7 +113,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void findall() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
 
         assertEquals("[]", assertOneSolution("findall(1, fail, L)").binding("L").toString());
         assertEquals("[1]", assertOneSolution("findall(1, true, L)").binding("L").toString());
@@ -136,7 +136,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void member() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
 
         assertOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
         assertNoSolution("member(d, [a,b,c])");
@@ -151,7 +151,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void sumial() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
         assertEquals(term(15), assertOneSolution("sumial(5, X)").binding("X"));
         assertEquals(term(55), assertOneSolution("sumial(10, X)").binding("X"));
         assertEquals(term(5050), assertOneSolution("sumial(100, X)").binding("X"));
@@ -159,7 +159,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void unify() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
         assertOneSolution("unifyterms(X,X)");
         assertEquals(term(123), assertOneSolution("unifyterms21(X,123)").binding("X"));
         assertEquals(term(123), assertOneSolution("unifyterms21(123, X)").binding("X"));
@@ -174,7 +174,7 @@ public class FunctionalTest extends PrologTestBase {
      */
     @Test
     public void relink_vars() {
-        loadTheoryFromTestResourceDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pl");
         // Below, Y must be equal to g(123,X), but does not solve to X!
         assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").binding("Y"));
 
