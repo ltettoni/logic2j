@@ -146,14 +146,14 @@ public class DefaultLibraryManager implements LibraryManager {
                 if (primitiveName == null || primitiveName.isEmpty()) {
                     primitiveName = method.getName();
                 }
-                final String arityIndicator = varargs ? VARARG_ARITY_INDICATOR : Integer.toString(nbMethodParams - NB_EXTRA_PARAMS);
-                final String key1 = primitiveName + '/' + arityIndicator;
+                final String aritySignature = varargs ? VARARG_ARITY_SIGNATURE : Integer.toString(nbMethodParams - NB_EXTRA_PARAMS);
+                final String key1 = primitiveName + '/' + aritySignature;
                 final PrimitiveInfo desc = new PrimitiveInfo(type, theLibrary, primitiveName, method, varargs);
                 content.putPrimitive(key1, desc);
 
                 // All other accepted synonyms for this primitive
                 for (final String synonym : annotation.synonyms()) {
-                    final String key2 = synonym + '/' + arityIndicator;
+                    final String key2 = synonym + '/' + aritySignature;
                     final PrimitiveInfo desc2 = new PrimitiveInfo(type, theLibrary, primitiveName, method, varargs);
                     content.putPrimitive(key2, desc2);
                 }

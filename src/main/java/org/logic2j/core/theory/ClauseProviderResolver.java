@@ -37,7 +37,7 @@ public class ClauseProviderResolver {
     }
 
     public Iterable<ClauseProvider> providersFor(Struct struct) {
-        final String key = struct.getPredicateIndicator();
+        final String key = struct.getPredicateSignature();
         final List<ClauseProvider> list = this.register.get(key);
         return list == null ? EMPTY : list;
     }

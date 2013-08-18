@@ -78,7 +78,7 @@ public class TheoryContent {
      * @return An iterable for a foreach() loop.
      */
     public Iterable<Clause> find(Struct theGoalTerm) {
-        final String key = theGoalTerm.getPredicateIndicator();
+        final String key = theGoalTerm.getPredicateSignature();
         final List<Clause> list = this.content.get(key);
         if (list == null) {
             // Predicate not registered in this theory content, return empty, it's not a failure condition

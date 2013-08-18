@@ -30,7 +30,7 @@ public interface LibraryManager {
      * Indicate the arity of a variable arguments predicate, such as write/N. (this is an extension to classic Prolog where only fixed arity
      * is supported).
      */
-    static final String VARARG_ARITY_INDICATOR = "N";
+    static final String VARARG_ARITY_SIGNATURE = "N";
 
     LibraryContent loadLibrary(PLibrary theLibrary);
 

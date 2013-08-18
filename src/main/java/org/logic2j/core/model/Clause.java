@@ -129,7 +129,7 @@ public class Clause {
      */
     public String getPredicateKey() {
         final Struct head = getHead();
-        return head.getPredicateIndicator();
+        return head.getPredicateSignature();
     }
 
     /**

@@ -42,7 +42,7 @@ public class Struct extends Term {
     /**
      * Terminates a vararg predicate description: write/N
      */
-    private static final String VARARG_PREDICATE_TRAILER = "/" + LibraryManager.VARARG_ARITY_INDICATOR;
+    private static final String VARARG_PREDICATE_TRAILER = "/" + LibraryManager.VARARG_ARITY_SIGNATURE;
 
     private static final TermApi TERM_API = new TermApi();
 
@@ -246,11 +246,11 @@ public class Struct extends Term {
      * 
      * @return The predicate's name + '/' + arity
      */
-    public String getPredicateIndicator() {
+    public String getPredicateSignature() {
         return this.name + '/' + this.arity;
     }
 
-    public String getVarargsPredicateIndicator() {
+    public String getVarargsPredicateSignature() {
         return this.name + VARARG_PREDICATE_TRAILER;
     }
 
@@ -273,10 +273,10 @@ public class Struct extends Term {
      */
     public void assignPrimitiveInfo(LibraryContent theContent) {
         // Find by exact arity match
-        this.primitiveInfo = theContent.primitiveMap.get(getPredicateIndicator());
+        this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
         if (this.primitiveInfo == null) {
             // Alternate find by wildcard (varargs signature)
-            this.primitiveInfo = theContent.primitiveMap.get(getVarargsPredicateIndicator());
+            this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
         }
         for (int i = 0; i < this.arity; i++) {
             final Term child = this.args[i];
