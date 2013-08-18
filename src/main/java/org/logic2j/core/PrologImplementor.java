@@ -17,8 +17,6 @@
  */
 package org.logic2j.core;
 
-import java.util.List;
-
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.Solver;
@@ -33,13 +31,6 @@ public interface PrologImplementor extends Prolog {
     // ---------------------------------------------------------------------------
     // Accessors to the sub-features of the Prolog engine
     // ---------------------------------------------------------------------------
-
-    /**
-     * @return All clause providers, in same order as when registered. TODO But the actual ordering may not be always needed, it's only
-     *         important when the same predicate is available from several providers (not frequent). Could we in certain cases use
-     *         multi-threaded access to all clause providers?
-     */
-    List<ClauseProvider> getClauseProviders();
 
     /**
      * @return The implementation for managing libraries.

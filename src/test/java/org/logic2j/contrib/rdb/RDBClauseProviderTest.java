@@ -68,7 +68,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void matchClausesFromProlog() {
         addTheoryFromTestResourceDir("test-config.pl");
 
-        getProlog().getClauseProviders().add(this.provider);
+        getProlog().getTheoryManager().getClauseProviders().add(this.provider);
         // Matching all
         assertNSolutions(79991, "pred_zip_code(_, _)");
         assertNSolutions(79991, "pred_zip_code(X, _)");

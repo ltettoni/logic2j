@@ -17,9 +17,6 @@
  */
 package org.logic2j.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.logic2j.core.TermFactory.FactoryMode;
 import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.io.operator.DefaultOperatorManager;
@@ -38,7 +35,6 @@ import org.logic2j.core.theory.DefaultTheoryManager;
 import org.logic2j.core.theory.TheoryManager;
 import org.logic2j.core.unify.DefaultUnifier;
 import org.logic2j.core.unify.Unifier;
-import org.logic2j.core.util.ReflectUtils;
 import org.logic2j.core.util.ReportUtils;
 
 /**
@@ -75,10 +71,7 @@ public class PrologImpl implements PrologImplementor {
     private OperatorManager operatorManager = new DefaultOperatorManager();
     private Solver solver = new DefaultSolver(this);
     private Unifier unifier = new DefaultUnifier();
-
-    // TODO (issue) Does the clauseProviders belong here or from the Solver where they are solely used??? See
-    // https://github.com/ltettoni/logic2j/issues/17
-    private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
+    private TheoryManager theoryManager = new DefaultTheoryManager(this);
 
     /**
      * Default constructor will only provide an engine with the {@link CoreLibrary} loaded.
@@ -93,10 +86,6 @@ public class PrologImpl implements PrologImplementor {
      * @param theLevel
      */
     public PrologImpl(InitLevel theLevel) {
-        // The first clause provider is always the TheoryManager. Others may be added.
-        final TheoryManager tm = new DefaultTheoryManager(this);
-        this.clauseProviders.add(tm);
-
         // Here we load libs in order
 
         /*
@@ -148,8 +137,7 @@ public class PrologImpl implements PrologImplementor {
 
     @Override
     public TheoryManager getTheoryManager() {
-        // TODO is this normal to look for the first ClauseProvider only??? Seems OK, see constructor.
-        return ReflectUtils.safeCastNotNull("getting TheoryManager of the first ClauseProvider", this.clauseProviders.get(0), TheoryManager.class);
+        return this.theoryManager;
     }
 
     @Override
@@ -204,15 +192,6 @@ public class PrologImpl implements PrologImplementor {
 
     public void setUnifier(Unifier unifier) {
         this.unifier = unifier;
-    }
-
-    @Override
-    public List<ClauseProvider> getClauseProviders() {
-        return this.clauseProviders;
-    }
-
-    public void setClauseProviders(List<ClauseProvider> clauseProviders) {
-        this.clauseProviders = clauseProviders;
     }
 
     // ---------------------------------------------------------------------------

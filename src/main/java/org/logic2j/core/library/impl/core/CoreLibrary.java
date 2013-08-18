@@ -198,7 +198,7 @@ public class CoreLibrary extends LibraryBase {
     public void clause(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theHead, Term theBody) {
         final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
         final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
-        for (final ClauseProvider cp : getProlog().getClauseProviders()) {
+        for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(realHead, theBindings)) {
                 // Clone the clause so that we can unify against its bindings
                 final Clause clauseToUnify = new Clause(clause);

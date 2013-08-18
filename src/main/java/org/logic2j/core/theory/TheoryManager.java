@@ -19,6 +19,7 @@ package org.logic2j.core.theory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
@@ -65,6 +66,14 @@ public interface TheoryManager extends ClauseProvider {
      */
     // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
     ClauseProviderResolver getClauseProviderResolver();
+
+    /**
+     * @return All clause providers, in same order as when registered. TODO But the actual ordering may not be always needed, it's only
+     *         important when the same predicate is available from several providers (not frequent). Could we in certain cases use
+     *         multi-threaded access to all clause providers?
+     */
+    // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
+    List<ClauseProvider> getClauseProviders();
 
     // ---------------------------------------------------------------------------
     // Alter the current Prolog instance with content from theories

@@ -24,7 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.library.PLibrary;
@@ -49,12 +52,16 @@ public class DefaultTheoryManager implements TheoryManager {
     private final PrologImplementor prolog;
     private TheoryContent wholeContent = new TheoryContent();
     private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
+    private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
     /**
+     * Constructor
+     * 
      * @param theProlog
      */
     public DefaultTheoryManager(PrologImplementor theProlog) {
         this.prolog = theProlog;
+        this.clauseProviders.add(this);
     }
 
     public TheoryContent load(CharSequence theTheoryText) {
@@ -164,6 +171,15 @@ public class DefaultTheoryManager implements TheoryManager {
 
     public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
         this.clauseProviderResolver = clauseProviderResolver;
+    }
+
+    @Override
+    public List<ClauseProvider> getClauseProviders() {
+        return this.clauseProviders;
+    }
+
+    public void setClauseProviders(List<ClauseProvider> clauseProviders) {
+        this.clauseProviders = clauseProviders;
     }
 
     // ---------------------------------------------------------------------------
