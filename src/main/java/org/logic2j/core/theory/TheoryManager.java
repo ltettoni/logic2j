@@ -24,12 +24,17 @@ import org.logic2j.core.ClauseProvider;
 import org.logic2j.core.PrologImplementor;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.model.Clause;
-import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.solver.Solver;
 
 /**
- * An API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text. The {@link TheoryManager} is an
- * implementation of a {@link ClauseProvider} since it also provides sequences of clauses to the {@link Solver} inference engine.
+ * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text. The {@link TheoryManager} also implements
+ * {@link ClauseProvider} since it provides sequences of clauses to the {@link Solver} inference engine.
+ * Provide methods for:
+ * <ul>
+ * <li>Loading theory files</li>
+ * <li>Loading {@link PLibrary} and their associated features (primitives, operators, {@link Clause}s</li>
+ * <li>(future)Assert and retracting {@link Clause}s</li>
+ * </ul>
  */
 public interface TheoryManager extends ClauseProvider {
 
@@ -74,7 +79,5 @@ public interface TheoryManager extends ClauseProvider {
      * @param theContent To be added to the {@link PrologImplementor} engine associated.
      */
     void addTheory(TheoryContent theContent);
-
-    void assertZ(Struct theClause, boolean theB, String theName, boolean theB2);
 
 }

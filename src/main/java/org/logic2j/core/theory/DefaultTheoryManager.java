@@ -145,11 +145,6 @@ public class DefaultTheoryManager implements TheoryManager {
         this.wholeContent.addAll(theContent);
     }
 
-    @Override
-    public void assertZ(Struct theClause, boolean theB, String theName, boolean theB2) {
-        throw new PrologNonSpecificError("Method assertZ() not implemented");
-    }
-
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
