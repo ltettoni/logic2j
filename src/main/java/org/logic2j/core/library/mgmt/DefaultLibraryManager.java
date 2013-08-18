@@ -40,12 +40,11 @@ public class DefaultLibraryManager implements LibraryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);
 
     /**
-     * SolutionListener, GoalFrame, Bindings, Term, ...
+     * Difference between number of args in Prolog's primitive invocation, and number of varargs
+     * passed to Java implementatino of the primitive: (SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term...)
      */
     private static final int NB_EXTRA_PARAMS = 3;
 
-    // TODO Should this be a PrologImplementation instead of Prolog? If so it allows moving Prolog.getLibararyManager to
-    // PrologImplementation.
     private final Prolog prolog;
 
     private final LibraryContent wholeContent = new LibraryContent();
@@ -59,17 +58,25 @@ public class DefaultLibraryManager implements LibraryManager {
         this.prolog = theProlog;
     }
 
+    /**
+     * @return The extra content loaded.
+     * @note Won't load any instance of a {@link PLibrary} of the same class more than once - if asked more than once, we won't fail, just
+     *       log, and return no loaded content.
+     */
     @Override
     public LibraryContent loadLibrary(PLibrary theLibrary) {
         if (alreadyLoaded(theLibrary)) {
-            return this.wholeContent;
+            logger.warn("Library \"{}\" already has an instance of the same class loaded - nothing done", theLibrary);
+            final LibraryContent extraContentIsEmpty = new LibraryContent();
+            return extraContentIsEmpty;
         }
-        final LibraryContent loadedContent = loadLibraryInternal(theLibrary);
-        updateWholeContent(loadedContent);
+        final LibraryContent extraContent = loadLibraryInternal(theLibrary);
+        mergeExtraContent(extraContent);
         // Load the theory text associated to the library
+        // TODO the logic of finding the source of the Theory belongs here, not in TheoryManager
         final TheoryManager theoryManager = this.prolog.getTheoryManager();
         theoryManager.addTheory(theoryManager.load(theLibrary));
-        return loadedContent;
+        return extraContent;
     }
 
     /**
@@ -80,7 +87,7 @@ public class DefaultLibraryManager implements LibraryManager {
         return this.libraries.containsKey(theLibrary.getClass());
     }
 
-    private void updateWholeContent(LibraryContent loadedContent) {
+    private void mergeExtraContent(LibraryContent loadedContent) {
         this.wholeContent.addAll(loadedContent);
         // TODO Houston we have a problem - we need to reassign our primitives upon loading libs!
         // It's actually unclear if when we load a new library, the new available functors would influence theories currently loaded.
@@ -92,9 +99,17 @@ public class DefaultLibraryManager implements LibraryManager {
         termApi.normalize(Struct.ATOM_CUT, this.wholeContent);
     }
 
+    /**
+     * Introspect annotations within the {@link PLibrary} and return a description of it.
+     * Look for {@link Primitive} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
+     * \=)
+     * 
+     * @param theLibrary
+     * @return
+     */
     private LibraryContent loadLibraryInternal(PLibrary theLibrary) {
         final LibraryContent content = new LibraryContent();
-        logger.debug("Loading new library {}", theLibrary);
+        logger.debug("Loading library {}", theLibrary);
         final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
 
         // Load all annotated methods
@@ -164,7 +179,7 @@ public class DefaultLibraryManager implements LibraryManager {
     }
 
     /**
-     * @return The whole libraries content.
+     * @return The merged content of all the {@link PLibrary}es loaded by {@link #loadLibrary(PLibrary)} so far.
      */
     @Override
     public LibraryContent wholeContent() {
