@@ -29,8 +29,8 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.logic2j.core.TermFactory.FactoryMode;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
@@ -43,7 +43,8 @@ import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
 
 /**
- * Base class for tests, initiazlize a fresh {@link PrologReferenceImplementation} on every method (level of init is {@link InitLevel#L1_CORE_LIBRARY}, and
+ * Base class for tests, initiazlize a fresh {@link PrologReferenceImplementation} on every method (level of init is
+ * {@link InitLevel#L1_CORE_LIBRARY}, and
  * provides utility methods.
  */
 public abstract class PrologTestBase {
@@ -53,10 +54,16 @@ public abstract class PrologTestBase {
 
     private PrologImplementation prolog;
 
+    /**
+     * @return Use only the core library - no extra features loaded.
+     */
     protected InitLevel initLevel() {
         return InitLevel.L1_CORE_LIBRARY;
     }
 
+    /**
+     * Initialize the engine as per the {@link #initLevel()} specified.
+     */
     @Before
     public void setUp() {
         this.prolog = new PrologReferenceImplementation(initLevel());
@@ -165,16 +172,16 @@ public abstract class PrologTestBase {
      * @param theFile To be loaded
      * 
      */
-    private void addTheory(File theFile) throws IOException {
+    private void loadTheory(File theFile) throws IOException {
         final TheoryManager manager = getProlog().getTheoryManager();
         final TheoryContent load = manager.load(theFile);
         manager.addTheory(load);
         logger.debug("Loaded theory from: {}", theFile);
     }
 
-    protected void addTheoryFromTestResourceDir(String theFilename) {
+    protected void loadTheoryFromTestResourceDir(String theFilename) {
         try {
-            addTheory(new File(TEST_RESOURCES_DIR, theFilename));
+            loadTheory(new File(TEST_RESOURCES_DIR, theFilename));
         } catch (IOException e) {
             // Avoid bothernig with checked IOException in our TestCases (since this is a helper method, let's help)
             throw new PrologNonSpecificError("Could not load Theory from " + theFilename + ": " + e);

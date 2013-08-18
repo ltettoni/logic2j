@@ -22,12 +22,16 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 
 public class TheoryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TheoryTest.class);
 
+    /**
+     * Use a bare {@link PrologImplementation} for testing the {@link TheoryManager} and how theories are loaded.
+     */
     @Override
     protected InitLevel initLevel() {
         return InitLevel.L0_BARE;

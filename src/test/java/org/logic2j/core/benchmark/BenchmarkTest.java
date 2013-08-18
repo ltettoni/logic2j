@@ -35,14 +35,14 @@ public class BenchmarkTest extends PrologTestBase {
      */
     @Test
     public void hanoi() {
-        addTheoryFromTestResourceDir("hanoi.pl");
+        loadTheoryFromTestResourceDir("hanoi.pl");
         assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
         logger.info("Number of solutions processed: {}", ((DefaultSolver) getProlog().getSolver()).internalCounter);
     }
 
     @Test
     public void thousandLoops() {
-        addTheoryFromTestResourceDir("test-data.pl");
+        loadTheoryFromTestResourceDir("test-data.pl");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
         assertNSolutions(1000, "int10(_),int10(_),int10(_)");
@@ -63,7 +63,7 @@ public class BenchmarkTest extends PrologTestBase {
     @Ignore
     @Test
     public void millionLoops() {
-        addTheoryFromTestResourceDir("test-data.pl");
+        loadTheoryFromTestResourceDir("test-data.pl");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
         assertNSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
@@ -78,7 +78,7 @@ public class BenchmarkTest extends PrologTestBase {
 
     @Test
     public void profileMillionLoops() {
-        addTheoryFromTestResourceDir("test-data.pl");
+        loadTheoryFromTestResourceDir("test-data.pl");
         final long t1 = System.currentTimeMillis();
         assertNSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
         final long t2 = System.currentTimeMillis();

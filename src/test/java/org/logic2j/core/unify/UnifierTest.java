@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TLong;
@@ -43,6 +44,9 @@ public class UnifierTest extends PrologTestBase {
     public Unifier unifier;
     private UnificationTester tester;
 
+    /**
+     * Use a bare {@link PrologImplementation} to test the unification.
+     */
     @Override
     protected InitLevel initLevel() {
         return InitLevel.L0_BARE;
