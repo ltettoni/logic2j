@@ -37,7 +37,8 @@ import org.logic2j.core.solver.listener.SolutionListenerBase;
  * <li>Predicate</li>
  * <li>Functor</li>
  * </ul>
- * Strangely, this class has ivoke() features so it's not only a description!
+ * 
+ * @note Strangely, this class has ivoke() features so it's not only a description!
  */
 public class PrimitiveInfo {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
@@ -151,6 +152,10 @@ public class PrimitiveInfo {
     public boolean isVarargs() {
         return this.varargs;
     }
+
+    // ---------------------------------------------------------------------------
+    // Methods of java.lang.Object
+    // ---------------------------------------------------------------------------
 
     @Override
     public String toString() {
