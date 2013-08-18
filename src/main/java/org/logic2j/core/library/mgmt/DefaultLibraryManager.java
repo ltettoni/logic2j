@@ -33,7 +33,6 @@ import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryManager;
-import org.logic2j.core.util.ReflectUtils;
 
 /**
  */
@@ -45,7 +44,8 @@ public class DefaultLibraryManager implements LibraryManager {
      */
     private static final int NB_EXTRA_PARAMS = 3;
 
-    // TODO Should this be a PrologImplementation instead of Prolog? If so it allows moving Prolog.getLibararyManager to PrologImplementation.
+    // TODO Should this be a PrologImplementation instead of Prolog? If so it allows moving Prolog.getLibararyManager to
+    // PrologImplementation.
     private final Prolog prolog;
 
     private final LibraryContent wholeContent = new LibraryContent();
@@ -146,7 +146,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 if (primitiveName == null || primitiveName.isEmpty()) {
                     primitiveName = method.getName();
                 }
-                final String aritySignature = varargs ? VARARG_ARITY_SIGNATURE : Integer.toString(nbMethodParams - NB_EXTRA_PARAMS);
+                final String aritySignature = varargs ? Struct.VARARG_ARITY_SIGNATURE : Integer.toString(nbMethodParams - NB_EXTRA_PARAMS);
                 final String key1 = primitiveName + '/' + aritySignature;
                 final PrimitiveInfo desc = new PrimitiveInfo(type, theLibrary, primitiveName, method, varargs);
                 content.putPrimitive(key1, desc);
@@ -169,16 +169,6 @@ public class DefaultLibraryManager implements LibraryManager {
     @Override
     public LibraryContent wholeContent() {
         return this.wholeContent;
-    }
-
-    @Override
-    public <T extends PLibrary> T getLibrary(Class<T> theClass) {
-        final PLibrary lib = this.libraries.get(theClass);
-        final T pLibrary = ReflectUtils.safeCastNotNull("obtaining library of " + theClass, lib, theClass);
-        if (pLibrary == null) {
-            throw new PrologNonSpecificError("No library bound of " + theClass);
-        }
-        return pLibrary;
     }
 
 }

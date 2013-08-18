@@ -27,18 +27,16 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 public interface LibraryManager {
 
     /**
-     * Indicate the arity of a variable arguments predicate, such as write/N. (this is an extension to classic Prolog where only fixed arity
-     * is supported).
+     * Load a {@link PLibrary}
+     * 
+     * @param theLibrary
+     * @return
      */
-    static final String VARARG_ARITY_SIGNATURE = "N";
-
     LibraryContent loadLibrary(PLibrary theLibrary);
 
     /**
-     * @return The whole library's content.
+     * @return The whole {@link PLibrary}'s content.
      */
     LibraryContent wholeContent();
-
-    <T extends PLibrary> T getLibrary(Class<T> theClass);
 
 }

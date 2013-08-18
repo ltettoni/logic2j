@@ -18,32 +18,11 @@
 package org.logic2j.core.library.impl.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.library.impl.core.CoreLibrary;
 
 public class AdHocLibraryTest extends PrologTestBase {
-
-    @Test
-    public void getLibrary() {
-        AdHocLibraryForTesting library;
-        try {
-            library = prolog.getLibraryManager().getLibrary(AdHocLibraryForTesting.class);
-        } catch (final Exception e) {
-            // Expected to not find it
-        }
-        library = new AdHocLibraryForTesting(prolog);
-        loadLibrary(library);
-        // Now we must find it - the same
-        final AdHocLibraryForTesting library2 = prolog.getLibraryManager().getLibrary(AdHocLibraryForTesting.class);
-        assertSame(library, library2);
-        // But not another
-        final CoreLibrary library3 = prolog.getLibraryManager().getLibrary(CoreLibrary.class);
-        assertNotSame(library, library3);
-    }
 
     @Test
     public void int_range() {
