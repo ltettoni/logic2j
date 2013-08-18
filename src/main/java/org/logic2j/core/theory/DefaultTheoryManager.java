@@ -197,7 +197,7 @@ public class DefaultTheoryManager implements TheoryManager {
     }
 
     // ---------------------------------------------------------------------------
-    // Core java.lang.Object methods
+    // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
     @Override

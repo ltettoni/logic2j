@@ -55,7 +55,7 @@ public class TDouble extends TNumber {
     }
 
     // ---------------------------------------------------------------------------
-    // Core java.lang.Object methods
+    // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
     @Override

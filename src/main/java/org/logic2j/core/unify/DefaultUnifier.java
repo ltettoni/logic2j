@@ -127,7 +127,7 @@ public class DefaultUnifier implements Unifier {
     }
 
     // ---------------------------------------------------------------------------
-    // Core java.lang.Object methods
+    // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
     @Override

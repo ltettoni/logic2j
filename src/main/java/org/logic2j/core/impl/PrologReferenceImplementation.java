@@ -46,6 +46,7 @@ import org.logic2j.core.util.ReportUtils;
 public class PrologReferenceImplementation implements PrologImplementation {
     /**
      * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
+     * This enum is not in the {@link PrologImplementation} interface since it's particular to the reference implementation.
      */
     public enum InitLevel {
         /**
@@ -68,13 +69,13 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Define all sub-features of this reference implementation and initialize with default, reference implementations
     // ---------------------------------------------------------------------------
 
+    private TheoryManager theoryManager = new DefaultTheoryManager(this);
     private TermFactory termFactory = new DefaultTermFactory(this);
     private Formatter formatter = new DefaultFormatter(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
     private OperatorManager operatorManager = new DefaultOperatorManager();
     private Solver solver = new DefaultSolver(this);
     private Unifier unifier = new DefaultUnifier();
-    private TheoryManager theoryManager = new DefaultTheoryManager(this);
 
     /**
      * Default constructor will only provide an engine with the {@link CoreLibrary} loaded.
@@ -198,7 +199,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     // ---------------------------------------------------------------------------
-    // Core java.lang.Object methods
+    // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
     @Override

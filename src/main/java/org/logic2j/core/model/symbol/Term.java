@@ -171,7 +171,7 @@ public abstract class Term implements Serializable, Cloneable {
     }
 
     // ---------------------------------------------------------------------------
-    // Core java.lang.Object methods
+    // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
     /**
