@@ -71,6 +71,10 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         return this.nameMapper.get(tableName);
     }
 
+    // ---------------------------------------------------------------------------
+    // Implementation of ClauseProvider
+    // ---------------------------------------------------------------------------
+
     @Override
     public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
         final String predicateName = theGoal.getName();
