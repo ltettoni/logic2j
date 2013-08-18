@@ -39,6 +39,11 @@ import org.logic2j.core.solver.listener.SolutionListenerBase;
 import org.logic2j.core.theory.ClauseProvider;
 import org.logic2j.core.util.ReflectUtils;
 
+/**
+ * Provide the core primitives of the Prolog language.
+ * Most is implemented in Java, but there is an associated Prolog theory at:
+ * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.prolog
+ */
 public class CoreLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
 
@@ -166,7 +171,7 @@ public class CoreLibrary extends LibraryBase {
             public Continuation onSolution() {
                 // Calculate the substituted goal value (resolve bindings)
                 @SuppressWarnings("synthetic-access")
-                // FIXME This is most certainly wrong: how can we call substitute on a variable expressed in a different bindings?????
+                // FIXME !!! This is most certainly wrong: how can we call substitute on a variable expressed in a different bindings?????
                 // The case is : findall(X, Expr, Result) where Expr -> something -> expr(a,b,X,c)
                 final Term substitute = TERM_API.substitute(theTemplate, subGoalBindings, null);
                 // Map<String, Term> explicitBindings = goalBindings.explicitBindings(FreeVarRepresentation.FREE);
