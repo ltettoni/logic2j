@@ -152,6 +152,8 @@ public class CoreLibrary extends LibraryBase {
             }
         }
         final NegationListener callListener = new NegationListener();
+        // The following line seems to work OK but unsure if we can afford this I doubt
+        // getProlog().getSolver().solveGoal(subGoalBindings, callListener);
         getProlog().getSolver().solveGoal(subGoalBindings, theGoalFrame, callListener);
         if (!callListener.found) {
             theListener.onSolution();
@@ -185,7 +187,7 @@ public class CoreLibrary extends LibraryBase {
         // Now solve the target goal, this may find several values of course
         // final Term effectiveGoal = subGoalBindings.getReferrer();
         // getProlog().getSolver().solveGoalRecursive(effectiveGoal, subGoalBindings, new GoalFrame(), adHocListener);
-        getProlog().getSolver().solveGoal(subGoalBindings, new GoalFrame(), adHocListener);
+        getProlog().getSolver().solveGoal(subGoalBindings, adHocListener);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be

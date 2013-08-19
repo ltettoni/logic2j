@@ -28,7 +28,6 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
@@ -52,7 +51,7 @@ public class MultipleSolutionsHolder {
      */
     public int number() {
         final SolutionListenerBase listener = new SolutionListenerBase();
-        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, listener);
         final int counter = listener.getCounter();
         checkBounds(counter);
         return counter;
@@ -92,7 +91,7 @@ public class MultipleSolutionsHolder {
             }
 
         };
-        this.solutionHolder.prolog.getSolver().solveGoal(bindings, new GoalFrame(), listener);
+        this.solutionHolder.prolog.getSolver().solveGoal(bindings, listener);
         final int size = results.size();
         checkBounds(size);
         return results;
@@ -114,7 +113,7 @@ public class MultipleSolutionsHolder {
             }
 
         };
-        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, new GoalFrame(), listener);
+        this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.bindings, listener);
         final int size = results.size();
         checkBounds(size);
         return results;

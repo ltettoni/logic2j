@@ -47,16 +47,21 @@ public class DefaultSolver implements Solver {
      * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, GoalFrame, SolutionListener)} method. The referrer goal to solve
      * is in the callerFrame
      * 
-     * @param theGoalBindings
-     * @param callerFrame
      * @param theSolutionListener
+     * @param theGoalBindings
      */
+    @Override
+    public void solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+        solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, new GoalFrame(), theSolutionListener);
+    }
+
+    // TODO This method only used once - possibly not needed, check if specifying the GoalFrame is needed
     @Override
     public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
         solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, callerFrame, theSolutionListener);
     }
 
-    public void solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
+    private void solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
         if (debug) {
             logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
         }
