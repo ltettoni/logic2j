@@ -154,7 +154,7 @@ public final class GoalFrame {
 
     /**
      * @return The number of bindings that would be deunified.
-     * @deprecated Bo be used only from test cases for low-level white-box unit testing of unification.
+     * @deprecated To be used only from test cases for low-level white-box unit testing of unification.
      */
     @Deprecated
     public Object nbBindings() {
@@ -201,6 +201,7 @@ public final class GoalFrame {
     public String toString() {
         final StringBuilder sb = new StringBuilder(ReportUtils.shortDescription(this));
         sb.append('{');
+        /*
         final int size = this.trailingBindings.size();
         int i = this.bindingMarkBetweenUnify.peek();
         sb.append(i);
@@ -213,6 +214,7 @@ public final class GoalFrame {
             sb.append(':');
         }
         sb.append("(top) ");
+        */
         sb.append(" #chld=");
         sb.append(this.nbChildren);
         sb.append(", childIx=");
