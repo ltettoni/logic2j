@@ -125,8 +125,11 @@ public final class GoalFrame {
     // ---------------------------------------------------------------------------
 
     public void markBeforeAddingBindings() {
-        final int upperWatermark = this.trailingBindings.size();
-        this.bindingMarkBetweenUnify.push(upperWatermark);
+        // ** Basic implementation - working
+        // final int upperWatermark = this.trailingBindings.size();
+        // this.bindingMarkBetweenUnify.push(upperWatermark);
+        // ** New implementation
+        BindingTrail.markBeforeAddingBindings();
     }
 
     /**
@@ -135,7 +138,10 @@ public final class GoalFrame {
      * @param theBinding
      */
     public void addBinding(Binding theBinding) {
-        this.trailingBindings.add(theBinding);
+        // ** Basic implementation - working
+        // this.trailingBindings.add(theBinding);
+        // ** New implementation
+        BindingTrail.addBinding(theBinding);
     }
 
     /**
@@ -144,12 +150,15 @@ public final class GoalFrame {
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public void undoBindingsUntilPreviousMark() {
-        final int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
-        for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
-            final Binding toUnbind = this.trailingBindings.remove(i);
-            // TODO (issue) Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
-            toUnbind.free();
-        }
+        // ** Basic implementation - working
+        // final int indexOfPreviousMark = this.bindingMarkBetweenUnify.pop();
+        // for (int i = this.trailingBindings.size() - 1; i >= indexOfPreviousMark; i--) {
+        // final Binding toUnbind = this.trailingBindings.remove(i);
+        // // TODO (issue) Is it efficient to remove() from an ArrayList?, see https://github.com/ltettoni/logic2j/issues/9
+        // toUnbind.free();
+        // }
+        // ** New implementation
+        BindingTrail.undoBindingsUntilPreviousMark();
     }
 
     /**
@@ -157,8 +166,11 @@ public final class GoalFrame {
      * @deprecated To be used only from test cases for low-level white-box unit testing of unification.
      */
     @Deprecated
-    public Object nbBindings() {
-        return this.trailingBindings.size() - this.bindingMarkBetweenUnify.peek();
+    public int nbBindings() {
+        // ** Basic implementation - working
+        // return this.trailingBindings.size() - this.bindingMarkBetweenUnify.peek().intValue();
+        // ** New implementation
+        return BindingTrail.nbBindings();
     }
 
     // ---------------------------------------------------------------------------
