@@ -23,6 +23,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.util.ReportUtils;
 
@@ -34,7 +35,7 @@ public class DefaultUnifier implements Unifier {
     @Override
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
         // Remember where we were so that we can deunify
-        theGoalFrame.markBeforeAddingBindings();
+        BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
         final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2, theGoalFrame);
         if (!unified /* && theGoalFrame != null */) {
@@ -46,10 +47,10 @@ public class DefaultUnifier implements Unifier {
     /**
      * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even if it eventually
      * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
-     *
+     * 
      * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is
      *       symmetric.
-     *
+     * 
      * @param term1
      * @param theBindings1
      * @param term2
@@ -123,7 +124,7 @@ public class DefaultUnifier implements Unifier {
 
     @Override
     public void deunify(GoalFrame theGoalFrame) {
-        theGoalFrame.undoBindingsUntilPreviousMark();
+        BindingTrail.undoBindingsUntilPreviousMark();
     }
 
     // ---------------------------------------------------------------------------

@@ -24,6 +24,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.solver.GoalFrame;
 
 /**
@@ -203,7 +204,7 @@ class UnificationTester {
     @SuppressWarnings("deprecation")
     private void assertNbBindings(int theExpectedNbBindings) {
         assertNotNull(this.frame);
-        assertEquals("Number of var bindings", theExpectedNbBindings, this.frame.nbBindings());
+        assertEquals("Number of var bindings", theExpectedNbBindings, BindingTrail.nbBindings());
     }
 
     // ---------------------------------------------------------------------------

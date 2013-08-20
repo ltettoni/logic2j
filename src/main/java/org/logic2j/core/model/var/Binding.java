@@ -22,14 +22,15 @@ import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
+import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free,
  * bound, or chaining).
- *
+ * 
  * The properties of a {@link Binding} depend on its type according to the following table:
- *
+ * 
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ import org.logic2j.core.solver.GoalFrame;
  * FREE     null                          null(*)        null
  * LITERAL      bindings of the literal term  ref to term    null
  * LINK     null                          null           ref to a Binding representing the bound var
- *
+ * 
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
  *     member to point to the variable, this allows retrieving its name for reporting
  *     bindings to the application code.
@@ -70,7 +71,7 @@ public class Binding implements Cloneable {
 
     /**
      * Factory method to create one "fake" binding to a literal.
-     *
+     * 
      * @param theLiteral
      * @param theLiteralBindings
      * @return This is used to return a pair (Term, Bindings) where needed.
@@ -99,7 +100,7 @@ public class Binding implements Cloneable {
 
     /**
      * Bind this to a {@link Term}, may be a literal or another variable.
-     *
+     * 
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
      * @param theGoalFrame When non null, will remember this binding for deunification
@@ -126,8 +127,9 @@ public class Binding implements Cloneable {
             this.link = null;
         }
         // Remember (if asked for) - but should it be done here, or in the caller code (typically, unifiation?)
+        // TODO Is it the right place to be? If we do the addBinding in the parent, then Binding does not have to depend on BindingTrail
         if (theGoalFrame != null) {
-            theGoalFrame.addBinding(this);
+            BindingTrail.addBinding(this);
         }
     }
 
@@ -144,7 +146,7 @@ public class Binding implements Cloneable {
 
     /**
      * Follow chains of linked bindings.
-     *
+     * 
      * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to satisfy
      *         either of {@link #isFree()} or {@link #isLiteral()}.
      */
@@ -168,7 +170,7 @@ public class Binding implements Cloneable {
     /**
      * When {@link #getType()} is {@link BindingType#LITERAL}, the {@link #getTerm()} is a literal {@link Struct}, and this represents the
      * {@link Bindings} storing the content of those variables.
-     *
+     * 
      * @return The {@link Bindings} associated to the Term from {@link #getTerm()}.
      */
     public Bindings getLiteralBindings() {

@@ -25,6 +25,8 @@ import org.logic2j.core.model.var.Binding;
 
 /**
  * Prototype implementation to manage a trail of {@link Binding}s so that they can be undone.
+ * So far we are using a {@link ThreadLocal} variable to avoid having to pass a context object around - this may have a performance impact
+ * although not proven.
  */
 public final class BindingTrail {
 

@@ -29,6 +29,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.unify.Unifier;
 
@@ -63,7 +64,7 @@ public class DelegatingUnifier implements Unifier {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
                     try {
-                        theGoalFrame.markBeforeAddingBindings();
+                        BindingTrail.markBeforeAddingBindings();
                         final boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
                         if (!unified) {
                             deunify(theGoalFrame);
@@ -176,6 +177,6 @@ public class DelegatingUnifier implements Unifier {
 
     @Override
     public void deunify(GoalFrame theGoalFrame) {
-        theGoalFrame.undoBindingsUntilPreviousMark();
+        BindingTrail.undoBindingsUntilPreviousMark();
     }
 }
