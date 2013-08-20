@@ -32,7 +32,7 @@ public final class BindingTrail {
 
         @Override
         protected Stack<ArrayList<Binding>> initialValue() {
-            return new Stack<>();
+            return new Stack<ArrayList<Binding>>();
         }
 
     };
