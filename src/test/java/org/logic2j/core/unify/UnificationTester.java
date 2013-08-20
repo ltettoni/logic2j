@@ -86,7 +86,7 @@ class UnificationTester {
     /**
      * Execute the unification and do some state checking if expected results have been defined.
      * 
-     * @return The unification result
+     * @return true if unified
      */
     private boolean unifyLR(StringBuilder theSignature) {
         logger.info("Unifying {} to {}", this.left, this.right);
