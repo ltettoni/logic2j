@@ -164,7 +164,7 @@ public class SqlRunner {
      */
     protected void rethrow(SQLException cause, String sql, Object[] params) throws SQLException {
 
-        final StringBuffer msg = new StringBuffer(cause.getMessage());
+        final StringBuilder msg = new StringBuilder(cause.getMessage());
 
         msg.append(", query=\"");
         msg.append(sql);
