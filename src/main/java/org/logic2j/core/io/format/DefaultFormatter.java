@@ -97,24 +97,28 @@ public class DefaultFormatter implements Formatter {
         if (name.equals(Struct.FUNCTOR_LIST) && arity == 2) {
             return ("[" + formatRecursive(theStruct) + "]");
         }
-        String s = (Parser.isAtom(name) ? name : ('\'' + name + '\''));
+        final StringBuilder sb = new StringBuilder((Parser.isAtom(name) ? name : ('\'' + name + '\'')));
         if (arity > 0) {
-            s = s + "(";
+            sb.append('(');
             for (int c = 1; c < arity; c++) {
                 final Term arg = theStruct.getArg(c - 1);
                 if (!(arg instanceof Var)) {
-                    s = s + arg.toString() + DefaultFormatter.ARG_SEPARATOR;
+                    sb.append(arg.toString());
+                    sb.append(DefaultFormatter.ARG_SEPARATOR);
                 } else {
-                    s = s + formatVar((Var) arg) + DefaultFormatter.ARG_SEPARATOR;
+                    sb.append(formatVar((Var) arg));
+                    sb.append(DefaultFormatter.ARG_SEPARATOR);
                 }
             }
             if (!(theStruct.getArg(arity - 1) instanceof Var)) {
-                s = s + theStruct.getArg(arity - 1).toString() + ")";
+                sb.append(theStruct.getArg(arity - 1).toString());
+                sb.append(')');
             } else {
-                s = s + formatVar((Var) theStruct.getArg(arity - 1)) + ")";
+                sb.append(formatVar((Var) theStruct.getArg(arity - 1)));
+                sb.append(')');
             }
         }
-        return s;
+        return sb.toString();
     }
 
     private String formatRecursive(Struct theStruct) {
@@ -220,17 +224,18 @@ public class DefaultFormatter implements Formatter {
                 return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), op, p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
         }
-        v = (Parser.isAtom(name) ? name : "'" + name + "'");
+        final StringBuilder sb = new StringBuilder(Parser.isAtom(name) ? name : "'" + name + "'");
         if (arity == 0) {
-            return v;
+            return sb.toString();
         }
-        v = v + "(";
+        sb.append('(');
         for (p = 1; p < arity; p++) {
-            v = v + toStringAsArgY(theStruct.getArg(p - 1), op, 0) + DefaultFormatter.ARG_SEPARATOR;
+            sb.append(toStringAsArgY(theStruct.getArg(p - 1), op, 0));
+            sb.append(DefaultFormatter.ARG_SEPARATOR);
         }
-        v = v + toStringAsArgY(theStruct.getArg(arity - 1), op, 0);
-        v = v + ")";
-        return v;
+        sb.append(toStringAsArgY(theStruct.getArg(arity - 1), op, 0));
+        sb.append(')');
+        return sb.toString();
     }
 
     @Override
