@@ -117,26 +117,32 @@ public class ConfigLibrary extends LibraryBase {
         // This generates a NPE see RDBClauseProviderTest
         final RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(), dataSource, prefix);
 
-        final DatabaseMetaData dmd = dataSource.getConnection(username, password).getMetaData();
-        final ResultSet tables = dmd.getTables(null, null, "%", null);
-        while (tables.next()) {
-            final String tableName = tables.getString(3);
-            logger.debug("DB introspection found table \"{}\"", tableName);
-            final String tableNameLc = tableName.toLowerCase();
-            if (!tablesToMap.contains(tableNameLc)) {
-                continue;
+        Connection connection = dataSource.getConnection(username, password);
+        try {
+            final DatabaseMetaData dmd = connection.getMetaData();
+            final ResultSet tables = dmd.getTables(null, null, "%", null);
+            while (tables.next()) {
+                final String tableName = tables.getString(3);
+                logger.debug("DB introspection found table \"{}\"", tableName);
+                final String tableNameLc = tableName.toLowerCase();
+                if (!tablesToMap.contains(tableNameLc)) {
+                    continue;
+                }
+                final ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
+                final List<String> columnDescription = new ArrayList<String>();
+                while (tableColumns.next()) {
+                    columnDescription.add(tableColumns.getString(4));
+                }
+                clauseProvider.saveTableInfo(tableName, columnDescription.toArray(new String[] {}));
+                final int arity = columnDescription.size();
+                final String predicateKey = prefix + tableNameLc + '/' + arity;
+                getProlog().getTheoryManager().getClauseProviderResolver().register(predicateKey, clauseProvider);
+                tableColumns.close();
             }
-            final ResultSet tableColumns = dmd.getColumns(null, null, tableName, null);
-            final List<String> columnDescription = new ArrayList<String>();
-            while (tableColumns.next()) {
-                columnDescription.add(tableColumns.getString(4));
-            }
-            clauseProvider.saveTableInfo(tableName, columnDescription.toArray(new String[] {}));
-            final int arity = columnDescription.size();
-            final String predicateKey = prefix + tableNameLc + '/' + arity;
-            getProlog().getTheoryManager().getClauseProviderResolver().register(predicateKey, clauseProvider);
-            tableColumns.close();
+            tables.close();
+        } finally {
+            connection.close();
         }
-        tables.close();
+
     }
 }
