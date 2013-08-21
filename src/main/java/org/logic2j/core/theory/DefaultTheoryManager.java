@@ -47,7 +47,7 @@ public class DefaultTheoryManager implements TheoryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
 
     private final PrologImplementation prolog;
-    private TheoryContent wholeContent = new TheoryContent();
+    private final TheoryContent wholeContent = new TheoryContent();
     private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 

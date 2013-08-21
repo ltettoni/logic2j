@@ -50,7 +50,7 @@ public abstract class TNumber extends Term implements Comparable<TNumber> {
 
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
-     *
+     * 
      * @param theCollectedTerms
      */
     @Override

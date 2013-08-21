@@ -29,7 +29,7 @@ public interface SolutionListener {
     /**
      * Specifies the behaviour that calling code requests to the inference engine after a solution was found, via
      * {@link SolutionListener#onSolution()}.
-     *
+     * 
      * @author tettoni
      */
     static enum Continuation {
@@ -58,7 +58,7 @@ public interface SolutionListener {
     /**
      * The inference engine notifies the caller code that a solution was proven; the real content to the solution must be retrieved from the
      * goal's variables.
-     *
+     * 
      * @return The caller must return {@link #CONTINUE} for the inference engine to continue searching for other solutions, or
      *         {@link #USER_ABORT} to break the search for other solutions (ie. user cancellation).
      */

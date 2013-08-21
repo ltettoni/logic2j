@@ -20,14 +20,14 @@ package org.logic2j.core.util;
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
  * micro-helper to java.lang.reflect.
- *
+ * 
  * @version $Revision: 1.24 $
  */
 public abstract class ReflectUtils {
 
     /**
      * Dynamic runtime checking of an instance against a class or interface; tolerates null values.
-     *
+     * 
      * @param context Contextual information to be reported, in case of an exception being thrown, to the beginning of the exception's
      *            message. Typical use case would be safeCastOrNull("Downloading " + this, eventDate, Date.class).
      * @param instance The instance to check, can be null.
@@ -50,7 +50,7 @@ public abstract class ReflectUtils {
 
     /**
      * Dynamic runtime checking of an instance against a class or interface; does now allow null values.
-     *
+     * 
      * @param context Contextual information to be reported, in case of an exception being thrown, to the beginning of the exception's
      *            message. Typical use case would be safeCastNotNull("Obtaining PMDB API", api, PMDB.class).
      * @param instance The instance to check, must not be null

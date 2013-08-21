@@ -42,11 +42,11 @@ public class SqlBuilder3Test {
 
     /**
      * Testing internals.
-     *
+     * 
      * @
      */
     @Test
-    public void inlistParamsPlaceholders()  {
+    public void inlistParamsPlaceholders() {
         assertEquals("", SqlBuilder3.inlistParamsPlaceholders(-10).toString());
         assertEquals("", SqlBuilder3.inlistParamsPlaceholders(-1).toString());
         assertEquals("", SqlBuilder3.inlistParamsPlaceholders(0).toString());
@@ -56,11 +56,11 @@ public class SqlBuilder3Test {
 
     /**
      * Testing internals.
-     *
+     * 
      * @
      */
     @Test
-    public void flattenedParams()  {
+    public void flattenedParams() {
         assertEquals("", CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams(), "|"));
         assertEquals("", CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams((Object[]) null), "|"));
         assertEquals("5", CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams(5), "|"));
@@ -69,7 +69,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void uninitialized()  {
+    public void uninitialized() {
         final SqlBuilder3 sb = new SqlBuilder3();
         try {
             assertEquals("select * from ", sb.getSql());
@@ -80,14 +80,14 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void empty()  {
+    public void empty() {
         final SqlBuilder3 sb = new SqlBuilder3();
         sb.generateSelect();
         assertEquals("select * from ", sb.getSql());
     }
 
     @Test
-    public void simple0()  {
+    public void simple0() {
         final SqlBuilder3 sb = new SqlBuilder3();
         sb.addConjunction(sb.column(sb.table("tbl"), "id"), 12);
         sb.generateSelect();
@@ -96,7 +96,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void simple1()  {
+    public void simple1() {
         final SqlBuilder3 sb = new SqlBuilder3();
         sb.addConjunction(sb.column(sb.table("tbl"), "col"), "val");
         sb.generateSelect();
@@ -106,7 +106,7 @@ public class SqlBuilder3Test {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void simple2()  {
+    public void simple2() {
         {
             final SqlBuilder3 sb = new SqlBuilder3();
             final Column col = sb.column(sb.table("tbl"), "col");
@@ -152,7 +152,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void multipleTables()  {
+    public void multipleTables() {
         final SqlBuilder3 sb = new SqlBuilder3();
         final Column col = sb.column(sb.table("t1"), "c1");
         sb.addConjunction(sb.criterion(col, 1));
@@ -164,7 +164,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void join()  {
+    public void join() {
         final SqlBuilder3 sb = new SqlBuilder3();
         final Column col = sb.column(sb.table("table1", "t1"), "c1");
         sb.addConjunction(sb.criterion(col, 1));
@@ -180,7 +180,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void joinSameTable()  {
+    public void joinSameTable() {
         final SqlBuilder3 sb = new SqlBuilder3();
         final Column col = sb.column(sb.table("table"), "c1");
         final Column col2 = sb.column(sb.table("table", "alias"), "c2");
@@ -190,7 +190,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void subtable()  {
+    public void subtable() {
         final SqlBuilder3 sb = new SqlBuilder3();
         sb.tableSubUnion("sub", false, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
         logger.info("Union query: {}", sb.describe());
@@ -200,7 +200,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void logicalNot()  {
+    public void logicalNot() {
         final SqlBuilder3 sb = new SqlBuilder3();
         sb.addConjunction(sb.not(sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value")));
         sb.generateSelect();
@@ -209,7 +209,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void logicalAnd()  {
+    public void logicalAnd() {
         final SqlBuilder3 sb = new SqlBuilder3();
         final Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
         final Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");
@@ -221,7 +221,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void logicalMix()  {
+    public void logicalMix() {
         final SqlBuilder3 sb = new SqlBuilder3();
         final Criterion c1 = sb.criterion(sb.column(sb.table("t1"), "c1"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value1");
         final Criterion c2 = sb.criterion(sb.column(sb.table("t1"), "c2"), SqlBuilder3.OPERATOR_EQ_OR_IN, "value2");

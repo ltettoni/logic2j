@@ -33,7 +33,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     @Before
     public void setUp() {
         super.setUp();
-        this.provider = new RDBClauseProvider(prolog, zipcodesDataSource());
+        this.provider = new RDBClauseProvider(this.prolog, zipcodesDataSource());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void listMatchingClausesWithSpecialTransformer() {
         assertNotNull(this.provider);
         final Struct theGoal = new Struct("zip_code", "Zip", "City");
-        this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(prolog));
+        this.provider.setTermFactory(new RDBBase.AllStringsAsAtoms(this.prolog));
         this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
     }
 
@@ -68,7 +68,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void matchClausesFromProlog() {
         loadTheoryFromTestResourcesDir("test-config.pl");
 
-        prolog.getTheoryManager().getClauseProviders().add(this.provider);
+        this.prolog.getTheoryManager().getClauseProviders().add(this.provider);
         // Matching all
         assertNSolutions(79991, "pred_zip_code(_, _)");
         assertNSolutions(79991, "pred_zip_code(X, _)");

@@ -216,7 +216,7 @@ public class RDBLibrary extends LibraryBase {
         logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
         // Now collect join conditions: all columns having the same variable
-        final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); 
+        final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>();
         // Join clauses
         for (final SqlBuilder3.Criterion column : rawColumns) {
             if (column.getOperand()[0] instanceof Var) {

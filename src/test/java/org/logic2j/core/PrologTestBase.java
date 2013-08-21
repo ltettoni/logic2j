@@ -90,9 +90,9 @@ public abstract class PrologTestBase {
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = prolog.term(goal);
+            final Term parsed = this.prolog.term(goal);
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-            final SolutionHolder solution = prolog.solve(parsed);
+            final SolutionHolder solution = this.prolog.solve(parsed);
             result = solution.unique();
         }
         return result;
@@ -123,7 +123,7 @@ public abstract class PrologTestBase {
     protected void assertGoalMustFail(CharSequence... theGoals) {
         for (final CharSequence theGoal : theGoals) {
             try {
-                prolog.solve(theGoal).number();
+                this.prolog.solve(theGoal).number();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final RuntimeException e) {
                 // Normal
@@ -139,9 +139,9 @@ public abstract class PrologTestBase {
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = prolog.term(goal);
+            final Term parsed = this.prolog.term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
-            solve = prolog.solve(parsed);
+            solve = this.prolog.solve(parsed);
             assertEquals("Goal " + goal + " did has different number of solutions", theNumber, solve.number());
         }
         return solve;
@@ -154,7 +154,7 @@ public abstract class PrologTestBase {
      * @return A single Term, corresponding to theObject.
      */
     protected Term term(Object theObject) {
-        return prolog.getTermFactory().create(theObject, FactoryMode.ANY_TERM);
+        return this.prolog.getTermFactory().create(theObject, FactoryMode.ANY_TERM);
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class PrologTestBase {
      * 
      */
     private void loadTheory(File theFile) throws IOException {
-        final TheoryManager manager = prolog.getTheoryManager();
+        final TheoryManager manager = this.prolog.getTheoryManager();
         final TheoryContent load = manager.load(theFile);
         manager.addTheory(load);
         logger.debug("Loaded theory from: {}", theFile);
@@ -191,14 +191,14 @@ public abstract class PrologTestBase {
     protected void loadTheoryFromTestResourcesDir(String theTheoryFile) {
         try {
             loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // Avoid bothernig with checked IOException in our TestCases (since this is a helper method, let's help)
             throw new PrologNonSpecificError("Could not load Theory from " + theTheoryFile + ": " + e);
         }
     }
 
     protected File[] allTheoryFilesFromTestResourceDir() {
-        FilenameFilter filesOnly = new FilenameFilter() {
+        final FilenameFilter filesOnly = new FilenameFilter() {
 
             @Override
             public boolean accept(File dir, String name) {
@@ -210,7 +210,7 @@ public abstract class PrologTestBase {
     }
 
     protected LibraryContent loadLibrary(PLibrary theLibrary) {
-        return prolog.getLibraryManager().loadLibrary(theLibrary);
+        return this.prolog.getLibraryManager().loadLibrary(theLibrary);
     }
 
 }

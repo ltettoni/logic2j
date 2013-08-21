@@ -27,7 +27,7 @@ public class ConfigLibraryTest extends PrologTestBase {
     @Test
     public void undefined() {
         loadTheoryFromTestResourcesDir("test-config.pl");
-        logger.info("undefined test result: {}", prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
+        logger.info("undefined test result: {}", this.prolog.solve("zipcodesdb_ZIP_CODE(\"10001\", Latitude, Longitude)").all().bindings());
         // FIXME No assertions?
     }
 }

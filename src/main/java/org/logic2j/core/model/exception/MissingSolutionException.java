@@ -21,7 +21,7 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
 
 /**
  * Thrown by {@link UniqueSolutionListener} when no solution could be found and one is required by the calling context.
- *
+ * 
  * @author tettoni
  */
 public class MissingSolutionException extends PrologException {

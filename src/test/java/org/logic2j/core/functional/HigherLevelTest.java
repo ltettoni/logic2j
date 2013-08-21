@@ -40,7 +40,7 @@ public class HigherLevelTest extends PrologTestBase {
     public void hanoi() {
         loadTheoryFromTestResourcesDir("hanoi.pl");
         assertOneSolution("move(5, left, right, center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
-        logger.info("Number of solutions processed: {}", ((DefaultSolver) prolog.getSolver()).internalCounter);
+        logger.info("Number of solutions processed: {}", ((DefaultSolver) this.prolog.getSolver()).internalCounter);
     }
 
     /**
@@ -49,7 +49,7 @@ public class HigherLevelTest extends PrologTestBase {
      */
     @Test
     public void changeForOneDollar() {
-        final IOLibrary library = new IOLibrary(prolog);
+        final IOLibrary library = new IOLibrary(this.prolog);
         loadLibrary(library);
         loadTheoryFromTestResourcesDir("dollar.pl");
         assertNSolutions(292, "change([H,Q,D,N,P])");

@@ -133,7 +133,7 @@ public class UnifierTest extends PrologTestBase {
         // itself
         this.tester.setExpectedUnificationResult(true);
         this.tester.setExpectedNbBindings(0);
-        final Term term = prolog.term("X");
+        final Term term = this.prolog.term("X");
         this.tester.unify2ways(term, term, new Bindings(term));
     }
 
@@ -145,7 +145,7 @@ public class UnifierTest extends PrologTestBase {
         final Term varA = TERM_API.normalize(new Var("A"), null);
         final Bindings bindingsA = new Bindings(varA);
         final Term tlong = TERM_API.normalize(new TLong(123), null);
-        GoalFrame theGoalFrame = new GoalFrame();
+        final GoalFrame theGoalFrame = new GoalFrame();
         final boolean aToLiteral = this.unifier.unify(varA, bindingsA, tlong, new Bindings(tlong), theGoalFrame);
         logger.info("A={}", varA);
         logger.info("A={}", TERM_API.substitute(varA, bindingsA, null));
@@ -161,7 +161,7 @@ public class UnifierTest extends PrologTestBase {
         final Bindings bindingsA = new Bindings(varA);
         final Term varX = TERM_API.normalize(new Var("X"), null);
         final Bindings bindingsX = new Bindings(varX);
-        GoalFrame theGoalFrame = new GoalFrame();
+        final GoalFrame theGoalFrame = new GoalFrame();
         final boolean xToA = this.unifier.unify(varA, bindingsA, varX, bindingsX, theGoalFrame);
         assertTrue(xToA);
         logger.info("X={}", varX);
@@ -181,8 +181,8 @@ public class UnifierTest extends PrologTestBase {
         final Term goalTermNormalized = TERM_API.normalize(goalTerm, null);
         final Bindings goalVars = new Bindings(goalTermNormalized);
         final GoalFrame gf = new GoalFrame();
-        boolean unify = this.unifier.unify(x, goalVars, y, goalVars, gf);
-        boolean unify2 = this.unifier.unify(x, goalVars, two, goalVars, gf);
+        final boolean unify = this.unifier.unify(x, goalVars, y, goalVars, gf);
+        final boolean unify2 = this.unifier.unify(x, goalVars, two, goalVars, gf);
         logger.info("goalTerm={}", goalTerm);
         logger.info("Vars: {}", goalVars);
         logger.info("Bindings: {}", goalVars.explicitBindings(FreeVarRepresentation.SKIPPED));
@@ -199,12 +199,12 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings_1() {
         // Bind bindings1 to var
-        final Term t0 = prolog.term("t(U)");
+        final Term t0 = this.prolog.term("t(U)");
         final Bindings bindings0 = new Bindings(t0);
-        final Term t1 = prolog.term("t(X)");
+        final Term t1 = this.prolog.term("t(X)");
         final Bindings bindings1 = new Bindings(t1);
         final GoalFrame goalFrame = new GoalFrame();
-        boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame);
+        final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame);
         assertEquals("t(X)", TERM_API.substitute(t1, bindings1, null).toString());
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         if (unify) {
@@ -216,11 +216,11 @@ public class UnifierTest extends PrologTestBase {
     public void explicitBindings_2() {
         final GoalFrame goalFrame = new GoalFrame();
         // Bind bindings2 to const
-        final Term t0 = prolog.term("t(U)");
+        final Term t0 = this.prolog.term("t(U)");
         final Bindings bindings0 = new Bindings(t0);
-        final Term t2 = prolog.term("t(123)");
+        final Term t2 = this.prolog.term("t(123)");
         final Bindings bindings2 = new Bindings(t2);
-        boolean unify = this.unifier.unify(t0, bindings0, t2, bindings2, goalFrame);
+        final boolean unify = this.unifier.unify(t0, bindings0, t2, bindings2, goalFrame);
         assertEquals("t(123)", TERM_API.substitute(t0, bindings0, null).toString());
         assertEquals("{U=123}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         if (unify) {
@@ -230,7 +230,7 @@ public class UnifierTest extends PrologTestBase {
 
     @Test
     public void explicitBindings_representation_1() {
-        final Term t1 = prolog.term("t(X)");
+        final Term t1 = this.prolog.term("t(X)");
         final Bindings bindings1 = new Bindings(t1);
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
@@ -241,7 +241,7 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings_representation_2() {
         // No bindings since no variable in this one:
-        final Term t2 = prolog.term("t(_)");
+        final Term t2 = this.prolog.term("t(_)");
         final Bindings bindings2 = new Bindings(t2);
         assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
@@ -252,14 +252,14 @@ public class UnifierTest extends PrologTestBase {
     // TODO Try to understand what I was trying to test here - I can't any longer. Refactor then in 2 tests, each calling unify() once...
     @Test
     public void explicitBindings2() {
-        final Term t0 = prolog.term("append2([1],[2,3],X)");
+        final Term t0 = this.prolog.term("append2([1],[2,3],X)");
         final Bindings bindings0 = new Bindings(t0);
         // Bind bindings1 to var
-        final Struct clause = (Struct) prolog.term("append2([E|T1],L2,[E|T2]) :- append2(T1,L2,T2)");
+        final Struct clause = (Struct) this.prolog.term("append2([E|T1],L2,[E|T2]) :- append2(T1,L2,T2)");
         final Term t1 = clause.getLHS(); // Term of first hitting clause
         final Bindings bindings1 = new Bindings(t1);
         final GoalFrame goalFrame = new GoalFrame();
-        boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame);
+        final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0, goalFrame);
         assertTrue(unify);
         assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t0, bindings0, null).toString());
         assertEquals("append2([1], [2,3], [1|T2])", TERM_API.substitute(t1, bindings1, null).toString());
@@ -267,9 +267,9 @@ public class UnifierTest extends PrologTestBase {
         assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         // Bind bindings2 to const
         final Term t1b = clause.getRHS(); // Body of first hitting clause
-        final Term t2 = prolog.term("append2([],L2,L2)"); // Body of second hitting clause
+        final Term t2 = this.prolog.term("append2([],L2,L2)"); // Body of second hitting clause
         final Bindings bindings2 = new Bindings(t2);
-        boolean unify2 = this.unifier.unify(t1b, bindings1, t2, bindings2, goalFrame);
+        final boolean unify2 = this.unifier.unify(t1b, bindings1, t2, bindings2, goalFrame);
         assertTrue(unify2);
         assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t1b, bindings1, null).toString());
         assertEquals("append2([], [2,3], [2,3])", TERM_API.substitute(t2, bindings2, null).toString());
@@ -284,7 +284,7 @@ public class UnifierTest extends PrologTestBase {
     }
 
     public void assertStaticallyEquals(CharSequence expectedStr, Term theActual) {
-        final Term theExpected = prolog.term(expectedStr);
+        final Term theExpected = this.prolog.term(expectedStr);
         if (!theExpected.structurallyEquals(theActual)) {
             assertEquals("Terms are not structurally equal", theExpected.toString(), theActual.toString());
             fail("Terms are not structurally equal yet strangely their toString are the same");

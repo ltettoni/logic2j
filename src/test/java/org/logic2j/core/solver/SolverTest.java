@@ -88,21 +88,21 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void multiple() {
         // Nothing should be actually solved by calling all()
-        prolog.solve("1=2").all();
+        this.prolog.solve("1=2").all();
 
         try {
-            prolog.solve("2=2").all().binding("X");
+            this.prolog.solve("2=2").all().binding("X");
             fail("There was one solution, but no variable X, variable() should have failed.");
         } catch (final Exception e) {
             // Expected
         }
         //
-        assertEquals(termList("a", "b"), prolog.solve("member(X, [a,b])").all().binding("X"));
+        assertEquals(termList("a", "b"), this.prolog.solve("member(X, [a,b])").all().binding("X"));
     }
 
     @Test
     public void iterator() {
-        final Iterator<Solution> iterator = prolog.solve("member(X, [1,2,3,4])").iterator();
+        final Iterator<Solution> iterator = this.prolog.solve("member(X, [1,2,3,4])").iterator();
         assertNotNull(iterator);
         int counter = 0;
         while (iterator.hasNext()) {

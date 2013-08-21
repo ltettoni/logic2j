@@ -117,7 +117,7 @@ public class ConfigLibrary extends LibraryBase {
         // This generates a NPE see RDBClauseProviderTest
         final RDBClauseProvider clauseProvider = new RDBClauseProvider(getProlog(), dataSource, prefix);
 
-        Connection connection = dataSource.getConnection(username, password);
+        final Connection connection = dataSource.getConnection(username, password);
         try {
             final DatabaseMetaData dmd = connection.getMetaData();
             final ResultSet tables = dmd.getTables(null, null, "%", null);

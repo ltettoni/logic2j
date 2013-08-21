@@ -19,7 +19,7 @@ package org.logic2j.core.util;
 
 /**
  * Utilities for reporting / logging / etc.
- *
+ * 
  * @note Just a nice to have - not functionally needed.
  */
 public class ReportUtils {

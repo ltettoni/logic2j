@@ -195,7 +195,7 @@ class UnificationTester {
      * @param theExpectedResult
      */
     private void assertUnificationResult(boolean theExpectedResult) {
-        assertEquals("unification result", (Boolean) theExpectedResult, this.result);
+        assertEquals("unification result", theExpectedResult, this.result);
     }
 
     /**

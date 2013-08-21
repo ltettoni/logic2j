@@ -42,7 +42,7 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * A {@link Formatter} that will use the defined operators to render structures.
-     * 
+     *
      * @param theProlog
      */
     public DefaultFormatter(PrologImplementation theProlog) {
@@ -83,7 +83,7 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * Gets the string representation of this structure
-     * 
+     *
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
      */
     private String formatStruct(Struct theStruct) {

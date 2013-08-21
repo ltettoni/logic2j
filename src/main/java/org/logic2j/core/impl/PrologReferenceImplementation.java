@@ -69,7 +69,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Define all sub-features of this reference implementation and initialize with default, reference implementations
     // ---------------------------------------------------------------------------
 
-    private TheoryManager theoryManager = new DefaultTheoryManager(this);
+    private final TheoryManager theoryManager = new DefaultTheoryManager(this);
     private TermFactory termFactory = new DefaultTermFactory(this);
     private Formatter formatter = new DefaultFormatter(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);

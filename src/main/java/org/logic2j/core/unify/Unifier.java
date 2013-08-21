@@ -28,7 +28,7 @@ public interface Unifier {
 
     /**
      * Unify terms together, term1 with its bindings, and term2 with its bindings.
-     *
+     * 
      * @param term1
      * @param theBindings1
      * @param term2
@@ -40,7 +40,7 @@ public interface Unifier {
 
     /**
      * Deunify to the last unification that returned true.
-     *
+     * 
      * @param theGoalFrame
      */
     void deunify(GoalFrame theGoalFrame);

@@ -77,7 +77,7 @@ public class DefaultLibraryManager implements LibraryManager {
         final URL associatedTheory = locationOfAssociatedTheory(theLibrary);
         if (associatedTheory != null) {
             final TheoryManager theoryManager = this.prolog.getTheoryManager();
-            TheoryContent theory = theoryManager.load(associatedTheory);
+            final TheoryContent theory = theoryManager.load(associatedTheory);
             theoryManager.addTheory(theory);
             logger.debug("Library \"{}\" loaded with extra content from {}", theLibrary, associatedTheory);
         } else {

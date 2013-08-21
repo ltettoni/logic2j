@@ -46,7 +46,7 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Convenience shortcut to have the current Prolog engine unifying 2 terms.
-     *
+     * 
      * @param t1
      * @param theBindings1
      * @param t2
@@ -64,7 +64,7 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Notify theSolutionListener that a solution has been found.
-     *
+     * 
      * @param theSolutionListener
      */
     protected void notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
@@ -77,7 +77,7 @@ public class LibraryBase implements PLibrary {
     /**
      * When unified is true, call {@link #notifySolution(GoalFrame, SolutionListener)}, and then call {@link #deunify(GoalFrame)}. Otherwise
      * nothing is done.
-     *
+     * 
      * @param unified
      * @param theGoalFrame
      * @param theListener

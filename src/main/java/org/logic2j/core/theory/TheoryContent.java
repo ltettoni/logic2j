@@ -39,7 +39,7 @@ public class TheoryContent {
 
     /**
      * Add one {@link Clause}.
-     *
+     * 
      * @param theClause
      */
     public void add(Clause theClause) {
@@ -56,7 +56,7 @@ public class TheoryContent {
     /**
      * Add all {@link Clause}s contained in theExtraContent. Watch out, references are added, Clauses are NOT copied, because of their
      * immutable nature, they can be shared.
-     *
+     * 
      * @param theExtraContent
      */
     public void addAll(TheoryContent theExtraContent) {
@@ -73,7 +73,7 @@ public class TheoryContent {
 
     /**
      * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
-     *
+     * 
      * @param theGoalTerm
      * @return An iterable for a foreach() loop.
      */

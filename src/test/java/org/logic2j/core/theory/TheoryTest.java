@@ -42,8 +42,8 @@ public class TheoryTest extends PrologTestBase {
     @Test
     public void loadAllTestTheories() throws IOException {
         final File[] allTheoryFilesFromTestResourceDir = allTheoryFilesFromTestResourceDir();
-        for (File theory : allTheoryFilesFromTestResourceDir) {
-            final TheoryManager theoryManager = new DefaultTheoryManager(prolog);
+        for (final File theory : allTheoryFilesFromTestResourceDir) {
+            final TheoryManager theoryManager = new DefaultTheoryManager(this.prolog);
             final TheoryContent content = theoryManager.load(theory);
             logger.info("Loaded library: {}", content);
         }

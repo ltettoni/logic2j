@@ -32,7 +32,7 @@ import javax.sql.DataSource;
 /**
  * Execute SQL statements in an IoC manner, guaranteeing proper error handling and resource cleaning. Highly inspired by Jakarta Commons
  * "dbutils".
- *
+ * 
  * @version $Id$
  */
 public class SqlRunner {
@@ -153,13 +153,13 @@ public class SqlRunner {
 
     /**
      * Throws a new exception with a more informative error message.
-     *
+     * 
      * @param cause The original exception that will be chained to the new exception when it's rethrown.
-     *
+     * 
      * @param sql The query that was executing when the exception happened.
-     *
+     * 
      * @param params The query replacement paramaters; <code>null</code> is a valid value to pass in.
-     *
+     * 
      * @throws SQLException
      */
     protected void rethrow(SQLException cause, String sql, Object[] params) throws SQLException {

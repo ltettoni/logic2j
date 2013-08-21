@@ -28,10 +28,10 @@ import org.logic2j.core.model.exception.PrologNonSpecificError;
  */
 public class LibraryContent {
 
-    private Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
-    private Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
-    private Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
-    private Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
+    private final Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
+    private final Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
+    private final Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
+    private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
 
     public void putDirective(String theKey, PrimitiveInfo theDesc) {
         if (this.directiveMap.containsKey(theKey)) {

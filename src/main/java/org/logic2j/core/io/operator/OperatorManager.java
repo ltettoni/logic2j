@@ -19,7 +19,7 @@ package org.logic2j.core.io.operator;
 
 /**
  * This class manages Prolog operators.
- *
+ * 
  * @see Operator
  */
 public interface OperatorManager {

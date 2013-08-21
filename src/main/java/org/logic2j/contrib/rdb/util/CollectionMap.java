@@ -32,7 +32,7 @@ public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Co
     /**
      * Add a value to the collection addressed by theKey. If nothing was registered a new collection is instantiated by
      * {@link #instantiateCollection()} and the theElement is added to it.
-     *
+     * 
      * @param theKey
      * @param theElement
      */

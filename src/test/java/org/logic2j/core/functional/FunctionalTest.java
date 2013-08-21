@@ -138,7 +138,7 @@ public class FunctionalTest extends PrologTestBase {
 
         assertOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
         assertNoSolution("member(d, [a,b,c])");
-        logger.info(CollectionUtils.format("All bindings: ", prolog.solve("member(X, [a,b,c])").all().ensureNumber(3).bindings(), 0));
+        logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").all().ensureNumber(3).bindings(), 0));
 
         assertEquals("[1,2,3]", assertOneSolution("append([1],[2,3],X)").binding("X").toString());
 

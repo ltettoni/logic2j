@@ -24,7 +24,7 @@ public class PojoLibraryTest extends PrologTestBase {
 
     @Test
     public void bind() {
-        loadLibrary(new PojoLibrary(prolog));
+        loadLibrary(new PojoLibrary(this.prolog));
         bind("name", "value");
         //
         assertOneSolution("bind(name, X), X=value");

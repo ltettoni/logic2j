@@ -5,12 +5,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
@@ -45,7 +45,7 @@ public final class BindingTrail {
     }
 
     public static void markBeforeAddingBindings() {
-        Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         stack.push(new ArrayList<Binding>());
     }
 
@@ -55,7 +55,7 @@ public final class BindingTrail {
      * @param theBinding
      */
     public static void addBinding(Binding theBinding) {
-        Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         stack.peek().add(theBinding);
     }
 
@@ -65,8 +65,8 @@ public final class BindingTrail {
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public static void undoBindingsUntilPreviousMark() {
-        Stack<ArrayList<Binding>> stack = stackOfBindings.get();
-        ArrayList<Binding> bindings = stack.pop();
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final ArrayList<Binding> bindings = stack.pop();
         for (int i = bindings.size() - 1; i >= 0; i--) {
             final Binding toUnbind = bindings.get(i);
             toUnbind.free();
@@ -79,7 +79,7 @@ public final class BindingTrail {
      */
     @Deprecated
     public static int nbBindings() {
-        Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         if (stack.isEmpty()) {
             return 0;
         }

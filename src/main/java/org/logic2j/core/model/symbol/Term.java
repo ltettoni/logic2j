@@ -37,7 +37,7 @@ import org.logic2j.core.model.var.Bindings;
  * <li>Initialization of {@link Var} indexes, see {@link #assignIndexes(short)}</li>
  * <li>Normaliization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
- *
+ * 
  * @see Struct
  * @see Var
  * @see TNumber
@@ -86,7 +86,7 @@ public abstract class Term implements Serializable, Cloneable {
     /**
      * Check structural equality, this means that the names of atoms, functors, arity and numeric values are all equal, that the same
      * variables are referred to, but irrelevant of the bound values of those variables.
-     *
+     * 
      * @param theOther
      * @return true when theOther is structurally equal to this. Same references (==) will always yield true.
      */
@@ -104,7 +104,7 @@ public abstract class Term implements Serializable, Cloneable {
      * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link #index} to
      * {@link #NO_INDEX}. This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Term)}; see a more
      * detailed description there.
-     *
+     * 
      * @param collectedTerms Recipient collection, {@link Term}s add here.
      */
     protected abstract void collectTermsInto(Collection<Term> theCollectedTerms);
@@ -114,7 +114,7 @@ public abstract class Term implements Serializable, Cloneable {
      * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal. A factorized {@link Struct}
      * will have all occurences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
      * public API entry point is {@link TermApi#factorize(Term)}; see a more detailed description there.
-     *
+     * 
      * @param theCollectedTerms The reference Terms to search for.
      * @return Either this, or a new equivalent but factorized Term.
      */
@@ -123,7 +123,7 @@ public abstract class Term implements Serializable, Cloneable {
     /**
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s. This is an internal template method: the public API entry
      * point is {@link TermApi#assignIndexes(Term)}; see a more detailed description there.
-     *
+     * 
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
      */
@@ -132,7 +132,7 @@ public abstract class Term implements Serializable, Cloneable {
     /**
      * This is an internal template method: the public API entry point is {@link TermApi#substitute(Term, Bindings, IdentityHashMap)}; see a
      * more detailed description there.
-     *
+     * 
      * @param theBindings
      * @param theBindingsToVars
      * @return A possibly new (cloned) term with all non-free bindings resolved.
@@ -141,7 +141,7 @@ public abstract class Term implements Serializable, Cloneable {
 
     /**
      * Find the first instance of {@link Var} by name inside a Term, most often a {@link Struct}.
-     *
+     * 
      * @param theVariableName
      * @return A {@link Var} with the specified name, or null when not found.
      */
@@ -149,7 +149,7 @@ public abstract class Term implements Serializable, Cloneable {
 
     /**
      * Find the first {@link Term} that is either same, or structurally equal to this.
-     *
+     * 
      * @param findWithin
      * @return The {@link Term} found or null when none found.
      */
@@ -176,7 +176,7 @@ public abstract class Term implements Serializable, Cloneable {
 
     /**
      * An equivalent to {@link #clone()} that does not throw the checked exception {@link CloneNotSupportedException}.
-     *
+     * 
      * @return A deep copy of this Term.
      */
     @SuppressWarnings("unchecked")
