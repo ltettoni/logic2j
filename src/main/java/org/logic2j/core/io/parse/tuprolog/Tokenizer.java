@@ -246,7 +246,7 @@ class Tokenizer extends StreamTokenizer {
         // quotes
         if (typea == '\'' || typea == '\"' || typea == '`') {
             int qType = typea;
-            final StringBuffer quote = new StringBuffer();
+            final StringBuilder quote = new StringBuilder();
             while (true) { // run through entire quote and added body to quote buffer
                 typea = super.nextToken();
                 svala = this.sval;
@@ -307,7 +307,7 @@ class Tokenizer extends StreamTokenizer {
         if (Arrays.binarySearch(GRAPHIC_CHARS, (char) typea) >= 0) {
 
             // the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
-            final StringBuffer symbols = new StringBuffer();
+            final StringBuilder symbols = new StringBuilder();
             int typeb = typea;
             // String svalb = null;
             while (Arrays.binarySearch(GRAPHIC_CHARS, (char) typeb) >= 0) {
