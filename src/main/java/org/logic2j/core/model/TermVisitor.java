@@ -18,7 +18,6 @@
 package org.logic2j.core.model;
 
 import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.StructObject;
 import org.logic2j.core.model.symbol.TDouble;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
@@ -36,6 +35,4 @@ public interface TermVisitor<T> {
     T visit(Var theVar);
 
     T visit(Struct theStruct);
-
-    T visit(StructObject<?> theStructObject);
 }

@@ -18,7 +18,6 @@
 package org.logic2j.core.model;
 
 import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.StructObject;
 import org.logic2j.core.model.symbol.TDouble;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Var;
@@ -48,7 +47,7 @@ public class TermVisitorBase<T> implements TermVisitor<T> {
     /**
      * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... until the last OR until the first
      * that returns a non-null result.
-     *
+     * 
      * @return The first returning a non-null result breaks the traveral of children and the result is returned.
      */
     @Override
@@ -61,11 +60,6 @@ public class TermVisitorBase<T> implements TermVisitor<T> {
                 return result;
             }
         }
-        return null;
-    }
-
-    @Override
-    public T visit(StructObject<?> theStructObject) {
         return null;
     }
 }

@@ -23,7 +23,6 @@ import org.logic2j.core.io.operator.Operator;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.io.parse.tuprolog.Parser;
 import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.StructObject;
 import org.logic2j.core.model.symbol.TDouble;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
@@ -43,7 +42,7 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * A {@link Formatter} that will use the defined operators to render structures.
-     *
+     * 
      * @param theProlog
      */
     public DefaultFormatter(PrologImplementation theProlog) {
@@ -74,16 +73,6 @@ public class DefaultFormatter implements Formatter {
     }
 
     @Override
-    public String visit(StructObject<?> theStructObject) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(formatStruct(theStructObject));
-        sb.append('(');
-        sb.append(theStructObject.getObject());
-        sb.append(')');
-        return sb.toString();
-    }
-
-    @Override
     public String visit(Var theVar) {
         return String.valueOf(formatVar(theVar));
     }
@@ -94,7 +83,7 @@ public class DefaultFormatter implements Formatter {
 
     /**
      * Gets the string representation of this structure
-     *
+     * 
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
      */
     private String formatStruct(Struct theStruct) {
@@ -185,9 +174,6 @@ public class DefaultFormatter implements Formatter {
 
     private String toStringAsArg(Term theTerm, OperatorManager op, int prio, boolean x) {
         if (!(theTerm instanceof Struct)) {
-            return theTerm.toString();
-        }
-        if (theTerm instanceof StructObject<?>) {
             return theTerm.toString();
         }
         final Struct theStruct = (Struct) theTerm;
