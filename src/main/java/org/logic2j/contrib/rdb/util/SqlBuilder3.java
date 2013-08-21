@@ -30,11 +30,11 @@ import org.logic2j.core.util.CollectionUtils;
 
 /**
  * Generate the lexical part of SQL and array of arguments based on higher-levels components of a query.
- *
+ * 
  * TODO: possibility to inject parameter values at a later stage, when the structure of the SqlBuilder is already created (factorized) TODO:
  * possibility to have a Column on the RHS of a Criterion (e.g. Column1 > Column2, not only Column1>123) TODO: cannot handle subqueries
  * TODO: cannot express AST expressions (OR, NOT)
- *
+ * 
  * @author tettoni
  */
 public class SqlBuilder3 {
@@ -270,7 +270,7 @@ public class SqlBuilder3 {
 
     /**
      * Generate several "?" parameter placeholders for scalar or vectorial (inlist) parameters.
-     *
+     * 
      * @param theNumber 0 for no parameter, 1 for a scalar parameter, >1 for vectorial parameters, this implies the INlist operator.
      * @return "" when theNumber=0, "?" when theNumber=1, otherwise "(?,?,?,?...?)" with as many question marks as argument theNumber
      */
@@ -296,7 +296,7 @@ public class SqlBuilder3 {
     /**
      * Flatten out parameters of arrays and collections: in case one element is itself an array or collection, all its first level elements
      * will be added to the returned collection.
-     *
+     * 
      * @param theParams
      * @return An array of theParams, where elements of arrays or collections are flatted out (only the first level). May be empty but never
      *         null.
@@ -477,7 +477,7 @@ public class SqlBuilder3 {
 
     /**
      * Create and register new table with alias, or obtain previously registered one (with same name or alias).
-     *
+     * 
      * @param theTableName
      * @param theAlias
      * @return A new or previously-registered Table.
@@ -572,7 +572,7 @@ public class SqlBuilder3 {
 
     /**
      * Describe references to a table or view, possibly with an alias.
-     *
+     * 
      * @version $Id: SqlBuilder3.java,v 1.7 2011-10-14 22:53:46 tettoni Exp $
      */
     public class Table {
@@ -595,7 +595,7 @@ public class SqlBuilder3 {
 
         /**
          * Table based on sub queries.
-         *
+         * 
          * @param theSubQueries
          * @param theOptionUnionAll
          * @param theAlias
@@ -793,7 +793,7 @@ public class SqlBuilder3 {
         }
     }
 
-    public class Column {
+    public static class Column {
 
         private final Table table;
         private final String columnName;
@@ -896,7 +896,7 @@ public class SqlBuilder3 {
 
     }
 
-    public class ColumnOrder {
+    public static class ColumnOrder {
 
         private final Column column;
         private final String direction;
