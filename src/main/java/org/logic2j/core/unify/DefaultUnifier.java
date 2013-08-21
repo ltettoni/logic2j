@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.unify;
 
+import org.logic2j.core.model.exception.PrologInternalError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -59,6 +60,9 @@ public class DefaultUnifier implements Unifier {
      * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
      */
     private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
+        if (theGoalFrame==null) {
+            throw new PrologInternalError("Is this normal that theGoalFrame is null here?");
+        }
         if (term2 instanceof Var && !(term1 instanceof Var)) {
             return unifyInternal(term2, theBindings2, term1, theBindings1, theGoalFrame);
         }
@@ -79,7 +83,12 @@ public class DefaultUnifier implements Unifier {
                     return true;
                 }
                 // Bind the free var
-                binding1.bindTo(term2, theBindings2, theGoalFrame);
+                if (binding1.bindTo(term2, theBindings2, theGoalFrame)) {
+                    if (theGoalFrame != null) {
+                        BindingTrail.addBinding(binding1);
+                    }
+                }
+                
                 return true;
             } else if (binding1.isLiteral()) {
                 // We have followed term1 to end up with a literal. It may either unify or not depending if

@@ -22,7 +22,6 @@ import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.solver.GoalFrame;
 
 /**
@@ -104,8 +103,9 @@ public class Binding implements Cloneable {
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
      * @param theGoalFrame When non null, will remember this binding for deunification
+     * @return true if a binding was done, false otherwise
      */
-    public void bindTo(Term theTerm, Bindings theFrame, GoalFrame theGoalFrame) {
+    public boolean bindTo(Term theTerm, Bindings theFrame, GoalFrame theGoalFrame) {
         if (!isFree()) {
             throw new PrologNonSpecificError("Should never attempt to re-bind a Binding that is not free!");
         }
@@ -114,7 +114,7 @@ public class Binding implements Cloneable {
             final Var other = (Var) theTerm;
             final Binding targetBinding = other.bindingWithin(theFrame);
             if (targetBinding == this) {
-                return;
+                return false;
             }
             this.type = BindingType.LINK;
             this.term = null;
@@ -126,11 +126,7 @@ public class Binding implements Cloneable {
             this.literalBindings = theFrame;
             this.link = null;
         }
-        // Remember (if asked for) - but should it be done here, or in the caller code (typically, unifiation?)
-        // TODO Is it the right place to be? If we do the addBinding in the parent, then Binding does not have to depend on BindingTrail
-        if (theGoalFrame != null) {
-            BindingTrail.addBinding(this);
-        }
+        return true;
     }
 
     /**

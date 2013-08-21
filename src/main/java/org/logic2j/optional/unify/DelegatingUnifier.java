@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.logic2j.core.model.exception.InvalidTermException;
+import org.logic2j.core.model.exception.PrologInternalError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -148,6 +149,9 @@ public class DelegatingUnifier implements Unifier {
     }
 
     private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+        if (theGoalFrame==null) {
+            throw new PrologInternalError("Is this normal that theGoalFrame is null here?");
+        }
         // Variable:
         // - when anonymous, unifies
         // - when free, bind it
@@ -163,7 +167,11 @@ public class DelegatingUnifier implements Unifier {
                 return true;
             }
             // Bind the free var
-            binding1.bindTo(term2, theBindings2, theGoalFrame);
+            if (binding1.bindTo(term2, theBindings2, theGoalFrame)) {
+                if (theGoalFrame != null) {
+                    BindingTrail.addBinding(binding1);
+                }
+            };
             return true;
         } else if (binding1.isLiteral()) {
             // We have followed term1 to end up with a literal. It may either unify or not depending if
