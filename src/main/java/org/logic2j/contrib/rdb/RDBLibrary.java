@@ -216,8 +216,8 @@ public class RDBLibrary extends LibraryBase {
         logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
         // Now collect join conditions: all columns having the same variable
-        final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); // Join
-                                                                                                                              // clauses
+        final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>(); 
+        // Join clauses
         for (final SqlBuilder3.Criterion column : rawColumns) {
             if (column.getOperand()[0] instanceof Var) {
                 final Var var = (Var) column.getOperand()[0];
@@ -310,7 +310,7 @@ public class RDBLibrary extends LibraryBase {
 
     /**
      * Translate prolog operators into SQL operator.
-     *
+     * 
      * @param theOperator
      * @return The valid SQL operator.
      */
@@ -349,7 +349,7 @@ public class RDBLibrary extends LibraryBase {
     /**
      * @param theBinding
      * @param desiredClassOrInterface
-     * @return Unwrap a StructObject bound term to a pojo.
+     * @return The object bound to a Term by its name
      */
     private <T> T bound(Term theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
         final Bindings b = theBindings.focus(theBinding, Struct.class);
