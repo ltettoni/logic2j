@@ -101,7 +101,7 @@ public class Binding implements Cloneable {
      * 
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
-     * @return true if a binding was done, false otherwise
+     * @return true if a binding was done, false otherwise. Caller needs to know if future un-binding will be needed.
      */
     public boolean bindTo(Term theTerm, Bindings theFrame) {
         if (!isFree()) {
@@ -112,6 +112,7 @@ public class Binding implements Cloneable {
             final Var other = (Var) theTerm;
             final Binding targetBinding = other.bindingWithin(theFrame);
             if (targetBinding == this) {
+                // Don't bind on oneself
                 return false;
             }
             this.type = BindingType.LINK;
@@ -124,6 +125,7 @@ public class Binding implements Cloneable {
             this.literalBindings = theFrame;
             this.link = null;
         }
+        // Bound OK
         return true;
     }
 

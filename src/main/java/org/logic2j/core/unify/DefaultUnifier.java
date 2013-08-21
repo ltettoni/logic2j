@@ -60,7 +60,7 @@ public class DefaultUnifier implements Unifier {
      * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
      */
     private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
-        if (theGoalFrame==null) {
+        if (theGoalFrame == null) {
             throw new PrologInternalError("Is this normal that theGoalFrame is null here?");
         }
         if (term2 instanceof Var && !(term1 instanceof Var)) {
@@ -84,11 +84,8 @@ public class DefaultUnifier implements Unifier {
                 }
                 // Bind the free var
                 if (binding1.bindTo(term2, theBindings2)) {
-                    if (theGoalFrame != null) {
-                        BindingTrail.addBinding(binding1);
-                    }
+                    BindingTrail.addBinding(binding1);
                 }
-                
                 return true;
             } else if (binding1.isLiteral()) {
                 // We have followed term1 to end up with a literal. It may either unify or not depending if
