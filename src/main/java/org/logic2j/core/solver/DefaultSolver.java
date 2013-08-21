@@ -74,7 +74,7 @@ public class DefaultSolver implements Solver {
 
         final String functor = goalStruct.getName();
         final int arity = goalStruct.getArity();
-        if (Struct.FUNCTOR_COMMA == functor) {
+        if (Struct.FUNCTOR_COMMA == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical AND
             final SolutionListener[] listeners = new SolutionListener[arity];
             // The last listener is the one of this overall COMMA sequence
@@ -95,13 +95,13 @@ public class DefaultSolver implements Solver {
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
             solveGoalRecursive(goalStruct.getArg(0), theGoalBindings, callerFrame, listeners[0]);
-        } else if (Struct.FUNCTOR_SEMICOLON == functor) {
+        } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical OR
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
                 solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, callerFrame, theSolutionListener);
             }
-        } else if (Struct.FUNCTOR_CALL == functor) {
+        } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // TODO: call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
             // implemented)
             if (arity != 1) {

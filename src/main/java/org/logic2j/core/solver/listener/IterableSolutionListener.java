@@ -89,24 +89,24 @@ public class IterableSolutionListener implements SolutionListener {
         public synchronized void wakeUp() {
             this.ready = true;
             this.content = null;
-            this.notify();
+            this.notifyAll();
         }
 
         /**
          * Indicate that the peer thread can be restart - with exchanged data.
-         *
+         * 
          * @param theContent
          */
         public synchronized void hereIsTheData(T theContent) {
             this.ready = true;
             this.content = theContent;
-            this.notify();
+            this.notifyAll();
         }
 
         /**
          * Tell this thread that content (or just a signal without content) is expected from the other thread. If nothing is yet ready, this
          * thread goes to sleep.
-         *
+         * 
          * @return The content exchanged, or null when none.
          */
         public synchronized T waitUntilAvailable() {

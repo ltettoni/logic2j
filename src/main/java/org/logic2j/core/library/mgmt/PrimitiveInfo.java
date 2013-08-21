@@ -123,10 +123,11 @@ public class PrimitiveInfo {
         }
     }
 
+    private static final GoalFrame UNUSED_GOALFRAME = null;
+    private static final SolutionListenerBase NO_LISTENER = null;
+
     public Term invokeFunctor(Struct theGoalStruct, Bindings theGoalVars) {
-        final GoalFrame unusedGoalFrame = null;
-        final SolutionListenerBase noListener = null;
-        return (Term) invoke(theGoalStruct, theGoalVars, unusedGoalFrame, noListener);
+        return (Term) invoke(theGoalStruct, theGoalVars, UNUSED_GOALFRAME, NO_LISTENER);
     }
 
     // ---------------------------------------------------------------------------

@@ -211,7 +211,7 @@ public class Parser {
                     }
                 }
                 logger.info("Stop loop, found so far: {}", elements);
-                return new IdentifiedTerm(yfy, new Struct(functor, elements.toArray(new Term[] {})));
+                return new IdentifiedTerm(yfy, new Struct(functor, elements.toArray(new Term[elements.size()])));
             }
 
             // YFX has priority over YF

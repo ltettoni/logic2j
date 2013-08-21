@@ -81,7 +81,7 @@ public class Clause {
      */
     public boolean isFact() {
         // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
-        if (Struct.FUNCTOR_CLAUSE != this.content.getName()) {
+        if (Struct.FUNCTOR_CLAUSE != this.content.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
             return true;
         }
         // We know it's a clause functor, arity must be 2, check the body
@@ -94,7 +94,7 @@ public class Clause {
     }
 
     private boolean isWithClauseFunctor() {
-        return Struct.FUNCTOR_CLAUSE == this.content.getName();
+        return Struct.FUNCTOR_CLAUSE == this.content.getName(); // Names are {@link String#intern()}alized so OK to check by reference
     }
 
     /**

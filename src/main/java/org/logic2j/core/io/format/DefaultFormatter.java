@@ -182,7 +182,6 @@ public class DefaultFormatter implements Formatter {
         }
         final Struct theStruct = (Struct) theTerm;
         int p = 0;
-        String v = "";
         final String name = theStruct.getName();
         final int arity = theStruct.getArity();
 

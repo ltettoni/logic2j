@@ -69,7 +69,7 @@ public class TDouble extends TNumber {
 
     @Override
     public int hashCode() {
-        return new Double(this.value).hashCode();
+        return Double.valueOf(this.value).hashCode();
     }
 
     // ---------------------------------------------------------------------------
@@ -78,6 +78,6 @@ public class TDouble extends TNumber {
 
     @Override
     public int compareTo(TNumber that) {
-        return (new Double(this.value)).compareTo(that.doubleValue());
+        return Double.valueOf(this.value).compareTo(that.doubleValue());
     }
 }
