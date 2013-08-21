@@ -69,7 +69,7 @@ public class TLong extends TNumber {
 
     @Override
     public int hashCode() {
-        return new Long(this.value).hashCode();
+        return Long.valueOf(this.value).hashCode();
     }
 
     // ---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ public class TLong extends TNumber {
 
     @Override
     public int compareTo(TNumber that) {
-        return (new Long(this.value)).compareTo(that.longValue());
+        return Long.valueOf(this.value).compareTo(that.longValue());
     }
 
 }
