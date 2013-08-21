@@ -83,6 +83,7 @@ public class Struct extends Term {
     private int arity;
     private Term[] args;
 
+    // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
     private PrimitiveInfo primitiveInfo;
 
     /**
