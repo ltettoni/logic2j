@@ -21,11 +21,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.util.CollectionUtils;
 
+/**
+ * Functional tests of the core features.
+ */
 public class FunctionalTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
 
@@ -79,14 +81,6 @@ public class FunctionalTest extends PrologTestBase {
     public void cut_OneToStudy() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(3, "a(X), b(Y), !, c(Z)");
-    }
-
-    @Test
-    public void changeForOneDollar() {
-        final IOLibrary library = new IOLibrary(prolog);
-        loadLibrary(library);
-        loadTheoryFromTestResourcesDir("dollar.pl");
-        assertNSolutions(292, "change([H,Q,D,N,P])");
     }
 
     @Test

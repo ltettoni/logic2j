@@ -20,11 +20,12 @@ package org.logic2j.core.benchmark;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.functional.HigherLevelTest;
 import org.logic2j.core.solver.DefaultSolver;
 
 /**
- * Benchmarking the Prolog engine (unification, inference engine).
- * 
+ * Benchmarking the Prolog engine (unification, inference engine) for performance, memory footprint, etc.
+ * For real-life tests see {@link HigherLevelTest}.
  */
 public class BenchmarkTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);

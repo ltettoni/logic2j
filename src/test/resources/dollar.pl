@@ -1,4 +1,3 @@
-
 /*
         This simple Prolog program checks or generates change 
         adding up to a dollar consisting of half-dollars, quarters, dimes, nickels, and pennies.

@@ -21,6 +21,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 
+/**
+ * Check non-regression on issues that have been found and solved over time.
+ */
 public class BugRegressionTest extends PrologTestBase {
 
     @Ignore("but a serious bug to fix - once more with cut and subgoals")
