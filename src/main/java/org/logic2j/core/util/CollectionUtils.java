@@ -54,7 +54,7 @@ public final class CollectionUtils {
         if (separator == null) {
             separator = "";
         }
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (final Iterator<? extends Object> iter = theCollection.iterator(); iter.hasNext();) {
             final String element = String.valueOf(iter.next());
             sb.append(element);
@@ -83,7 +83,7 @@ public final class CollectionUtils {
         if (separator == null) {
             separator = "";
         }
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < theArray.length; i++) {
             final String element = String.valueOf(theArray[i]);
             sb.append(element);
@@ -113,7 +113,7 @@ public final class CollectionUtils {
         }
 
         final Map<Class<?>, Integer> instancesByClass = new HashMap<Class<?>, Integer>();
-        final StringBuffer sb = new StringBuffer(label);
+        final StringBuilder sb = new StringBuilder(label);
 
         if (label.length() > 0) {
             sb.append(' ');
