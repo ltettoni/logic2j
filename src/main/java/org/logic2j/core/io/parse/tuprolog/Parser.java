@@ -34,7 +34,6 @@ import static org.logic2j.core.io.parse.tuprolog.MaskConstants.VARIABLE;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,9 +77,8 @@ import org.logic2j.core.model.symbol.Var;
  * op(type,n) ::= ATOM_PATTERN | { symbol }+
  * </pre>
  */
-public class Parser implements Serializable {
+public class Parser {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Parser.class);
-    private static final long serialVersionUID = 1L;
 
     private static final Pattern ATOM_PATTERN = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
 

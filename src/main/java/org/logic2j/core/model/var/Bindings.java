@@ -287,6 +287,7 @@ public class Bindings {
                     result.put(originalVarName, finalVar);
                     break;
                 case FREE_NOT_SELF:
+                    // Names are {@link String#intern()}alized so OK to check by reference
                     if (originalVar.getName() != finalVar.getName()) {
                         // Avoid reporting "X=null" for free variables or "X=X" as a binding...
                         result.put(originalVarName, finalVar);

@@ -58,10 +58,12 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
      * Register for operators; caches operator by name+type description. Retains insertion order.
      * <p/>
      * Not 100% sure if 'insertion-order-priority' should be completely replaced by the explicit priority given to operators.
-     *
+     * 
      * @author ivar.orstavik@hist.no
      */
-    static class OperatorRegister {
+    static class OperatorRegister implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         // map of operators by name and type
         // key is the nameType of an operator (for example ":-xfx") - value is an Operator
         private final HashMap<String, Operator> nameTypeToKey = new HashMap<String, Operator>();

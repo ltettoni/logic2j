@@ -49,9 +49,9 @@ public class Var extends Term {
 
     /**
      * Creates a variable identified by a name.
-     *
+     * 
      * The name must starts with an upper case letter or the underscore. If an underscore is specified as a name, the variable is anonymous.
-     *
+     * 
      * @note Internally the {@link #name} is {@link String#intern()}alized so it's OK to compare by reference.
      * @param theName is the name
      * @throws InvalidTermException if n is not a valid Prolog variable name
@@ -69,8 +69,8 @@ public class Var extends Term {
 
     /**
      * Gets the name of the variable.
-     *
-     * @note Names are {@link String#intern()}alized so OK to check by reference
+     * 
+     * @note Names are {@link String#intern()}alized so OK to check by reference (with ==)
      */
     public String getName() {
         return this.name;
@@ -86,7 +86,7 @@ public class Var extends Term {
     /**
      * Obtain the current {@link Binding} of this Var from the {@link Bindings}. Notice that the variable index must have been assigned, and
      * this var must NOT be the anonymous variable (that cannot be bound to anything).
-     *
+     * 
      * @param theBindings
      * @return The current binding of this Var.
      */
@@ -158,7 +158,7 @@ public class Var extends Term {
 
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
-     *
+     * 
      * @param theCollectedTerms
      */
     @Override
@@ -214,7 +214,7 @@ public class Var extends Term {
         }
         // Index this var
         this.index = theIndexOfNextNonIndexedVar;
-        return ++theIndexOfNextNonIndexedVar;
+        return (short) (theIndexOfNextNonIndexedVar + 1);
     }
 
     @Override

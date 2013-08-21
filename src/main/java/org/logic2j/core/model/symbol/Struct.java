@@ -615,7 +615,7 @@ public class Struct extends Term {
      * @return True if this and that Struct have the same name and arity.
      */
     public boolean nameAndArityMatch(Struct that) {
-        return this.arity == that.arity && this.name == that.name;
+        return this.arity == that.arity && this.name == that.name; // Names are {@link String#intern()}alized so OK to check by reference
     }
 
     // ---------------------------------------------------------------------------

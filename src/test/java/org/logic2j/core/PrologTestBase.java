@@ -124,7 +124,7 @@ public abstract class PrologTestBase {
         for (final CharSequence theGoal : theGoals) {
             try {
                 prolog.solve(theGoal).number();
-                fail("Goal should have failed and did not: \"" + theGoals + '"');
+                fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final RuntimeException e) {
                 // Normal
             }

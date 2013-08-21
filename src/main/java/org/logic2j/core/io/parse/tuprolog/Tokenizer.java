@@ -37,7 +37,6 @@ import static org.logic2j.core.io.parse.tuprolog.MaskConstants.VARIABLE;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -48,19 +47,18 @@ import org.logic2j.core.model.symbol.Struct;
 
 /**
  * BNF for tuProlog
- *
+ * 
  * part 1: Lexer digit ::= 0 .. 9 lc_letter ::= a .. z uc_letter ::= A .. Z | _ symbol ::= \ | $ | & | ^ | @ | # | . | , | : | ; | = | < | >
  * | + | - | * | / | ~
- *
+ * 
  * letter ::= digit | lc_letter | uc_letter integer ::= { digit }+ float ::= { digit }+ . { digit }+ [ E|e [ +|- ] { digit }+ ] atom ::=
  * lc_letter { letter }* | ! variable ::= uc_letter { letter }*
- *
+ * 
  * from the super class, the super.nextToken() returns and updates the following relevant fields: - if the next token is a collection of
  * wordChars, the type returned is TT_WORD and the value is put into the field sval. - if the next token is an ordinary char, the type
  * returned is the same as the unicode int value of the ordinary character - other characters should be handled as ordinary characters.
  */
-class Tokenizer extends StreamTokenizer implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Tokenizer extends StreamTokenizer {
 
     private static final char[] GRAPHIC_CHARS = { '\\', '$', '&', '?', '^', '@', '#', '.', ',', ':', ';', '=', '<', '>', '+', '-', '*', '/', '~' };
     static {
@@ -429,8 +427,8 @@ class Tokenizer extends StreamTokenizer implements Serializable {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @param typec
      * @param svalc
      * @return the intValue of the next character token, -1 if invalid needs a lookahead if typec is \
