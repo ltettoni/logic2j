@@ -22,7 +22,6 @@ import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free,
@@ -102,10 +101,9 @@ public class Binding implements Cloneable {
      * 
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
-     * @param theGoalFrame When non null, will remember this binding for deunification
      * @return true if a binding was done, false otherwise
      */
-    public boolean bindTo(Term theTerm, Bindings theFrame, GoalFrame theGoalFrame) {
+    public boolean bindTo(Term theTerm, Bindings theFrame) {
         if (!isFree()) {
             throw new PrologNonSpecificError("Should never attempt to re-bind a Binding that is not free!");
         }

@@ -167,7 +167,7 @@ public class DelegatingUnifier implements Unifier {
                 return true;
             }
             // Bind the free var
-            if (binding1.bindTo(term2, theBindings2, theGoalFrame)) {
+            if (binding1.bindTo(term2, theBindings2)) {
                 if (theGoalFrame != null) {
                     BindingTrail.addBinding(binding1);
                 }
