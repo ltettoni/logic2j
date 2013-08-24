@@ -17,6 +17,7 @@
  */
 package org.logic2j.contrib.rdb.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -104,7 +105,6 @@ public class SqlBuilder3Test {
         assertEquals(1, sb.getParameters().length);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void simple2() {
         {
@@ -115,7 +115,7 @@ public class SqlBuilder3Test {
             assertEquals("select * from tbl where tbl.col=?", sb.getSql());
             assertEquals(1, sb.getParameters().length);
             final Integer[] expectedParams = new Integer[] { 3 };
-            assertEquals(expectedParams, sb.getParameters());
+            assertArrayEquals(expectedParams, sb.getParameters());
         }
         {
             final SqlBuilder3 sb = new SqlBuilder3();
@@ -125,7 +125,7 @@ public class SqlBuilder3Test {
             assertEquals("select * from tbl where tbl.col in (?,?,?)", sb.getSql());
             assertEquals(3, sb.getParameters().length);
             final Character[] expectedParams = new Character[] { 'a', 'b', 'c' };
-            assertEquals(expectedParams, sb.getParameters());
+            assertArrayEquals(expectedParams, sb.getParameters());
         }
         {
             final SqlBuilder3 sb = new SqlBuilder3();
@@ -136,7 +136,7 @@ public class SqlBuilder3Test {
             assertEquals("select * from tbl where tbl.col in (?,?)", sb.getSql());
             assertEquals(2, sb.getParameters().length);
             final Integer[] expectedParams = new Integer[] { 5, 6 };
-            assertEquals(expectedParams, sb.getParameters());
+            assertArrayEquals(expectedParams, sb.getParameters());
         }
         {
             final SqlBuilder3 sb = new SqlBuilder3();
@@ -147,7 +147,7 @@ public class SqlBuilder3Test {
             assertEquals("select * from tbl where tbl.col in (?,?,?,?,?)", sb.getSql());
             assertEquals(5, sb.getParameters().length);
             final Integer[] expectedParams = new Integer[] { 5, 6, 4, 5, 6 };
-            assertEquals(expectedParams, sb.getParameters());
+            assertArrayEquals(expectedParams, sb.getParameters());
         }
     }
 
