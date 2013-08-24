@@ -20,6 +20,7 @@ package org.logic2j.core.solver;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
@@ -33,7 +34,7 @@ public interface Solver {
      * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param theSolutionListener Where to send solutions
      */
-    void solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
+    Continuation solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
 
     /**
      * The method to solve a goal.
@@ -43,6 +44,6 @@ public interface Solver {
      * @param callerFrame Use the specified GoalFrame
      * @param theSolutionListener Where to send solutions
      */
-    void solveGoal(Bindings theGoal, GoalFrame callerFrame, SolutionListener theSolutionListener);
+    Continuation solveGoal(Bindings theGoal, GoalFrame callerFrame, SolutionListener theSolutionListener);
 
 }

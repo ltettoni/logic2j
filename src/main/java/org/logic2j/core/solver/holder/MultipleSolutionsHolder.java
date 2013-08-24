@@ -28,6 +28,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**

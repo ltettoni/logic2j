@@ -27,35 +27,6 @@ import org.logic2j.core.solver.holder.SolutionHolder;
 public interface SolutionListener {
 
     /**
-     * Specifies the behaviour that calling code requests to the inference engine after a solution was found, via
-     * {@link SolutionListener#onSolution()}.
-     * 
-     * @author tettoni
-     */
-    static enum Continuation {
-        /**
-         * Value that {@link #onSolution()} must return for the inference engine to continue solving (search for alternate solutions).
-         */
-        CONTINUE,
-        /**
-         * Value that {@link #onSolution()} must return for the inference engine to stop solving (ie. means caller requests abort).
-         */
-        USER_ABORT;
-
-        public static Continuation requestContinuationWhen(boolean conditionApplies) {
-            return conditionApplies ? CONTINUE : USER_ABORT;
-        }
-
-        public boolean isContinuing() {
-            return this == CONTINUE;
-        }
-
-        public boolean isUserAbort() {
-            return this == USER_ABORT;
-        }
-    }
-
-    /**
      * The inference engine notifies the caller code that a solution was proven; the real content to the solution must be retrieved from the
      * goal's variables.
      * 

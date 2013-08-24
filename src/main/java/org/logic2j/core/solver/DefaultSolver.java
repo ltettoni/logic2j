@@ -24,8 +24,8 @@ import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
-import org.logic2j.core.solver.listener.SolutionListener.Continuation;
 import org.logic2j.core.theory.ClauseProvider;
 import org.logic2j.core.util.ReportUtils;
 
@@ -51,17 +51,17 @@ public class DefaultSolver implements Solver {
      * @param theGoalBindings
      */
     @Override
-    public void solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
-        solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, new GoalFrame(), theSolutionListener);
+    public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+        return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, new GoalFrame(), theSolutionListener);
     }
 
     // TODO This method only used once - possibly not needed, check if specifying the GoalFrame is needed
     @Override
-    public void solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
-        solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, callerFrame, theSolutionListener);
+    public Continuation solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
+        return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, callerFrame, theSolutionListener);
     }
 
-    private void solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
+    private Continuation solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
         if (debug) {
             logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
         }
@@ -230,6 +230,7 @@ public class DefaultSolver implements Solver {
         if (debug) {
             logger.debug("Leaving solveGoalRecursive({})", goalTerm);
         }
+        return Continuation.CONTINUE;
     }
 
     @Override
