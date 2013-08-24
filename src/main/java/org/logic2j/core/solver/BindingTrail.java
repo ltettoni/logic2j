@@ -39,11 +39,6 @@ public final class BindingTrail {
 
     };
 
-    public static void reset() {
-        stackOfBindings.remove();
-        // Any subsequent access such as get() will invoke method initialValue()
-    }
-
     public static void markBeforeAddingBindings() {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         stack.push(new ArrayList<Binding>());
@@ -66,7 +61,9 @@ public final class BindingTrail {
      */
     public static void undoBindingsUntilPreviousMark() {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        // Remove one level from the stack, then will process its content
         final ArrayList<Binding> bindings = stack.pop();
+        // Process all bindings to undo
         for (int i = bindings.size() - 1; i >= 0; i--) {
             final Binding toUnbind = bindings.get(i);
             toUnbind.free();
@@ -74,11 +71,27 @@ public final class BindingTrail {
     }
 
     /**
+     * This method is part of white-box testing, it should not be needed in principle.
+     * Use package scope there's a class in the test tree that is in the same package.
+     * 
+     * @deprecated Use only from test cases
+     */
+    @Deprecated
+    // Use only from test cases
+    static void reset() {
+        stackOfBindings.remove();
+        // Any subsequent access such as get() will invoke method initialValue()
+    }
+
+    /**
+     * This method is part of white-box testing, it should not be needed in principle.
+     * Use package scope there's a class in the test tree that is in the same package.
+     * 
      * @return The number of bindings that would be deunified.
      * @deprecated To be used only from test cases for low-level white-box unit testing of unification.
      */
     @Deprecated
-    public static int nbBindings() {
+    static int nbBindings() {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         if (stack.isEmpty()) {
             return 0;
@@ -86,4 +99,16 @@ public final class BindingTrail {
         return stack.peek().size();
     }
 
+    /**
+     * This method is part of white-box testing, it should not be needed in principle.
+     * Use package scope there's a class in the test tree that is in the same package.
+     * 
+     * @deprecated Use only from test cases
+     * @return The current stack size
+     */
+    @Deprecated
+    static int size() {
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        return stack.size();
+    }
 }
