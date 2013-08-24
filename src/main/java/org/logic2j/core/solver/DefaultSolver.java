@@ -68,12 +68,13 @@ public class DefaultSolver implements Solver {
         if (!(goalTerm instanceof Struct)) {
             throw new InvalidTermException("Goal \"" + goalTerm + "\" is not a Struct and cannot be solved");
         }
-        // Check if goal is a system predicate or a simple one to match against the theory
+        // Extract all features of the goal to solve
         final Struct goalStruct = (Struct) goalTerm;
         final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
-
         final String functor = goalStruct.getName();
         final int arity = goalStruct.getArity();
+
+        // Check if goal is a system predicate or a simple one to match against the theory
         if (Struct.FUNCTOR_COMMA == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical AND
             final SolutionListener[] listeners = new SolutionListener[arity];
@@ -136,10 +137,9 @@ public class DefaultSolver implements Solver {
             }
 
         } else {
-            // Simple "user" goal to demonstrate - find matching goals
+            // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
 
-            // Now ready to iteratively try clause by first attempting to unify with its headTerm
-            // For this we need a new TrailFrame
+            // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
             final GoalFrame subFrameForClauses = new GoalFrame(callerFrame);
 
             final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
@@ -184,43 +184,47 @@ public class DefaultSolver implements Solver {
                     // the trailFrame will remember this.
                     // Solutions will be notified from within this method.
                     // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-                    final boolean unified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
+                    final boolean headUnified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
                     if (debug) {
-                        logger.debug("  result=" + unified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
+                        logger.debug("  result=" + headUnified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
                     }
 
-                    if (unified) {
-                        if (clause.isFact()) {
-                            if (debug) {
-                                logger.debug("{} is a fact", clauseHead);
+                    if (headUnified) {
+                        try {
+                            if (clause.isFact()) {
+                                if (debug) {
+                                    logger.debug("{} is a fact", clauseHead);
+                                }
+                                // Notify one solution, and handle result if user wants to continue or not.
+                                final Continuation continuation = theSolutionListener.onSolution();
+                                if (continuation.isUserAbort()) {
+                                    subFrameForClauses.raiseUserCanceled();
+                                }
+                            } else {
+                                // Not a fact, it's a theorem - it has a body
+                                final Term newGoalTerm = clause.getBody();
+                                if (debug) {
+                                    logger.debug(">> RECURS: {} is a theorem, body={}", clauseHead, newGoalTerm);
+                                }
+                                // Solve the body in our current subFrame
+                                solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
+                                if (debug) {
+                                    logger.debug("<< RECURS");
+                                }
                             }
-                            // Notify one solution, and handle result if user wants to continue or not.
-                            final Continuation continuation = theSolutionListener.onSolution();
-                            if (continuation.isUserAbort()) {
-                                subFrameForClauses.raiseUserCanceled();
-                            }
-                        } else {
-                            final Term newGoalTerm = clause.getBody();
-                            if (debug) {
-                                logger.debug(">> RECURS: {} is a theorem, body={}", clauseHead, newGoalTerm);
-                            }
-                            // Solve the body in our current subFrame
-                            solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
-                            if (debug) {
-                                logger.debug("<< RECURS");
-                            }
+                        } finally {
+                            // We have now fired our solution(s), we no longer need our bound bindings and can deunify
+                            // Go to next solution: start by clearing our trailing bindings
+                            this.prolog.getUnifier().deunify(subFrameForClauses);
                         }
-                        // We have now fired our solution(s), we no longer need our bound bindings and can deunify
-                        // Go to next solution: start by clearing our trailing bindings
-                        this.prolog.getUnifier().deunify(subFrameForClauses);
                     }
                 }
                 if (debug) {
-                    logger.debug("Leaving loop on Clauses of " + provider);
+                    logger.debug("Last Clause of {} iterated", provider);
                 }
             }
             if (debug) {
-                logger.debug("Last ClauseProvider done");
+                logger.debug("Last ClauseProvider iterated");
             }
         }
         if (debug) {

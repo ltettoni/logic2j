@@ -84,8 +84,11 @@ public class LibraryBase implements PLibrary {
      */
     protected void notifyIfUnified(boolean unified, GoalFrame theGoalFrame, SolutionListener theListener) {
         if (unified) {
-            notifySolution(theGoalFrame, theListener);
-            deunify(theGoalFrame);
+            try {
+                notifySolution(theGoalFrame, theListener);
+            } finally {
+                deunify(theGoalFrame);
+            }
         }
     }
 
