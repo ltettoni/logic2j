@@ -24,7 +24,6 @@ import org.logic2j.core.util.ReportUtils;
  * One stack-frame to keep track of the goal solving state, and manage the "cut" to prune solution trees.<br/>
  * Implements logic and data for:
  * <ul>
- * <li>remembering which variables have been bound by unification, in order to deunify before next solutions: {@link #trailingBindings}</li>
  * <li>implementing "cut" (programmatic search tree pruning)</li>
  * <li>user cancellation (see return value from {@link SolutionListener#onSolution()}</li>
  * </ul>
