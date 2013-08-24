@@ -36,6 +36,7 @@ import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.solver.BindingTrailTestUtils;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
@@ -70,10 +71,13 @@ public abstract class PrologTestBase {
     @Before
     public void setUp() {
         this.prolog = new PrologReferenceImplementation(initLevel());
+        // Here we should NOT NEED to reset the BindingTrail stack - however in certain cases it's useful just to enable this
+        // BindingTrailTestUtils.reset();
     }
 
     @After
     public void tearDown() {
+        assertEquals("BindingTrail should be empty after any test method, checking stack size", 0, BindingTrailTestUtils.size());
         this.prolog = null;
     }
 
@@ -126,6 +130,7 @@ public abstract class PrologTestBase {
                 this.prolog.solve(theGoal).number();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final RuntimeException e) {
+                logger.warn("Goal failing - but expected: " + e, e);
                 // Normal
             }
         }
