@@ -130,7 +130,7 @@ public abstract class PrologTestBase {
                 this.prolog.solve(theGoal).number();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final RuntimeException e) {
-                logger.warn("Goal failing - but expected: " + e, e);
+                // logger.warn("Goal failing - but expected: " + e, e);
                 // Normal
             }
         }
