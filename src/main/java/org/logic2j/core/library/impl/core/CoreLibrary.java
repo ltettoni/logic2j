@@ -118,6 +118,7 @@ public class CoreLibrary extends LibraryBase {
         if (!unified) {
             notifySolution(theGoalFrame, theListener);
         }
+        // TODO Why not "else"?
         if (unified) {
             deunify(theGoalFrame);
         }
@@ -211,12 +212,18 @@ public class CoreLibrary extends LibraryBase {
                 final Clause clauseToUnify = new Clause(clause);
                 final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getLiteralBindings(), theGoalFrame);
                 if (headUnified) {
-                    final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings, theGoalFrame);
-                    if (bodyUnified) {
-                        notifySolution(theGoalFrame, theListener);
+                    try {
+                        final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings, theGoalFrame);
+                        if (bodyUnified) {
+                            try {
+                                notifySolution(theGoalFrame, theListener);
+                            } finally {
+                                deunify(theGoalFrame);
+                            }
+                        }
+                    } finally {
                         deunify(theGoalFrame);
                     }
-                    deunify(theGoalFrame);
                 }
             }
         }
