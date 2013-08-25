@@ -28,17 +28,13 @@ import java.util.Map;
 import org.junit.Test;
 import org.logic2j.core.Prolog;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
-import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.Solution;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Check {@link Solver} on extremely trivial goals, and also check the {@link SolutionHolder} API to extract solutions (results and
@@ -111,63 +107,6 @@ public class SolverTest extends PrologTestBase {
             counter++;
         }
         assertEquals(4, counter);
-    }
-
-    /**
-     * A {@link SolutionListener} that counts solutions - won't request user cancellation.
-     */
-    static class CountingListener implements SolutionListener {
-        int counter = 0;
-
-        @Override
-        public Continuation onSolution() {
-            this.counter++;
-            return Continuation.CONTINUE;
-        }
-    }
-
-    /**
-     * A {@link SolutionListener} that will request user cancellation after the first solution was found.
-     */
-    static class Max1Listener implements SolutionListener {
-        int counter = 0;
-
-        @Override
-        public Continuation onSolution() {
-            this.counter++;
-            return Continuation.USER_ABORT;
-        }
-    }
-
-    /**
-     * A {@link SolutionListener} that will request user cancellation after 5 solutions were found.
-     */
-    static class Max5Listener implements SolutionListener {
-        int counter = 0;
-
-        @Override
-        public Continuation onSolution() {
-            this.counter++;
-            final boolean requestContinue = this.counter < 5;
-            return Continuation.requestContinuationWhen(requestContinue);
-        }
-    }
-
-    @Test
-    public void userCancel() {
-        final PrologImplementation prolog = new PrologReferenceImplementation();
-        final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
-        final CountingListener listenerAll = new CountingListener();
-        prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
-        assertEquals(10, listenerAll.counter);
-        // Only one
-        final Max1Listener maxOneSolution = new Max1Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
-        assertEquals(1, maxOneSolution.counter);
-        // Only five
-        final Max5Listener maxFiveSolutions = new Max5Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
-        assertEquals(5, maxFiveSolutions.counter);
     }
 
 }

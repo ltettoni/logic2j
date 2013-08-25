@@ -22,7 +22,6 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.io.IOLibrary;
-import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Run higher-level tests such as whole programs.
@@ -40,7 +39,6 @@ public class HigherLevelTest extends PrologTestBase {
     public void hanoi() {
         loadTheoryFromTestResourcesDir("hanoi.pl");
         assertOneSolution("move(5, left, right, center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
-        logger.info("Number of solutions processed: {}", ((DefaultSolver) this.prolog.getSolver()).internalCounter);
     }
 
     /**

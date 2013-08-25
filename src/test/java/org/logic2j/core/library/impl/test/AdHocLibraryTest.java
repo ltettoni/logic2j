@@ -21,18 +21,21 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.model.exception.PrologNonSpecificError;
 
 public class AdHocLibraryTest extends PrologTestBase {
 
     @Test
     public void int_range() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-
         assertEquals(termList(12, 13, 14), assertNSolutions(3, "int_range(12, X, 14)").binding("X"));
-
         assertNoSolution("int_range(12, X, 10)");
-        // Fixme: proper exception - not a class cast!
-        // assertNoSolution("int_range(A, X, 10)");
+    }
+
+    @Test(expected = PrologNonSpecificError.class)
+    public void exceptionThrownInJavaPredicate() throws Exception {
+        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
+        assertNoSolution("int_range(A, X, 10)");
     }
 
 }

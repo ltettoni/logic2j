@@ -84,9 +84,9 @@ public class FunctionalTest extends PrologTestBase {
 
         assertNSolutions(5, "f(Q)");
 
-        assertNSolutions(9, "a(X), b(Y)", "true, a(X), b(Y)", "a(X), b(Y), true", "a(X), true, b(Y)", "a(X), !, b(Y), c(Z)", "a(X), !, !, b(Y), c(Z)");
+        assertNSolutions(9, "a(X), b(Y)", "true, a(X), b(Y)", "a(X), b(Y), true", "a(X), true, b(Y)");
 
-        assertNSolutions(27, "a(X), b(Y), c(Z)", "!, a(X), b(Y), c(Z)", "!, true, !, a(X), b(Y), c(Z)");
+        assertNSolutions(27, "a(X), b(Y), c(Z)");
     }
 
     @Test

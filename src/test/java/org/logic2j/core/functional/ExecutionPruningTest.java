@@ -17,8 +17,16 @@
  */
 package org.logic2j.core.functional;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.listener.Continuation;
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Test the cut and user abort features.
@@ -27,8 +35,15 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void justForDebugging() {
+        // Empty use just for debugging one particular case
+    }
+
+    @Test
+    public void withoutCut() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
-        assertNSolutions(1, "a(X), b(Y), !");
+        assertNSolutions(3, "a(X)");
+        assertNSolutions(9, "a(X), b(Y)");
+        assertNSolutions(27, "a(X), b(Y), c(Z)");
     }
 
     @Test
@@ -42,6 +57,8 @@ public class ExecutionPruningTest extends PrologTestBase {
     @Test
     public void cutInMiddle() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(3, "a(X), !, b(Y)");
+        assertNSolutions(3, "a(X), !, !, b(Y)");
         assertNSolutions(3, "a(X), b(Y), !, c(Z)");
     }
 
@@ -56,12 +73,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(1, "!");
         assertNSolutions(1, "!, !");
-        assertNSolutions(3, "a(X)");
-        assertNSolutions(1, "a(X), !");
         //
-        assertNSolutions(9, "a(X), b(Y)");
-        assertNSolutions(3, "a(X), !, b(Y)");
-        assertNSolutions(3, "a(X), !, !, b(Y)");
         assertNSolutions(1, "a(X), !, b(Y), !");
         assertNSolutions(1, "a(X), !, b(Y), !, !");
     }
@@ -91,14 +103,71 @@ public class ExecutionPruningTest extends PrologTestBase {
     @Test
     public void cut() throws Exception {
         loadTheoryFromTestResourcesDir("test-functional.pl");
-        assertNSolutions(1, "cut1(_)", "a(X), !", "a(X), b(Y), c(Z), !", "p(X), X=4");
-
-        assertNSolutions(2, "cut2(_)");
         assertNSolutions(0, "pc(X)");
         assertNSolutions(3, "p(X), X>1");
-
         assertNSolutions(1, "a(X), !, cut1(Y)");
         assertNSolutions(4, "cut4", "cut4b");
+    }
+
+    // ---------------------------------------------------------------------------
+    // Testing user abort
+    // ---------------------------------------------------------------------------
+
+    /**
+     * A {@link SolutionListener} that will request user cancellation after the first solution was found.
+     */
+    private static class Max1Listener implements SolutionListener {
+        private int counter = 0;
+
+        @Override
+        public Continuation onSolution() {
+            this.counter++;
+            return Continuation.USER_ABORT;
+        }
+    }
+
+    /**
+     * A {@link SolutionListener} that will request user cancellation after 5 solutions were found.
+     */
+    private static class Max5Listener implements SolutionListener {
+        private int counter = 0;
+
+        @Override
+        public Continuation onSolution() {
+            this.counter++;
+            final boolean requestContinue = this.counter < 5;
+            return Continuation.requestContinuationWhen(requestContinue);
+        }
+    }
+
+    /**
+     * A {@link SolutionListener} that counts solutions - won't request user cancellation.
+     */
+    private static class CountingListener implements SolutionListener {
+        private int counter = 0;
+
+        @Override
+        public Continuation onSolution() {
+            this.counter++;
+            return Continuation.CONTINUE;
+        }
+    }
+
+    @Test
+    public void userCancel() {
+        final PrologImplementation prolog = new PrologReferenceImplementation();
+        final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
+        final CountingListener listenerAll = new CountingListener();
+        prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
+        assertEquals(10, listenerAll.counter);
+        // Only one
+        final Max1Listener maxOneSolution = new Max1Listener();
+        prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
+        assertEquals(1, maxOneSolution.counter);
+        // Only five
+        final Max5Listener maxFiveSolutions = new Max5Listener();
+        prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
+        assertEquals(5, maxFiveSolutions.counter);
     }
 
 }

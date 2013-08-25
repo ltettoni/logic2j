@@ -21,7 +21,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.functional.HigherLevelTest;
-import org.logic2j.core.solver.DefaultSolver;
 
 /**
  * Benchmarking the Prolog engine (unification, inference engine) for performance, memory footprint, etc.
@@ -38,7 +37,6 @@ public class BenchmarkTest extends PrologTestBase {
     public void hanoi() {
         loadTheoryFromTestResourcesDir("hanoi.pl");
         assertOneSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
-        logger.info("Number of solutions processed: {}", ((DefaultSolver) this.prolog.getSolver()).internalCounter);
     }
 
     @Test
