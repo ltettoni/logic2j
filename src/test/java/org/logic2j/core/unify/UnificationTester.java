@@ -23,7 +23,6 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
-import org.logic2j.core.solver.BindingTrailTestUtils;
 
 /**
  * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. TODO replace this class by hamctest 1.3

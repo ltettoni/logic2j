@@ -36,12 +36,12 @@ import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solver.BindingTrailTestUtils;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
+import org.logic2j.core.unify.BindingTrailTestUtils;
 
 /**
  * Base class for tests, initiazlize a fresh {@link PrologReferenceImplementation} on every method (level of init is

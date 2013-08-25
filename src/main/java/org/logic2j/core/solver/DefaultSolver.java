@@ -167,28 +167,7 @@ public class DefaultSolver implements Solver {
                     if (debug) {
                         logger.debug("Trying clause \"{}\", current status={}", clause, result);
                     }
-                    // // Handle user cancellation at beginning of loop, not at the end.
-                    // // This is in case user code returns onSolution()=false (do not continue)
-                    // // on what happens to be the last normal solution - in this case we can't tell if
-                    // // we are exiting because user requested it, or because there's no other solution!
-                    // if (subFrameForClauses.isUserCanceled()) {
-                    // if (debug) {
-                    // logger.debug("!!! Stopping on SolutionListener's request");
-                    // }
-                    // break;
-                    // }
-                    // if (subFrameForClauses.isCut()) {
-                    // if (debug) {
-                    // logger.debug("!!! cut found in clause");
-                    // }
-                    // break;
-                    // }
-                    // if (subFrameForClauses.hasCutInSiblingSubsequentGoal()) {
-                    // if (debug) {
-                    // logger.debug("!!! Stopping because of cut in sibling subsequent goal");
-                    // }
-                    // break;
-                    // }
+
                     // Clone the variables so that we won't mutate our current clause's ones
                     final Bindings immutableVars = clause.getBindings();
                     final Bindings clauseVars = new Bindings(immutableVars);
@@ -241,9 +220,15 @@ public class DefaultSolver implements Solver {
                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 // TODO There is something really ugly here but I'm in the middle of a big refactoring and
                                 // did not find anything better yet.
+                                // When we solve a goal such as "a,b,c,!,d", the cut must ascend up to the first ",", so that further
+                                // attempt to use clauses for a() are also cut.
+                                // However, when we solve main :- sub., then if sub has a cut inside, the cut must not ascend back to the
+                                // main.
+                                // we deal with that here.
+                                // Any other solution (much) welcome.
                                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 if (newGoalTerm instanceof Struct) {
-                                    String bodyFunctor = ((Struct) newGoalTerm).getName();
+                                    final String bodyFunctor = ((Struct) newGoalTerm).getName();
                                     if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
                                         if (continuation == Continuation.CUT) {
                                             result = Continuation.CUT;
@@ -269,10 +254,6 @@ public class DefaultSolver implements Solver {
             if (debug) {
                 logger.debug("Last ClauseProvider iterated");
             }
-            // if (result == Continuation.CUT) {
-            // logger.debug("Iterating clauses was stopped by a CUT, yet return CONTINUE");
-            // result = Continuation.CONTINUE;
-            // }
         }
         if (debug) {
             logger.debug("<< Exit    solveGoalRecursive(\"{}\") with {}", goalTerm, result);

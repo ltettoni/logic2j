@@ -16,7 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.logic2j.core.solver;
+package org.logic2j.core.unify;
+
+import org.logic2j.core.unify.BindingTrail;
 
 /**
  * Utilities for white-box testing of {@link BindingTrail}, lies in the same package to leverage package scope.

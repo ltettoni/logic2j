@@ -23,7 +23,6 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.BindingTrail;
 import org.logic2j.core.util.ReportUtils;
 
 /**

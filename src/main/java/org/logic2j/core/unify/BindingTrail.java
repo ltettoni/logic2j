@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.logic2j.core.solver;
+package org.logic2j.core.unify;
 
 import java.util.ArrayList;
 import java.util.Stack;
