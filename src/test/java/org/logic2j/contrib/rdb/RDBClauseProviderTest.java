@@ -41,8 +41,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         assertNotNull(zipcodesConnection());
     }
 
-    @Ignore
-    // NPE see ConfigLibrary
+    @Ignore("NPE see ConfigLibrary")
     @Test
     public void listMatchingClauses() {
         loadTheoryFromTestResourcesDir("test-config.pl");
@@ -52,8 +51,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         this.provider.listMatchingClauses(theGoal, null);
     }
 
-    @Ignore
-    // NPE see ConfigLibrary
+    @Ignore("NPE see ConfigLibrary")
     @Test
     public void listMatchingClausesWithSpecialTransformer() {
         assertNotNull(this.provider);
@@ -62,8 +60,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
     }
 
-    @Ignore
-    // NPE see ConfigLibrary
+    @Ignore("NPE see ConfigLibrary")
     @Test
     public void matchClausesFromProlog() {
         loadTheoryFromTestResourcesDir("test-config.pl");

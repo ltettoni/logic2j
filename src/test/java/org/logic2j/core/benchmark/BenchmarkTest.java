@@ -58,10 +58,8 @@ public class BenchmarkTest extends PrologTestBase {
 
     /**
      * Takes lots of time and stack - use with parcimony and with -Xss10m. By defaut we @Ignore this test.
-     * 
-     * 
      */
-    @Ignore
+    @Ignore("Temporarily disabled because takes a lot of time and resources. Use with -Xss10m")
     @Test
     public void millionLoops() {
         loadTheoryFromTestResourcesDir("test-data.pl");

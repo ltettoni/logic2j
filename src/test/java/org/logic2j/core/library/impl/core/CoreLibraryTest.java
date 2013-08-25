@@ -64,7 +64,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     // TODO Some uncertainties re. the behaviour of no-op binding of free bindings. To be clarified.
-    @Ignore
+    @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
     @Test
     public void solvePrimitivePredicates_representation_FREE() {
         assertEquals(term("X"), assertOneSolution("X=X").binding("X"));
@@ -215,10 +215,8 @@ public class CoreLibraryTest extends PrologTestBase {
 
     }
 
-    /**
-     * FIXME: This fails with an Exception - check what proper behaviour should be and fix
-     */
-    @Ignore
+    // FIXME: This fails with an Exception - check what proper behaviour should be and fix
+    @Ignore("FIXME: This fails with an Exception - check what proper behaviour should be and fix")
     @Test
     public void atom_length_free_var() {
         assertNoSolution("atom_length(X, 3)");
