@@ -41,16 +41,4 @@ public enum Continuation {
     public static Continuation requestContinuationWhen(boolean conditionApplies) {
         return conditionApplies ? CONTINUE : USER_ABORT;
     }
-
-    public boolean isContinuing() {
-        return this == CONTINUE;
-    }
-
-    public boolean isUserAbort() {
-        return this == USER_ABORT;
-    }
-
-    public boolean isCut() {
-        return this == CUT;
-    }
 }

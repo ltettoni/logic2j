@@ -160,11 +160,11 @@ public class SolverTest extends PrologTestBase {
         final CountingListener listenerAll = new CountingListener();
         prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);
-        //
+        // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
         prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
         assertEquals(1, maxOneSolution.counter);
-        //
+        // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
         prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
         assertEquals(5, maxFiveSolutions.counter);

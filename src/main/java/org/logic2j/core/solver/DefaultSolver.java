@@ -237,9 +237,6 @@ public class DefaultSolver implements Solver {
                                 }
                             }
 
-                            // if (continuation.isUserAbort()) {
-                            // subFrameForClauses.raiseUserCanceled();
-                            // }
                         } finally {
                             // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                             // Go to next solution: start by clearing our trailing bindings

@@ -32,7 +32,7 @@ public interface Solver {
      * The method to solve a goal.
      * 
      * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
-     * @param theSolutionListener Where to send solutions
+     * @param theSolutionListener Where solutions should be called back.
      */
     Continuation solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
 
