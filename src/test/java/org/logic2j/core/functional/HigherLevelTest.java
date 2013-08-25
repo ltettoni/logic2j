@@ -30,7 +30,6 @@ import org.logic2j.core.library.impl.io.IOLibrary;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
 
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}

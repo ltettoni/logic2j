@@ -215,8 +215,8 @@ public class CoreLibraryTest extends PrologTestBase {
 
     }
 
-    // FIXME: This fails with an Exception - check what proper behaviour should be and fix
-    @Ignore("FIXME: This fails with an Exception - check what proper behaviour should be and fix")
+    // FIXME This fails with an Exception - check what proper behaviour should be and fix
+    @Ignore("FIXME This fails with an Exception - check what proper behaviour should be and fix")
     @Test
     public void atom_length_free_var() {
         assertNoSolution("atom_length(X, 3)");

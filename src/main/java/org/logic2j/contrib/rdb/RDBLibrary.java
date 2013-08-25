@@ -54,8 +54,8 @@ import org.logic2j.core.util.CollectionUtils;
 import org.logic2j.core.util.ReflectUtils;
 
 /**
- * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository. TODO: the
- * {@link #select(SolutionListener, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
+ * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
+ * TODO the {@link #select(SolutionListener, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
  * transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {

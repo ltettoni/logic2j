@@ -95,7 +95,7 @@ public class DefaultTheoryManager implements TheoryManager {
             throw new InvalidTermException("Could not load theory from resource " + theTheory + ": " + e);
         }
         if (text instanceof InputStream) {
-            // FIXME: there will be encoding issues when using InputStream instead of Reader
+            // FIXME there will be encoding issues when using InputStream instead of Reader
             final Reader reader = new InputStreamReader((InputStream) text);
             return load(reader);
         }

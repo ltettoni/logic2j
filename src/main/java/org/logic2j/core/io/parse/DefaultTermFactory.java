@@ -53,7 +53,7 @@ public class DefaultTermFactory implements TermFactory {
         return normalized;
     }
 
-    // TODO: be smarter to handle Arrays and Collections, and Iterables
+    // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
     public Term create(Object theObject, FactoryMode theMode) {
         if (theObject instanceof CharSequence) {

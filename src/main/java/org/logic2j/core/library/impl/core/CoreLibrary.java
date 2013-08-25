@@ -151,7 +151,7 @@ public class CoreLibrary extends LibraryBase {
 
         // final Term target = resolveNonVar(theGoal, theBindings, "not");
         final class NegationListener implements SolutionListener {
-            boolean found = false;
+            private boolean found = false;
 
             @Override
             public Continuation onSolution() {

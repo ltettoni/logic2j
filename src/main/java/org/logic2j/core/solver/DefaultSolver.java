@@ -103,7 +103,7 @@ public class DefaultSolver implements Solver {
                 solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, theSolutionListener);
             }
         } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            // TODO: call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
+            // TODO call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
             // implemented)
             if (arity != 1) {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);

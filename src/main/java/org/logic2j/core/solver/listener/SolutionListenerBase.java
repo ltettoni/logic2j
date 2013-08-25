@@ -25,7 +25,7 @@ package org.logic2j.core.solver.listener;
 public class SolutionListenerBase implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
 
-    // TODO: timing and logging should use on AOP instead, not hardcoding here
+    // TODO timing and logging should use on AOP instead, not hardcoding here
     private final long startTime = System.currentTimeMillis();
     private long lastSolutionTime = this.startTime;
 

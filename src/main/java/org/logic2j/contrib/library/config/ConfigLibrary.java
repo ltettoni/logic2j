@@ -27,7 +27,7 @@ import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
- * Preliminary - should be reviewed FIXME: This class should not know of RDBClauseProvider!
+ * Preliminary - should be reviewed FIXME This class should not know of RDBClauseProvider!
  */
 public class ConfigLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConfigLibrary.class);

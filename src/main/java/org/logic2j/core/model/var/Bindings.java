@@ -260,7 +260,7 @@ public class Bindings {
             // The original name of our variable
             final String originalVarName = originalVar.getName();
             // Now reach the effective lastest binding
-            final Binding finalBinding = initialBinding.followLinks(); // FIXME: we did this above already - can't we remember it???
+            final Binding finalBinding = initialBinding.followLinks(); // FIXME we did this above already - can't we remember it???
             final Var finalVar = finalBinding.getVar();
             switch (finalBinding.getType()) {
             case LITERAL:
@@ -326,7 +326,7 @@ public class Bindings {
         // Search root level
         int index = 0;
         for (final Binding binding : this.bindings) {
-            // FIXME: dubious use of == instead of structural equality
+            // FIXME dubious use of == instead of structural equality
             if (binding.getVar() == theVar && index == theVar.getIndex()) {
                 return this;
             }
