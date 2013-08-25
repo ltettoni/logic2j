@@ -36,9 +36,6 @@ public class DefaultSolver implements Solver {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
     private static final boolean debug = logger.isDebugEnabled();
 
-    // TODO WTF is this?
-    public int internalCounter = 0;
-
     private final PrologImplementation prolog;
 
     public DefaultSolver(PrologImplementation theProlog) {
@@ -88,7 +85,6 @@ public class DefaultSolver implements Solver {
 
                     @Override
                     public Continuation onSolution() {
-                        DefaultSolver.this.internalCounter++;
                         final int nextIndex = index + 1;
                         final Term rhs = goalStruct.getArg(nextIndex); // Usually the right-hand-side of a binary ','
                         final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, theGoalBindings, listeners[nextIndex]);
