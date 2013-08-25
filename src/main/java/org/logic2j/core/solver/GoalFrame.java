@@ -95,33 +95,30 @@ public final class GoalFrame {
     // User cancellation request and status
     // ---------------------------------------------------------------------------
 
-    public void raiseUserCanceled() {
-        this.userCanceled = true;
-    }
+    // public void raiseUserCanceled() {
+    // this.userCanceled = true;
+    // }
 
-    public boolean isUserCanceled() {
-        return this.userCanceled;
-    }
+    // public boolean isUserCanceled() {
+    // return this.userCanceled;
+    // }
 
     // ---------------------------------------------------------------------------
     // Management of the cut (!)
     // ---------------------------------------------------------------------------
 
-    public void signalCut() {
-        this.cutIndex = this.nbChildren - 1;
-        logger.debug("!!! Executed CUT on goalFrame={}, setting cutIndex={}", this, this.cutIndex);
-    }
+    // public void signalCut() {
+    // this.cutIndex = this.nbChildren - 1;
+    // logger.debug("!!! Executed CUT on goalFrame={}, setting cutIndex={}", this, this.cutIndex);
+    // }
 
-    public boolean isCut() {
-        return this.cutIndex != UNDEF_INDEX;
-    }
+    // public boolean isCut() {
+    // return this.cutIndex != UNDEF_INDEX;
+    // }
 
-    /**
-     * @return TBD
-     */
-    public boolean hasCutInSiblingSubsequentGoal() {
-        return this.parent.cutIndex >= this.childIndex;
-    }
+    // public boolean hasCutInSiblingSubsequentGoal() {
+    // return this.parent.cutIndex >= this.childIndex;
+    // }
 
     // ---------------------------------------------------------------------------
     // Override top Object methods

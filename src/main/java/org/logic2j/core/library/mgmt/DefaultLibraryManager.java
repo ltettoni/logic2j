@@ -32,6 +32,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryContent;
 import org.logic2j.core.theory.TheoryManager;
@@ -137,7 +138,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 final Class<?>[] paramTypes = method.getParameterTypes();
                 final Class<?> returnType = method.getReturnType();
                 final PrimitiveType type;
-                if (Void.class.equals(returnType) || Void.TYPE.equals(returnType)) {
+                if (Continuation.class.equals(returnType)) {
                     type = PrimitiveType.PREDICATE;
                 } else if (Term.class.equals(returnType)) {
                     type = PrimitiveType.FUNCTOR;

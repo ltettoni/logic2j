@@ -36,7 +36,9 @@ public class DefaultSolver implements Solver {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
     private static final boolean debug = logger.isDebugEnabled();
 
+    // TODO WTF is this?
     public int internalCounter = 0;
+
     private final PrologImplementation prolog;
 
     public DefaultSolver(PrologImplementation theProlog) {
@@ -63,11 +65,13 @@ public class DefaultSolver implements Solver {
 
     private Continuation solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
         if (debug) {
-            logger.debug("Entering solveRecursive({}), callerFrame={}", goalTerm, callerFrame);
+            logger.debug(">> Entering solveRecursive(\"{}\"), callerFrame={}", goalTerm, callerFrame);
         }
         if (!(goalTerm instanceof Struct)) {
             throw new InvalidTermException("Goal \"" + goalTerm + "\" is not a Struct and cannot be solved");
         }
+        Continuation result = Continuation.CONTINUE;
+
         // Extract all features of the goal to solve
         final Struct goalStruct = (Struct) goalTerm;
         final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
@@ -76,11 +80,15 @@ public class DefaultSolver implements Solver {
 
         // Check if goal is a system predicate or a simple one to match against the theory
         if (Struct.FUNCTOR_COMMA == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            // Logical AND
+            // Logical AND. Typically the arity=2 since "," is a binary predicate. But in logic2j we allow more.
             final SolutionListener[] listeners = new SolutionListener[arity];
-            // The last listener is the one of this overall COMMA sequence
+            // The last listener is the one that called us (usually callbacks into the application)
             listeners[arity - 1] = theSolutionListener;
-            // Allocates N-1 listeners. On solution, each will trigger solving of the next term
+            // Allocates N-1 listeners, usually this means one.
+            // On solution, each will trigger solving of the next term
+            if (debug) {
+                logger.debug("Handing AND, arity={}", arity);
+            }
             for (int i = 0; i < arity - 1; i++) {
                 final int index = i;
                 listeners[index] = new SolutionListener() {
@@ -89,17 +97,20 @@ public class DefaultSolver implements Solver {
                     public Continuation onSolution() {
                         DefaultSolver.this.internalCounter++;
                         final int nextIndex = index + 1;
-                        solveGoalRecursive(goalStruct.getArg(nextIndex), theGoalBindings, callerFrame, listeners[nextIndex]);
-                        return Continuation.CONTINUE;
+                        final Term rhs = goalStruct.getArg(nextIndex); // Usually the right-hand-side of a binary ','
+                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, theGoalBindings, callerFrame, listeners[nextIndex]);
+                        return continuationFromSubGoal;
                     }
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
-            solveGoalRecursive(goalStruct.getArg(0), theGoalBindings, callerFrame, listeners[0]);
+            final Term lhs = goalStruct.getArg(0);
+            result = solveGoalRecursive(lhs, theGoalBindings, callerFrame, listeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical OR
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
+                // TODO what do we do with the "Continuation" result of the method?
                 solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, callerFrame, theSolutionListener);
             }
         } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
@@ -116,14 +127,18 @@ public class DefaultSolver implements Solver {
             if (debug) {
                 logger.debug("Calling FUNCTOR_CALL ------------------ {}", target);
             }
-            solveGoalRecursive(target, effectiveGoalBindings, callerFrame, theSolutionListener);
+            result = solveGoalRecursive(target, effectiveGoalBindings, callerFrame, theSolutionListener);
         } else if (prim != null) {
+            // ---------------------------------------------------------------------------
             // Primitive implemented in Java
+            // ---------------------------------------------------------------------------
+
             final Object resultOfPrimitive = prim.invoke(goalStruct, theGoalBindings, callerFrame, theSolutionListener);
             // Extract necessary objects from our current state
 
             switch (prim.getType()) {
             case PREDICATE:
+                result = (Continuation) resultOfPrimitive;
                 break;
             case FUNCTOR:
                 if (debug) {
@@ -145,32 +160,43 @@ public class DefaultSolver implements Solver {
             final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
             for (final ClauseProvider provider : providers) {
                 for (final Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
-
+                    if (result == Continuation.CUT) {
+                        if (debug) {
+                            logger.debug("Current status is {}: stop finding more clauses", result);
+                        }
+                        break;
+                    }
+                    if (result == Continuation.USER_ABORT) {
+                        if (debug) {
+                            logger.debug("Current status is {}: abort finding more clauses", result);
+                        }
+                        break;
+                    }
                     if (debug) {
-                        logger.debug("Trying clause {}", clause);
+                        logger.debug("Trying clause \"{}\", current status={}", clause, result);
                     }
-                    // Handle user cancellation at beginning of loop, not at the end.
-                    // This is in case user code returns onSolution()=false (do not continue)
-                    // on what happens to be the last normal solution - in this case we can't tell if
-                    // we are exiting because user requested it, or because there's no other solution!
-                    if (subFrameForClauses.isUserCanceled()) {
-                        if (debug) {
-                            logger.debug("!!! Stopping on SolutionListener's request");
-                        }
-                        break;
-                    }
-                    if (subFrameForClauses.isCut()) {
-                        if (debug) {
-                            logger.debug("!!! cut found in clause");
-                        }
-                        break;
-                    }
-                    if (subFrameForClauses.hasCutInSiblingSubsequentGoal()) {
-                        if (debug) {
-                            logger.debug("!!! Stopping because of cut in sibling subsequent goal");
-                        }
-                        break;
-                    }
+                    // // Handle user cancellation at beginning of loop, not at the end.
+                    // // This is in case user code returns onSolution()=false (do not continue)
+                    // // on what happens to be the last normal solution - in this case we can't tell if
+                    // // we are exiting because user requested it, or because there's no other solution!
+                    // if (subFrameForClauses.isUserCanceled()) {
+                    // if (debug) {
+                    // logger.debug("!!! Stopping on SolutionListener's request");
+                    // }
+                    // break;
+                    // }
+                    // if (subFrameForClauses.isCut()) {
+                    // if (debug) {
+                    // logger.debug("!!! cut found in clause");
+                    // }
+                    // break;
+                    // }
+                    // if (subFrameForClauses.hasCutInSiblingSubsequentGoal()) {
+                    // if (debug) {
+                    // logger.debug("!!! Stopping because of cut in sibling subsequent goal");
+                    // }
+                    // break;
+                    // }
                     // Clone the variables so that we won't mutate our current clause's ones
                     final Bindings immutableVars = clause.getBindings();
                     final Bindings clauseVars = new Bindings(immutableVars);
@@ -191,27 +217,52 @@ public class DefaultSolver implements Solver {
 
                     if (headUnified) {
                         try {
+                            final Continuation continuation;
                             if (clause.isFact()) {
                                 if (debug) {
-                                    logger.debug("{} is a fact", clauseHead);
+                                    logger.debug("{} is a fact, callback one solution", clauseHead);
                                 }
                                 // Notify one solution, and handle result if user wants to continue or not.
-                                final Continuation continuation = theSolutionListener.onSolution();
-                                if (continuation.isUserAbort()) {
-                                    subFrameForClauses.raiseUserCanceled();
+                                continuation = theSolutionListener.onSolution();
+                                if (continuation == Continuation.CUT) {
+                                    result = Continuation.CUT;
+                                } else if (continuation == Continuation.USER_ABORT) {
+                                    // TODO should we just "return" from here?
+                                    result = Continuation.USER_ABORT;
                                 }
                             } else {
                                 // Not a fact, it's a theorem - it has a body
                                 final Term newGoalTerm = clause.getBody();
                                 if (debug) {
-                                    logger.debug(">> RECURS: {} is a theorem, body={}", clauseHead, newGoalTerm);
+                                    logger.debug("Clause {} is a theorem, clause's body is \"{}\"", clauseHead, newGoalTerm);
                                 }
                                 // Solve the body in our current subFrame
-                                solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
+                                continuation = solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
                                 if (debug) {
-                                    logger.debug("<< RECURS");
+                                    logger.debug("  back to clause \"{}\" with continuation={}", clause, continuation);
+                                }
+                                if (continuation == Continuation.USER_ABORT) {
+                                    // TODO should we just "return" from here?
+                                    result = Continuation.USER_ABORT;
+                                }
+
+                                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                // TODO There is something really ugly here but I'm in the middle of a big refactoring and
+                                // did not find anything better yet.
+                                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                if (newGoalTerm instanceof Struct) {
+                                    String bodyFunctor = ((Struct) newGoalTerm).getName();
+                                    if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
+                                        if (continuation == Continuation.CUT) {
+                                            result = Continuation.CUT;
+                                        }
+                                    }
                                 }
                             }
+
+                            // if (continuation.isUserAbort()) {
+                            // subFrameForClauses.raiseUserCanceled();
+                            // }
                         } finally {
                             // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                             // Go to next solution: start by clearing our trailing bindings
@@ -226,11 +277,15 @@ public class DefaultSolver implements Solver {
             if (debug) {
                 logger.debug("Last ClauseProvider iterated");
             }
+            // if (result == Continuation.CUT) {
+            // logger.debug("Iterating clauses was stopped by a CUT, yet return CONTINUE");
+            // result = Continuation.CONTINUE;
+            // }
         }
         if (debug) {
-            logger.debug("Leaving solveGoalRecursive({})", goalTerm);
+            logger.debug("<< Exit    solveGoalRecursive(\"{}\") with {}", goalTerm, result);
         }
-        return Continuation.CONTINUE;
+        return result;
     }
 
     @Override

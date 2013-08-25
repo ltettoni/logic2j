@@ -147,7 +147,7 @@ public abstract class PrologTestBase {
             final Term parsed = this.prolog.term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
             solve = this.prolog.solve(parsed);
-            assertEquals("Goal " + goal + " did has different number of solutions", theNumber, solve.number());
+            assertEquals("Goal \"" + goal + "\" has different number of solutions", theNumber, solve.number());
         }
         return solve;
     }

@@ -27,6 +27,7 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
@@ -46,7 +47,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public void bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
+    public Continuation bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
         final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
         assertValidBindings(nameBindings, "bind/2");
         final Struct nameTerm = (Struct) nameBindings.getReferrer();
@@ -55,7 +56,7 @@ public class PojoLibrary extends LibraryBase {
         final Object instance = extract(name);
         final Term instanceTerm = createConstantTerm(instance);
         final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings, theGoalFrame);
-        notifyIfUnified(unified, theGoalFrame, theListener);
+        return notifyIfUnified(unified, theGoalFrame, theListener);
     }
 
     /**

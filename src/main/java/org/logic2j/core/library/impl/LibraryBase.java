@@ -31,6 +31,7 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
@@ -66,12 +67,15 @@ public class LibraryBase implements PLibrary {
      * Notify theSolutionListener that a solution has been found.
      * 
      * @param theSolutionListener
+     * @return
      */
-    protected void notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
-        final boolean userRequestsAbort = theSolutionListener.onSolution().isUserAbort();
-        if (userRequestsAbort) {
-            theGoalFrame.raiseUserCanceled();
-        }
+    protected Continuation notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
+        final Continuation continuation = theSolutionListener.onSolution();
+        // final boolean userRequestsAbort = continuation.isUserAbort();
+        // if (userRequestsAbort) {
+        // theGoalFrame.raiseUserCanceled();
+        // }
+        return continuation;
     }
 
     /**
@@ -81,15 +85,20 @@ public class LibraryBase implements PLibrary {
      * @param unified
      * @param theGoalFrame
      * @param theListener
+     * @return
      */
-    protected void notifyIfUnified(boolean unified, GoalFrame theGoalFrame, SolutionListener theListener) {
+    protected Continuation notifyIfUnified(boolean unified, GoalFrame theGoalFrame, SolutionListener theListener) {
+        final Continuation continuation;
         if (unified) {
             try {
-                notifySolution(theGoalFrame, theListener);
+                continuation = notifySolution(theGoalFrame, theListener);
             } finally {
                 deunify(theGoalFrame);
             }
+        } else {
+            continuation = Continuation.CONTINUE;
         }
+        return continuation;
     }
 
     /**

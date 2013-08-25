@@ -114,7 +114,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     /**
-     * Just count solutions - won't request user cancellation.
+     * A {@link SolutionListener} that counts solutions - won't request user cancellation.
      */
     static class CountingListener implements SolutionListener {
         int counter = 0;
@@ -127,7 +127,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     /**
-     * Will request user cancellation after the first solution was found.
+     * A {@link SolutionListener} that will request user cancellation after the first solution was found.
      */
     static class Max1Listener implements SolutionListener {
         int counter = 0;
@@ -140,8 +140,7 @@ public class SolverTest extends PrologTestBase {
     }
 
     /**
-     * Will request user cancellation after 5 solutions were found.
-     * 
+     * A {@link SolutionListener} that will request user cancellation after 5 solutions were found.
      */
     static class Max5Listener implements SolutionListener {
         int counter = 0;
@@ -162,13 +161,13 @@ public class SolverTest extends PrologTestBase {
         prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);
         //
-        final Max1Listener listener1 = new Max1Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), listener1);
-        assertEquals(1, listener1.counter);
+        final Max1Listener maxOneSolution = new Max1Listener();
+        prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
+        assertEquals(1, maxOneSolution.counter);
         //
-        final Max5Listener listener5 = new Max5Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), listener5);
-        assertEquals(5, listener5.counter);
+        final Max5Listener maxFiveSolutions = new Max5Listener();
+        prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
+        assertEquals(5, maxFiveSolutions.counter);
     }
 
 }

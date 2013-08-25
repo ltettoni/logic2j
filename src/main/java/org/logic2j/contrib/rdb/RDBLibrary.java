@@ -48,6 +48,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.GoalFrame;
+import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.UniqueSolutionListener;
 import org.logic2j.core.util.CollectionUtils;
@@ -79,7 +80,7 @@ public class RDBLibrary extends LibraryBase {
     }
 
     @Primitive
-    public void select(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
+    public Continuation select(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
         final Term theDataSource = theArguments[0];
         final Term theExpression = theArguments[1];
         final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
@@ -150,7 +151,7 @@ public class RDBLibrary extends LibraryBase {
         if (nbTbl == 0) {
             // Pass through
             logger.error("select/3 did not extract any reference to a table, while processing expression \"{}\" - no matches", conditions);
-            return;
+            return Continuation.CONTINUE;
         }
 
         // And convert Struct to references to tables, columns and column criteria
@@ -306,6 +307,7 @@ public class RDBLibrary extends LibraryBase {
                 unifyAndNotify(projectedVars, objects, originalBindings, theGoalFrame, theListener);
             }
         }
+        return Continuation.CONTINUE;
     }
 
     /**

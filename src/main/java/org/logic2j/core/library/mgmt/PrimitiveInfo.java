@@ -45,7 +45,18 @@ public class PrimitiveInfo {
     private static final boolean debug = logger.isDebugEnabled();
 
     public static enum PrimitiveType {
-        DIRECTIVE, PREDICATE, FUNCTOR
+        /**
+         * Not yet implemented.
+         */
+        DIRECTIVE,
+        /**
+         * A predicate implemented as a Java method, will produce solution(s) or not via the {@link SolutionListener} interface.
+         */
+        PREDICATE,
+        /**
+         * A functor yields a result, such as +(2,3).
+         */
+        FUNCTOR
     }
 
     private final PrimitiveType type;

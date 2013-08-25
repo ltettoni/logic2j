@@ -32,7 +32,11 @@ public enum Continuation {
     /**
      * Value that {@link #onSolution()} must return for the inference engine to stop solving (ie. means caller requests abort).
      */
-    USER_ABORT;
+    USER_ABORT,
+    /**
+     * A cut "!" has been found - this will prune the search tree to the last solution found.
+     */
+    CUT;
 
     public static Continuation requestContinuationWhen(boolean conditionApplies) {
         return conditionApplies ? CONTINUE : USER_ABORT;
@@ -44,5 +48,9 @@ public enum Continuation {
 
     public boolean isUserAbort() {
         return this == USER_ABORT;
+    }
+
+    public boolean isCut() {
+        return this == CUT;
     }
 }
