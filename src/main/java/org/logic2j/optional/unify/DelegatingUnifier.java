@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.logic2j.core.model.exception.InvalidTermException;
-import org.logic2j.core.model.exception.PrologInternalError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -31,12 +30,11 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.BindingTrail;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.unify.Unifier;
 
 /**
  * A {@link Unifier} that uses reflecton to determine which method to invoke to unify 2 concrete {@link Term}s. The methods invoked must
- * have the exact signature unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) where the
+ * have the exact signature unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2) where the
  * classes of term1 and term2 are the effective final subclasses.
  */
 public class DelegatingUnifier implements Unifier {
@@ -59,16 +57,16 @@ public class DelegatingUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         for (final Method method : this.getClass().getMethods()) {
             if ("unify".equals(method.getName())) {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
                 if (parameterTypes[0].isAssignableFrom(term1.getClass()) && parameterTypes[1].isAssignableFrom(term2.getClass())) {
                     try {
                         BindingTrail.markBeforeAddingBindings();
-                        final boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2, theGoalFrame });
+                        final boolean unified = (Boolean) method.invoke(this, new Object[] { term1, term2, theBindings1, theBindings2 });
                         if (!unified) {
-                            deunify(theGoalFrame);
+                            deunify();
                         }
                         return unified;
                     } catch (final InvocationTargetException e) {
@@ -101,57 +99,54 @@ public class DelegatingUnifier implements Unifier {
 
     // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
 
-    public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2) {
         if (!(s1.nameAndArityMatch(s2))) {
             return false;
         }
         final int arity = s1.getArity();
         for (int i = 0; i < arity; i++) {
-            if (!unify(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
+            if (!unify(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2)) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean unify(Struct term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(Struct term1, TNumber term2, Bindings theBindings1, Bindings theBindings2) {
         return false;
     }
 
-    public boolean unify(Struct term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(Struct term1, Var term2, Bindings theBindings1, Bindings theBindings2) {
         // Second term is var, we prefer have it first
-        return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
+        return unify(term2, term1, theBindings2, theBindings1);
     }
 
-    public boolean unify(TNumber term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(TNumber term1, Struct term2, Bindings theBindings1, Bindings theBindings2) {
         return false;
     }
 
-    public boolean unify(TNumber term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(TNumber term1, TNumber term2, Bindings theBindings1, Bindings theBindings2) {
         return term1.equals(term2);
     }
 
-    public boolean unify(TNumber term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(TNumber term1, Var term2, Bindings theBindings1, Bindings theBindings2) {
         // Second term is var, we prefer have it first
-        return unify(term2, term1, theBindings2, theBindings1, theGoalFrame);
+        return unify(term2, term1, theBindings2, theBindings1);
     }
 
-    public boolean unify(Var term1, Struct term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    public boolean unify(Var term1, Struct term2, Bindings theBindings1, Bindings theBindings2) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2);
     }
 
-    public boolean unify(Var term1, TNumber term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    public boolean unify(Var term1, TNumber term2, Bindings theBindings1, Bindings theBindings2) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2);
     }
 
-    public boolean unify(Var term1, Var term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2, theGoalFrame);
+    public boolean unify(Var term1, Var term2, Bindings theBindings1, Bindings theBindings2) {
+        return unifyVarToWhatever(term1, term2, theBindings1, theBindings2);
     }
 
-    private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2, GoalFrame theGoalFrame) {
-        if (theGoalFrame == null) {
-            throw new PrologInternalError("Is this normal that theGoalFrame is null here?");
-        }
+    private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2) {
         // Variable:
         // - when anonymous, unifies
         // - when free, bind it
@@ -175,14 +170,14 @@ public class DelegatingUnifier implements Unifier {
             // We have followed term1 to end up with a literal. It may either unify or not depending if
             // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
             // part as term2
-            return unify(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings(), theGoalFrame);
+            return unify(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings());
         } else {
             throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
         }
     }
 
     @Override
-    public void deunify(GoalFrame theGoalFrame) {
+    public void deunify() {
         BindingTrail.undoBindingsUntilPreviousMark();
     }
 }

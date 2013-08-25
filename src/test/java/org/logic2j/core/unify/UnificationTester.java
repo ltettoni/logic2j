@@ -18,14 +18,12 @@
 package org.logic2j.core.unify;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solver.BindingTrailTestUtils;
-import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. TODO replace this class by hamctest 1.3
@@ -42,7 +40,6 @@ class UnificationTester {
     public Term right;
     public Bindings leftVars;
     public Bindings rightVars;
-    private GoalFrame frame;
     private Boolean expectedResult = null; // TODO Good candidates for hamctest 1.3
     private Boolean result = null; // TODO Good candidates for hamctest 1.3
 
@@ -66,7 +63,6 @@ class UnificationTester {
         this.right = TERM_API.normalize(theRight, null);
         this.leftVars = new Bindings(this.left);
         this.rightVars = new Bindings(this.right);
-        this.frame = new GoalFrame();
     }
 
     /**
@@ -81,7 +77,6 @@ class UnificationTester {
         this.right = TERM_API.normalize(theRight, null);
         this.leftVars = bindings;
         this.rightVars = bindings;
-        this.frame = new GoalFrame();
     }
 
     /**
@@ -91,13 +86,13 @@ class UnificationTester {
      */
     private boolean unifyLR(StringBuilder theSignature) {
         logger.info("Unifying {} to {}", this.left, this.right);
-        final boolean unified = this.unifier.unify(this.left, this.leftVars, this.right, this.rightVars, this.frame);
-        logger.debug(" result={}, trailFrame={}", unified, this.frame);
+        final boolean unified = this.unifier.unify(this.left, this.leftVars, this.right, this.rightVars);
+        logger.debug(" result={}", unified);
         logger.debug(" leftVars={}", this.leftVars);
         logger.debug(" rightVars={}", this.rightVars);
         logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        appendSignature(theSignature, this.leftVars, this.rightVars, this.frame);
+        appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {
             assertUnificationResult(unified);
@@ -114,11 +109,11 @@ class UnificationTester {
 
     private boolean unifyRL(StringBuilder theSignature) {
         logger.info("Unifying {} to {}", this.right, this.left);
-        final boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars, this.frame);
-        logger.debug(" result={}, trailFrame={}", unified, this.frame);
+        final boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars);
+        logger.debug(" result={}", unified);
         logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        appendSignature(theSignature, this.leftVars, this.rightVars, this.frame);
+        appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {
             assertUnificationResult(unified);
@@ -169,22 +164,19 @@ class UnificationTester {
      * @param theSignature
      * @param theBindings1
      * @param theBindings2
-     * @param theFrame
      */
-    private void appendSignature(StringBuilder theSignature, Bindings theBindings1, Bindings theBindings2, GoalFrame theFrame) {
+    private void appendSignature(StringBuilder theSignature, Bindings theBindings1, Bindings theBindings2) {
         theSignature.append(theBindings1.toString());
         theSignature.append("  ");
         theSignature.append(theBindings2.toString());
-        theSignature.append("  ");
-        theSignature.append(theFrame.toString());
     }
 
     /**
      * Deunify and do some state checking.
      */
     private void deunify() {
-        this.unifier.deunify(this.frame);
-        logger.debug("Deunify, trailFrame={}", this.frame);
+        this.unifier.deunify();
+        logger.debug("Deunify");
         // No more bindings expected
         assertNbBindings(0);
     }
@@ -202,7 +194,6 @@ class UnificationTester {
      * @param theExpectedNbBindings
      */
     private void assertNbBindings(int theExpectedNbBindings) {
-        assertNotNull(this.frame);
         assertEquals("Number of var bindings", theExpectedNbBindings, BindingTrailTestUtils.nbBindings());
     }
 

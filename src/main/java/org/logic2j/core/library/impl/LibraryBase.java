@@ -30,7 +30,6 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
@@ -52,48 +51,43 @@ public class LibraryBase implements PLibrary {
      * @param theBindings1
      * @param t2
      * @param theBindings2
-     * @param theGoalFrame
      * @return The result of unification.
      */
-    protected boolean unify(Term t1, Bindings theBindings1, Term t2, Bindings theBindings2, GoalFrame theGoalFrame) {
-        return getProlog().getUnifier().unify(t1, theBindings1, t2, theBindings2, theGoalFrame);
+    protected boolean unify(Term t1, Bindings theBindings1, Term t2, Bindings theBindings2) {
+        return getProlog().getUnifier().unify(t1, theBindings1, t2, theBindings2);
     }
 
-    protected void deunify(GoalFrame theGoalFrame) {
-        getProlog().getUnifier().deunify(theGoalFrame);
+    protected void deunify() {
+        getProlog().getUnifier().deunify();
     }
 
     /**
      * Notify theSolutionListener that a solution has been found.
      * 
      * @param theSolutionListener
+     * 
      * @return
      */
-    protected Continuation notifySolution(GoalFrame theGoalFrame, SolutionListener theSolutionListener) {
+    protected Continuation notifySolution(SolutionListener theSolutionListener) {
         final Continuation continuation = theSolutionListener.onSolution();
-        // final boolean userRequestsAbort = continuation.isUserAbort();
-        // if (userRequestsAbort) {
-        // theGoalFrame.raiseUserCanceled();
-        // }
         return continuation;
     }
 
     /**
-     * When unified is true, call {@link #notifySolution(GoalFrame, SolutionListener)}, and then call {@link #deunify(GoalFrame)}. Otherwise
+     * When unified is true, call {@link #notifySolution(SolutionListener)}, and then call {@link #deunify()}. Otherwise
      * nothing is done.
      * 
      * @param unified
-     * @param theGoalFrame
      * @param theListener
      * @return
      */
-    protected Continuation notifyIfUnified(boolean unified, GoalFrame theGoalFrame, SolutionListener theListener) {
+    protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener) {
         final Continuation continuation;
         if (unified) {
             try {
-                continuation = notifySolution(theGoalFrame, theListener);
+                continuation = notifySolution(theListener);
             } finally {
-                deunify(theGoalFrame);
+                deunify();
             }
         } else {
             continuation = Continuation.CONTINUE;
@@ -162,13 +156,13 @@ public class LibraryBase implements PLibrary {
         return getProlog().getTermFactory().create(anyObject, FactoryMode.ATOM);
     }
 
-    protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, GoalFrame theGoalFrame, SolutionListener theListener) {
+    protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, SolutionListener theListener) {
         final Term[] values = new Term[theValues.length];
         for (int i = 0; i < theValues.length; i++) {
             values[i] = createConstantTerm(theValues[i]);
         }
-        final boolean unified = unify(new Struct("group", theVariables), theBindings, new Struct("group", values), theBindings, theGoalFrame);
-        notifyIfUnified(unified, theGoalFrame, theListener);
+        final boolean unified = unify(new Struct("group", theVariables), theBindings, new Struct("group", values), theBindings);
+        notifyIfUnified(unified, theListener);
     }
 
     // ---------------------------------------------------------------------------

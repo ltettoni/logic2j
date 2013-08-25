@@ -25,7 +25,6 @@ import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
@@ -40,7 +39,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
     }
 
     @Primitive
-    public Continuation int_range(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theLowerBound, Term theIterable, Term theUpperBound) {
+    public Continuation int_range(SolutionListener theListener, Bindings theBindings, Term theLowerBound, Term theIterable, Term theUpperBound) {
         final Bindings b1 = theBindings.focus(theLowerBound, TNumber.class);
         assertValidBindings(b1, "int_range/3");
         final long lower = ((TNumber) b1.getReferrer()).longValue();
@@ -51,8 +50,8 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
         for (long iter = lower; iter <= upper; iter++) {
             final TLong iterTerm = new TLong(iter);
-            final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings, theGoalFrame);
-            notifyIfUnified(unified, theGoalFrame, theListener);
+            final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings);
+            notifyIfUnified(unified, theListener);
         }
         return Continuation.CONTINUE;
     }

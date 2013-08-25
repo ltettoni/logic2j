@@ -26,12 +26,9 @@ import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
-/**
- */
 public class PojoLibrary extends LibraryBase {
     private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
 
@@ -47,7 +44,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation bind(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theBindingName, Term theTarget) {
+    public Continuation bind(final SolutionListener theListener, Bindings theBindings, Term theBindingName, Term theTarget) {
         final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
         assertValidBindings(nameBindings, "bind/2");
         final Struct nameTerm = (Struct) nameBindings.getReferrer();
@@ -55,8 +52,8 @@ public class PojoLibrary extends LibraryBase {
         final String name = nameTerm.getName();
         final Object instance = extract(name);
         final Term instanceTerm = createConstantTerm(instance);
-        final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings, theGoalFrame);
-        return notifyIfUnified(unified, theGoalFrame, theListener);
+        final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings);
+        return notifyIfUnified(unified, theListener);
     }
 
     /**

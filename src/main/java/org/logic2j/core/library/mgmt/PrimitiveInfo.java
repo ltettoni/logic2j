@@ -26,7 +26,6 @@ import org.logic2j.core.model.exception.RecursionException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
@@ -75,20 +74,19 @@ public class PrimitiveInfo {
     }
 
     /**
-     * @param theGoalFrame
+     * @param theGoalStruct
      * @param theGoalVars
      * @param theGoalStruct
      */
-    public Object invoke(Struct theGoalStruct, Bindings theGoalVars, GoalFrame theGoalFrame, SolutionListener theListener) {
+    public Object invoke(Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
         if (debug) {
             logger.debug("PRIMITIVE > invocation of {}", this);
         }
         final int arity = theGoalStruct.getArity();
-        final int nbargs = isVarargs() ? 4 : (3 + arity);
+        final int nbargs = isVarargs() ? 3 : (2 + arity);
         final Object[] args = new Object[nbargs];
         int i = 0;
         args[i++] = theListener;
-        args[i++] = theGoalFrame;
         args[i++] = theGoalVars;
         if (isVarargs()) {
             // All arguments as an array
@@ -134,11 +132,10 @@ public class PrimitiveInfo {
         }
     }
 
-    private static final GoalFrame UNUSED_GOALFRAME = null;
     private static final SolutionListenerBase NO_LISTENER = null;
 
     public Term invokeFunctor(Struct theGoalStruct, Bindings theGoalVars) {
-        return (Term) invoke(theGoalStruct, theGoalVars, UNUSED_GOALFRAME, NO_LISTENER);
+        return (Term) invoke(theGoalStruct, theGoalVars, NO_LISTENER);
     }
 
     // ---------------------------------------------------------------------------

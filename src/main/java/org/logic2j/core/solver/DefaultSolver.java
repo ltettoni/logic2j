@@ -46,26 +46,19 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, GoalFrame, SolutionListener)} method. The referrer goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, SolutionListener)} method. The referrer goal to solve
      * is in the callerFrame
      * 
      * @param theSolutionListener
      * @param theGoalBindings
      */
-    @Override
     public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
-        return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, new GoalFrame(), theSolutionListener);
+        return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
 
-    // TODO This method only used once - possibly not needed, check if specifying the GoalFrame is needed
-    @Override
-    public Continuation solveGoal(final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
-        return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, callerFrame, theSolutionListener);
-    }
-
-    private Continuation solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final GoalFrame callerFrame, final SolutionListener theSolutionListener) {
+    private Continuation solveGoalRecursive(final Term goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
         if (debug) {
-            logger.debug(">> Entering solveRecursive(\"{}\"), callerFrame={}", goalTerm, callerFrame);
+            logger.debug(">> Entering solveRecursive(\"{}\")", goalTerm);
         }
         if (!(goalTerm instanceof Struct)) {
             throw new InvalidTermException("Goal \"" + goalTerm + "\" is not a Struct and cannot be solved");
@@ -98,20 +91,20 @@ public class DefaultSolver implements Solver {
                         DefaultSolver.this.internalCounter++;
                         final int nextIndex = index + 1;
                         final Term rhs = goalStruct.getArg(nextIndex); // Usually the right-hand-side of a binary ','
-                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, theGoalBindings, callerFrame, listeners[nextIndex]);
+                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, theGoalBindings, listeners[nextIndex]);
                         return continuationFromSubGoal;
                     }
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
             final Term lhs = goalStruct.getArg(0);
-            result = solveGoalRecursive(lhs, theGoalBindings, callerFrame, listeners[0]);
+            result = solveGoalRecursive(lhs, theGoalBindings, listeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical OR
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
                 // TODO what do we do with the "Continuation" result of the method?
-                solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, callerFrame, theSolutionListener);
+                solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, theSolutionListener);
             }
         } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // TODO: call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
@@ -127,13 +120,13 @@ public class DefaultSolver implements Solver {
             if (debug) {
                 logger.debug("Calling FUNCTOR_CALL ------------------ {}", target);
             }
-            result = solveGoalRecursive(target, effectiveGoalBindings, callerFrame, theSolutionListener);
+            result = solveGoalRecursive(target, effectiveGoalBindings, theSolutionListener);
         } else if (prim != null) {
             // ---------------------------------------------------------------------------
             // Primitive implemented in Java
             // ---------------------------------------------------------------------------
 
-            final Object resultOfPrimitive = prim.invoke(goalStruct, theGoalBindings, callerFrame, theSolutionListener);
+            final Object resultOfPrimitive = prim.invoke(goalStruct, theGoalBindings, theSolutionListener);
             // Extract necessary objects from our current state
 
             switch (prim.getType()) {
@@ -155,7 +148,6 @@ public class DefaultSolver implements Solver {
             // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
 
             // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
-            final GoalFrame subFrameForClauses = new GoalFrame(callerFrame);
 
             final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
             for (final ClauseProvider provider : providers) {
@@ -210,7 +202,7 @@ public class DefaultSolver implements Solver {
                     // the trailFrame will remember this.
                     // Solutions will be notified from within this method.
                     // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-                    final boolean headUnified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars, subFrameForClauses);
+                    final boolean headUnified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars);
                     if (debug) {
                         logger.debug("  result=" + headUnified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
                     }
@@ -237,7 +229,7 @@ public class DefaultSolver implements Solver {
                                     logger.debug("Clause {} is a theorem, clause's body is \"{}\"", clauseHead, newGoalTerm);
                                 }
                                 // Solve the body in our current subFrame
-                                continuation = solveGoalRecursive(newGoalTerm, clauseVars, subFrameForClauses, theSolutionListener);
+                                continuation = solveGoalRecursive(newGoalTerm, clauseVars, theSolutionListener);
                                 if (debug) {
                                     logger.debug("  back to clause \"{}\" with continuation={}", clause, continuation);
                                 }
@@ -266,7 +258,7 @@ public class DefaultSolver implements Solver {
                         } finally {
                             // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                             // Go to next solution: start by clearing our trailing bindings
-                            this.prolog.getUnifier().deunify(subFrameForClauses);
+                            this.prolog.getUnifier().deunify();
                         }
                     }
                 }

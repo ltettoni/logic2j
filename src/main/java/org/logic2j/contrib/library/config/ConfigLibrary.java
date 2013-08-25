@@ -23,7 +23,6 @@ import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
@@ -38,7 +37,7 @@ public class ConfigLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation rdb_config(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
+    public Continuation rdb_config(SolutionListener theListener, Bindings theBindings, Term... theArguments) throws SQLException {
         final String driver = ((Struct) theArguments[0]).getName();
         final String connectionString = ((Struct) theArguments[1]).getName();
         final String username = ((Struct) theArguments[2]).getName();

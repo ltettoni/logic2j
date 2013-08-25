@@ -36,14 +36,4 @@ public interface Solver {
      */
     Continuation solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
 
-    /**
-     * The method to solve a goal.
-     * TODO This method only used once - possibly not needed, check if specifying the GoalFrame is needed
-     * 
-     * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
-     * @param callerFrame Use the specified GoalFrame
-     * @param theSolutionListener Where to send solutions
-     */
-    Continuation solveGoal(Bindings theGoal, GoalFrame callerFrame, SolutionListener theSolutionListener);
-
 }

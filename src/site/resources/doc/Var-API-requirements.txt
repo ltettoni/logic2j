@@ -24,7 +24,7 @@ UC 2: Obtain values from within a java primtive
 	  
   
   @Primitive(name = ">")
-  public void expression_greater_than(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+  public void expression_greater_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
     t1 = evaluateFunctor(theBindings, t1);
     t2 = evaluateFunctor(theBindings, t2);
     ...

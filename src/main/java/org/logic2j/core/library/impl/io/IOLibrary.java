@@ -24,7 +24,6 @@ import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
@@ -40,7 +39,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation write(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+    public Continuation write(SolutionListener theListener, Bindings theBindings, Term... terms) {
         for (final Term term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
             final Term value = b.getReferrer();
@@ -49,17 +48,17 @@ public class IOLibrary extends LibraryBase {
             format = IOLibrary.unquote(format);
             this.writer.print(format);
         }
-        return notifySolution(theGoalFrame, theListener);
+        return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation nl(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
+    public Continuation nl(SolutionListener theListener, Bindings theBindings) {
         this.writer.print('\n');
-        return notifySolution(theGoalFrame, theListener);
+        return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation log(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+    public Continuation log(SolutionListener theListener, Bindings theBindings, Term... terms) {
         for (final Term term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
             assertValidBindings(b, "write/*");
@@ -69,13 +68,13 @@ public class IOLibrary extends LibraryBase {
             format = IOLibrary.unquote(format);
             logger.info(format);
         }
-        return notifySolution(theGoalFrame, theListener);
+        return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation nolog(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... terms) {
+    public Continuation nolog(SolutionListener theListener, Bindings theBindings, Term... terms) {
         // Do nothing, but succeeds!
-        return notifySolution(theGoalFrame, theListener);
+        return notifySolution(theListener);
     }
 
     private static String unquote(String st) {

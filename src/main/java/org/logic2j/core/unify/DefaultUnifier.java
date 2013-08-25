@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.unify;
 
-import org.logic2j.core.model.exception.PrologInternalError;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
@@ -25,7 +24,6 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.BindingTrail;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.util.ReportUtils;
 
 /**
@@ -34,13 +32,13 @@ import org.logic2j.core.util.ReportUtils;
 public class DefaultUnifier implements Unifier {
 
     @Override
-    public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
+    public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         // Remember where we were so that we can deunify
         BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
-        final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2, theGoalFrame);
-        if (!unified /* && theGoalFrame != null */) {
-            deunify(theGoalFrame);
+        final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2);
+        if (!unified) {
+            deunify();
         }
         return unified;
     }
@@ -56,15 +54,11 @@ public class DefaultUnifier implements Unifier {
      * @param theBindings1
      * @param term2
      * @param theBindings2
-     * @param theGoalFrame
      * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
      */
-    private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame) {
-        if (theGoalFrame == null) {
-            throw new PrologInternalError("Is this normal that theGoalFrame is null here?");
-        }
+    private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         if (term2 instanceof Var && !(term1 instanceof Var)) {
-            return unifyInternal(term2, theBindings2, term1, theBindings1, theGoalFrame);
+            return unifyInternal(term2, theBindings2, term1, theBindings1);
         }
         if (term1 instanceof Var) {
             // Variable:
@@ -91,7 +85,7 @@ public class DefaultUnifier implements Unifier {
                 // We have followed term1 to end up with a literal. It may either unify or not depending if
                 // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
                 // part as term2
-                return unifyInternal(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings(), theGoalFrame);
+                return unifyInternal(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings());
             } else {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }
@@ -115,7 +109,7 @@ public class DefaultUnifier implements Unifier {
                 }
                 final int arity1 = s1.getArity();
                 for (int i = 0; i < arity1; i++) {
-                    if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2, theGoalFrame)) {
+                    if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2)) {
                         return false;
                     }
                 }
@@ -129,7 +123,7 @@ public class DefaultUnifier implements Unifier {
     }
 
     @Override
-    public void deunify(GoalFrame theGoalFrame) {
+    public void deunify() {
         BindingTrail.undoBindingsUntilPreviousMark();
     }
 

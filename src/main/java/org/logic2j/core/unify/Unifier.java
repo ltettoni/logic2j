@@ -19,7 +19,6 @@ package org.logic2j.core.unify;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 
 /**
  * Functionality to unify terms together. Various implementations possible.
@@ -33,16 +32,13 @@ public interface Unifier {
      * @param theBindings1
      * @param term2
      * @param theBindings2
-     * @param theGoalFrame To remember that unification was done and allow deunification.
      * @return true if term1 and term2 could be unified together.
      */
-    boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2, GoalFrame theGoalFrame);
+    boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2);
 
     /**
      * Deunify to the last unification that returned true.
-     * 
-     * @param theGoalFrame
      */
-    void deunify(GoalFrame theGoalFrame);
+    void deunify();
 
 }

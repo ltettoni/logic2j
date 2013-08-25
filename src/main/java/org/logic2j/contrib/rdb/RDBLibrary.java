@@ -47,7 +47,6 @@ import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.UniqueSolutionListener;
@@ -56,7 +55,7 @@ import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository. TODO: the
- * {@link #select(SolutionListener, GoalFrame, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
+ * {@link #select(SolutionListener, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
  * transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
@@ -80,7 +79,7 @@ public class RDBLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation select(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term... theArguments) throws SQLException {
+    public Continuation select(SolutionListener theListener, Bindings theBindings, Term... theArguments) throws SQLException {
         final Term theDataSource = theArguments[0];
         final Term theExpression = theArguments[1];
         final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
@@ -273,7 +272,7 @@ public class RDBLibrary extends LibraryBase {
             int number = resultSet.intValue();
             while (number-- > 0) {
                 // Generates solutions without binding variables, just the right number of them
-                notifySolution(theGoalFrame, theListener);
+                notifySolution(theListener);
             }
         } else {
             final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
@@ -304,7 +303,7 @@ public class RDBLibrary extends LibraryBase {
             }
             // Generate solutions, one per row
             for (final Object[] objects : resultSet) {
-                unifyAndNotify(projectedVars, objects, originalBindings, theGoalFrame, theListener);
+                unifyAndNotify(projectedVars, objects, originalBindings, theListener);
             }
         }
         return Continuation.CONTINUE;

@@ -31,7 +31,6 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.TheoryContent;
@@ -42,9 +41,9 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Difference between number of args in Prolog's primitive invocation, and number of varargs
-     * passed to Java implementatino of the primitive: (SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term...)
+     * passed to Java implementatino of the primitive: (SolutionListener theListener, Bindings theBindings, Term...)
      */
-    private static final int NB_EXTRA_PARAMS = 3;
+    private static final int NB_EXTRA_PARAMS = 2;
 
     private final Prolog prolog;
 
@@ -151,15 +150,11 @@ public class DefaultLibraryManager implements LibraryManager {
                 final int nbMethodParams = paramTypes.length;
                 int i = 0;
                 if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
-                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + SolutionListener.class);
-                }
-                i++;
-                if (!(GoalFrame.class.isAssignableFrom(paramTypes[i]))) {
-                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + GoalFrame.class);
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
                 }
                 i++;
                 if (!(Bindings.class.isAssignableFrom(paramTypes[i]))) {
-                    throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + Bindings.class);
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + Bindings.class);
                 }
                 i++;
                 boolean varargs = false;
@@ -169,7 +164,7 @@ public class DefaultLibraryManager implements LibraryManager {
                     } else {
                         while (i < nbMethodParams) {
                             if (!(Term.class.isAssignableFrom(paramTypes[i]))) {
-                                throw new PrologNonSpecificError("Argument type at index " + i + " of metohd " + method + " not of proper " + Term.class);
+                                throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + Term.class);
                             }
                             i++;
                         }

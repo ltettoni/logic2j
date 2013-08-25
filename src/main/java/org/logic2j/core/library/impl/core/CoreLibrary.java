@@ -33,7 +33,6 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.GoalFrame;
 import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
@@ -54,29 +53,29 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = Struct.FUNCTOR_TRUE)
     // We can't name the method "true" it's a Java reserved word...
-    public Continuation trueFunctor(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
-        return notifySolution(theGoalFrame, theListener);
+    public Continuation trueFunctor(SolutionListener theListener, Bindings theBindings) {
+        return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation fail(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
+    public Continuation fail(SolutionListener theListener, Bindings theBindings) {
         // Do not propagate a solution - that's all
         return Continuation.CONTINUE;
     }
 
     @Primitive
-    public Continuation var(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
+    public Continuation var(SolutionListener theListener, Bindings theBindings, Term t1) {
         Continuation continuation = Continuation.CONTINUE;
 
         if (t1 instanceof Var) {
             final Var var = (Var) t1;
             if (var.isAnonymous()) {
-                notifySolution(theGoalFrame, theListener);
+                notifySolution(theListener);
             } else {
                 final Binding binding = var.bindingWithin(theBindings).followLinks();
                 if (!binding.isLiteral()) {
                     // Not ending on a literal, we end up on a free var!
-                    continuation = notifySolution(theGoalFrame, theListener);
+                    continuation = notifySolution(theListener);
                 }
             }
         }
@@ -84,70 +83,69 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation atomic(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
+    public Continuation atomic(SolutionListener theListener, Bindings theBindings, Term theTerm) {
         final Bindings b = theBindings.focus(theTerm, Term.class);
         assertValidBindings(b, "atomic/1");
         final Term effectiveTerm = b.getReferrer();
         if (effectiveTerm instanceof Struct || effectiveTerm instanceof TNumber) {
-            return notifySolution(theGoalFrame, theListener);
+            return notifySolution(theListener);
         }
         return Continuation.CONTINUE;
     }
 
     @Primitive
-    public Continuation number(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theTerm) {
+    public Continuation number(SolutionListener theListener, Bindings theBindings, Term theTerm) {
         final Bindings b = theBindings.focus(theTerm, Term.class);
         assertValidBindings(b, "number/1");
         final Term effectiveTerm = b.getReferrer();
         if (effectiveTerm instanceof TNumber) {
-            return notifySolution(theGoalFrame, theListener);
+            return notifySolution(theListener);
         }
         return Continuation.CONTINUE;
     }
 
     @Primitive(name = Struct.FUNCTOR_CUT)
-    public Continuation cut(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings) {
+    public Continuation cut(SolutionListener theListener, Bindings theBindings) {
         // This is a complex behaviour - read on DefaultSolver
-        // theGoalFrame.signalCut();
         // Cut is a "true" solution to a goal, just notify one as such
-        notifySolution(theGoalFrame, theListener);
+        notifySolution(theListener);
         return Continuation.CUT;
     }
 
     @Primitive(name = "=")
-    public Continuation unify(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
-        final boolean unified = unify(t1, theBindings, t2, theBindings, theGoalFrame);
-        return notifyIfUnified(unified, theGoalFrame, theListener);
+    public Continuation unify(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        final boolean unified = unify(t1, theBindings, t2, theBindings);
+        return notifyIfUnified(unified, theListener);
     }
 
     @Primitive(name = "\\=")
-    public Continuation notUnify(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
-        final boolean unified = unify(t1, theBindings, t2, theBindings, theGoalFrame);
+    public Continuation notUnify(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        final boolean unified = unify(t1, theBindings, t2, theBindings);
         Continuation continuation = Continuation.CONTINUE;
         if (!unified) {
-            continuation = notifySolution(theGoalFrame, theListener);
+            continuation = notifySolution(theListener);
         }
         // TODO Why not "else"?
         if (unified) {
-            deunify(theGoalFrame);
+            deunify();
         }
         return continuation;
     }
 
     @Primitive
-    public Continuation atom_length(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theAtom, Term theLength) {
+    public Continuation atom_length(SolutionListener theListener, Bindings theBindings, Term theAtom, Term theLength) {
         final Bindings atomBindings = theBindings.focus(theAtom, Struct.class);
         assertValidBindings(atomBindings, "atom_length/2");
         final Struct atom = (Struct) atomBindings.getReferrer();
 
         final TLong atomLength = createTLong(atom.getName().length());
-        final boolean unified = unify(atomLength, atomBindings, theLength, theBindings, theGoalFrame);
-        return notifyIfUnified(unified, theGoalFrame, theListener);
+        final boolean unified = unify(atomLength, atomBindings, theLength, theBindings);
+        return notifyIfUnified(unified, theListener);
     }
 
     @Primitive(synonyms = "\\+")
     // Surprisingly enough the operator \+ means "not provable".
-    public Continuation not(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theGoal) {
+    public Continuation not(final SolutionListener theListener, Bindings theBindings, Term theGoal) {
         final Bindings subGoalBindings = theBindings.focus(theGoal, Struct.class);
         assertValidBindings(subGoalBindings, "\\+/1");
 
@@ -165,7 +163,7 @@ public class CoreLibrary extends LibraryBase {
         final NegationListener callListener = new NegationListener();
         // The following line seems to work OK but unsure if we can afford this I doubt
         // getProlog().getSolver().solveGoal(subGoalBindings, callListener);
-        getProlog().getSolver().solveGoal(subGoalBindings, theGoalFrame, callListener);
+        getProlog().getSolver().solveGoal(subGoalBindings, callListener);
         if (!callListener.found) {
             theListener.onSolution();
         }
@@ -173,7 +171,7 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation findall(SolutionListener theListener, GoalFrame theGoalFrame, final Bindings theBindings, final Term theTemplate, final Term theGoal, final Term theResult) {
+    public Continuation findall(SolutionListener theListener, final Bindings theBindings, final Term theTemplate, final Term theGoal, final Term theResult) {
         final Bindings subGoalBindings = theBindings.focus(theGoal, Term.class);
         assertValidBindings(subGoalBindings, "findall/3");
 
@@ -197,8 +195,6 @@ public class CoreLibrary extends LibraryBase {
         };
 
         // Now solve the target goal, this may find several values of course
-        // final Term effectiveGoal = subGoalBindings.getReferrer();
-        // getProlog().getSolver().solveGoalRecursive(effectiveGoal, subGoalBindings, new GoalFrame(), adHocListener);
         getProlog().getSolver().solveGoal(subGoalBindings, adHocListener);
 
         // Convert all results into a prolog list structure
@@ -209,31 +205,31 @@ public class CoreLibrary extends LibraryBase {
         final Struct plist = Struct.createPList(javaResults);
 
         // And unify with result
-        final boolean unified = unify(theResult, theBindings, plist, theBindings, theGoalFrame);
-        return notifyIfUnified(unified, theGoalFrame, theListener);
+        final boolean unified = unify(theResult, theBindings, plist, theBindings);
+        return notifyIfUnified(unified, theListener);
     }
 
     @Primitive
-    public Continuation clause(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term theHead, Term theBody) {
+    public Continuation clause(SolutionListener theListener, Bindings theBindings, Term theHead, Term theBody) {
         final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
         final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
         for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(realHead, theBindings)) {
                 // Clone the clause so that we can unify against its bindings
                 final Clause clauseToUnify = new Clause(clause);
-                final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getLiteralBindings(), theGoalFrame);
+                final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getLiteralBindings());
                 if (headUnified) {
                     try {
-                        final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings, theGoalFrame);
+                        final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings);
                         if (bodyUnified) {
                             try {
-                                notifySolution(theGoalFrame, theListener);
+                                notifySolution(theListener);
                             } finally {
-                                deunify(theGoalFrame);
+                                deunify();
                             }
                         }
                     } finally {
-                        deunify(theGoalFrame);
+                        deunify();
                     }
                 }
             }
@@ -242,7 +238,7 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive(name = "=..")
-    public Continuation predicate2PList(final SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term thePredicate, Term theList) {
+    public Continuation predicate2PList(final SolutionListener theListener, Bindings theBindings, Term thePredicate, Term theList) {
         Bindings resolvedBindings = theBindings.focus(thePredicate, Term.class);
         Continuation continuation = Continuation.CONTINUE;
 
@@ -255,8 +251,8 @@ public class CoreLibrary extends LibraryBase {
             }
             final Struct lst2 = (Struct) resolvedBindings.getReferrer();
             final Struct flattened = lst2.predicateFromPList();
-            final boolean unified = unify(thePredicate, theBindings, flattened, resolvedBindings, theGoalFrame);
-            continuation = notifyIfUnified(unified, theGoalFrame, theListener);
+            final boolean unified = unify(thePredicate, theBindings, flattened, resolvedBindings);
+            continuation = notifyIfUnified(unified, theListener);
         } else {
             final Term predResolved = resolvedBindings.getReferrer();
             if (predResolved instanceof Struct) {
@@ -268,25 +264,25 @@ public class CoreLibrary extends LibraryBase {
                     elems.add(struct.getArg(i));
                 }
                 final Struct plist = Struct.createPList(elems);
-                final boolean unified = unify(theList, theBindings, plist, resolvedBindings, theGoalFrame);
-                continuation = notifyIfUnified(unified, theGoalFrame, theListener);
+                final boolean unified = unify(theList, theBindings, plist, resolvedBindings);
+                continuation = notifyIfUnified(unified, theListener);
             }
         }
         return continuation;
     }
 
     @Primitive
-    public Continuation is(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Continuation is(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         final Term evaluated = evaluateFunctor(theBindings, t2);
         if (evaluated == null) {
             return Continuation.CONTINUE;
         }
-        final boolean unified = unify(t1, theBindings, evaluated, theBindings, theGoalFrame);
-        return notifyIfUnified(unified, theGoalFrame, theListener);
+        final boolean unified = unify(t1, theBindings, evaluated, theBindings);
+        return notifyIfUnified(unified, theListener);
     }
 
     @Primitive(name = ">")
-    public Continuation expression_greater_than(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Continuation expression_greater_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
         t2 = evaluateFunctor(theBindings, t2);
         Continuation continuation = Continuation.CONTINUE;
@@ -294,14 +290,14 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n.longValue() > val1n.longValue()) {
-                continuation = notifySolution(theGoalFrame, theListener);
+                continuation = notifySolution(theListener);
             }
         }
         return continuation;
     }
 
     @Primitive(name = "<")
-    public Continuation expression_lower_than(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Continuation expression_lower_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
         t2 = evaluateFunctor(theBindings, t2);
         Continuation continuation = Continuation.CONTINUE;
@@ -309,14 +305,14 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n.longValue() < val1n.longValue()) {
-                continuation = notifySolution(theGoalFrame, theListener);
+                continuation = notifySolution(theListener);
             }
         }
         return continuation;
     }
 
     @Primitive(name = "+")
-    public Term plus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Term plus(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
         t2 = evaluateFunctor(theBindings, t2);
         if (t1 instanceof TNumber && t2 instanceof TNumber) {
@@ -331,14 +327,14 @@ public class CoreLibrary extends LibraryBase {
     }
 
     /**
-     * @param theGoalFrame
+     * @param theListener
      * @param theBindings
      * @param t1
      * @param t2
      * @return Binary minus (subtract)
      */
     @Primitive(name = "-")
-    public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Term minus(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
         t2 = evaluateFunctor(theBindings, t2);
         if (t1 instanceof TNumber && t2 instanceof TNumber) {
@@ -353,14 +349,13 @@ public class CoreLibrary extends LibraryBase {
     }
 
     /**
-     * @param theGoalFrame
-     * @param theBindings
+     * @param theListener
      * @param t1
      * @param t2
      * @return Binary multiply
      */
     @Primitive(name = "*")
-    public Term multiply(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1, Term t2) {
+    public Term multiply(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
         t2 = evaluateFunctor(theBindings, t2);
         if (t1 instanceof TNumber && t2 instanceof TNumber) {
@@ -375,13 +370,13 @@ public class CoreLibrary extends LibraryBase {
     }
 
     /**
-     * @param theGoalFrame
+     * @param theListener
      * @param theBindings
      * @param t1
      * @return Unary minus (negate)
      */
     @Primitive(name = "-")
-    public Term minus(SolutionListener theListener, GoalFrame theGoalFrame, Bindings theBindings, Term t1) {
+    public Term minus(SolutionListener theListener, Bindings theBindings, Term t1) {
         t1 = evaluateFunctor(theBindings, t1);
         if (t1 instanceof TNumber) {
             final TNumber val0n = (TNumber) t1;
