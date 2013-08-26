@@ -49,6 +49,7 @@ public class DefaultSolver implements Solver {
      * @param theSolutionListener
      * @param theGoalBindings
      */
+    @Override
     public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
         return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
