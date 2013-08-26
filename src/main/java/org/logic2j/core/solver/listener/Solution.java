@@ -52,7 +52,7 @@ public class Solution {
      * 
      * @note This costs a little: in logic2j the solver is very efficient, but extracting results is a little more costly. This is caused by
      *       the shared-structures approach.
-     * 
+     * @note Maybe it could be more efficient to just clone the {@link Bindings} and then calculate the solution on demand?
      * @param theBindings
      */
     public Solution(Bindings theBindings) {
@@ -61,7 +61,7 @@ public class Solution {
     }
 
     // ---------------------------------------------------------------------------
-    // Accessors
+    // Methods
     // ---------------------------------------------------------------------------
 
     /**
@@ -78,10 +78,6 @@ public class Solution {
     public Map<String, Term> getBindings() {
         return this.bindings;
     }
-
-    // ---------------------------------------------------------------------------
-    // Methods
-    // ---------------------------------------------------------------------------
 
     /**
      * @return The actual value bound to a {@link Var}iable by its name.

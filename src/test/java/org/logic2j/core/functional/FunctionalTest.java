@@ -146,9 +146,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     /**
-     * Sometimes (when?) X is bound to a term containing a unified var to another of our
-     * 
-     * 
+     * Sometimes (when?) X is bound to a term containing a unified var to another of our vars
      */
     @Test
     public void relink_vars() {
