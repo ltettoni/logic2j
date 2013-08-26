@@ -28,8 +28,15 @@ public abstract class SingleSolutionListener implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleSolutionListener.class);
 
     private final int maxCount; // Maximal number of solutions to fetch
-    protected int counter; // Current solution counter
-    private Solution solution; // Current solution
+    /**
+     * Current solution counter (number of times {@link #onSolution()} was called)
+     */
+    protected int counter;
+
+    /**
+     * Current solution, initialized within {@link #onSolution()}
+     */
+    private Solution solution;
 
     protected Bindings bindings;
 

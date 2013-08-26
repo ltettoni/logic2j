@@ -40,6 +40,12 @@ public enum Continuation {
      */
     CUT;
 
+    /**
+     * Factory for a {@link Continuation} depending on a boolean condition.
+     * 
+     * @param conditionApplies
+     * @return {@value #CONTINUE} when conditionApplies (is true), otherwise {@value #USER_ABORT}
+     */
     public static Continuation requestContinuationWhen(boolean conditionApplies) {
         return conditionApplies ? CONTINUE : USER_ABORT;
     }

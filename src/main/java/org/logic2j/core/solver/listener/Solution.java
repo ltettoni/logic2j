@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
+import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 
@@ -36,13 +37,12 @@ public class Solution {
     private static final TermApi TERM_API = new TermApi();
 
     /**
-     * The solution to a goal, expressed as the goal itself (with all bound variables substituted to their actual values - only free
-     * variables remaining).
+     * @see #getSolution()
      */
     private final Term solution;
 
     /**
-     * The bindings, per variable name.
+     * @see #getBindings()
      */
     private final Map<String, Term> bindings;
 
@@ -65,14 +65,15 @@ public class Solution {
     // ---------------------------------------------------------------------------
 
     /**
-     * @return the solution
+     * @return The solution to a goal, expressed as the goal itself (with all bound variables substituted to their actual values - only free
+     *         variables remaining).
      */
     public Term getSolution() {
         return this.solution;
     }
 
     /**
-     * @return the bindings
+     * @return All bindings, a {@link Map} of Terms by their {@link Var}iable name.
      */
     public Map<String, Term> getBindings() {
         return this.bindings;
@@ -83,7 +84,7 @@ public class Solution {
     // ---------------------------------------------------------------------------
 
     /**
-     * Obtain the binding for a particular variable name.
+     * @return The actual value bound to a {@link Var}iable by its name.
      */
     public Term getBinding(String theVariableName) {
         if (this.bindings == null) {
@@ -94,6 +95,10 @@ public class Solution {
         }
         return this.bindings.get(theVariableName);
     }
+
+    // ---------------------------------------------------------------------------
+    // Methods of java.lang.Object
+    // ---------------------------------------------------------------------------
 
     @Override
     public String toString() {
