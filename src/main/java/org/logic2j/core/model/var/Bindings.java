@@ -349,9 +349,12 @@ public class Bindings {
     // Accessors
     // ---------------------------------------------------------------------------
 
+    public boolean isEmpty() {
+        return this.bindings.length == 0;
+    }
+
     /**
      * @return The number of {@link Binding}s held in this object, corresponds to the number of distinct variables in {@link #getReferrer()}
-     *         .
      */
     public int getSize() {
         return this.bindings.length;
@@ -380,7 +383,7 @@ public class Bindings {
     @Override
     public String toString() {
         final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
-        if (getSize() == 0) {
+        if (isEmpty()) {
             return this.getClass().getSimpleName() + address + "(empty)";
         }
         return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings);
