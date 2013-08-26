@@ -177,7 +177,7 @@ public class CoreLibrary extends LibraryBase {
 
         // Define a listener to collect all solutions for the goal specified
         final ArrayList<Term> javaResults = new ArrayList<Term>(); // Our internal collection of results
-        final SolutionListenerBase adHocListener = new SolutionListenerBase() {
+        final SolutionListener adHocListener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {

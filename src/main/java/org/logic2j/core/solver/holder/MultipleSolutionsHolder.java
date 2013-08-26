@@ -29,6 +29,7 @@ import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.solver.Continuation;
+import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
@@ -76,7 +77,7 @@ public class MultipleSolutionsHolder {
         final List<Term> results = new ArrayList<Term>();
 
         final Bindings bindings = this.solutionHolder.bindings;
-        final SolutionListenerBase listener = new SolutionListenerBase() {
+        final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
@@ -105,7 +106,7 @@ public class MultipleSolutionsHolder {
      */
     public List<Map<String, Term>> bindings() {
         final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
-        final SolutionListenerBase listener = new SolutionListenerBase() {
+        final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
