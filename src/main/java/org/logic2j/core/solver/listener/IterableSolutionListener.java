@@ -19,6 +19,7 @@ package org.logic2j.core.solver.listener;
 
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.Continuation;
 
 /**
  * A {@link SolutionListener} that allows the caller of the inference engine to enumerates solutions to his goal, like all Prolog APIs do.

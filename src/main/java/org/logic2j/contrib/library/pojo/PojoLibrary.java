@@ -26,7 +26,7 @@ import org.logic2j.core.library.mgmt.Primitive;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.Continuation;
+import org.logic2j.core.solver.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 public class PojoLibrary extends LibraryBase {

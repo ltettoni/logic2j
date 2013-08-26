@@ -30,7 +30,7 @@ import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Binding;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.Continuation;
+import org.logic2j.core.solver.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**

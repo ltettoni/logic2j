@@ -29,9 +29,10 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
 
 /**
  * Holds state necessary to describe the unique solution or multiple solutions to a goal; this object lies between the expression of a goal
- * (a request or query) and the extraction of all aspects of the solution (a response or results). <br/>
- * IMPORTANT: obtaining a {@link SolutionHolder} usually means that the execution has not yet started - state is held ready to execute,
- * until you tell what you want! <br/>
+ * (a request or query) and the extraction of any aspect of the solution (existence of a solution, number of a solutions, values of a given
+ * binding, or values of all bindings or results). <br/>
+ * IMPORTANT: This is a lazy proxy to solutions: obtaining a {@link SolutionHolder} does not imply that the execution has yet started -
+ * state is held ready to execute, until you tell what you want! <br/>
  * This object exposes strongly-typed, templated methods to extract results depending on how the calling code expects them (unique or
  * multiple solutions), and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
  * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed),
@@ -40,7 +41,7 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
  * TODO Maybe have a way to allow limiting "all" to a reasonable number.
  * 
  * <p/>
- * This type of API for extracting results from a data layer should further be analyzed and compared to other APIs such as JDBC, JNDI,
+ * This type of API for extracting results from a data layer should further be analyzed and confronted to other APIs such as JDBC, JNDI,
  * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
  */
 public class SolutionHolder {
@@ -57,7 +58,19 @@ public class SolutionHolder {
     }
 
     /**
+     * Existence of any (one or several) solutions - without their content.
+     * Calling this method will start solving.
+     * 
+     * @return true when {@link #number()} returns more than zero
+     */
+    public boolean exists() {
+        // TODO This is NOT an efficient implementation. We should use a FirstSolutionListener to reduce unnecessary inference.
+        return number() > 0;
+    }
+
+    /**
      * Number of solutions - without their content.
+     * Calling this method will start solving.
      * 
      * @return The value of {@link #all()}.{@link MultipleSolutionsHolder#number()}.
      */

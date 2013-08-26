@@ -17,6 +17,7 @@
  */
 package org.logic2j.core;
 
+import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.holder.SolutionHolder;
 import org.logic2j.core.solver.listener.SolutionListener;
@@ -43,7 +44,8 @@ public interface Prolog {
     Term term(Object theSource);
 
     /**
-     * The highest-level entry point for solving a goal (this is the higer-level API, solving internally uses a {@link SolutionListener}).
+     * The top-level method for solving a goal (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
+     * {@link SolutionListener}).
      * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
      * 
      * @param theGoal To solve, will be parsed into a Term.
@@ -52,9 +54,10 @@ public interface Prolog {
     SolutionHolder solve(CharSequence theGoal);
 
     /**
-     * Solves a goal.
+     * Solves a goal expressed as a {@link Term} (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
+     * {@link SolutionListener}).
      * 
-     * @param theGoal To solve.
+     * @param theGoal The {@link Term} to solve, usually a {@link Struct}
      * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
      */
     SolutionHolder solve(Term theGoal);

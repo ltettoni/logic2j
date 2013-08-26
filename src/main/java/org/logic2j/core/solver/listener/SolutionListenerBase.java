@@ -17,6 +17,8 @@
  */
 package org.logic2j.core.solver.listener;
 
+import org.logic2j.core.solver.Continuation;
+
 /**
  * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached. The {@link #onSolution()}
  * method always returns true (dangerously allowing for potential infinite generation). Derive from this class to ease the programming of

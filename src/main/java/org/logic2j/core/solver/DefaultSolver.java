@@ -24,7 +24,6 @@ import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.theory.ClauseProvider;
 import org.logic2j.core.util.ReportUtils;

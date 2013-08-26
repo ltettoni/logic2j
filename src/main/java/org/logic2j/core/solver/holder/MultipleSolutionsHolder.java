@@ -28,11 +28,11 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.model.var.Bindings.FreeVarRepresentation;
-import org.logic2j.core.solver.listener.Continuation;
+import org.logic2j.core.solver.Continuation;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
- * A relay object to provide access to the results of all the (expected) solutions to a goal.
+ * A relay object to provide access to the results of all the solutions to a goal.
  */
 public class MultipleSolutionsHolder {
 
@@ -46,7 +46,7 @@ public class MultipleSolutionsHolder {
     private Integer highest = null; // FIXME to document
 
     /**
-     * Start solving butindicating you are not interested by the actual solutions nor bindings, only their number.
+     * Start solving but indicating you are not interested by the actual solutions nor bindings, only their number.
      * 
      * @return The number of solutions
      */

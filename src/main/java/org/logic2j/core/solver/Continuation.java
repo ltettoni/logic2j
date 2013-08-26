@@ -16,7 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.logic2j.core.solver.listener;
+package org.logic2j.core.solver;
+
+import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Allows the application or library code to specify to the behaviour that the inference engine should take after

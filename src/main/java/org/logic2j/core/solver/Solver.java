@@ -20,11 +20,11 @@ package org.logic2j.core.solver;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Interface to access the inference engine algorithm, in order to solve goals.
+ * Uses the low-level {@link SolutionListener} callback mechanism to notify solutions.
  */
 public interface Solver {
 
@@ -33,6 +33,8 @@ public interface Solver {
      * 
      * @param theGoal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param theSolutionListener Where solutions should be called back.
+     * @return Indicate how the solving has completed, either {@value Continuation#CONTINUE} for a successful
+     *         complete result, or if the solving has been cut or aborted by user callback.
      */
     Continuation solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
 

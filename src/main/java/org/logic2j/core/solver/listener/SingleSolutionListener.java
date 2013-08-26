@@ -18,6 +18,7 @@
 package org.logic2j.core.solver.listener;
 
 import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.solver.Continuation;
 
 /**
  * A {@link SolutionListener} that will retain the first solution only; see subclasses for features. In any case, no more than 2 solutions

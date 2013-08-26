@@ -121,15 +121,14 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     @Override
-    public SolutionHolder solve(Term theGoal) {
-        return new SolutionHolder(this, new Bindings(theGoal));
+    public SolutionHolder solve(CharSequence theGoal) {
+        final Term parsed = term(theGoal);
+        return solve(parsed);
     }
 
     @Override
-    public SolutionHolder solve(CharSequence theGoal) {
-        // Perhaps we could transform the goal into a real clause?
-        final Term parsed = term(theGoal);
-        return solve(parsed);
+    public SolutionHolder solve(Term theGoal) {
+        return new SolutionHolder(this, new Bindings(theGoal));
     }
 
     // ---------------------------------------------------------------------------

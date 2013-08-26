@@ -18,6 +18,7 @@
 package org.logic2j.core.solver.listener;
 
 import org.logic2j.core.Prolog;
+import org.logic2j.core.solver.Continuation;
 import org.logic2j.core.solver.holder.SolutionHolder;
 
 /**

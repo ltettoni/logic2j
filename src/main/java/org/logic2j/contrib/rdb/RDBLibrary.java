@@ -47,7 +47,7 @@ import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.Var;
 import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.Continuation;
+import org.logic2j.core.solver.Continuation;
 import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.UniqueSolutionListener;
 import org.logic2j.core.util.CollectionUtils;
