@@ -18,4 +18,5 @@ intended to be compatible with Prolog specification, this is just the core engin
 
 Read further documentation at src/site/resources/doc (before there's a proper Wiki).
 
+
 You must have received a LICENSE.txt file with this software package.
