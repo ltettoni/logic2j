@@ -16,6 +16,7 @@ open and extendable implementation, small footprint, and high performance.
 Although very close to Prolog, this is NOT a Prolog programming environment, is not 
 intended to be compatible with Prolog specification, this is just the core engine...
 
+
 Read further documentation at src/site/resources/doc (before there's a proper Wiki).
 
 
