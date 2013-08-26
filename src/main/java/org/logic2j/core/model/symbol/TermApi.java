@@ -123,11 +123,11 @@ public class TermApi {
      *         returned reference was cloned or not, so it must never mutate it!
      */
     public Term substitute(Term theTerm, final Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) throws InvalidTermException {
-        if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.getSize() == 0) {
+        if ((theTerm instanceof Struct && theTerm.index == 0) || theBindings.isEmpty()) {
             // No variables identified in the term, or no variables passed as argument: do not need to substitute
             return theTerm;
         }
-        // Delegate to actual subclass
+        // Delegate to actual subclass of Term
         return theTerm.substitute(theBindings, theBindingsToVars);
     }
 
