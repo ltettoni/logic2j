@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 
@@ -33,6 +34,12 @@ import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
+
+    @Override
+    protected InitLevel initLevel() {
+        // TODO Auto-generated method stub
+        return InitLevel.L2_BASE_LIBRARIES;
+    }
 
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
@@ -164,6 +171,27 @@ public class HigherLevelTest extends PrologTestBase {
         //
         solutions = this.prolog.solve("quick_sort([1,7,9,3,2,4,5,8], X)").all();
         assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void fibonacci() {
+        loadTheoryFromTestResourcesDir("fibonacci.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("fib(2, X)").all();
+        assertEquals("[1]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("fib(3, X)").all();
+        assertEquals("[2]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("fib(4, X)").all();
+        assertEquals("[3]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("fib(8, X)").all();
+        assertEquals("[21]", solutions.binding("X").toString());
+        // // Eats lots of stack
+        // solutions = this.prolog.solve("fib(10, X)").all();
+        // assertEquals("[55]", solutions.binding("X").toString());
     }
 
 }

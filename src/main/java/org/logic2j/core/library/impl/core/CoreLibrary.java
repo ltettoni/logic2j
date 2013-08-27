@@ -43,6 +43,8 @@ import org.logic2j.core.util.ReflectUtils;
  * Provide the core primitives of the Prolog language.
  * Most is implemented in Java, but there is an associated Prolog theory at:
  * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.prolog
+ * 
+ * TODO Factorize code of functors (eg "+") and predicates (eg =<) to use a closure for the real numeric calculation
  */
 public class CoreLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
@@ -305,6 +307,21 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n.longValue() < val1n.longValue()) {
+                continuation = notifySolution(theListener);
+            }
+        }
+        return continuation;
+    }
+
+    @Primitive(name = ">=")
+    public Continuation expression_greater_equal_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        t1 = evaluateFunctor(theBindings, t1);
+        t2 = evaluateFunctor(theBindings, t2);
+        Continuation continuation = Continuation.CONTINUE;
+        if (t1 instanceof TNumber && t2 instanceof TNumber) {
+            final TNumber val0n = (TNumber) t1;
+            final TNumber val1n = (TNumber) t2;
+            if (val0n.longValue() >= val1n.longValue()) {
                 continuation = notifySolution(theListener);
             }
         }
