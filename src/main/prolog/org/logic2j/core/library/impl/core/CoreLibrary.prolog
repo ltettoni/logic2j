@@ -31,8 +31,9 @@ reverse([],X,X).
 reverse(A,R) :- reverse(A,[],R).
 
 % All permutations of a list
-perm([X|Y], Z) :- perm(Y, W), takeout(X, Z, W).   
+perm(List, [H|Perm]) :- takeout(H, List, Rest), perm(Rest, Perm).
 perm([], []).
+  
 
 %- not/1 is implemented in Java
 %not(P) :- call(P), !, fail.
