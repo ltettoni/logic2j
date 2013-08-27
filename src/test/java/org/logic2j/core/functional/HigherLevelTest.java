@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 
@@ -35,11 +34,6 @@ import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
  */
 public class HigherLevelTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
-
-    @Override
-    protected InitLevel initLevel() {
-        return InitLevel.L0_BARE;
-    }
 
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
@@ -63,35 +57,37 @@ public class HigherLevelTest extends PrologTestBase {
     }
 
     @Test
-    public void delete() throws Exception {
+    public void takeout() {
         loadTheoryFromTestResourcesDir("sorting.pl");
         MultipleSolutionsHolder solutions;
         //
-        assertNoSolution("delete(a, [], X)");
+        assertNoSolution("takeout(a, [], X)");
         //
-        solutions = this.prolog.solve("delete(a, [a], X)").all();
+        solutions = this.prolog.solve("takeout(a, [a], X)").all();
         assertEquals("[[]]", solutions.binding("X").toString());
         //
-        assertNoSolution("delete(k, [a], X)");
+        assertNoSolution("takeout(k, [a], X)");
         //
-        solutions = this.prolog.solve("delete(a, [a, b, c], X)").all();
+        solutions = this.prolog.solve("takeout(a, [a, b, c], X)").all();
         assertEquals("[[b,c]]", solutions.binding("X").toString());
         //
-        solutions = this.prolog.solve("delete(b, [a, b, c], X)").all();
+        solutions = this.prolog.solve("takeout(b, [a, b, c], X)").all();
         assertEquals("[[a,c]]", solutions.binding("X").toString());
         //
-        solutions = this.prolog.solve("delete(c, [a, b, c], X)").all();
+        solutions = this.prolog.solve("takeout(c, [a, b, c], X)").all();
         assertEquals("[[a,b]]", solutions.binding("X").toString());
         //
-        assertNoSolution("delete(k, [a, b, c], X)");
+        assertNoSolution("takeout(k, [a, b, c], X)");
         //
-        solutions = this.prolog.solve("delete(X, [a, b, c], Y)").all();
+        solutions = this.prolog.solve("takeout(X, [a, b, c], Y)").all();
         assertEquals("[a, b, c]", solutions.binding("X").toString());
         assertEquals("[[b,c], [a,c], [a,b]]", solutions.binding("Y").toString());
+        //
+        assertNSolutions(10, "takeout(_, [_,_,_,_,_,_,_,_,_,_], _)");
     }
 
     @Test
-    public void permutations() throws Exception {
+    public void permutations() {
         loadTheoryFromTestResourcesDir("sorting.pl");
         MultipleSolutionsHolder solutions;
         //
@@ -106,6 +102,21 @@ public class HigherLevelTest extends PrologTestBase {
         //
         solutions = this.prolog.solve("perm([a,b,c], X)").all();
         assertEquals("[[a,b,c], [a,c,b], [b,a,c], [b,c,a], [c,a,b], [c,b,a]]", solutions.binding("X").toString());
+        //
+        assertNSolutions(24, "perm([_,_,_,_], _)");
+        assertNSolutions(40320, "perm([_,_,_,_,_,_,_,_], _)");
+    }
+
+    @Test
+    public void naive_sort() {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("naive_sort([6,3,9,1], X)").all();
+        assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("naive_sort([1,7,9,3,2,4,5,8], X)").all();
+        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
     }
 
 }
