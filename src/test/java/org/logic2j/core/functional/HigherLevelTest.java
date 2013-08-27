@@ -17,11 +17,15 @@
  */
 package org.logic2j.core.functional;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
+import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 
 /**
  * Run higher-level tests such as whole programs.
@@ -30,6 +34,12 @@ import org.logic2j.core.library.impl.io.IOLibrary;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
+
+    @Override
+    protected InitLevel initLevel() {
+        return InitLevel.L0_BARE;
+    }
 
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
@@ -50,6 +60,52 @@ public class HigherLevelTest extends PrologTestBase {
         loadLibrary(library);
         loadTheoryFromTestResourcesDir("dollar.pl");
         assertNSolutions(292, "change([H,Q,D,N,P])");
+    }
+
+    @Test
+    public void delete() throws Exception {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        assertNoSolution("delete(a, [], X)");
+        //
+        solutions = this.prolog.solve("delete(a, [a], X)").all();
+        assertEquals("[[]]", solutions.binding("X").toString());
+        //
+        assertNoSolution("delete(k, [a], X)");
+        //
+        solutions = this.prolog.solve("delete(a, [a, b, c], X)").all();
+        assertEquals("[[b,c]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("delete(b, [a, b, c], X)").all();
+        assertEquals("[[a,c]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("delete(c, [a, b, c], X)").all();
+        assertEquals("[[a,b]]", solutions.binding("X").toString());
+        //
+        assertNoSolution("delete(k, [a, b, c], X)");
+        //
+        solutions = this.prolog.solve("delete(X, [a, b, c], Y)").all();
+        assertEquals("[a, b, c]", solutions.binding("X").toString());
+        assertEquals("[[b,c], [a,c], [a,b]]", solutions.binding("Y").toString());
+    }
+
+    @Test
+    public void permutations() throws Exception {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("perm([], X)").all();
+        assertEquals("[[]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("perm([a], X)").all();
+        assertEquals("[[a]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("perm([a,b], X)").all();
+        assertEquals("[[a,b], [b,a]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("perm([a,b,c], X)").all();
+        assertEquals("[[a,b,c], [a,c,b], [b,a,c], [b,c,a], [c,a,b], [c,b,a]]", solutions.binding("X").toString());
     }
 
 }
