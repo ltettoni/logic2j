@@ -311,6 +311,21 @@ public class CoreLibrary extends LibraryBase {
         return continuation;
     }
 
+    @Primitive(name = "=<")
+    public Continuation expression_lower_equal_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        t1 = evaluateFunctor(theBindings, t1);
+        t2 = evaluateFunctor(theBindings, t2);
+        Continuation continuation = Continuation.CONTINUE;
+        if (t1 instanceof TNumber && t2 instanceof TNumber) {
+            final TNumber val0n = (TNumber) t1;
+            final TNumber val1n = (TNumber) t2;
+            if (val0n.longValue() <= val1n.longValue()) {
+                continuation = notifySolution(theListener);
+            }
+        }
+        return continuation;
+    }
+
     @Primitive(name = "+")
     public Term plus(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
         t1 = evaluateFunctor(theBindings, t1);
