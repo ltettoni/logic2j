@@ -30,7 +30,7 @@ import org.logic2j.core.solver.listener.SolutionListener;
 import org.logic2j.core.solver.listener.SolutionListenerBase;
 
 /**
- * Describe a primitive, either a:
+ * Describe a {@link Primitive}, which is either a:
  * <ul>
  * <li>Directive</li>
  * <li>Predicate</li>

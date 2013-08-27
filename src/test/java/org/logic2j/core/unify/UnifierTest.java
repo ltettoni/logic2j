@@ -284,10 +284,6 @@ public class UnifierTest extends PrologTestBase {
         }
     }
 
-    /**
-     * @param theExpected
-     * @param theActual
-     */
     public static void assertStaticallyEquals(Term theExpected, Term theActual) {
         if (!theExpected.structurallyEquals(theActual)) {
             assertEquals("Terms are not structurally equal", theExpected.toString(), theActual.toString());

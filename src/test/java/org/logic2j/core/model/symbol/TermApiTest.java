@@ -37,7 +37,6 @@ import org.logic2j.core.model.var.Bindings;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
- * 
  */
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);

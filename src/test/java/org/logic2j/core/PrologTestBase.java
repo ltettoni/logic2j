@@ -89,7 +89,7 @@ public abstract class PrologTestBase {
      * Make sure there is only one solution to goals.
      * 
      * @param theGoals All goals to check for
-     * @return The UniqueSolutionHolder holding the solution
+     * @return The UniqueSolutionHolder holding the last solution of theGoals
      */
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;

@@ -18,7 +18,7 @@
 package org.logic2j.core.model.exception;
 
 /**
- * FIXME Must be documented.
+ * When a solution is not expected or not possible, depending on the calling context.
  */
 public class IllegalSolutionException extends PrologException {
     private static final long serialVersionUID = 1L;
