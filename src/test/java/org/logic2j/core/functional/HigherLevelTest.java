@@ -33,7 +33,6 @@ import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
 
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
@@ -116,6 +115,54 @@ public class HigherLevelTest extends PrologTestBase {
         assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
         //
         solutions = this.prolog.solve("naive_sort([1,7,9,3,2,4,5,8], X)").all();
+        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void insert_sort() {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("insert_sort([6,3,9,1], X)").all();
+        assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("insert_sort([1,7,9,3,2,4,5,8], X)").all();
+        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void bubble_sort() {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("bubble_sort([6,3,9,1], X)").all();
+        assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("bubble_sort([1,7,9,3,2,4,5,8], X)").all();
+        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void merge_sort() {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("merge_sort([6,3,9,1], X)").all();
+        assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("merge_sort([1,7,9,3,2,4,5,8], X)").all();
+        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void quick_sort() {
+        loadTheoryFromTestResourcesDir("sorting.pl");
+        MultipleSolutionsHolder solutions;
+        //
+        solutions = this.prolog.solve("quick_sort([6,3,9,1], X)").all();
+        assertEquals("[[1,3,6,9]]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("quick_sort([1,7,9,3,2,4,5,8], X)").all();
         assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.binding("X").toString());
     }
 
