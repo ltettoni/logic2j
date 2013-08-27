@@ -94,9 +94,8 @@ public abstract class PrologTestBase {
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = this.prolog.term(goal);
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-            final SolutionHolder solution = this.prolog.solve(parsed);
+            final SolutionHolder solution = this.prolog.solve(goal);
             result = solution.unique();
         }
         return result;
@@ -144,9 +143,8 @@ public abstract class PrologTestBase {
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
         SolutionHolder solve = null;
         for (final CharSequence goal : theGoals) {
-            final Term parsed = this.prolog.term(goal);
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
-            solve = this.prolog.solve(parsed);
+            solve = this.prolog.solve(goal);
             assertEquals("Goal \"" + goal + "\" has different number of solutions", theNumber, solve.number());
         }
         return solve;
