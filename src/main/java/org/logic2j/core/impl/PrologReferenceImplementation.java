@@ -128,7 +128,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public SolutionHolder solve(Term theGoal) {
-        return new SolutionHolder(this, new Bindings(theGoal));
+        final Bindings theBindings = new Bindings(theGoal);
+        return new SolutionHolder(this, theBindings);
     }
 
     // ---------------------------------------------------------------------------
