@@ -215,6 +215,14 @@ public class CoreLibraryTest extends PrologTestBase {
 
     }
 
+    @Test
+    public void arrow() throws Exception {
+        assertOneSolution("true->true");
+        assertNoSolution("true->fail");
+        assertNoSolution("fail->true");
+        assertNoSolution("fail->fail");
+    }
+
     // FIXME This fails with an Exception - check what proper behaviour should be and fix
     @Ignore("FIXME This fails with an Exception - check what proper behaviour should be and fix")
     @Test
