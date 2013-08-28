@@ -39,7 +39,7 @@ public class SolutionListenerBase implements SolutionListener {
     @Override
     public Continuation onSolution() {
         if (logger.isDebugEnabled()) {
-            logger.debug(" onSolution(), iter=#{}", this.counter);
+            logger.debug(" onSolution(#{})", this.counter);
         }
         this.lastSolutionTime = System.currentTimeMillis();
         this.counter++;
