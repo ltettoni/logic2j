@@ -26,6 +26,7 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.solver.Continuation;
+import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
@@ -94,6 +95,44 @@ public class ExecutionPruningTest extends PrologTestBase {
     public void cut4b() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(4, "cut4b");
+    }
+
+    @Test
+    public void max_green_cut() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        assertOneSolution("max(2,3,3)");
+        assertOneSolution("max(3,2,3)");
+        //
+        assertEquals(term(3), assertOneSolution("max(2,3,X)").binding("X"));
+        assertEquals(term(3), assertOneSolution("max(3,2,X)").binding("X"));
+        //
+        assertOneSolution("max4(3,1,7,5,7)");
+        assertOneSolution("max4(1,3,5,7,7)");
+        assertOneSolution("max4(7,5,3,1,7)");
+        assertEquals(term(7), assertOneSolution("max4(3,1,7,5,X)").binding("X"));
+    }
+
+    @Test
+    public void sign_without_cut() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        assertEquals(term("positive"), assertOneSolution("sign(5,X)").binding("X"));
+        assertEquals(term("negative"), assertOneSolution("sign(-5,X)").binding("X"));
+        assertEquals(term("zero"), assertOneSolution("sign(0,X)").binding("X"));
+    }
+
+    @Test
+    public void sign_with_arrow() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("sign2(5,X)").all();
+        assertEquals("[]", solutions.binding("X").toString());
+
+        // assertEquals(term("positive"), assertOneSolution("sign2(5,X)").binding("X"));
+        // assertEquals(term("negative"), assertOneSolution("sign2(-5,X)").binding("X"));
+        // assertEquals(term("zero"), assertOneSolution("sign2(0,X)").binding("X"));
     }
 
     // ---------------------------------------------------------------------------
