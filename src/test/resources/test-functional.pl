@@ -89,3 +89,25 @@ call_over_call(Goal) :- call(Goal).   % call_over_call is a Prolog clause wrappe
 call_check(1).
 call_check(2).
 call_check(3).
+
+
+% Green-cut example
+max(X,Y,R) :- X =< Y, !, R = Y. 
+max(X,Y,X).
+
+max3(X,Y,Z,R) :- max(X,Y,R1), max(R1,Z,R).
+
+max4(X,Y,Z,T,R) :- max(X,Y,R1), max(Z,T,R2), max(R1,R2,R).
+
+
+
+sign(N, positive) :- N > 0.
+sign(N, negative) :- N < 0.
+sign(N, zero)     :- N =:= 0.
+
+    
+sign2(N, Sign) :-
+    (   N > 0 -> Sign=positive
+    ;   N < 0 -> Sign=negative
+    ;            Sign=zero
+    ).
