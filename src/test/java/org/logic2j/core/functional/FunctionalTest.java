@@ -71,15 +71,23 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void or() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
-        // assertNSolutions(1, "';'(true)");
-        // assertNSolutions(2, "';'(true, true)");
-        // assertNSolutions(3, "';'(true, true, true)");
-        // //
-        // assertNSolutions(2, "true; true");
-        // assertNSolutions(3, "true; true; true");
+        assertNSolutions(1, "';'(true)");
+        assertNSolutions(2, "';'(true, true)");
+        assertNSolutions(3, "';'(true, true, true)");
+        //
+        assertNSolutions(2, "true; true");
+        assertNSolutions(3, "true; true; true");
         //
         MultipleSolutionsHolder solutions;
         solutions = this.prolog.solve("X=a; X=b; X=c").all();
+        assertEquals("[a, b, c]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void orWithClause() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("or3(X)").all();
         assertEquals("[a, b, c]", solutions.binding("X").toString());
     }
 

@@ -106,8 +106,11 @@ sign(N, negative) :- N < 0.
 sign(N, zero)     :- N =:= 0.
 
     
-sign2(N, Sign) :-
-    (   N > 0 -> Sign=positive
-    ;   N < 0 -> Sign=negative
-    ;            Sign=zero
-    ).
+sign2(N, Sign) :- 
+        N > 0 -> Sign=positive ;
+        N < 0 -> Sign=negative ;
+        Sign=zero.
+
+or3(X) :- X=a;X=b;X=c.
+
+    
