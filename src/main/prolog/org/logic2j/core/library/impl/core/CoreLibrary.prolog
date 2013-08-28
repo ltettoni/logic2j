@@ -35,7 +35,10 @@ perm(List, [H|Perm]) :- takeout(H, List, Rest), perm(Rest, Perm).
 perm([], []).
   
 
-%- not/1 is implemented in Java
+%- not/1 is now implemented in the CoreLibrary in Java
 %not(P) :- call(P), !, fail.
 %not(P).
+
+% Is this correct? (and that simple?)
+C -> T :- call(C), !, call(T).
 
