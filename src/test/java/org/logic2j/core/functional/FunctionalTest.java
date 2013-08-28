@@ -58,7 +58,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void nArityAndOr() {
+    public void nonBinaryAnd() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "','(true)", //
@@ -66,8 +66,21 @@ public class FunctionalTest extends PrologTestBase {
                 "','(true, !, true)", //
         };
         assertOneSolution(SINGLE_SOLUTION_GOALS);
-        assertNSolutions(3, "';'(true, true, true)");
+    }
 
+    @Test
+    public void or() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        // assertNSolutions(1, "';'(true)");
+        // assertNSolutions(2, "';'(true, true)");
+        // assertNSolutions(3, "';'(true, true, true)");
+        // //
+        // assertNSolutions(2, "true; true");
+        // assertNSolutions(3, "true; true; true");
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("X=a; X=b; X=c").all();
+        assertEquals("[a, b, c]", solutions.binding("X").toString());
     }
 
     @Test
