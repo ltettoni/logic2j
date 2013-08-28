@@ -47,10 +47,10 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
 public class SolutionHolder {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
 
-    static final TermApi TERM_API = new TermApi();
+    protected static final TermApi TERM_API = new TermApi();
 
-    final PrologImplementation prolog;
-    final Bindings bindings;
+    protected final PrologImplementation prolog;
+    protected final Bindings bindings;
 
     public SolutionHolder(PrologImplementation theProlog, Bindings theBindings) {
         this.prolog = theProlog;
