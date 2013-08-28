@@ -128,7 +128,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         //
         MultipleSolutionsHolder solutions;
         solutions = this.prolog.solve("sign2(5,X)").all();
-        assertEquals("[]", solutions.binding("X").toString());
+        assertEquals("[positive]", solutions.binding("X").toString());
 
         // assertEquals(term("positive"), assertOneSolution("sign2(5,X)").binding("X"));
         // assertEquals(term("negative"), assertOneSolution("sign2(-5,X)").binding("X"));
