@@ -98,12 +98,12 @@ public class DefaultSolver implements Solver {
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
 
             /*
-             * This is the Java implementation of N-arity OR
-             * We can also implement a binary OR directly in Prolog using
-             *   A ; B :- call(A).
-             *   A ; B :- call(B).
-             * but the simplicity of the code below and its efficiency are preferred.
-             */
+            * This is the Java implementation of N-arity OR
+            * We can also implement a binary OR directly in Prolog using
+            * A ; B :- call(A).
+            * A ; B :- call(B).
+            * but the simplicity of the code below and its efficiency are preferred.
+            */
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
                 // TODO what do we do with the "Continuation" result of the method?
@@ -122,7 +122,7 @@ public class DefaultSolver implements Solver {
             }
             final Term target = effectiveGoalBindings.getReferrer();
             if (debug) {
-                logger.debug("Calling FUNCTOR_CALL ------------------ {}", target);
+                logger.debug("Invoking call({})", target);
             }
             result = solveGoalRecursive(target, effectiveGoalBindings, theSolutionListener);
         } else if (prim != null) {
