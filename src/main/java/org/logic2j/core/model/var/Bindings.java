@@ -53,7 +53,7 @@ public class Bindings {
     /**
      * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link Bindings} through their indexes.
      */
-    private final Term referrer;
+    private Term referrer;
 
     /**
      * All {@link Binding}s, one per instance of {@link Var}iable. There are as many bindings as the distinct number of variables in the
@@ -61,7 +61,7 @@ public class Bindings {
      * {@link Var#getIndex()}. This array is never null, but may be empty (length=0) when the referrer Term does not contain any {@link Var}
      * iable.
      */
-    private final Binding[] bindings;
+    private Binding[] bindings;
 
     /**
      * Determine how free (unbound) variables will be represented in resulting bindings returned by
@@ -197,13 +197,27 @@ public class Bindings {
         }
     }
 
+    private Bindings() {
+        // Nothing
+    }
+
+    /**
+     * Create a new Bindings, but only set the two fields - to be revised further.
+     */
+    private static Bindings shallowCopy(Bindings theOriginal, Term theNewReferrer) {
+        final Bindings result = new Bindings();
+        result.referrer = theNewReferrer;
+        result.bindings = theOriginal.bindings;
+        return result;
+    }
+
     // ---------------------------------------------------------------------------
     // Methods for extracting values from variable Bindings
     // ---------------------------------------------------------------------------
 
     /**
-     * Create a new {@link Bindings} with the specified {@link Term} as new Referrer. When Term is a {@link Var} iable, will following
-     * through bound variables until a free or literal is found.
+     * Create a new {@link Bindings} with the specified {@link Term} as new Referrer.
+     * When Term is a {@link Var}iable, will follow through bound variables until a free or literal is found.
      * 
      * @param theTerm Must be one of the root or children {@link Term}s that was used to instantiate this {@link Bindings}
      * @param theClass Of the expected referrer Term
@@ -213,23 +227,24 @@ public class Bindings {
         if (theTerm instanceof Var) {
             final Var origin = (Var) theTerm;
             if (origin.isAnonymous()) {
-                return null;
+                return null; // See method contract
             }
             // Go to fetch the effective variable value if any
-            final Binding finalBinding = origin.bindingWithin(this).followLinks();
+            final Binding startingBinding = origin.bindingWithin(this);
+            final Binding finalBinding = startingBinding.followLinks();
             if (finalBinding.getType() == BindingType.LITERAL) {
-                return new Bindings(finalBinding.getLiteralBindings(), finalBinding.getTerm());
+                return shallowCopy(finalBinding.getLiteralBindings(), finalBinding.getTerm());
             } else if (finalBinding.getType() == BindingType.FREE) {
                 // Refocus on original var (we now know it is free), keep the same original bindings
-                return new Bindings(this, origin);
+                return shallowCopy(this, origin);
             } else {
                 throw new PrologNonSpecificError("Should not have been here");
             }
         }
         // Now it's anything else than a Var
-
         // Make sure it's of the desired class
         ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
+        // will return a cloned Bindings with theTerm as referrer
         return new Bindings(this, theTerm);
     }
 
