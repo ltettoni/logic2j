@@ -19,6 +19,7 @@
    -->
 
    <logger name="org.logic2j" level="info" />
+   <logger name="org.logic2j.core.solver.listener" level="info" />
    <logger name="org.logic2j.core.solver.DefaultSolver" level="info" />
 
    <root level="debug">
