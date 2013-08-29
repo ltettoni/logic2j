@@ -107,7 +107,10 @@ public class DefaultSolver implements Solver {
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
                 // TODO what do we do with the "Continuation" result of the method?
-                solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, theSolutionListener);
+                result = solveGoalRecursive(goalStruct.getArg(i), theGoalBindings, theSolutionListener);
+                if (result == Continuation.CUT) {
+                    break;
+                }
             }
         } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // TODO call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
