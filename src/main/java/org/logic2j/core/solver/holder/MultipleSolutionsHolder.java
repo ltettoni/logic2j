@@ -76,12 +76,12 @@ public class MultipleSolutionsHolder {
     public List<Term> binding(final String theVariableName) {
         final List<Term> results = new ArrayList<Term>();
 
-        final Bindings bindings = this.solutionHolder.bindings;
+        final Bindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                final Bindings bnd = bindings;
+                final Bindings bnd = originalBindings;
                 final Term term = bnd.getReferrer();
                 final Var var = term.findVar(theVariableName);
                 if (var == null) {
@@ -93,7 +93,7 @@ public class MultipleSolutionsHolder {
             }
 
         };
-        this.solutionHolder.prolog.getSolver().solveGoal(bindings, listener);
+        this.solutionHolder.prolog.getSolver().solveGoal(originalBindings, listener);
         final int size = results.size();
         checkBounds(size);
         return results;
@@ -106,11 +106,13 @@ public class MultipleSolutionsHolder {
      */
     public List<Map<String, Term>> bindings() {
         final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
+        final Bindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                results.add(MultipleSolutionsHolder.this.solutionHolder.bindings.explicitBindings(FreeVarRepresentation.FREE));
+                final Bindings bnd = originalBindings;
+                results.add(bnd.explicitBindings(FreeVarRepresentation.FREE));
                 return super.onSolution();
             }
 
