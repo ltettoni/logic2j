@@ -224,7 +224,8 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     // FIXME This fails with an Exception - check what proper behaviour should be and fix
-    @Ignore("FIXME This fails with an Exception - check what proper behaviour should be and fix")
+    @Ignore("FIXME This fails with a PrologNonSpecificError - check what proper behaviour should be, and fix")
+    // org.logic2j.core.model.exception.PrologNonSpecificError: Cannot call primitive atom_length/2 with a free variable goal
     @Test
     public void atom_length_free_var() {
         assertNoSolution("atom_length(X, 3)");

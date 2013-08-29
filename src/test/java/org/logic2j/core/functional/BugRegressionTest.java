@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.functional;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 
@@ -26,9 +25,11 @@ import org.logic2j.core.PrologTestBase;
  */
 public class BugRegressionTest extends PrologTestBase {
 
-    @Ignore("but a serious bug to fix - once more with cut and subgoals")
+    /**
+     * There was a serious bug with CUT within subgoals. It's now fixed.
+     */
     @Test
-    public void int5() throws Exception {
+    public void int5() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(5, "int5(X)");
         assertNSolutions(5, "int5_rule(X)");
