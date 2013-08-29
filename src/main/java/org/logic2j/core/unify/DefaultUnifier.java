@@ -47,7 +47,7 @@ public class DefaultUnifier implements Unifier {
      * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
      * 
      * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is
-     *       symmetric.
+     *       symmetric. In the case of 2 free vars, term1 is linked to term2.
      * 
      * @param term1
      * @param theBindings1

@@ -129,6 +129,15 @@ public class Bindings {
 
     }
 
+    private Bindings() {
+        // Nothing
+    }
+
+    private Bindings(Term theNewReferrer, Binding[] theArrayOfBinding) {
+        this.referrer = theNewReferrer;
+        this.bindings = theArrayOfBinding;
+    }
+
     /**
      * Instantiate a {@link Bindings} to hold the values of all {@link Var}iables of a given {@link Term}, named further the "referrer",
      * which is ususally a {@link Struct}.
@@ -170,45 +179,31 @@ public class Bindings {
         }
     }
 
-    /**
-     * Deep copy (cloning) constructor, used for efficiency since the original one needs to a costly traversal of the {@link Term}.<br/>
-     * The referrer of the new Bindings is the same as theOriginal.
-     * 
-     * @param theOriginal The one to clone from, remains intact.
-     */
-    public Bindings(Bindings theOriginal) {
-        this(theOriginal, theOriginal.referrer);
+    public static Bindings deepCopyWithSameReferrer(Bindings theOriginal) {
+        return deepCopyWithNewReferrer(theOriginal, theOriginal.getReferrer());
     }
 
-    /**
-     * Clone this {@link Bindings} but with the specified referrer Term instead of the original one.
-     * 
-     * @param theOriginal
-     * @param theNewReferrer
-     */
-    private Bindings(Bindings theOriginal, Term theNewReferrer) {
-        this.referrer = theNewReferrer;
+    private static Bindings deepCopyWithNewReferrer(Bindings theOriginal, Term theNewReferrer) {
         // Deep cloning of the individual Binding
         final int nbVars = theOriginal.bindings.length;
-        this.bindings = new Binding[nbVars];
+        final Binding[] copiedArray = new Binding[nbVars];
         // All bindings need cloning
         for (int i = 0; i < nbVars; i++) {
-            this.bindings[i] = theOriginal.bindings[i].cloneIt();
+            copiedArray[i] = theOriginal.bindings[i].cloneIt();
         }
-    }
-
-    private Bindings() {
-        // Nothing
+        return new Bindings(theNewReferrer, copiedArray);
     }
 
     /**
-     * Create a new Bindings, but only set the two fields - to be revised further.
+     * Create a new Bindings, just setting the specified referrer, but referring to the same
+     * array of {@link Binding}.
      */
     private static Bindings shallowCopy(Bindings theOriginal, Term theNewReferrer) {
-        final Bindings result = new Bindings();
-        result.referrer = theNewReferrer;
-        result.bindings = theOriginal.bindings;
-        return result;
+        return new Bindings(theNewReferrer, theOriginal.bindings);
+    }
+
+    public static Bindings shallowCopyWithSameReferrer(Bindings theOriginal) {
+        return new Bindings(theOriginal.getReferrer(), theOriginal.bindings);
     }
 
     // ---------------------------------------------------------------------------
@@ -245,7 +240,9 @@ public class Bindings {
         // Make sure it's of the desired class
         ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
         // will return a cloned Bindings with theTerm as referrer
-        return new Bindings(this, theTerm);
+        return shallowCopy(this, theTerm);
+        // Did we need the following line?
+        // return deepCopyWithNewReferrer(this, theTerm);
     }
 
     /**

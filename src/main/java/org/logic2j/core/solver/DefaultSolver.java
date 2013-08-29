@@ -177,8 +177,11 @@ public class DefaultSolver implements Solver {
 
                     // Clone the variables so that we won't mutate our current clause's ones
                     final Bindings immutableVars = clause.getBindings();
-                    // FIXME: we have a problem we clone the Bindings, so we will callback our solution listener with another one!
-                    final Bindings clauseVars = new Bindings(immutableVars);
+
+                    // TODO apparently we cannot afford a shallow copy?
+                    // final Bindings clauseVars = Bindings.shallowCopyWithSameReferrer(immutableVars);
+                    final Bindings clauseVars = Bindings.deepCopyWithSameReferrer(immutableVars);
+
                     final Term clauseHead = clause.getHead();
                     if (debug) {
                         logger.debug("Unifying: goal={}        with  goalVars={}", goalTerm, theGoalBindings);
