@@ -40,9 +40,9 @@ perm([], []).
 %not(P) :- call(P), !, fail.
 %not(P).
 
-% Is this correct? (and that simple?)
-C -> T :- call(C), !, call(T).
-
+% Is this correct?
+C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
+C -> T      :- call(C), !, call(T).
 
 
 /*
