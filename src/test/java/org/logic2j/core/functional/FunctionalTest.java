@@ -57,6 +57,9 @@ public class FunctionalTest extends PrologTestBase {
         assertNoSolution(NO_SOLUTION_GOALS);
     }
 
+    /**
+     * This is a special feature of logic2j: AND with any arity
+     */
     @Test
     public void nonBinaryAnd() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
@@ -71,9 +74,7 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void or() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
-        assertNSolutions(1, "';'(true)");
         assertNSolutions(2, "';'(true, true)");
-        assertNSolutions(3, "';'(true, true, true)");
         //
         assertNSolutions(2, "true; true");
         assertNSolutions(3, "true; true; true");
@@ -81,6 +82,24 @@ public class FunctionalTest extends PrologTestBase {
         MultipleSolutionsHolder solutions;
         solutions = this.prolog.solve("X=a; X=b; X=c").all();
         assertEquals("[a, b, c]", solutions.binding("X").toString());
+    }
+
+    /**
+     * This is a special feature of logic2j: OR with any arity
+     */
+    @Test
+    public void nonBinaryOr() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(1, "';'(true)");
+        assertNSolutions(2, "';'(true, true)");
+        assertNSolutions(3, "';'(true, true, true)");
+    }
+
+    @Test
+    public void orWithVars() {
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("X=1; Y=2").all();
+        assertEquals("[{X=1, Y=Y}, {X=X, Y=2}]", solutions.bindings().toString());
     }
 
     @Test
