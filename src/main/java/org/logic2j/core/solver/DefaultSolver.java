@@ -96,7 +96,14 @@ public class DefaultSolver implements Solver {
             final Term lhs = goalStruct.getArg(0);
             result = solveGoalRecursive(lhs, theGoalBindings, listeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            // Logical OR
+
+            /*
+             * This is the Java implementation of N-arity OR
+             * We can also implement a binary OR directly in Prolog using
+             *   A ; B :- call(A).
+             *   A ; B :- call(B).
+             * but the simplicity of the code below and its efficiency are preferred.
+             */
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
                 // TODO what do we do with the "Continuation" result of the method?
@@ -108,7 +115,8 @@ public class DefaultSolver implements Solver {
             if (arity != 1) {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
             }
-            final Bindings effectiveGoalBindings = theGoalBindings.focus(goalStruct.getArg(0), Term.class);
+            final Term argumentOfCall = goalStruct.getArg(0);
+            final Bindings effectiveGoalBindings = theGoalBindings.focus(argumentOfCall, Term.class);
             if (effectiveGoalBindings == null) {
                 throw new InvalidTermException("Argument to primitive 'call' may not be a free variable, was " + goalStruct.getArg(0));
             }

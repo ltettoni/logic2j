@@ -15,6 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 member(E,[E|_]).
 member(E,[_|L]):- member(E,L).
 
@@ -42,3 +43,12 @@ perm([], []).
 % Is this correct? (and that simple?)
 C -> T :- call(C), !, call(T).
 
+
+
+/*
+  This is a working version of OR implemented in prolog. 
+  However we prefer the N-arity implmentation of OR in Java, see DefaultSolver.
+
+A ; B :- call(A).
+A ; B :- call(B).
+*/
