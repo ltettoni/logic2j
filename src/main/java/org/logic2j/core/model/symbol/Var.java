@@ -84,12 +84,16 @@ public class Var extends Term {
     }
 
     /**
-     * Obtain the current {@link Binding} of this Var from the {@link Bindings}. Notice that the variable index must have been assigned, and
+     * Obtain the current {@link Binding} to this Var among all contained in the specified {@link Bindings}.
+     * Principally, this would search through all {@link Binding}s contained in the specified {@link Bindings} and return the one that
+     * refer to this {@link Var}. But since the {@link Bindings} is indexed, let's use the index!
+     * Notice that the variable index must have been assigned, and
      * this var must NOT be the anonymous variable (that cannot be bound to anything).
      * 
      * @param theBindings
      * @return The current binding of this Var.
      */
+    // TODO Does this method belong here, or to the Bindings class?
     public Binding bindingWithin(Bindings theBindings) {
         if (this.index < 0) {
             // An error situation
@@ -103,6 +107,7 @@ public class Var extends Term {
         if (this.index >= theBindings.getSize()) {
             throw new PrologNonSpecificError("Bindings " + theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
         }
+        // Since this var is properly indexed, use it!
         return theBindings.getBinding(this.index);
     }
 
