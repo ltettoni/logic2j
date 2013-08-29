@@ -99,18 +99,29 @@ max3(X,Y,Z,R) :- max(X,Y,R1), max(R1,Z,R).
 
 max4(X,Y,Z,T,R) :- max(X,Y,R1), max(Z,T,R2), max(R1,R2,R).
 
+or3(X) :- X=a; X=b; X=c.
 
-
+  
+% Inefficient implementation: backtracking and redundant tests
 sign(N, positive) :- N > 0.
 sign(N, negative) :- N < 0.
 sign(N, zero)     :- N =:= 0.
 
-    
-sign2(N, Sign) :- 
+% Better
+sign2(N, Sign) :- N > 0, Sign=positive, !.
+sign2(N, Sign) :- N < 0, Sign=negative, !.
+sign2(N, Sign) :- Sign=zero.
+
+% More compact, using OR instead of several clauses
+sign3(N, Sign) :- 
+    N > 0, Sign=positive, ! ;
+    N < 0, Sign=negative, ! ;
+    Sign=zero.
+
+% Even more compact, using ->
+sign4(N, Sign) :- 
         N > 0 -> Sign=positive ;
         N < 0 -> Sign=negative ;
         Sign=zero.
 
-or3(X) :- X=a;X=b;X=c.
-
-    
+  

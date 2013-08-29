@@ -19,7 +19,6 @@ package org.logic2j.core.functional;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.impl.PrologImplementation;
@@ -35,23 +34,19 @@ import org.logic2j.core.solver.listener.SolutionListener;
  */
 public class ExecutionPruningTest extends PrologTestBase {
 
-    @Ignore("Still not working")
-    @Test
-    public void sign_with_arrow() throws Exception {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
-        //
-        MultipleSolutionsHolder solutions;
-        solutions = this.prolog.solve("sign2(5,X)").all();
-        assertEquals("[positive]", solutions.binding("X").toString());
-
-        // assertEquals(term("positive"), assertOneSolution("sign2(5,X)").binding("X"));
-        // assertEquals(term("negative"), assertOneSolution("sign2(-5,X)").binding("X"));
-        // assertEquals(term("zero"), assertOneSolution("sign2(0,X)").binding("X"));
-    }
-
     @Test
     public void justForDebugging() {
         // Empty use just for debugging one particular case
+    }
+
+    @Test
+    public void cutAndOr() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(1, "!; true");
+        assertNSolutions(2, "true; !");
+        assertNSolutions(2, "true; !; true");
+        assertNSolutions(3, "true; true; !; true");
+        assertNSolutions(2, "true; !; true; !; true");
     }
 
     @Test
@@ -113,7 +108,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     @Test
-    public void max_green_cut() throws Exception {
+    public void max_green_cut() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         //
         assertOneSolution("max(2,3,3)");
@@ -129,7 +124,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     @Test
-    public void sign_without_cut() throws Exception {
+    public void sign() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         //
         assertEquals(term("positive"), assertOneSolution("sign(5,X)").binding("X"));
@@ -137,12 +132,54 @@ public class ExecutionPruningTest extends PrologTestBase {
         assertEquals(term("zero"), assertOneSolution("sign(0,X)").binding("X"));
     }
 
+    @Test
+    public void sign2() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        assertEquals(term("zero"), assertOneSolution("sign2(0,X)").binding("X"));
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("sign2(-5,X)").all();
+        assertEquals("[negative]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("sign2(5,X)").all();
+        assertEquals("[positive]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void sign3() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        assertEquals(term("zero"), assertOneSolution("sign3(0,X)").binding("X"));
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("sign3(-5,X)").all();
+        assertEquals("[negative]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("sign3(5,X)").all();
+        assertEquals("[positive]", solutions.binding("X").toString());
+    }
+
+    @Test
+    public void sign4() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        assertEquals(term("zero"), assertOneSolution("sign4(0,X)").binding("X"));
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("sign4(-5,X)").all();
+        assertEquals("[negative]", solutions.binding("X").toString());
+        //
+        solutions = this.prolog.solve("sign4(5,X)").all();
+        assertEquals("[positive]", solutions.binding("X").toString());
+    }
+
     // ---------------------------------------------------------------------------
     // Former tests from FunctionalTest
     // ---------------------------------------------------------------------------
 
     @Test
-    public void cut() throws Exception {
+    public void cut() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         assertNSolutions(0, "pc(X)");
         assertNSolutions(3, "p(X), X>1");
