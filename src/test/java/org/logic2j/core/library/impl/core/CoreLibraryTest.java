@@ -216,7 +216,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void arrow() throws Exception {
+    public void arrow() {
         assertOneSolution("true->true");
         assertNoSolution("true->fail");
         assertNoSolution("fail->true");

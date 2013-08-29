@@ -33,7 +33,7 @@ public class AdHocLibraryTest extends PrologTestBase {
     }
 
     @Test(expected = PrologNonSpecificError.class)
-    public void exceptionThrownInJavaPredicate() throws Exception {
+    public void exceptionThrownInJavaPredicate() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
         assertNoSolution("int_range(A, X, 10)");
     }
