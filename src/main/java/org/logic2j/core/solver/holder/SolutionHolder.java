@@ -44,7 +44,7 @@ import org.logic2j.core.solver.listener.UniqueSolutionListener;
  * This type of API for extracting results from a data layer should further be analyzed and confronted to other APIs such as JDBC, JNDI,
  * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
  */
-public class SolutionHolder {
+public class SolutionHolder implements Iterable<Solution> {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
 
     protected static final TermApi TERM_API = new TermApi();

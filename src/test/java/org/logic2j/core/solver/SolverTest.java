@@ -109,4 +109,14 @@ public class SolverTest extends PrologTestBase {
         assertEquals(4, counter);
     }
 
+    @Test
+    public void iterable() {
+        int counter = 0;
+        for (Solution solution : this.prolog.solve("member(X, [1,2,3,4])")) {
+            logger.info(" iterable Solution={}", solution);
+            counter++;
+        }
+        assertEquals(4, counter);
+    }
+
 }
