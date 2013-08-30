@@ -43,8 +43,6 @@ import org.logic2j.core.util.ReflectUtils;
  * Provide the core primitives of the Prolog language.
  * Most is implemented in Java, but there is an associated Prolog theory at:
  * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.prolog
- * 
- * TODO Factorize code of functors (eg "+") and predicates (eg =<) to use a closure for the real numeric calculation
  */
 public class CoreLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
@@ -283,80 +281,108 @@ public class CoreLibrary extends LibraryBase {
         return notifyIfUnified(unified, theListener);
     }
 
-    @Primitive(name = ">")
-    public Continuation expression_greater_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
-        t1 = evaluateFunctor(theBindings, t1);
-        t2 = evaluateFunctor(theBindings, t2);
+    // ---------------------------------------------------------------------------
+    // Binary numeric predicates
+    // ---------------------------------------------------------------------------
+
+    private static interface TNumberBinaryClosure {
+        boolean apply(TNumber val1, TNumber val2);
+    }
+
+    /**
+     * For all binary predicates that compare numeric values.
+     * 
+     * @param theListener
+     * @param theBindings
+     * @param t1
+     * @param t2
+     * @param theEvaluationFunction
+     * @return
+     */
+    private Continuation binaryNumericPredicate(SolutionListener theListener, Bindings theBindings, Term t1, Term t2, TNumberBinaryClosure theEvaluationFunction) {
+        final Term effectiveT1 = evaluateFunctor(theBindings, t1);
+        final Term effectiveT2 = evaluateFunctor(theBindings, t2);
         Continuation continuation = Continuation.CONTINUE;
-        if (t1 instanceof TNumber && t2 instanceof TNumber) {
-            final TNumber val0n = (TNumber) t1;
-            final TNumber val1n = (TNumber) t2;
-            if (val0n.longValue() > val1n.longValue()) {
+        if (effectiveT1 instanceof TNumber && effectiveT2 instanceof TNumber) {
+            final TNumber value1 = (TNumber) effectiveT1;
+            final TNumber value2 = (TNumber) effectiveT2;
+            boolean condition = theEvaluationFunction.apply(value1, value2);
+            if (condition) {
                 continuation = notifySolution(theListener);
             }
         }
         return continuation;
+    }
+
+    @Primitive(name = ">")
+    public Continuation expression_greater_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() > val2.doubleValue();
+            }
+        });
     }
 
     @Primitive(name = "<")
     public Continuation expression_lower_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
-        t1 = evaluateFunctor(theBindings, t1);
-        t2 = evaluateFunctor(theBindings, t2);
-        Continuation continuation = Continuation.CONTINUE;
-        if (t1 instanceof TNumber && t2 instanceof TNumber) {
-            final TNumber val0n = (TNumber) t1;
-            final TNumber val1n = (TNumber) t2;
-            if (val0n.longValue() < val1n.longValue()) {
-                continuation = notifySolution(theListener);
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() < val2.doubleValue();
             }
-        }
-        return continuation;
+        });
     }
 
     @Primitive(name = ">=")
     public Continuation expression_greater_equal_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
-        t1 = evaluateFunctor(theBindings, t1);
-        t2 = evaluateFunctor(theBindings, t2);
-        Continuation continuation = Continuation.CONTINUE;
-        if (t1 instanceof TNumber && t2 instanceof TNumber) {
-            final TNumber val0n = (TNumber) t1;
-            final TNumber val1n = (TNumber) t2;
-            if (val0n.longValue() >= val1n.longValue()) {
-                continuation = notifySolution(theListener);
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() >= val2.doubleValue();
             }
-        }
-        return continuation;
+        });
     }
 
     @Primitive(name = "=<")
     public Continuation expression_lower_equal_than(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
-        t1 = evaluateFunctor(theBindings, t1);
-        t2 = evaluateFunctor(theBindings, t2);
-        Continuation continuation = Continuation.CONTINUE;
-        if (t1 instanceof TNumber && t2 instanceof TNumber) {
-            final TNumber val0n = (TNumber) t1;
-            final TNumber val1n = (TNumber) t2;
-            if (val0n.longValue() <= val1n.longValue()) {
-                continuation = notifySolution(theListener);
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() <= val2.doubleValue();
             }
-        }
-        return continuation;
+        });
     }
 
     @Primitive(name = "=:=")
     public Continuation expression_equals(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
-        t1 = evaluateFunctor(theBindings, t1);
-        t2 = evaluateFunctor(theBindings, t2);
-        Continuation continuation = Continuation.CONTINUE;
-        if (t1 instanceof TNumber && t2 instanceof TNumber) {
-            final TNumber val0n = (TNumber) t1;
-            final TNumber val1n = (TNumber) t2;
-            if (val0n.longValue() == val1n.longValue()) {
-                continuation = notifySolution(theListener);
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() == val2.doubleValue();
             }
-        }
-        return continuation;
+        });
     }
+
+    @Primitive(name = "=\\=")
+    public Continuation expression_not_equals(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
+        return binaryNumericPredicate(theListener, theBindings, t1, t2, new TNumberBinaryClosure() {
+
+            @Override
+            public boolean apply(TNumber val1, TNumber val2) {
+                return val1.doubleValue() != val2.doubleValue();
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Functors
+    // ---------------------------------------------------------------------------
 
     @Primitive(name = "+")
     public Term plus(SolutionListener theListener, Bindings theBindings, Term t1, Term t2) {
