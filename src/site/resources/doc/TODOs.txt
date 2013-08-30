@@ -6,3 +6,6 @@ Things possibly to be done:
 - There is no Tail Recursion Optimization (TRO) yet
 - Remove ClauseProviderResolver
 - Have a look at Java CDI (JSR ?, JSR 250, instead of Spring) for easier integration with CDI frameworks (see tasks in PrologImpl)
+
+
+- Implement setof, bagof, etc. See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/4.html
