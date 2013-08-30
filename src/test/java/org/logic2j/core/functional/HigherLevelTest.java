@@ -41,6 +41,11 @@ public class HigherLevelTest extends PrologTestBase {
         return InitLevel.L2_BASE_LIBRARIES;
     }
 
+    @Test
+    public void placeholder() {
+        //
+    }
+
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
      */
@@ -60,6 +65,35 @@ public class HigherLevelTest extends PrologTestBase {
         loadLibrary(library);
         loadTheoryFromTestResourcesDir("dollar.pl");
         assertNSolutions(292, "change([H,Q,D,N,P])");
+    }
+
+    /**
+     * N-Queens problem
+     */
+    @Test
+    public void queens() {
+        loadTheoryFromTestResourcesDir("queens.pl");
+
+        assertEquals("[1]", assertOneSolution("queens(1, Positions)").binding("Positions").toString());
+        assertNoSolution("queens(2, _)");
+        assertNoSolution("queens(3, _)");
+        MultipleSolutionsHolder solutions;
+        //
+        //
+        solutions = this.prolog.solve("queens(4, Positions)").all();
+        assertEquals("[[3,1,4,2], [2,4,1,3]]", solutions.binding("Positions").toString());
+        //
+        solutions = this.prolog.solve("queens(5, Positions)").all();
+        assertEquals("[[4,2,5,3,1], [3,5,2,4,1], [5,3,1,4,2], [4,1,3,5,2], [5,2,4,1,3], [1,4,2,5,3], [2,5,3,1,4], [1,3,5,2,4], [3,1,4,2,5], [2,4,1,3,5]]", solutions.binding("Positions").toString());
+        //
+        solutions = this.prolog.solve("queens(6, Positions)").all();
+        assertEquals("[[5,3,1,6,4,2], [4,1,5,2,6,3], [3,6,2,5,1,4], [2,4,6,1,3,5]]", solutions.binding("Positions").toString());
+        //
+        assertNSolutions(40, "queens(7, _)");
+        assertNSolutions(92, "queens(8, _)");
+        assertNSolutions(352, "queens(9, _)");
+        assertNSolutions(724, "queens(10, _)");
+        assertNSolutions(2680, "queens(11, _)"); // About 7 times faster than tuProlog
     }
 
     @Test
