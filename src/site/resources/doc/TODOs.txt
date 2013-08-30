@@ -9,3 +9,4 @@ Things possibly to be done:
 
 
 - Implement setof, bagof, etc. See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/4.html
+- How could we leverage multi-core architectures? Running "queens(11, _)" shows that only one core is busy.

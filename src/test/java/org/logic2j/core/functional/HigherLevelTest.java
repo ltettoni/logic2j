@@ -19,6 +19,9 @@ package org.logic2j.core.functional;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Iterator;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.benchmark.BenchmarkTest;
@@ -26,6 +29,7 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
+import org.logic2j.core.solver.listener.Solution;
 
 /**
  * Run higher-level tests such as whole programs.
@@ -34,6 +38,7 @@ import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
 
     @Override
     protected InitLevel initLevel() {
@@ -68,10 +73,11 @@ public class HigherLevelTest extends PrologTestBase {
     }
 
     /**
-     * N-Queens problem
+     * N-Queens problem, lighter ones.
+     * See also {@link #queensHeavier()}
      */
     @Test
-    public void queens() {
+    public void queensLighter() {
         loadTheoryFromTestResourcesDir("queens.pl");
 
         assertEquals("[1]", assertOneSolution("queens(1, Positions)").binding("Positions").toString());
@@ -91,9 +97,37 @@ public class HigherLevelTest extends PrologTestBase {
         //
         assertNSolutions(40, "queens(7, _)");
         assertNSolutions(92, "queens(8, _)");
+    }
+
+    /**
+     * N-Queens problem, heavy ones.
+     * See {@link #queensLighter()}
+     */
+    @Ignore("Very CPU intensive - enable on demand")
+    @Test
+    public void queensHeavier() {
+        loadTheoryFromTestResourcesDir("queens.pl");
+
         assertNSolutions(352, "queens(9, _)");
         assertNSolutions(724, "queens(10, _)");
-        assertNSolutions(2680, "queens(11, _)"); // About 7 times faster than tuProlog
+        assertNSolutions(2680, "queens(11, _)");
+    }
+
+    @Ignore("Takes a lot of time - used to study multicore use of 2-thread solving")
+    @Test
+    public void multithreadedProducerConsumerIsNotFaster() {
+        logger.info("Number of host cores = {}", Runtime.getRuntime().availableProcessors());
+        loadTheoryFromTestResourcesDir("queens.pl");
+        // assertNSolutions(724, "queens(10, _)");
+        //
+        //
+        Iterator<Solution> solutions = this.prolog.solve("queens(11, Positions)").iterator();
+        int counter = 0;
+        while (solutions.hasNext()) {
+            solutions.next();
+            counter++;
+        }
+        logger.info("Iterated {} solutions", counter);
     }
 
     @Test
