@@ -129,18 +129,20 @@ public class Bindings {
 
     }
 
-    private Bindings() {
-        // Nothing
-    }
-
+    /**
+     * Just assign the 2 fields of this new Bindings.
+     * 
+     * @param theNewReferrer
+     * @param theArrayOfBinding
+     */
     private Bindings(Term theNewReferrer, Binding[] theArrayOfBinding) {
         this.referrer = theNewReferrer;
         this.bindings = theArrayOfBinding;
     }
 
     /**
-     * Instantiate a {@link Bindings} to hold the values of all {@link Var}iables of a given {@link Term}, named further the "referrer",
-     * which is ususally a {@link Struct}.
+     * Allocate a {@link Bindings} to hold the values of all {@link Var}iables of a given {@link Term},
+     * named further the "referrer", which is ususally a {@link Struct}.
      * 
      * @note This constructor needs quite a lot of processing - there should be ways to optimize it
      * @param theReferrer The Term whose {@link Var}iables's values are to be found in this object.
@@ -179,6 +181,13 @@ public class Bindings {
         }
     }
 
+    /**
+     * Create a new {@link Bindings} with the same referrer, but a deep copy of the {@link Binding} array
+     * contained therein. A new array is allocated, and every {@link Binding} is cloned also.
+     * 
+     * @param theOriginal
+     * @return
+     */
     public static Bindings deepCopyWithSameReferrer(Bindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal, theOriginal.getReferrer());
     }
@@ -200,10 +209,6 @@ public class Bindings {
      */
     private static Bindings shallowCopy(Bindings theOriginal, Term theNewReferrer) {
         return new Bindings(theNewReferrer, theOriginal.bindings);
-    }
-
-    public static Bindings shallowCopyWithSameReferrer(Bindings theOriginal) {
-        return new Bindings(theOriginal.getReferrer(), theOriginal.bindings);
     }
 
     // ---------------------------------------------------------------------------
