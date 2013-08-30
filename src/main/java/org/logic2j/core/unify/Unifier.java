@@ -27,6 +27,7 @@ public interface Unifier {
 
     /**
      * Unify terms together, term1 with its bindings, and term2 with its bindings.
+     * It is perfectly legal to call with theBindings1==theBindings2.
      * 
      * @param term1
      * @param theBindings1
