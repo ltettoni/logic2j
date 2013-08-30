@@ -138,7 +138,7 @@ public class CoreLibrary extends LibraryBase {
         assertValidBindings(atomBindings, "atom_length/2");
         final Struct atom = (Struct) atomBindings.getReferrer();
 
-        final TLong atomLength = createTLong(atom.getName().length());
+        final TLong atomLength = new TLong((long) atom.getName().length());
         final boolean unified = unify(atomLength, atomBindings, theLength, theBindings);
         return notifyIfUnified(unified, theListener);
     }
@@ -392,7 +392,7 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n instanceof TLong && val1n instanceof TLong) {
-                return createTLong(val0n.longValue() + val1n.longValue());
+                return new TLong(val0n.longValue() + val1n.longValue());
             }
             return new TDouble(val0n.doubleValue() + val1n.doubleValue());
         }
@@ -414,7 +414,7 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n instanceof TLong && val1n instanceof TLong) {
-                return createTLong(val0n.longValue() - val1n.longValue());
+                return new TLong(val0n.longValue() - val1n.longValue());
             }
             return new TDouble(val0n.doubleValue() - val1n.doubleValue());
         }
@@ -435,7 +435,7 @@ public class CoreLibrary extends LibraryBase {
             final TNumber val0n = (TNumber) t1;
             final TNumber val1n = (TNumber) t2;
             if (val0n instanceof TLong && val1n instanceof TLong) {
-                return createTLong(val0n.longValue() * val1n.longValue());
+                return new TLong(val0n.longValue() * val1n.longValue());
             }
             return new TDouble(val0n.doubleValue() * val1n.doubleValue());
         }
@@ -460,10 +460,6 @@ public class CoreLibrary extends LibraryBase {
             }
         }
         throw new InvalidTermException("Could not negate because argument " + t1 + " is not TNumber but " + t1.getClass());
-    }
-
-    private TLong createTLong(long num) {
-        return new TLong(num);
     }
 
 }
