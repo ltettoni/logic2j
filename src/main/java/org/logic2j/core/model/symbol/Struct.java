@@ -88,6 +88,7 @@ public class Struct extends Term {
 
     /**
      * Builds a compound, with any number of arguments.
+     * TODO Move this to the Adapter framework
      */
     public Struct(String theFunctor, Object... argList) throws InvalidTermException {
         this(theFunctor, argList.length);
