@@ -19,8 +19,10 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.Formatter;
 import org.logic2j.core.LibraryManager;
+import org.logic2j.core.TermAdapter;
 import org.logic2j.core.TermFactory;
 import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.adapter.DefaultTermAdapter;
 import org.logic2j.core.io.format.DefaultFormatter;
 import org.logic2j.core.io.operator.DefaultOperatorManager;
 import org.logic2j.core.io.operator.OperatorManager;
@@ -69,6 +71,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Define all sub-features of this reference implementation and initialize with default, reference implementations
     // ---------------------------------------------------------------------------
 
+    private TermAdapter termAdapter = new DefaultTermAdapter(this);
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
     private TermFactory termFactory = new DefaultTermFactory(this);
     private Formatter formatter = new DefaultFormatter(this);
@@ -140,13 +143,18 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // ---------------------------------------------------------------------------
 
     @Override
-    public TheoryManager getTheoryManager() {
-        return this.theoryManager;
+    public TermAdapter getTermAdapter() {
+        return this.termAdapter;
     }
 
     @Override
     public TermFactory getTermFactory() {
         return this.termFactory;
+    }
+
+    @Override
+    public TheoryManager getTheoryManager() {
+        return this.theoryManager;
     }
 
     public void setTermFactory(TermFactory termFactory) {
