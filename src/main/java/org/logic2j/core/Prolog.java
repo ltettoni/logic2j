@@ -67,6 +67,13 @@ public interface Prolog {
     // ---------------------------------------------------------------------------
 
     /**
+     * The current adapter to convert {@link Term}s to and from Java {@link Object}s.
+     * 
+     * @return Our {@link TermAdapter}
+     */
+    TermAdapter getTermAdapter();
+
+    /**
      * The current factory to parse instantiate {@link Term}s.
      * 
      * @return Our {@link TermFactory}
