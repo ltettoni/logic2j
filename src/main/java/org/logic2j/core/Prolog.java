@@ -74,16 +74,17 @@ public interface Prolog {
     TermAdapter getTermAdapter();
 
     /**
-     * The current factory to parse instantiate {@link Term}s.
-     * 
-     * @return Our {@link TermFactory}
-     */
-    TermFactory getTermFactory();
-
-    /**
      * The current theory manager, will allow calling code to add clauses, load theories, etc.
      * 
      * @return Our {@link TheoryManager}
      */
     TheoryManager getTheoryManager();
+
+    /**
+     * The current factory to parse instantiate {@link Term}s.
+     * 
+     * @return Our {@link TermFactory}
+     */
+    @Deprecated
+    TermFactory getTermFactory();
 }

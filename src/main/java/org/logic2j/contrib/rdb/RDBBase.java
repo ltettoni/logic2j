@@ -19,6 +19,7 @@ package org.logic2j.contrib.rdb;
 
 import javax.sql.DataSource;
 
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.TermFactory;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.DefaultTermFactory;

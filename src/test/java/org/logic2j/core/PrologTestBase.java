@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;

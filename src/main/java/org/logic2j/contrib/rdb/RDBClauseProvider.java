@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.Clause;
 import org.logic2j.core.model.exception.InvalidTermException;

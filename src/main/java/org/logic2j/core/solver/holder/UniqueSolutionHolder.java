@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.listener.Solution;
+import org.logic2j.core.util.ReflectUtils;
 
 /**
  * A relay object to provide access to the results of the (expected) unique solution to a goal.
@@ -48,6 +49,15 @@ public class UniqueSolutionHolder {
     }
 
     /**
+     * @param theVariableName
+     * @param theTargetClass
+     */
+    public <T> T binding(String theVariableName, Class<T> theTargetClass) {
+        final Term t = binding(theVariableName);
+        return ReflectUtils.safeCastNotNull("extracting binding for variable " + theVariableName, t, theTargetClass);
+    }
+
+    /**
      * @return All bindings.
      */
     public Map<String, Term> bindings() {
@@ -60,4 +70,5 @@ public class UniqueSolutionHolder {
     public Term solution() {
         return this.solution.getSolution();
     }
+
 }

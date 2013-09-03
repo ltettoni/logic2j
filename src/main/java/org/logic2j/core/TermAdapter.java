@@ -18,12 +18,38 @@
 
 package org.logic2j.core;
 
+import org.logic2j.core.model.symbol.Struct;
+import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.symbol.Var;
 
 /**
  * Convert from Java objects to {@link Term}s, and from Terms to Java objects.
  */
 public interface TermAdapter {
+
+    static enum FactoryMode {
+        /**
+         * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
+         */
+        ATOM,
+
+        /**
+         * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), but not a {@link Var}iable neither a
+         * compound {@link Struct}.
+         */
+        LITERAL,
+
+        /**
+         * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
+         */
+        ANY_TERM,
+
+        /**
+         * Result can be any term plus compound structures.
+         */
+        COMPOUND
+    }
 
     /**
      * Create a Term from virtually any class of {@link Object}; this is the highest-level factory
@@ -31,7 +57,7 @@ public interface TermAdapter {
      * @param theObject
      * @return A factorized and normalized {@link Term}.
      */
-    Term term(Object theObject);
+    Term term(Object theObject, FactoryMode theMode);
 
     /**
      * Convert a Term into the desired target Class.

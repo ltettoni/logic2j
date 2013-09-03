@@ -17,7 +17,7 @@
  */
 package org.logic2j.core.library.impl;
 
-import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;

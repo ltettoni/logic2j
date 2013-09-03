@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.logic2j.core.Prolog;
-import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.exception.InvalidTermException;

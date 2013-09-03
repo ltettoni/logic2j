@@ -1,0 +1,71 @@
+/*
+ * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+package org.logic2j.core.functional;
+
+import java.awt.Button;
+import java.util.Arrays;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.logic2j.core.Prolog;
+import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.model.symbol.Struct;
+import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.solver.Solver;
+
+/**
+ * Test how Java objects can invoke and be returned from logic2j's {@link Prolog} and {@link Solver}.
+ */
+public class AdapterTest extends PrologTestBase {
+    // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);
+
+    public static class MyOutputObject {
+
+    }
+
+    public static enum MyEnum {
+        V1, V2, V3
+    }
+
+    public static abstract class PrologAdapter<In, Out> {
+        public abstract Iterable<Out> solve(In in);
+    }
+
+    @Ignore("Under development")
+    @Test
+    public void invokeWithJavaObjects() throws Exception {
+        // Just convert a vararg of Object... to a Struct, and that's OK
+        this.prolog.solve(invocation("goal", 123, "str", 3.14, MyEnum.V1, new Object(), new Button()));
+        // ^^^static : en tout cas pas.
+    }
+
+    @Ignore("Under development")
+    @Test
+    public void testRetrieveJavaObjects() throws Exception {
+        this.prolog.solve("X is 2+3").unique().binding("X", Integer.class);
+    }
+
+    /**
+     * @param predicateName
+     * @param args
+     * @return
+     */
+    private Term invocation(String predicateName, Object... args) {
+        return new Struct(predicateName, Arrays.asList(args));
+    }
+}

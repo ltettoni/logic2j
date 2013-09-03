@@ -17,47 +17,17 @@
  */
 package org.logic2j.core;
 
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TNumber;
 import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.Var;
 
 /**
  * Factory methods to unmarshall {@link Term}s from data of a different nature such as {@link Object}s or streamable representations.
- * 
- * TODO Should become bidirectional: be extended towards marshalling Terms into Java objects or streamable representations (currently
- * covered by the {@link Formatter}). Currently we have a Term->String in {@link Formatter}, String->Term and Object->Term in
- * {@link TermFactory}, and nothing for Term->Object. Should we split by direction (in vs. out), or by type of representation (Stream vs.
- * Pojo).
  * 
  * @note A TermFactory must know its {@link PrologImplementation}, because it has to identify operators and primitives registered therein.
  * @note This interface is still deficient for handling channel streams - some more design needed.
  */
 public interface TermFactory {
-
-    static enum FactoryMode {
-        /**
-         * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
-         */
-        ATOM,
-
-        /**
-         * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), but not a {@link Var}iable neither a
-         * compound {@link Struct}.
-         */
-        LITERAL,
-
-        /**
-         * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
-         */
-        ANY_TERM,
-
-        /**
-         * Result can be any term plus compound structures.
-         */
-        COMPOUND
-    }
 
     /**
      * Create a Term from virtually any class of {@link Object}, in particular a {@link CharSequence}; this is the highest-level factory.

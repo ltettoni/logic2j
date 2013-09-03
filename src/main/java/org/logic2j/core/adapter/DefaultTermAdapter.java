@@ -24,7 +24,7 @@ import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 
 /**
- * Default implementation of {@link TermFactory}
+ * Default and reference implementation of {@link TermFactory}.
  */
 public class DefaultTermAdapter implements TermAdapter {
 
@@ -37,8 +37,8 @@ public class DefaultTermAdapter implements TermAdapter {
 
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
-    public Term term(Object theObject) {
-        final Term created = TERM_API.valueOf(theObject, TermFactory.FactoryMode.COMPOUND);
+    public Term term(Object theObject, FactoryMode theMode) {
+        final Term created = TERM_API.valueOf(theObject, theMode);
         final Term normalized = TERM_API.normalize(created, this.prolog.getLibraryManager().wholeContent());
         return normalized;
     }

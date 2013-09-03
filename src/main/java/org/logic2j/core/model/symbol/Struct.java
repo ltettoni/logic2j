@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 
-import org.logic2j.core.TermFactory.FactoryMode;
+import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.model.TermVisitor;

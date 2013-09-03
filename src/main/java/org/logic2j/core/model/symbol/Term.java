@@ -21,8 +21,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 
-import org.logic2j.core.Formatter;
-import org.logic2j.core.io.format.DefaultFormatter;
+import org.logic2j.core.TermExchanger;
+import org.logic2j.core.exchange.DefaultTermExchanger;
 import org.logic2j.core.model.TermVisitor;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
 import org.logic2j.core.model.var.Binding;
@@ -64,14 +64,15 @@ public abstract class Term implements Serializable, Cloneable {
     protected short index = NO_INDEX;
 
     /**
-     * A {@link Formatter} for the default's {@link #toString()} to render this {@link Term}. Calling {@link #toString()} should be avoided
-     * from caller code, use your preferred instance of {@link Formatter} instead. Yet we need {@link #toString()} to work for the cases of
+     * A {@link TermExchanger} for the default's {@link #toString()} to render this {@link Term}.
+     * Calling {@link #toString()} should be avoided from caller code, use your preferred
+     * instance of {@link TermExchanger} instead. Yet we need {@link #toString()} to work for the cases of
      * logging and while debugging, so let's use a fixed (static) one.
      */
-    private static final Formatter formatter = new DefaultFormatter();
+    private static final TermExchanger basicExchanger = new DefaultTermExchanger();
 
     // Use the following line instead to really debug the display of terms:
-    // private static final Formatter formatter = new
+    // private static final Formatter basicExchanger = new
     // org.logic2j.core.optional.io.format.DetailedFormatter();
 
     // ---------------------------------------------------------------------------
@@ -197,11 +198,11 @@ public abstract class Term implements Serializable, Cloneable {
     public abstract int hashCode();
 
     /**
-     * Delegate formatting to the {@link DefaultFormatter}.
+     * Delegate formatting to our basic {@link TermExchanger}.
      */
     @Override
     public String toString() {
-        return accept(formatter);
+        return basicExchanger.marshall(this).toString();
     }
 
 }

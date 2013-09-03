@@ -44,7 +44,7 @@ public class IOLibrary extends LibraryBase {
             final Bindings b = theBindings.focus(term, Term.class);
             final Term value = b.getReferrer();
 
-            String format = getProlog().getFormatter().format(value);
+            String format = getProlog().getExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
             this.writer.print(format);
         }
@@ -64,7 +64,7 @@ public class IOLibrary extends LibraryBase {
             assertValidBindings(b, "write/*");
             final Term value = b.getReferrer();
 
-            String format = getProlog().getFormatter().format(value);
+            String format = getProlog().getExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
             logger.info(format);
         }

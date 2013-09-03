@@ -17,9 +17,9 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.Formatter;
 import org.logic2j.core.LibraryManager;
 import org.logic2j.core.Prolog;
+import org.logic2j.core.TermExchanger;
 import org.logic2j.core.io.operator.OperatorManager;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.solver.Solver;
@@ -56,8 +56,8 @@ public interface PrologImplementation extends Prolog {
     OperatorManager getOperatorManager();
 
     /**
-     * @return The implementation for marshalling {@link Term} hierarchies to various formats.
+     * @return Exchanger to parse or format {@link Term}s.
      */
-    Formatter getFormatter();
+    TermExchanger getExchanger();
 
 }

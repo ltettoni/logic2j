@@ -18,15 +18,19 @@
 
 package org.logic2j.optional.io.format;
 
-import org.logic2j.core.Formatter;
-import org.logic2j.core.io.format.DefaultFormatter;
+import org.logic2j.core.TermExchanger;
+import org.logic2j.core.exchange.DefaultTermExchanger;
 import org.logic2j.core.model.symbol.Var;
+import org.logic2j.core.model.var.Bindings;
 
 /**
- * A {@link Formatter} with more detailed information, use for debugging.
+ * A {@link TermExchanger} with more detailed information, use for debugging.
  */
-public class DetailedFormatter extends DefaultFormatter {
+public class DetailedFormatter extends DefaultTermExchanger {
 
+    /**
+     * Variables are reported with their offset in their {@link Bindings}.
+     */
     @Override
     protected String formatVar(Var theVar) {
         if (theVar.isAnonymous()) {
