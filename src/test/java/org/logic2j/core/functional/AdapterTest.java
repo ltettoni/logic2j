@@ -66,6 +66,6 @@ public class AdapterTest extends PrologTestBase {
      * @return
      */
     private Term invocation(String predicateName, Object... args) {
-        return new Struct(predicateName, Arrays.asList(args));
+        return Struct.valueOf(predicateName, Arrays.asList(args));
     }
 }

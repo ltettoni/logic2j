@@ -47,7 +47,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         loadTheoryFromTestResourcesDir("test-config.pl");
 
         assertNotNull(this.provider);
-        final Struct theGoal = new Struct("zip_code", "Zip", "City");
+        final Struct theGoal = Struct.valueOf("zip_code", "Zip", "City");
         this.provider.listMatchingClauses(theGoal, null);
     }
 
@@ -55,7 +55,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     @Test
     public void listMatchingClausesWithSpecialTransformer() {
         assertNotNull(this.provider);
-        final Struct theGoal = new Struct("zip_code", "Zip", "City");
+        final Struct theGoal = Struct.valueOf("zip_code", "Zip", "City");
         this.provider.setTermAdapter(new RDBBase.AllStringsAsAtoms(this.prolog));
         this.provider.listMatchingClauses(theGoal, /* No vars in theGoal */null);
     }

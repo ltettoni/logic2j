@@ -20,6 +20,7 @@ package org.logic2j.core.adapter;
 import org.logic2j.core.TermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.io.parse.tuprolog.Parser;
+import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
@@ -50,9 +51,36 @@ public class DefaultTermAdapter implements TermAdapter {
             return normalized;
         }
 
-        final Term created = TERM_API.valueOf(theObject, theMode);
+        final Term created = termFrom(theObject, theMode);
         final Term normalized = TERM_API.normalize(created, this.prolog.getLibraryManager().wholeContent());
         return normalized;
+    }
+
+    /**
+     * Factory that can be overridden.
+     * 
+     * @param theObject
+     * @param theMode
+     * @return An instance of Term
+     */
+    protected Term termFrom(Object theObject, FactoryMode theMode) {
+        if (theObject == null) {
+            throw new InvalidTermException("Cannot create Term from a null argument");
+        }
+        Term result = null;
+        if (theObject instanceof CharSequence || theObject instanceof Character) {
+            // Rudimentary parsing
+            final String chars = theObject.toString();
+            if (theMode == FactoryMode.ATOM) {
+                // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
+                result = new Struct(chars);
+            }
+        }
+        // Otherwise apply basic algorithm from TermApi
+        if (result == null) {
+            result = TERM_API.valueOf(theObject);
+        }
+        return result;
     }
 
     @Override

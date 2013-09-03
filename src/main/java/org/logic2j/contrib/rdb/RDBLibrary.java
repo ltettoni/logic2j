@@ -96,7 +96,7 @@ public class RDBLibrary extends LibraryBase {
         final String resultVar = "Tbl";
 
         // The goal we are solving
-        Term internalGoal = new Struct("gd3_solve", conditions, resultVar);
+        Term internalGoal = Struct.valueOf("gd3_solve", conditions, resultVar);
         internalGoal = internalGoal.cloneIt();
         // Watch out this destroys the indexes in the original expression !!!!
         internalGoal = TERM_API.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());

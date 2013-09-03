@@ -74,16 +74,16 @@ public class TermApiTest {
     public void collectTerms() {
         Term term;
         //
-        term = new Struct("p", "X", 2);
+        term = Struct.valueOf("p", "X", 2);
         logger.info("Flat terms: {}", TERM_API.collectTerms(term));
         //
-        term = new Struct("a", new Struct("b"), "c");
+        term = Struct.valueOf("a", new Struct("b"), "c");
         logger.info("Flat terms: {}", TERM_API.collectTerms(term));
         //
-        term = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
+        term = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", Struct.valueOf("p", "X", "Y")), Struct.valueOf("p", "X", "Y"));
         logger.info("Flat terms: {}", TERM_API.collectTerms(term));
         //
-        final Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", new Struct("p", "X", "Y")), new Struct("p", "X", "Y"));
+        final Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", Struct.valueOf("p", "X", "Y")), Struct.valueOf("p", "X", "Y"));
         logger.info("Flat terms of original {}", TERM_API.collectTerms(clause));
         final Term t2 = TERM_API.normalize(clause, null);
         logger.info("Found {} bindings", t2.getIndex());

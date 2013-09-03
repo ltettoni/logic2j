@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 
-import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.model.TermVisitor;
@@ -87,15 +86,19 @@ public class Struct extends Term {
     private PrimitiveInfo primitiveInfo;
 
     /**
-     * Builds a compound, with any number of arguments.
-     * TODO Move this to the Adapter framework
+     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
+     * by {@link TermApi#valueOf(Object)}.
+     * 
+     * @note This method is a static factory, not a constructor, to emphasize that arguments
+     *       are not of the type needed by this class, but need transformation.
      */
-    public Struct(String theFunctor, Object... argList) throws InvalidTermException {
-        this(theFunctor, argList.length);
+    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
+        final Struct newInstance = new Struct(theFunctor, argList.length);
         int i = 0;
         for (final Object element : argList) {
-            this.args[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
+            newInstance.args[i++] = TERM_API.valueOf(element);
         }
+        return newInstance;
     }
 
     public Struct(String theFunctor, Term... argList) throws InvalidTermException {

@@ -26,7 +26,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.logic2j.core.TermAdapter;
-import org.logic2j.core.TermAdapter.FactoryMode;
+import org.logic2j.core.TermExchanger;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
@@ -131,18 +131,22 @@ public class TermApi {
     }
 
     /**
-     * Lowest-level factory for simple {@link Term}s from plain Java {@link Object}s.
+     * Primitive factory for simple {@link Term}s from plain Java {@link Object}s, use this
+     * with parcimony at low-level.
+     * Higher-level must use {@link TermAdapter} or {@link TermExchanger} instead which can be
+     * overridden and defined with user logic and features.
      * 
-     * @note This method is not for unmarshalling (parsing) from {@link String}s into {@link Term}s; use the {@link TermAdapter} instead.
+     * Character input will be converted to Struct or Var according to Prolog's syntax convention:
+     * when starting with an underscore or an uppercase, this is a {@link Var}.
+     * This method is not capable of instantiating a compound {@link Struct}, it may only create atoms.
      * 
-     * @param theObject
-     * @param theMode
+     * @param theObject Should usually be {@link CharSequence}, {@link Number}, {@link Boolean}
      * @return An instance of a subclass of {@link Term}.
-     * @throws InvalidTermException
+     * @throws InvalidTermException If theObject cannot be converted to a Term
      */
-    public Term valueOf(Object theObject, FactoryMode theMode) throws InvalidTermException {
+    public Term valueOf(Object theObject) throws InvalidTermException {
         if (theObject == null) {
-            throw new InvalidTermException("Cannot create Term from null argument");
+            throw new InvalidTermException("Cannot create Term from a null argument");
         }
         final Term result;
         if (theObject instanceof Term) {
@@ -159,24 +163,30 @@ public class TermApi {
         } else if (theObject instanceof Boolean) {
             result = (Boolean) theObject ? Struct.ATOM_TRUE : Struct.ATOM_FALSE;
         } else if (theObject instanceof CharSequence || theObject instanceof Character) {
-            // Rudimentary parsing
+            // Very very vary rudimentary parsing
             final String chars = theObject.toString();
-            if (theMode == FactoryMode.ATOM) {
-                // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
-                result = new Struct(chars);
+            if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
+                result = Var.ANONYMOUS_VAR;
+            } else if (chars.isEmpty()) {
+                // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent them
+                // as a Term
+                result = new Struct("");
+            } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
+                // Use Prolog's convention re variables starting with uppercase or underscore
+                result = new Var(chars);
             } else {
-                if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
-                    result = Var.ANONYMOUS_VAR;
-                } else if (chars.isEmpty()) {
-                    // Dubious for real programming, but data sources may contain empty fields, and this is the only way to represent them
-                    // as a Term
-                    result = new Struct("");
-                } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
-                    result = new Var(chars);
-                } else {
-                    // Otherwise it's an atom
-                    result = new Struct(chars);
-                }
+                // Otherwise it's an atom
+                result = new Struct(chars);
+            }
+        } else if (theObject instanceof Number) {
+            // Other types of numbers
+            final Number nbr = (Number) theObject;
+            if (nbr.doubleValue() % 1 != 0) {
+                // Has floating point number
+                result = new TDouble(nbr.doubleValue());
+            } else {
+                // Is just an integer
+                result = new TLong(nbr.longValue());
             }
         } else {
             throw new InvalidTermException("Cannot create Term from '" + theObject + "' of " + theObject.getClass());

@@ -104,7 +104,7 @@ public class UnifierTest extends PrologTestBase {
         // Must deunify automatically when unification fails
         this.tester.setExpectedUnificationResult(true);
         this.tester.setExpectedNbBindings(1);
-        this.tester.unify2ways(new Struct("f", "X", "X"), new Struct("f", "_", "a"));
+        this.tester.unify2ways(Struct.valueOf("f", "X", "X"), Struct.valueOf("f", "_", "a"));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class UnifierTest extends PrologTestBase {
         // Must deunify automatically when unification fails
         this.tester.setExpectedUnificationResult(false);
         this.tester.setExpectedNbBindings(0);
-        this.tester.unify2ways(new Struct("f", "X", "X"), new Struct("f", "a", "b"));
+        this.tester.unify2ways(Struct.valueOf("f", "X", "X"), Struct.valueOf("f", "a", "b"));
     }
 
     @Test
