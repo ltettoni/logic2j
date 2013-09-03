@@ -17,10 +17,11 @@
  */
 package org.logic2j.core.model;
 
-import org.logic2j.core.Prolog;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.var.Bindings;
 import org.logic2j.core.theory.TheoryManager;
 
@@ -34,6 +35,8 @@ import org.logic2j.core.theory.TheoryManager;
  * </ol>
  */
 public class Clause {
+
+    private static final TermApi TERM_API = new TermApi();
 
     /**
      * The {@link Struct} that represents the content of either a rule (when it has a body) or a fact (does not have a body - or has "true"
@@ -52,13 +55,12 @@ public class Clause {
      * @param theProlog
      * @param theClauseTerm
      */
-    public Clause(Prolog theProlog, Term theClauseTerm) {
+    public Clause(PrologImplementation theProlog, Term theClauseTerm) {
         if (!(theClauseTerm instanceof Struct)) {
             throw new InvalidTermException("Need a Struct to build a clause, not " + theClauseTerm);
         }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
-        // Since we don't create via the TermFactory we have to do it here.
-        this.content = (Struct) theProlog.getTermFactory().normalize(theClauseTerm);
+        this.content = (Struct) TERM_API.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
         this.bindings = new Bindings(this.content);
     }
 

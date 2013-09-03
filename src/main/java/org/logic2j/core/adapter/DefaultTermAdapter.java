@@ -18,13 +18,14 @@
 package org.logic2j.core.adapter;
 
 import org.logic2j.core.TermAdapter;
-import org.logic2j.core.TermFactory;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.io.parse.tuprolog.Parser;
+import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 
 /**
- * Default and reference implementation of {@link TermFactory}.
+ * Default and reference implementation of {@link TermAdapter}.
  */
 public class DefaultTermAdapter implements TermAdapter {
 
@@ -38,6 +39,17 @@ public class DefaultTermAdapter implements TermAdapter {
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
     public Term term(Object theObject, FactoryMode theMode) {
+        // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermExchanger
+        if (theObject instanceof CharSequence) {
+            if (theMode == FactoryMode.ATOM) {
+                return new Struct(theObject.toString());
+            }
+            final Parser parser = new Parser(this.prolog.getOperatorManager(), ((CharSequence) theObject).toString());
+            final Term parsed = parser.parseSingleTerm();
+            final Term normalized = TERM_API.normalize(parsed, this.prolog.getLibraryManager().wholeContent());
+            return normalized;
+        }
+
         final Term created = TERM_API.valueOf(theObject, theMode);
         final Term normalized = TERM_API.normalize(created, this.prolog.getLibraryManager().wholeContent());
         return normalized;

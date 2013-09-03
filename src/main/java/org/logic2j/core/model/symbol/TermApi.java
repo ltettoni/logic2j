@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import org.logic2j.core.TermAdapter;
 import org.logic2j.core.TermAdapter.FactoryMode;
-import org.logic2j.core.TermFactory;
 import org.logic2j.core.library.mgmt.LibraryContent;
 import org.logic2j.core.model.exception.InvalidTermException;
 import org.logic2j.core.model.exception.PrologNonSpecificError;
@@ -97,7 +97,6 @@ public class TermApi {
     /**
      * Normalize a {@link Term} using the specified definitions of operators, primitives.
      * 
-     * @note This method must EXCLUSIVELY be called from {@link TermFactory#normalize(Term)}, with the exception of test cases.
      * @param theTerm To be normalized
      * @param theLibraryContent Defines primitives to be recognized
      * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
@@ -134,7 +133,7 @@ public class TermApi {
     /**
      * Lowest-level factory for simple {@link Term}s from plain Java {@link Object}s.
      * 
-     * @note This method is not for unmarshalling (parsing) from {@link String}s into {@link Term}s; use the {@link TermFactory} instead.
+     * @note This method is not for unmarshalling (parsing) from {@link String}s into {@link Term}s; use the {@link TermAdapter} instead.
      * 
      * @param theObject
      * @param theMode
@@ -193,7 +192,7 @@ public class TermApi {
      * 
      * @param theClass The {@link Term} class or one of its subclass that the desired returned object should be.
      */
-    // TODO Should this go to TermFactory instead? - since we return a new Term
+    // TODO Should this go to TermAdapter instead? - since we return a new Term
     @SuppressWarnings("unchecked")
     public <T extends Term> T selectTerm(Term theTerm, String theTPathExpression, Class<T> theClass) {
         if (theTPathExpression.isEmpty()) {

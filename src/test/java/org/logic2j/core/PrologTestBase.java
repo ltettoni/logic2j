@@ -157,7 +157,7 @@ public abstract class PrologTestBase {
      * @return A single Term, corresponding to theObject.
      */
     protected Term term(Object theObject) {
-        return this.prolog.getTermFactory().create(theObject, FactoryMode.ANY_TERM);
+        return this.prolog.getTermAdapter().term(theObject, FactoryMode.ANY_TERM);
     }
 
     /**

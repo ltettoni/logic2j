@@ -36,7 +36,7 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.TermFactory;
+import org.logic2j.core.TermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -71,11 +71,11 @@ public class RDBLibrary extends LibraryBase {
         ALLOWED_OPERATORS = new HashSet<String>(Arrays.asList(new String[] { "=", "\\=", "<", ">", "=<", ">=" }));
     }
 
-    private TermFactory termFactory;
+    private TermAdapter termAdapter;
 
     public RDBLibrary(PrologImplementation theProlog) {
         super(theProlog);
-        this.termFactory = new RDBBase.AllStringsAsAtoms(theProlog);
+        this.termAdapter = new RDBBase.AllStringsAsAtoms(theProlog);
     }
 
     @Primitive
@@ -99,7 +99,7 @@ public class RDBLibrary extends LibraryBase {
         Term internalGoal = new Struct("gd3_solve", conditions, resultVar);
         internalGoal = internalGoal.cloneIt();
         // Watch out this destroys the indexes in the original expression !!!!
-        internalGoal = getProlog().getTermFactory().normalize(internalGoal);
+        internalGoal = TERM_API.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
         final Bindings internalBindings = new Bindings(internalGoal);
         final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalBindings);
         getProlog().getSolver().solveGoal(internalBindings, internalListener);
@@ -365,12 +365,12 @@ public class RDBLibrary extends LibraryBase {
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public TermFactory getTermFactory() {
-        return this.termFactory;
+    public TermAdapter getTermAdapter() {
+        return this.termAdapter;
     }
 
-    public void setTermFactory(TermFactory theTermFactory) {
-        this.termFactory = theTermFactory;
+    public void setTermAdapter(TermAdapter theTermAdapter) {
+        this.termAdapter = theTermAdapter;
     }
 
 }

@@ -127,7 +127,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
                 final Term[] args = new Term[row.length];
                 for (int i = 0; i < row.length; i++) {
                     final Object object = row[i];
-                    args[i] = getTermFactory().create(object, FactoryMode.ANY_TERM);
+                    args[i] = getTermAdapter().term(object, FactoryMode.ANY_TERM);
                 }
                 final Clause cl = new Clause(getProlog(), new Struct(predicateName, args));
                 clauses.add(cl);

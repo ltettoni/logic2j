@@ -21,12 +21,10 @@ import org.logic2j.core.LibraryManager;
 import org.logic2j.core.TermAdapter;
 import org.logic2j.core.TermAdapter.FactoryMode;
 import org.logic2j.core.TermExchanger;
-import org.logic2j.core.TermFactory;
 import org.logic2j.core.adapter.DefaultTermAdapter;
 import org.logic2j.core.exchange.DefaultTermExchanger;
 import org.logic2j.core.io.operator.DefaultOperatorManager;
 import org.logic2j.core.io.operator.OperatorManager;
-import org.logic2j.core.io.parse.DefaultTermFactory;
 import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 import org.logic2j.core.library.impl.io.IOLibrary;
@@ -74,7 +72,6 @@ public class PrologReferenceImplementation implements PrologImplementation {
     private TermAdapter termAdapter = new DefaultTermAdapter(this);
     private TermExchanger termExchanger = new DefaultTermExchanger(this);
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
-    private TermFactory termFactory = new DefaultTermFactory(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
     private OperatorManager operatorManager = new DefaultOperatorManager();
     private Solver solver = new DefaultSolver(this);
@@ -120,7 +117,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public Term term(Object theSource) {
-        return getTermFactory().create(theSource, FactoryMode.ANY_TERM);
+        return getTermAdapter().term(theSource, FactoryMode.ANY_TERM);
     }
 
     @Override
@@ -153,17 +150,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     @Override
-    public TermFactory getTermFactory() {
-        return this.termFactory;
-    }
-
-    @Override
     public TheoryManager getTheoryManager() {
         return this.theoryManager;
-    }
-
-    public void setTermFactory(TermFactory termFactory) {
-        this.termFactory = termFactory;
     }
 
     @Override

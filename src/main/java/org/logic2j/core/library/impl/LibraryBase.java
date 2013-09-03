@@ -153,7 +153,7 @@ public class LibraryBase implements PLibrary {
         if (anyObject == null) {
             return Var.ANONYMOUS_VAR;
         }
-        return getProlog().getTermFactory().create(anyObject, FactoryMode.ATOM);
+        return getProlog().getTermAdapter().term(anyObject, FactoryMode.ATOM);
     }
 
     protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, SolutionListener theListener) {

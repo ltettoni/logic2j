@@ -95,17 +95,11 @@ public class Parser {
     private final Tokenizer tokenizer;
     private final OperatorManager opManager;
 
-    /**
-     * creating a TermFactory specifing how to handle operators and what text to parse
-     */
     public Parser(OperatorManager theOperatorManager, Reader theoryText) {
         this.tokenizer = new Tokenizer(new BufferedReader(theoryText));
         this.opManager = theOperatorManager;
     }
 
-    /**
-     * creating a TermFactory specifing how to handle operators and what text to parse
-     */
     public Parser(OperatorManager theOperatorManager, String theoryText) {
         this.tokenizer = new Tokenizer(theoryText);
         this.opManager = theOperatorManager;

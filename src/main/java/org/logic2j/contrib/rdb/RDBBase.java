@@ -19,11 +19,9 @@ package org.logic2j.contrib.rdb;
 
 import javax.sql.DataSource;
 
-import org.logic2j.core.TermAdapter.FactoryMode;
-import org.logic2j.core.TermFactory;
+import org.logic2j.core.TermAdapter;
+import org.logic2j.core.adapter.DefaultTermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.io.parse.DefaultTermFactory;
-import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.Term;
 import org.logic2j.core.model.symbol.TermApi;
 
@@ -34,34 +32,28 @@ public class RDBBase {
     protected static final TermApi TERM_API = new TermApi();
 
     /**
-     * A {@link TermFactory} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
+     * A {@link TermAdapter} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
      */
-    public static class AllStringsAsAtoms extends DefaultTermFactory {
+    public static class AllStringsAsAtoms extends DefaultTermAdapter {
 
         public AllStringsAsAtoms(PrologImplementation theProlog) {
             super(theProlog);
         }
 
         @Override
-        public Term parse(CharSequence theExpression) {
-            return new Struct(theExpression.toString());
-        }
-
-        @Override
-        public Term create(Object theObject, FactoryMode theMode) {
-            // Ignore theMode argument, and use forcing of atom instead
-            return TERM_API.valueOf(theObject, FactoryMode.ATOM);
+        public Term term(Object theObject, FactoryMode theMode) {
+            return super.term(theObject, FactoryMode.ATOM);
         }
 
     }
 
     private final PrologImplementation prolog;
-    private TermFactory termFactory;
+    private TermAdapter termAdapter;
     private DataSource dataSource;
 
     public RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
         this.prolog = theProlog;
-        this.termFactory = new RDBBase.AllStringsAsAtoms(this.prolog);
+        this.termAdapter = new RDBBase.AllStringsAsAtoms(this.prolog);
         this.dataSource = theDataSource;
     }
 
@@ -77,12 +69,12 @@ public class RDBBase {
         this.dataSource = theDataSource;
     }
 
-    public TermFactory getTermFactory() {
-        return this.termFactory;
+    public TermAdapter getTermAdapter() {
+        return this.termAdapter;
     }
 
-    public void setTermFactory(TermFactory theTermFactory) {
-        this.termFactory = theTermFactory;
+    public void setTermAdapter(TermAdapter theTermAdapter) {
+        this.termAdapter = theTermAdapter;
     }
 
     public PrologImplementation getProlog() {

@@ -27,8 +27,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 
 import org.junit.Test;
-import org.logic2j.core.Prolog;
-import org.logic2j.core.TermAdapter.FactoryMode;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.model.exception.InvalidTermException;
@@ -41,7 +40,7 @@ import org.logic2j.core.model.var.Bindings;
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
 
-    private final Prolog prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
+    private final PrologImplementation prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
     private static final TermApi TERM_API = new TermApi();
 
     @Test
@@ -143,7 +142,7 @@ public class TermApiTest {
 
     @Test
     public void selectTerm() {
-        final Term term = this.prolog.getTermFactory().create("a(b(c,c2),b2)", FactoryMode.ANY_TERM);
+        final Term term = this.prolog.getExchanger().unmarshall("a(b(c,c2),b2)");
         //
         assertSame(term, TERM_API.selectTerm(term, "", Struct.class));
         assertSame(term, TERM_API.selectTerm(term, "a", Struct.class));

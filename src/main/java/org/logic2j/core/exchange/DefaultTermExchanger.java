@@ -29,12 +29,15 @@ import org.logic2j.core.model.symbol.Struct;
 import org.logic2j.core.model.symbol.TDouble;
 import org.logic2j.core.model.symbol.TLong;
 import org.logic2j.core.model.symbol.Term;
+import org.logic2j.core.model.symbol.TermApi;
 import org.logic2j.core.model.symbol.Var;
 
 /**
  * Default and reference implementation of {@link TermExchanger}.
  */
 public class DefaultTermExchanger implements TermExchanger {
+
+    private static final TermApi TERM_API = new TermApi();
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
     private static final String ARG_SEPARATOR = ", ".intern();
@@ -238,7 +241,10 @@ public class DefaultTermExchanger implements TermExchanger {
 
     @Override
     public Term unmarshall(CharSequence theChars) {
-        return null;
+        final Parser parser = new Parser(this.prolog.getOperatorManager(), theChars.toString());
+        final Term parsed = parser.parseSingleTerm();
+        final Term normalized = TERM_API.normalize(parsed, this.prolog.getLibraryManager().wholeContent());
+        return normalized;
     }
 
     @Override
