@@ -78,6 +78,7 @@ public class TermApi {
         return theTerm.factorize(collection);
     }
 
+    // TODO Currently unused - but probably we should
     void avoidCycle(Struct theClause) {
         final List<Term> visited = new ArrayList<Term>(20);
         theClause.avoidCycle(visited);
@@ -89,7 +90,6 @@ public class TermApi {
      * @param theTerm
      * @return The number of variables found (recursively).
      */
-
     short assignIndexes(Term theTerm) {
         return theTerm.assignIndexes((short) 0); // Start assigning indexes with zero
     }
