@@ -34,7 +34,6 @@ import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
-import org.logic2j.core.impl.unify.DefaultUnifier;
 
 // TODO replace the use of class UnificationTester by hamctest 1.3 assertions
 public class UnifierTest extends PrologTestBase {

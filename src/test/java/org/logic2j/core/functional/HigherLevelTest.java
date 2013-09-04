@@ -121,7 +121,7 @@ public class HigherLevelTest extends PrologTestBase {
         // assertNSolutions(724, "queens(10, _)");
         //
         //
-        Iterator<Solution> solutions = this.prolog.solve("queens(11, Positions)").iterator();
+        final Iterator<Solution> solutions = this.prolog.solve("queens(11, Positions)").iterator();
         int counter = 0;
         while (solutions.hasNext()) {
             solutions.next();

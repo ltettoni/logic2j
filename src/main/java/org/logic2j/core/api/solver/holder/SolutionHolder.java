@@ -104,6 +104,7 @@ public class SolutionHolder implements Iterable<Solution> {
      * 
      * @return An iterator for all solutions.
      */
+    @Override
     public Iterator<Solution> iterator() {
         final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.bindings);
 

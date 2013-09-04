@@ -306,7 +306,7 @@ public class CoreLibrary extends LibraryBase {
         if (effectiveT1 instanceof TNumber && effectiveT2 instanceof TNumber) {
             final TNumber value1 = (TNumber) effectiveT1;
             final TNumber value2 = (TNumber) effectiveT2;
-            boolean condition = theEvaluationFunction.apply(value1, value2);
+            final boolean condition = theEvaluationFunction.apply(value1, value2);
             if (condition) {
                 continuation = notifySolution(theListener);
             }

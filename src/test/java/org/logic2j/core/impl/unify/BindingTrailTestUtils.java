@@ -18,8 +18,6 @@
 
 package org.logic2j.core.impl.unify;
 
-import org.logic2j.core.impl.unify.BindingTrail;
-
 /**
  * Utilities for white-box testing of {@link BindingTrail}, lies in the same package to leverage package scope.
  * This class just exposes functions to call {@link BindingTrail}'s method in the same package.

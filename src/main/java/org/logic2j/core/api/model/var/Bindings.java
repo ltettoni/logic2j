@@ -53,7 +53,7 @@ public class Bindings {
     /**
      * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link Bindings} through their indexes.
      */
-    private Term referrer;
+    private final Term referrer;
 
     /**
      * All {@link Binding}s, one per instance of {@link Var}iable. There are as many bindings as the distinct number of variables in the
@@ -61,7 +61,7 @@ public class Bindings {
      * {@link Var#getIndex()}. This array is never null, but may be empty (length=0) when the referrer Term does not contain any {@link Var}
      * iable.
      */
-    private Binding[] bindings;
+    private final Binding[] bindings;
 
     /**
      * Determine how free (unbound) variables will be represented in resulting bindings returned by

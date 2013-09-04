@@ -21,9 +21,9 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.Unifier;
-import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.OperatorManager;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
@@ -66,8 +66,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Define all sub-features of this reference implementation and initialize with default, reference implementations
     // ---------------------------------------------------------------------------
 
-    private TermAdapter termAdapter = new DefaultTermAdapter(this);
-    private TermExchanger termExchanger = new DefaultTermExchanger(this);
+    private final TermAdapter termAdapter = new DefaultTermAdapter(this);
+    private final TermExchanger termExchanger = new DefaultTermExchanger(this);
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
     private OperatorManager operatorManager = new DefaultOperatorManager();
