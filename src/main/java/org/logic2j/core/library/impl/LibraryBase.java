@@ -17,21 +17,21 @@
  */
 package org.logic2j.core.library.impl;
 
-import org.logic2j.core.TermAdapter.FactoryMode;
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TNumber;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Binding;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TNumber;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.TermApi;
-import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.model.var.Binding;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Base class for libraries.

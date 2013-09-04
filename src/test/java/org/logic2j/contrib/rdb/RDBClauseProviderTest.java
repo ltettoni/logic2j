@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Struct;
 
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     private RDBClauseProvider provider;

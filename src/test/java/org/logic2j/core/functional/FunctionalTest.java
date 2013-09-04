@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.solver.holder.UniqueSolutionHolder;
-import org.logic2j.core.util.CollectionUtils;
+import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
+import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.impl.util.CollectionUtils;
 
 /**
  * Functional tests of the core features.

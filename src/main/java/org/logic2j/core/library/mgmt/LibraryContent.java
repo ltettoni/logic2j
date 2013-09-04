@@ -20,8 +20,8 @@ package org.logic2j.core.library.mgmt;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.logic2j.core.library.PLibrary;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 
 /**
  * Describe the content of a {@link PLibrary}: its primitives, directives, functors and predicates.

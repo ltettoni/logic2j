@@ -17,16 +17,16 @@
  */
 package org.logic2j.core.library.impl.test;
 
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.TLong;
+import org.logic2j.core.api.model.symbol.TNumber;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.PLibrary;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.symbol.TLong;
-import org.logic2j.core.model.symbol.TNumber;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * A small ad-hoc implementation of a {@link PLibrary} just for testing.

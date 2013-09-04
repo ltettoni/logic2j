@@ -19,25 +19,25 @@ package org.logic2j.core.library.impl.core;
 
 import java.util.ArrayList;
 
+import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Clause;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TDouble;
+import org.logic2j.core.api.model.symbol.TLong;
+import org.logic2j.core.api.model.symbol.TNumber;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Binding;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.Clause;
-import org.logic2j.core.model.exception.InvalidTermException;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TDouble;
-import org.logic2j.core.model.symbol.TLong;
-import org.logic2j.core.model.symbol.TNumber;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.model.var.Binding;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
-import org.logic2j.core.solver.listener.SolutionListenerBase;
-import org.logic2j.core.theory.ClauseProvider;
-import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Provide the core primitives of the Prolog language.

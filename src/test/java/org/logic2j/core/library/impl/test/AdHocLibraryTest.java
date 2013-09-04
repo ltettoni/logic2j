@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 
 public class AdHocLibraryTest extends PrologTestBase {
 

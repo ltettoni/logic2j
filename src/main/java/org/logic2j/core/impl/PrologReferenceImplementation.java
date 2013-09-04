@@ -17,28 +17,25 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.LibraryManager;
-import org.logic2j.core.TermAdapter;
-import org.logic2j.core.TermAdapter.FactoryMode;
-import org.logic2j.core.TermExchanger;
-import org.logic2j.core.adapter.DefaultTermAdapter;
-import org.logic2j.core.exchange.DefaultTermExchanger;
-import org.logic2j.core.io.operator.DefaultOperatorManager;
-import org.logic2j.core.io.operator.OperatorManager;
-import org.logic2j.core.library.PLibrary;
+import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.model.OperatorManager;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.solver.holder.SolutionHolder;
+import org.logic2j.core.impl.io.operator.DefaultOperatorManager;
+import org.logic2j.core.impl.theory.DefaultTheoryManager;
+import org.logic2j.core.impl.theory.TheoryManager;
+import org.logic2j.core.impl.unify.DefaultUnifier;
+import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.library.impl.core.CoreLibrary;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import org.logic2j.core.library.mgmt.DefaultLibraryManager;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.DefaultSolver;
-import org.logic2j.core.solver.Solver;
-import org.logic2j.core.solver.holder.SolutionHolder;
-import org.logic2j.core.theory.DefaultTheoryManager;
-import org.logic2j.core.theory.TheoryManager;
-import org.logic2j.core.unify.DefaultUnifier;
-import org.logic2j.core.unify.Unifier;
-import org.logic2j.core.util.ReportUtils;
 
 /**
  * Reference implementation of logic2j's {@link PrologImplementation} API.
@@ -145,7 +142,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     @Override
-    public TermExchanger getExchanger() {
+    public TermExchanger getTermExchanger() {
         return this.termExchanger;
     }
 

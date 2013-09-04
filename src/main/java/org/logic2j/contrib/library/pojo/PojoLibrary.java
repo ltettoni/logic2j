@@ -20,14 +20,14 @@ package org.logic2j.contrib.library.pojo;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 public class PojoLibrary extends LibraryBase {
     private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {

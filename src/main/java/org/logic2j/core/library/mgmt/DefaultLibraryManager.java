@@ -22,19 +22,19 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.logic2j.core.LibraryManager;
-import org.logic2j.core.Prolog;
-import org.logic2j.core.library.PLibrary;
+import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.impl.theory.TheoryContent;
+import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.TermApi;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
-import org.logic2j.core.theory.TheoryContent;
-import org.logic2j.core.theory.TheoryManager;
 
 public class DefaultLibraryManager implements LibraryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);

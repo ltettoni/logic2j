@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
 
 public class CoreLibraryTest extends PrologTestBase {
 
@@ -225,7 +225,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     // FIXME This fails with an Exception - check what proper behaviour should be and fix
     @Ignore("FIXME This fails with a PrologNonSpecificError - check what proper behaviour should be, and fix")
-    // org.logic2j.core.model.exception.PrologNonSpecificError: Cannot call primitive atom_length/2 with a free variable goal
+    // org.logic2j.core.api.model.exception.PrologNonSpecificError: Cannot call primitive atom_length/2 with a free variable goal
     @Test
     public void atom_length_free_var() {
         assertNoSolution("atom_length(X, 3)");

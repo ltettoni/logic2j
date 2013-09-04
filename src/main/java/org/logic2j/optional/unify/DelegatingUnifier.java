@@ -22,15 +22,15 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.logic2j.core.model.exception.InvalidTermException;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TNumber;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.model.var.Binding;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.unify.BindingTrail;
-import org.logic2j.core.unify.Unifier;
+import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TNumber;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Binding;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.impl.unify.BindingTrail;
 
 /**
  * A {@link Unifier} that uses reflecton to determine which method to invoke to unify 2 concrete {@link Term}s. The methods invoked must

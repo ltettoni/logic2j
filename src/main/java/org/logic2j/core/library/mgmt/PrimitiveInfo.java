@@ -20,14 +20,14 @@ package org.logic2j.core.library.mgmt;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.logic2j.core.library.PLibrary;
-import org.logic2j.core.model.exception.InvalidTermException;
-import org.logic2j.core.model.exception.RecursionException;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.listener.SolutionListener;
-import org.logic2j.core.solver.listener.SolutionListenerBase;
+import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.RecursionException;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 
 /**
  * Describe a {@link Primitive}, which is either a:

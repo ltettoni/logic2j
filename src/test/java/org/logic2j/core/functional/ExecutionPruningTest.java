@@ -21,13 +21,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Test the cut and user abort features.

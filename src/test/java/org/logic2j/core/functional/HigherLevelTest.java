@@ -24,12 +24,12 @@ import java.util.Iterator;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.model.Solution;
+import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
-import org.logic2j.core.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.solver.listener.Solution;
 
 /**
  * Run higher-level tests such as whole programs.

@@ -18,10 +18,10 @@
 
 package org.logic2j.optional.io.format;
 
-import org.logic2j.core.TermExchanger;
-import org.logic2j.core.exchange.DefaultTermExchanger;
-import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.model.var.Bindings;
+import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.impl.DefaultTermExchanger;
 
 /**
  * A {@link TermExchanger} with more detailed information, use for debugging.

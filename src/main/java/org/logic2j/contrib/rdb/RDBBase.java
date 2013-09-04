@@ -19,11 +19,11 @@ package org.logic2j.contrib.rdb;
 
 import javax.sql.DataSource;
 
-import org.logic2j.core.TermAdapter;
-import org.logic2j.core.adapter.DefaultTermAdapter;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.impl.DefaultTermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.TermApi;
 
 /**
  * Base class for RDB access using JDBC.

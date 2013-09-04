@@ -17,13 +17,13 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.LibraryManager;
-import org.logic2j.core.Prolog;
-import org.logic2j.core.TermExchanger;
-import org.logic2j.core.io.operator.OperatorManager;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solver.Solver;
-import org.logic2j.core.unify.Unifier;
+import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.model.OperatorManager;
+import org.logic2j.core.api.model.symbol.Term;
 
 /**
  * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog} intended for client
@@ -58,6 +58,6 @@ public interface PrologImplementation extends Prolog {
     /**
      * @return Exchanger to parse or format {@link Term}s.
      */
-    TermExchanger getExchanger();
+    TermExchanger getTermExchanger();
 
 }

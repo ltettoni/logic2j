@@ -36,22 +36,22 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.TermAdapter;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TNumber;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.solver.listener.UniqueSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.util.CollectionUtils;
+import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.exception.InvalidTermException;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.TNumber;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.symbol.Var;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
-import org.logic2j.core.solver.listener.UniqueSolutionListener;
-import org.logic2j.core.util.CollectionUtils;
-import org.logic2j.core.util.ReflectUtils;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.

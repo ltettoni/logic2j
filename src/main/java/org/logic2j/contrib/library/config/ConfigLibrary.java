@@ -16,15 +16,15 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import org.logic2j.contrib.rdb.RDBClauseProvider;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.exception.PrologNonSpecificError;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 /**
  * Preliminary - should be reviewed FIXME This class should not know of RDBClauseProvider!

@@ -19,13 +19,13 @@ package org.logic2j.core.library.impl.io;
 
 import java.io.PrintStream;
 
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.model.var.Bindings;
-import org.logic2j.core.solver.Continuation;
-import org.logic2j.core.solver.listener.SolutionListener;
 
 public class IOLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IOLibrary.class);
@@ -44,7 +44,7 @@ public class IOLibrary extends LibraryBase {
             final Bindings b = theBindings.focus(term, Term.class);
             final Term value = b.getReferrer();
 
-            String format = getProlog().getExchanger().marshall(value).toString();
+            String format = getProlog().getTermExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
             this.writer.print(format);
         }
@@ -64,7 +64,7 @@ public class IOLibrary extends LibraryBase {
             assertValidBindings(b, "write/*");
             final Term value = b.getReferrer();
 
-            String format = getProlog().getExchanger().marshall(value).toString();
+            String format = getProlog().getTermExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
             logger.info(format);
         }

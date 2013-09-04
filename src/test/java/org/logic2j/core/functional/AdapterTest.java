@@ -22,11 +22,11 @@ import java.util.Arrays;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.Prolog;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.model.symbol.Struct;
-import org.logic2j.core.model.symbol.Term;
-import org.logic2j.core.solver.Solver;
+import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Term;
 
 /**
  * Test how Java objects can invoke and be returned from logic2j's {@link Prolog} and {@link Solver}.

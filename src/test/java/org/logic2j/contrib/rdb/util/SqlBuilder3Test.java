@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
-import org.logic2j.core.util.CollectionUtils;
+import org.logic2j.core.impl.util.CollectionUtils;
 
 public class SqlBuilder3Test {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlBuilder3Test.class);

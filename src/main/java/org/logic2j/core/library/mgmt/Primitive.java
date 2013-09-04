@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.logic2j.core.library.PLibrary;
+import org.logic2j.core.api.PLibrary;
 
 /**
  * Annotation to a method that implements a Prolog primitive in a {@link PLibrary}.
