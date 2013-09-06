@@ -144,6 +144,11 @@ public class DefaultTheoryManager implements TheoryManager {
         this.wholeContent.addAll(theContent);
     }
 
+    @Override
+    public void addClauseProvider(ClauseProvider theNewProvider) {
+        this.clauseProviders.add(theNewProvider);
+    }
+
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
@@ -157,6 +162,7 @@ public class DefaultTheoryManager implements TheoryManager {
         this.clauseProviderResolver = clauseProviderResolver;
     }
 
+    // TODO is it reasonable to return a mutable list so that callers can add() to it???
     @Override
     public List<ClauseProvider> getClauseProviders() {
         return this.clauseProviders;

@@ -20,7 +20,6 @@ package org.logic2j.core.impl.theory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.Solver;
@@ -70,7 +69,12 @@ public interface TheoryManager extends ClauseProvider {
      *         multi-threaded access to all clause providers?
      */
     // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
-    List<ClauseProvider> getClauseProviders();
+    Iterable<ClauseProvider> getClauseProviders();
+
+    /**
+     * @param theNewProvider
+     */
+    void addClauseProvider(ClauseProvider theNewProvider);
 
     // ---------------------------------------------------------------------------
     // Alter the current Prolog instance with content from theories
