@@ -52,7 +52,7 @@ public class Clause {
     /**
      * Make a Term (must be a Struct) read for inference, this requires to normalize it.
      * 
-     * @param theProlog
+     * @param theProlog Required to normalize theClauseTerm according to the current libraries.
      * @param theClauseTerm
      */
     public Clause(PrologImplementation theProlog, Term theClauseTerm) {
