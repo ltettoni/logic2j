@@ -97,6 +97,11 @@
       <version>1.0.13</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+     <version>3.9</version>
+    </dependency>
   </dependencies>
   <url>https://github.com/ltettoni/logic2j</url>
   <description> logic2j : Bring Logic to your Java
