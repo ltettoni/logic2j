@@ -55,9 +55,20 @@ public interface TermAdapter {
      * Create a Term from virtually any class of {@link Object}; this is the highest-level factory
      * 
      * @param theObject
+     * @param theMode
      * @return A factorized and normalized {@link Term}.
      */
     Term term(Object theObject, FactoryMode theMode);
+
+    /**
+     * Create a Struct with arguments from virtually any class of {@link Object}; this is the highest-level factory
+     * 
+     * @param thePredicateName The predicate (functor)
+     * @param theMode
+     * @param theArguments
+     * @return A factorized and normalized {@link Term}.
+     */
+    Term term(String thePredicateName, FactoryMode theMode, Object... theArguments);
 
     /**
      * Convert a Term into the desired target Class.
