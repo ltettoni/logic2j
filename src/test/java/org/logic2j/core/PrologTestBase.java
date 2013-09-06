@@ -29,6 +29,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Term;
@@ -81,6 +82,10 @@ public abstract class PrologTestBase {
         this.prolog = null;
     }
 
+    /**
+     * @return Our {@link PrologImplementation}. In normal application code it must be sufficient to use the {@link Prolog} but since here
+     *         we test details of the implmenetation, we need more.
+     */
     protected PrologImplementation getProlog() {
         return this.prolog;
     }
