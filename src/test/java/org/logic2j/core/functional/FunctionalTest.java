@@ -198,4 +198,22 @@ public class FunctionalTest extends PrologTestBase {
         assertEquals(term("f(_)"), assertOneSolution("final(X)").binding("X"));
     }
 
+    @Test
+    public void binding_single_var_1() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ab(X,Y)");
+        assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.bindings().toString());
+        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.binding("X").toString());
+        assertEquals("[11, 12, 13, 14, 15, 16]", assertNSolutions.binding("Y").toString());
+    }
+
+    @Test
+    public void binding_single_var_2() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ac(X,Y)");
+        assertEquals("[{X=1, Y=11}, {X=2, Y=twelve}, {X=3, Y=13}, {X=4, Y=fourteen}, {X=5, Y=15}, {X=6, Y=sixteen}]", assertNSolutions.bindings().toString());
+        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.binding("X").toString());
+        assertEquals("[11, twelve, 13, fourteen, 15, sixteen]", assertNSolutions.binding("Y").toString());
+    }
+
 }
