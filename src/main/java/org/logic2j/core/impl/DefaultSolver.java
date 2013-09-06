@@ -159,7 +159,11 @@ public class DefaultSolver implements Solver {
 
             final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
             for (final ClauseProvider provider : providers) {
-                for (final Clause clause : provider.listMatchingClauses(goalStruct, theGoalBindings)) {
+                final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalStruct, theGoalBindings);
+                if (matchingClauses == null) {
+                    continue;
+                }
+                for (final Clause clause : matchingClauses) {
                     if (result == Continuation.CUT) {
                         if (debug) {
                             logger.debug("Current status is {}: stop finding more clauses", result);
