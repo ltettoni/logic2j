@@ -55,6 +55,17 @@ public class DefaultTermAdapter implements TermAdapter {
         return normalized;
     }
 
+    @Override
+    public Term term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
+        final Term[] convertedArgs = new Term[theArguments.length];
+        for (int i = 0; i < theArguments.length; i++) {
+            convertedArgs[i] = termFrom(theArguments[i], theMode);
+        }
+        final Term created = new Struct(thePredicateName, convertedArgs);
+        final Term normalized = TERM_API.normalize(created, this.prolog.getLibraryManager().wholeContent());
+        return normalized;
+    }
+
     /**
      * Factory that can be overridden.
      * 
@@ -86,4 +97,5 @@ public class DefaultTermAdapter implements TermAdapter {
     public <T> T object(Term t, Class<T> theTargetClass) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
 }
