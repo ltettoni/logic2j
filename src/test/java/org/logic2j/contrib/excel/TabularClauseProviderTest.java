@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.logic2j.contrib.excel.TabularClauseProvider.PredicateMode;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
@@ -34,20 +35,35 @@ public class TabularClauseProviderTest extends PrologTestBase {
 
     @Before
     public void setup() {
-        data = new TabularData();
-        data.columnNames = new String[] { "countryName", "countryCode", "population" };
-        data.rowIdentifierColumn = 1;
-        data.data = new Object[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 }, { "Germany", "DEU", 85.4 } };
-        data.predicateName = "data";
+        this.data = new TabularData();
+        this.data.columnNames = new String[] { "countryName", "countryCode", "population" };
+        this.data.rowIdentifierColumn = 1;
+        this.data.data = new Object[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 }, { "Germany", "DEU", 85.4 } };
+        this.data.predicateName = "myData";
     }
 
     @Test
-    public void tabularClauseProvider() {
-        ClauseProvider td = new TabularClauseProvider(getProlog(), data);
-        TheoryManager theoryManager = getProlog().getTheoryManager();
+    public void tabularClauseProvider_eav() {
+        final ClauseProvider td = new TabularClauseProvider(getProlog(), this.data, PredicateMode.EAV_NAMED);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
-        theoryManager.getClauseProviderResolver().register(data.getPredicateSignature(), td);
-        MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "data(E,A,V)");
+        // theoryManager.getClauseProviderResolver().register(data.getPredicateSignature(), td);
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "myData(E,A,V)");
+        assertEquals(
+                "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
+                sixSolutions.bindings().toString());
+        assertEquals("['CHE', 'CHE', 'FRA', 'FRA', 'DEU', 'DEU']", sixSolutions.binding("E").toString());
+        assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.binding("A").toString());
+        assertEquals("['Switzerland', 7.8, 'France', 65.0, 'Germany', 85.4]", sixSolutions.binding("V").toString());
+    }
+
+    @Test
+    public void tabularClauseProvider_eavt() {
+        final ClauseProvider td = new TabularClauseProvider(getProlog(), this.data, PredicateMode.EAVT);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+        // theoryManager.getClauseProviderResolver().register(data.getPredicateSignature(), td);
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "eavt(E,A,V,myData)");
         assertEquals(
                 "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
                 sixSolutions.bindings().toString());
