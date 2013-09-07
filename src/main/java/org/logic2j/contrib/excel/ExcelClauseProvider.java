@@ -153,4 +153,9 @@ public class ExcelClauseProvider implements ClauseProvider {
         }
     }
 
+    @Override
+    public void registerIntoResolver() {
+        // Work in progress
+    }
+
 }
