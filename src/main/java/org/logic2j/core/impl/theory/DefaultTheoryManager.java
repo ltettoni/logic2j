@@ -147,6 +147,7 @@ public class DefaultTheoryManager implements TheoryManager {
     @Override
     public void addClauseProvider(ClauseProvider theNewProvider) {
         this.clauseProviders.add(theNewProvider);
+        theNewProvider.registerIntoResolver();
     }
 
     // ---------------------------------------------------------------------------
@@ -175,6 +176,11 @@ public class DefaultTheoryManager implements TheoryManager {
     // ---------------------------------------------------------------------------
     // Implementation of ClauseProvider
     // ---------------------------------------------------------------------------
+
+    @Override
+    public void registerIntoResolver() {
+        // Nothing to do - was done above - but most inelegant!
+    }
 
     /**
      * @param theGoal
