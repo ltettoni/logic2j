@@ -71,4 +71,17 @@ public class TabularClauseProviderTest extends PrologTestBase {
         assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.binding("A").toString());
         assertEquals("['Switzerland', 7.8, 'France', 65.0, 'Germany', 85.4]", sixSolutions.binding("V").toString());
     }
+
+    @Test
+    public void tabularClauseProvider_record() {
+        final ClauseProvider td = new TabularClauseProvider(getProlog(), this.data, PredicateMode.RECORD);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+        // theoryManager.getClauseProviderResolver().register(data.getPredicateSignature(), td);
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(3, "myData(Country,Code,Pop)");
+        assertEquals("[{Code='CHE', Country='Switzerland', Pop=7.8}, {Code='FRA', Country='France', Pop=65.0}, {Code='DEU', Country='Germany', Pop=85.4}]", sixSolutions.bindings().toString());
+        assertEquals("['Switzerland', 'France', 'Germany']", sixSolutions.binding("Country").toString());
+        assertEquals("['CHE', 'FRA', 'DEU']", sixSolutions.binding("Code").toString());
+        assertEquals("[7.8, 65.0, 85.4]", sixSolutions.binding("Pop").toString());
+    }
 }

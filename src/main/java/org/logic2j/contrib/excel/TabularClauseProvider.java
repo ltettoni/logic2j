@@ -37,7 +37,23 @@ public class TabularClauseProvider implements ClauseProvider {
     private static final String EAVT_4 = EAVT + "/4";
 
     public static enum PredicateMode {
-        EAV_NAMED, EAVT, RECORD
+        /**
+         * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
+         * myData(entityIdentifier, propertyName, propertyValue).
+         */
+        EAV_NAMED,
+        /**
+         * Data is asserted as "quads". The predicate is always "eavt" (entity, attribute, value, transaction).
+         * The "transaction" identifier is the dataset name. For example:
+         * eavt(entityIdentifier, propertyName, propertyValue, myData).
+         */
+        EAVT,
+        /**
+         * Data is asserted as full records with one argument per column. The order matters. This is the least
+         * flexible format since changes to the data (adding or removing or reordering columns) will change the assertions.
+         * myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN).
+         */
+        RECORD
     }
 
     private final PrologImplementation prolog;
@@ -88,6 +104,11 @@ public class TabularClauseProvider implements ClauseProvider {
                     }
                 }
                 break;
+            case RECORD:
+                final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, row);
+                final Clause clause = new Clause(this.prolog, theClauseTerm);
+                clauses.add(clause);
+                break;
             default:
                 throw new PrologNonSpecificError("Unknown mode " + this.mode);
             }
@@ -103,6 +124,9 @@ public class TabularClauseProvider implements ClauseProvider {
             break;
         case EAVT:
             clauseProviderResolver.register(EAVT_4, this);
+            break;
+        case RECORD:
+            clauseProviderResolver.register(data.predicateName + '/' + data.nbColumns(), this);
             break;
         default:
             throw new PrologNonSpecificError("Unknown mode " + this.mode);
@@ -120,6 +144,11 @@ public class TabularClauseProvider implements ClauseProvider {
             return clauses;
         case EAVT:
             if (!predicateSignature.equals(EAVT_4)) {
+                return null;
+            }
+            return clauses;
+        case RECORD:
+            if (!predicateSignature.equals(data.predicateName + '/' + data.nbColumns())) {
                 return null;
             }
             return clauses;
