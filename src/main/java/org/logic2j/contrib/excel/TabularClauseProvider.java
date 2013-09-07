@@ -24,26 +24,37 @@ import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Clause;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.theory.ClauseProviderResolver;
 
 public class TabularClauseProvider implements ClauseProvider {
 
+    private static final String EAVT = "eavt";
+    private static final String EAVT_4 = EAVT + "/4";
+
+    public static enum PredicateMode {
+        EAV_NAMED, EAVT, RECORD
+    }
+
     private final PrologImplementation prolog;
     private final TabularData data;
+    private final PredicateMode mode;
 
     private final ArrayList<Clause> clauses = new ArrayList<Clause>();
 
     /**
      * @param prolog
      * @param data
+     * @param mode
      */
-    public TabularClauseProvider(PrologImplementation prolog, TabularData data) {
-        super();
+    public TabularClauseProvider(PrologImplementation prolog, TabularData data, PredicateMode mode) {
         this.prolog = prolog;
         this.data = data;
+        this.mode = mode;
         initClauses();
     }
 
@@ -54,24 +65,66 @@ public class TabularClauseProvider implements ClauseProvider {
         for (int r = 0; r < nbRows; r++) {
             final Object[] row = this.data.data[r];
             final String identifier = row[this.data.rowIdentifierColumn].toString();
-            for (int c = 0; c < nbColumns; c++) {
-                if (c != this.data.rowIdentifierColumn) {
-                    final String property = this.data.columnNames[c];
-                    final Object value = row[c];
-                    final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, identifier, property, value);
-                    final Clause clause = new Clause(this.prolog, theClauseTerm);
-                    clauses.add(clause);
+            switch (mode) {
+            case EAV_NAMED:
+                for (int c = 0; c < nbColumns; c++) {
+                    if (c != this.data.rowIdentifierColumn) {
+                        final String property = this.data.columnNames[c];
+                        final Object value = row[c];
+                        final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, identifier, property, value);
+                        final Clause clause = new Clause(this.prolog, theClauseTerm);
+                        clauses.add(clause);
+                    }
                 }
+                break;
+            case EAVT:
+                for (int c = 0; c < nbColumns; c++) {
+                    if (c != this.data.rowIdentifierColumn) {
+                        final String property = this.data.columnNames[c];
+                        final Object value = row[c];
+                        final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.predicateName);
+                        final Clause clause = new Clause(this.prolog, theClauseTerm);
+                        clauses.add(clause);
+                    }
+                }
+                break;
+            default:
+                throw new PrologNonSpecificError("Unknown mode " + this.mode);
             }
+        }
+    }
+
+    @Override
+    public void registerIntoResolver() {
+        final ClauseProviderResolver clauseProviderResolver = this.prolog.getTheoryManager().getClauseProviderResolver();
+        switch (mode) {
+        case EAV_NAMED:
+            clauseProviderResolver.register(data.getPredicateSignature(), this);
+            break;
+        case EAVT:
+            clauseProviderResolver.register(EAVT_4, this);
+            break;
+        default:
+            throw new PrologNonSpecificError("Unknown mode " + this.mode);
         }
     }
 
     @Override
     public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
         final String predicateSignature = theGoal.getPredicateSignature();
-        if (!predicateSignature.equals(data.getPredicateSignature())) {
-            return null;
+        switch (mode) {
+        case EAV_NAMED:
+            if (!predicateSignature.equals(data.getPredicateSignature())) {
+                return null;
+            }
+            return clauses;
+        case EAVT:
+            if (!predicateSignature.equals(EAVT_4)) {
+                return null;
+            }
+            return clauses;
+        default:
+            throw new PrologNonSpecificError("Unknown mode " + this.mode);
         }
-        return clauses;
     }
 }
