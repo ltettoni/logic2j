@@ -146,9 +146,4 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         return theGoal.getName().substring(this.prefix.length());
     }
 
-    @Override
-    public void registerIntoResolver() {
-        // Nothing to do - was done above - but most inelegant!
-    }
-
 }

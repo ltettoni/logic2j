@@ -4,7 +4,6 @@ Things possibly to be done:
 - Using Java assertions (but check for recommended / best practices carefully first - and document them), they do not replace exceptions.
 - Refactor unit test cases to leverage new JUnit's bundle of hamcrest v1.3
 - There is no Tail Recursion Optimization (TRO) yet
-- Remove ClauseProviderResolver
 - Have a look at Java CDI (JSR ?, JSR 250, instead of Spring) for easier integration with CDI frameworks (see tasks in PrologImpl)
 
 

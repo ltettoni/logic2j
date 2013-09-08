@@ -47,6 +47,4 @@ public interface ClauseProvider {
      */
     Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
 
-    void registerIntoResolver();
-
 }

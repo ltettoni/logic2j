@@ -58,13 +58,8 @@ public interface TheoryManager extends ClauseProvider {
     TheoryContent load(URL theTheory);
 
     /**
-     * @return The current resolver
-     */
-    // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
-    ClauseProviderResolver getClauseProviderResolver();
-
-    /**
-     * @return All clause providers, in same order as when registered. TODO But the actual ordering may not be always needed, it's only
+     * @return All clause providers, in same order as when registered.
+     *         TODO But the actual ordering may not be always needed, it's only
      *         important when the same predicate is available from several providers (not frequent). Could we in certain cases use
      *         multi-threaded access to all clause providers?
      */

@@ -30,7 +30,6 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.theory.ClauseProviderResolver;
 
 public class TabularDataClauseProvider implements ClauseProvider {
 
@@ -121,24 +120,6 @@ public class TabularDataClauseProvider implements ClauseProvider {
             default:
                 throw new PrologNonSpecificError("Unknown mode " + this.mode);
             }
-        }
-    }
-
-    @Override
-    public void registerIntoResolver() {
-        final ClauseProviderResolver clauseProviderResolver = this.prolog.getTheoryManager().getClauseProviderResolver();
-        switch (mode) {
-        case EAV_NAMED:
-            clauseProviderResolver.register(data.getDataSetName() + "/3", this);
-            break;
-        case EAVT:
-            clauseProviderResolver.register(EAVT_4, this);
-            break;
-        case RECORD:
-            clauseProviderResolver.register(data.getDataSetName() + '/' + data.getNbColumns(), this);
-            break;
-        default:
-            throw new PrologNonSpecificError("Unknown mode " + this.mode);
         }
     }
 

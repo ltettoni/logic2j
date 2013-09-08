@@ -50,7 +50,6 @@ public class DefaultTheoryManager implements TheoryManager {
 
     private final PrologImplementation prolog;
     private final TheoryContent wholeContent = new TheoryContent();
-    private ClauseProviderResolver clauseProviderResolver = new ClauseProviderResolver();
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
 
     /**
@@ -114,9 +113,6 @@ public class DefaultTheoryManager implements TheoryManager {
             // Handling of the "initialize" special clause - we should provide IoC callback for that, not inline code!!!
             if ("initialize".equals(cl.getHead().getName())) {
                 specialInitializeGoalBody = cl.getBody();
-            } else {
-                // TODO Resgistration of indexes should be done elsewhere
-                this.clauseProviderResolver.register(cl.getPredicateKey(), this);
             }
             content.add(cl);
             clauseTerm = theParser.nextTerm(true);
@@ -147,21 +143,11 @@ public class DefaultTheoryManager implements TheoryManager {
     @Override
     public void addClauseProvider(ClauseProvider theNewProvider) {
         this.clauseProviders.add(theNewProvider);
-        theNewProvider.registerIntoResolver();
     }
 
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
-
-    @Override
-    public ClauseProviderResolver getClauseProviderResolver() {
-        return this.clauseProviderResolver;
-    }
-
-    public void setClauseProviderResolver(ClauseProviderResolver clauseProviderResolver) {
-        this.clauseProviderResolver = clauseProviderResolver;
-    }
 
     // TODO is it reasonable to return a mutable list so that callers can add() to it???
     @Override
@@ -176,11 +162,6 @@ public class DefaultTheoryManager implements TheoryManager {
     // ---------------------------------------------------------------------------
     // Implementation of ClauseProvider
     // ---------------------------------------------------------------------------
-
-    @Override
-    public void registerIntoResolver() {
-        // Nothing to do - was done above - but most inelegant!
-    }
 
     /**
      * @param theGoal

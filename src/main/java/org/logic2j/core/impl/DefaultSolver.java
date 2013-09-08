@@ -157,7 +157,7 @@ public class DefaultSolver implements Solver {
 
             // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
 
-            final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviderResolver().providersFor(goalStruct);
+            final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
             for (final ClauseProvider provider : providers) {
                 final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalStruct, theGoalBindings);
                 if (matchingClauses == null) {
