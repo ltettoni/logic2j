@@ -61,7 +61,7 @@ public class AdapterTest extends PrologTestBase {
     }
 
     /**
-     * @param predicateName
+     * @param dataSetName
      * @param args
      * @return
      */
