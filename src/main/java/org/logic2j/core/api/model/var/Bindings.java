@@ -401,7 +401,7 @@ public class Bindings {
     public String toString() {
         final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
         if (isEmpty()) {
-            return this.getClass().getSimpleName() + address + "(empty)";
+            return this.getClass().getSimpleName() + address + "(novars)";
         }
         return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings);
     }
