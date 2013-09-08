@@ -109,7 +109,7 @@ public class HigherLevelTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("queens.pl");
 
         assertNSolutions(352, "queens(9, _)");
-        assertNSolutions(724, "queens(10, _)");
+        assertNSolutions(724, "queens(10, _)"); // tuProlog needs 28s on my machine
         assertNSolutions(2680, "queens(11, _)");
     }
 
