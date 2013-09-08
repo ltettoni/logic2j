@@ -1,0 +1,86 @@
+/*
+ * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package org.logic2j.contrib.excel;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.Test;
+import org.logic2j.contrib.excel.TabularDataClauseProvider.AssertionMode;
+import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.model.Clause;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.impl.theory.TheoryManager;
+
+public class ExcelReaderTest extends PrologTestBase {
+
+    private static final File EXCEL_TEST_RESOURCES_DIR = new File(TEST_RESOURCES_DIR, "excel");
+
+    @Test
+    public void read() throws IOException {
+        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final TabularData data = new ExcelReader(file, true, -1).read();
+        assertNotNull(data);
+        assertEquals(10, data.getNbRows());
+        assertEquals(11, data.getNbColumns());
+    }
+
+    @Test
+    public void listMatchingClauses() throws IOException {
+        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final TabularData data = new ExcelReader(file, true, -1).read();
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
+        final Struct theGoal = new Struct("eavt", Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR);
+        final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
+        assertNotNull(listMatchingClauses);
+        assertNotNull(listMatchingClauses.iterator());
+        assertNotNull(listMatchingClauses.iterator().next());
+    }
+
+    @Test
+    public void readAndSolve_eavt() throws IOException {
+        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final TabularData data = new ExcelReader(file, true, -1).read();
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+        assertNSolutions(1, "eavt('58/2008', 'TPM', 'AD', 'TEST.xls')");
+    }
+
+    @Test
+    public void readAndSolve_record() throws IOException {
+        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final TabularData data = new ExcelReader(file, true, -1).read();
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.RECORD);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+        //
+        assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
+        assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
+        assertNSolutions(1, "'TEST.xls'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+        // Failing tests
+        assertNSolutions(0, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
+        assertNSolutions(1, "'TEST.xls'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+    }
+}

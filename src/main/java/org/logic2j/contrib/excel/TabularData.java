@@ -18,6 +18,9 @@
 
 package org.logic2j.contrib.excel;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * A tabular data set all loaded into memory.
  */
@@ -25,21 +28,37 @@ public class TabularData {
 
     public String predicateName;
     public String[] columnNames;
-    public Object[][] data;
+    public Serializable[][] data;
 
-    public int rowIdentifierColumn;
+    public int rowIdentifierColumn = -1;
+
+    public TabularData() {
+    }
+
+    /**
+     * @param colNames
+     * @param listData
+     */
+    public TabularData(List<String> colNames, List<List<Serializable>> listData) {
+        this.columnNames = colNames.toArray(new String[0]);
+        this.data = new Serializable[listData.size()][];
+        for (int i = 0; i < this.data.length; i++) {
+            Serializable[] row = listData.get(i).toArray(new Serializable[0]);
+            this.data[i] = row;
+        }
+    }
 
     /**
      * @return Number of rows (entities) in the data.
      */
-    public int nbRows() {
+    public int getNbRows() {
         return data.length;
     }
 
     /**
      * @return Number of columns (properties) in the data.
      */
-    public int nbColumns() {
+    public int getNbColumns() {
         return columnNames.length;
     }
 
@@ -50,4 +69,15 @@ public class TabularData {
         return this.predicateName + "/3";
     }
 
+    // ---------------------------------------------------------------------------
+    // Methods of java.lang.Object
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+        if (this.data == null) {
+            return this.getClass().getSimpleName() + "[no data]";
+        }
+        return this.getClass().getSimpleName() + '[' + this.getNbRows() + " x " + this.getNbColumns() + ']';
+    }
 }

@@ -31,12 +31,15 @@ import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.theory.ClauseProviderResolver;
 
-public class TabularClauseProvider implements ClauseProvider {
+public class TabularDataClauseProvider implements ClauseProvider {
 
     private static final String EAVT = "eavt";
     private static final String EAVT_4 = EAVT + "/4";
 
-    public static enum PredicateMode {
+    /**
+     * Describe how tabular data must be asserted into clauses.
+     */
+    public static enum AssertionMode {
         /**
          * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
          * myData(entityIdentifier, propertyName, propertyValue).
@@ -58,16 +61,11 @@ public class TabularClauseProvider implements ClauseProvider {
 
     private final PrologImplementation prolog;
     private final TabularData data;
-    private final PredicateMode mode;
+    private final AssertionMode mode;
 
     private final ArrayList<Clause> clauses = new ArrayList<Clause>();
 
-    /**
-     * @param prolog
-     * @param data
-     * @param mode
-     */
-    public TabularClauseProvider(PrologImplementation prolog, TabularData data, PredicateMode mode) {
+    public TabularDataClauseProvider(PrologImplementation prolog, TabularData data, AssertionMode mode) {
         this.prolog = prolog;
         this.data = data;
         this.mode = mode;
@@ -76,8 +74,8 @@ public class TabularClauseProvider implements ClauseProvider {
 
     private void initClauses() {
         final TermAdapter termAdapter = this.prolog.getTermAdapter();
-        final int nbRows = this.data.nbRows();
-        final int nbColumns = this.data.nbColumns();
+        final int nbRows = this.data.getNbRows();
+        final int nbColumns = this.data.getNbColumns();
         for (int r = 0; r < nbRows; r++) {
             final Object[] row = this.data.data[r];
             final String identifier = row[this.data.rowIdentifierColumn].toString();
@@ -126,7 +124,7 @@ public class TabularClauseProvider implements ClauseProvider {
             clauseProviderResolver.register(EAVT_4, this);
             break;
         case RECORD:
-            clauseProviderResolver.register(data.predicateName + '/' + data.nbColumns(), this);
+            clauseProviderResolver.register(data.predicateName + '/' + data.getNbColumns(), this);
             break;
         default:
             throw new PrologNonSpecificError("Unknown mode " + this.mode);
@@ -148,7 +146,7 @@ public class TabularClauseProvider implements ClauseProvider {
             }
             return clauses;
         case RECORD:
-            if (!predicateSignature.equals(data.predicateName + '/' + data.nbColumns())) {
+            if (!predicateSignature.equals(data.predicateName + '/' + data.getNbColumns())) {
                 return null;
             }
             return clauses;

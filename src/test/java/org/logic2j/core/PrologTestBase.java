@@ -52,7 +52,7 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 public abstract class PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
 
-    protected static final String TEST_RESOURCES_DIR = "src/test/resources";
+    protected static final File TEST_RESOURCES_DIR = new File("src/test/resources");
 
     /**
      * Will be initialized for every test method, as per {@link #initLevel()}
@@ -214,7 +214,7 @@ public abstract class PrologTestBase {
                 return file.canRead() && file.isFile();
             }
         };
-        return new File(TEST_RESOURCES_DIR).listFiles(filesOnly);
+        return TEST_RESOURCES_DIR.listFiles(filesOnly);
     }
 
     protected LibraryContent loadLibrary(PLibrary theLibrary) {
