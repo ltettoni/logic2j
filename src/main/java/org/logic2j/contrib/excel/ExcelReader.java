@@ -46,11 +46,18 @@ public class ExcelReader {
 
     /**
      * @param file
+     * @param firstRowIsHeaders
+     */
+    public ExcelReader(File file, boolean firstRowIsHeaders) {
+        this(file, firstRowIsHeaders, -1);
+    }
+
+    /**
+     * @param file
      * @param firstRowIsHeaders True when first row contains column headers.
      * @param primaryKeyColumn The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
      */
     public ExcelReader(File file, boolean firstRowIsHeaders, int primaryKeyColumn) {
-        super();
         this.file = file;
         this.firstRowIsHeaders = firstRowIsHeaders;
         this.primaryKeyColumn = primaryKeyColumn;
@@ -99,8 +106,8 @@ public class ExcelReader {
                 }
             }
             TabularData tbl = new TabularData(columnNames, listData);
-            tbl.predicateName = this.file.getName();
-            tbl.rowIdentifierColumn = 0;
+            tbl.setDataSetName(this.file.getName());
+            tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
             return tbl;
         } else {
             throw new IOException("According to extension file may not be of Excel format: " + this.file);
@@ -140,7 +147,7 @@ public class ExcelReader {
         // // args[c] = prolog.getTermFactory().create("\""+value.replace("\"", "").replaceAll("\\r|\\n", "")+"\"",
         // // FactoryMode.ANY_TERM);
         // }
-        // final Clause cl = new Clause(this.prolog, new Struct(predicateName, args));
+        // final Clause cl = new Clause(this.prolog, new Struct(dataSetName, args));
         // clauses.add(cl);
         // }
         // }

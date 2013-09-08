@@ -27,13 +27,22 @@ import java.util.List;
 public class TabularData implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public String predicateName;
-    public String[] columnNames;
-    public Serializable[][] data;
+    private String[] columnNames;
+    private Serializable[][] data;
+    private String dataSetName;
 
-    public int rowIdentifierColumn = -1;
+    private int primaryKeyColumn = -1;
 
     public TabularData() {
+    }
+
+    /**
+     * @param strings
+     * @param serializables
+     */
+    public TabularData(String[] colNames, Serializable[][] serializables) {
+        this.columnNames = colNames;
+        this.data = serializables;
     }
 
     /**
@@ -64,6 +73,34 @@ public class TabularData implements Serializable {
     }
 
     // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    public String getDataSetName() {
+        return dataSetName;
+    }
+
+    public void setDataSetName(String dataSetName) {
+        this.dataSetName = dataSetName;
+    }
+
+    public String[] getColumnNames() {
+        return columnNames;
+    }
+
+    public Serializable[][] getData() {
+        return data;
+    }
+
+    public int getPrimaryKeyColumn() {
+        return primaryKeyColumn;
+    }
+
+    public void setPrimaryKeyColumn(int primaryKeyColumn) {
+        this.primaryKeyColumn = primaryKeyColumn;
+    }
+
+    // ---------------------------------------------------------------------------
     // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
 
@@ -74,4 +111,5 @@ public class TabularData implements Serializable {
         }
         return this.getClass().getSimpleName() + '[' + this.getNbRows() + " x " + this.getNbColumns() + ']';
     }
+
 }

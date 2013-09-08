@@ -49,7 +49,7 @@ public class ExcelReaderTest extends PrologTestBase {
     @Test
     public void listMatchingClauses() throws IOException {
         final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
-        final TabularData data = new ExcelReader(file, true, -1).read();
+        final TabularData data = new ExcelReader(file, true, 0).read();
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
         final Struct theGoal = new Struct("eavt", Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR);
         final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
@@ -61,7 +61,7 @@ public class ExcelReaderTest extends PrologTestBase {
     @Test
     public void readAndSolve_eavt() throws IOException {
         final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
-        final TabularData data = new ExcelReader(file, true, -1).read();
+        final TabularData data = new ExcelReader(file, true, 0).read();
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);

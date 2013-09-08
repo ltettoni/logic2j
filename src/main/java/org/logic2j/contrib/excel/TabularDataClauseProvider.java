@@ -78,36 +78,46 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final int nbRows = this.data.getNbRows();
         final int nbColumns = this.data.getNbColumns();
         for (int r = 0; r < nbRows; r++) {
-            final Serializable[] row = this.data.data[r];
-            final String identifier = row[this.data.rowIdentifierColumn].toString();
+            final Serializable[] row = this.data.getData()[r];
             switch (mode) {
-            case EAV_NAMED:
+            case EAV_NAMED: {
+                if (this.data.getPrimaryKeyColumn() < 0) {
+                    throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                }
+                final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
                 for (int c = 0; c < nbColumns; c++) {
-                    if (c != this.data.rowIdentifierColumn) {
-                        final String property = this.data.columnNames[c];
+                    if (c != this.data.getPrimaryKeyColumn()) {
+                        final String property = this.data.getColumnNames()[c];
                         final Serializable value = row[c];
-                        final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, identifier, property, value);
+                        final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, identifier, property, value);
                         final Clause clause = new Clause(this.prolog, theClauseTerm);
                         clauses.add(clause);
                     }
                 }
                 break;
-            case EAVT:
+            }
+            case EAVT: {
+                if (this.data.getPrimaryKeyColumn() < 0) {
+                    throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                }
+                final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
                 for (int c = 0; c < nbColumns; c++) {
-                    if (c != this.data.rowIdentifierColumn) {
-                        final String property = this.data.columnNames[c];
+                    if (c != this.data.getPrimaryKeyColumn()) {
+                        final String property = this.data.getColumnNames()[c];
                         final Serializable value = row[c];
-                        final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.predicateName);
+                        final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.getDataSetName());
                         final Clause clause = new Clause(this.prolog, theClauseTerm);
                         clauses.add(clause);
                     }
                 }
                 break;
-            case RECORD:
-                final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, (Object[]) row);
+            }
+            case RECORD: {
+                final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, (Object[]) row);
                 final Clause clause = new Clause(this.prolog, theClauseTerm);
                 clauses.add(clause);
                 break;
+            }
             default:
                 throw new PrologNonSpecificError("Unknown mode " + this.mode);
             }
@@ -119,13 +129,13 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final ClauseProviderResolver clauseProviderResolver = this.prolog.getTheoryManager().getClauseProviderResolver();
         switch (mode) {
         case EAV_NAMED:
-            clauseProviderResolver.register(data.predicateName + "/3", this);
+            clauseProviderResolver.register(data.getDataSetName() + "/3", this);
             break;
         case EAVT:
             clauseProviderResolver.register(EAVT_4, this);
             break;
         case RECORD:
-            clauseProviderResolver.register(data.predicateName + '/' + data.getNbColumns(), this);
+            clauseProviderResolver.register(data.getDataSetName() + '/' + data.getNbColumns(), this);
             break;
         default:
             throw new PrologNonSpecificError("Unknown mode " + this.mode);
@@ -137,7 +147,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final String predicateSignature = theGoal.getPredicateSignature();
         switch (mode) {
         case EAV_NAMED:
-            if (!predicateSignature.equals(data.predicateName + "/3")) {
+            if (!predicateSignature.equals(data.getDataSetName() + "/3")) {
                 return null;
             }
             return clauses;
@@ -147,7 +157,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
             }
             return clauses;
         case RECORD:
-            if (!predicateSignature.equals(data.predicateName + '/' + data.getNbColumns())) {
+            if (!predicateSignature.equals(data.getDataSetName() + '/' + data.getNbColumns())) {
                 return null;
             }
             return clauses;
