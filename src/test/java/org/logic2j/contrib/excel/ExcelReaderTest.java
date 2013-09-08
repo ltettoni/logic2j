@@ -60,21 +60,13 @@ public class ExcelReaderTest extends PrologTestBase {
 
     @Test
     public void readAndSolve_eavt() throws IOException {
-        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
-        final TabularData data = new ExcelReader(file, true, 0).read();
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
+        setExcelClauseProvider(AssertionMode.EAVT);
         assertNSolutions(1, "eavt('58/2008', 'TPM', 'AD', 'TEST.xls')");
     }
 
     @Test
     public void readAndSolve_record() throws IOException {
-        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
-        final TabularData data = new ExcelReader(file, true, -1).read();
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.RECORD);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
+        setExcelClauseProvider(AssertionMode.RECORD);
         //
         assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
         assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
@@ -83,4 +75,13 @@ public class ExcelReaderTest extends PrologTestBase {
         assertNSolutions(0, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
         assertNSolutions(1, "'TEST.xls'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
     }
+
+    private void setExcelClauseProvider(AssertionMode theMode) throws IOException {
+        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final TabularData data = new ExcelReader(file, true, 0).read();
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, theMode);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+    }
+
 }
