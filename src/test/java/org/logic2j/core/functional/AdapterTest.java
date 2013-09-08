@@ -46,7 +46,7 @@ public class AdapterTest extends PrologTestBase {
         public abstract Iterable<Out> solve(In in);
     }
 
-    @Ignore("Under development")
+    @Ignore("Under design")
     @Test
     public void invokeWithJavaObjects() throws Exception {
         // Just convert a vararg of Object... to a Struct, and that's OK
@@ -54,7 +54,7 @@ public class AdapterTest extends PrologTestBase {
         // ^^^static : en tout cas pas.
     }
 
-    @Ignore("Under development")
+    @Ignore("Under design")
     @Test
     public void testRetrieveJavaObjects() throws Exception {
         this.prolog.solve("X is 2+3").unique().binding("X", Integer.class);
