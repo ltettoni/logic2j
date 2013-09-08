@@ -19,7 +19,10 @@
 package org.logic2j.contrib.excel;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 
 /**
  * A tabular data set all loaded into memory.
@@ -43,6 +46,7 @@ public class TabularData implements Serializable {
     public TabularData(String[] colNames, Serializable[][] serializables) {
         this.columnNames = colNames;
         this.data = serializables;
+        checkPrimaryKeyColumn();
     }
 
     /**
@@ -55,6 +59,28 @@ public class TabularData implements Serializable {
         for (int i = 0; i < this.data.length; i++) {
             final Serializable[] row = listData.get(i).toArray(new Serializable[0]);
             this.data[i] = row;
+        }
+        checkPrimaryKeyColumn();
+    }
+
+    /**
+     * Make sure there are no duplicate values within the column defined as being the primary key.
+     */
+    private void checkPrimaryKeyColumn() {
+        final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
+        final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
+        if (this.primaryKeyColumn >= 0) {
+            for (int r = 0; r < this.data.length; r++) {
+                Serializable value = this.data[r][this.primaryKeyColumn];
+                if (existingKeys.contains(value)) {
+                    duplicateKeys.add(value);
+                } else {
+                    existingKeys.add(value);
+                }
+            }
+        }
+        if (!duplicateKeys.isEmpty()) {
+            throw new PrologNonSpecificError("Tabular data " + this.dataSetName + " contains duplicate keys in column " + this.primaryKeyColumn + ": " + duplicateKeys);
         }
     }
 
