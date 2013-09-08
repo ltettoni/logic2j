@@ -46,6 +46,7 @@ public class TabularData implements Serializable {
     public TabularData(String[] colNames, Serializable[][] serializables) {
         this.columnNames = colNames;
         this.data = serializables;
+        checkColumnNames();
         checkPrimaryKeyColumn();
     }
 
@@ -61,6 +62,24 @@ public class TabularData implements Serializable {
             this.data[i] = row;
         }
         checkPrimaryKeyColumn();
+    }
+
+    /**
+     * 
+     */
+    private void checkColumnNames() {
+        final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
+        final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
+        for (String name : this.columnNames) {
+            if (existingKeys.contains(name)) {
+                duplicateKeys.add(name);
+            } else {
+                existingKeys.add(name);
+            }
+        }
+        if (!duplicateKeys.isEmpty()) {
+            throw new PrologNonSpecificError("Tabular data " + this.dataSetName + " contains duplicate column names: " + duplicateKeys);
+        }
     }
 
     /**

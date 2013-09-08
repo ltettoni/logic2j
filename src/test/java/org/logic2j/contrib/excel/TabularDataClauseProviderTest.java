@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.Serializable;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.contrib.excel.TabularDataClauseProvider.AssertionMode;
 import org.logic2j.core.PrologTestBase;
@@ -31,24 +30,34 @@ import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
 public class TabularDataClauseProviderTest extends PrologTestBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataClauseProviderTest.class);
 
-    private TabularData data;
-
-    @Before
-    public void setUp() {
-        super.setUp();
-        this.data = new TabularData(new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 },
+    private TabularData smallData() {
+        final TabularData data = new TabularData(new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 },
                 { "Germany", "DEU", 85.4 } });
-        this.data.setPrimaryKeyColumn(1);
-        this.data.setDataSetName("myData");
+        data.setPrimaryKeyColumn(1);
+        data.setDataSetName("smallData");
+        return data;
+    }
+
+    private TabularData largeData() {
+        String[] strings = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
+        Serializable[][] arr = new Serializable[1000][];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = strings;
+        }
+        final TabularData data = new TabularData(new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, arr);
+        data.setPrimaryKeyColumn(1);
+        data.setDataSetName("largeData");
+        return data;
     }
 
     @Test
     public void tabularClauseProvider_eav() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), this.data, AssertionMode.EAV_NAMED);
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), AssertionMode.EAV_NAMED);
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
-        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "myData(E,A,V)");
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "smallData(E,A,V)");
         assertEquals(
                 "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
                 sixSolutions.bindings().toString());
@@ -59,10 +68,10 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
 
     @Test
     public void tabularClauseProvider_eavt() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), this.data, AssertionMode.EAVT);
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), AssertionMode.EAVT);
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
-        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "eavt(E,A,V,myData)");
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "eavt(E,A,V,smallData)");
         assertEquals(
                 "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
                 sixSolutions.bindings().toString());
@@ -73,13 +82,23 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
 
     @Test
     public void tabularClauseProvider_record() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), this.data, AssertionMode.RECORD);
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), AssertionMode.RECORD);
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
-        final MultipleSolutionsHolder sixSolutions = assertNSolutions(3, "myData(Country,Code,Pop)");
+        final MultipleSolutionsHolder sixSolutions = assertNSolutions(3, "smallData(Country,Code,Pop)");
         assertEquals("[{Code='CHE', Country='Switzerland', Pop=7.8}, {Code='FRA', Country='France', Pop=65.0}, {Code='DEU', Country='Germany', Pop=85.4}]", sixSolutions.bindings().toString());
         assertEquals("['Switzerland', 'France', 'Germany']", sixSolutions.binding("Country").toString());
         assertEquals("['CHE', 'FRA', 'DEU']", sixSolutions.binding("Code").toString());
         assertEquals("[7.8, 65.0, 85.4]", sixSolutions.binding("Pop").toString());
+    }
+
+    @Test
+    public void tabularClauseProvider_eav_big() {
+        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), largeData(), AssertionMode.EAV_NAMED);
+        final TheoryManager theoryManager = getProlog().getTheoryManager();
+        theoryManager.addClauseProvider(td);
+        //
+        final MultipleSolutionsHolder solutions = assertNSolutions(9000, "largeData(E,A,V)");
+        // logger.info("V={}", solutions.binding("V").toString());
     }
 }
