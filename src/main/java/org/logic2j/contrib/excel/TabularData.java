@@ -24,7 +24,8 @@ import java.util.List;
 /**
  * A tabular data set all loaded into memory.
  */
-public class TabularData {
+public class TabularData implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public String predicateName;
     public String[] columnNames;
@@ -43,7 +44,7 @@ public class TabularData {
         this.columnNames = colNames.toArray(new String[0]);
         this.data = new Serializable[listData.size()][];
         for (int i = 0; i < this.data.length; i++) {
-            Serializable[] row = listData.get(i).toArray(new Serializable[0]);
+            final Serializable[] row = listData.get(i).toArray(new Serializable[0]);
             this.data[i] = row;
         }
     }
@@ -52,21 +53,14 @@ public class TabularData {
      * @return Number of rows (entities) in the data.
      */
     public int getNbRows() {
-        return data.length;
+        return this.data.length;
     }
 
     /**
      * @return Number of columns (properties) in the data.
      */
     public int getNbColumns() {
-        return columnNames.length;
-    }
-
-    /**
-     * @return
-     */
-    public String getPredicateSignature() {
-        return this.predicateName + "/3";
+        return this.columnNames.length;
     }
 
     // ---------------------------------------------------------------------------

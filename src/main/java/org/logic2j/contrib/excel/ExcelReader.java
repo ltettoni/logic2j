@@ -46,8 +46,8 @@ public class ExcelReader {
 
     /**
      * @param file
-     * @param firstRowIsHeaders
-     * @param primaryKeyColumn
+     * @param firstRowIsHeaders True when first row contains column headers.
+     * @param primaryKeyColumn The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
      */
     public ExcelReader(File file, boolean firstRowIsHeaders, int primaryKeyColumn) {
         super();

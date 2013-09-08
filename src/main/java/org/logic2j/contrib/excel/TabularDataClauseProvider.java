@@ -18,6 +18,7 @@
 
 package org.logic2j.contrib.excel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.logic2j.core.api.ClauseProvider;
@@ -77,14 +78,14 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final int nbRows = this.data.getNbRows();
         final int nbColumns = this.data.getNbColumns();
         for (int r = 0; r < nbRows; r++) {
-            final Object[] row = this.data.data[r];
+            final Serializable[] row = this.data.data[r];
             final String identifier = row[this.data.rowIdentifierColumn].toString();
             switch (mode) {
             case EAV_NAMED:
                 for (int c = 0; c < nbColumns; c++) {
                     if (c != this.data.rowIdentifierColumn) {
                         final String property = this.data.columnNames[c];
-                        final Object value = row[c];
+                        final Serializable value = row[c];
                         final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, identifier, property, value);
                         final Clause clause = new Clause(this.prolog, theClauseTerm);
                         clauses.add(clause);
@@ -95,7 +96,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
                 for (int c = 0; c < nbColumns; c++) {
                     if (c != this.data.rowIdentifierColumn) {
                         final String property = this.data.columnNames[c];
-                        final Object value = row[c];
+                        final Serializable value = row[c];
                         final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.predicateName);
                         final Clause clause = new Clause(this.prolog, theClauseTerm);
                         clauses.add(clause);
@@ -103,7 +104,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
                 }
                 break;
             case RECORD:
-                final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, row);
+                final Term theClauseTerm = termAdapter.term(this.data.predicateName, FactoryMode.ATOM, (Object[]) row);
                 final Clause clause = new Clause(this.prolog, theClauseTerm);
                 clauses.add(clause);
                 break;
@@ -118,7 +119,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final ClauseProviderResolver clauseProviderResolver = this.prolog.getTheoryManager().getClauseProviderResolver();
         switch (mode) {
         case EAV_NAMED:
-            clauseProviderResolver.register(data.getPredicateSignature(), this);
+            clauseProviderResolver.register(data.predicateName + "/3", this);
             break;
         case EAVT:
             clauseProviderResolver.register(EAVT_4, this);
@@ -136,7 +137,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final String predicateSignature = theGoal.getPredicateSignature();
         switch (mode) {
         case EAV_NAMED:
-            if (!predicateSignature.equals(data.getPredicateSignature())) {
+            if (!predicateSignature.equals(data.predicateName + "/3")) {
                 return null;
             }
             return clauses;
