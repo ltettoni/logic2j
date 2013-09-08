@@ -74,10 +74,14 @@ public class DefaultTermAdapter implements TermAdapter {
      * @return An instance of Term
      */
     protected Term termFrom(Object theObject, FactoryMode theMode) {
-        if (theObject == null) {
-            throw new InvalidTermException("Cannot create Term from a null argument");
-        }
         Term result = null;
+        if (theObject == null) {
+            if (theMode == FactoryMode.ATOM) {
+                result = new Struct(""); // The empty string atom, see note on FactoryMode.ATOM
+            } else {
+                throw new InvalidTermException("Cannot create Term from a null argument");
+            }
+        }
         if (theObject instanceof CharSequence || theObject instanceof Character) {
             // Rudimentary parsing
             final String chars = theObject.toString();

@@ -31,6 +31,7 @@ public interface TermAdapter {
     static enum FactoryMode {
         /**
          * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
+         * In the case of null, will create an empty-string atom.
          */
         ATOM,
 
