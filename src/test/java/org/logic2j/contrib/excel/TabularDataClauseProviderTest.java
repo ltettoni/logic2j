@@ -35,9 +35,11 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
     private TabularData data;
 
     @Before
-    public void setup() {
+    public void setUp() {
+        super.setUp();
         this.data = new TabularData(new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 },
                 { "Germany", "DEU", 85.4 } });
+        this.data.setPrimaryKeyColumn(1);
         this.data.setDataSetName("myData");
     }
 
