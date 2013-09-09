@@ -61,9 +61,11 @@ public class TermApi {
      * @return A collection of terms, never empty. Same terms may appear multiple times.
      */
     Collection<Term> collectTerms(Term theTerm) {
-        final Collection<Term> collection = new ArrayList<Term>();
-        theTerm.collectTermsInto(collection);
-        return collection;
+        final ArrayList<Term> recipient = new ArrayList<Term>();
+        theTerm.collectTermsInto(recipient);
+        // Remove ourself from the result - we are always at the end of the collection
+        recipient.remove(recipient.size() - 1);
+        return recipient;
     }
 
     /**
