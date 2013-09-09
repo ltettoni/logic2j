@@ -35,11 +35,9 @@ import org.logic2j.core.impl.theory.TheoryManager;
 
 public class ExcelReaderTest extends PrologTestBase {
 
-    private static final File EXCEL_TEST_RESOURCES_DIR = new File(TEST_RESOURCES_DIR, "excel");
-
     @Test
     public void read() throws IOException {
-        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final File file = new File(TEST_RESOURCES_DIR, "excel/TEST.xls");
         final TabularData data = new ExcelReader(file, true, -1).read();
         assertNotNull(data);
         assertEquals(10, data.getNbRows());
@@ -48,7 +46,7 @@ public class ExcelReaderTest extends PrologTestBase {
 
     @Test
     public void listMatchingClauses() throws IOException {
-        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+        final File file = new File(TEST_RESOURCES_DIR, "excel/TEST.xls");
         final TabularData data = new ExcelReader(file, true, 0).read();
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, AssertionMode.EAVT);
         final Struct theGoal = new Struct("eavt", Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR);
@@ -60,24 +58,24 @@ public class ExcelReaderTest extends PrologTestBase {
 
     @Test
     public void readAndSolve_eavt() throws IOException {
-        setExcelClauseProvider(AssertionMode.EAVT);
-        assertNSolutions(1, "eavt('58/2008', 'TPM', 'AD', 'TEST.xls')");
+        setExcelClauseProvider("excel/TEST.xls", AssertionMode.EAVT);
+        assertNSolutions(1, "eavt('58/2008', 'TPM', 'AD', 'TEST')");
     }
 
     @Test
     public void readAndSolve_record() throws IOException {
-        setExcelClauseProvider(AssertionMode.RECORD);
+        setExcelClauseProvider("excel/TEST.xls", AssertionMode.RECORD);
         //
-        assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
-        assertNSolutions(1, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
-        assertNSolutions(1, "'TEST.xls'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+        assertNSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
+        assertNSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
+        assertNSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
         // Failing tests
-        assertNSolutions(0, "'TEST.xls'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
-        assertNSolutions(1, "'TEST.xls'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+        assertNSolutions(0, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
+        assertNSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
     }
 
-    private void setExcelClauseProvider(AssertionMode theMode) throws IOException {
-        final File file = new File(EXCEL_TEST_RESOURCES_DIR, "TEST.xls");
+    protected void setExcelClauseProvider(String filename, AssertionMode theMode) throws IOException {
+        final File file = new File(TEST_RESOURCES_DIR, filename);
         final TabularData data = new ExcelReader(file, true, 0).read();
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, theMode);
         final TheoryManager theoryManager = getProlog().getTheoryManager();

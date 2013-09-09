@@ -77,48 +77,52 @@ public class TabularDataClauseProvider implements ClauseProvider {
         final int nbRows = this.data.getNbRows();
         final int nbColumns = this.data.getNbColumns();
         for (int r = 0; r < nbRows; r++) {
-            final Serializable[] row = this.data.getData()[r];
-            switch (mode) {
-            case EAV_NAMED: {
-                if (this.data.getPrimaryKeyColumn() < 0) {
-                    throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                }
-                final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
-                for (int c = 0; c < nbColumns; c++) {
-                    if (c != this.data.getPrimaryKeyColumn()) {
-                        final String property = this.data.getColumnNames()[c];
-                        final Serializable value = row[c];
-                        final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, identifier, property, value);
-                        final Clause clause = new Clause(this.prolog, theClauseTerm);
-                        clauses.add(clause);
+            try {
+                final Serializable[] row = this.data.getData()[r];
+                switch (mode) {
+                case EAV_NAMED: {
+                    if (this.data.getPrimaryKeyColumn() < 0) {
+                        throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
                     }
-                }
-                break;
-            }
-            case EAVT: {
-                if (this.data.getPrimaryKeyColumn() < 0) {
-                    throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                }
-                final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
-                for (int c = 0; c < nbColumns; c++) {
-                    if (c != this.data.getPrimaryKeyColumn()) {
-                        final String property = this.data.getColumnNames()[c];
-                        final Serializable value = row[c];
-                        final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.getDataSetName());
-                        final Clause clause = new Clause(this.prolog, theClauseTerm);
-                        clauses.add(clause);
+                    final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
+                    for (int c = 0; c < nbColumns; c++) {
+                        if (c != this.data.getPrimaryKeyColumn()) {
+                            final String property = this.data.getColumnNames()[c];
+                            final Serializable value = row[c];
+                            final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, identifier, property, value);
+                            final Clause clause = new Clause(this.prolog, theClauseTerm);
+                            clauses.add(clause);
+                        }
                     }
+                    break;
                 }
-                break;
-            }
-            case RECORD: {
-                final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, (Object[]) row);
-                final Clause clause = new Clause(this.prolog, theClauseTerm);
-                clauses.add(clause);
-                break;
-            }
-            default:
-                throw new PrologNonSpecificError("Unknown mode " + this.mode);
+                case EAVT: {
+                    if (this.data.getPrimaryKeyColumn() < 0) {
+                        throw new PrologNonSpecificError("Exposing tabular data with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                    }
+                    final String identifier = row[this.data.getPrimaryKeyColumn()].toString();
+                    for (int c = 0; c < nbColumns; c++) {
+                        if (c != this.data.getPrimaryKeyColumn()) {
+                            final String property = this.data.getColumnNames()[c];
+                            final Serializable value = row[c];
+                            final Term theClauseTerm = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, this.data.getDataSetName());
+                            final Clause clause = new Clause(this.prolog, theClauseTerm);
+                            clauses.add(clause);
+                        }
+                    }
+                    break;
+                }
+                case RECORD: {
+                    final Term theClauseTerm = termAdapter.term(this.data.getDataSetName(), FactoryMode.ATOM, (Object[]) row);
+                    final Clause clause = new Clause(this.prolog, theClauseTerm);
+                    clauses.add(clause);
+                    break;
+                }
+                default:
+                    throw new PrologNonSpecificError("Unknown mode " + this.mode);
+                }
+            } catch (Exception e) {
+                throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
             }
         }
     }

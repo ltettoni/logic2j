@@ -105,7 +105,11 @@ public class ExcelReader {
                     listData.add(listRow);
                 }
             }
-            TabularData tbl = new TabularData(this.file.getName(), columnNames, listData);
+            String dataSetName = this.file.getName();
+            if (dataSetName.lastIndexOf('.') >= 0) {
+                dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
+            }
+            TabularData tbl = new TabularData(dataSetName, columnNames, listData);
             tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
             return tbl;
         } else {
@@ -164,26 +168,28 @@ public class ExcelReader {
             return null;
         }
         final int nbCols = row.getPhysicalNumberOfCells();
-        ArrayList<T> values = new ArrayList<T>();
+        final ArrayList<T> values = new ArrayList<T>();
         boolean hasSomeData = false;
         for (int c = 0; c < nbCols; c++) {
             final HSSFCell cell = row.getCell(c);
             Object value = null;
-            switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_FORMULA:
-                value = cell.getCellFormula();
-                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                value = cell.getNumericCellValue();
-                break;
-            case Cell.CELL_TYPE_STRING:
-                value = cell.getStringCellValue();
-                break;
-            case Cell.CELL_TYPE_BLANK:
-                value = null;
-                break;
-            default:
-                throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " not handled, value is " + value);
+            if (cell != null) {
+                switch (cell.getCellType()) {
+                case Cell.CELL_TYPE_FORMULA:
+                    value = cell.getCellFormula();
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+                    value = cell.getNumericCellValue();
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                    value = cell.getStringCellValue();
+                    break;
+                case Cell.CELL_TYPE_BLANK:
+                    value = null;
+                    break;
+                default:
+                    throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " not handled, value is " + value);
+                }
             }
             value = map(value);
             if (value != null) {

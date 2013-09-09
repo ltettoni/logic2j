@@ -19,6 +19,7 @@
 package org.logic2j.contrib.excel;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -69,7 +70,21 @@ public class TabularData implements Serializable {
 
     private void checkAll() {
         checkColumnNames();
+        squarify();
         checkPrimaryKeyColumn();
+    }
+
+    /**
+     * Make the data square, ie extend or reduce every data row to match the {@link #columnNames} size.
+     */
+    private void squarify() {
+        final int nbColumns = this.columnNames.length;
+        for (int i = 0; i < data.length; i++) {
+            Serializable[] row = data[i];
+            if (nbColumns != row.length) {
+                data[i] = Arrays.copyOf(data[i], nbColumns);
+            }
+        }
     }
 
     private void checkColumnNames() {
