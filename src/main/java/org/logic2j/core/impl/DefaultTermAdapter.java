@@ -22,7 +22,6 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.impl.io.parse.tuprolog.Parser;
 
 /**
  * Default and reference implementation of {@link TermAdapter}.
@@ -44,12 +43,8 @@ public class DefaultTermAdapter implements TermAdapter {
             if (theMode == FactoryMode.ATOM) {
                 return new Struct(theObject.toString());
             }
-            final Parser parser = new Parser(this.prolog.getOperatorManager(), ((CharSequence) theObject).toString());
-            final Term parsed = parser.parseSingleTerm();
-            final Term normalized = TERM_API.normalize(parsed, this.prolog.getLibraryManager().wholeContent());
-            return normalized;
+            throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermExchanger instead");
         }
-
         final Term created = termFrom(theObject, theMode);
         final Term normalized = TERM_API.normalize(created, this.prolog.getLibraryManager().wholeContent());
         return normalized;
