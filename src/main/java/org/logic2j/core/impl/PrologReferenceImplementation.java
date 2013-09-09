@@ -119,7 +119,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public SolutionHolder solve(CharSequence theGoal) {
-        final Term parsed = term(theGoal);
+        final Term parsed = getTermExchanger().unmarshall(theGoal);
         return solve(parsed);
     }
 
