@@ -408,7 +408,7 @@ public class Parser {
         if (t1.isType(LBRA)) {
             final Token t2 = this.tokenizer.readToken();
             if (t2.isType(RBRA)) {
-                return Struct.createEmptyPList();
+                return Struct.EMPTY_LIST;
             }
 
             this.tokenizer.unreadToken(t2);
@@ -448,7 +448,7 @@ public class Parser {
         }
         if ("]".equals(t.text)) {
             this.tokenizer.unreadToken(t);
-            return Struct.createPList(head, Struct.createEmptyPList());
+            return Struct.createPList(head, Struct.EMPTY_LIST);
         }
         throw new InvalidTermException("The expression: \"" + head + "\" is not followed by either a ',' or '|'  or ']'.");
     }

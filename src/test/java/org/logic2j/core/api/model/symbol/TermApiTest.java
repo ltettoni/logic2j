@@ -130,7 +130,7 @@ public class TermApiTest {
     @SuppressWarnings("deprecation")
     @Test
     public void avoidCycle() {
-        final Struct cyclic = new Struct("s", Struct.createEmptyPList());
+        final Struct cyclic = new Struct("s", Struct.EMPTY_LIST);
         cyclic.setArg(0, cyclic);
         try {
             cyclic.avoidCycle(new ArrayList<Term>());
