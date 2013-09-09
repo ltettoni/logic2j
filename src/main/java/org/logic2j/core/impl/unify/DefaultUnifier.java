@@ -57,7 +57,14 @@ public class DefaultUnifier implements Unifier {
      * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
      */
     private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
+        if (term1 == term2 && theBindings1 == theBindings2) {
+            // Atoms now share the same address - we can optimize their unification.
+            // Notice that due to factorization, struct such as [H|T] may also share the same location
+            // so we can only assume they unify if the bindings are the same too
+            return true;
+        }
         if (term2 instanceof Var && !(term1 instanceof Var)) {
+            // Prefer unifying Var to const so we swap args - this is purely conventional
             return unifyInternal(term2, theBindings2, term1, theBindings1);
         }
         if (term1 instanceof Var) {
@@ -103,12 +110,8 @@ public class DefaultUnifier implements Unifier {
                 if (!(s1.nameAndArityMatch(s2))) {
                     return false;
                 }
-                if (s1.getClass() != s2.getClass()) {
-                    // Must unify same (sub?) classes of Struct
-                    return false;
-                }
-                final int arity1 = s1.getArity();
-                for (int i = 0; i < arity1; i++) {
+                final int arity = s1.getArity();
+                for (int i = 0; i < arity; i++) {
                     if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2)) {
                         return false;
                     }
@@ -119,7 +122,6 @@ public class DefaultUnifier implements Unifier {
         } else {
             throw new IllegalStateException("Internal bug, term1 is of unexpected " + term1.getClass());
         }
-        // return result;
     }
 
     @Override
