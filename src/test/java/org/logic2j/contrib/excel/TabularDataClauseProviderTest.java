@@ -32,21 +32,23 @@ import org.logic2j.core.impl.theory.TheoryManager;
 public class TabularDataClauseProviderTest extends PrologTestBase {
 
     private TabularData smallData() {
-        final TabularData data = new TabularData("smallData", new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 },
+        final TabularData td = new TabularData("smallData", new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 },
                 { "France", "FRA", 65.0 }, { "Germany", "DEU", 85.4 } });
-        data.setPrimaryKeyColumn(1);
-        return data;
+        td.setPrimaryKeyColumn(1);
+        return td;
     }
+
+    private static final int LARGE_DATA_NB_ROWS = 10000;
 
     private TabularData largeData() {
         String[] strings = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
-        Serializable[][] arr = new Serializable[1000][];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = strings;
+        Serializable[][] array = new Serializable[LARGE_DATA_NB_ROWS][];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = strings;
         }
-        final TabularData data = new TabularData("largeData", new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, arr);
-        data.setPrimaryKeyColumn(1);
-        return data;
+        final TabularData td = new TabularData("largeData", new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, array);
+        td.setPrimaryKeyColumn(0);
+        return td;
     }
 
     @Test
@@ -95,6 +97,6 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         //
-        assertNSolutions(9000, "largeData(E,A,V)");
+        assertNSolutions(90000, "largeData(E,A,V)"); // Takes only 0.1 seconds: 900000 solutions/s
     }
 }
