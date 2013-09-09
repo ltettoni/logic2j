@@ -21,7 +21,6 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.OperatorManager;
@@ -111,11 +110,6 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Implementation of interface Prolog.
     // These are actually shortcuts or "syntactic sugars".
     // ---------------------------------------------------------------------------
-
-    @Override
-    public Term term(Object theSource) {
-        return getTermAdapter().term(theSource, FactoryMode.ANY_TERM);
-    }
 
     @Override
     public SolutionHolder solve(CharSequence theGoal) {

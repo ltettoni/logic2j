@@ -35,14 +35,6 @@ public interface Prolog {
     // ---------------------------------------------------------------------------
 
     /**
-     * The shortcut and preferred method to create a {@link Term} by delegating instantiation to the current {@link TermAdapter}.
-     * 
-     * @param theSource Any instance of {@link Object} that may be converted to a {@link Term}.
-     * @return A valid {@link Term}, ready for unification or inference within the current {@link Prolog} engine.
-     */
-    Term term(Object theSource);
-
-    /**
      * The top-level method for solving a goal (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
      * {@link SolutionListener}).
      * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
