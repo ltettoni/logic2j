@@ -182,11 +182,11 @@ public class CoreLibraryTest extends PrologTestBase {
         assertOneSolution("clause(a(X), true), X=3");
         assertNSolutions(3, "clause(a(X), Z)");
         assertNSolutions(3, "clause(a(X), Z), Z=true");
-        assertEquals(termList(true, true, true), assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z"));
+        assertEquals(termList("true", "true", "true"), assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z"));
         assertNSolutions(3, "clause(a(X), Z), Z\\=false").binding("Z");
-        assertEquals(termList(1, 2, 3), assertNSolutions(3, "clause(a(X), true)").binding("X"));
+        assertEquals(termList("1", "2", "3"), assertNSolutions(3, "clause(a(X), true)").binding("X"));
         assertNSolutions(5, "clause(f(_), true)");
-        assertEquals(termList(2), assertNSolutions(1, "clause(cut2(X), !)").binding("X"));
+        assertEquals(termList("2"), assertNSolutions(1, "clause(cut2(X), !)").binding("X"));
     }
 
     @Test

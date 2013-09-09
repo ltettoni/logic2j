@@ -28,7 +28,7 @@ public class AdHocLibraryTest extends PrologTestBase {
     @Test
     public void int_range() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-        assertEquals(termList(12, 13, 14), assertNSolutions(3, "int_range(12, X, 14)").binding("X"));
+        assertEquals(termList("12", "13", "14"), assertNSolutions(3, "int_range(12, X, 14)").binding("X"));
         assertNoSolution("int_range(12, X, 10)");
     }
 

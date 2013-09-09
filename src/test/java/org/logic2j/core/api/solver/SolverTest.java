@@ -80,7 +80,7 @@ public class SolverTest extends PrologTestBase {
         vars.put("Y", new TLong(3));
         assertEquals(vars, unique.bindings());
         // Obtain resolved term
-        assertEquals(prolog.term("2=2, 3=3"), unique.solution());
+        assertEquals(this.prolog.getTermExchanger().unmarshall("2=2, 3=3"), unique.solution());
     }
 
     @Test

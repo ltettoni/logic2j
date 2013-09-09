@@ -41,25 +41,25 @@ public class ParsingAndFormattingTest extends PrologTestBase {
 
     @Test
     public void parsing() {
-        logger.info("Term: {}", this.prolog.term("p(X,Y) :- a;b,c,d"));
-        logger.info("Term: {}", this.prolog.term("[1,2,3]"));
+        logger.info("Term: {}", this.prolog.getTermExchanger().unmarshall("p(X,Y) :- a;b,c,d"));
+        logger.info("Term: {}", this.prolog.getTermExchanger().unmarshall("[1,2,3]"));
     }
 
     @Test
     public void parseNarityOperator() {
         this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
-        logger.info("Result: {}", this.prolog.term("a oo b oo c oo d"));
+        logger.info("Result: {}", this.prolog.getTermExchanger().unmarshall("a oo b oo c oo d"));
     }
 
     @Test
     public void formatting() {
         Term t;
         //
-        t = this.prolog.term("'An atom'");
+        t = this.prolog.getTermExchanger().unmarshall("'An atom'");
         logger.info("Formatted: {}", t);
         assertEquals("Uppercase atom must be quoted", "'An atom'", t.toString());
         //
-        t = this.prolog.term("t('A')");
+        t = this.prolog.getTermExchanger().unmarshall("t('A')");
         logger.info("Formatted: {}", t);
         assertEquals("t('A')", t.toString());
     }

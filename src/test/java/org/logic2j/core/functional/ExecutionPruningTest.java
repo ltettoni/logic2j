@@ -234,7 +234,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     @Test
     public void userCancel() {
         final PrologImplementation prolog = new PrologReferenceImplementation();
-        final Term term = prolog.term("member(X, [0,1,2,3,4,5,6,7,8,9])");
+        final Term term = this.prolog.getTermExchanger().unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
         prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);

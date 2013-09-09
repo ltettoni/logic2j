@@ -166,14 +166,24 @@ public abstract class PrologTestBase {
     }
 
     /**
+     * Factory.
+     * 
+     * @param theText
+     * @return A single Term, corresponding to theObject.
+     */
+    protected Term term(CharSequence theText) {
+        return this.prolog.getTermExchanger().unmarshall(theText);
+    }
+
+    /**
      * Utility factory.
      * 
      * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.
      */
-    protected List<Term> termList(Object... elements) {
+    protected List<Term> termList(CharSequence... elements) {
         final List<Term> result = new ArrayList<Term>(elements.length);
-        for (final Object element : elements) {
+        for (final CharSequence element : elements) {
             result.add(term(element));
         }
         return result;

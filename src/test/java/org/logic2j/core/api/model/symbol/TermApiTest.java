@@ -116,14 +116,14 @@ public class TermApiTest {
             // Expected to happen
         }
 
-        final Term a = this.prolog.term("a");
+        final Term a = this.prolog.getTermExchanger().unmarshall("a");
         // Empty binding yields same term since no bindings to resolve
         assertSame(a, TERM_API.substitute(a, new Bindings(a), null));
 
         // Bindings without
         TERM_API.substitute(a, new Bindings(a), null);
 
-        final Term x = this.prolog.term("X");
+        final Term x = this.prolog.getTermExchanger().unmarshall("X");
         TERM_API.substitute(x, new Bindings(x), null);
     }
 
