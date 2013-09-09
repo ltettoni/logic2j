@@ -25,48 +25,53 @@ import java.util.List;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 
 /**
- * A tabular data set all loaded into memory.
+ * A tabular data set fully loaded in memory.
  */
 public class TabularData implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String[] columnNames;
-    private Serializable[][] data;
-    private String dataSetName;
+    private final String dataSetName;
+    private final String[] columnNames;
+    private final Serializable[][] data;
 
+    /**
+     * The 0-based index of the column that contains unique identifiers of rows, or -1 when not used.
+     */
     private int primaryKeyColumn = -1;
 
-    public TabularData() {
-    }
-
     /**
-     * @param strings
+     * @param theDataSetName
+     * @param colNames
      * @param serializables
      */
-    public TabularData(String[] colNames, Serializable[][] serializables) {
+    public TabularData(String theDataSetName, String[] colNames, Serializable[][] serializables) {
+        this.dataSetName = theDataSetName;
         this.columnNames = colNames;
         this.data = serializables;
-        checkColumnNames();
-        checkPrimaryKeyColumn();
+        checkAll();
     }
 
     /**
+     * @param theDataSetName
      * @param colNames
      * @param listData
      */
-    public TabularData(List<String> colNames, List<List<Serializable>> listData) {
+    public TabularData(String theDataSetName, List<String> colNames, List<List<Serializable>> listData) {
+        this.dataSetName = theDataSetName;
         this.columnNames = colNames.toArray(new String[0]);
         this.data = new Serializable[listData.size()][];
         for (int i = 0; i < this.data.length; i++) {
             final Serializable[] row = listData.get(i).toArray(new Serializable[0]);
             this.data[i] = row;
         }
+        checkAll();
+    }
+
+    private void checkAll() {
+        checkColumnNames();
         checkPrimaryKeyColumn();
     }
 
-    /**
-     * 
-     */
     private void checkColumnNames() {
         final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
         final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
@@ -123,10 +128,6 @@ public class TabularData implements Serializable {
 
     public String getDataSetName() {
         return dataSetName;
-    }
-
-    public void setDataSetName(String dataSetName) {
-        this.dataSetName = dataSetName;
     }
 
     public String[] getColumnNames() {

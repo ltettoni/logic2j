@@ -105,8 +105,7 @@ public class ExcelReader {
                     listData.add(listRow);
                 }
             }
-            TabularData tbl = new TabularData(columnNames, listData);
-            tbl.setDataSetName(this.file.getName());
+            TabularData tbl = new TabularData(this.file.getName(), columnNames, listData);
             tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
             return tbl;
         } else {

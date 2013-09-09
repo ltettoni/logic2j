@@ -30,13 +30,11 @@ import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
 public class TabularDataClauseProviderTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataClauseProviderTest.class);
 
     private TabularData smallData() {
-        final TabularData data = new TabularData(new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 }, { "France", "FRA", 65.0 },
-                { "Germany", "DEU", 85.4 } });
+        final TabularData data = new TabularData("smallData", new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 },
+                { "France", "FRA", 65.0 }, { "Germany", "DEU", 85.4 } });
         data.setPrimaryKeyColumn(1);
-        data.setDataSetName("smallData");
         return data;
     }
 
@@ -46,9 +44,8 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
         for (int i = 0; i < arr.length; i++) {
             arr[i] = strings;
         }
-        final TabularData data = new TabularData(new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, arr);
+        final TabularData data = new TabularData("largeData", new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, arr);
         data.setPrimaryKeyColumn(1);
-        data.setDataSetName("largeData");
         return data;
     }
 
@@ -98,7 +95,6 @@ public class TabularDataClauseProviderTest extends PrologTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         //
-        final MultipleSolutionsHolder solutions = assertNSolutions(9000, "largeData(E,A,V)");
-        // logger.info("V={}", solutions.binding("V").toString());
+        assertNSolutions(9000, "largeData(E,A,V)");
     }
 }
