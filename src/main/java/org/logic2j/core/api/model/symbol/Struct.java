@@ -86,10 +86,9 @@ public final class Struct extends Term {
      * 
      * @note Remember all Struct names are internalized we can compare by references, we use an IdentityMap
      */
-    public static IdentityHashMap<String, Struct> ATOM_CATALOG = new IdentityHashMap<String, Struct>();
+    private static IdentityHashMap<String, Struct> ATOM_CATALOG = new IdentityHashMap<String, Struct>();
 
-    private String name; // Always "internalized" with String.intern(), you can
-                         // compare with == !
+    private String name; // Always "internalized" with String.intern(), you can compare with == !
     private int arity;
     private Term[] args;
 
@@ -126,12 +125,14 @@ public final class Struct extends Term {
     /**
      * Static factory (instead of constructor).
      * 
-     * @return A prolog list providing head and tail
+     * @param head
+     * @param tail
+     * @return A prolog list provided head and tail
      */
-    public static Struct createPList(Term h, Term t) {
+    public static Struct createPList(Term head, Term tail) {
         final Struct result = new Struct(FUNCTOR_LIST, 2);
-        result.args[0] = h;
-        result.args[1] = t;
+        result.args[0] = head;
+        result.args[1] = tail;
         return result;
     }
 
@@ -142,11 +143,7 @@ public final class Struct extends Term {
      */
     public static Struct createPList(List<Term> theJavaList) {
         final int size = theJavaList.size();
-        if (size == 0) {
-            return Struct.EMPTY_LIST;
-        }
-        Struct pList;
-        pList = Struct.EMPTY_LIST;
+        Struct pList = Struct.EMPTY_LIST;
         for (int i = size - 1; i >= 0; i--) {
             pList = Struct.createPList(theJavaList.get(i), pList);
         }
@@ -154,39 +151,14 @@ public final class Struct extends Term {
     }
 
     /**
-     * Builds a list specifying the elements
+     * Low-level constructor.
+     * 
+     * @param theFunctor
+     * @param theArity
      */
-    public Struct(Term[] argList) {
-        this(argList, 0);
-    }
-
-    private Struct(Term[] argList, int theIndex) {
-        this(FUNCTOR_LIST, 2);
-        if (theIndex < argList.length) {
-            this.args[0] = argList[theIndex];
-            this.args[1] = new Struct(argList, theIndex + 1);
-        } else {
-            // build an empty list
-            setNameAndArity(FUNCTOR_LIST_EMPTY, 0);
-            this.args = null;
-        }
-    }
-
-    /**
-     * Builds a compound, with a linked list of arguments
-     */
-    public Struct(String theFunctor, Collection<Term> elements) {
-        final int ary = elements.size();
-        setNameAndArity(theFunctor, ary);
-        this.args = new Term[ary];
-        int i = 0;
-        for (final Term element : elements) {
-            this.args[i++] = element;
-        }
-    }
-
     private Struct(String theFunctor, int theArity) {
         setNameAndArity(theFunctor, theArity);
+        // When arity is zero, don't even bother to allocate arguments!
         if (this.arity > 0) {
             this.args = new Term[this.arity];
         }
@@ -269,10 +241,10 @@ public final class Struct extends Term {
     /**
      * Sets the i-th element of this structure
      * 
-     * (Only for internal service)
+     * @deprecated Do not use - only for white-box testing from TestCases
      */
     @Deprecated
-    public void setArg(int theIndex, Term argument) {
+    void setArg(int theIndex, Term argument) {
         this.args[theIndex] = argument;
     }
 
@@ -557,7 +529,7 @@ public final class Struct extends Term {
             elements.add(runningElement.getLHS());
             runningElement = (Struct) runningElement.getRHS();
         }
-        return new Struct(((Struct) functor).name, elements);
+        return new Struct(((Struct) functor).name, elements.toArray(new Term[0]));
     }
 
     @SuppressWarnings("unchecked")

@@ -392,7 +392,7 @@ public class Parser {
             final LinkedList<Term> a = exprA0_arglist(); // reading arguments
             final Token t3 = this.tokenizer.readToken();
             if (t3.isType(RPAR)) {
-                return new Struct(functor, a);
+                return new Struct(functor, a.toArray(new Term[0]));
             }
             throw new InvalidTermException("Missing right parenthesis: (" + a + " -> here <-");
         }
