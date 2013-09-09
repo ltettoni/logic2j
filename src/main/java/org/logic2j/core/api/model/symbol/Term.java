@@ -38,6 +38,7 @@ import org.logic2j.core.impl.DefaultTermExchanger;
  * <li>Normaliization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
  * 
+ * @note Maybe one day we will need a subclass to represent timestamps.
  * @see Struct
  * @see Var
  * @see TNumber
