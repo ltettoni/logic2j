@@ -33,8 +33,9 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
 
 /**
  * Struct class represents either Prolog compound {@link Term}s or atoms (an atom is represented by a 0-arity compound).
+ * This class is now final, one we'll have to carefully think if this could be user-extended.
  */
-public class Struct extends Term {
+public final class Struct extends Term {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -60,10 +61,7 @@ public class Struct extends Term {
 
     public static final String FUNCTOR_LIST = ".".intern();
     public static final String FUNCTOR_LIST_EMPTY = "[]".intern(); // The
-                                                                   // functor
-                                                                   // representing
-                                                                   // an empty
-                                                                   // list
+
     public static final String FUNCTOR_CLAUSE = ":-".intern();
     public static final String FUNCTOR_CLAUSE_QUOTED = ("'" + FUNCTOR_CLAUSE + "'").intern();
 
@@ -76,6 +74,19 @@ public class Struct extends Term {
     public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
     public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
     public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
+
+    /**
+     * The empty list.
+     */
+    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_LIST_EMPTY, 0);
+
+    /**
+     * A potentially big catalogue of all our atoms - will avoid duplicating atoms such as Struct("a"),
+     * and make the unification much faster since we can compare references.
+     * 
+     * @note Remember all Struct names are internalized we can compare by references, we use an IdentityMap
+     */
+    public static IdentityHashMap<String, Struct> ATOM_CATALOG = new IdentityHashMap<String, Struct>();
 
     private String name; // Always "internalized" with String.intern(), you can
                          // compare with == !
@@ -115,15 +126,6 @@ public class Struct extends Term {
     /**
      * Static factory (instead of constructor).
      * 
-     * @return A structure representing an empty list
-     */
-    public static Struct createEmptyPList() {
-        return new Struct(FUNCTOR_LIST_EMPTY, 0);
-    }
-
-    /**
-     * Static factory (instead of constructor).
-     * 
      * @return A prolog list providing head and tail
      */
     public static Struct createPList(Term h, Term t) {
@@ -141,10 +143,10 @@ public class Struct extends Term {
     public static Struct createPList(List<Term> theJavaList) {
         final int size = theJavaList.size();
         if (size == 0) {
-            return Struct.createEmptyPList();
+            return Struct.EMPTY_LIST;
         }
         Struct pList;
-        pList = Struct.createEmptyPList();
+        pList = Struct.EMPTY_LIST;
         for (int i = size - 1; i >= 0; i--) {
             pList = Struct.createPList(theJavaList.get(i), pList);
         }
@@ -184,12 +186,6 @@ public class Struct extends Term {
     }
 
     private Struct(String theFunctor, int theArity) {
-        if (theFunctor == null) {
-            throw new InvalidTermException("The functor of a Struct cannot be null");
-        }
-        if (theFunctor.length() == 0 && theArity > 0) {
-            throw new InvalidTermException("The functor of a non-atom Struct cannot be an empty string");
-        }
         setNameAndArity(theFunctor, theArity);
         if (this.arity > 0) {
             this.args = new Term[this.arity];
@@ -199,11 +195,17 @@ public class Struct extends Term {
     /**
      * Write major properties of the Struct, and also store read-only fields for efficient access.
      * 
-     * @param theName
+     * @param theFunctor whose named is internalized by {@link String#intern()}
      * @param theArity
      */
-    private void setNameAndArity(String theName, int theArity) {
-        this.name = theName.intern();
+    private void setNameAndArity(String theFunctor, int theArity) {
+        if (theFunctor == null) {
+            throw new InvalidTermException("The functor of a Struct cannot be null");
+        }
+        if (theFunctor.isEmpty() && theArity > 0) {
+            throw new InvalidTermException("The functor of a non-atom Struct cannot be an empty string");
+        }
+        this.name = theFunctor.intern();
         this.arity = theArity;
     }
 
@@ -354,6 +356,15 @@ public class Struct extends Term {
 
     @Override
     protected Term factorize(Collection<Term> theCollectedTerms) {
+        if (this.arity == 0) {
+            // This is an atom - find if we already have it in our catalog
+            final Struct found = ATOM_CATALOG.get(this.name);
+            if (found != null) {
+                return found;
+            }
+            // Let's file this new atom into our catalog
+            ATOM_CATALOG.put(this.name, this);
+        }
         // Recursively factorize all arguments of this Struct
         final Term[] newArgs = new Term[this.arity];
         boolean anyChange = false;
@@ -588,7 +599,7 @@ public class Struct extends Term {
             setNameAndArity(FUNCTOR_LIST, 2);
             this.args = new Term[this.arity];
             this.args[0] = t;
-            this.args[1] = Struct.createEmptyPList();
+            this.args[1] = Struct.EMPTY_LIST;
         } else if (this.args[1].isList()) {
             ((Struct) this.args[1]).append(t);
         } else {
@@ -601,7 +612,7 @@ public class Struct extends Term {
      */
     void insert(Term t) {
         assertPList(this);
-        final Struct co = Struct.createEmptyPList();
+        final Struct co = Struct.EMPTY_LIST;
         co.args[0] = getLHS();
         co.args[1] = getRHS();
         this.args[0] = t;
