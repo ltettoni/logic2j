@@ -32,6 +32,11 @@ public class FunctionalTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
 
     @Test
+    public void placeholder() {
+        //
+    }
+
+    @Test
     public void corePrimitivesThatYieldUniqueSolution() {
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "true", //
