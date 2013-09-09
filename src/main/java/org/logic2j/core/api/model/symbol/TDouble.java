@@ -22,7 +22,7 @@ import org.logic2j.core.api.model.TermVisitor;
 /**
  * TDouble class represents the double Prolog data type.
  */
-public class TDouble extends TNumber {
+public final class TDouble extends TNumber {
     private static final long serialVersionUID = 1L;
 
     private final double value;

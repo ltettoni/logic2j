@@ -31,7 +31,7 @@ import org.logic2j.core.api.model.var.Bindings;
  * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
  * ('_') name.
  */
-public class Var extends Term {
+public final class Var extends Term {
     private static final long serialVersionUID = 1L;
 
     public static final String ANONYMOUS_VAR_NAME = "_".intern(); // TODO

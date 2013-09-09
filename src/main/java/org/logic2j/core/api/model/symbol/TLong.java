@@ -22,7 +22,7 @@ import org.logic2j.core.api.model.TermVisitor;
 /**
  * TLong class represents the long Prolog data type.
  */
-public class TLong extends TNumber {
+public final class TLong extends TNumber {
     private static final long serialVersionUID = 1L;
 
     private final long value;
