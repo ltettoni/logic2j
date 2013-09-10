@@ -23,7 +23,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import org.logic2j.contrib.excel.TabularDataClauseProvider.AssertionMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.impl.PrologImplementation;
 
 /**
  * A tabular data set fully loaded in memory.
@@ -123,6 +125,10 @@ public class TabularData implements Serializable {
         }
     }
 
+    // ---------------------------------------------------------------------------
+    // Methods
+    // ---------------------------------------------------------------------------
+
     /**
      * @return Number of rows (entities) in the data.
      */
@@ -135,6 +141,18 @@ public class TabularData implements Serializable {
      */
     public int getNbColumns() {
         return this.columnNames.length;
+    }
+
+    /**
+     * Helper method to instantiate a {@link TabularDataClauseProvider} from this {@link TabularData} and
+     * add it to a Prolog implementation.
+     * 
+     * @param mode
+     * @param prolog
+     */
+    public void addClauseProviderTo(PrologImplementation prolog, AssertionMode mode) {
+        final TabularDataClauseProvider cp = new TabularDataClauseProvider(prolog, this, mode);
+        prolog.getTheoryManager().addClauseProvider(cp);
     }
 
     // ---------------------------------------------------------------------------
