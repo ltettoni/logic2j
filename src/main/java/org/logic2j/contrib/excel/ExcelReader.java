@@ -40,9 +40,9 @@ import org.logic2j.core.impl.util.ReflectUtils;
  */
 public class ExcelReader {
 
-    private File file;
-    private boolean firstRowIsHeaders;
-    private int primaryKeyColumn;
+    private final File file;
+    private final boolean firstRowIsHeaders;
+    private final int primaryKeyColumn;
 
     /**
      * @param file
@@ -63,43 +63,52 @@ public class ExcelReader {
         this.primaryKeyColumn = primaryKeyColumn;
     }
 
-    // From : http://stackoverflow.com/questions/8710719/generating-an-alphabetic-sequence-in-java
-    public String createSequenceElement(int index) {
-        String sequenceElement = "";
-        int first = index / 26;
-        int second = index % 26;
-        if (first < 1) {
-            sequenceElement += (char) ('A' + second);
+    /**
+     * Cache and read from cache.
+     * 
+     * @return
+     * @throws IOException
+     */
+    public TabularData readCached() throws IOException {
+        final File cached = cachedFile();
+        if (cached.exists() && cached.isFile() && cached.canRead() && cached.lastModified() > this.file.lastModified()) {
+            // We can use the cached version
+            try {
+                return new TabularDataSerializer(cached).read();
+            } catch (final ClassNotFoundException e) {
+                throw new IOException("Recent cached version of " + this.file + " located at " + cached + " was not loadable: " + e);
+            }
         } else {
-            sequenceElement += createSequenceElement(first) + (char) ('A' + second);
+            // Read the file
+            final TabularData data = read();
+            // Cache it
+            cached.getParentFile().mkdirs();
+            new TabularDataSerializer(cached).write(data);
+            return data;
         }
-        return sequenceElement;
     }
 
     public TabularData read() throws IOException {
-        Sheet sheet = null;
         if (this.file.getName().endsWith(".xls")) {
-            if (sheet == null) {
-                final InputStream myxls = new FileInputStream(this.file);
-                final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
-                sheet = workBook.getSheetAt(0);
-            }
+            final InputStream myxls = new FileInputStream(this.file);
+            final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
+            final Sheet sheet = workBook.getSheetAt(0);
             final int excelPhysicalRows = sheet.getPhysicalNumberOfRows();
             List<String> columnNames;
             if (this.firstRowIsHeaders) {
                 columnNames = readRow(sheet, 0, String.class);
             } else {
-                int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
+                final int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
                 final List<String> colNames = new ArrayList<String>();
                 for (int i = 0; i < nbColunms; i++) {
                     colNames.add(createSequenceElement(i));
                 }
                 columnNames = colNames;
             }
-            List<List<Serializable>> listData = new ArrayList<List<Serializable>>();
+            final List<List<Serializable>> listData = new ArrayList<List<Serializable>>();
 
             for (int r = this.firstRowIsHeaders ? 1 : 0; r < excelPhysicalRows; r++) {
-                List<Serializable> listRow = readRow(sheet, r, Serializable.class);
+                final List<Serializable> listRow = readRow(sheet, r, Serializable.class);
                 if (listRow != null) {
                     // Sometimes
                     listData.add(listRow);
@@ -109,7 +118,7 @@ public class ExcelReader {
             if (dataSetName.lastIndexOf('.') >= 0) {
                 dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
             }
-            TabularData tbl = new TabularData(dataSetName, columnNames, listData);
+            final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
             tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
             return tbl;
         } else {
@@ -158,6 +167,16 @@ public class ExcelReader {
     }
 
     /**
+     * @return
+     */
+    private File cachedFile() {
+        final File tempDir = new File(System.getProperty("java.io.tmpdir"));
+        final String relativePath = this.file.getPath();
+        final File pathWithinTempDir = new File(tempDir, relativePath);
+        return pathWithinTempDir;
+    }
+
+    /**
      * @param sheet
      * @param row Row index
      * @return Null if row is empty or only containing nulls.
@@ -191,11 +210,11 @@ public class ExcelReader {
                     throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " not handled, value is " + value);
                 }
             }
-            value = map(value);
+            value = mapCellValue(value);
             if (value != null) {
                 hasSomeData = true;
             }
-            T cast = ReflectUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
+            final T cast = ReflectUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
             values.add(cast);
         }
         if (!hasSomeData) {
@@ -208,10 +227,21 @@ public class ExcelReader {
      * @param value
      * @return
      */
-    private Object map(Object value) {
+    private Object mapCellValue(Object value) {
         if (value instanceof CharSequence) {
             return value.toString().trim();
         }
         return value;
+    }
+
+    // From : http://stackoverflow.com/questions/8710719/generating-an-alphabetic-sequence-in-java
+    private String createSequenceElement(int index) {
+        final int first = index / 26;
+        final int second = index % 26;
+        if (first < 1) {
+            return String.valueOf((char) ('A' + second));
+        } else {
+            return createSequenceElement(first) + (char) ('A' + second);
+        }
     }
 }
