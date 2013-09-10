@@ -31,7 +31,6 @@ import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.impl.theory.TheoryManager;
 
 public class ExcelReaderTest extends PrologTestBase {
 
@@ -76,10 +75,6 @@ public class ExcelReaderTest extends PrologTestBase {
 
     protected void setExcelClauseProvider(String filename, AssertionMode theMode) throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, filename);
-        final TabularData data = new ExcelReader(file, true, 0).read();
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, theMode);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
+        new ExcelReader(file, true, 0).readCached().addClauseProviderTo(getProlog(), theMode);
     }
-
 }
