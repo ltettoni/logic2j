@@ -32,7 +32,7 @@ import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 
 public class TabularDataClauseProvider implements ClauseProvider {
-
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataClauseProvider.class);
     private static final String EAVT = "eavt";
     private static final String EAVT_4 = EAVT + "/4";
 
@@ -73,6 +73,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
     }
 
     private void initClauses() {
+        logger.debug("Starting to init clauses");
         final TermAdapter termAdapter = this.prolog.getTermAdapter();
         final int nbRows = this.data.getNbRows();
         final int nbColumns = this.data.getNbColumns();
@@ -125,6 +126,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
                 throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
             }
         }
+        logger.debug("Finished to init clauses");
     }
 
     @Override
