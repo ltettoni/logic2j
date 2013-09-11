@@ -75,6 +75,7 @@ public class ExcelReaderTest extends PrologTestBase {
 
     protected void setExcelClauseProvider(String filename, AssertionMode theMode) throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, filename);
-        new ExcelReader(file, true, 0).readCached().addClauseProviderTo(getProlog(), theMode);
+        final TabularData td = new ExcelReader(file, true, 0).readCached();
+        td.addClauseProviderTo(getProlog(), theMode);
     }
 }
