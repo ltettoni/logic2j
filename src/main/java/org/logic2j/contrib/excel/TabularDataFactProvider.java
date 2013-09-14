@@ -1,0 +1,102 @@
+/*
+ * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package org.logic2j.contrib.excel;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import org.logic2j.core.api.DataFactProvider;
+import org.logic2j.core.api.TermAdapter.AssertionMode;
+import org.logic2j.core.api.model.DataFact;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.symbol.Struct;
+
+public class TabularDataFactProvider implements DataFactProvider {
+    private final TabularData tabularData;
+    private final AssertionMode assertionMode;
+    final ArrayList<DataFact> dataFacts = new ArrayList<DataFact>();
+
+    public TabularDataFactProvider(TabularData tabularData, AssertionMode theMode) {
+        this.tabularData = tabularData;
+        this.assertionMode = theMode;
+        initDataFacts();
+    }
+
+    private void initDataFacts() {
+        final String dataSetName = tabularData.getDataSetName();
+        final int nbColumns = tabularData.getNbColumns();
+        final int primaryKeyColumn = tabularData.getPrimaryKeyColumn();
+        final String[] columnNames = tabularData.getColumnNames();
+        final Serializable[][] data = this.tabularData.getData();
+        for (final Serializable[] row : data) {
+            switch (this.assertionMode) {
+            case EAV_NAMED: {
+                if (primaryKeyColumn < 0) {
+                    throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                }
+                final String identifier = row[primaryKeyColumn].toString();
+                for (int c = 0; c < nbColumns; c++) {
+                    if (c != primaryKeyColumn) {
+                        final String property = columnNames[c];
+                        // FIXME hack! - null values should actually just not be asserted!
+                        Serializable value = row[c];
+                        if (value == null) {
+                            value = "n/a";
+                        }
+                        final DataFact fact = new DataFact(dataSetName, identifier, property, value);
+                        dataFacts.add(fact);
+                    }
+                }
+                break;
+            }
+            case EAVT: {
+                if (primaryKeyColumn < 0) {
+                    throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                }
+                final String identifier = row[primaryKeyColumn].toString();
+                for (int c = 0; c < nbColumns; c++) {
+                    if (c != primaryKeyColumn) {
+                        final String property = columnNames[c];
+                        final Serializable value = row[c];
+                        final DataFact fact = new DataFact(identifier, property, value, dataSetName);
+                        dataFacts.add(fact);
+                    }
+                }
+                break;
+            }
+            case RECORD: {
+                dataFacts.add(new DataFact((Object[]) row));
+                break;
+            }
+            default:
+                throw new PrologNonSpecificError("Unknown AssertionMode " + assertionMode);
+
+            }
+        }
+    }
+
+    /**
+     * TODO Almost the same code in {@link TabularDataTermAdapter#terms(Object, AssertionMode) we should use a common
+     * codebase
+     */
+    @Override
+    public Iterable<DataFact> listMatchingDataFacts(Struct theGoal) {
+        return this.dataFacts;
+    }
+}
