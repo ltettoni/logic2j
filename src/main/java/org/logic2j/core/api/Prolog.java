@@ -35,8 +35,9 @@ public interface Prolog {
     // ---------------------------------------------------------------------------
 
     /**
-     * The top-level method for solving a goal (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
-     * {@link SolutionListener}).
+     * The top-level method for solving a goal (exposes the high-level {@link SolutionHolder} API,
+     * internally it usess the low-level {@link SolutionListener}).
+     * This does NOT YET start solving.
      * If you already have a parsed {@link Term}, use {@link #solve(Term)} instead.
      * 
      * @param theGoal To solve, will be parsed into a Term.
