@@ -17,6 +17,9 @@
  */
 package org.logic2j.core.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
@@ -29,7 +32,7 @@ import org.logic2j.core.api.model.symbol.TermApi;
 public class DefaultTermAdapter implements TermAdapter {
 
     private static final TermApi TERM_API = new TermApi();
-    private final PrologImplementation prolog;
+    protected final PrologImplementation prolog;
 
     public DefaultTermAdapter(PrologImplementation theProlog) {
         this.prolog = theProlog;
@@ -87,8 +90,19 @@ public class DefaultTermAdapter implements TermAdapter {
         }
         // Otherwise apply basic algorithm from TermApi
         if (result == null) {
-            result = TERM_API.valueOf(theObject);
+            result = TERM_API.valueOf(theObject, theMode);
         }
+        return result;
+    }
+
+    /**
+     * @return a List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+     */
+    @Override
+    public List<Term> terms(Object theObject, AssertionMode theAssertionMode) {
+        final List<Term> result = new ArrayList<Term>();
+        final Term term = term(theObject, FactoryMode.ATOM);
+        result.add(term);
         return result;
     }
 
