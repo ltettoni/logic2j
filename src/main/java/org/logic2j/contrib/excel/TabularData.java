@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.logic2j.contrib.excel.TabularDataClauseProvider.AssertionMode;
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -150,7 +150,7 @@ public class TabularData implements Serializable {
      * @param mode
      * @param prolog
      */
-    public void addClauseProviderTo(PrologImplementation prolog, AssertionMode mode) {
+    public void addClauseProviderTo(PrologImplementation prolog, TermAdapter.AssertionMode mode) {
         final TabularDataClauseProvider cp = new TabularDataClauseProvider(prolog, this, mode);
         prolog.getTheoryManager().addClauseProvider(cp);
     }
