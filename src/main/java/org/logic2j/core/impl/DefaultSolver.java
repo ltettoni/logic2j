@@ -17,11 +17,16 @@
  */
 package org.logic2j.core.impl;
 
+import java.util.List;
+
 import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
@@ -154,6 +159,7 @@ public class DefaultSolver implements Solver {
 
         } else {
             // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
+            final Unifier unifier = this.prolog.getUnifier();
 
             // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
 
@@ -163,6 +169,7 @@ public class DefaultSolver implements Solver {
                 if (matchingClauses == null) {
                     continue;
                 }
+                // logger.info("matchingClauses: {}", ((List<?>) matchingClauses).size());
                 for (final Clause clause : matchingClauses) {
                     if (result == Continuation.CUT) {
                         if (debug) {
@@ -197,7 +204,7 @@ public class DefaultSolver implements Solver {
                     // the trailFrame will remember this.
                     // Solutions will be notified from within this method.
                     // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
-                    final boolean headUnified = this.prolog.getUnifier().unify(goalTerm, theGoalBindings, clauseHead, clauseVars);
+                    final boolean headUnified = unifier.unify(goalTerm, theGoalBindings, clauseHead, clauseVars);
                     if (debug) {
                         logger.debug("  result=" + headUnified + ", goalVars={}, clauseVars={}", theGoalBindings, clauseVars);
                     }
@@ -256,7 +263,7 @@ public class DefaultSolver implements Solver {
                         } finally {
                             // We have now fired our solution(s), we no longer need our bound bindings and can deunify
                             // Go to next solution: start by clearing our trailing bindings
-                            this.prolog.getUnifier().deunify();
+                            unifier.deunify();
                         }
                     }
                 }
@@ -267,6 +274,29 @@ public class DefaultSolver implements Solver {
             if (debug) {
                 logger.debug("Last ClauseProvider iterated");
             }
+
+            // Now fetch data
+            final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
+            for (final DataFactProvider dataProvider : dataProviders) {
+                final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalStruct);
+                // logger.info("Matching datafacts: {}", ((List<?>) matchingDataFacts).size());
+                for (final DataFact dataFact : matchingDataFacts) {
+                    // We should probably try/finally between unification and deunification. However since we unify with data
+                    // and need efficiency, and we won't call any user code, we can assume not to.
+                    final boolean unifiedWithData = unifier.unify(goalTerm, theGoalBindings, dataFact);
+                    if (unifiedWithData) {
+                        final Continuation continuation = theSolutionListener.onSolution();
+                        if (continuation == Continuation.CUT) {
+                            result = Continuation.CUT;
+                        } else if (continuation == Continuation.USER_ABORT) {
+                            // TODO should we just "return" from here?
+                            result = Continuation.USER_ABORT;
+                        }
+                        unifier.deunify();
+                    }
+                }
+            }
+
         }
         if (debug) {
             logger.debug("<< Exit    solveGoalRecursive(\"{}\") with {}", goalTerm, result);
