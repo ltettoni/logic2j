@@ -65,7 +65,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // Define all sub-features of this reference implementation and initialize with default, reference implementations
     // ---------------------------------------------------------------------------
 
-    private final TermAdapter termAdapter = new DefaultTermAdapter(this);
+    private TermAdapter termAdapter = new DefaultTermAdapter(this);
     private final TermExchanger termExchanger = new DefaultTermExchanger(this);
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
@@ -133,6 +133,10 @@ public class PrologReferenceImplementation implements PrologImplementation {
     @Override
     public TermAdapter getTermAdapter() {
         return this.termAdapter;
+    }
+
+    public void setTermAdapter(TermAdapter termAdapter) {
+        this.termAdapter = termAdapter;
     }
 
     @Override
