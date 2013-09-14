@@ -26,6 +26,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -143,10 +144,11 @@ public class TermApi {
      * This method is not capable of instantiating a compound {@link Struct}, it may only create atoms.
      * 
      * @param theObject Should usually be {@link CharSequence}, {@link Number}, {@link Boolean}
+     * @param theMode
      * @return An instance of a subclass of {@link Term}.
      * @throws InvalidTermException If theObject cannot be converted to a Term
      */
-    public Term valueOf(Object theObject) throws InvalidTermException {
+    public Term valueOf(Object theObject, FactoryMode theMode) throws InvalidTermException {
         if (theObject == null) {
             throw new InvalidTermException("Cannot create Term from a null argument");
         }
@@ -167,18 +169,26 @@ public class TermApi {
         } else if (theObject instanceof CharSequence || theObject instanceof Character) {
             // Very very vary rudimentary parsing
             final String chars = theObject.toString();
-            if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
-                result = Var.ANONYMOUS_VAR;
-            } else if (chars.isEmpty()) {
-                // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent them
-                // as a Term
-                result = new Struct("");
-            } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
-                // Use Prolog's convention re variables starting with uppercase or underscore
-                result = new Var(chars);
-            } else {
-                // Otherwise it's an atom
-                result = new Struct(chars);
+            switch (theMode) {
+            case ATOM:
+                result = Struct.atom(chars);
+                break;
+            default:
+                if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
+                    result = Var.ANONYMOUS_VAR;
+                } else if (chars.isEmpty()) {
+                    // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent
+                    // them
+                    // as a Term
+                    result = new Struct("");
+                } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
+                    // Use Prolog's convention re variables starting with uppercase or underscore
+                    result = new Var(chars);
+                } else {
+                    // Otherwise it's an atom
+                    result = new Struct(chars);
+                }
+                break;
             }
         } else if (theObject instanceof Number) {
             // Other types of numbers
