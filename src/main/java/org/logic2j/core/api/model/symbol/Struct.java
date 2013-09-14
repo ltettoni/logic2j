@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -96,19 +97,17 @@ public final class Struct extends Term {
     private PrimitiveInfo primitiveInfo;
 
     /**
-     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-     * by {@link TermApi#valueOf(Object)}.
+     * Low-level constructor.
      * 
-     * @note This method is a static factory, not a constructor, to emphasize that arguments
-     *       are not of the type needed by this class, but need transformation.
+     * @param theFunctor
+     * @param theArity
      */
-    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
-        final Struct newInstance = new Struct(theFunctor, argList.length);
-        int i = 0;
-        for (final Object element : argList) {
-            newInstance.args[i++] = TERM_API.valueOf(element);
+    private Struct(String theFunctor, int theArity) {
+        setNameAndArity(theFunctor, theArity);
+        // When arity is zero, don't even bother to allocate arguments!
+        if (this.arity > 0) {
+            this.args = new Term[this.arity];
         }
-        return newInstance;
     }
 
     public Struct(String theFunctor, Term... argList) throws InvalidTermException {
@@ -120,6 +119,44 @@ public final class Struct extends Term {
             }
             this.args[i++] = element;
         }
+    }
+
+    /**
+     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
+     * by {@link TermApi#valueOf(Object, ANY_TERM)}.
+     * 
+     * @note This method is a static factory, not a constructor, to emphasize that arguments
+     *       are not of the type needed by this class, but need transformation.
+     */
+    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
+        if (argList.length == 0) {
+            return atom(theFunctor);
+        }
+        final Struct newInstance = new Struct(theFunctor, argList.length);
+        int i = 0;
+        for (final Object element : argList) {
+            newInstance.args[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
+        }
+        return newInstance;
+    }
+
+    /**
+     * Obtain an atom from the catalog if it pre-existed, or create one an register in the catalog.
+     * 
+     * @param theFunctor
+     * @return Either a new one created or an existing one
+     */
+    public static Struct atom(String theFunctor) {
+        // Search in the catalog of atoms for exact match
+        final String functor = theFunctor.intern();
+        final Struct found = ATOM_CATALOG.get(functor);
+        if (found != null) {
+            return found;
+        }
+        final Struct instance = new Struct(functor, 0);
+        // Let's file this new atom into our catalog
+        ATOM_CATALOG.put(functor, instance);
+        return instance;
     }
 
     /**
@@ -148,20 +185,6 @@ public final class Struct extends Term {
             pList = Struct.createPList(theJavaList.get(i), pList);
         }
         return pList;
-    }
-
-    /**
-     * Low-level constructor.
-     * 
-     * @param theFunctor
-     * @param theArity
-     */
-    private Struct(String theFunctor, int theArity) {
-        setNameAndArity(theFunctor, theArity);
-        // When arity is zero, don't even bother to allocate arguments!
-        if (this.arity > 0) {
-            this.args = new Term[this.arity];
-        }
     }
 
     /**
