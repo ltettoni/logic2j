@@ -39,9 +39,20 @@ public final class BindingTrail {
 
     };
 
-    public static void markBeforeAddingBindings() {
+    public static Stack<ArrayList<Binding>> markBeforeAddingBindings() {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        // Lazy instantiation of a new ArrayList<Binding>() on top of stack
         stack.push(new ArrayList<Binding>());
+        // stack.push(null);
+        return stack;
+    }
+
+    public static Stack<ArrayList<Binding>> markBeforeAddingBindingsLazy() {
+        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        // Lazy instantiation of a new ArrayList<Binding>() on top of stack
+        // stack.push(new ArrayList<Binding>());
+        stack.push(null);
+        return stack;
     }
 
     /**
@@ -51,7 +62,14 @@ public final class BindingTrail {
      */
     public static void addBinding(Binding theBinding) {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
-        stack.peek().add(theBinding);
+        ArrayList<Binding> top = stack.peek();
+        if (top == null) {
+            // If we had a lazy collection - let's instantiate now
+            top = new ArrayList<Binding>();
+            stack.pop();
+            stack.push(top);
+        }
+        top.add(theBinding);
     }
 
     /**
@@ -64,9 +82,26 @@ public final class BindingTrail {
         // Remove one level from the stack, then will process its content
         final ArrayList<Binding> bindings = stack.pop();
         // Process all bindings to undo
-        for (int i = bindings.size() - 1; i >= 0; i--) {
-            final Binding toUnbind = bindings.get(i);
-            toUnbind.free();
+        if (bindings != null) {
+            for (int i = bindings.size() - 1; i >= 0; i--) {
+                final Binding toUnbind = bindings.get(i);
+                toUnbind.free();
+            }
+        }
+    }
+
+    /**
+     * @param stack
+     */
+    public static void undoBindingsUntilPreviousMark(Stack<ArrayList<Binding>> stack) {
+        // Remove one level from the stack, then will process its content
+        final ArrayList<Binding> bindings = stack.pop();
+        // Process all bindings to undo
+        if (bindings != null) {
+            for (int i = bindings.size() - 1; i >= 0; i--) {
+                final Binding toUnbind = bindings.get(i);
+                toUnbind.free();
+            }
         }
     }
 
@@ -96,7 +131,11 @@ public final class BindingTrail {
         if (stack.isEmpty()) {
             return 0;
         }
-        return stack.peek().size();
+        ArrayList<Binding> bindings = stack.peek();
+        if (bindings == null) {
+            return 0;
+        }
+        return bindings.size();
     }
 
     /**
@@ -111,4 +150,5 @@ public final class BindingTrail {
         final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
         return stack.size();
     }
+
 }
