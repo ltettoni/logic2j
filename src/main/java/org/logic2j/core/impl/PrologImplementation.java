@@ -20,6 +20,7 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.OperatorManager;
@@ -59,5 +60,7 @@ public interface PrologImplementation extends Prolog {
      * @return Exchanger to parse or format {@link Term}s.
      */
     TermExchanger getTermExchanger();
+
+    void setTermAdapter(TermAdapter termAdapter);
 
 }
