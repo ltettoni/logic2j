@@ -17,7 +17,11 @@
  */
 package org.logic2j.core.impl.unify;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TNumber;
 import org.logic2j.core.api.model.symbol.Term;
@@ -31,14 +35,18 @@ import org.logic2j.core.impl.util.ReportUtils;
  */
 public class DefaultUnifier implements Unifier {
 
+    public int counter = 0;
+
     @Override
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
+        this.counter++;
         // Remember where we were so that we can deunify
-        BindingTrail.markBeforeAddingBindings();
+        final boolean term1HasVars = term1.getIndex() > 0;
+        final Stack<ArrayList<Binding>> stack = term1HasVars ? BindingTrail.markBeforeAddingBindings() : BindingTrail.markBeforeAddingBindingsLazy();
         // Now attempt unifiation
         final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2);
         if (!unified) {
-            deunify();
+            BindingTrail.undoBindingsUntilPreviousMark(stack);
         }
         return unified;
     }
@@ -97,13 +105,8 @@ public class DefaultUnifier implements Unifier {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }
         }
-        // term1 can only be a TNumber or Struct
-        if (term1 instanceof TNumber) {
-            if (term2 instanceof TNumber) {
-                return term1.equals(term2);
-            }
-            return false;
-        } else if (term1 instanceof Struct) {
+        // term1 can only be a Struct or TNumber
+        if (term1 instanceof Struct) {
             if (term2 instanceof Struct) {
                 final Struct s1 = (Struct) term1;
                 final Struct s2 = (Struct) term2;
@@ -117,6 +120,110 @@ public class DefaultUnifier implements Unifier {
                     }
                 }
                 return true;
+            }
+            return false;
+        } else if (term1 instanceof TNumber) {
+            if (term2 instanceof TNumber) {
+                return term1.equals(term2);
+            }
+            return false;
+        } else {
+            throw new IllegalStateException("Internal bug, term1 is of unexpected " + term1.getClass());
+        }
+    }
+
+    @Override
+    public boolean unify(Term goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+        this.counter++;
+        if (!(goalTerm instanceof Struct)) {
+            // Only Struct could match a DataFact
+            return false;
+        }
+        final Struct s1 = (Struct) goalTerm;
+        final Object[] elements = dataFact.elements;
+        if (s1.getName() != elements[0]) {
+            // Functor must match
+            return false;
+        }
+        final int arity = s1.getArity();
+        if (arity != elements.length - 1) {
+            // Arity must match as well
+            return false;
+        }
+        final boolean hasVars = goalTerm.getIndex() > 0;
+        final Stack<ArrayList<Binding>> stack = hasVars ? BindingTrail.markBeforeAddingBindings() : BindingTrail.markBeforeAddingBindingsLazy();
+        boolean unified = true;
+        for (int i = 0; i < arity; i++) {
+            final Term arg = s1.getArg(i);
+            final Term term2 = (Term) elements[1 + i];
+            if (!simpleUnification(arg, theGoalBindings, term2)) {
+                unified = false;
+                break;
+            }
+        }
+        if (!unified) {
+            BindingTrail.undoBindingsUntilPreviousMark(stack);
+        }
+        return unified;
+        /*
+        // Now we are likely to unify something - remember where we were so that we can deunify
+
+        // Now attempt unifiation
+        boolean unified = true;
+        for (int i = 0; i < arity; i++) {
+            Term arg = s1.getArg(i);
+            Term term2 = (Term) elements[1 + i];
+            // if (!simpleUnification(arg, theGoalBindings, term2)) {
+            // unified = false;
+            // break;
+            // }
+        }
+        deunify();
+        if (!unified) {
+            deunify();
+        }
+        return unified;
+        */
+    }
+
+    /**
+     * @param term1
+     * @param theGoalBindings
+     * @param term2
+     * @return
+     */
+    private boolean simpleUnification(Term term1, Bindings theBindings1, Term term2) {
+        if (term1 instanceof Var) {
+            final Var var1 = (Var) term1;
+            if (var1.isAnonymous()) {
+                return true;
+            }
+            final Binding binding1 = var1.bindingWithin(theBindings1).followLinks();
+            // Followed chain to the end until we hit either a FREE or LITERAL binding
+            if (binding1.isFree()) {
+                // Bind the free var
+                if (binding1.bindTo(term2, theBindings1)) {
+                    // We don't care about theBindings, it's a literal, so specify theBindings1
+                    BindingTrail.addBinding(binding1);
+                }
+                return true;
+            } else if (binding1.isLiteral()) {
+                return simpleUnification(binding1.getTerm(), binding1.getLiteralBindings(), term2);
+            } else {
+                throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
+            }
+        }
+        if (term1 instanceof Struct) {
+            // return term1 == term2;
+            if (term2 instanceof Struct) {
+                final Struct s1 = (Struct) term1;
+                final Struct s2 = (Struct) term2;
+                return s1.nameAndArityMatch(s2);
+            }
+            return false;
+        } else if (term1 instanceof TNumber) {
+            if (term2 instanceof TNumber) {
+                return term1.equals(term2);
             }
             return false;
         } else {

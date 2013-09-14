@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TNumber;
@@ -174,6 +175,11 @@ public class DelegatingUnifier implements Unifier {
         } else {
             throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
         }
+    }
+
+    @Override
+    public boolean unify(Term goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+        throw new UnsupportedOperationException("Unifying against data is not implemented by " + this);
     }
 
     @Override
