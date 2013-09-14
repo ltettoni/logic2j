@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
@@ -66,10 +67,17 @@ public interface TheoryManager extends ClauseProvider {
     // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
     Iterable<ClauseProvider> getClauseProviders();
 
+    Iterable<DataFactProvider> getDataFactProviders();
+
     /**
      * @param theNewProvider
      */
     void addClauseProvider(ClauseProvider theNewProvider);
+
+    /**
+     * @param theNewProvider
+     */
+    void addDataFactProvider(DataFactProvider theNewProvider);
 
     // ---------------------------------------------------------------------------
     // Alter the current Prolog instance with content from theories
