@@ -18,6 +18,8 @@
 
 package org.logic2j.core.api;
 
+import java.util.List;
+
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TNumber;
 import org.logic2j.core.api.model.symbol.Term;
@@ -53,7 +55,30 @@ public interface TermAdapter {
     }
 
     /**
-     * Create a Term from virtually any class of {@link Object}; this is the highest-level factory
+     * Describe the shape that complex data structures should take as {@link Term}s.
+     */
+    static enum AssertionMode {
+        /**
+         * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
+         * myData(entityIdentifier, propertyName, propertyValue).
+         */
+        EAV_NAMED,
+        /**
+         * Data is asserted as "quads". The predicate is always "eavt" (entity, attribute, value, transaction).
+         * The "transaction" identifier is the dataset name. For example:
+         * eavt(entityIdentifier, propertyName, propertyValue, myData).
+         */
+        EAVT,
+        /**
+         * Data is asserted as full records with one argument per column. The order matters. This is the least
+         * flexible format since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
+         * myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN).
+         */
+        RECORD
+    }
+
+    /**
+     * Instantiate a Term from virtually any class of single {@link Object}; this is the highest-level factory
      * 
      * @param theObject
      * @param theMode
@@ -62,7 +87,7 @@ public interface TermAdapter {
     Term term(Object theObject, FactoryMode theMode);
 
     /**
-     * Create a Struct with arguments from virtually any class of {@link Object}; this is the highest-level factory
+     * Instantiate a Struct with arguments from virtually any class of {@link Object}; this is the highest-level factory
      * 
      * @param thePredicateName The predicate (functor)
      * @param theMode
@@ -70,6 +95,14 @@ public interface TermAdapter {
      * @return A factorized and normalized {@link Term}.
      */
     Term term(String thePredicateName, FactoryMode theMode, Object... theArguments);
+
+    /**
+     * Instantiate a list of Terms from one (possibly large) {@link Object}.
+     * 
+     * @param theObject
+     * @return
+     */
+    List<Term> terms(Object theObject, AssertionMode theAssertionMode);
 
     /**
      * Convert a Term into the desired target Class.
