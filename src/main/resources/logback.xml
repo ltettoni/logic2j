@@ -1,7 +1,7 @@
 <configuration>
    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
       <filter class="ch.qos.logback.classic.filter.ThresholdFilter" >
-        <level>info</level>
+        <level>debug</level>
       </filter>
       <encoder>
          <pattern>%5relative %-5level [%thread] %msg%n</pattern>
@@ -21,8 +21,9 @@
    <logger name="org.logic2j" level="info" />
    <logger name="org.logic2j.core.api.solver.listener" level="info" />
    <logger name="org.logic2j.core.api.solver.DefaultSolver" level="info" />
+   <logger name="org.logic2j.contrib.excel.TabularDataClauseProvider" level="debug" />
 
-   <root level="debug">
+   <root level="warn">
       <appender-ref ref="console" />
       <!--
       <appender-ref ref="nonregression" />
