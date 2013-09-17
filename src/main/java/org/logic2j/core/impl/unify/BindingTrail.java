@@ -18,7 +18,6 @@
 
 package org.logic2j.core.impl.unify;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 import org.logic2j.core.api.model.var.Binding;
@@ -27,30 +26,25 @@ import org.logic2j.core.api.model.var.Binding;
  * Prototype implementation to manage a trail of {@link Binding}s so that they can be undone.
  * So far we are using a {@link ThreadLocal} variable to avoid having to pass a context object around - this may have a performance impact
  * although not proven.
+ * TODO Explain the data structure used.
  */
 public final class BindingTrail {
 
-    private static final ThreadLocal<Stack<ArrayList<Binding>>> stackOfBindings = new ThreadLocal<Stack<ArrayList<Binding>>>() {
+    /**
+     * Keep our unbinding stack in a {@link ThreadLocal} so that we don't have to pass its reference as argument
+     * to all methods, everywhere. This reveals to have very little performance impact.
+     */
+    private static final ThreadLocal<Stack<Binding>> stackOfBindings = new ThreadLocal<Stack<Binding>>() {
 
         @Override
-        protected Stack<ArrayList<Binding>> initialValue() {
-            return new Stack<ArrayList<Binding>>();
+        protected Stack<Binding> initialValue() {
+            return new Stack<Binding>();
         }
 
     };
 
-    public static Stack<ArrayList<Binding>> markBeforeAddingBindings() {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
-        // Lazy instantiation of a new ArrayList<Binding>() on top of stack
-        stack.push(new ArrayList<Binding>());
-        // stack.push(null);
-        return stack;
-    }
-
-    public static Stack<ArrayList<Binding>> markBeforeAddingBindingsLazy() {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
-        // Lazy instantiation of a new ArrayList<Binding>() on top of stack
-        // stack.push(new ArrayList<Binding>());
+    public static Stack<Binding> markBeforeAddingBindings() {
+        final Stack<Binding> stack = stackOfBindings.get();
         stack.push(null);
         return stack;
     }
@@ -61,15 +55,16 @@ public final class BindingTrail {
      * @param theBinding
      */
     public static void addBinding(Binding theBinding) {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
-        ArrayList<Binding> top = stack.peek();
-        if (top == null) {
-            // If we had a lazy collection - let's instantiate now
-            top = new ArrayList<Binding>();
+        final Stack<Binding> stack = stackOfBindings.get();
+        Binding topOfStack = stack.peek();
+        if (topOfStack == null) {
+            // We had a null on top of stack, replace by the first Binding that needs later undoing
             stack.pop();
-            stack.push(top);
+            stack.push(theBinding);
+        } else {
+            // We already have a binding. Link the next.
+            topOfStack.linkNext(theBinding);
         }
-        top.add(theBinding);
     }
 
     /**
@@ -78,30 +73,20 @@ public final class BindingTrail {
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public static void undoBindingsUntilPreviousMark() {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<Binding> stack = stackOfBindings.get();
         // Remove one level from the stack, then will process its content
-        final ArrayList<Binding> bindings = stack.pop();
-        // Process all bindings to undo
-        if (bindings != null) {
-            for (int i = bindings.size() - 1; i >= 0; i--) {
-                final Binding toUnbind = bindings.get(i);
-                toUnbind.free();
-            }
+        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
+            iter.free();
         }
     }
 
     /**
      * @param stack
      */
-    public static void undoBindingsUntilPreviousMark(Stack<ArrayList<Binding>> stack) {
+    public static void undoBindingsUntilPreviousMark(Stack<Binding> stack) {
         // Remove one level from the stack, then will process its content
-        final ArrayList<Binding> bindings = stack.pop();
-        // Process all bindings to undo
-        if (bindings != null) {
-            for (int i = bindings.size() - 1; i >= 0; i--) {
-                final Binding toUnbind = bindings.get(i);
-                toUnbind.free();
-            }
+        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
+            iter.free();
         }
     }
 
@@ -127,15 +112,15 @@ public final class BindingTrail {
      */
     @Deprecated
     static int nbBindings() {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<Binding> stack = stackOfBindings.get();
         if (stack.isEmpty()) {
             return 0;
         }
-        ArrayList<Binding> bindings = stack.peek();
-        if (bindings == null) {
-            return 0;
+        int counter = 0;
+        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
+            counter++;
         }
-        return bindings.size();
+        return counter;
     }
 
     /**
@@ -147,7 +132,7 @@ public final class BindingTrail {
      */
     @Deprecated
     static int size() {
-        final Stack<ArrayList<Binding>> stack = stackOfBindings.get();
+        final Stack<Binding> stack = stackOfBindings.get();
         return stack.size();
     }
 
