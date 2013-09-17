@@ -17,8 +17,6 @@
  */
 package org.logic2j.core.impl.unify;
 
-import java.util.Stack;
-
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.symbol.Struct;
@@ -27,6 +25,7 @@ import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.impl.unify.BindingTrail.Milestone;
 import org.logic2j.core.impl.util.ReportUtils;
 
 /**
@@ -40,11 +39,11 @@ public class DefaultUnifier implements Unifier {
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         this.counter++;
         // Remember where we were so that we can deunify
-        final Stack<Binding> stack = BindingTrail.markBeforeAddingBindings();
+        final Milestone trailMilestone = BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
         final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2);
         if (!unified) {
-            BindingTrail.undoBindingsUntilPreviousMark(stack);
+            BindingTrail.undoBindingsUntilPreviousMark(trailMilestone);
         }
         return unified;
     }
@@ -131,13 +130,13 @@ public class DefaultUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Term term1, Bindings theGoalBindings, DataFact dataFact) {
+    public boolean unify(Term goalTerm, Bindings theGoalBindings, DataFact dataFact) {
         this.counter++;
-        if (!(term1 instanceof Struct)) {
+        if (!(goalTerm instanceof Struct)) {
             // Only Struct could match a DataFact
             return false;
         }
-        final Struct s1 = (Struct) term1;
+        final Struct s1 = (Struct) goalTerm;
         final Object[] elements = dataFact.elements;
         if (s1.getName() != elements[0]) {
             // Functor must match
@@ -148,7 +147,7 @@ public class DefaultUnifier implements Unifier {
             // Arity must match as well
             return false;
         }
-        final Stack<Binding> stack = BindingTrail.markBeforeAddingBindings();
+        final Milestone trailMilestone = BindingTrail.markBeforeAddingBindings();
         boolean unified = true;
         for (int i = 0; i < arity; i++) {
             final Term arg = s1.getArg(i);
@@ -159,7 +158,7 @@ public class DefaultUnifier implements Unifier {
             }
         }
         if (!unified) {
-            BindingTrail.undoBindingsUntilPreviousMark(stack);
+            BindingTrail.undoBindingsUntilPreviousMark(trailMilestone);
         }
         return unified;
         /*
