@@ -17,8 +17,6 @@
  */
 package org.logic2j.core.impl;
 
-import java.util.List;
-
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.SolutionListener;
@@ -169,7 +167,7 @@ public class DefaultSolver implements Solver {
                 if (matchingClauses == null) {
                     continue;
                 }
-                // logger.info("matchingClauses: {}", ((List<?>) matchingClauses).size());
+                final long start = System.currentTimeMillis();
                 for (final Clause clause : matchingClauses) {
                     if (result == Continuation.CUT) {
                         if (debug) {
@@ -267,8 +265,8 @@ public class DefaultSolver implements Solver {
                         }
                     }
                 }
-                if (debug) {
-                    logger.debug("Last Clause of {} iterated", provider);
+                if (logger.isInfoEnabled()) {
+                    logger.info("Last Clause of {} iterated, duration={}", provider, System.currentTimeMillis() - start);
                 }
             }
             if (debug) {
@@ -279,7 +277,7 @@ public class DefaultSolver implements Solver {
             final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
             for (final DataFactProvider dataProvider : dataProviders) {
                 final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalStruct);
-                // logger.info("Matching datafacts: {}", ((List<?>) matchingDataFacts).size());
+                final long start = System.currentTimeMillis();
                 for (final DataFact dataFact : matchingDataFacts) {
                     // We should probably try/finally between unification and deunification. However since we unify with data
                     // and need efficiency, and we won't call any user code, we can assume not to.
@@ -294,6 +292,9 @@ public class DefaultSolver implements Solver {
                         }
                         unifier.deunify();
                     }
+                }
+                if (logger.isInfoEnabled()) {
+                    logger.info("Last DataFact of {} iterated, duration={}", dataProvider, System.currentTimeMillis() - start);
                 }
             }
 
