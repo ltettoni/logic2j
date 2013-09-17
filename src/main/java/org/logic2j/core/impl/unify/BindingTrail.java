@@ -38,14 +38,20 @@ public final class BindingTrail {
 
         @Override
         protected Stack<Binding> initialValue() {
+            // Stack initially valid and empty
             return new Stack<Binding>();
         }
 
     };
 
+    /**
+     * Register a valid new state on stack, but with empty content.
+     * 
+     * @return
+     */
     public static Stack<Binding> markBeforeAddingBindings() {
         final Stack<Binding> stack = stackOfBindings.get();
-        stack.push(null);
+        stack.push(null); // No binding yet
         return stack;
     }
 
@@ -56,14 +62,13 @@ public final class BindingTrail {
      */
     public static void addBinding(Binding theBinding) {
         final Stack<Binding> stack = stackOfBindings.get();
-        Binding topOfStack = stack.peek();
+        final Binding topOfStack = stack.pop();
         if (topOfStack == null) {
             // We had a null on top of stack, replace by the first Binding that needs later undoing
-            stack.pop();
             stack.push(theBinding);
         } else {
-            // We already have a binding. Link the next.
-            topOfStack.linkNext(theBinding);
+            theBinding.linkNext(topOfStack);
+            stack.push(theBinding);
         }
     }
 
@@ -74,10 +79,7 @@ public final class BindingTrail {
      */
     public static void undoBindingsUntilPreviousMark() {
         final Stack<Binding> stack = stackOfBindings.get();
-        // Remove one level from the stack, then will process its content
-        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
-            iter.free();
-        }
+        undoBindingsUntilPreviousMark(stack);
     }
 
     /**
@@ -85,8 +87,11 @@ public final class BindingTrail {
      */
     public static void undoBindingsUntilPreviousMark(Stack<Binding> stack) {
         // Remove one level from the stack, then will process its content
-        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
-            iter.free();
+        if (!stack.isEmpty()) {
+            for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
+                iter.free();
+                // To be really 100% safe, we could consider resetting the nextToUnbind() link to null - but this appears not necessary
+            }
         }
     }
 
@@ -117,7 +122,7 @@ public final class BindingTrail {
             return 0;
         }
         int counter = 0;
-        for (Binding iter = stack.pop(); iter != null; iter = iter.nextToUnbind()) {
+        for (Binding iter = stack.peek(); iter != null; iter = iter.nextToUnbind()) {
             counter++;
         }
         return counter;

@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.impl.unify;
 
-import java.util.ArrayList;
 import java.util.Stack;
 
 import org.logic2j.core.api.Unifier;
@@ -41,8 +40,7 @@ public class DefaultUnifier implements Unifier {
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         this.counter++;
         // Remember where we were so that we can deunify
-        final boolean term1HasVars = term1.getIndex() > 0;
-        final Stack<ArrayList<Binding>> stack = term1HasVars ? BindingTrail.markBeforeAddingBindings() : BindingTrail.markBeforeAddingBindingsLazy();
+        final Stack<Binding> stack = BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
         final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2);
         if (!unified) {
@@ -150,8 +148,7 @@ public class DefaultUnifier implements Unifier {
             // Arity must match as well
             return false;
         }
-        final boolean hasVars = goalTerm.getIndex() > 0;
-        final Stack<ArrayList<Binding>> stack = hasVars ? BindingTrail.markBeforeAddingBindings() : BindingTrail.markBeforeAddingBindingsLazy();
+        final Stack<Binding> stack = BindingTrail.markBeforeAddingBindings();
         boolean unified = true;
         for (int i = 0; i < arity; i++) {
             final Term arg = s1.getArg(i);
