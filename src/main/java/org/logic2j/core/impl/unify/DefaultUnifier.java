@@ -131,13 +131,13 @@ public class DefaultUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Term goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+    public boolean unify(Term term1, Bindings theGoalBindings, DataFact dataFact) {
         this.counter++;
-        if (!(goalTerm instanceof Struct)) {
+        if (!(term1 instanceof Struct)) {
             // Only Struct could match a DataFact
             return false;
         }
-        final Struct s1 = (Struct) goalTerm;
+        final Struct s1 = (Struct) term1;
         final Object[] elements = dataFact.elements;
         if (s1.getName() != elements[0]) {
             // Functor must match
