@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.impl.unify.BindingTrail.Milestone;
+import org.logic2j.core.impl.unify.BindingTrail.StepInfo;
 import org.logic2j.core.impl.util.ReportUtils;
 
 /**
@@ -39,11 +39,11 @@ public class DefaultUnifier implements Unifier {
     public boolean unify(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         this.counter++;
         // Remember where we were so that we can deunify
-        final Milestone trailMilestone = BindingTrail.markBeforeAddingBindings();
+        final StepInfo stepInfo = BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
-        final boolean unified = unifyInternal(term1, theBindings1, term2, theBindings2);
+        final boolean unified = unifyInternal(stepInfo, term1, theBindings1, term2, theBindings2);
         if (!unified) {
-            BindingTrail.undoBindingsUntilPreviousMark(trailMilestone);
+            BindingTrail.undoBindingsUntilPreviousMark(stepInfo);
         }
         return unified;
     }
@@ -51,6 +51,7 @@ public class DefaultUnifier implements Unifier {
     /**
      * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even if it eventually
      * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
+     * @param stepInfo 
      * 
      * @note The Orientation of method arguments tends to be variables on term1 and literals on term2, but of course this method is
      *       symmetric. In the case of 2 free vars, term1 is linked to term2.
@@ -61,7 +62,7 @@ public class DefaultUnifier implements Unifier {
      * @param theBindings2
      * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
      */
-    private boolean unifyInternal(Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
+    private boolean unifyInternal(StepInfo stepInfo, Term term1, Bindings theBindings1, Term term2, Bindings theBindings2) {
         if (term1 == term2 && theBindings1 == theBindings2) {
             // Atoms now share the same address - we can optimize their unification.
             // Notice that due to factorization, struct such as [H|T] may also share the same location
@@ -70,7 +71,7 @@ public class DefaultUnifier implements Unifier {
         }
         if (term2 instanceof Var && !(term1 instanceof Var)) {
             // Prefer unifying Var to const so we swap args - this is purely conventional
-            return unifyInternal(term2, theBindings2, term1, theBindings1);
+            return unifyInternal(stepInfo, term2, theBindings2, term1, theBindings1);
         }
         if (term1 instanceof Var) {
             // Variable:
@@ -97,7 +98,7 @@ public class DefaultUnifier implements Unifier {
                 // We have followed term1 to end up with a literal. It may either unify or not depending if
                 // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
                 // part as term2
-                return unifyInternal(term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings());
+                return unifyInternal(stepInfo, term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings());
             } else {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }
@@ -112,7 +113,7 @@ public class DefaultUnifier implements Unifier {
                 }
                 final int arity = s1.getArity();
                 for (int i = 0; i < arity; i++) {
-                    if (!unifyInternal(s1.getArg(i), theBindings1, s2.getArg(i), theBindings2)) {
+                    if (!unifyInternal(stepInfo, s1.getArg(i), theBindings1, s2.getArg(i), theBindings2)) {
                         return false;
                     }
                 }
@@ -147,18 +148,18 @@ public class DefaultUnifier implements Unifier {
             // Arity must match as well
             return false;
         }
-        final Milestone trailMilestone = BindingTrail.markBeforeAddingBindings();
+        final StepInfo stepInfo = BindingTrail.markBeforeAddingBindings();
         boolean unified = true;
         for (int i = 0; i < arity; i++) {
             final Term arg = s1.getArg(i);
             final Term term2 = (Term) elements[1 + i];
-            if (!simpleUnification(arg, theGoalBindings, term2)) {
+            if (!simpleUnification(stepInfo, arg, theGoalBindings, term2)) {
                 unified = false;
                 break;
             }
         }
         if (!unified) {
-            BindingTrail.undoBindingsUntilPreviousMark(trailMilestone);
+            BindingTrail.undoBindingsUntilPreviousMark(stepInfo);
         }
         return unified;
         /*
@@ -183,12 +184,13 @@ public class DefaultUnifier implements Unifier {
     }
 
     /**
+     * @param stepInfo 
      * @param term1
      * @param theGoalBindings
      * @param term2
      * @return
      */
-    private boolean simpleUnification(Term term1, Bindings theBindings1, Term term2) {
+    private boolean simpleUnification(StepInfo stepInfo, Term term1, Bindings theBindings1, Term term2) {
         if (term1 instanceof Var) {
             final Var var1 = (Var) term1;
             if (var1.isAnonymous()) {
@@ -200,11 +202,11 @@ public class DefaultUnifier implements Unifier {
                 // Bind the free var
                 if (binding1.bindTo(term2, theBindings1)) {
                     // We don't care about theBindings, it's a literal, so specify theBindings1
-                    BindingTrail.addBinding(binding1);
+                    BindingTrail.addBinding(stepInfo, binding1);
                 }
                 return true;
             } else if (binding1.isLiteral()) {
-                return simpleUnification(binding1.getTerm(), binding1.getLiteralBindings(), term2);
+                return simpleUnification(stepInfo, binding1.getTerm(), binding1.getLiteralBindings(), term2);
             } else {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }

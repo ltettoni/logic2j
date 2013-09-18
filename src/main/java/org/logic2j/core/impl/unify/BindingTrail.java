@@ -28,20 +28,20 @@ import org.logic2j.core.api.model.var.Binding;
  */
 public final class BindingTrail {
 
-    public static class Milestone {
-        Binding binding;
-        Milestone previous;
+    public static class StepInfo {
+        private Binding binding;
+        private StepInfo previous;
 
     }
 
     /**
-     * Keep the last Milestone of our trail in a {@link ThreadLocal} so that we don't have to pass its reference as argument
+     * Keep the last StepInfo of our trail in a {@link ThreadLocal} so that we don't have to pass its reference as argument
      * to all methods, everywhere. This reveals to have very little performance impact.
      */
-    private static final ThreadLocal<Milestone> lastMilestone = new ThreadLocal<Milestone>() {
+    private static final ThreadLocal<StepInfo> lastMilestone = new ThreadLocal<StepInfo>() {
 
         @Override
-        protected Milestone initialValue() {
+        protected StepInfo initialValue() {
             // Path initially undefined
             return null;
         }
@@ -49,13 +49,13 @@ public final class BindingTrail {
     };
 
     /**
-     * Register a valid new Milestone on our trail, but with empty content.
+     * Register a valid new StepInfo on our trail, but with empty content.
      * 
      * @return
      */
-    public static Milestone markBeforeAddingBindings() {
-        final Milestone last = lastMilestone.get();
-        final Milestone newed = new Milestone();
+    public static StepInfo markBeforeAddingBindings() {
+        final StepInfo last = lastMilestone.get();
+        final StepInfo newed = new StepInfo();
         newed.previous = last;
         lastMilestone.set(newed);
         return newed;
@@ -67,13 +67,21 @@ public final class BindingTrail {
      * @param theBinding
      */
     public static void addBinding(Binding theBinding) {
-        final Milestone current = lastMilestone.get();
-        if (current.binding == null) {
+        final StepInfo current = lastMilestone.get();
+        addBinding(current, theBinding);
+    }
+
+    /**
+     * @param stepInfo
+     * @param binding1
+     */
+    public static void addBinding(StepInfo stepInfo, Binding theBinding) {
+        if (stepInfo.binding == null) {
             // We had a null on top of stack, replace by the first Binding that needs later undoing
-            current.binding = theBinding;
+            stepInfo.binding = theBinding;
         } else {
-            theBinding.linkNext(current.binding);
-            current.binding = theBinding;
+            theBinding.linkNext(stepInfo.binding);
+            stepInfo.binding = theBinding;
         }
     }
 
@@ -83,11 +91,11 @@ public final class BindingTrail {
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public static void undoBindingsUntilPreviousMark() {
-        final Milestone current = lastMilestone.get();
+        final StepInfo current = lastMilestone.get();
         undoBindingsUntilPreviousMark(current);
     }
 
-    public static void undoBindingsUntilPreviousMark(Milestone current) {
+    public static void undoBindingsUntilPreviousMark(StepInfo current) {
         // Remove one level from the stack, then will process its content
         if (current != null) {
             for (Binding iter = current.binding; iter != null; iter = iter.nextToUnbind()) {
@@ -120,7 +128,7 @@ public final class BindingTrail {
      */
     @Deprecated
     static int nbBindings() {
-        final Milestone current = lastMilestone.get();
+        final StepInfo current = lastMilestone.get();
         if (current == null || current.binding == null) {
             return 0;
         }
@@ -141,7 +149,7 @@ public final class BindingTrail {
     @Deprecated
     static int size() {
         int counter = 0;
-        for (Milestone current = lastMilestone.get(); current != null; current = current.previous) {
+        for (StepInfo current = lastMilestone.get(); current != null; current = current.previous) {
             counter++;
         }
         return counter;
