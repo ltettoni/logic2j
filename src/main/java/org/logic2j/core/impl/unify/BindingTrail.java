@@ -28,9 +28,15 @@ import org.logic2j.core.api.model.var.Binding;
  */
 public final class BindingTrail {
 
+    /**
+     * The number of elements in the {@link BindingTrail} to allocate at one time.
+     */
+    private static final int BINDING_TRAIL_CHUNK = 1000;
+
     public static class StepInfo {
-        private Binding binding;
-        private StepInfo previous;
+        private Binding[] bindingStack;
+        private int size;
+        private int top;
 
     }
 
@@ -38,12 +44,15 @@ public final class BindingTrail {
      * Keep the last StepInfo of our trail in a {@link ThreadLocal} so that we don't have to pass its reference as argument
      * to all methods, everywhere. This reveals to have very little performance impact.
      */
-    private static final ThreadLocal<StepInfo> lastMilestone = new ThreadLocal<StepInfo>() {
+    private static final ThreadLocal<StepInfo> stepInfoOfThisThread = new ThreadLocal<StepInfo>() {
 
         @Override
         protected StepInfo initialValue() {
-            // Path initially undefined
-            return null;
+            final StepInfo si = new StepInfo();
+            si.size = BINDING_TRAIL_CHUNK;
+            si.bindingStack = new Binding[si.size];
+            si.top = -1;
+            return si;
         }
 
     };
@@ -54,11 +63,9 @@ public final class BindingTrail {
      * @return
      */
     public static StepInfo markBeforeAddingBindings() {
-        final StepInfo last = lastMilestone.get();
-        final StepInfo newed = new StepInfo();
-        newed.previous = last;
-        lastMilestone.set(newed);
-        return newed;
+        final StepInfo current = stepInfoOfThisThread.get();
+        current.bindingStack[++current.top] = null;
+        return current;
     }
 
     /**
@@ -67,7 +74,7 @@ public final class BindingTrail {
      * @param theBinding
      */
     public static void addBinding(Binding theBinding) {
-        final StepInfo current = lastMilestone.get();
+        final StepInfo current = stepInfoOfThisThread.get();
         addBinding(current, theBinding);
     }
 
@@ -76,13 +83,13 @@ public final class BindingTrail {
      * @param binding1
      */
     public static void addBinding(StepInfo stepInfo, Binding theBinding) {
-        if (stepInfo.binding == null) {
-            // We had a null on top of stack, replace by the first Binding that needs later undoing
-            stepInfo.binding = theBinding;
-        } else {
-            theBinding.linkNext(stepInfo.binding);
-            stepInfo.binding = theBinding;
+        final int top = stepInfo.top;
+        final Binding topBinding = stepInfo.bindingStack[top];
+        if (topBinding != null) {
+            // We had an occupied on top of stack, replace by the first Binding that needs later undoing
+            theBinding.linkNext(topBinding);
         }
+        stepInfo.bindingStack[top] = theBinding;
     }
 
     /**
@@ -91,18 +98,18 @@ public final class BindingTrail {
      * @note An initial {@link #markBeforeAddingBindings()} should always be done.
      */
     public static void undoBindingsUntilPreviousMark() {
-        final StepInfo current = lastMilestone.get();
+        final StepInfo current = stepInfoOfThisThread.get();
         undoBindingsUntilPreviousMark(current);
     }
 
     public static void undoBindingsUntilPreviousMark(StepInfo current) {
         // Remove one level from the stack, then will process its content
-        if (current != null) {
-            for (Binding iter = current.binding; iter != null; iter = iter.nextToUnbind()) {
+        if (current.top >= 0) {
+            for (Binding iter = current.bindingStack[current.top]; iter != null; iter = iter.nextToUnbind()) {
                 iter.free();
                 // To be really 100% safe, we could consider resetting the nextToUnbind() link to null - but this appears not necessary
             }
-            lastMilestone.set(current.previous);
+            current.top--;
         }
     }
 
@@ -115,7 +122,7 @@ public final class BindingTrail {
     @Deprecated
     // Use only from test cases
     static void reset() {
-        lastMilestone.remove();
+        stepInfoOfThisThread.remove();
         // Any subsequent access such as get() will invoke method initialValue()
     }
 
@@ -128,12 +135,12 @@ public final class BindingTrail {
      */
     @Deprecated
     static int nbBindings() {
-        final StepInfo current = lastMilestone.get();
-        if (current == null || current.binding == null) {
+        final StepInfo current = stepInfoOfThisThread.get();
+        if (current.top < 0 || current.bindingStack[current.top] == null) {
             return 0;
         }
         int counter = 0;
-        for (Binding iter = current.binding; iter != null; iter = iter.nextToUnbind()) {
+        for (Binding iter = current.bindingStack[current.top]; iter != null; iter = iter.nextToUnbind()) {
             counter++;
         }
         return counter;
@@ -148,11 +155,8 @@ public final class BindingTrail {
      */
     @Deprecated
     static int size() {
-        int counter = 0;
-        for (StepInfo current = lastMilestone.get(); current != null; current = current.previous) {
-            counter++;
-        }
-        return counter;
+        final StepInfo current = stepInfoOfThisThread.get();
+        return current.top + 1;
     }
 
 }
