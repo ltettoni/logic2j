@@ -20,6 +20,7 @@ package org.logic2j.core.functional;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
+import java.util.Scanner;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,7 +49,13 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-        //
+        loadTheoryFromTestResourcesDir("queens.pl");
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("Press any key");
+            scanner.next();
+            assertNSolutions(724, "queens(10, _)"); // tuProlog needs 28s on my machine, this takes 3 seconds.
+        }
     }
 
     /**

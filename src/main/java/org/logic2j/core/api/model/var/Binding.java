@@ -93,6 +93,7 @@ public class Binding implements Cloneable {
 
     /**
      * @return A clone of this {@link Binding} without throwing a checked exception.
+     *         TODO Seems slow (according to JVisualVM) - maybe a copy constructor instead?
      */
     public Binding cloneIt() {
         try {
