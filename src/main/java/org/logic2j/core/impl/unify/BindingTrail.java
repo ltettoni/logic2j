@@ -18,6 +18,8 @@
 
 package org.logic2j.core.impl.unify;
 
+import java.util.Arrays;
+
 import org.logic2j.core.api.model.var.Binding;
 
 /**
@@ -30,10 +32,14 @@ public final class BindingTrail {
 
     /**
      * The number of elements in the {@link BindingTrail} to allocate at one time.
+     * 1000 looks like a reasonable value, actually solves all test cases in one chunk.
      */
     private static final int BINDING_TRAIL_CHUNK = 1000;
 
     public static class StepInfo {
+        /**
+         * Our "stack", will auto-grow but never shrink.
+         */
         private Binding[] bindingStack;
         private int size;
         private int top;
@@ -64,7 +70,14 @@ public final class BindingTrail {
      */
     public static StepInfo markBeforeAddingBindings() {
         final StepInfo current = stepInfoOfThisThread.get();
-        current.bindingStack[++current.top] = null;
+        final int top = ++current.top;
+        if (top >= current.size) {
+            // OOps, need to reallocate more stack size
+            final int newSize = current.size + BINDING_TRAIL_CHUNK;
+            current.bindingStack = Arrays.copyOf(current.bindingStack, newSize);
+            current.size = newSize;
+        }
+        current.bindingStack[top] = null;
         return current;
     }
 
