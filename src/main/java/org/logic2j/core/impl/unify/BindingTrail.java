@@ -23,41 +23,56 @@ import java.util.Arrays;
 import org.logic2j.core.api.model.var.Binding;
 
 /**
- * Prototype implementation to manage a trail of {@link Binding}s so that they can be undone.
- * So far we are using a {@link ThreadLocal} variable to avoid having to pass a context object around - this may have a performance impact
- * although not proven.
+ * This class manages the deunification "trail" to undo what was previously unified while backtracking to other solutions.
  * TODO Explain the data structure used.
  */
 public final class BindingTrail {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BindingTrail.class);
 
     /**
      * The number of elements in the {@link BindingTrail} to allocate at one time.
      * 1000 looks like a reasonable value, actually solves all test cases in one chunk.
      */
-    private static final int BINDING_TRAIL_CHUNK = 1000;
+    private static final int BINDING_STACK_CHUNK = 1000;
+
+    private static final int TRAIL_STACK_CHUNK = 1000;
 
     public static class StepInfo {
+
         /**
-         * Our "stack", will auto-grow but never shrink.
+         * The "trail" is a stack implemented with a auto-extending array.
+         */
+        private int[] trailStack;
+        private int trailSize;
+        private int trailTop;
+
+        /**
+         * The "bindings" is a stack implemented with a auto-extending array.
          */
         private Binding[] bindingStack;
-        private int size;
-        private int top;
+        private int bindingSize;
+        private int bindingTop;
 
     }
 
     /**
      * Keep the last StepInfo of our trail in a {@link ThreadLocal} so that we don't have to pass its reference as argument
      * to all methods, everywhere. This reveals to have very little performance impact.
+     * Being a ThreadLocal variable, we won't have any issue of concurrent access, so no synchronization needed!
      */
     private static final ThreadLocal<StepInfo> stepInfoOfThisThread = new ThreadLocal<StepInfo>() {
 
         @Override
         protected StepInfo initialValue() {
             final StepInfo si = new StepInfo();
-            si.size = BINDING_TRAIL_CHUNK;
-            si.bindingStack = new Binding[si.size];
-            si.top = -1;
+            // Trail stack
+            si.trailSize = TRAIL_STACK_CHUNK;
+            si.trailStack = new int[si.trailSize];
+            si.trailTop = -1; // Be ready for the first "markBeforeAddingBindings()"
+            // Bindings stack
+            si.bindingSize = BINDING_STACK_CHUNK;
+            si.bindingStack = new Binding[si.bindingSize];
+            si.bindingTop = -1; // We will be pushing just after this index
             return si;
         }
 
@@ -70,14 +85,13 @@ public final class BindingTrail {
      */
     public static StepInfo markBeforeAddingBindings() {
         final StepInfo current = stepInfoOfThisThread.get();
-        final int top = ++current.top;
-        if (top >= current.size) {
-            // OOps, need to reallocate more stack size
-            final int newSize = current.size + BINDING_TRAIL_CHUNK;
-            current.bindingStack = Arrays.copyOf(current.bindingStack, newSize);
-            current.size = newSize;
+        final int top = ++current.trailTop;
+        if (top >= current.trailSize) {
+            // OOps, need to reallocate more stack
+            current.trailSize += TRAIL_STACK_CHUNK;
+            current.trailStack = Arrays.copyOf(current.trailStack, current.trailSize);
         }
-        current.bindingStack[top] = null;
+        current.trailStack[top] = current.bindingTop;
         return current;
     }
 
@@ -92,17 +106,17 @@ public final class BindingTrail {
     }
 
     /**
-     * @param stepInfo
+     * @param current
      * @param binding1
      */
-    public static void addBinding(StepInfo stepInfo, Binding theBinding) {
-        final int top = stepInfo.top;
-        final Binding topBinding = stepInfo.bindingStack[top];
-        if (topBinding != null) {
-            // We had an occupied on top of stack, replace by the first Binding that needs later undoing
-            theBinding.linkNext(topBinding);
+    public static void addBinding(StepInfo current, Binding theBinding) {
+        final int top = ++current.bindingTop;
+        if (top >= current.bindingSize) {
+            // OOps, need to reallocate more stack
+            current.bindingSize += BINDING_STACK_CHUNK;
+            current.bindingStack = Arrays.copyOf(current.bindingStack, current.bindingSize);
         }
-        stepInfo.bindingStack[top] = theBinding;
+        current.bindingStack[top] = theBinding;
     }
 
     /**
@@ -117,13 +131,13 @@ public final class BindingTrail {
 
     public static void undoBindingsUntilPreviousMark(StepInfo current) {
         // Remove one level from the stack, then will process its content
-        if (current.top >= 0) {
-            for (Binding iter = current.bindingStack[current.top]; iter != null; iter = iter.nextToUnbind()) {
-                iter.free();
-                // To be really 100% safe, we could consider resetting the nextToUnbind() link to null - but this appears not necessary
-            }
-            current.top--;
+        final int freeBindingsUntil = current.trailStack[current.trailTop];
+        for (int i = current.bindingTop; i > freeBindingsUntil; i--) {
+            final Binding binding = current.bindingStack[i];
+            binding.free();
         }
+        current.bindingTop = freeBindingsUntil;
+        current.trailTop--;
     }
 
     /**
@@ -149,14 +163,11 @@ public final class BindingTrail {
     @Deprecated
     static int nbBindings() {
         final StepInfo current = stepInfoOfThisThread.get();
-        if (current.top < 0 || current.bindingStack[current.top] == null) {
+        if (current.trailTop < 0) {
             return 0;
         }
-        int counter = 0;
-        for (Binding iter = current.bindingStack[current.top]; iter != null; iter = iter.nextToUnbind()) {
-            counter++;
-        }
-        return counter;
+        final int bindingStartedAt = current.trailStack[current.trailTop];
+        return current.bindingTop - bindingStartedAt;
     }
 
     /**
@@ -164,12 +175,12 @@ public final class BindingTrail {
      * Use package scope there's a class in the test tree that is in the same package.
      * 
      * @deprecated Use only from test cases
-     * @return The current stack size
+     * @return The current stack bindingSize
      */
     @Deprecated
     static int size() {
         final StepInfo current = stepInfoOfThisThread.get();
-        return current.top + 1;
+        return current.trailTop + 1;
     }
 
 }

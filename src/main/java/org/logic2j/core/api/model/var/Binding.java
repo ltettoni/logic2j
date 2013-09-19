@@ -54,12 +54,6 @@ public class Binding implements Cloneable {
     private Bindings literalBindings;
     private Binding link;
 
-    /**
-     * When we need to unbind a number of Binding, we will chain them with this reference.
-     * null is the end of the chain.
-     */
-    private Binding nextToUnbind;
-
     // Ref to the variable associated to this binding in the "owning" Struct. This is solely
     // used for reporting and extracting the "original" variable name from solutions.
     // This field is not "functionally" needed
@@ -70,7 +64,6 @@ public class Binding implements Cloneable {
      */
     public Binding() {
         this.type = BindingType.FREE;
-        this.nextToUnbind = null;
     }
 
     /**
@@ -98,7 +91,6 @@ public class Binding implements Cloneable {
     public Binding cloneIt() {
         try {
             final Binding clone = (Binding) this.clone();
-            clone.nextToUnbind = null;
             return clone;
         } catch (final CloneNotSupportedException e) {
             throw new InvalidTermException("Failed cloning " + this + " : " + e);
@@ -162,20 +154,6 @@ public class Binding implements Cloneable {
             result = result.link;
         }
         return result;
-    }
-
-    /**
-     * @param theBinding
-     */
-    public void linkNext(Binding theBinding) {
-        this.nextToUnbind = theBinding;
-    }
-
-    /**
-     * @return The next Binding to unbind, or null when this one is the last in the chain.
-     */
-    public Binding nextToUnbind() {
-        return this.nextToUnbind;
     }
 
     // ---------------------------------------------------------------------------
