@@ -32,9 +32,8 @@ public class FunctionalTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
 
     @Test
-    public void placeholder() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
-        assertEquals(term(3), assertOneSolution("sumial(2, X)").binding("X"));
+    public void placeholderToReproduceError() {
+        //
     }
 
     @Test

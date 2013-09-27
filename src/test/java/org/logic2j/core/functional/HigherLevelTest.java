@@ -47,7 +47,7 @@ public class HigherLevelTest extends PrologTestBase {
     }
 
     @Test
-    public void placeholder() {
+    public void placeholderToReproduceError() {
         //
     }
 

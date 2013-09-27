@@ -143,13 +143,16 @@ public class Binding {
     /**
      * Follow chains of linked bindings.
      * 
+     * @note On problem queens(11,_) this is invoked 68M times, with 59M real steps followed, and a longest chain of 13!
+     * 
      * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to satisfy
      *         either of {@link #isFree()} or {@link #isLiteral()}.
      */
-    public Binding followLinks() {
-        Binding result;
-        for (result = this; result.type == BindingType.LINK; result = result.link) {
-            // continue following links
+    public final Binding followLinks() {
+        Binding result = this;
+        // Maybe we should use isLink() and getters, but let's be efficient!
+        while (result.type == BindingType.LINK) {
+            result = result.link;
         }
         return result;
     }
