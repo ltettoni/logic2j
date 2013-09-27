@@ -147,10 +147,9 @@ public class Binding {
      *         either of {@link #isFree()} or {@link #isLiteral()}.
      */
     public Binding followLinks() {
-        Binding result = this;
-        // Maybe we should use isLink() and getters, but let's be efficient!
-        while (result.type == BindingType.LINK) {
-            result = result.link;
+        Binding result;
+        for (result = this; result.type == BindingType.LINK; result = result.link) {
+            // continue following links
         }
         return result;
     }
