@@ -42,6 +42,8 @@ public class DefaultSolver implements Solver {
 
     private final PrologImplementation prolog;
 
+    private boolean hasDataFactProviders;
+
     public DefaultSolver(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
@@ -55,6 +57,7 @@ public class DefaultSolver implements Solver {
      */
     @Override
     public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+        this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
 
@@ -177,7 +180,7 @@ public class DefaultSolver implements Solver {
         } else {
             result = solveAgainstClauseProviders(goalTerm, theGoalBindings, theSolutionListener);
 
-            if (!(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
+            if (hasDataFactProviders && !(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
                 solveAgainstDataProviders(goalTerm, theGoalBindings, theSolutionListener);
             }
         }
