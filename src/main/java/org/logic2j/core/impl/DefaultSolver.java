@@ -57,6 +57,8 @@ public class DefaultSolver implements Solver {
      */
     @Override
     public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+        // Check if we will have to deal with DataFacts in this session of solving.
+        // This slightly improves performance - we can bypass calling the mehod that deals with that
         this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
