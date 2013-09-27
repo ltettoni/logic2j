@@ -164,8 +164,14 @@ public class DefaultTheoryManager implements TheoryManager {
         this.clauseProviders = clauseProviders;
     }
 
-    public List<DataFactProvider> getDataFactProviders() {
-        return dataFactProviders;
+    @Override
+    public boolean hasDataFactProviders() {
+        return !this.dataFactProviders.isEmpty();
+    }
+
+    @Override
+    public Iterable<DataFactProvider> getDataFactProviders() {
+        return this.dataFactProviders;
     }
 
     public void setDataFactProviders(List<DataFactProvider> dataFactProviders) {

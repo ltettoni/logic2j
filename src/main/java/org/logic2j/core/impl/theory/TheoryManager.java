@@ -67,6 +67,8 @@ public interface TheoryManager extends ClauseProvider {
     // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>
     Iterable<ClauseProvider> getClauseProviders();
 
+    boolean hasDataFactProviders();
+
     Iterable<DataFactProvider> getDataFactProviders();
 
     /**
