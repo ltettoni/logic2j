@@ -18,15 +18,13 @@
 
 package org.logic2j.contrib.excel;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
 
 public class TabularDataFactProviderTest extends TabularDataTestBase {
 
-    @Ignore("not ready to test")
     @Test
-    public void test() {
+    public void test10000() {
         getProlog().getTheoryManager().addDataFactProvider(new TabularDataFactProvider(largeData(), AssertionMode.RECORD));
         assertNSolutions(10000, "a(b,C,d,e,f,g,h,i,j)");
     }

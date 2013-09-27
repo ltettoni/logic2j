@@ -19,13 +19,12 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.DataFact;
-import org.logic2j.core.api.model.symbol.Struct;
 
 /**
  * Provide {@link DataFact}s.
  */
 public interface DataFactProvider {
 
-    Iterable<DataFact> listMatchingDataFacts(Struct theGoal);
+    Iterable<DataFact> listMatchingDataFacts(Object theGoal);
 
 }

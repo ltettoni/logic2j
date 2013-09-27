@@ -25,7 +25,6 @@ import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.symbol.Struct;
 
 public class TabularDataFactProvider implements DataFactProvider {
     private final TabularData tabularData;
@@ -96,7 +95,7 @@ public class TabularDataFactProvider implements DataFactProvider {
      * codebase
      */
     @Override
-    public Iterable<DataFact> listMatchingDataFacts(Struct theGoal) {
+    public Iterable<DataFact> listMatchingDataFacts(Object theGoal) {
         return this.dataFacts;
     }
 }

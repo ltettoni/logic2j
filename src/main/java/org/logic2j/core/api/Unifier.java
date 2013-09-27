@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.api;
 
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.var.Bindings;
 
 /**
@@ -35,6 +36,15 @@ public interface Unifier {
      * @return true if term1 and term2 could be unified together.
      */
     boolean unify(Object term1, Bindings theBindings1, Object term2, Bindings theBindings2);
+
+    /**
+     * Unify a Term against plain data.
+     * 
+     * @param goalTerm
+     * @param theGoalBindings
+     * @param dataFact
+     */
+    boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact);
 
     /**
      * Deunify to the last unification that returned true.

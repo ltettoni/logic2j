@@ -18,11 +18,13 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
@@ -36,6 +38,7 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
 public class DefaultSolver implements Solver {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
     private static final boolean debug = logger.isDebugEnabled();
+    private static final boolean info = logger.isInfoEnabled();
 
     private final PrologImplementation prolog;
 
@@ -173,6 +176,10 @@ public class DefaultSolver implements Solver {
 
         } else {
             result = solveAgainstClauseProviders(goalTerm, theGoalBindings, theSolutionListener);
+
+            if (!(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
+                solveAgainstDataProviders(goalTerm, theGoalBindings, theSolutionListener);
+            }
         }
         if (debug) {
             logger.debug("<< Exit    solveGoalRecursive(\"{}\") with {}, continuation=" + result, goalTerm, theGoalBindings);
@@ -195,6 +202,7 @@ public class DefaultSolver implements Solver {
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
 
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
+        final long start = System.currentTimeMillis();
         for (final ClauseProvider provider : providers) {
             final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, theGoalBindings);
             if (matchingClauses == null) {
@@ -302,34 +310,40 @@ public class DefaultSolver implements Solver {
         if (debug) {
             logger.debug("Last ClauseProvider iterated");
         }
-        /*
-                    // Now fetch data
-                    final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
-                    for (final DataFactProvider dataProvider : dataProviders) {
-                        final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalStruct);
-                        final long start = System.currentTimeMillis();
-                        for (final DataFact dataFact : matchingDataFacts) {
-                            // We should probably try/finally between unification and deunification. However since we unify with data
-                            // and need efficiency, and we won't call any user code, we can assume not to.
-                            final boolean unifiedWithData = unifier.unify(goalTerm, theGoalBindings, dataFact);
-                            if (unifiedWithData) {
-                                final Continuation continuation = theSolutionListener.onSolution();
-                                if (continuation == Continuation.CUT) {
-                                    result = Continuation.CUT;
-                                } else if (continuation == Continuation.USER_ABORT) {
-                                    // TODO should we just "return" from here?
-                                    result = Continuation.USER_ABORT;
-                                }
-                                unifier.deunify();
-                            }
-                        }
-                        if (logger.isInfoEnabled()) {
-                            logger.info("Last DataFact of {} iterated, duration={}", dataProvider, System.currentTimeMillis() - start);
-                        }
-                    }
+        if (info) {
+            logger.info("Time in solving ClauseProviders: {}", System.currentTimeMillis() - start);
+        }
 
+        return result;
+    }
+
+    private Continuation solveAgainstDataProviders(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+        final Unifier unifier = this.prolog.getUnifier();
+        Continuation result = Continuation.CONTINUE;
+        // Now fetch data
+        final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
+        final long start = System.currentTimeMillis();
+        for (final DataFactProvider dataProvider : dataProviders) {
+            final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalTerm);
+            for (final DataFact dataFact : matchingDataFacts) {
+                // We should probably try/finally between unification and deunification. However since we unify with data
+                // and need efficiency, and we won't call any user code, we can assume not to.
+                final boolean unifiedWithData = unifier.unify(goalTerm, theGoalBindings, dataFact);
+                if (unifiedWithData) {
+                    final Continuation continuation = theSolutionListener.onSolution();
+                    if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
+                        result = continuation;
+                    }
+                    unifier.deunify();
                 }
-        */
+            }
+            if (logger.isInfoEnabled()) {
+                logger.info("Last DataFact of {} iterated, duration={}", dataProvider, System.currentTimeMillis() - start);
+            }
+        }
+        if (info) {
+            logger.info("Time in solving DataProviders: {}", System.currentTimeMillis() - start);
+        }
         return result;
     }
 

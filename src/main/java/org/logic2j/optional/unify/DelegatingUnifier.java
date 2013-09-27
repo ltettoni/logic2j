@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.logic2j.core.api.Unifier;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
@@ -157,5 +159,10 @@ public class DelegatingUnifier implements Unifier {
     @Override
     public void deunify() {
         BindingTrail.undoBindingsUntilPreviousMark();
+    }
+
+    @Override
+    public boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+        throw new PrologNonSpecificError("Not implemented");
     }
 }
