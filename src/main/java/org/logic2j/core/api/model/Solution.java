@@ -34,17 +34,16 @@ import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
  * a(Y, 3)) , {@link #getBindings()}=={X -> 2, Y -> null, Z -> 3} , {@link #getBinding(String)}==2 when argument is "X".
  */
 public class Solution {
-    private static final TermApi TERM_API = new TermApi();
 
     /**
      * @see #getSolution()
      */
-    private final Term solution;
+    private final Object solution;
 
     /**
      * @see #getBindings()
      */
-    private final Map<String, Term> bindings;
+    private final Map<String, Object> bindings;
 
     /**
      * Build a solution for the current variable bindings. This will calculate the substituted value of bound variables, i.e. "denormalize"
@@ -56,7 +55,7 @@ public class Solution {
      * @param theBindings
      */
     public Solution(Bindings theBindings) {
-        this.solution = TERM_API.substitute(theBindings.getReferrer(), theBindings, null);
+        this.solution = TermApi.substitute(theBindings.getReferrer(), theBindings, null);
         this.bindings = theBindings.explicitBindings(FreeVarRepresentation.NULL);
     }
 
@@ -68,21 +67,21 @@ public class Solution {
      * @return The solution to a goal, expressed as the goal itself (with all bound variables substituted to their actual values - only free
      *         variables remaining).
      */
-    public Term getSolution() {
+    public Object getSolution() {
         return this.solution;
     }
 
     /**
      * @return All bindings, a {@link Map} of Terms by their {@link Var}iable name.
      */
-    public Map<String, Term> getBindings() {
+    public Map<String, Object> getBindings() {
         return this.bindings;
     }
 
     /**
      * @return The actual value bound to a {@link Var}iable by its name.
      */
-    public Term getBinding(String theVariableName) {
+    public Object getBinding(String theVariableName) {
         if (this.bindings == null) {
             throw new IllegalArgumentException("No bindings");
         }

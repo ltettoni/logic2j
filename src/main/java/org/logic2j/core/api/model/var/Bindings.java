@@ -48,12 +48,10 @@ public class Bindings {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
     private static boolean isDebug = logger.isDebugEnabled();
 
-    private static final TermApi TERM_API = new TermApi();
-
     /**
      * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link Bindings} through their indexes.
      */
-    private final Term referrer;
+    private final Object referrer;
 
     /**
      * All {@link Binding}s, one per instance of {@link Var}iable. There are as many bindings as the distinct number of variables in the
@@ -132,11 +130,11 @@ public class Bindings {
     /**
      * Just assign the 2 fields of this new Bindings.
      * 
-     * @param theNewReferrer
+     * @param theNewReferrerTerm
      * @param theArrayOfBinding
      */
-    private Bindings(Term theNewReferrer, Binding[] theArrayOfBinding) {
-        this.referrer = theNewReferrer;
+    private Bindings(Object theNewReferrerTerm, Binding[] theArrayOfBinding) {
+        this.referrer = theNewReferrerTerm;
         this.bindings = theArrayOfBinding;
     }
 
@@ -148,9 +146,17 @@ public class Bindings {
      * @param theReferrer The Term whose {@link Var}iables's values are to be found in this object.
      * @see Bindings#getReferrer() to further access theTerm
      */
-    public Bindings(Term theReferrer) {
+    public Bindings(Object theReferrer) {
         // Note: this constructor should be called only with Var or Struct as arguments, but we don't check this. Should we?
-        final short index = theReferrer.getIndex();
+        final short index;
+        if (theReferrer instanceof Var) {
+            index = ((Var) theReferrer).getIndex();
+        } else if (theReferrer instanceof Struct) {
+            index = ((Struct) theReferrer).getIndex();
+        } else {
+            // It's a plain Java object
+            index = 0;
+        }
         if (index == Term.NO_INDEX) {
             throw new InvalidTermException("Index of Term '" + theReferrer + "' is not yet initialized, cannot create Bindings because Term is not ready for inference. Normalize it first.");
         }
@@ -177,7 +183,7 @@ public class Bindings {
             this.bindings[varIndex] = binding;
             // Assign Binding.var field
             // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
-            theReferrer.accept(new VisitorToAssignVarWithinBinding(binding, varIndex));
+            TermApi.accept(theReferrer, new VisitorToAssignVarWithinBinding(binding, varIndex));
         }
     }
 
@@ -189,16 +195,17 @@ public class Bindings {
      * @return
      */
     public static Bindings deepCopyWithSameReferrer(Bindings theOriginal) {
-        return deepCopyWithNewReferrer(theOriginal, theOriginal.getReferrer());
+        return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
     }
 
-    private static Bindings deepCopyWithNewReferrer(Bindings theOriginal, Term theNewReferrer) {
+    private static Bindings deepCopyWithNewReferrer(Object theNewReferrer, Bindings theOriginal) {
         // Deep cloning of the individual Binding
-        final int nbVars = theOriginal.bindings.length;
+        final Binding[] originalBindings = theOriginal.bindings;
+        final int nbVars = originalBindings.length;
         final Binding[] copiedArray = new Binding[nbVars];
         // All bindings need cloning
         for (int i = 0; i < nbVars; i++) {
-            copiedArray[i] = theOriginal.bindings[i].cloneIt();
+            copiedArray[i] = new Binding(originalBindings[i]);
         }
         return new Bindings(theNewReferrer, copiedArray);
     }
@@ -207,8 +214,8 @@ public class Bindings {
      * Create a new Bindings, just setting the specified referrer, but referring to the same
      * array of {@link Binding}.
      */
-    private static Bindings shallowCopy(Bindings theOriginal, Term theNewReferrer) {
-        return new Bindings(theNewReferrer, theOriginal.bindings);
+    private static Bindings shallowCopy(Bindings theOriginal, Object theNewReferrerTerm) {
+        return new Bindings(theNewReferrerTerm, theOriginal.bindings);
     }
 
     // ---------------------------------------------------------------------------
@@ -217,13 +224,14 @@ public class Bindings {
 
     /**
      * Create a new {@link Bindings} with the specified {@link Term} as new Referrer.
-     * When Term is a {@link Var}iable, will follow through bound variables until a free or literal is found.
+     * When Term is a bound {@link Var}iable, will follow through until a free Var or literal is found.
      * 
-     * @param theTerm Must be one of the root or children {@link Term}s that was used to instantiate this {@link Bindings}
-     * @param theClass Of the expected referrer Term
+     * @param theTerm Must be either the root or on of the children {@link Term}s that was
+     *            used to instantiate this {@link Bindings}
+     * @param theClass of the expected referrer Term
      * @return null if theTerm was a free {@link Var}iable
      */
-    public Bindings focus(Term theTerm, Class<? extends Term> theClass) {
+    public Bindings focus(Object theTerm, Class<? extends Object> theClass) {
         if (theTerm instanceof Var) {
             final Var origin = (Var) theTerm;
             if (origin.isAnonymous()) {
@@ -257,7 +265,7 @@ public class Bindings {
      * @param theRepresentation How to represent free (non-ground) variables
      * @return All variable bindings resolved, represented as specified for the case of free bindings.
      */
-    public Map<String, Term> explicitBindings(FreeVarRepresentation theRepresentation) {
+    public Map<String, Object> explicitBindings(FreeVarRepresentation theRepresentation) {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
         // ending up with either null (on a literal), or a real Var (on a free var).
         final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
@@ -268,7 +276,7 @@ public class Bindings {
             bindingToInitialVar.put(finalBinding, initialBinding.getVar());
         }
 
-        final Map<String, Term> result = new TreeMap<String, Term>();
+        final Map<String, Object> result = new TreeMap<String, Object>();
         for (final Binding initialBinding : this.bindings) {
             final Var originalVar = initialBinding.getVar();
             if (originalVar == null) {
@@ -285,8 +293,8 @@ public class Bindings {
                     throw new PrologNonSpecificError("Cannot assign null (undefined) var, not all variables of " + this + " are referenced from Term " + this.referrer + ", binding " + initialBinding
                             + " can't be assigned a variable name");
                 }
-                final Term boundTerm = finalBinding.getTerm();
-                final Term substitute = TERM_API.substitute(boundTerm, finalBinding.getLiteralBindings(), bindingToInitialVar);
+                final Object boundTerm = finalBinding.getTerm();
+                final Object substitute = TermApi.substitute(boundTerm, finalBinding.getLiteralBindings(), bindingToInitialVar);
                 // Literals are not unbound terms, they are returned the same way for all types of representations asked
                 result.put(originalVarName, substitute);
                 break;
@@ -389,7 +397,7 @@ public class Bindings {
      * @return The Term whose variable values are held in this structure, actually the one that was provided to the consturctor
      *         {@link #Bindings(Term)}.
      */
-    public Term getReferrer() {
+    public Object getReferrer() {
         return this.referrer;
     }
 

@@ -33,7 +33,8 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-        //
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertEquals(term(3), assertOneSolution("sumial(2, X)").binding("X"));
     }
 
     @Test
@@ -175,6 +176,9 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void sumial() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertEquals(term(0), assertOneSolution("sumial(0, X)").binding("X"));
+        assertEquals(term(1), assertOneSolution("sumial(1, X)").binding("X"));
+        assertEquals(term(3), assertOneSolution("sumial(2, X)").binding("X"));
         assertEquals(term(15), assertOneSolution("sumial(5, X)").binding("X"));
         assertEquals(term(55), assertOneSolution("sumial(10, X)").binding("X"));
         assertEquals(term(5050), assertOneSolution("sumial(100, X)").binding("X"));

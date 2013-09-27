@@ -30,8 +30,6 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Solution;
-import org.logic2j.core.api.model.symbol.TLong;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation;
@@ -72,12 +70,12 @@ public class SolverTest extends PrologTestBase {
         assertEquals(null, prolog.solve("write(Z_written_from_SolverTest)").unique().binding("Z_written_from_SolverTest"));
         // Obtain values of bound variables
         final UniqueSolutionHolder unique = prolog.solve("X=2, Y=3").unique();
-        assertEquals(new TLong(2), unique.binding("X"));
-        assertEquals(new TLong(3), unique.binding("Y"));
+        assertEquals(2L, unique.binding("X"));
+        assertEquals(3L, unique.binding("Y"));
         // Obtain all variables
-        final Map<String, Term> vars = new HashMap<String, Term>();
-        vars.put("X", new TLong(2));
-        vars.put("Y", new TLong(3));
+        final Map<String, Object> vars = new HashMap<String, Object>();
+        vars.put("X", 2L);
+        vars.put("Y", 3L);
         assertEquals(vars, unique.bindings());
         // Obtain resolved term
         assertEquals(this.prolog.getTermExchanger().unmarshall("2=2, 3=3"), unique.solution());

@@ -41,7 +41,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Difference between number of args in Prolog's primitive invocation, and number of varargs
-     * passed to Java implementatino of the primitive: (SolutionListener theListener, Bindings theBindings, Term...)
+     * passed to Java implementation of the primitive: (SolutionListener theListener, Bindings theBindings, Object...)
      */
     private static final int NB_EXTRA_PARAMS = 2;
 
@@ -111,10 +111,9 @@ public class DefaultLibraryManager implements LibraryManager {
         // It's actually unclear if when we load a new library, the new available functors would influence theories currently loaded.
 
         // We need to assignPrimitiveInfo(), but let's use the TermApi directly and invoke normalize() it won't harm to do a little more.
-        final TermApi termApi = new TermApi();
-        termApi.normalize(Struct.ATOM_TRUE, this.wholeContent);
-        termApi.normalize(Struct.ATOM_FALSE, this.wholeContent);
-        termApi.normalize(Struct.ATOM_CUT, this.wholeContent);
+        TermApi.normalize(Struct.ATOM_TRUE, this.wholeContent);
+        TermApi.normalize(Struct.ATOM_FALSE, this.wholeContent);
+        TermApi.normalize(Struct.ATOM_CUT, this.wholeContent);
     }
 
     /**
@@ -139,10 +138,12 @@ public class DefaultLibraryManager implements LibraryManager {
                 final PrimitiveType type;
                 if (Continuation.class.equals(returnType)) {
                     type = PrimitiveType.PREDICATE;
-                } else if (Term.class.equals(returnType)) {
-                    type = PrimitiveType.FUNCTOR;
                 } else if (Void.TYPE.equals(returnType)) {
                     type = PrimitiveType.DIRECTIVE;
+                } else if (Term.class.equals(returnType)) {
+                    type = PrimitiveType.FUNCTOR;
+                } else if (Object.class.equals(returnType)) {
+                    type = PrimitiveType.FUNCTOR;
                 } else {
                     throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + annotation);
                 }
@@ -159,11 +160,11 @@ public class DefaultLibraryManager implements LibraryManager {
                 i++;
                 boolean varargs = false;
                 if (i < nbMethodParams) {
-                    if (Term[].class.isAssignableFrom(paramTypes[i])) {
+                    if (Object[].class.isAssignableFrom(paramTypes[i])) {
                         varargs = true;
                     } else {
                         while (i < nbMethodParams) {
-                            if (!(Term.class.isAssignableFrom(paramTypes[i]))) {
+                            if (!(Object.class.isAssignableFrom(paramTypes[i]))) {
                                 throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + Term.class);
                             }
                             i++;

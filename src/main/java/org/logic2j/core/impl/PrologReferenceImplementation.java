@@ -24,7 +24,6 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.OperatorManager;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.impl.io.operator.DefaultOperatorManager;
@@ -113,12 +112,12 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public SolutionHolder solve(CharSequence theGoal) {
-        final Term parsed = getTermExchanger().unmarshall(theGoal);
+        final Object parsed = getTermExchanger().unmarshall(theGoal);
         return solve(parsed);
     }
 
     @Override
-    public SolutionHolder solve(Term theGoal) {
+    public SolutionHolder solve(Object theGoal) {
         final Bindings theBindings = new Bindings(theGoal);
         return new SolutionHolder(this, theBindings);
     }

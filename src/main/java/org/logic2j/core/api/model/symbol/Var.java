@@ -115,13 +115,7 @@ public final class Var extends Term {
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
 
-    @Override
-    public boolean isList() {
-        return false;
-    }
-
-    @Override
-    public Var findVar(String theVariableName) {
+    Var findVar(String theVariableName) {
         if (ANONYMOUS_VAR_NAME.equals(theVariableName)) {
             throw new PrologInternalError("Cannot find the anonymous variable");
         }
@@ -131,8 +125,7 @@ public final class Var extends Term {
         return null;
     }
 
-    @Override
-    protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
         if (isAnonymous()) {
             // Anonymous variable is never bound - won't substitute
             return this;
@@ -142,7 +135,7 @@ public final class Var extends Term {
             // For a literal, we have a reference to the literal term and to its
             // own variables,
             // so recurse further
-            return binding.getTerm().substitute(binding.getLiteralBindings(), theBindingsToVars);
+            return TermApi.substitute(binding.getTerm(), binding.getLiteralBindings(), theBindingsToVars);
         }
         if (binding.isFree()) {
             // Free variable has no value, so substitution ends up on the last
@@ -166,22 +159,20 @@ public final class Var extends Term {
      * 
      * @param theCollectedTerms
      */
-    @Override
-    protected void collectTermsInto(Collection<Term> theCollectedTerms) {
+    void collectTermsInto(Collection<Object> theCollectedTerms) {
         this.index = NO_INDEX;
         theCollectedTerms.add(this);
     }
 
-    @Override
-    protected Term factorize(Collection<Term> theCollectedTerms) {
+    Object factorize(Collection<Object> theCollectedTerms) {
         // If this term already has an equivalent in the provided collection, return that one
-        final Term alreadyThere = findStructurallyEqualWithin(theCollectedTerms);
+        final Object alreadyThere = findStructurallyEqualWithin(theCollectedTerms);
         if (alreadyThere != null) {
             return alreadyThere;
         }
         // Not found by structural equality, we match variables by their name
         // TODO I'm not actually sure why we do this - we should probably log and identify why this case
-        for (final Term term : theCollectedTerms) {
+        for (final Object term : theCollectedTerms) {
             if (term instanceof Var) {
                 final Var var = (Var) term;
                 if (this.getName().equals(var.getName())) {
@@ -197,16 +188,14 @@ public final class Var extends Term {
      * @return true only when references are the same, otherwise two distinct {@link Var}s will always be considered different, despite
      *         their name, index, or whatever.
      */
-    @Override
-    public boolean structurallyEquals(Term theOther) {
+    boolean structurallyEquals(Object theOther) {
         return theOther == this; // Check memory reference only
     }
 
     /**
      * Assign a new {@link Term#index} to a Var if it was not assigned before.
      */
-    @Override
-    protected short assignIndexes(short theIndexOfNextNonIndexedVar) {
+    short assignIndexes(short theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
             // Already assigned, do nothing
             return theIndexOfNextNonIndexedVar; // return same index since we did nothing
@@ -222,8 +211,7 @@ public final class Var extends Term {
         return (short) (theIndexOfNextNonIndexedVar + 1);
     }
 
-    @Override
-    public <T> T accept(TermVisitor<T> theVisitor) {
+    <T> T accept(TermVisitor<T> theVisitor) {
         return theVisitor.visit(this);
     }
 

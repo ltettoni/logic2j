@@ -17,11 +17,18 @@
  */
 package org.logic2j.core.api;
 
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.var.Bindings;
+
 /**
  * A library of Prolog primitives implemented in Java, as methods of a single class. Usually {@link PLibrary}es come together with an
  * associated theory of Prolog rules and facts, associated as a classloadable resource. Low-level predicates are implemented in Java and
  * high-level or facade predicates are expressed as Prolog rules.
  */
 public interface PLibrary {
-    // Marker interface. Maybe one day we may define some methods.
+
+    static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
+
+    Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener);
+
 }

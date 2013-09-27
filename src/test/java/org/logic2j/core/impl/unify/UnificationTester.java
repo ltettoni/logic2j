@@ -32,12 +32,10 @@ import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
 class UnificationTester {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);
 
-    private static final TermApi TERM_API = new TermApi();
-
     private final Unifier unifier;
 
-    public Term left;
-    public Term right;
+    public Object left;
+    public Object right;
     public Bindings leftVars;
     public Bindings rightVars;
     private Boolean expectedResult = null; // TODO Good candidates for hamctest 1.3
@@ -59,8 +57,8 @@ class UnificationTester {
      * @param theRight
      */
     private void init2(Term theLeft, Term theRight) {
-        this.left = TERM_API.normalize(theLeft, null);
-        this.right = TERM_API.normalize(theRight, null);
+        this.left = TermApi.normalize(theLeft, null);
+        this.right = TermApi.normalize(theRight, null);
         this.leftVars = new Bindings(this.left);
         this.rightVars = new Bindings(this.right);
     }
@@ -72,9 +70,9 @@ class UnificationTester {
      * @param theRight
      * @param bindings
      */
-    private void init1(Term theLeft, Term theRight, Bindings bindings) {
-        this.left = TERM_API.normalize(theLeft, null);
-        this.right = TERM_API.normalize(theRight, null);
+    private void init1(Object theLeft, Object theRight, Bindings bindings) {
+        this.left = TermApi.normalize(theLeft, null);
+        this.right = TermApi.normalize(theRight, null);
         this.leftVars = bindings;
         this.rightVars = bindings;
     }
@@ -90,8 +88,8 @@ class UnificationTester {
         logger.debug(" result={}", unified);
         logger.debug(" leftVars={}", this.leftVars);
         logger.debug(" rightVars={}", this.rightVars);
-        logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {
@@ -111,8 +109,8 @@ class UnificationTester {
         logger.info("Unifying {} to {}", this.right, this.left);
         final boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars);
         logger.debug(" result={}", unified);
-        logger.debug(" left={}   bindings={}", TERM_API.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        logger.debug(" right={}  bindings={}", TERM_API.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {
@@ -144,7 +142,7 @@ class UnificationTester {
         assertEquals("Same post-unification state signatures", signatureLR.toString(), signatureRL.toString());
     }
 
-    public void unify2ways(Term theLeft, Term theRight, Bindings bindings) {
+    public void unify2ways(Object theLeft, Object theRight, Bindings bindings) {
         init1(theLeft, theRight, bindings);
         final StringBuilder signatureLR = new StringBuilder();
         final boolean unifyLR = unifyLR(signatureLR);
@@ -206,7 +204,7 @@ class UnificationTester {
     }
 
     /**
-     * @param theExpectedNbBindings TNumber of effective bindings created by unification, and remembered in the trailing bindings to be
+     * @param theExpectedNbBindings number of effective bindings created by unification, and remembered in the trailing bindings to be
      *            deunified.
      */
     public void setExpectedNbBindings(int theExpectedNbBindings) {

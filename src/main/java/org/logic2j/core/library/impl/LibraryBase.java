@@ -21,11 +21,8 @@ import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.TNumber;
-import org.logic2j.core.api.model.symbol.Term;
-import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
@@ -37,11 +34,15 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
  * Base class for libraries.
  */
 public class LibraryBase implements PLibrary {
-    protected static final TermApi TERM_API = new TermApi();
     private final PrologImplementation prolog;
 
     public LibraryBase(PrologImplementation theProlog) {
         this.prolog = theProlog;
+    }
+
+    @Override
+    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+        return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
 
     /**
@@ -53,7 +54,7 @@ public class LibraryBase implements PLibrary {
      * @param theBindings2
      * @return The result of unification.
      */
-    protected boolean unify(Term t1, Bindings theBindings1, Term t2, Bindings theBindings2) {
+    protected boolean unify(Object t1, Bindings theBindings1, Object t2, Bindings theBindings2) {
         return getProlog().getUnifier().unify(t1, theBindings1, t2, theBindings2);
     }
 
@@ -96,18 +97,21 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
+     * Make sure a {@link Bindings} does not have a {@link Bindings#getReferrer()} that is a free {@link Var}.
+     * 
      * @param theBindings
-     * @param thePrimitive
+     * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
+     * @throws InvalidTermException
      */
-    protected void assertValidBindings(Bindings theBindings, String thePrimitive) {
+    protected void ensureBindingIsNotAFreeVar(Bindings theBindings, String nameOfPrimitive) {
         if (theBindings.isFreeReferrer()) {
             // TODO should be sort of an InvalidGoalException?
-            throw new PrologNonSpecificError("Cannot call primitive " + thePrimitive + " with a free variable goal");
+            throw new InvalidTermException("Cannot call primitive " + nameOfPrimitive + " with a Variable that is free");
         }
     }
 
     // TODO assess if needed - used only once
-    protected Binding dereferencedBinding(Term theTerm, Bindings theBindings) {
+    protected Binding dereferencedBinding(Object theTerm, Bindings theBindings) {
         if (theTerm instanceof Var) {
             return ((Var) theTerm).bindingWithin(theBindings).followLinks();
         }
@@ -117,7 +121,7 @@ public class LibraryBase implements PLibrary {
     /**
      * Evaluates an expression. Returns null value if the argument is not an evaluable expression
      */
-    protected Term evaluateFunctor(Bindings theBindings, Term theTerm) {
+    protected Object evaluate(Object theTerm, Bindings theBindings) {
         if (theTerm == null) {
             return null;
         }
@@ -130,38 +134,37 @@ public class LibraryBase implements PLibrary {
             theTerm = binding.getTerm();
         }
 
-        if (theTerm instanceof TNumber) {
-            return theTerm;
-        }
         if (theTerm instanceof Struct) {
             final Struct struct = (Struct) theTerm;
-            final PrimitiveInfo desc = struct.getPrimitiveInfo();
-            if (desc == null) {
+            final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
+            if (primInfo == null) {
                 // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
                 return null;
             }
-            if (desc.getType() != PrimitiveType.FUNCTOR) {
+            if (primInfo.getType() != PrimitiveType.FUNCTOR) {
                 // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
                 return null;
             }
-            return desc.invokeFunctor(struct, theBindings);
+            final Object result = primInfo.invoke(struct, theBindings, /* no listener */null);
+            return result;
         }
-        return null;
+        return theTerm;
     }
 
-    protected Term createConstantTerm(Object anyObject) {
+    protected Object createConstantTerm(Object anyObject) {
         if (anyObject == null) {
             return Var.ANONYMOUS_VAR;
         }
         return getProlog().getTermAdapter().term(anyObject, FactoryMode.ATOM);
     }
 
+    // Only one use!
     protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, SolutionListener theListener) {
-        final Term[] values = new Term[theValues.length];
+        final Object[] values = new Object[theValues.length];
         for (int i = 0; i < theValues.length; i++) {
             values[i] = createConstantTerm(theValues[i]);
         }
-        final boolean unified = unify(new Struct("group", theVariables), theBindings, new Struct("group", values), theBindings);
+        final boolean unified = unify(new Struct("group", (Object[]) theVariables), theBindings, new Struct("group", values), theBindings);
         notifyIfUnified(unified, theListener);
     }
 

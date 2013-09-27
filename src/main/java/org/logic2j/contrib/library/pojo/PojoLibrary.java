@@ -17,13 +17,13 @@
  */
 package org.logic2j.contrib.library.pojo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -43,16 +43,50 @@ public class PojoLibrary extends LibraryBase {
         super(theProlog);
     }
 
-    @Primitive
-    public Continuation bind(final SolutionListener theListener, Bindings theBindings, Term theBindingName, Term theTarget) {
-        final Bindings nameBindings = theBindings.focus(theBindingName, Struct.class);
-        assertValidBindings(nameBindings, "bind/2");
-        final Struct nameTerm = (Struct) nameBindings.getReferrer();
+    /**
+     * Override this method with whatever introspection framework you want.
+     * 
+     * @param theInstance
+     * @param theExpression
+     * @return
+     */
+    protected Object introspect(Object theInstance, String theExpression) {
+        Object value;
+        try {
+            value = PropertyUtils.getProperty(theInstance, theExpression);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // Property does not exist - cannot be matched - no solution
+            return null;
+        }
+        return value;
+    }
 
-        final String name = nameTerm.getName();
+    @Primitive
+    public Continuation bind(final SolutionListener theListener, Bindings theBindings, Object theBindingName, Object theTarget) {
+        final Bindings nameBindings = theBindings.focus(theBindingName, Object.class);
+        ensureBindingIsNotAFreeVar(nameBindings, "bind/2");
+        final Object nameTerm = nameBindings.getReferrer();
+        final String name = nameTerm.toString();
         final Object instance = extract(name);
-        final Term instanceTerm = createConstantTerm(instance);
+        final Object instanceTerm = createConstantTerm(instance);
         final boolean unified = unify(instanceTerm, nameBindings, theTarget, theBindings);
+        return notifyIfUnified(unified, theListener);
+    }
+
+    @Primitive
+    public Continuation property(final SolutionListener theListener, Bindings theBindings, Object thePojo, Object thePropertyName, Object theValue) {
+        // First argument
+        final Bindings bindingsForPojo = theBindings.focus(thePojo, Object.class);
+        ensureBindingIsNotAFreeVar(bindingsForPojo, "property/3");
+        final Object pojo = bindingsForPojo.getReferrer();
+        // Second argument
+        final Bindings bindingsForPropertyName = theBindings.focus(thePropertyName, String.class);
+        ensureBindingIsNotAFreeVar(bindingsForPropertyName, "property/3");
+        final String propertyName = (String) bindingsForPropertyName.getReferrer();
+        //
+        Object value = introspect(pojo, propertyName);
+
+        final boolean unified = unify(theValue, theBindings, value, theBindings);
         return notifyIfUnified(unified, theListener);
     }
 

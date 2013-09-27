@@ -42,8 +42,8 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.TNumber;
 import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.listener.UniqueSolutionListener;
@@ -79,31 +79,34 @@ public class RDBLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation select(SolutionListener theListener, Bindings theBindings, Term... theArguments) throws SQLException {
-        final Term theDataSource = theArguments[0];
-        final Term theExpression = theArguments[1];
+    public Continuation select(SolutionListener theListener, Bindings theBindings, Object... theArguments) throws SQLException {
+        final Object theDataSource = theArguments[0];
+        final Object theExpression = theArguments[1];
         final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
         final Bindings expressionBindings = theBindings.focus(theExpression, Struct.class);
-        assertValidBindings(expressionBindings, "select/*");
+        ensureBindingIsNotAFreeVar(expressionBindings, "select/*");
         final Struct conditions = (Struct) expressionBindings.getReferrer();
 
         // Options
-        final Set<Term> optionSet = new HashSet<Term>(Arrays.asList(theArguments).subList(2, theArguments.length));
+        final Set<Object> optionSet = new HashSet<Object>(Arrays.asList(theArguments).subList(2, theArguments.length));
         final boolean isDistinct = optionSet.contains(new Struct("distinct"));
 
         //
         final String resultVar = "Tbl";
 
         // The goal we are solving
-        Term internalGoal = Struct.valueOf("gd3_solve", conditions, resultVar);
-        internalGoal = internalGoal.cloneIt();
+        Object internalGoal = Struct.valueOf("gd3_solve", conditions, resultVar);
+        if (internalGoal instanceof Struct) {
+            // Clone
+            internalGoal = new Struct((Struct) internalGoal);
+        }
         // Watch out this destroys the indexes in the original expression !!!!
-        internalGoal = TERM_API.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
+        internalGoal = TermApi.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
         final Bindings internalBindings = new Bindings(internalGoal);
         final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalBindings);
         getProlog().getSolver().solveGoal(internalBindings, internalListener);
-        final Term result = internalListener.getSolution().getBinding(resultVar);
+        final Object result = internalListener.getSolution().getBinding(resultVar);
         if (!(result instanceof Struct)) {
             throw new InvalidTermException("Internal result must be a Struct");
         }
@@ -123,8 +126,8 @@ public class RDBLibrary extends LibraryBase {
                 }
                 // Operator
                 else if (ALLOWED_OPERATORS.contains(functor)) {
-                    final Term term1 = TERM_API.selectTerm(pred, "[1]", Term.class);
-                    final Term term2 = TERM_API.selectTerm(pred, "[2]", Term.class);
+                    final Term term1 = TermApi.selectTerm(pred, "[1]", Term.class);
+                    final Term term2 = TermApi.selectTerm(pred, "[2]", Term.class);
                     final String variableName;
                     final Term value;
                     if (term1 instanceof Var && !(term2 instanceof Var)) {
@@ -171,12 +174,12 @@ public class RDBLibrary extends LibraryBase {
                     throw new InvalidTermException("Arity of term " + tbl + " must be 4 or 5");
                 }
                 // Convert this predicate into a Criterion. When variables are specified, use the var as the operand value
-                final String tableName = TERM_API.selectTerm(tbl, "tbl[1]", Struct.class).getName();
-                final String columnName = TERM_API.selectTerm(tbl, "tbl[2]", Struct.class).getName();
-                final Term valueTerm = TERM_API.selectTerm(tbl, "tbl[4]", Term.class);
+                final String tableName = TermApi.selectTerm(tbl, "tbl[1]", Struct.class).getName();
+                final String columnName = TermApi.selectTerm(tbl, "tbl[2]", Struct.class).getName();
+                final Term valueTerm = TermApi.selectTerm(tbl, "tbl[4]", Term.class);
                 String operator = SqlBuilder3.OPERATOR_EQ_OR_IN;
                 if (tbl.getArity() >= 5) {
-                    operator = TERM_API.selectTerm(tbl, "tbl[5]", Struct.class).getName();
+                    operator = TermApi.selectTerm(tbl, "tbl[5]", Struct.class).getName();
                 }
                 final Table table = builder.table(tableName, alias);
                 final Column sqlColumn = builder.column(table, columnName);
@@ -281,7 +284,7 @@ public class RDBLibrary extends LibraryBase {
             Bindings originalBindings = null;
             int counter = 0;
             for (final Var var : projectVars) {
-                final Var originalVar = conditions.findVar(var.getName());
+                final Var originalVar = TermApi.findVar(conditions, var.getName());
                 if (originalVar == null) {
                     throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
                 }
@@ -329,12 +332,12 @@ public class RDBLibrary extends LibraryBase {
      * @param theTerm
      * @return A JDBC argument from a Term value
      */
-    private Object jdbcFromTerm(Term theTerm) {
-        if (theTerm instanceof TNumber) {
-            return ((TNumber) theTerm).longValue();
+    private Object jdbcFromTerm(Object theTerm) {
+        if (theTerm instanceof Number) {
+            return ((Number) theTerm).longValue();
         } else if (theTerm instanceof Struct) {
             final Struct struct = (Struct) theTerm;
-            if (struct.isList()) {
+            if (TermApi.isList(struct)) {
                 final Set<Object> javaList = new HashSet<Object>();
                 for (final Term t : struct.javaListFromPList(new ArrayList<Term>(), Term.class)) {
                     javaList.add(jdbcFromTerm(t));
@@ -352,9 +355,9 @@ public class RDBLibrary extends LibraryBase {
      * @param desiredClassOrInterface
      * @return The object bound to a Term by its name
      */
-    private <T> T bound(Term theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
+    private <T> T bound(Object theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
         final Bindings b = theBindings.focus(theBinding, Struct.class);
-        assertValidBindings(b, "bound");
+        ensureBindingIsNotAFreeVar(b, "bound");
         final Struct bindingName = (Struct) b.getReferrer();
 
         final Object instance = PojoLibrary.extract(bindingName.getName());

@@ -20,8 +20,6 @@ package org.logic2j.contrib.rdb;
 import javax.sql.DataSource;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.symbol.Term;
-import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.impl.DefaultTermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -29,8 +27,6 @@ import org.logic2j.core.impl.PrologImplementation;
  * Base class for RDB access using JDBC.
  */
 public class RDBBase {
-    protected static final TermApi TERM_API = new TermApi();
-
     /**
      * A {@link TermAdapter} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
      */
@@ -41,7 +37,7 @@ public class RDBBase {
         }
 
         @Override
-        public Term term(Object theObject, FactoryMode theMode) {
+        public Object term(Object theObject, FactoryMode theMode) {
             return super.term(theObject, FactoryMode.ATOM);
         }
 

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.exception.InvalidTermException;
 
 public class AdHocLibraryTest extends PrologTestBase {
 
@@ -32,7 +32,7 @@ public class AdHocLibraryTest extends PrologTestBase {
         assertNoSolution("int_range(12, X, 10)");
     }
 
-    @Test(expected = PrologNonSpecificError.class)
+    @Test(expected = InvalidTermException.class)
     public void exceptionThrownInJavaPredicate() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
         assertNoSolution("int_range(A, X, 10)");

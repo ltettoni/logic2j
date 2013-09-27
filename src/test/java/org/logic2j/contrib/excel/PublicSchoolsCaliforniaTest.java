@@ -36,12 +36,4 @@ public class PublicSchoolsCaliforniaTest extends ExcelReaderTest {
         logger.info("unification: {}, solutions: {}", ((DefaultUnifier) getProlog().getUnifier()).counter, number);
     }
 
-    @Test
-    public void withDataProvider() throws IOException {
-        setExcelDataFactProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
-        int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").all().number();
-        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").binding("E").toString());
-        logger.info("unification: {}, solutions: {}", ((DefaultUnifier) getProlog().getUnifier()).counter, number);
-    }
-
 }

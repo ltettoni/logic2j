@@ -32,7 +32,7 @@ public interface TermExchanger {
      * @param theChars
      * @return
      */
-    Term unmarshall(CharSequence theChars);
+    Object unmarshall(CharSequence theChars);
 
     /**
      * Formats a {@link Term} into a character stream.
@@ -40,6 +40,6 @@ public interface TermExchanger {
      * @param theTerm
      * @return
      */
-    CharSequence marshall(Term theTerm);
+    CharSequence marshall(Object theTerm);
 
 }

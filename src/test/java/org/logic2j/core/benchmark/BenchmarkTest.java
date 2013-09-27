@@ -17,6 +17,10 @@
  */
 package org.logic2j.core.benchmark;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
@@ -82,4 +86,31 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("Elapse {}", t2 - t1);
     }
 
+    @Test
+    public void queensForTiming() throws IOException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        final String goal = "queens(11, _)";
+        final long startTime = System.currentTimeMillis();
+        assertNSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
+        logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
+    }
+
+    @Ignore("Use this in conjuction with jvisualvm to profile")
+    @Test
+    public void queensForJVisualVM() throws IOException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        while (true) {
+            final String goal = "queens(11, _)";
+            System.out.print("Press any key to run, q to quit");
+            String readLine = br.readLine();
+            if (readLine != null && readLine.startsWith("q")) {
+                break;
+            }
+            final long startTime = System.currentTimeMillis();
+            assertNSolutions(2680, goal); // tuProlog (GUI) needs 261s on my machine
+            logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
+        }
+    }
 }

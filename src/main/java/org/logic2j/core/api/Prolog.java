@@ -52,7 +52,7 @@ public interface Prolog {
      * @param theGoal The {@link Term} to solve, usually a {@link Struct}
      * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
      */
-    SolutionHolder solve(Term theGoal);
+    SolutionHolder solve(Object theGoal);
 
     // ---------------------------------------------------------------------------
     // Accessors to the sub-features of the Prolog engine

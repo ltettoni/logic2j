@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.api.model.var;
 
-import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
@@ -43,14 +42,14 @@ import org.logic2j.core.api.model.symbol.Var;
  *     bindings to the application code.
  * </pre>
  */
-public class Binding implements Cloneable {
+public class Binding {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Binding.class);
     private static final boolean debug = logger.isDebugEnabled();
 
     // See description of fields in this class' Javadoc, and on getters.
 
     private BindingType type;
-    private Term term;
+    private Object term;
     private Bindings literalBindings;
     private Binding link;
 
@@ -67,6 +66,19 @@ public class Binding implements Cloneable {
     }
 
     /**
+     * Copy constructor.
+     * 
+     * @param toClone
+     */
+    public Binding(Binding toClone) {
+        this.link = toClone.link;
+        this.literalBindings = toClone.literalBindings;
+        this.term = toClone.term;
+        this.type = toClone.type;
+        this.var = toClone.var;
+    }
+
+    /**
      * Factory method to create one "fake" binding to a literal.
      * 
      * @param theLiteral
@@ -74,7 +86,7 @@ public class Binding implements Cloneable {
      * @return This is used to return a pair (Term, Bindings) where needed.
      */
     // TODO assess if needed - used only once
-    public static Binding createLiteralBinding(Term theLiteral, Bindings theLiteralBindings) {
+    public static Binding createLiteralBinding(Object theLiteral, Bindings theLiteralBindings) {
         final Binding binding = new Binding();
         binding.type = BindingType.LITERAL;
         binding.link = null;
@@ -85,26 +97,13 @@ public class Binding implements Cloneable {
     }
 
     /**
-     * @return A clone of this {@link Binding} without throwing a checked exception.
-     *         TODO Seems slow (according to JVisualVM) - maybe a copy constructor instead?
-     */
-    public Binding cloneIt() {
-        try {
-            final Binding clone = (Binding) this.clone();
-            return clone;
-        } catch (final CloneNotSupportedException e) {
-            throw new InvalidTermException("Failed cloning " + this + " : " + e);
-        }
-    }
-
-    /**
      * Bind this to a {@link Term}, may be a literal or another variable.
      * 
      * @param theTerm
      * @param theFrame When theTerm is a literal, here are its current value bindings
      * @return true if a binding was done, false otherwise. Caller needs to know if future un-binding will be needed.
      */
-    public boolean bindTo(Term theTerm, Bindings theFrame) {
+    public boolean bindTo(Object theTerm, Bindings theFrame) {
         if (!isFree()) {
             throw new PrologNonSpecificError("Should never attempt to re-bind a Binding that is not free!");
         }
@@ -178,7 +177,7 @@ public class Binding implements Cloneable {
      * Reference to a bound term: for {@link BindingType#LITERAL}, this is the literal, for {@link BindingType#LINK}, it refers to the
      * {@link Term} of subclass {@link Var}.
      */
-    public Term getTerm() {
+    public Object getTerm() {
         return this.term;
     }
 

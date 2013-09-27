@@ -39,10 +39,10 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation write(SolutionListener theListener, Bindings theBindings, Term... terms) {
-        for (final Term term : terms) {
+    public Continuation write(SolutionListener theListener, Bindings theBindings, Object... terms) {
+        for (final Object term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
-            final Term value = b.getReferrer();
+            final Object value = b.getReferrer();
 
             String format = getProlog().getTermExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
@@ -58,11 +58,11 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation log(SolutionListener theListener, Bindings theBindings, Term... terms) {
-        for (final Term term : terms) {
+    public Continuation log(SolutionListener theListener, Bindings theBindings, Object... terms) {
+        for (final Object term : terms) {
             final Bindings b = theBindings.focus(term, Term.class);
-            assertValidBindings(b, "write/*");
-            final Term value = b.getReferrer();
+            ensureBindingIsNotAFreeVar(b, "write/*");
+            final Object value = b.getReferrer();
 
             String format = getProlog().getTermExchanger().marshall(value).toString();
             format = IOLibrary.unquote(format);
@@ -72,7 +72,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation nolog(SolutionListener theListener, Bindings theBindings, Term... terms) {
+    public Continuation nolog(SolutionListener theListener, Bindings theBindings, Object... terms) {
         // Do nothing, but succeeds!
         return notifySolution(theListener);
     }

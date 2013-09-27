@@ -32,7 +32,7 @@ import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
@@ -76,28 +76,32 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     // ---------------------------------------------------------------------------
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings) {
-        final String predicateName = theGoal.getName();
+    public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
+        if (!(theGoal instanceof Struct)) {
+            throw new InvalidTermException("Need a Struct term instead of " + theGoal);
+        }
+        final Struct goalStruct = (Struct) theGoal;
+        final String predicateName = goalStruct.getName();
         final SqlBuilder3 builder = new SqlBuilder3();
         builder.setInstruction(SqlBuilder3.SELECT);
-        final String tableName = tableName(theGoal);
+        final String tableName = tableName(goalStruct);
         final Table table = builder.table(tableName);
         final String[] columnName = this.readTableInfo(tableName);
 
-        for (int i = 0; i < theGoal.getArity(); i++) {
+        for (int i = 0; i < goalStruct.getArity(); i++) {
             builder.addProjection(builder.column(table, columnName[i]));
         }
 
-        for (int i = 0; i < theGoal.getArity(); i++) {
-            Term t = theGoal.getArg(i);
+        for (int i = 0; i < goalStruct.getArity(); i++) {
+            Object t = goalStruct.getArg(i);
             if (t instanceof Var && theGoalBindings != null) {
-                t = TERM_API.substitute(theGoal.getArg(i), theGoalBindings, null);
+                t = TermApi.substitute(goalStruct.getArg(i), theGoalBindings, null);
             }
-            final boolean isAtom = TERM_API.isAtom(t);
-            if (t instanceof Struct && (isAtom || t.isList())) {
+            final boolean isAtom = TermApi.isAtom(t);
+            if (t instanceof Struct && (isAtom || TermApi.isList(t))) {
                 if (isAtom) {
                     builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct) t).getName()));
-                } else if (t.isList()) {
+                } else if (TermApi.isList(t)) {
                     addConjunctionList(builder, table, i, ((Struct) t).javaListFromPList(new ArrayList<Struct>(), Struct.class));
                 }
             }
@@ -124,7 +128,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
             builder.generateSelect();
             rows = new SqlRunner(getDataSource()).query(builder.getSql(), builder.getParameters());
             for (final Object[] row : rows) {
-                final Term[] args = new Term[row.length];
+                final Object[] args = new Object[row.length];
                 for (int i = 0; i < row.length; i++) {
                     final Object object = row[i];
                     args[i] = getTermAdapter().term(object, FactoryMode.ANY_TERM);

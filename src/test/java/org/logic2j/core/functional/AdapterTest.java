@@ -17,8 +17,11 @@
  */
 package org.logic2j.core.functional;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Button;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,6 +30,7 @@ import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 
 /**
  * Test how Java objects can invoke and be returned from logic2j's {@link Prolog} and {@link Solver}.
@@ -67,5 +71,15 @@ public class AdapterTest extends PrologTestBase {
      */
     private Term invocation(String predicateName, Object... args) {
         return Struct.valueOf(predicateName, Arrays.asList(args));
+    }
+
+    @Test
+    public void plainDouble() throws Exception {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        //
+        MultipleSolutionsHolder solutions;
+        solutions = this.prolog.solve("dbl(X)").all();
+        List<Object> binding = solutions.binding("X");
+        assertEquals("[1.1, 1.2, 1.3]", binding.toString());
     }
 }

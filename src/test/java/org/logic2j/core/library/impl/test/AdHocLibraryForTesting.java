@@ -20,9 +20,6 @@ package org.logic2j.core.library.impl.test;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.symbol.TLong;
-import org.logic2j.core.api.model.symbol.TNumber;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -39,18 +36,17 @@ public class AdHocLibraryForTesting extends LibraryBase {
     }
 
     @Primitive
-    public Continuation int_range(SolutionListener theListener, Bindings theBindings, Term theLowerBound, Term theIterable, Term theUpperBound) {
-        final Bindings b1 = theBindings.focus(theLowerBound, TNumber.class);
-        assertValidBindings(b1, "int_range/3");
-        final long lower = ((TNumber) b1.getReferrer()).longValue();
+    public Continuation int_range(SolutionListener theListener, Bindings theBindings, Object theLowerBound, Object theIterable, Object theUpperBound) {
+        final Bindings b1 = theBindings.focus(theLowerBound, Object.class);
+        ensureBindingIsNotAFreeVar(b1, "int_range/3");
+        final long lower = ((Number) b1.getReferrer()).longValue();
 
-        final Bindings b2 = theBindings.focus(theUpperBound, TNumber.class);
-        assertValidBindings(b2, "int_range/3");
-        final long upper = ((TNumber) b2.getReferrer()).longValue();
+        final Bindings b2 = theBindings.focus(theUpperBound, Object.class);
+        ensureBindingIsNotAFreeVar(b2, "int_range/3");
+        final long upper = ((Number) b2.getReferrer()).longValue();
 
         for (long iter = lower; iter <= upper; iter++) {
-            final TLong iterTerm = new TLong(iter);
-            final boolean unified = unify(theIterable, theBindings, iterTerm, theBindings);
+            final boolean unified = unify(theIterable, theBindings, Long.valueOf(iter), theBindings);
             notifyIfUnified(unified, theListener);
         }
         return Continuation.CONTINUE;

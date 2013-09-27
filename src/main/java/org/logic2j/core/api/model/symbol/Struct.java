@@ -50,8 +50,6 @@ public final class Struct extends Term {
      */
     private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
-    private static final TermApi TERM_API = new TermApi();
-
     // TODO Move these constants to a common place?
     // TODO Replace all calls to intern() by some factory to initialize our
     // constants. But aren't all java literal strings already internalized?
@@ -91,7 +89,8 @@ public final class Struct extends Term {
 
     private String name; // Always "internalized" with String.intern(), you can compare with == !
     private int arity;
-    private Term[] args;
+    private Object[] args;
+    private String signature;
 
     // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
     private PrimitiveInfo primitiveInfo;
@@ -106,18 +105,40 @@ public final class Struct extends Term {
         setNameAndArity(theFunctor, theArity);
         // When arity is zero, don't even bother to allocate arguments!
         if (this.arity > 0) {
-            this.args = new Term[this.arity];
+            this.args = new Object[this.arity];
         }
     }
 
-    public Struct(String theFunctor, Term... argList) throws InvalidTermException {
+    public Struct(String theFunctor, Object... argList) throws InvalidTermException {
         this(theFunctor, argList.length);
         int i = 0;
-        for (final Term element : argList) {
+        for (final Object element : argList) {
             if (element == null) {
                 throw new InvalidTermException("Cannot create Term from with null argument");
             }
             this.args[i++] = element;
+        }
+    }
+
+    /**
+     * Copy constructor.
+     * 
+     * @return
+     */
+    public Struct(Struct toClone) {
+        this.name = toClone.name;
+        this.arity = toClone.arity;
+        this.signature = toClone.signature;
+        this.primitiveInfo = toClone.primitiveInfo;
+        if (this.arity > 0) {
+            this.args = new Object[this.arity];
+            for (int i = 0; i < this.arity; i++) {
+                Object cloned = toClone.args[i];
+                if (cloned instanceof Struct) {
+                    cloned = new Struct((Struct) cloned);
+                }
+                this.args[i] = cloned;
+            }
         }
     }
 
@@ -129,13 +150,10 @@ public final class Struct extends Term {
      *       are not of the type needed by this class, but need transformation.
      */
     public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
-        if (argList.length == 0) {
-            return atom(theFunctor);
-        }
         final Struct newInstance = new Struct(theFunctor, argList.length);
         int i = 0;
         for (final Object element : argList) {
-            newInstance.args[i++] = TERM_API.valueOf(element, FactoryMode.ANY_TERM);
+            newInstance.args[i++] = TermApi.valueOf(element, FactoryMode.ANY_TERM);
         }
         return newInstance;
     }
@@ -146,9 +164,12 @@ public final class Struct extends Term {
      * @param theFunctor
      * @return Either a new one created or an existing one
      */
-    public static Struct atom(String theFunctor) {
+    public static Object atom(String theFunctor) {
         // Search in the catalog of atoms for exact match
         final String functor = theFunctor.intern();
+        if (!(functor == Struct.FUNCTOR_CUT || functor == Struct.FUNCTOR_TRUE || functor == Struct.FUNCTOR_FALSE)) {
+            return functor;
+        }
         final Struct found = ATOM_CATALOG.get(functor);
         if (found != null) {
             return found;
@@ -166,7 +187,7 @@ public final class Struct extends Term {
      * @param tail
      * @return A prolog list provided head and tail
      */
-    public static Struct createPList(Term head, Term tail) {
+    public static Struct createPList(Object head, Object tail) {
         final Struct result = new Struct(FUNCTOR_LIST, 2);
         result.args[0] = head;
         result.args[1] = tail;
@@ -178,7 +199,7 @@ public final class Struct extends Term {
      * 
      * @param theJavaList
      */
-    public static Struct createPList(List<Term> theJavaList) {
+    public static Struct createPList(List<Object> theJavaList) {
         final int size = theJavaList.size();
         Struct pList = Struct.EMPTY_LIST;
         for (int i = size - 1; i >= 0; i--) {
@@ -202,6 +223,7 @@ public final class Struct extends Term {
         }
         this.name = theFunctor.intern();
         this.arity = theArity;
+        this.signature = this.name + '/' + this.arity;
     }
 
     /**
@@ -223,15 +245,24 @@ public final class Struct extends Term {
      * 
      * No bound check is done
      */
-    public Term getArg(int theIndex) {
+    public Object getArg(int theIndex) {
         return this.args[theIndex];
+    }
+
+    /**
+     * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
+     * 
+     * @return The predicate's name + '/' + arity
+     */
+    public String getPredicateSignature() {
+        return this.signature;
     }
 
     /**
      * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0. It is assumed that the term MUST have an arity of 2, because
      *         when there's a LHS, there's also a RHS!
      */
-    public Term getLHS() {
+    public Object getLHS() {
         if (this.arity != 2) {
             throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
         }
@@ -241,20 +272,11 @@ public final class Struct extends Term {
     /**
      * @return Right-hand-side term, this is, {@link #getArg(int)} at index 1. It is assumed that the term MUST have an arity of 2
      */
-    public Term getRHS() {
+    public Object getRHS() {
         if (this.arity != 2) {
             throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
         }
         return this.args[1];
-    }
-
-    /**
-     * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
-     * 
-     * @return The predicate's name + '/' + arity
-     */
-    public String getPredicateSignature() {
-        return this.name + '/' + this.arity;
     }
 
     public String getVarargsPredicateSignature() {
@@ -286,7 +308,7 @@ public final class Struct extends Term {
             this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
         }
         for (int i = 0; i < this.arity; i++) {
-            final Term child = this.args[i];
+            final Object child = this.args[i];
             if (child instanceof Struct) {
                 ((Struct) child).assignPrimitiveInfo(theContent);
             }
@@ -300,7 +322,7 @@ public final class Struct extends Term {
             }
         }
         visited.add(this);
-        for (final Term term : this.args) {
+        for (final Object term : this.args) {
             if (term instanceof Struct) {
                 ((Struct) term).avoidCycle(visited);
             }
@@ -312,45 +334,21 @@ public final class Struct extends Term {
     // ---------------------------------------------------------------------------
 
     /**
-     * Gets a copy of this structure
-     */
-    @SuppressWarnings("unchecked")
-    // TODO LT: also unclear here why we get a warning
-    @Override
-    public Struct cloneIt() {
-        Struct t;
-        try {
-            t = (Struct) this.clone();
-        } catch (final CloneNotSupportedException e) {
-            throw new InvalidTermException("Could not clone: " + e, e);
-        }
-        t.setNameAndArity(this.name, this.arity);
-        t.args = new Term[this.arity];
-        t.primitiveInfo = this.primitiveInfo;
-        for (int i = 0; i < this.arity; i++) {
-            t.args[i] = this.args[i].cloneIt();
-        }
-        return t;
-    }
-
-    /**
      * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to
      * theCollectedTerms. The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
      * 
      * @param theCollectedTerms
      */
-    @Override
-    protected void collectTermsInto(Collection<Term> theCollectedTerms) {
+    void collectTermsInto(Collection<Object> theCollectedTerms) {
         this.index = NO_INDEX;
         for (int i = 0; i < this.arity; i++) {
-            final Term child = this.args[i];
-            child.collectTermsInto(theCollectedTerms);
+            final Object child = this.args[i];
+            TermApi.collectTermsInto(child, theCollectedTerms);
         }
         theCollectedTerms.add(this);
     }
 
-    @Override
-    protected Term factorize(Collection<Term> theCollectedTerms) {
+    Object factorize(Collection<Object> theCollectedTerms) {
         if (this.arity == 0) {
             // This is an atom - find if we already have it in our catalog
             final Struct found = ATOM_CATALOG.get(this.name);
@@ -361,33 +359,32 @@ public final class Struct extends Term {
             ATOM_CATALOG.put(this.name, this);
         }
         // Recursively factorize all arguments of this Struct
-        final Term[] newArgs = new Term[this.arity];
+        final Object[] newArgs = new Object[this.arity];
         boolean anyChange = false;
         for (int i = 0; i < this.arity; i++) {
-            newArgs[i] = this.args[i].factorize(theCollectedTerms);
+            newArgs[i] = TermApi.factorize(this.args[i], theCollectedTerms);
             anyChange |= (newArgs[i] != this.args[i]);
         }
         // Now initialize result - a new Struct only if any change was found below
         final Struct factorized;
         if (anyChange) {
-            factorized = this.cloneIt();
+            factorized = new Struct(this);
             factorized.args = newArgs;
         } else {
             factorized = this;
         }
         // If this Struct already has an equivalent in the provided collection, return that one
-        final Term betterEquivalent = factorized.findStructurallyEqualWithin(theCollectedTerms);
+        final Object betterEquivalent = factorized.findStructurallyEqualWithin(theCollectedTerms);
         if (betterEquivalent != null) {
             return betterEquivalent;
         }
         return factorized;
     }
 
-    @Override
-    public Var findVar(String theVariableName) {
+    Var findVar(String theVariableName) {
         for (int i = 0; i < this.arity; i++) {
-            final Term term = this.args[i];
-            final Var found = term.findVar(theVariableName);
+            final Object term = this.args[i];
+            final Var found = TermApi.findVar(term, theVariableName);
             if (found != null) {
                 return found;
             }
@@ -398,13 +395,12 @@ public final class Struct extends Term {
     /**
      * If any argument appears to have been cloned, then the complete structure will be cloned.
      */
-    @Override
-    protected Term substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
-        final Term[] substArgs = new Term[this.arity]; // All arguments after
-                                                       // substitution
+    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+        final Object[] substArgs = new Object[this.arity]; // All arguments after
+        // substitution
         boolean anyChange = false;
         for (int i = 0; i < this.arity; i++) {
-            substArgs[i] = this.args[i].substitute(theBindings, theBindingsToVars);
+            substArgs[i] = TermApi.substitute(this.args[i], theBindings, theBindingsToVars);
             anyChange |= (substArgs[i] != this.args[i]);
         }
         final Struct substituted;
@@ -422,8 +418,7 @@ public final class Struct extends Term {
      * @param theOther
      * @return true when references are the same, or when theOther Struct has same predicate name, arity, and all arguments are also equal.
      */
-    @Override
-    public boolean structurallyEquals(Term theOther) {
+    boolean structurallyEquals(Object theOther) {
         if (theOther == this) {
             return true; // Same reference
         }
@@ -434,7 +429,7 @@ public final class Struct extends Term {
         // Arity and names must match.
         if (this.arity == that.arity && this.name == that.name) { // Names are {@link String#intern()}alized so OK to check by reference
             for (int i = 0; i < this.arity; i++) {
-                if (!this.args[i].structurallyEquals(that.args[i])) {
+                if (!TermApi.structurallyEquals(this.args[i], that.args[i])) {
                     return false;
                 }
             }
@@ -447,8 +442,7 @@ public final class Struct extends Term {
      * For {@link Struct}s, the {@link Term#index} will be the maximal index of any variables that can be found, recursively, under all
      * arguments.
      */
-    @Override
-    protected short assignIndexes(short theIndexOfNextNonIndexedVar) {
+    short assignIndexes(short theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
             // Already assigned, do nothing and return same index since we did
             // not assigned a new var
@@ -457,7 +451,7 @@ public final class Struct extends Term {
         // Recursive assignment
         short runningCounter = theIndexOfNextNonIndexedVar;
         for (int i = 0; i < this.arity; i++) {
-            runningCounter = this.args[i].assignIndexes(runningCounter);
+            runningCounter = TermApi.assignIndexes(this.args[i], runningCounter);
         }
         this.index = runningCounter;
         return runningCounter;
@@ -474,13 +468,12 @@ public final class Struct extends Term {
         return this.name.equals(FUNCTOR_LIST_EMPTY) && this.arity == 0;
     }
 
-    @Override
-    public boolean isList() {
-        return (this.name.equals(FUNCTOR_LIST) && this.arity == 2 && this.args[1].isList()) || isEmptyList();
+    boolean isList() {
+        return (this.name.equals(FUNCTOR_LIST) && this.arity == 2 && TermApi.isList(this.args[1])) || isEmptyList();
     }
 
     protected void assertPList(Term thePList) {
-        if (!thePList.isList()) {
+        if (!TermApi.isList(thePList)) {
             throw new PrologNonSpecificError("The structure \"" + thePList + "\" is not a Prolog list.");
         }
     }
@@ -493,7 +486,7 @@ public final class Struct extends Term {
      * <code>UnsupportedOperationException</code>
      * </p>
      */
-    public Term listHead() {
+    public Object listHead() {
         assertPList(this);
         return getLHS();
     }
@@ -539,12 +532,12 @@ public final class Struct extends Term {
     // TODO (issue) Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
     public Struct predicateFromPList() {
         assertPList(this);
-        final Term functor = getLHS();
-        if (!TERM_API.isAtom(functor)) {
+        final Object functor = getLHS();
+        if (!TermApi.isAtom(functor)) {
             return null;
         }
         Struct runningElement = (Struct) getRHS();
-        final ArrayList<Term> elements = new ArrayList<Term>();
+        final ArrayList<Object> elements = new ArrayList<Object>();
         while (!runningElement.isEmptyList()) {
             if (!runningElement.isList()) {
                 return null;
@@ -552,7 +545,14 @@ public final class Struct extends Term {
             elements.add(runningElement.getLHS());
             runningElement = (Struct) runningElement.getRHS();
         }
-        return new Struct(((Struct) functor).name, elements.toArray(new Term[0]));
+        final String fnct;
+        if (functor instanceof String) {
+            fnct = (String) functor;
+        } else {
+            fnct = ((Struct) functor).name;
+        }
+
+        return new Struct(fnct, (Object[]) elements.toArray(new Object[elements.size()]));
     }
 
     @SuppressWarnings("unchecked")
@@ -592,10 +592,10 @@ public final class Struct extends Term {
         assertPList(this);
         if (isEmptyList()) {
             setNameAndArity(FUNCTOR_LIST, 2);
-            this.args = new Term[this.arity];
+            this.args = new Object[this.arity];
             this.args[0] = t;
             this.args[1] = Struct.EMPTY_LIST;
-        } else if (this.args[1].isList()) {
+        } else if (TermApi.isList(this.args[1])) {
             ((Struct) this.args[1]).append(t);
         } else {
             this.args[1] = t;
@@ -614,8 +614,7 @@ public final class Struct extends Term {
         this.args[1] = co;
     }
 
-    @Override
-    public <T> T accept(TermVisitor<T> theVisitor) {
+    <T> T accept(TermVisitor<T> theVisitor) {
         return theVisitor.visit(this);
     }
 

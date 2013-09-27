@@ -45,6 +45,6 @@ public interface ClauseProvider {
      *         it is not critical to return {@link Clause}s whose head would eventually not be used by the
      *         {@link org.org.logic2j.core.api.Solver}.
      */
-    Iterable<Clause> listMatchingClauses(Struct theGoal, Bindings theGoalBindings);
+    Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings);
 
 }

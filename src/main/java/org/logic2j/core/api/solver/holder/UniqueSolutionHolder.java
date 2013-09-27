@@ -44,7 +44,7 @@ public class UniqueSolutionHolder {
      * @return The value of var theVariableName
      * @see Solution#getBinding(String)
      */
-    public Term binding(String theVariableName) {
+    public Object binding(String theVariableName) {
         return this.solution.getBinding(theVariableName);
     }
 
@@ -53,21 +53,21 @@ public class UniqueSolutionHolder {
      * @param theTargetClass
      */
     public <T> T binding(String theVariableName, Class<T> theTargetClass) {
-        final Term t = binding(theVariableName);
+        final Object t = binding(theVariableName);
         return ReflectUtils.safeCastNotNull("extracting binding for variable " + theVariableName, t, theTargetClass);
     }
 
     /**
      * @return All bindings.
      */
-    public Map<String, Term> bindings() {
+    public Map<String, Object> bindings() {
         return this.solution.getBindings();
     }
 
     /**
      * @return The solution as a {@link Term}.
      */
-    public Term solution() {
+    public Object solution() {
         return this.solution.getSolution();
     }
 

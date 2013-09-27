@@ -29,7 +29,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void reproduce_error() {
-        // Nothing at the moment
+        assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
     }
 
     @Test

@@ -48,7 +48,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-        // Empty
+        //
     }
 
     /**
@@ -109,8 +109,8 @@ public class HigherLevelTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("queens.pl");
 
         assertNSolutions(352, "queens(9, _)");
-        assertNSolutions(724, "queens(10, _)"); // tuProlog needs 28s on my machine
-        assertNSolutions(2680, "queens(11, _)");
+        assertNSolutions(724, "queens(10, _)"); // tuProlog (GUI) needs 28s on my machine
+        assertNSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
     }
 
     @Ignore("Takes a lot of time - used to study multicore use of 2-thread solving")

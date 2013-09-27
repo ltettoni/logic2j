@@ -32,7 +32,6 @@ import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
@@ -73,7 +72,8 @@ public abstract class PrologTestBase {
     public void setUp() {
         this.prolog = new PrologReferenceImplementation(initLevel());
         // Here we should NOT NEED to reset the BindingTrail stack - however in certain cases it's useful just to enable this
-        // BindingTrailTestUtils.reset();
+        BindingTrailTestUtils.reset();
+        // Struct.ATOM_CATALOG.clear(); // While debugging - we may clear cache - requires public access
     }
 
     @After
@@ -161,7 +161,7 @@ public abstract class PrologTestBase {
      * @param theObject
      * @return A single Term, corresponding to theObject.
      */
-    protected Term term(Object theObject) {
+    protected Object term(Object theObject) {
         return this.prolog.getTermAdapter().term(theObject, FactoryMode.ANY_TERM);
     }
 
@@ -171,7 +171,7 @@ public abstract class PrologTestBase {
      * @param theText
      * @return A single Term, corresponding to theObject.
      */
-    protected Term term(CharSequence theText) {
+    protected Object term(CharSequence theText) {
         return this.prolog.getTermExchanger().unmarshall(theText);
     }
 
@@ -181,8 +181,8 @@ public abstract class PrologTestBase {
      * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.
      */
-    protected List<Term> termList(CharSequence... elements) {
-        final List<Term> result = new ArrayList<Term>(elements.length);
+    protected List<Object> termList(CharSequence... elements) {
+        final List<Object> result = new ArrayList<Object>(elements.length);
         for (final CharSequence element : elements) {
             result.add(term(element));
         }

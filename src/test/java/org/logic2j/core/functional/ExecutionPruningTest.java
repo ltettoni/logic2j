@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.impl.PrologImplementation;
@@ -35,8 +34,9 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
-    public void justForDebugging() {
-        // Empty use just for debugging one particular case
+    public void placeholder() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        assertNSolutions(4, "cut4");
     }
 
     @Test
@@ -234,7 +234,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     @Test
     public void userCancel() {
         final PrologImplementation prolog = new PrologReferenceImplementation();
-        final Term term = this.prolog.getTermExchanger().unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
+        final Object term = this.prolog.getTermExchanger().unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
         prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);

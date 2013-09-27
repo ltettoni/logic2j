@@ -35,11 +35,11 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         theoryManager.addClauseProvider(td);
         final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "smallData(E,A,V)");
         assertEquals(
-                "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
+                "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]",
                 sixSolutions.bindings().toString());
-        assertEquals("['CHE', 'CHE', 'FRA', 'FRA', 'DEU', 'DEU']", sixSolutions.binding("E").toString());
+        assertEquals("[CHE, CHE, FRA, FRA, DEU, DEU]", sixSolutions.binding("E").toString());
         assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.binding("A").toString());
-        assertEquals("['Switzerland', 7.8, 'France', 65.0, 'Germany', 85.4]", sixSolutions.binding("V").toString());
+        assertEquals("[Switzerland, 7.8, France, 65.0, Germany, 85.4]", sixSolutions.binding("V").toString());
     }
 
     @Test
@@ -49,11 +49,11 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         theoryManager.addClauseProvider(td);
         final MultipleSolutionsHolder sixSolutions = assertNSolutions(6, "eavt(E,A,V,smallData)");
         assertEquals(
-                "[{A=countryName, E='CHE', V='Switzerland'}, {A=population, E='CHE', V=7.8}, {A=countryName, E='FRA', V='France'}, {A=population, E='FRA', V=65.0}, {A=countryName, E='DEU', V='Germany'}, {A=population, E='DEU', V=85.4}]",
+                "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]",
                 sixSolutions.bindings().toString());
-        assertEquals("['CHE', 'CHE', 'FRA', 'FRA', 'DEU', 'DEU']", sixSolutions.binding("E").toString());
+        assertEquals("[CHE, CHE, FRA, FRA, DEU, DEU]", sixSolutions.binding("E").toString());
         assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.binding("A").toString());
-        assertEquals("['Switzerland', 7.8, 'France', 65.0, 'Germany', 85.4]", sixSolutions.binding("V").toString());
+        assertEquals("[Switzerland, 7.8, France, 65.0, Germany, 85.4]", sixSolutions.binding("V").toString());
     }
 
     @Test
@@ -62,9 +62,9 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         final MultipleSolutionsHolder sixSolutions = assertNSolutions(3, "smallData(Country,Code,Pop)");
-        assertEquals("[{Code='CHE', Country='Switzerland', Pop=7.8}, {Code='FRA', Country='France', Pop=65.0}, {Code='DEU', Country='Germany', Pop=85.4}]", sixSolutions.bindings().toString());
-        assertEquals("['Switzerland', 'France', 'Germany']", sixSolutions.binding("Country").toString());
-        assertEquals("['CHE', 'FRA', 'DEU']", sixSolutions.binding("Code").toString());
+        assertEquals("[{Code=CHE, Country=Switzerland, Pop=7.8}, {Code=FRA, Country=France, Pop=65.0}, {Code=DEU, Country=Germany, Pop=85.4}]", sixSolutions.bindings().toString());
+        assertEquals("[Switzerland, France, Germany]", sixSolutions.binding("Country").toString());
+        assertEquals("[CHE, FRA, DEU]", sixSolutions.binding("Code").toString());
         assertEquals("[7.8, 65.0, 85.4]", sixSolutions.binding("Pop").toString());
     }
 

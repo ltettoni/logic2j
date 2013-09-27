@@ -27,7 +27,6 @@ import org.logic2j.core.api.model.var.Binding;
  * TODO Explain the data structure used.
  */
 public final class BindingTrail {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BindingTrail.class);
 
     /**
      * The number of elements in the {@link BindingTrail} to allocate at one time.

@@ -26,7 +26,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
@@ -73,8 +73,8 @@ public class MultipleSolutionsHolder {
      * 
      * @param theVariableName
      */
-    public List<Term> binding(final String theVariableName) {
-        final List<Term> results = new ArrayList<Term>();
+    public List<Object> binding(final String theVariableName) {
+        final List<Object> results = new ArrayList<Object>();
 
         final Bindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
@@ -82,12 +82,12 @@ public class MultipleSolutionsHolder {
             @Override
             public Continuation onSolution() {
                 final Bindings bnd = originalBindings;
-                final Term term = bnd.getReferrer();
-                final Var var = term.findVar(theVariableName);
+                final Object term = bnd.getReferrer();
+                final Var var = TermApi.findVar(term, theVariableName);
                 if (var == null) {
                     throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
                 }
-                final Term substituted = SolutionHolder.TERM_API.substitute(var, bnd, null);
+                final Object substituted = TermApi.substitute(var, bnd, null);
                 results.add(substituted);
                 return super.onSolution();
             }
@@ -104,8 +104,8 @@ public class MultipleSolutionsHolder {
      * 
      * @result An ordered list of bindings
      */
-    public List<Map<String, Term>> bindings() {
-        final List<Map<String, Term>> results = new ArrayList<Map<String, Term>>();
+    public List<Map<String, Object>> bindings() {
+        final List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
         final Bindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
 

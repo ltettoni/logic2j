@@ -40,6 +40,9 @@ ac(4,fourteen).
 ac(5,15).
 ac(6,sixteen).
 
+dbl(1.1).
+dbl(1.2).
+dbl(1.3).
 
 % -----------------------------
 % More testing of cut behaviour
@@ -59,7 +62,7 @@ cut2(3).
 % Cut after 4
 cut4 :- a(_).       % 3 solutions
 cut4 :- b(_), !.    % Plus one
-cut4.
+cut4.               % And one
 
 cut4b:-cut2(_).cut4b:-cut2(_).
 

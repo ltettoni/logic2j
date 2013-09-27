@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.impl.io.operator.Operator;
 
@@ -53,15 +52,14 @@ public class ParsingAndFormattingTest extends PrologTestBase {
 
     @Test
     public void formatting() {
-        Term t;
+        Object t;
         //
         t = this.prolog.getTermExchanger().unmarshall("'An atom'");
-        logger.info("Formatted: {}", t);
-        assertEquals("Uppercase atom must be quoted", "'An atom'", t.toString());
+        assertEquals(String.class, t.getClass());
         //
-        t = this.prolog.getTermExchanger().unmarshall("t('A')");
+        t = this.prolog.getTermExchanger().unmarshall("t('A', b, 'C')");
         logger.info("Formatted: {}", t);
-        assertEquals("t('A')", t.toString());
+        assertEquals("t('A', b, 'C')", t.toString());
     }
 
 }

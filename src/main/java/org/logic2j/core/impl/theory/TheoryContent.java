@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TermApi;
 
 /**
  * Storage of the content of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.
@@ -77,8 +77,8 @@ public class TheoryContent {
      * @param theGoalTerm
      * @return An iterable for a foreach() loop.
      */
-    public Iterable<Clause> find(Struct theGoalTerm) {
-        final String key = theGoalTerm.getPredicateSignature();
+    public Iterable<Clause> find(Object theGoalTerm) {
+        final String key = TermApi.getPredicateSignature(theGoalTerm);
         final List<Clause> list = this.content.get(key);
         if (list == null) {
             // Predicate not registered in this theory content, return empty, it's not a failure condition

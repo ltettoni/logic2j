@@ -41,7 +41,11 @@ public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
 
     private final PrologImplementation prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
-    private static final TermApi TERM_API = new TermApi();
+
+    @Test
+    public void placeholder() throws Exception {
+        //
+    }
 
     @Test
     public void structurallyEquals() {
@@ -52,12 +56,12 @@ public class TermApiTest {
         // ... even when they have the same name
         assertFalse(x1.structurallyEquals(x2));
         final Struct s = new Struct("s", x1, x2);
-        assertFalse(s.getArg(0).structurallyEquals(s.getArg(1)));
+        assertFalse(TermApi.structurallyEquals(s.getArg(0), s.getArg(1)));
         // After factorization, the 2 X will be same
-        final Struct s2 = (Struct) TERM_API.factorize(s);
+        final Struct s2 = (Struct) TermApi.factorize(s);
         assertNotSame(s, s2);
         assertFalse(s.structurallyEquals(s2));
-        assertTrue(s2.getArg(0).structurallyEquals(s2.getArg(1)));
+        assertTrue(TermApi.structurallyEquals(s2.getArg(0), s2.getArg(1)));
     }
 
     // TODO (issue) Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
@@ -75,33 +79,36 @@ public class TermApiTest {
         Term term;
         //
         term = Struct.valueOf("p", "X", 2);
-        logger.info("Flat terms: {}", TERM_API.collectTerms(term));
+        logger.info("Flat terms: {}", TermApi.collectTerms(term));
         //
         term = Struct.valueOf("a", new Struct("b"), "c");
-        logger.info("Flat terms: {}", TERM_API.collectTerms(term));
+        logger.info("Flat terms: {}", TermApi.collectTerms(term));
         //
         term = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", Struct.valueOf("p", "X", "Y")), Struct.valueOf("p", "X", "Y"));
-        logger.info("Flat terms: {}", TERM_API.collectTerms(term));
+        logger.info("Flat terms: {}", TermApi.collectTerms(term));
         //
         final Term clause = new Struct(Struct.FUNCTOR_CLAUSE, new Struct("a", Struct.valueOf("p", "X", "Y")), Struct.valueOf("p", "X", "Y"));
-        logger.info("Flat terms of original {}", TERM_API.collectTerms(clause));
-        final Term t2 = TERM_API.normalize(clause, null);
-        logger.info("Found {} bindings", t2.getIndex());
-        assertEquals(2, t2.getIndex());
-        logger.info("Flat terms of copy     {}", TERM_API.collectTerms(t2));
+        logger.info("Flat terms of original {}", TermApi.collectTerms(clause));
+        final Object t2 = TermApi.normalize(clause, null);
+        logger.info("Found {} bindings", ((Struct) t2).getIndex());
+        assertEquals(2, ((Struct) t2).getIndex());
+        logger.info("Flat terms of copy     {}", TermApi.collectTerms(t2));
         assertEquals(clause.toString(), t2.toString());
     }
 
     @Test
     public void assignIndexes() {
         int nbVars;
-        nbVars = TERM_API.assignIndexes(new TLong(2));
+        nbVars = TermApi.assignIndexes(new Struct("f"));
         assertEquals(0, nbVars);
-        nbVars = TERM_API.assignIndexes(new Struct("f"));
-        assertEquals(0, nbVars);
-        nbVars = TERM_API.assignIndexes(new Var("X"));
+        nbVars = TermApi.assignIndexes(new Var("X"));
         assertEquals(1, nbVars);
-        nbVars = TERM_API.assignIndexes(new Var("_"));
+        nbVars = TermApi.assignIndexes(new Var("_"));
+        assertEquals(0, nbVars);
+        //
+        nbVars = TermApi.assignIndexes(Long.valueOf(2));
+        assertEquals(0, nbVars);
+        nbVars = TermApi.assignIndexes(Double.valueOf(1.1));
         assertEquals(0, nbVars);
     }
 
@@ -110,21 +117,21 @@ public class TermApiTest {
     public void substitute() {
         try {
             final Term v = Var.ANONYMOUS_VAR;
-            TERM_API.substitute(v, new Bindings(v), null);
+            TermApi.substitute(v, new Bindings(v), null);
             fail();
         } catch (final InvalidTermException e) {
             // Expected to happen
         }
 
-        final Term a = this.prolog.getTermExchanger().unmarshall("a");
+        final Object a = this.prolog.getTermExchanger().unmarshall("a");
         // Empty binding yields same term since no bindings to resolve
-        assertSame(a, TERM_API.substitute(a, new Bindings(a), null));
+        assertSame(a, TermApi.substitute(a, new Bindings(a), null));
 
         // Bindings without
-        TERM_API.substitute(a, new Bindings(a), null);
+        TermApi.substitute(a, new Bindings(a), null);
 
-        final Term x = this.prolog.getTermExchanger().unmarshall("X");
-        TERM_API.substitute(x, new Bindings(x), null);
+        final Object x = this.prolog.getTermExchanger().unmarshall("X");
+        TermApi.substitute(x, new Bindings(x), null);
     }
 
     @SuppressWarnings("deprecation")
@@ -142,49 +149,49 @@ public class TermApiTest {
 
     @Test
     public void selectTerm() {
-        final Term term = this.prolog.getTermExchanger().unmarshall("a(b(c,c2),b2)");
+        final Object term = this.prolog.getTermExchanger().unmarshall("a(b(c,c2),b2)");
         //
-        assertSame(term, TERM_API.selectTerm(term, "", Struct.class));
-        assertSame(term, TERM_API.selectTerm(term, "a", Struct.class));
+        assertSame(term, TermApi.selectTerm(term, "", Struct.class));
+        assertSame(term, TermApi.selectTerm(term, "a", Struct.class));
         try {
-            TERM_API.selectTerm(term, "a[-1]", Struct.class);
+            TermApi.selectTerm(term, "a[-1]", Struct.class);
             fail("Should fail");
         } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
-            TERM_API.selectTerm(term, "a[0]", Struct.class);
+            TermApi.selectTerm(term, "a[0]", Struct.class);
             fail("Should fail");
         } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
-            TERM_API.selectTerm(term, "a[4]", Struct.class);
+            TermApi.selectTerm(term, "a[4]", Struct.class);
             fail("Should fail");
         } catch (final InvalidTermException e) {
             // OK
         }
         //
         try {
-            TERM_API.selectTerm(term, "z", Struct.class);
+            TermApi.selectTerm(term, "z", Struct.class);
             fail("Should fail");
         } catch (final InvalidTermException e) {
             // OK
         }
         //
         final Struct sTerm = (Struct) term;
-        assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a/", Struct.class));
-        assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a[1]", Struct.class));
-        assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "[1]", Struct.class));
-        assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a/b", Struct.class));
-        assertSame(sTerm.getArg(0), TERM_API.selectTerm(term, "a[1]/b", Struct.class));
-        assertEquals(new Struct("b2"), TERM_API.selectTerm(term, "a[2]", Struct.class));
-        assertEquals(new Struct("b2"), TERM_API.selectTerm(term, "a[2]/b2", Struct.class));
-        assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b/c", Struct.class));
-        assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/b[1]", Struct.class));
-        assertSame(((Struct) sTerm.getArg(0)).getArg(0), TERM_API.selectTerm(term, "a/[1]", Struct.class));
-        assertEquals(new Struct("c2"), TERM_API.selectTerm(term, "a/b[2]", Struct.class));
+        assertSame(sTerm.getArg(0), TermApi.selectTerm(term, "a/", Struct.class));
+        assertSame(sTerm.getArg(0), TermApi.selectTerm(term, "a[1]", Struct.class));
+        assertSame(sTerm.getArg(0), TermApi.selectTerm(term, "[1]", Struct.class));
+        assertSame(sTerm.getArg(0), TermApi.selectTerm(term, "a/b", Struct.class));
+        assertSame(sTerm.getArg(0), TermApi.selectTerm(term, "a[1]/b", Struct.class));
+        assertSame("b2", TermApi.selectTerm(term, "a[2]", String.class));
+        assertSame("b2", TermApi.selectTerm(term, "a[2]/b2", String.class));
+        assertSame("c", TermApi.selectTerm(term, "a/b/c", String.class));
+        assertSame("c", TermApi.selectTerm(term, "a/b[1]", String.class));
+        assertSame("c", TermApi.selectTerm(term, "a/[1]", String.class));
+        assertSame("c2", TermApi.selectTerm(term, "a/b[2]", String.class));
     }
 }

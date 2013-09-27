@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.impl.DefaultTermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -45,7 +44,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
      * codebase
      */
     @Override
-    public List<Term> terms(Object theObject, AssertionMode theAssertionMode) {
+    public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {
         if (!(theObject instanceof TabularData)) {
             return super.terms(theObject, theAssertionMode);
         }
@@ -54,7 +53,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
         final String dataSetName = tabularData.getDataSetName();
         final int nbRows = tabularData.getNbRows();
         final int nbColumns = tabularData.getNbColumns();
-        final List<Term> result = new ArrayList<Term>();
+        final List<Object> result = new ArrayList<Object>();
         for (int r = 0; r < nbRows; r++) {
             try {
                 final Serializable[] row = tabularData.getData()[r];
@@ -68,7 +67,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
                         if (c != tabularData.getPrimaryKeyColumn()) {
                             final String property = tabularData.getColumnNames()[c];
                             final Serializable value = row[c];
-                            final Term term = termAdapter.term(dataSetName, FactoryMode.ATOM, identifier, property, value);
+                            final Object term = termAdapter.term(dataSetName, FactoryMode.ATOM, identifier, property, value);
                             result.add(term);
                         }
                     }
@@ -83,14 +82,14 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
                         if (c != tabularData.getPrimaryKeyColumn()) {
                             final String property = tabularData.getColumnNames()[c];
                             final Serializable value = row[c];
-                            final Term term = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
+                            final Object term = termAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
                             result.add(term);
                         }
                     }
                     break;
                 }
                 case RECORD: {
-                    final Term term = termAdapter.term(dataSetName, FactoryMode.ATOM, (Object[]) row);
+                    final Object term = termAdapter.term(dataSetName, FactoryMode.ATOM, (Object[]) row);
                     result.add(term);
                     break;
                 }

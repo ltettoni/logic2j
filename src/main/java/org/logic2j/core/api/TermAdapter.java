@@ -21,7 +21,6 @@ package org.logic2j.core.api;
 import java.util.List;
 
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.TNumber;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
 
@@ -38,7 +37,7 @@ public interface TermAdapter {
         ATOM,
 
         /**
-         * Result will be either an atom (a {@link Struct} of 0-arity), a numeric ({@link TNumber}), but not a {@link Var}iable neither a
+         * Result will be either an atom (a {@link Struct} of 0-arity), an object, but not a {@link Var}iable neither a
          * compound {@link Struct}.
          */
         LITERAL,
@@ -84,7 +83,7 @@ public interface TermAdapter {
      * @param theMode
      * @return A factorized and normalized {@link Term}.
      */
-    Term term(Object theObject, FactoryMode theMode);
+    Object term(Object theObject, FactoryMode theMode);
 
     /**
      * Instantiate a Struct with arguments from virtually any class of {@link Object}; this is the highest-level factory
@@ -94,7 +93,7 @@ public interface TermAdapter {
      * @param theArguments
      * @return A factorized and normalized {@link Term}.
      */
-    Term term(String thePredicateName, FactoryMode theMode, Object... theArguments);
+    Object term(String thePredicateName, FactoryMode theMode, Object... theArguments);
 
     /**
      * Instantiate a list of Terms from one (possibly large) {@link Object}.
@@ -102,7 +101,7 @@ public interface TermAdapter {
      * @param theObject
      * @return
      */
-    List<Term> terms(Object theObject, AssertionMode theAssertionMode);
+    List<Object> terms(Object theObject, AssertionMode theAssertionMode);
 
     /**
      * Convert a Term into the desired target Class.

@@ -31,7 +31,6 @@ import org.logic2j.core.api.model.symbol.TermApi;
  */
 public final class DataFact {
 
-    private static final TermApi TERM_API = new TermApi();
     public Object[] elements;
 
     public DataFact(Object... arguments) {
@@ -42,7 +41,7 @@ public final class DataFact {
         this.elements[0] = ((String) arguments[0]).intern();
         // Internalize all strings
         for (int i = 1; i < arguments.length; i++) {
-            this.elements[i] = TERM_API.valueOf(arguments[i], TermAdapter.FactoryMode.ATOM);
+            this.elements[i] = TermApi.valueOf(arguments[i], TermAdapter.FactoryMode.ATOM);
         }
     }
 
