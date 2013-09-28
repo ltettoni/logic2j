@@ -96,15 +96,15 @@ public class BenchmarkTest extends PrologTestBase {
         // Numbers
         ProfilingInfo.setTimer1();
         int number = getProlog().solve(goal).number();
-        ProfilingInfo.reportCounters("Number of solutions to " + goal);
+        ProfilingInfo.reportAll("Number of solutions to " + goal);
 
         // Bindings
         ProfilingInfo.setTimer1();
         List<Map<String, Object>> bindings = getProlog().solve(goal).all().bindings();
-        ProfilingInfo.reportCounters("Bindings of solutions to " + goal);
+        ProfilingInfo.reportAll("Bindings of solutions to " + goal);
     }
 
-    @Ignore("Use this in conjuction with jvisualvm to profile")
+    // @Ignore("Use this in conjuction with jvisualvm to profile")
     @Test
     public void queensForJVisualVM() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");

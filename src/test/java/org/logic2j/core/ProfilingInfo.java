@@ -18,6 +18,8 @@
 
 package org.logic2j.core;
 
+import java.util.HashMap;
+
 /**
  * Counters and data structures that can be used (temporarily) to instrument logic2j
  * to collect usage / profiling information
@@ -26,11 +28,14 @@ public class ProfilingInfo {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ProfilingInfo.class);
     public static long counter1;
     public static long timer1;
+
+    public static HashMap<Object, Integer> events = new HashMap<Object, Integer>();
+
     static {
         resetAll();
     }
 
-    public static void reportCounters(String label) {
+    public static void reportAll(String label) {
         final long now = System.currentTimeMillis();
         logger.info("Profile report for: {}", label);
         if (counter1 >= 0) {
@@ -38,6 +43,9 @@ public class ProfilingInfo {
         }
         if (timer1 >= 0) {
             logger.info("  timer1={}", now - timer1);
+        }
+        if (!events.isEmpty()) {
+            logger.info("  events={}", events);
         }
         resetAll();
     }
@@ -50,6 +58,19 @@ public class ProfilingInfo {
     public static long setTimer1() {
         timer1 = System.currentTimeMillis();
         return timer1;
+    }
+
+    /**
+     * @param theMethodName
+     */
+    public static int addEvent(Object theEventKey) {
+        Integer val = events.get(theEventKey);
+        if (val == null) {
+            events.put(theEventKey, 1);
+            return 1;
+        }
+        events.put(theEventKey, val + 1);
+        return val + 1;
     }
 
 }
