@@ -7,7 +7,7 @@ Inferring Prolog Facts: 800'000 facts for 15 solutions in 145 ms
 Inferring DataFacts: 800'000 facts for 15 solutions in 92 ms
 
 Solving "queens(11, X)" takes 
-        261 s on tuProlog
-        7.8 s on logic2j
+        261 s on tuProlog v2.7.2
+        7.8 s on logic2j v0.5.0
 
         
