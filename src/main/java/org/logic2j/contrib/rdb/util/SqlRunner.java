@@ -67,14 +67,14 @@ public class SqlRunner {
             logger.debug("SqlRunner SQL \"" + theSelect + '"');
             logger.debug(" parameters=" + Arrays.asList(theParameters));
         }
+        Connection conn = null;
         try {
-            final Connection conn = this.dataSource.getConnection();
+            conn = this.dataSource.getConnection();
             stmt = this.prepareStatement(conn, theSelect);
             this.fillStatement(stmt, theParameters);
             rs = stmt.executeQuery();
 
             result = handle(rs);
-
         } catch (final SQLException e) {
             if (DEBUG_ENABLED) {
                 logger.debug("Caught exception \"" + e + "\", going to rethrow");
@@ -95,7 +95,9 @@ public class SqlRunner {
             } catch (final SQLException ignored) {
                 // Quiet
             }
-            // Should we close the connection here??? (return it to the pool in case of a pooled connection?)
+            if (conn != null) {
+                conn.close();
+            }
         }
         return result;
     }

@@ -27,7 +27,6 @@ import org.logic2j.core.PrologTestBase;
 public class TabularDataSerializerTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataSerializerTest.class);
 
-    // @Ignore("Quite slow")
     @Test
     public void loadExcelAndSerialize() throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.xls");
@@ -35,7 +34,6 @@ public class TabularDataSerializerTest extends PrologTestBase {
         new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).write(data);
     }
 
-    // @Ignore("Really slow")
     @Test
     public void deserialize() throws IOException, ClassNotFoundException {
         TabularData td = new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).read();

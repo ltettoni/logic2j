@@ -26,7 +26,7 @@ import org.logic2j.core.impl.PrologImplementation;
 /**
  * Base class for RDB access using JDBC.
  */
-public class RDBBase {
+public abstract class RDBBase {
     /**
      * A {@link TermAdapter} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
      */
@@ -44,13 +44,13 @@ public class RDBBase {
     }
 
     private final PrologImplementation prolog;
-    private TermAdapter termAdapter;
     private DataSource dataSource;
+    private TermAdapter termAdapter;
 
-    public RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
+    protected RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
         this.prolog = theProlog;
-        this.termAdapter = new RDBBase.AllStringsAsAtoms(this.prolog);
         this.dataSource = theDataSource;
+        this.termAdapter = new RDBBase.AllStringsAsAtoms(this.prolog);
     }
 
     // ---------------------------------------------------------------------------

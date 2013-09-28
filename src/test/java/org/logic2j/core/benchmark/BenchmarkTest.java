@@ -20,8 +20,6 @@ package org.logic2j.core.benchmark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -95,12 +93,12 @@ public class BenchmarkTest extends PrologTestBase {
         final String goal = "queens(11, X)";
         // Numbers
         ProfilingInfo.setTimer1();
-        int number = getProlog().solve(goal).number();
+        getProlog().solve(goal).number();
         ProfilingInfo.reportAll("Number of solutions to " + goal);
 
         // Bindings
         ProfilingInfo.setTimer1();
-        List<Map<String, Object>> bindings = getProlog().solve(goal).all().bindings();
+        getProlog().solve(goal).all().bindings();
         ProfilingInfo.reportAll("Bindings of solutions to " + goal);
     }
 

@@ -102,7 +102,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
                 if (isAtom) {
                     builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct) t).getName()));
                 } else if (TermApi.isList(t)) {
-                    addConjunctionList(builder, table, i, ((Struct) t).javaListFromPList(new ArrayList<Struct>(), Struct.class));
+                    addConjunctionList(builder, table, i, ((Struct) t).javaListFromPList(new ArrayList<Object>(), Object.class));
                 }
             }
             // Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a
@@ -112,10 +112,10 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         return clauses;
     }
 
-    protected void addConjunctionList(SqlBuilder3 builder, Table table, int columnNumber, ArrayList<Struct> structList) {
+    protected void addConjunctionList(SqlBuilder3 builder, Table table, int columnNumber, ArrayList<Object> structList) {
         final Object[] listValues = new Object[structList.size()];
         for (int i = 0; i < structList.size(); i++) {
-            listValues[i] = structList.get(i).getName();
+            listValues[i] = structList.get(i).toString();
         }
         builder.addConjunction(builder.criterion(builder.column(table, this.readTableInfo(table.table)[columnNumber]), listValues));
     }
