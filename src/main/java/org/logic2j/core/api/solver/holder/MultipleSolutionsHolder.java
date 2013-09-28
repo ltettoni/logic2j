@@ -47,7 +47,8 @@ public class MultipleSolutionsHolder {
     private Integer highest = null; // FIXME to document
 
     /**
-     * Start solving but indicating you are not interested by the actual solutions nor bindings, only their number.
+     * Start solving but indicating you are not interested by the actual solutions nor their bindings,
+     * only the number of solutions.
      * 
      * @return The number of solutions
      */

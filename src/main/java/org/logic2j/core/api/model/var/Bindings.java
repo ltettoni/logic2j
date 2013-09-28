@@ -252,6 +252,7 @@ public class Bindings {
         // Now it's anything else than a Var
         // Make sure it's of the desired class
         ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
+
         // will return a cloned Bindings with theTerm as referrer
         return shallowCopy(this, theTerm);
         // Did we need the following line?

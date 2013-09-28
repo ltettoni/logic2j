@@ -31,7 +31,7 @@ import org.logic2j.core.impl.PrologImplementation;
  * (a request or query) and the extraction of any aspect of the solution (existence of a solution, number of a solutions, values of a given
  * binding, or values of all bindings or results). <br/>
  * IMPORTANT: This is a lazy proxy to solutions: obtaining a {@link SolutionHolder} does not imply that the execution has yet started -
- * state is held ready to execute, until you tell what you want! <br/>
+ * state is held ready to execute, until you tell it what you need! <br/>
  * This object exposes strongly-typed, templated methods to extract results depending on how the calling code expects them (unique or
  * multiple solutions), and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
  * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed),

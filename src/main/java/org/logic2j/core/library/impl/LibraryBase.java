@@ -40,6 +40,15 @@ public class LibraryBase implements PLibrary {
         this.prolog = theProlog;
     }
 
+    /**
+     * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
+     * You MAY override this method, if you don't, reflection will be used.
+     * 
+     * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
+     * @param theGoalStruct Regular argument for invoking a primitive
+     * @param theGoalVars Regular argument for invoking a primitive
+     * @param theListener Regular argument for invoking a primitive
+     */
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
         return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
