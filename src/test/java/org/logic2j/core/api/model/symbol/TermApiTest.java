@@ -117,7 +117,7 @@ public class TermApiTest {
     public void substitute() {
         try {
             final Term v = Var.ANONYMOUS_VAR;
-            TermApi.substitute(v, new Bindings(v), null);
+            TermApi.substitute(v, new Bindings(v));
             fail();
         } catch (final InvalidTermException e) {
             // Expected to happen
@@ -125,13 +125,13 @@ public class TermApiTest {
 
         final Object a = this.prolog.getTermExchanger().unmarshall("a");
         // Empty binding yields same term since no bindings to resolve
-        assertSame(a, TermApi.substitute(a, new Bindings(a), null));
+        assertSame(a, TermApi.substitute(a, new Bindings(a)));
 
         // Bindings without
-        TermApi.substitute(a, new Bindings(a), null);
+        TermApi.substitute(a, new Bindings(a));
 
         final Object x = this.prolog.getTermExchanger().unmarshall("X");
-        TermApi.substitute(x, new Bindings(x), null);
+        TermApi.substitute(x, new Bindings(x));
     }
 
     @SuppressWarnings("deprecation")

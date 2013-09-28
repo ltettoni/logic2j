@@ -295,26 +295,25 @@ public class CoreLibrary extends LibraryBase {
         ensureBindingIsNotAFreeVar(subGoalBindings, "findall/3");
 
         // Define a listener to collect all solutions for the goal specified
-        final ArrayList<Object> javaResults = new ArrayList<Object>(); // Our internal collection of results
-        final SolutionListener adHocListener = new SolutionListenerBase() {
+        final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
+        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                // Calculate the substituted goal value (resolve bindings)
-                @SuppressWarnings("synthetic-access")
+                // Calculate the substituted goal value (resolve all bound vars)
                 // FIXME !!! This is most certainly wrong: how can we call substitute on a variable expressed in a different bindings?????
                 // The case is : findall(X, Expr, Result) where Expr -> something -> expr(a,b,X,c)
-                final Object substitute = TermApi.substitute(theTemplate, subGoalBindings, null);
+                final Object resolvedTemplate = TermApi.substitute(theTemplate, subGoalBindings);
                 // Map<String, Term> explicitBindings = goalBindings.explicitBindings(FreeVarRepresentation.FREE);
                 // And add as extra solution
-                javaResults.add(substitute);
+                javaResults.add(resolvedTemplate);
                 return Continuation.CONTINUE;
             }
 
         };
 
-        // Now solve the target goal, this may find several values of course
-        getProlog().getSolver().solveGoal(subGoalBindings, adHocListener);
+        // Now solve the target sub goal
+        getProlog().getSolver().solveGoal(subGoalBindings, listenerForSubGoal);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be

@@ -152,7 +152,6 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void findall_bindFreeVars() {
-        // UniqueSolutionHolder sol = assertOneSolution("Res=Z");
         final UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
         assertEquals("[a,X,c]", sol.binding("Res").toString());
     }

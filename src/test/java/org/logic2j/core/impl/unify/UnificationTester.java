@@ -88,8 +88,8 @@ class UnificationTester {
         logger.debug(" result={}", unified);
         logger.debug(" leftVars={}", this.leftVars);
         logger.debug(" rightVars={}", this.rightVars);
-        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {
@@ -109,8 +109,8 @@ class UnificationTester {
         logger.info("Unifying {} to {}", this.right, this.left);
         final boolean unified = this.unifier.unify(this.right, this.rightVars, this.left, this.leftVars);
         logger.debug(" result={}", unified);
-        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars, null), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars, null), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         appendSignature(theSignature, this.leftVars, this.rightVars);
         this.result = unified;
         if (this.expectedResult != null) {

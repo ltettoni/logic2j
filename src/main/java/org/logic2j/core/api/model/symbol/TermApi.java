@@ -239,30 +239,37 @@ public class TermApi {
         return String.valueOf(thePredicate) + "/0";
     }
 
+    public static Object substitute(Object theTerm, Bindings theBindings) {
+        return substitute(theTerm, theBindings, null);
+    }
+
     /**
      * 
      * @param theBindings
-     * @param theBindingsToVars
+     * @param remapFreeBindingsToOriginalVars Specify non-null to remap free variables found in a Binding onto their original Var.
      * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
-     *         variables. When no variables are bound, then the same refernce is returned. Important note: the caller cannot know if the
-     *         returned reference was cloned or not, so it must never mutate it!
+     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
+     *         know if the returned reference was cloned or not, so it must never mutate it!
      */
-    public static Object substitute(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
-        if ((theTerm instanceof Struct && ((Struct) theTerm).index == 0) || theBindings.isEmpty()) {
-            // No variables identified in the term, or no variables passed as argument: do not need to substitute
+    public static Object substitute(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+        if (theBindings.isEmpty()) {
             return theTerm;
         }
         if (theTerm instanceof Struct) {
-            return ((Struct) theTerm).substitute(theBindings, theBindingsToVars);
-        } else if (theTerm instanceof Var) {
-            return ((Var) theTerm).substitute(theBindings, theBindingsToVars);
-        } else {
-            // Not a Term but a plain Java object - can't assign an index
-            return theTerm;
+            if (((Struct) theTerm).index == 0) {
+                // Struct has no variables below
+                return theTerm;
+            }
+            return ((Struct) theTerm).substitute(theBindings, remapFreeBindingsToOriginalVars);
         }
+        if (theTerm instanceof Var) {
+            return ((Var) theTerm).substitute(theBindings, remapFreeBindingsToOriginalVars);
+        }
+        // Not a Term but a plain Java object - cannot substitute
+        return theTerm;
     }
 
-    // TODO Currently unused - but probably we should
+    // TODO Currently unused - but probably we should!
     void avoidCycle(Struct theClause) {
         final List<Term> visited = new ArrayList<Term>(20);
         theClause.avoidCycle(visited);

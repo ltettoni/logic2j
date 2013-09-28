@@ -107,7 +107,7 @@ public final class Var extends Term {
         if (this.index >= theBindings.getSize()) {
             throw new PrologNonSpecificError("Bindings " + theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
         }
-        // Since this var is properly indexed, use it!
+        // Since this var is properly indexed, use its index!
         return theBindings.getBinding(this.index);
     }
 
@@ -125,33 +125,36 @@ public final class Var extends Term {
         return null;
     }
 
-    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
+    /**
+     * 
+     * @param theBindings The {@link Bindings} within which this {@link Var} is referenced
+     * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
+     * @return
+     */
+    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         if (isAnonymous()) {
             // Anonymous variable is never bound - won't substitute
             return this;
         }
         final Binding binding = bindingWithin(theBindings).followLinks();
         if (binding.isLiteral()) {
-            // For a literal, we have a reference to the literal term and to its
-            // own variables,
-            // so recurse further
-            return TermApi.substitute(binding.getTerm(), binding.getLiteralBindings(), theBindingsToVars);
+            // For a literal, we have a reference to the literal term and to its own variables, so recurse further
+            return TermApi.substitute(binding.getTerm(), binding.getLiteralBindings(), remapFreeBindingsToOriginalVars);
         }
         if (binding.isFree()) {
-            // Free variable has no value, so substitution ends up on the last
-            // variable of the chain
-            if (theBindingsToVars != null) {
-                final Var originVar = theBindingsToVars.get(binding);
-                if (originVar != null) {
-                    return originVar;
+            // Free variable has no value, if we have a remapping table let's use it
+            if (remapFreeBindingsToOriginalVars != null) {
+                final Var originalVar = remapFreeBindingsToOriginalVars.get(binding);
+                if (originalVar != null) {
+                    return originalVar;
                 }
                 return ANONYMOUS_VAR;
             }
-            // Return the free variable
+            // Return this free variable
             return this;
         }
         // Neither literal nor free? That's not possible.
-        throw new PrologInternalError("substitute() internal error");
+        throw new PrologInternalError("substitute() internal error, " + this + " is neither literal nor free");
     }
 
     /**

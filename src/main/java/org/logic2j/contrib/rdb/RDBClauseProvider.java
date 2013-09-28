@@ -95,7 +95,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         for (int i = 0; i < goalStruct.getArity(); i++) {
             Object t = goalStruct.getArg(i);
             if (t instanceof Var && theGoalBindings != null) {
-                t = TermApi.substitute(goalStruct.getArg(i), theGoalBindings, null);
+                t = TermApi.substitute(goalStruct.getArg(i), theGoalBindings);
             }
             final boolean isAtom = TermApi.isAtom(t);
             if (t instanceof Struct && (isAtom || TermApi.isList(t))) {

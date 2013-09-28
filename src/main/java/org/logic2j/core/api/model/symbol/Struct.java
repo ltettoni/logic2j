@@ -393,25 +393,26 @@ public final class Struct extends Term {
     }
 
     /**
-     * If any argument appears to have been cloned, then the complete structure will be cloned.
+     * Substitute all children. If nothing changes, return this, otherwise returned a cloned structure
+     * with all bound variables substituted to their literal values.
      */
-    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> theBindingsToVars) {
-        final Object[] substArgs = new Object[this.arity]; // All arguments after
-        // substitution
-        boolean anyChange = false;
+    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+        final Object[] substArgs = new Object[this.arity]; // All arguments after substitution
+        boolean anyChildWasChanged = false;
         for (int i = 0; i < this.arity; i++) {
-            substArgs[i] = TermApi.substitute(this.args[i], theBindings, theBindingsToVars);
-            anyChange |= (substArgs[i] != this.args[i]);
+            // Recurse for all children
+            substArgs[i] = TermApi.substitute(this.args[i], theBindings, remapFreeBindingsToOriginalVars);
+            anyChildWasChanged |= substArgs[i] != this.args[i];
         }
-        final Struct substituted;
-        if (anyChange) {
+        final Struct substitutedOrThis;
+        if (anyChildWasChanged) {
             // New cloned structure
-            substituted = new Struct(getName(), substArgs);
+            substitutedOrThis = new Struct(getName(), substArgs);
         } else {
             // Original unchanged - same reference
-            substituted = this;
+            substitutedOrThis = this;
         }
-        return substituted;
+        return substitutedOrThis;
     }
 
     /**
@@ -465,11 +466,11 @@ public final class Struct extends Term {
      * Is this structure an empty list?
      */
     public boolean isEmptyList() {
-        return this.name.equals(FUNCTOR_LIST_EMPTY) && this.arity == 0;
+        return this.name == FUNCTOR_LIST_EMPTY && this.arity == 0;
     }
 
     boolean isList() {
-        return (this.name.equals(FUNCTOR_LIST) && this.arity == 2 && TermApi.isList(this.args[1])) || isEmptyList();
+        return (this.name == FUNCTOR_LIST && this.arity == 2 && TermApi.isList(this.args[1])) || isEmptyList();
     }
 
     protected void assertPList(Term thePList) {
@@ -518,7 +519,7 @@ public final class Struct extends Term {
         int count = 0;
         while (!t.isEmptyList()) {
             count++;
-            t = (Struct) getRHS();
+            t = (Struct) t.getRHS();
         }
         return count;
     }

@@ -19,12 +19,14 @@ package org.logic2j.core.functional;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.Solution;
+import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.benchmark.BenchmarkTest;
 import org.logic2j.core.impl.PrologImplementation;
@@ -97,6 +99,16 @@ public class HigherLevelTest extends PrologTestBase {
         //
         assertNSolutions(40, "queens(7, _)");
         assertNSolutions(92, "queens(8, _)");
+    }
+
+    @Test
+    public void queensWithFindall() throws IOException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        final String goal = "findall(X, queens(5, X), List)";
+        // Numbers
+        Struct plist = getProlog().solve(goal).unique().binding("List", Struct.class);
+        assertEquals(10, plist.listSize());
+        assertEquals("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]", plist.toString());
     }
 
     /**
