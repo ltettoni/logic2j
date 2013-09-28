@@ -1,0 +1,13 @@
+I'm developing on an Intel Core2 Duo CPU, E6750, 2.66 GHz.
+OS: 32bit, 4 GB RAM
+Windows performance index: 3.4
+
+
+Inferring Prolog Facts: 800'000 facts for 15 solutions in 145 ms
+Inferring DataFacts: 800'000 facts for 15 solutions in 92 ms
+
+Solving "queens(11, X)" takes 
+        261 s on tuProlog
+        7.8 s on logic2j
+
+        
