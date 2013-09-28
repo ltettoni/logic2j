@@ -49,6 +49,9 @@ public class Clause {
     private final boolean isFact;
     private final boolean isWithClauseFunctor;
 
+    private final Object head;
+    private final Object body;
+
     /**
      * Make a Term (must be a Struct) read for inference, this requires to normalize it.
      * 
@@ -64,6 +67,8 @@ public class Clause {
         this.bindings = new Bindings(this.content);
         this.isFact = evaluateIsFact();
         this.isWithClauseFunctor = evaluateIsWithClauseFunctor();
+        this.head = evaluateHead();
+        this.body = evaluateBody();
     }
 
     /**
@@ -82,11 +87,13 @@ public class Clause {
         this.bindings = Bindings.deepCopyWithSameReferrer(theOriginal.getBindings());
         this.isFact = theOriginal.isFact;
         this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
+        this.head = theOriginal.head;
+        this.body = theOriginal.body;
     }
 
-    public boolean isFact() {
-        return this.isFact;
-    }
+    // ---------------------------------------------------------------------------
+    // Methods to denormalize immutable fields
+    // ---------------------------------------------------------------------------
 
     /**
      * Use this method to determine if the {@link Clause} is a fact, before calling {@link #getBody()} that would return "true" and entering
@@ -126,7 +133,7 @@ public class Clause {
      * 
      * @return The clause's head as a {@link Term}, normally a {@link Struct}.
      */
-    public Object getHead() {
+    public Object evaluateHead() {
         if (this.isWithClauseFunctor) {
             return ((Struct) this.content).getLHS();
         }
@@ -136,7 +143,7 @@ public class Clause {
     /**
      * @return The clause's body as a {@link Term}, normally a {@link Struct}.
      */
-    public Object getBody() {
+    public Object evaluateBody() {
         if (this.isWithClauseFunctor) {
             return ((Struct) this.content).getRHS();
         }
@@ -146,6 +153,30 @@ public class Clause {
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
+
+    public boolean isFact() {
+        return this.isFact;
+    }
+
+    /**
+     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
+     * functor.
+     * 
+     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
+     */
+    public Object getHead() {
+        return this.head;
+    }
+
+    /**
+     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
+     * functor.
+     * 
+     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
+     */
+    public Object getBody() {
+        return this.body;
+    }
 
     /**
      * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.
