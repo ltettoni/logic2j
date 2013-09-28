@@ -137,14 +137,12 @@ public class CoreLibrary extends LibraryBase {
 
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
-        final Object result;
+        Object result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         final int arity = theGoalStruct.getArity();
         if (arity == 1) {
             final Object arg0 = theGoalStruct.getArg(0);
             if (theMethodName == "not") {
                 result = not(theListener, theGoalVars, arg0);
-            } else {
-                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 2) {
             final Object arg0 = theGoalStruct.getArg(0);
@@ -161,11 +159,7 @@ public class CoreLibrary extends LibraryBase {
                 result = plus(theListener, theGoalVars, arg0, arg1);
             } else if (theMethodName == "minus") {
                 result = minus(theListener, theGoalVars, arg0, arg1);
-            } else {
-                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
-        } else {
-            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }
         return result;
     }
