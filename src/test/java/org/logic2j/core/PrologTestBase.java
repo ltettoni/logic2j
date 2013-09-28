@@ -146,13 +146,15 @@ public abstract class PrologTestBase {
      * @return The {@link SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
-        SolutionHolder solve = null;
+        SolutionHolder holder = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
-            solve = this.prolog.solve(goal);
-            assertEquals("Goal \"" + goal + "\" has different number of solutions", theNumber, solve.number());
+            holder = this.prolog.solve(goal);
+            // Now execute the goal - only extracting the number of solutions
+            final int number = holder.number();
+            assertEquals("Goal \"" + goal + "\" has different number of solutions", theNumber, number);
         }
-        return solve;
+        return holder;
     }
 
     /**
