@@ -35,7 +35,7 @@ public class TheoryContent {
      * The data structure to hold our clauses: lists of {@link Clause}s by predicate key. Key: unique key for all clauses whose predicate
      * head is a family, see {@link Clause#getPredicateKey()}. Value: ordered list of very very very immutable {@link Clause}s.
      */
-    private final Map<String, List<Clause>> content = new HashMap<String, List<Clause>>();
+    private final HashMap<String, List<Clause>> content = new HashMap<String, List<Clause>>();
 
     /**
      * Add one {@link Clause}.
