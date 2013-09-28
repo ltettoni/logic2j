@@ -44,10 +44,5 @@ UC 2: Obtain values from within a java primtive
   }
   
 
-UC 3: 
- - complex case of findall, call, and select that need to solve sub-goals, and bind input variables to sub-goal solutions!
- 
- 
- 
 
 
