@@ -104,7 +104,7 @@ public class BenchmarkTest extends PrologTestBase {
         ProfilingInfo.reportCounters("Bindings of solutions to " + goal);
     }
 
-    // @Ignore("Use this in conjuction with jvisualvm to profile")
+    @Ignore("Use this in conjuction with jvisualvm to profile")
     @Test
     public void queensForJVisualVM() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
