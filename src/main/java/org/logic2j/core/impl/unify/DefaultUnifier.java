@@ -107,7 +107,7 @@ public class DefaultUnifier implements Unifier {
             if (term2 instanceof Struct) {
                 final Struct s1 = (Struct) term1;
                 final Struct s2 = (Struct) term2;
-                if (!(s1.nameAndArityMatch(s2))) {
+                if (s1.getPredicateSignature() != s2.getPredicateSignature()) {
                     return false;
                 }
                 final int arity = s1.getArity();
@@ -210,7 +210,7 @@ public class DefaultUnifier implements Unifier {
             if (term2 instanceof Struct) {
                 final Struct s1 = (Struct) term1;
                 final Struct s2 = (Struct) term2;
-                return s1.nameAndArityMatch(s2);
+                return s1.getPredicateSignature() == s2.getPredicateSignature();
             }
             return false;
         } else {

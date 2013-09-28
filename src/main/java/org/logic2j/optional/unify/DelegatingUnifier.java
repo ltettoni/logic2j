@@ -101,7 +101,7 @@ public class DelegatingUnifier implements Unifier {
     // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
 
     public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2) {
-        if (!(s1.nameAndArityMatch(s2))) {
+        if (s1.getPredicateSignature() != s2.getPredicateSignature()) {
             return false;
         }
         final int arity = s1.getArity();
