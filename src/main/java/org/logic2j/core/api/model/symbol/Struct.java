@@ -223,7 +223,7 @@ public final class Struct extends Term {
         }
         this.name = theFunctor.intern();
         this.arity = theArity;
-        this.signature = this.name + '/' + this.arity;
+        this.signature = (this.name + '/' + this.arity).intern();
     }
 
     /**
@@ -616,16 +616,6 @@ public final class Struct extends Term {
 
     <T> T accept(TermVisitor<T> theVisitor) {
         return theVisitor.visit(this);
-    }
-
-    /**
-     * Base requirement to unify 2 structures: matching names and arities.
-     * 
-     * @param that
-     * @return True if this and that Struct have the same name and arity.
-     */
-    public boolean nameAndArityMatch(Struct that) {
-        return this.arity == that.arity && this.name == that.name; // Names are {@link String#intern()}alized so OK to check by reference
     }
 
     // ---------------------------------------------------------------------------
