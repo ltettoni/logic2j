@@ -20,9 +20,12 @@ package org.logic2j.core.benchmark;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.logic2j.core.ProfilingInfo;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.functional.HigherLevelTest;
 
@@ -90,12 +93,18 @@ public class BenchmarkTest extends PrologTestBase {
     public void queensForTiming() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
         final String goal = "queens(11, X)";
-        final long startTime = System.currentTimeMillis();
-        assertNSolutions(2680, goal); // tuProlog (GUI) needs 261s on my machine
-        logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
+        // Numbers
+        ProfilingInfo.setTimer1();
+        int number = getProlog().solve(goal).number();
+        ProfilingInfo.reportCounters("Number of solutions to " + goal);
+
+        // Bindings
+        ProfilingInfo.setTimer1();
+        List<Map<String, Object>> bindings = getProlog().solve(goal).all().bindings();
+        ProfilingInfo.reportCounters("Bindings of solutions to " + goal);
     }
 
-    @Ignore("Use this in conjuction with jvisualvm to profile")
+    // @Ignore("Use this in conjuction with jvisualvm to profile")
     @Test
     public void queensForJVisualVM() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
@@ -109,7 +118,7 @@ public class BenchmarkTest extends PrologTestBase {
                 break;
             }
             final long startTime = System.currentTimeMillis();
-            assertNSolutions(2680, goal); // tuProlog (GUI) needs 261s on my machine
+            getProlog().solve(goal).number();
             logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
         }
     }
