@@ -28,21 +28,19 @@ import org.logic2j.core.api.model.Continuation;
 public class SolutionListenerBase implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
 
-    // TODO timing and logging should use on AOP instead, not hardcoding here
-    private final long startTime = System.currentTimeMillis();
-    private long lastSolutionTime = this.startTime;
+    private static final boolean DEBUG_ENABLED = logger.isDebugEnabled();
 
     /**
      * Number of solutions (so far).
+     * TODO Should it deserve a "long"?
      */
     private int counter = 0;
 
     @Override
     public Continuation onSolution() {
-        if (logger.isDebugEnabled()) {
+        if (DEBUG_ENABLED) {
             logger.debug(" onSolution(#{})", this.counter);
         }
-        this.lastSolutionTime = System.currentTimeMillis();
         this.counter++;
         return Continuation.CONTINUE;
     }
@@ -53,10 +51,6 @@ public class SolutionListenerBase implements SolutionListener {
 
     public int getCounter() {
         return this.counter;
-    }
-
-    public long elapse() {
-        return this.lastSolutionTime - this.startTime;
     }
 
 }
