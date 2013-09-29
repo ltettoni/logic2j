@@ -196,7 +196,6 @@ public class DefaultSolver implements Solver {
      * @param goalTerm
      * @param theGoalBindings
      * @param theSolutionListener
-     * @param result
      * @return
      */
     private Continuation solveAgainstClauseProviders(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
@@ -207,7 +206,6 @@ public class DefaultSolver implements Solver {
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
 
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
-        final long start = System.currentTimeMillis();
         for (final ClauseProvider provider : providers) {
             final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, theGoalBindings);
             if (matchingClauses == null) {
@@ -315,9 +313,6 @@ public class DefaultSolver implements Solver {
         if (debug) {
             logger.debug("Last ClauseProvider iterated");
         }
-        if (info) {
-            logger.info("Time in solving ClauseProviders: {}", System.currentTimeMillis() - start);
-        }
 
         return result;
     }
@@ -327,7 +322,6 @@ public class DefaultSolver implements Solver {
         Continuation result = Continuation.CONTINUE;
         // Now fetch data
         final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
-        final long start = System.currentTimeMillis();
         for (final DataFactProvider dataProvider : dataProviders) {
             final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalTerm);
             for (final DataFact dataFact : matchingDataFacts) {
@@ -343,11 +337,8 @@ public class DefaultSolver implements Solver {
                 }
             }
             if (logger.isInfoEnabled()) {
-                logger.info("Last DataFact of {} iterated, duration={}", dataProvider, System.currentTimeMillis() - start);
+                logger.info("Last DataFact of {} iterated", dataProvider);
             }
-        }
-        if (info) {
-            logger.info("Time in solving DataProviders: {}", System.currentTimeMillis() - start);
         }
         return result;
     }
