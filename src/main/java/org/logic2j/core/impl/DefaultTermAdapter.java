@@ -82,7 +82,7 @@ public class DefaultTermAdapter implements TermAdapter {
         }
         if (theObject instanceof CharSequence || theObject instanceof Character) {
             // Rudimentary parsing
-            final String chars = theObject.toString();
+            final String chars = String.valueOf(theObject);
             if (theMode == FactoryMode.ATOM) {
                 // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
                 // result = new Struct(chars);
