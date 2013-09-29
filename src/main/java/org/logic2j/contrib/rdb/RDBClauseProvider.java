@@ -48,8 +48,6 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
      * The target database is supposed to implement tables, or (more realistically) views that start with the following name. The rest of
      * the table or view name will be the predicate being listed.
      */
-    // private static final String PREDICATE_TABLE_OR_VIEW_HEADER = "pred_";
-    // private static final String PREDICATE_COLUMN_HEADER = "arg_";
     private final HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
     private final String prefix;
 

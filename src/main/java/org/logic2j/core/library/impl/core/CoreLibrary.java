@@ -138,6 +138,7 @@ public class CoreLibrary extends LibraryBase {
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
         Object result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
         if (arity == 1) {
             final Object arg0 = theGoalStruct.getArg(0);

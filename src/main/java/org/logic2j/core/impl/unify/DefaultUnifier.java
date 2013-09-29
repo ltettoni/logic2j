@@ -107,6 +107,7 @@ public class DefaultUnifier implements Unifier {
             if (term2 instanceof Struct) {
                 final Struct s1 = (Struct) term1;
                 final Struct s2 = (Struct) term2;
+                // Signatures are {@link String#intern()}alized so OK to check by reference
                 if (s1.getPredicateSignature() != s2.getPredicateSignature()) {
                     return false;
                 }
@@ -133,7 +134,7 @@ public class DefaultUnifier implements Unifier {
         }
         final Struct s1 = (Struct) goalTerm;
         final Object[] elements = dataFact.elements;
-        if (s1.getName() != elements[0]) {
+        if (s1.getName() != elements[0]) {// Names are {@link String#intern()}alized so OK to check by reference
             // Functor must match
             return false;
         }
@@ -210,6 +211,7 @@ public class DefaultUnifier implements Unifier {
             if (term2 instanceof Struct) {
                 final Struct s1 = (Struct) term1;
                 final Struct s2 = (Struct) term2;
+                // Signatures are {@link String#intern()}alized so OK to check by reference
                 return s1.getPredicateSignature() == s2.getPredicateSignature();
             }
             return false;
