@@ -58,19 +58,58 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation log(SolutionListener theListener, Bindings theBindings, Object... terms) {
-        for (final Object term : terms) {
-            final Bindings b = theBindings.focus(term, Term.class);
-            ensureBindingIsNotAFreeVar(b, "write/*");
-            final Object value = b.getReferrer();
-
-            String format = getProlog().getTermExchanger().marshall(value).toString();
-            format = IOLibrary.unquote(format);
-            logger.info(format);
-        }
+    public Continuation debug(SolutionListener theListener, Bindings theBindings, Object... terms) {
+        String substring = formatForLog(theBindings, terms);
+        logger.debug(substring);
         return notifySolution(theListener);
     }
+    
+    @Primitive
+    public Continuation info(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      String substring = formatForLog(theBindings, terms);
+      logger.info(substring);
+      return notifySolution(theListener);
+    }
+    
+    @Primitive
+    public Continuation warn(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      String substring = formatForLog(theBindings, terms);
+      logger.warn(substring);
+      return notifySolution(theListener);
+    }
+    
+    @Primitive
+    public Continuation error(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      String substring = formatForLog(theBindings, terms);
+      logger.error(substring);
+      return notifySolution(theListener);
+    }
 
+    private String formatForLog(Bindings theBindings, Object... terms) {
+      final StringBuilder sb = new StringBuilder("P ");
+      for (final Object term : terms) {
+          final Bindings b = theBindings.focus(term, Object.class);
+          ensureBindingIsNotAFreeVar(b, "log/*");
+          final Object value = b.getReferrer();
+
+          String format = getProlog().getTermExchanger().marshall(value).toString();
+          format = IOLibrary.unquote(format);
+          sb.append(format);
+          sb.append(' ');
+      }
+      String substring = sb.substring(0, sb.length()-1);
+      return substring;
+    }
+
+    /**
+     * Replace any logging predicate by "nolog" to avoid any overhead with logging. 
+     * 
+     * @param theListener
+     * @param theBindings
+     * @param terms
+     * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
+     */
+    @SuppressWarnings("unused")
     @Primitive
     public Continuation nolog(SolutionListener theListener, Bindings theBindings, Object... terms) {
         // Do nothing, but succeeds!
