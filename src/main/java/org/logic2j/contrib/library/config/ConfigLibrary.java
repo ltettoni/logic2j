@@ -28,7 +28,10 @@ import org.logic2j.core.library.mgmt.Primitive;
 
 /**
  * Preliminary - should be reviewed FIXME This class should not know of RDBClauseProvider!
+ * 
+ * @deprecated I don't like this idea of using a semi-procedural manner to configure other libs.
  */
+@Deprecated
 public class ConfigLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ConfigLibrary.class);
 

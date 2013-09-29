@@ -86,15 +86,6 @@ public class PrologReferenceImplementation implements PrologImplementation {
      */
     public PrologReferenceImplementation(InitLevel theLevel) {
         // Here we load libs in order
-
-        /*
-         * NOTE: the ConfigLibrary was part of the "core" and has been pushed to "contrib" since it was only used in rdb-related
-         * configuration. I comment out this initialization since I don't want the "core" to depend on "contrib". We'll have to find a way
-         * to allow easy loading of libs upon initialization. I would really rely on DI to care about this.
-         */
-        // (commented out since ConfigLibrary no longer on core):
-        // libraryManager.loadLibrary(new ConfigLibrary(this));
-
         if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
             final PLibrary lib = new CoreLibrary(this);
             this.libraryManager.loadLibrary(lib);

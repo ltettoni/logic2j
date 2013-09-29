@@ -29,10 +29,8 @@ import java.util.List;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
-import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Bindings;
@@ -105,29 +103,11 @@ public class DefaultTheoryManager implements TheoryManager {
     private TheoryContent loadAllClauses(Parser theParser) {
         final TheoryContent content = new TheoryContent();
         Object clauseTerm = theParser.nextTerm(true);
-        Object specialInitializeGoalBody = null; // Body of the last clause whose head is "initialize"
         while (clauseTerm != null) {
             logger.debug("Parsed clause: {}", clauseTerm);
             final Clause cl = new Clause(this.prolog, clauseTerm);
-
-            // Handling of the "initialize" special clause - we should provide IoC callback for that, not inline code!!!
-            if ("initialize".equals(cl.getHead().toString())) {
-                specialInitializeGoalBody = cl.getBody();
-            }
             content.add(cl);
             clauseTerm = theParser.nextTerm(true);
-        }
-        // Invoke the "initialize" goal
-        // TODO should be done elsewhere
-        if (specialInitializeGoalBody != null) {
-            final Bindings bindings = new Bindings(specialInitializeGoalBody);
-            final SolutionListener solutionListener = new SolutionListener() {
-                @Override
-                public Continuation onSolution() {
-                    return Continuation.USER_ABORT;
-                }
-            };
-            this.prolog.getSolver().solveGoal(bindings, solutionListener);
         }
         return content;
     }
