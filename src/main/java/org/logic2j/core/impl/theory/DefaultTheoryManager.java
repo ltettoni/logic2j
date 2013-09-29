@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.parse.tuprolog.Parser;
+import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.impl.util.ReportUtils;
 
 /**
@@ -100,6 +102,42 @@ public class DefaultTheoryManager implements TheoryManager {
         throw new InvalidTermException("Could not load theory from resource " + theTheory + ": could not getContent()");
     }
 
+
+    /**
+     * @param theClassloadableResource must start with "/" otherwise considered a URL
+     */
+    @Override
+    public TheoryContent load(String theClassloadableResource) {
+      if (theClassloadableResource == null) {
+        throw new PrologNonSpecificError("Resource for rules content cannot be null");
+      }
+      final URL url;
+      try {
+        if (theClassloadableResource.startsWith("/")) {
+          url = this.getClass().getResource(theClassloadableResource);
+        } else {
+          url = new URL(theClassloadableResource);
+        }
+        if (url == null) {
+          throw new PrologNonSpecificError("No content at resource path: " + theClassloadableResource);
+        }
+        InputStream in = null;
+        try {
+          in = ReflectUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
+   // FIXME there will be encoding issues when using InputStream instead of Reader
+          final Reader reader = new InputStreamReader(in);
+          return load(reader);
+        } finally {
+          if (in != null)
+            in.close();
+        }
+      } catch (MalformedURLException e) {
+        throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
+      } catch (IOException e) {
+        throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
+      }
+    }
+    
     private TheoryContent loadAllClauses(Parser theParser) {
         final TheoryContent content = new TheoryContent();
         Object clauseTerm = theParser.nextTerm(true);
@@ -180,5 +218,6 @@ public class DefaultTheoryManager implements TheoryManager {
     public String toString() {
         return ReportUtils.shortDescription(this);
     }
+
 
 }

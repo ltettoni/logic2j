@@ -58,6 +58,8 @@ public interface TheoryManager extends ClauseProvider {
      */
     TheoryContent load(URL theTheory);
 
+    TheoryContent load(String theClassloadableResourceOrUrl);
+    
     /**
      * @return All clause providers, in same order as when registered.
      *         TODO But the actual ordering may not be always needed, it's only
