@@ -553,7 +553,7 @@ public final class Struct extends Term {
             fnct = ((Struct) functor).name;
         }
 
-        return new Struct(fnct, (Object[]) elements.toArray(new Object[elements.size()]));
+        return new Struct(fnct, elements.toArray(new Object[elements.size()]));
     }
 
     @SuppressWarnings("unchecked")

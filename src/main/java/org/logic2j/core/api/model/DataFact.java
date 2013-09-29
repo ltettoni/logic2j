@@ -46,15 +46,15 @@ public final class DataFact {
     }
 
     public String functor() {
-        return (String) elements[0];
+        return (String) this.elements[0];
     }
 
     public int arity() {
-        return elements.length - 1;
+        return this.elements.length - 1;
     }
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + Arrays.asList(elements).toString();
+        return this.getClass().getSimpleName() + Arrays.asList(this.elements).toString();
     }
 }

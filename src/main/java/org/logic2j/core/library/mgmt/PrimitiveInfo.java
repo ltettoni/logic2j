@@ -102,7 +102,7 @@ public class PrimitiveInfo {
                 throw (RuntimeException) targetException;
             }
             throw new InvalidTermException("Primitive threw an exception: " + this + ": " + targetException, targetException);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new InvalidTermException("Invocation of method " + this.method + " went really bad: " + e, e);
         }
     }

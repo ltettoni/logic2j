@@ -102,42 +102,42 @@ public class DefaultTheoryManager implements TheoryManager {
         throw new InvalidTermException("Could not load theory from resource " + theTheory + ": could not getContent()");
     }
 
-
     /**
      * @param theClassloadableResource must start with "/" otherwise considered a URL
      */
     @Override
     public TheoryContent load(String theClassloadableResource) {
-      if (theClassloadableResource == null) {
-        throw new PrologNonSpecificError("Resource for rules content cannot be null");
-      }
-      final URL url;
-      try {
-        if (theClassloadableResource.startsWith("/")) {
-          url = this.getClass().getResource(theClassloadableResource);
-        } else {
-          url = new URL(theClassloadableResource);
+        if (theClassloadableResource == null) {
+            throw new PrologNonSpecificError("Resource for rules content cannot be null");
         }
-        if (url == null) {
-          throw new PrologNonSpecificError("No content at resource path: " + theClassloadableResource);
-        }
-        InputStream in = null;
+        final URL url;
         try {
-          in = ReflectUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
-   // FIXME there will be encoding issues when using InputStream instead of Reader
-          final Reader reader = new InputStreamReader(in);
-          return load(reader);
-        } finally {
-          if (in != null)
-            in.close();
+            if (theClassloadableResource.startsWith("/")) {
+                url = this.getClass().getResource(theClassloadableResource);
+            } else {
+                url = new URL(theClassloadableResource);
+            }
+            if (url == null) {
+                throw new PrologNonSpecificError("No content at resource path: " + theClassloadableResource);
+            }
+            InputStream in = null;
+            try {
+                in = ReflectUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
+                // FIXME there will be encoding issues when using InputStream instead of Reader
+                final Reader reader = new InputStreamReader(in);
+                return load(reader);
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+            }
+        } catch (final MalformedURLException e) {
+            throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
+        } catch (final IOException e) {
+            throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
         }
-      } catch (MalformedURLException e) {
-        throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
-      } catch (IOException e) {
-        throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
-      }
     }
-    
+
     private TheoryContent loadAllClauses(Parser theParser) {
         final TheoryContent content = new TheoryContent();
         Object clauseTerm = theParser.nextTerm(true);
@@ -218,6 +218,5 @@ public class DefaultTheoryManager implements TheoryManager {
     public String toString() {
         return ReportUtils.shortDescription(this);
     }
-
 
 }

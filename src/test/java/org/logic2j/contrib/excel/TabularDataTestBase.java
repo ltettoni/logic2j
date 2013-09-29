@@ -34,8 +34,8 @@ class TabularDataTestBase extends PrologTestBase {
     private static final int LARGE_DATA_NB_ROWS = 10000;
 
     protected TabularData largeData() {
-        String[] strings = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
-        Serializable[][] array = new Serializable[LARGE_DATA_NB_ROWS][];
+        final String[] strings = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
+        final Serializable[][] array = new Serializable[LARGE_DATA_NB_ROWS][];
         for (int i = 0; i < array.length; i++) {
             array[i] = strings;
         }

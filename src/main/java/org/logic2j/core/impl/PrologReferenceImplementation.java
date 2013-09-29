@@ -125,6 +125,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
         return this.termAdapter;
     }
 
+    @Override
     public void setTermAdapter(TermAdapter termAdapter) {
         this.termAdapter = termAdapter;
     }

@@ -96,7 +96,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
                 default:
                     throw new PrologNonSpecificError("Unknown AssertionMode " + theAssertionMode);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
             }
         }

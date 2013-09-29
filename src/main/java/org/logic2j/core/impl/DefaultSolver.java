@@ -182,7 +182,7 @@ public class DefaultSolver implements Solver {
         } else {
             result = solveAgainstClauseProviders(goalTerm, theGoalBindings, theSolutionListener);
 
-            if (hasDataFactProviders && !(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
+            if (this.hasDataFactProviders && !(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
                 solveAgainstDataProviders(goalTerm, theGoalBindings, theSolutionListener);
             }
         }

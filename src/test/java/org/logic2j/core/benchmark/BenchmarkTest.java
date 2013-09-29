@@ -106,12 +106,12 @@ public class BenchmarkTest extends PrologTestBase {
     @Test
     public void queensForJVisualVM() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
             final String goal = "queens(11, X)";
             System.out.print("Press any key to run, q to quit");
-            String readLine = br.readLine();
+            final String readLine = br.readLine();
             if (readLine != null && readLine.startsWith("q")) {
                 break;
             }

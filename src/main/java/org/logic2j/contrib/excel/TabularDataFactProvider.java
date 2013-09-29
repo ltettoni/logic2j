@@ -38,10 +38,10 @@ public class TabularDataFactProvider implements DataFactProvider {
     }
 
     private void initDataFacts() {
-        final String dataSetName = tabularData.getDataSetName();
-        final int nbColumns = tabularData.getNbColumns();
-        final int primaryKeyColumn = tabularData.getPrimaryKeyColumn();
-        final String[] columnNames = tabularData.getColumnNames();
+        final String dataSetName = this.tabularData.getDataSetName();
+        final int nbColumns = this.tabularData.getNbColumns();
+        final int primaryKeyColumn = this.tabularData.getPrimaryKeyColumn();
+        final String[] columnNames = this.tabularData.getColumnNames();
         final Serializable[][] data = this.tabularData.getData();
         for (final Serializable[] row : data) {
             switch (this.assertionMode) {
@@ -59,7 +59,7 @@ public class TabularDataFactProvider implements DataFactProvider {
                             value = "n/a";
                         }
                         final DataFact fact = new DataFact(dataSetName, identifier, property, value);
-                        dataFacts.add(fact);
+                        this.dataFacts.add(fact);
                     }
                 }
                 break;
@@ -74,17 +74,17 @@ public class TabularDataFactProvider implements DataFactProvider {
                         final String property = columnNames[c];
                         final Serializable value = row[c];
                         final DataFact fact = new DataFact(identifier, property, value, dataSetName);
-                        dataFacts.add(fact);
+                        this.dataFacts.add(fact);
                     }
                 }
                 break;
             }
             case RECORD: {
-                dataFacts.add(new DataFact((Object[]) row));
+                this.dataFacts.add(new DataFact((Object[]) row));
                 break;
             }
             default:
-                throw new PrologNonSpecificError("Unknown AssertionMode " + assertionMode);
+                throw new PrologNonSpecificError("Unknown AssertionMode " + this.assertionMode);
 
             }
         }

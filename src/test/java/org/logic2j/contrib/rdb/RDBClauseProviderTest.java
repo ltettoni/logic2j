@@ -47,7 +47,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void listMatchingClauses() {
         this.provider.saveTableInfo("zip_code", new String[] { "zip_code", "city" });
         final Struct theGoal = Struct.valueOf("zip_code", "Zip", "City");
-        Iterator<Clause> iterator = this.provider.listMatchingClauses(theGoal, null).iterator();
+        final Iterator<Clause> iterator = this.provider.listMatchingClauses(theGoal, null).iterator();
         int counter;
         for (counter = 0; iterator.hasNext(); iterator.next()) {
             counter++;

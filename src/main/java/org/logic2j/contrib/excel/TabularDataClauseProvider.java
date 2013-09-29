@@ -49,8 +49,8 @@ public class TabularDataClauseProvider implements ClauseProvider {
 
     private void initClauses() {
         logger.debug("Starting to init clauses");
-        final List<Object> terms = new TabularDataTermAdapter(this.prolog).terms(this.tabularData, mode);
-        for (Object term : terms) {
+        final List<Object> terms = new TabularDataTermAdapter(this.prolog).terms(this.tabularData, this.mode);
+        for (final Object term : terms) {
             this.clauses.add(new Clause(this.prolog, term));
         }
         logger.debug("Finished to init clauses");
@@ -59,22 +59,22 @@ public class TabularDataClauseProvider implements ClauseProvider {
     @Override
     public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
         final String predicateSignature = TermApi.getPredicateSignature(theGoal);
-        switch (mode) {
+        switch (this.mode) {
         case EAV_NAMED:
-            if (!predicateSignature.equals(tabularData.getDataSetName() + "/3")) {
+            if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {
                 return null;
             }
-            return clauses;
+            return this.clauses;
         case EAVT:
             if (!predicateSignature.equals(EAVT_4)) {
                 return null;
             }
-            return clauses;
+            return this.clauses;
         case RECORD:
-            if (!predicateSignature.equals(tabularData.getDataSetName() + '/' + tabularData.getNbColumns())) {
+            if (!predicateSignature.equals(this.tabularData.getDataSetName() + '/' + this.tabularData.getNbColumns())) {
                 return null;
             }
-            return clauses;
+            return this.clauses;
         default:
             throw new PrologNonSpecificError("Unknown mode " + this.mode);
         }

@@ -64,7 +64,7 @@ public class ProfilingInfo {
      * @param theMethodName
      */
     public static int addEvent(Object theEventKey) {
-        Integer val = events.get(theEventKey);
+        final Integer val = events.get(theEventKey);
         if (val == null) {
             events.put(theEventKey, 1);
             return 1;

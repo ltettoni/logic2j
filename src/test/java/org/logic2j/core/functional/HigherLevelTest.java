@@ -106,7 +106,7 @@ public class HigherLevelTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("queens.pl");
         final String goal = "findall(X, queens(5, X), List)";
         // Numbers
-        Struct plist = getProlog().solve(goal).unique().binding("List", Struct.class);
+        final Struct plist = getProlog().solve(goal).unique().binding("List", Struct.class);
         assertEquals(10, plist.listSize());
         assertEquals("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]", plist.toString());
     }

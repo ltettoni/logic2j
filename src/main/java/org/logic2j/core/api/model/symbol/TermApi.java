@@ -313,13 +313,13 @@ public class TermApi {
         final Object result;
         if (theObject instanceof Term) {
             // Idempotence
-            result = (Term) theObject;
+            result = theObject;
         } else if (theObject instanceof Integer) {
             result = Long.valueOf(((Integer) theObject).longValue());
         } else if (theObject instanceof Long) {
-            result = (Long) theObject;
+            result = theObject;
         } else if (theObject instanceof Double) {
-            result = (Double) theObject;
+            result = theObject;
         } else if (theObject instanceof Float) {
             result = Double.valueOf(((Float) theObject).doubleValue());
         } else if (theObject instanceof Boolean) {

@@ -84,7 +84,7 @@ public class PojoLibrary extends LibraryBase {
         ensureBindingIsNotAFreeVar(bindingsForPropertyName, "property/3");
         final String propertyName = (String) bindingsForPropertyName.getReferrer();
         //
-        Object value = introspect(pojo, propertyName);
+        final Object value = introspect(pojo, propertyName);
 
         final boolean unified = unify(theValue, theBindings, value, theBindings);
         return notifyIfUnified(unified, theListener);

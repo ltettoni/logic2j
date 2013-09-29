@@ -45,7 +45,7 @@ public class DynamicClauseProvider implements ClauseProvider {
     @Override
     public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
         final List<Clause> nonNull = new ArrayList<Clause>(this.clauses.size());
-        for (Clause cl : this.clauses) {
+        for (final Clause cl : this.clauses) {
             if (cl != null) {
                 nonNull.add(cl);
             }

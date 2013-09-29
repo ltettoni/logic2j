@@ -36,7 +36,7 @@ public class TabularDataSerializerTest extends PrologTestBase {
 
     @Test
     public void deserialize() throws IOException, ClassNotFoundException {
-        TabularData td = new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).read();
+        final TabularData td = new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).read();
         logger.info("Deserialized: {}", td);
     }
 

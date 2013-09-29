@@ -22,7 +22,6 @@ import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.model.OperatorManager;
 import org.logic2j.core.api.model.PartialTermVisitor;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.impl.io.operator.Operator;
@@ -55,7 +54,7 @@ public class DefaultTermExchanger implements TermExchanger {
         @Override
         public String visit(String theAtomString) {
             if (theAtomString != null && theAtomString.length() > 0 && !Character.isLowerCase(theAtomString.charAt(0))) {
-                StringBuilder sb = new StringBuilder(theAtomString.length() + 2);
+                final StringBuilder sb = new StringBuilder(theAtomString.length() + 2);
                 sb.append('\'');
                 sb.append(theAtomString);
                 sb.append('\'');
@@ -100,7 +99,7 @@ public class DefaultTermExchanger implements TermExchanger {
                 sb.append('(');
                 for (int c = 0; c < arity; c++) {
                     final Object arg = theStruct.getArg(c);
-                    String accept = TermApi.accept(arg, this);
+                    final String accept = TermApi.accept(arg, this);
                     sb.append(accept);
                     if (c < arity - 1) {
                         sb.append(ARG_SEPARATOR);
@@ -255,7 +254,7 @@ public class DefaultTermExchanger implements TermExchanger {
     public CharSequence marshall(Object theTerm) {
         final FormattingVisitor fv = new FormattingVisitor();
         if (this.prolog != null && theTerm instanceof Struct) {
-            return fv.toStringAsArgY((Term) theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
+            return fv.toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
         }
         return TermApi.accept(theTerm, fv);
     }

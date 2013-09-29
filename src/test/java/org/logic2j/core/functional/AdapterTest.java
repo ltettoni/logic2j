@@ -79,7 +79,7 @@ public class AdapterTest extends PrologTestBase {
         //
         MultipleSolutionsHolder solutions;
         solutions = this.prolog.solve("dbl(X)").all();
-        List<Object> binding = solutions.binding("X");
+        final List<Object> binding = solutions.binding("X");
         assertEquals("[1.1, 1.2, 1.3]", binding.toString());
     }
 }

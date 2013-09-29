@@ -81,10 +81,10 @@ public class TabularData implements Serializable {
      */
     private void squarify() {
         final int nbColumns = this.columnNames.length;
-        for (int i = 0; i < data.length; i++) {
-            Serializable[] row = data[i];
+        for (int i = 0; i < this.data.length; i++) {
+            final Serializable[] row = this.data[i];
             if (nbColumns != row.length) {
-                data[i] = Arrays.copyOf(data[i], nbColumns);
+                this.data[i] = Arrays.copyOf(this.data[i], nbColumns);
             }
         }
     }
@@ -92,7 +92,7 @@ public class TabularData implements Serializable {
     private void checkColumnNames() {
         final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
         final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
-        for (String name : this.columnNames) {
+        for (final String name : this.columnNames) {
             if (existingKeys.contains(name)) {
                 duplicateKeys.add(name);
             } else {
@@ -111,8 +111,8 @@ public class TabularData implements Serializable {
         final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
         final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
         if (this.primaryKeyColumn >= 0) {
-            for (int r = 0; r < this.data.length; r++) {
-                Serializable value = this.data[r][this.primaryKeyColumn];
+            for (final Serializable[] element : this.data) {
+                final Serializable value = element[this.primaryKeyColumn];
                 if (existingKeys.contains(value)) {
                     duplicateKeys.add(value);
                 } else {
@@ -160,19 +160,19 @@ public class TabularData implements Serializable {
     // ---------------------------------------------------------------------------
 
     public String getDataSetName() {
-        return dataSetName;
+        return this.dataSetName;
     }
 
     public String[] getColumnNames() {
-        return columnNames;
+        return this.columnNames;
     }
 
     public Serializable[][] getData() {
-        return data;
+        return this.data;
     }
 
     public int getPrimaryKeyColumn() {
-        return primaryKeyColumn;
+        return this.primaryKeyColumn;
     }
 
     public void setPrimaryKeyColumn(int primaryKeyColumn) {
