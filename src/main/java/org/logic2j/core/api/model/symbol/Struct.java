@@ -79,14 +79,6 @@ public final class Struct extends Term {
      */
     public static final Struct EMPTY_LIST = new Struct(FUNCTOR_LIST_EMPTY, 0);
 
-    /**
-     * A potentially big catalogue of all our atoms - will avoid duplicating atoms such as Struct("a"),
-     * and make the unification much faster since we can compare references.
-     * 
-     * @note Remember all Struct names are internalized we can compare by references, we use an IdentityMap
-     */
-    private static IdentityHashMap<String, Struct> ATOM_CATALOG = new IdentityHashMap<String, Struct>();
-
     private String name; // Always "internalized" with String.intern(), you can compare with == !
     private int arity;
     private Object[] args;
@@ -170,13 +162,7 @@ public final class Struct extends Term {
         if (!(functor == Struct.FUNCTOR_CUT || functor == Struct.FUNCTOR_TRUE || functor == Struct.FUNCTOR_FALSE)) {
             return functor;
         }
-        final Struct found = ATOM_CATALOG.get(functor);
-        if (found != null) {
-            return found;
-        }
         final Struct instance = new Struct(functor, 0);
-        // Let's file this new atom into our catalog
-        ATOM_CATALOG.put(functor, instance);
         return instance;
     }
 
@@ -349,15 +335,6 @@ public final class Struct extends Term {
     }
 
     Object factorize(Collection<Object> theCollectedTerms) {
-        if (this.arity == 0) {
-            // This is an atom - find if we already have it in our catalog
-            final Struct found = ATOM_CATALOG.get(this.name);
-            if (found != null) {
-                return found;
-            }
-            // Let's file this new atom into our catalog
-            ATOM_CATALOG.put(this.name, this);
-        }
         // Recursively factorize all arguments of this Struct
         final Object[] newArgs = new Object[this.arity];
         boolean anyChange = false;

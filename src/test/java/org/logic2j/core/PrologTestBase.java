@@ -73,7 +73,6 @@ public abstract class PrologTestBase {
         this.prolog = new PrologReferenceImplementation(initLevel());
         // Here we should NOT NEED to reset the BindingTrail stack - however in certain cases it's useful just to enable this
         BindingTrailTestUtils.reset();
-        // Struct.ATOM_CATALOG.clear(); // While debugging - we may clear cache - requires public access
     }
 
     @After
