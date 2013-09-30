@@ -93,7 +93,7 @@ public class IOLibrary extends LibraryBase {
             final Object value = b.getReferrer();
 
             String format = getProlog().getTermExchanger().marshall(value).toString();
-            format = IOLibrary.unquote(format);
+//            format = IOLibrary.unquote(format);
             sb.append(format);
             sb.append(' ');
         }
