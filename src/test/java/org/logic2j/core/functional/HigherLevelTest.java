@@ -274,4 +274,18 @@ public class HigherLevelTest extends PrologTestBase {
         // assertEquals("[55]", solutions.binding("X").toString());
     }
 
+    @Test
+    public void mappingTransformer() throws Exception {
+        loadTheoryFromTestResourcesDir("transformations.pl");
+        assertEquals("[{ID=ID, Z=','(eav(ID, class, 'Committee'), eav(ID, classification, 'LEVEL_MAIN'))}]", this.prolog.solve("transformForContext(tc(ID), Z)").all().bindings().toString());
+        // assertEquals("[{Z=eav(13, classification, 'LEVEL_MAIN')}]",
+        // this.prolog.solve("transformForContext(main(13), Z)").all().bindings().toString());
+        // assertEquals("[{ID=ID, Z=eav(ID, class, 'Committee')}]",
+        // this.prolog.solve("transformForContext(committee(ID), Z)").all().bindings().toString());
+        // //
+        // assertEquals("[{Z=','(one, ten)}]", this.prolog.solve("transformForContext(11, Z)").all().bindings().toString());
+        // assertEquals("[{Z=ten}]", this.prolog.solve("transformForContext(10, Z)").all().bindings().toString());
+        // assertEquals("[{Z=one}]", this.prolog.solve("transformForContext(1, Z)").all().bindings().toString());
+        // assertEquals("[{Z=4}]", this.prolog.solve("transformForContext(4, Z)").all().bindings().toString());
+    }
 }

@@ -142,4 +142,3 @@ sign4(N, Sign) :-
         N < 0 -> Sign=negative ;
         Sign=zero.
 
-  
