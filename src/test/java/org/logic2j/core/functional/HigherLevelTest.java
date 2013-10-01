@@ -44,7 +44,6 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Override
     protected InitLevel initLevel() {
-        // TODO Auto-generated method stub
         return InitLevel.L2_BASE_LIBRARIES;
     }
 
