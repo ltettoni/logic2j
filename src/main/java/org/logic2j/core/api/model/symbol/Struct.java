@@ -592,8 +592,8 @@ public final class Struct extends Term {
         this.args[1] = co;
     }
 
-    <T> T accept(TermVisitor<T> theVisitor) {
-        return theVisitor.visit(this);
+    <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
+        return theVisitor.visit(this, theBindings);
     }
 
     // ---------------------------------------------------------------------------

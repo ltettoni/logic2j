@@ -113,7 +113,7 @@ public class Bindings {
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public Var visit(Var theVar) {
+        public Var visit(Var theVar, Bindings theBindings) {
             if (theVar.getIndex() == this.index) {
                 this.binding.setVar(theVar);
                 // Job done - there are no other variable to set for this index, since goals are always factorized (see def of factorized
@@ -228,8 +228,8 @@ public class Bindings {
      * 
      * @param theTerm Must be either the root or on of the children {@link Term}s that was
      *            used to instantiate this {@link Bindings}
-     * @param theClass of the expected referrer Term
-     * @return null if theTerm was a free {@link Var}iable
+     * @param theClass of the expected referrer Term, or Object.class for any
+     * @return null if theTerm was the anonymous {@link Var}iable
      */
     public Bindings focus(Object theTerm, Class<? extends Object> theClass) {
         if (theTerm instanceof Var) {
@@ -255,8 +255,6 @@ public class Bindings {
 
         // will return a cloned Bindings with theTerm as referrer
         return shallowCopy(this, theTerm);
-        // Did we need the following line?
-        // return deepCopyWithNewReferrer(this, theTerm);
     }
 
     /**

@@ -54,10 +54,10 @@ public class TermApi {
     public static <T> T accept(Object theTerm, PartialTermVisitor<T> theVisitor) {
         // TermVisitor
         if (theTerm instanceof Struct) {
-            return theVisitor.visit((Struct) theTerm);
+            return theVisitor.visit((Struct) theTerm, null);
         }
         if (theTerm instanceof Var) {
-            return theVisitor.visit((Var) theTerm);
+            return theVisitor.visit((Var) theTerm, null);
         }
         // throw new PrologNonSpecificError("Should not happen here");
         // Extension
@@ -70,7 +70,9 @@ public class TermApi {
         if (theTerm instanceof Double) {
             return theVisitor.visit((Double) theTerm);
         }
-        return theVisitor.visit(theTerm);
+        throw new InvalidTermException("Unsupported term class for TermVisitor: " + theTerm.getClass() + "; instance was " + theTerm);
+        //
+        // return theVisitor.visit(theTerm);
     }
 
     public static boolean isAtom(Object theTerm) {

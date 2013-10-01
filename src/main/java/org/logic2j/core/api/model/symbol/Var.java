@@ -214,8 +214,8 @@ public final class Var extends Term {
         return (short) (theIndexOfNextNonIndexedVar + 1);
     }
 
-    <T> T accept(TermVisitor<T> theVisitor) {
-        return theVisitor.visit(this);
+    <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
+        return theVisitor.visit(this, theBindings);
     }
 
     // ---------------------------------------------------------------------------
