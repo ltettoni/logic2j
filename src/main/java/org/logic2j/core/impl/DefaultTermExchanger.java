@@ -86,28 +86,10 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         return String.valueOf(theDouble);
     }
 
-    // @Override
-    // public String visit(Object theObject) {
-    // return String.valueOf(theObject);
-    // }
-
-    // protected String formatVar(Var theVar, Bindings theBindings) {
-    // if (theBindings == null) {
-    // return theVar.getName();
-    // }
-    // if (theVar.isAnonymous()) {
-    // return Var.ANONYMOUS_VAR_NAME;
-    // }
-    // // Go to fetch the effective variable value if any
-    // final Binding startingBinding = theVar.bindingWithin(theBindings);
-    // final Binding finalBinding = startingBinding.followLinks();
-    // if (finalBinding.isFree()) {
-    // return theVar.getName();
-    // } else {
-    // // Must be literal: recurse
-    // return TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
-    // }
-    // }
+     @Override
+     public String visit(Object theObject) {
+       return String.valueOf(theObject);
+     }
 
     /**
      * Gets the string representation of this structure

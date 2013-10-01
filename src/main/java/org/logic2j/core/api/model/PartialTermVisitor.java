@@ -30,5 +30,5 @@ public interface PartialTermVisitor<T> extends TermVisitor<T> {
 
     T visit(Double theDouble);
 
-    // T visit(Object theObject);
+    T visit(Object theObject);
 }

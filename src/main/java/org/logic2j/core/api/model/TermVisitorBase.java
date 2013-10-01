@@ -55,25 +55,21 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
 
     @Override
     public T visit(String theAtomString) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public T visit(Long theLong) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public T visit(Double theDouble) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    // @Override
-    // public T visit(Object theObject) {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
+     @Override
+     public T visit(Object theObject) {
+       return null;
+     }
 }

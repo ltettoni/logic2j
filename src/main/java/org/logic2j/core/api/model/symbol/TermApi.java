@@ -70,9 +70,8 @@ public class TermApi {
         if (theTerm instanceof Double) {
             return theVisitor.visit((Double) theTerm);
         }
-        throw new InvalidTermException("Unsupported term class for TermVisitor: " + theTerm.getClass() + "; instance was " + theTerm);
-        //
-        // return theVisitor.visit(theTerm);
+        // throw new InvalidTermException("Unsupported term class for TermVisitor: " + theTerm.getClass() + "; instance was " + theTerm);
+        return theVisitor.visit(theTerm);
     }
 
     public static boolean isAtom(Object theTerm) {
