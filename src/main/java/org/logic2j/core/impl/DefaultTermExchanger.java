@@ -42,15 +42,19 @@ public class DefaultTermExchanger implements TermExchanger {
 
     class FormattingVisitor implements PartialTermVisitor<String> {
 
+        /**
+         * @param theStruct
+         * @param theBindings When null, will format the structure with raw variables names. When not null, will resolve bound vars.
+         */
         @Override
         public String visit(Struct theStruct, Bindings theBindings) {
-            final String formatted = formatStruct(theStruct);
+            final String formatted = formatStruct(theStruct, theBindings);
             return formatted;
         }
 
         @Override
         public String visit(Var theVar, Bindings theBindings) {
-            return String.valueOf(formatVar(theVar));
+            return String.valueOf(formatVar(theVar, theBindings));
         }
 
         @Override
@@ -77,8 +81,10 @@ public class DefaultTermExchanger implements TermExchanger {
          * Gets the string representation of this structure
          * 
          * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
+         * 
+         * @param theBindings
          */
-        private String formatStruct(Struct theStruct) {
+        private String formatStruct(Struct theStruct, Bindings theBindings) {
             // empty list case
             if (theStruct.isEmptyList()) {
                 return Struct.FUNCTOR_LIST_EMPTY;
@@ -87,14 +93,14 @@ public class DefaultTermExchanger implements TermExchanger {
             final int arity = theStruct.getArity();
             // list case
             if (name.equals(Struct.FUNCTOR_LIST) && arity == 2) {
-                return ("[" + formatRecursive(theStruct) + "]");
+                return ("[" + formatPListRecursive(theStruct, theBindings) + "]");
             }
             final StringBuilder sb = new StringBuilder((Parser.isAtom(name) ? name : (QUOTE + name + QUOTE)));
             if (arity > 0) {
                 sb.append('(');
                 for (int c = 0; c < arity; c++) {
                     final Object arg = theStruct.getArg(c);
-                    final String accept = TermApi.accept(arg, this);
+                    final String accept = TermApi.accept(this, arg, theBindings);
                     sb.append(accept);
                     if (c < arity - 1) {
                         sb.append(ARG_SEPARATOR);
@@ -105,30 +111,30 @@ public class DefaultTermExchanger implements TermExchanger {
             return sb.toString();
         }
 
-        private String formatRecursive(Struct theStruct) {
-            final Object h = theStruct.getLHS();
-            final Object t = theStruct.getRHS();
-            if (TermApi.isList(t)) {
-                final Struct tl = (Struct) t;
-                if (tl.isEmptyList()) {
-                    return h.toString();
+        private String formatPListRecursive(Struct theStruct, Bindings theBindings) {
+            final Object head = theStruct.getLHS();
+            final Object tail = theStruct.getRHS();
+            if (TermApi.isList(tail)) {
+                final Struct tailS = (Struct) tail;
+                if (tailS.isEmptyList()) {
+                    return head.toString();
                 }
-                if (h instanceof Var) {
-                    return (formatVar((Var) h) + ELEM_SEPARATOR + formatRecursive(tl));
+                if (head instanceof Var) {
+                    return (formatVar((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings));
                 }
-                return (h.toString() + ELEM_SEPARATOR + formatRecursive(tl));
+                return (head.toString() + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings));
             }
             String h0;
             String t0;
-            if (h instanceof Var) {
-                h0 = formatVar((Var) h);
+            if (head instanceof Var) {
+                h0 = formatVar((Var) head, theBindings);
             } else {
-                h0 = h.toString();
+                h0 = head.toString();
             }
-            if (t instanceof Var) {
-                t0 = formatVar((Var) t);
+            if (tail instanceof Var) {
+                t0 = formatVar((Var) tail, theBindings);
             } else {
-                t0 = t.toString();
+                t0 = tail.toString();
             }
             return (h0 + "|" + t0);
         }
@@ -228,7 +234,7 @@ public class DefaultTermExchanger implements TermExchanger {
 
     private final PrologImplementation prolog;
 
-    protected String formatVar(Var theVar) {
+    protected String formatVar(Var theVar, Bindings theBindings) {
         return theVar.getName();
     }
 
@@ -278,7 +284,7 @@ public class DefaultTermExchanger implements TermExchanger {
         if (this.prolog != null && theTerm instanceof Struct) {
             return fv.toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
         }
-        return TermApi.accept(theTerm, fv);
+        return TermApi.accept(fv, theTerm, null);
     }
 
 }

@@ -183,7 +183,7 @@ public class Bindings {
             this.bindings[varIndex] = binding;
             // Assign Binding.var field
             // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
-            TermApi.accept(theReferrer, new VisitorToAssignVarWithinBinding(binding, varIndex));
+            TermApi.accept(new VisitorToAssignVarWithinBinding(binding, varIndex), theReferrer, this);
         }
     }
 

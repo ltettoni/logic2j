@@ -44,7 +44,7 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
     public T visit(Struct theStruct, Bindings theBindings) {
         // Recurse through children
         for (int i = 0; i < theStruct.getArity(); i++) {
-            final T result = TermApi.accept(theStruct.getArg(i), this);
+            final T result = TermApi.accept(this, theStruct.getArg(i), theBindings);
             // Until the first returning a non-null result
             if (result != null) {
                 return result;

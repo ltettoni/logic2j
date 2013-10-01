@@ -51,13 +51,13 @@ public class TermApi {
         // Forbid instantiation
     }
 
-    public static <T> T accept(Object theTerm, PartialTermVisitor<T> theVisitor) {
+    public static <T> T accept(PartialTermVisitor<T> theVisitor, Object theTerm, Bindings theBindings) {
         // TermVisitor
         if (theTerm instanceof Struct) {
-            return theVisitor.visit((Struct) theTerm, null);
+            return theVisitor.visit((Struct) theTerm, theBindings);
         }
         if (theTerm instanceof Var) {
-            return theVisitor.visit((Var) theTerm, null);
+            return theVisitor.visit((Var) theTerm, theBindings);
         }
         // throw new PrologNonSpecificError("Should not happen here");
         // Extension
