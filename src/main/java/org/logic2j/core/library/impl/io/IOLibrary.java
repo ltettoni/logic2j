@@ -92,8 +92,8 @@ public class IOLibrary extends LibraryBase {
             ensureBindingIsNotAFreeVar(b, "log/*");
             final Object value = b.getReferrer();
 
-            String format = getProlog().getTermExchanger().marshall(value).toString();
-//            format = IOLibrary.unquote(format);
+            String format = getProlog().getTermExchanger().marshall(b).toString();
+            // format = IOLibrary.unquote(format);
             sb.append(format);
             sb.append(' ');
         }
