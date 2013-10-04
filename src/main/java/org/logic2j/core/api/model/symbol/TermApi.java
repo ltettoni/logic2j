@@ -359,8 +359,11 @@ public class TermApi {
                 // Is just an integer
                 result = Long.valueOf(nbr.longValue());
             }
+        } else if (theObject instanceof Enum<?>) {
+            // Enums are just valid terms
+            result = theObject;
         } else {
-            throw new InvalidTermException("Cannot create Term from '" + theObject + "' of " + theObject.getClass());
+            throw new InvalidTermException("Cannot (yet) create a Term from '" + theObject + "' of " + theObject.getClass());
         }
         return result;
     }
