@@ -212,7 +212,6 @@ public class CoreLibraryTest extends PrologTestBase {
         assertNoSolution("X=abc, atom_length(X, 1)");
         //
         assertOneSolution("atom_length(abc, X), X=3");
-
     }
 
     @Test
