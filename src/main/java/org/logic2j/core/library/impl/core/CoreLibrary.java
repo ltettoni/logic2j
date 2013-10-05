@@ -137,13 +137,17 @@ public class CoreLibrary extends LibraryBase {
 
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
-        Object result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
         if (arity == 1) {
             final Object arg0 = theGoalStruct.getArg(0);
             if (theMethodName == "not") {
                 result = not(theListener, theGoalVars, arg0);
+            } else if (theMethodName == "var") {
+                result = var(theListener, theGoalVars, arg0);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 2) {
             final Object arg0 = theGoalStruct.getArg(0);
@@ -152,6 +156,12 @@ public class CoreLibrary extends LibraryBase {
                 result = unify(theListener, theGoalVars, arg0, arg1);
             } else if (theMethodName == "expression_greater_equal_than") {
                 result = expression_greater_equal_than(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "expression_greater_than") {
+                result = expression_greater_than(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "expression_lower_than") {
+                result = expression_lower_than(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "expression_lower_equal_than") {
+                result = expression_lower_equal_than(theListener, theGoalVars, arg0, arg1);
             } else if (theMethodName == "expression_equals") {
                 result = expression_equals(theListener, theGoalVars, arg0, arg1);
             } else if (theMethodName == "is") {
@@ -160,7 +170,36 @@ public class CoreLibrary extends LibraryBase {
                 result = plus(theListener, theGoalVars, arg0, arg1);
             } else if (theMethodName == "minus") {
                 result = minus(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "multiply") {
+                result = multiply(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "notUnify") {
+                result = notUnify(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "clause") {
+                result = clause(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "predicate2PList") {
+                result = predicate2PList(theListener, theGoalVars, arg0, arg1);
+            } else if (theMethodName == "atom_length") {
+                result = atom_length(theListener, theGoalVars, arg0, arg1);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
+        } else if (arity == 3) {
+            final Object arg0 = theGoalStruct.getArg(0);
+            final Object arg1 = theGoalStruct.getArg(1);
+            final Object arg2 = theGoalStruct.getArg(2);
+            if (theMethodName == "findall") {
+                result = findall(theListener, theGoalVars, arg0, arg1, arg2);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else if (arity == 0) {
+            if (theMethodName == "trueFunctor") {
+                result = trueFunctor(theListener, theGoalVars);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else {
+            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }
         return result;
     }

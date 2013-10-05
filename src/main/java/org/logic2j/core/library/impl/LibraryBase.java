@@ -31,7 +31,8 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
 
 /**
- * Base class for libraries.
+ * Base class for libraries, provides convenience methods to unify, deunify, and access the underlying {@link PrologImplementation}
+ * features.
  */
 public class LibraryBase implements PLibrary {
     private final PrologImplementation prolog;
@@ -64,11 +65,11 @@ public class LibraryBase implements PLibrary {
      * @return The result of unification.
      */
     protected boolean unify(Object t1, Bindings theBindings1, Object t2, Bindings theBindings2) {
-        return getProlog().getUnifier().unify(t1, theBindings1, t2, theBindings2);
+        return this.prolog.getUnifier().unify(t1, theBindings1, t2, theBindings2);
     }
 
     protected void deunify() {
-        getProlog().getUnifier().deunify();
+        this.prolog.getUnifier().deunify();
     }
 
     /**
@@ -164,7 +165,7 @@ public class LibraryBase implements PLibrary {
         if (anyObject == null) {
             return Var.ANONYMOUS_VAR;
         }
-        return getProlog().getTermAdapter().term(anyObject, FactoryMode.ATOM);
+        return this.prolog.getTermAdapter().term(anyObject, FactoryMode.ATOM);
     }
 
     // Only one use!

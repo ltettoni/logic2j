@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -41,6 +42,34 @@ public class PojoLibrary extends LibraryBase {
 
     public PojoLibrary(PrologImplementation theProlog) {
         super(theProlog);
+    }
+
+    @Override
+    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+        final Object result;
+        // Argument methodName is {@link String#intern()}alized so OK to check by reference
+        final int arity = theGoalStruct.getArity();
+        if (arity == 2) {
+            final Object arg0 = theGoalStruct.getArg(0);
+            final Object arg1 = theGoalStruct.getArg(1);
+            if (theMethodName == "bind") {
+                result = bind(theListener, theGoalVars, arg0, arg1);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else if (arity == 3) {
+            final Object arg0 = theGoalStruct.getArg(0);
+            final Object arg1 = theGoalStruct.getArg(1);
+            final Object arg2 = theGoalStruct.getArg(2);
+            if (theMethodName == "property") {
+                result = property(theListener, theGoalVars, arg0, arg1, arg2);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else {
+            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        }
+        return result;
     }
 
     /**

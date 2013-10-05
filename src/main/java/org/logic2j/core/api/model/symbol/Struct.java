@@ -227,6 +227,13 @@ public final class Struct extends Term {
     }
 
     /**
+     * @return The array of all arguments
+     */
+    public Object[] getArgs() {
+        return this.args;
+    }
+
+    /**
      * Gets the i-th element of this structure
      * 
      * No bound check is done

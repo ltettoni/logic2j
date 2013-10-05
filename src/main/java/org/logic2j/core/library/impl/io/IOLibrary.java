@@ -21,6 +21,7 @@ import java.io.PrintStream;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
@@ -38,6 +39,28 @@ public class IOLibrary extends LibraryBase {
         super(theProlog);
     }
 
+    @Override
+    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+        final Object result;
+        final Object[] args = theGoalStruct.getArgs();
+        if (theMethodName == "nolog") {
+            result = nolog(theListener, theGoalVars, args);
+        } else if (theMethodName == "write") {
+            result = write(theListener, theGoalVars, args);
+        } else if (theMethodName == "info") {
+            result = info(theListener, theGoalVars, args);
+        } else if (theMethodName == "debug") {
+            result = debug(theListener, theGoalVars, args);
+        } else if (theMethodName == "warn") {
+            result = warn(theListener, theGoalVars, args);
+        } else if (theMethodName == "error") {
+            result = error(theListener, theGoalVars, args);
+        } else {
+            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        }
+        return result;
+    }
+
     @Primitive
     public Continuation write(SolutionListener theListener, Bindings theBindings, Object... terms) {
         for (final Object term : terms) {
@@ -51,6 +74,7 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener);
     }
 
+    @SuppressWarnings("unused")
     @Primitive
     public Continuation nl(SolutionListener theListener, Bindings theBindings) {
         this.writer.print('\n');
@@ -90,10 +114,7 @@ public class IOLibrary extends LibraryBase {
         for (final Object term : terms) {
             final Bindings b = theBindings.focus(term, Object.class);
             ensureBindingIsNotAFreeVar(b, "log/*");
-            final Object value = b.getReferrer();
-
             String format = getProlog().getTermExchanger().marshall(b).toString();
-            // format = IOLibrary.unquote(format);
             sb.append(format);
             sb.append(' ');
         }
@@ -109,7 +130,6 @@ public class IOLibrary extends LibraryBase {
      * @param terms
      * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
      */
-    @SuppressWarnings("unused")
     @Primitive
     public Continuation nolog(SolutionListener theListener, Bindings theBindings, Object... terms) {
         // Do nothing, but succeeds!

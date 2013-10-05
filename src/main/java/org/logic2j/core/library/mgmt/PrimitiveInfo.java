@@ -19,6 +19,7 @@ package org.logic2j.core.library.mgmt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.SolutionListener;
@@ -40,6 +41,8 @@ import org.logic2j.core.api.model.var.Bindings;
 public class PrimitiveInfo {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
     private static final boolean debug = logger.isDebugEnabled();
+
+    private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<String>();
 
     public static enum PrimitiveType {
         /**
@@ -77,6 +80,12 @@ public class PrimitiveInfo {
         final Object result = this.library.dispatch(this.methodName, theGoalStruct, theGoalVars, theListener);
         if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
             return result;
+        }
+        // We did not do a direct invocation - we will have to rely on reflection
+        if (!methodNeedingReflectiveInvocation.contains(this.methodName)) {
+            logger.warn("Invocation of library primitive \"{}\" uses reflection - consider direct dispatch by implementing PLibrary.dispatch()", this.methodName);
+            // Avoid multiple logging
+            methodNeedingReflectiveInvocation.add(this.methodName);
         }
         try {
             if (debug) {
