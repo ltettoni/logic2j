@@ -280,7 +280,7 @@ public class TermApi {
      * Normalize a {@link Term} using the specified definitions of operators, primitives.
      * 
      * @param theTerm To be normalized
-     * @param theLibraryContent Defines primitives to be recognized
+     * @param theLibraryContent Defines primitives to be recognized, null for no assignment
      * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
      */
     public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
