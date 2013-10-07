@@ -28,8 +28,25 @@ public class FunctionLibraryTest extends PrologTestBase {
     @Test
     public void mapBottomUp() {
         loadLibrary(new FunctionLibrary(this.prolog));
+        loadTheoryFromTestResourcesDir("mapping.pl");
         //
-        assertEquals("a", assertOneSolution("IN=a, mapBottomUp(any, IN, X)").binding("X"));
-    }
+        // Mapped struct
+        assertEquals("f(one, 2)", assertOneSolution("mapBottomUp(map, f(1,2), X)").binding("X").toString());
 
+        //
+        // Free vars and anonymous should not be mapped
+        // assertOneSolution("mapBottomUp(map, _, anything)");
+        // assertOneSolution("mapBottomUp(map, Free, Free)");
+
+        //
+        // Mapped atoms
+        // assertOneSolution("mapBottomUp(map, 1, one)");
+        // assertNoSolution("mapBottomUp(map, 1, other)");
+        // assertEquals("one", assertOneSolution("IN=1, mapBottomUp(map, IN, X)").binding("X"));
+        //
+        // Unmapped atoms
+        // assertOneSolution("mapBottomUp(map, 2, 2)");
+        // assertNoSolution("mapBottomUp(map, 2, other)");
+        // assertEquals(2L, assertOneSolution("IN=2, mapBottomUp(map, IN, X)").binding("X"));
+    }
 }
