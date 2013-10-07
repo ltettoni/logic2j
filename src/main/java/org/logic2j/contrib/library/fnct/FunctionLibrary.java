@@ -25,6 +25,7 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.impl.PrologImplementation;
@@ -35,6 +36,7 @@ import org.logic2j.core.library.mgmt.Primitive;
  * Functional features (mapping, etc).
  */
 public class FunctionLibrary extends LibraryBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibrary.class);
 
     public FunctionLibrary(PrologImplementation theProlog) {
         super(theProlog);
@@ -48,20 +50,85 @@ public class FunctionLibrary extends LibraryBase {
         final Bindings theInputBindings = theBindings.focus(theInput, Object.class);
         final Bindings theOutputBindings = theBindings.focus(theOutput, Object.class);
 
-        traverseAndMap((String) thePredicate, theInputBindings, theOutputBindings);
+        traverseAndMap((String) thePredicate, theInputBindings, theOutputBindings, theListener);
 
-        final boolean unified = unify(theInput, theBindings, theOutput, theBindings);
-        return notifyIfUnified(unified, theListener);
+        // final boolean unified = unify(theInput, theBindings, theOutput, theBindings);
+        // return notifyIfUnified(unified, theListener);
+        return Continuation.CONTINUE;
     }
 
     /**
      * @param thePredicate
      * @param theInputBindings
      * @param theOutputBindings
+     * @param theListener
      */
-    private void traverseAndMap(String thePredicate, Bindings theInputBindings, Bindings theOutputBindings) {
-        // TODO Auto-generated method stub
+    private void traverseAndMap(String thePredicate, final Bindings theInputBindings, final Bindings theOutputBindings, final SolutionListener theListener) {
+        if (theInputBindings == null) {
+            // Anonymous var specified
+            notifySolution(theListener);
+            return;
+        }
+        if (theInputBindings.isFreeReferrer()) {
+            // Free variable
+            notifySolution(theListener);
+            return;
+        }
+        // Depth first traversal, traverse children first
+        if (theInputBindings.getReferrer() instanceof Struct) {
+            Struct struct = (Struct) (theInputBindings.getReferrer());
+            final Struct theTransformedStructure = new Struct(struct);
+            logger.info("Found a struct {}", struct);
+            final Object[] args = struct.getArgs();
+            final Object[] transformedArgs = new Object[args.length];
+            int index = -1;
+            for (Object arg : args) {
+                index++;
+                logger.info("Going to attempt to transform {}", arg);
 
+                // Create a method for this whole mess : create a new normalized structured piggy-backed on another
+                final Var zz = new Var("ZZ");
+                Struct transformationGoal = new Struct((String) thePredicate, arg, zz);
+                transformationGoal = (Struct) TermApi.normalize(transformationGoal, null);
+                final Bindings goal = Bindings.shallowCopy(theInputBindings, transformationGoal);
+
+                final SolutionListenerBase singleMappingResultListener = new SolutionListenerBase() {
+                    @Override
+                    public Continuation onSolution() {
+                        return Continuation.USER_ABORT;
+                    }
+                };
+                Continuation mappingResult = getProlog().getSolver().solveGoal(goal, singleMappingResultListener);
+                if (mappingResult == Continuation.USER_ABORT) {
+                    // One was found
+                    transformedArgs[index] = goal.getBinding(zz.getIndex()).followLinks().getTerm();
+                } else {
+                    // None was found: same arg
+                    transformedArgs[index] = arg;
+                }
+            }
+            final boolean unified = unify(theTransformedStructure, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+            notifyIfUnified(unified, theListener);
+        }
+
+        final Struct transformationGoal = new Struct((String) thePredicate, theInputBindings.getReferrer(), theOutputBindings.getReferrer());
+        final Bindings goal = Bindings.shallowCopy(theInputBindings, transformationGoal);
+
+        final SolutionListenerBase singleMappingResultListener = new SolutionListenerBase() {
+            @Override
+            public Continuation onSolution() {
+                logger.info("Found mapping for {} as {}", goal, theOutputBindings);
+                notifySolution(theListener);
+                super.onSolution();
+                return Continuation.USER_ABORT;
+            }
+        };
+        Continuation mappingResult = getProlog().getSolver().solveGoal(goal, singleMappingResultListener);
+        if (mappingResult == Continuation.CONTINUE) {
+            // No solution found (otherwise we would have returned a USER_ABORT), no mapping, return original
+            final boolean unified = unify(theInputBindings.getReferrer(), theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+            notifyIfUnified(unified, theListener);
+        }
     }
 
     // ---------------------------------------------------------------------------------------

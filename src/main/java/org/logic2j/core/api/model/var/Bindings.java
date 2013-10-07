@@ -214,7 +214,7 @@ public class Bindings {
      * Create a new Bindings, just setting the specified referrer, but referring to the same
      * array of {@link Binding}.
      */
-    private static Bindings shallowCopy(Bindings theOriginal, Object theNewReferrerTerm) {
+    public static Bindings shallowCopy(Bindings theOriginal, Object theNewReferrerTerm) {
         return new Bindings(theNewReferrerTerm, theOriginal.bindings);
     }
 
@@ -408,9 +408,9 @@ public class Bindings {
     public String toString() {
         final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
         if (isEmpty()) {
-            return this.getClass().getSimpleName() + address + "(novars)";
+            return this.getClass().getSimpleName() + address + "(novars):" + getReferrer();
         }
-        return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings);
+        return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings) + ':' + getReferrer();
     }
 
 }
