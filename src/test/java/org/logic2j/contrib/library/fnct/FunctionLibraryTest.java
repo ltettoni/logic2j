@@ -20,11 +20,13 @@ package org.logic2j.contrib.library.fnct;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 
 public class FunctionLibraryTest extends PrologTestBase {
 
+    @Ignore("Not ready")
     @Test
     public void mapBottomUp() {
         loadLibrary(new FunctionLibrary(this.prolog));
