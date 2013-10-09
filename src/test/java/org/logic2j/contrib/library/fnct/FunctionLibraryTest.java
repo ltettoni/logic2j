@@ -26,7 +26,6 @@ import org.logic2j.core.PrologTestBase;
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
 
-    // @Ignore("Not ready")
     @Test
     public void mapBottomUp() {
         loadLibrary(new FunctionLibrary(this.prolog));
@@ -37,12 +36,10 @@ public class FunctionLibraryTest extends PrologTestBase {
 
         // logger.info("XXXXXXXXXXXXXXX: {}", getProlog().solve("mapBottomUp(map, f(1,2), X)").all().binding("X").toString());
 
-        // assertEquals("f(one, 2)", assertOneSolution("mapBottomUp(map, f(1,2), X)").binding("X").toString());
-        // assertEquals("g(one, f(one, 2))", assertOneSolution("mapBottomUp(map, g(1, f(1,2)), X)").binding("X").toString());
+        assertEquals("f(one, 2)", assertOneSolution("mapBottomUp(map, f(1,2), X)").binding("X").toString());
+        assertEquals("g(one, f(one, 2))", assertOneSolution("mapBottomUp(map, g(1, f(1,2)), X)").binding("X").toString());
         assertEquals("[one,ten]", assertOneSolution("mapBottomUp(map, [1,10], X)").binding("X").toString());
 
-        /*
-         */
         //
         // Free vars and anonymous should not be mapped
         assertOneSolution("mapBottomUp(map, _, anything)");

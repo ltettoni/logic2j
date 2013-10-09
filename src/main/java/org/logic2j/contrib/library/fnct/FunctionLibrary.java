@@ -19,7 +19,6 @@
 package org.logic2j.contrib.library.fnct;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
@@ -65,7 +64,7 @@ public class FunctionLibrary extends LibraryBase {
      * @param theListener
      */
     private void traverseAndMap(String thePredicate, final Bindings theInputBindings, final Bindings theOutputBindings, final SolutionListener theListener) {
-        logger.info("Enter traverseAndMap, from {} to {}", theInputBindings, theOutputBindings);
+        logger.debug("Enter traverseAndMap, from {} to {}", theInputBindings, theOutputBindings);
         if (theInputBindings == null) {
             // Anonymous var specified
             notifySolution(theListener);
@@ -80,7 +79,7 @@ public class FunctionLibrary extends LibraryBase {
         // Depth first traversal, traverse children first
         if (theInputBindings.getReferrer() instanceof Struct) {
             final Struct struct = (Struct) (theInputBindings.getReferrer());
-            logger.info("Found a struct {}", struct);
+            logger.debug("Found a struct {}", struct);
             final Object[] args = struct.getArgs();
             if (args != null) {
                 final Object[] transformedArgs = new Object[args.length];
@@ -88,7 +87,7 @@ public class FunctionLibrary extends LibraryBase {
                 for (Object arg : args) {
                     index++;
                     final int indx = index;
-                    logger.info("Going to attempt to transform {}", arg);
+                    logger.debug("Going to attempt to transform {}", arg);
 
                     final Var xx = new Var("XX");
                     final Var zz = new Var("ZZ");
@@ -103,7 +102,7 @@ public class FunctionLibrary extends LibraryBase {
                                 @Override
                                 public Continuation onSolution() {
                                     final Object substitute = TermApi.substitute(zz, mappingBindings);
-                                    logger.info("solution: substituted={}", substitute);
+                                    logger.debug("solution: substituted={}", substitute);
                                     transformedArgs[indx] = substitute;
                                     return Continuation.USER_ABORT;
                                 }
@@ -116,9 +115,7 @@ public class FunctionLibrary extends LibraryBase {
                     }
 
                 }
-                logger.info("transformedArgs={}", Arrays.asList(transformedArgs));
                 final Struct theTransformedStructure = new Struct(struct.getName(), transformedArgs);
-                logger.info("theTransformedStructure={}", theTransformedStructure);
 
                 final boolean unified = unify(theTransformedStructure, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
                 notifyIfUnified(unified, theListener);
@@ -141,10 +138,9 @@ public class FunctionLibrary extends LibraryBase {
                     final SolutionListener singleMappingResultListener = new SolutionListener() {
                         @Override
                         public Continuation onSolution() {
-                            logger.info("Found mapping for {} as {}", mappingGoal, theOutputBindings);
                             final Object substitute = TermApi.substitute(zz, mappingBindings);
                             sol[0] = substitute;
-                            logger.info("solution: substituted={}", substitute);
+                            logger.debug("solution: substituted={}", substitute);
                             return Continuation.USER_ABORT;
                         }
                     };
