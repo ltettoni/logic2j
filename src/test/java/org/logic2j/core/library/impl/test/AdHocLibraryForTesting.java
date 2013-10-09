@@ -37,11 +37,11 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
     @Primitive
     public Continuation int_range(SolutionListener theListener, Bindings theBindings, Object theLowerBound, Object theIterable, Object theUpperBound) {
-        final Bindings b1 = theBindings.focus(theLowerBound, Object.class);
+        final Bindings b1 = theBindings.narrow(theLowerBound, Object.class);
         ensureBindingIsNotAFreeVar(b1, "int_range/3");
         final long lower = ((Number) b1.getReferrer()).longValue();
 
-        final Bindings b2 = theBindings.focus(theUpperBound, Object.class);
+        final Bindings b2 = theBindings.narrow(theUpperBound, Object.class);
         ensureBindingIsNotAFreeVar(b2, "int_range/3");
         final long upper = ((Number) b2.getReferrer()).longValue();
 

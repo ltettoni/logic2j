@@ -18,6 +18,7 @@
 package org.logic2j.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -96,6 +97,7 @@ public abstract class PrologTestBase {
      * @return The UniqueSolutionHolder holding the last solution of theGoals
      */
     protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
+        assertTrue("theGoals must not be empty for assertOneSolution()", theGoals.length > 0);
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
@@ -128,6 +130,7 @@ public abstract class PrologTestBase {
 
     // FIXME Not good, should use direct Junit and @Expected
     protected void assertGoalMustFail(CharSequence... theGoals) {
+        assertTrue("theGoals must not be empty for assertGoalMustFail()", theGoals.length > 0);
         for (final CharSequence theGoal : theGoals) {
             try {
                 this.prolog.solve(theGoal).number();
@@ -145,6 +148,7 @@ public abstract class PrologTestBase {
      * @return The {@link SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
+        assertTrue("theGoals must not be empty for assertOneSolution()", theGoals.length > 0);
         SolutionHolder holder = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting {} solutions to solving goal \"{}\"", theNumber, goal);
@@ -183,6 +187,7 @@ public abstract class PrologTestBase {
      * @return A List of term, corresponding to the related elements passed as argument.
      */
     protected List<Object> termList(CharSequence... elements) {
+        assertTrue("elements must not be empty for termList()", elements.length > 0);
         final List<Object> result = new ArrayList<Object>(elements.length);
         for (final CharSequence element : elements) {
             result.add(term(element));

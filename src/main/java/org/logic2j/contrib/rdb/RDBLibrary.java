@@ -84,7 +84,7 @@ public class RDBLibrary extends LibraryBase {
         final Object theExpression = theArguments[1];
         final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
-        final Bindings expressionBindings = theBindings.focus(theExpression, Struct.class);
+        final Bindings expressionBindings = theBindings.narrow(theExpression, Struct.class);
         ensureBindingIsNotAFreeVar(expressionBindings, "select/*");
         final Struct conditions = (Struct) expressionBindings.getReferrer();
 
@@ -356,7 +356,7 @@ public class RDBLibrary extends LibraryBase {
      * @return The object bound to a Term by its name
      */
     private <T> T bound(Object theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
-        final Bindings b = theBindings.focus(theBinding, Struct.class);
+        final Bindings b = theBindings.narrow(theBinding, Struct.class);
         ensureBindingIsNotAFreeVar(b, "bound");
         final Struct bindingName = (Struct) b.getReferrer();
 

@@ -38,4 +38,15 @@ public class BugRegressionTest extends PrologTestBase {
         assertNSolutions(1, "int5_rule(X), !"); // Horrible bug ! yields 5 solutions instead of 1!!!
     }
 
+    /**
+     * Avoid creating cycles in bindings, or looping forever during unification.
+     */
+    @Test
+    public void infiniteLoopWhenUnifying2Vars() {
+        // This is a simple case: once we have bound, we should not redo it!
+        assertOneSolution("Free=X, Free=X");
+        // This is more complex: we must avoid binding X to Free, when Free is already linked to X!
+        assertOneSolution("Free=X, X=Free");
+    }
+
 }

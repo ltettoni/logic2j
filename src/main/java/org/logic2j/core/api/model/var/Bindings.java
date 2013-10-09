@@ -226,12 +226,12 @@ public class Bindings {
      * Create a new {@link Bindings} with the specified {@link Term} as new Referrer.
      * When Term is a bound {@link Var}iable, will follow through until a free Var or literal is found.
      * 
-     * @param theTerm Must be either the root or on of the children {@link Term}s that was
+     * @param theTerm Must be either the referrer or on of the children {@link Term}s that was
      *            used to instantiate this {@link Bindings}
      * @param theClass of the expected referrer Term, or Object.class for any
      * @return null if theTerm was the anonymous {@link Var}iable
      */
-    public Bindings focus(Object theTerm, Class<? extends Object> theClass) {
+    public Bindings narrow(Object theTerm, Class<? extends Object> theClass) {
         if (theTerm instanceof Var) {
             final Var origin = (Var) theTerm;
             if (origin.isAnonymous()) {

@@ -138,7 +138,7 @@ public class DefaultSolver implements Solver {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
             }
             final Object argumentOfCall = goalStruct.getArg(0);
-            final Bindings effectiveGoalBindings = theGoalBindings.focus(argumentOfCall, Term.class);
+            final Bindings effectiveGoalBindings = theGoalBindings.narrow(argumentOfCall, Term.class);
             if (effectiveGoalBindings == null) {
                 throw new InvalidTermException("Argument to primitive 'call' may not be a free variable, was " + goalStruct.getArg(0));
             }

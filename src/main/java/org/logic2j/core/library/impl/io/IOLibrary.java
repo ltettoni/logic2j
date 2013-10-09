@@ -64,7 +64,7 @@ public class IOLibrary extends LibraryBase {
     @Primitive
     public Continuation write(SolutionListener theListener, Bindings theBindings, Object... terms) {
         for (final Object term : terms) {
-            final Bindings b = theBindings.focus(term, Term.class);
+            final Bindings b = theBindings.narrow(term, Term.class);
             final Object value = b.getReferrer();
 
             String format = getProlog().getTermExchanger().marshall(value).toString();
@@ -112,7 +112,7 @@ public class IOLibrary extends LibraryBase {
     private String formatForLog(Bindings theBindings, Object... terms) {
         final StringBuilder sb = new StringBuilder("P ");
         for (final Object term : terms) {
-            final Bindings b = theBindings.focus(term, Object.class);
+            final Bindings b = theBindings.narrow(term, Object.class);
             ensureBindingIsNotAFreeVar(b, "log/*");
             String format = getProlog().getTermExchanger().marshall(b).toString();
             sb.append(format);

@@ -92,7 +92,7 @@ public class PojoLibrary extends LibraryBase {
 
     @Primitive
     public Continuation bind(final SolutionListener theListener, Bindings theBindings, Object theBindingName, Object theTarget) {
-        final Bindings nameBindings = theBindings.focus(theBindingName, Object.class);
+        final Bindings nameBindings = theBindings.narrow(theBindingName, Object.class);
         ensureBindingIsNotAFreeVar(nameBindings, "bind/2");
         final Object nameTerm = nameBindings.getReferrer();
         final String name = nameTerm.toString();
@@ -105,11 +105,11 @@ public class PojoLibrary extends LibraryBase {
     @Primitive
     public Continuation property(final SolutionListener theListener, Bindings theBindings, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
-        final Bindings bindingsForPojo = theBindings.focus(thePojo, Object.class);
+        final Bindings bindingsForPojo = theBindings.narrow(thePojo, Object.class);
         ensureBindingIsNotAFreeVar(bindingsForPojo, "property/3");
         final Object pojo = bindingsForPojo.getReferrer();
         // Second argument
-        final Bindings bindingsForPropertyName = theBindings.focus(thePropertyName, String.class);
+        final Bindings bindingsForPropertyName = theBindings.narrow(thePropertyName, String.class);
         ensureBindingIsNotAFreeVar(bindingsForPropertyName, "property/3");
         final String propertyName = (String) bindingsForPropertyName.getReferrer();
         //

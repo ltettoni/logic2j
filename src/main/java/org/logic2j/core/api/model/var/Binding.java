@@ -110,9 +110,12 @@ public class Binding {
         if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
             // Bind Var -> Var, see description at top of class
             final Var other = (Var) theTerm;
-            final Binding targetBinding = other.bindingWithin(theFrame);
+            // We have to follow the links, otherwise we might be creating loops.
+            // See test case org.logic2j.core.functional.BugRegressionTest.infiniteLoopWhenUnifying2Vars()
+            // Here, in case we are binding Y to X, and X->Y, we should avoid it...
+            final Binding targetBinding = other.bindingWithin(theFrame).followLinks();
             if (targetBinding == this) {
-                // Don't bind on oneself
+                // Don't bind onto oneself!
                 return false;
             }
             this.type = BindingType.LINK;
@@ -207,12 +210,10 @@ public class Binding {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getVar());
-        sb.append(':');
-        sb.append(this.type);
 
         switch (this.type) {
         case LITERAL:
-            sb.append("->");
+            sb.append("=>");
             sb.append(this.term.toString());
             if (debug) {
                 sb.append('@');
@@ -223,7 +224,8 @@ public class Binding {
             sb.append("->");
             sb.append(this.link);
             break;
-        default:
+        case FREE:
+            sb.append(":(free)");
             break;
         }
         return sb.toString();

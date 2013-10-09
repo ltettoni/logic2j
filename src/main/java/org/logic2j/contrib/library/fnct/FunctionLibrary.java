@@ -19,6 +19,7 @@
 package org.logic2j.contrib.library.fnct;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
@@ -47,8 +48,8 @@ public class FunctionLibrary extends LibraryBase {
         if (!(thePredicate instanceof String)) {
             throw new InvalidTermException("Predicate for mapBottomUp/3 must be a String, was " + thePredicate);
         }
-        final Bindings theInputBindings = theBindings.focus(theInput, Object.class);
-        final Bindings theOutputBindings = theBindings.focus(theOutput, Object.class);
+        final Bindings theInputBindings = theBindings.narrow(theInput, Object.class);
+        final Bindings theOutputBindings = theBindings.narrow(theOutput, Object.class);
 
         traverseAndMap((String) thePredicate, theInputBindings, theOutputBindings, theListener);
 
@@ -64,69 +65,95 @@ public class FunctionLibrary extends LibraryBase {
      * @param theListener
      */
     private void traverseAndMap(String thePredicate, final Bindings theInputBindings, final Bindings theOutputBindings, final SolutionListener theListener) {
+        logger.info("Enter traverseAndMap, from {} to {}", theInputBindings, theOutputBindings);
         if (theInputBindings == null) {
             // Anonymous var specified
             notifySolution(theListener);
             return;
         }
         if (theInputBindings.isFreeReferrer()) {
-            // Free variable
-            notifySolution(theListener);
+            // Free variable, no transformatino
+            final boolean unify = getProlog().getUnifier().unify(theInputBindings.getReferrer(), theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+            notifyIfUnified(unify, theListener);
             return;
         }
         // Depth first traversal, traverse children first
         if (theInputBindings.getReferrer() instanceof Struct) {
-            Struct struct = (Struct) (theInputBindings.getReferrer());
-            final Struct theTransformedStructure = new Struct(struct);
+            final Struct struct = (Struct) (theInputBindings.getReferrer());
             logger.info("Found a struct {}", struct);
             final Object[] args = struct.getArgs();
-            final Object[] transformedArgs = new Object[args.length];
-            int index = -1;
-            for (Object arg : args) {
-                index++;
-                logger.info("Going to attempt to transform {}", arg);
+            if (args != null) {
+                final Object[] transformedArgs = new Object[args.length];
+                int index = -1;
+                for (Object arg : args) {
+                    index++;
+                    final int indx = index;
+                    logger.info("Going to attempt to transform {}", arg);
 
-                // Create a method for this whole mess : create a new normalized structured piggy-backed on another
-                final Var zz = new Var("ZZ");
-                Struct transformationGoal = new Struct((String) thePredicate, arg, zz);
-                transformationGoal = (Struct) TermApi.normalize(transformationGoal, null);
-                final Bindings goal = Bindings.shallowCopy(theInputBindings, transformationGoal);
+                    final Var xx = new Var("XX");
+                    final Var zz = new Var("ZZ");
+                    final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
+                    final Bindings mappingBindings = new Bindings(mappingGoal);
 
-                final SolutionListenerBase singleMappingResultListener = new SolutionListenerBase() {
-                    @Override
-                    public Continuation onSolution() {
-                        return Continuation.USER_ABORT;
+                    final boolean unify = getProlog().getUnifier().unify(arg, theInputBindings, xx, mappingBindings);
+                    transformedArgs[indx] = arg;
+                    if (unify) {
+                        try {
+                            final SolutionListener singleMappingResultListener = new SolutionListener() {
+                                @Override
+                                public Continuation onSolution() {
+                                    final Object substitute = TermApi.substitute(zz, mappingBindings);
+                                    logger.info("solution: substituted={}", substitute);
+                                    transformedArgs[indx] = substitute;
+                                    return Continuation.USER_ABORT;
+                                }
+                            };
+                            traverseAndMap(thePredicate, mappingBindings.narrow(xx, Object.class), mappingBindings.narrow(zz, Object.class), singleMappingResultListener);
+                            // getProlog().getSolver().solveGoal(transformationBindings, singleMappingResultListener);
+                        } finally {
+                            deunify();
+                        }
                     }
-                };
-                Continuation mappingResult = getProlog().getSolver().solveGoal(goal, singleMappingResultListener);
-                if (mappingResult == Continuation.USER_ABORT) {
-                    // One was found
-                    transformedArgs[index] = goal.getBinding(zz.getIndex()).followLinks().getTerm();
-                } else {
-                    // None was found: same arg
-                    transformedArgs[index] = arg;
+
+                }
+                logger.info("transformedArgs={}", Arrays.asList(transformedArgs));
+                final Struct theTransformedStructure = new Struct(struct.getName(), transformedArgs);
+                logger.info("theTransformedStructure={}", theTransformedStructure);
+
+                final boolean unified = unify(theTransformedStructure, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+                notifyIfUnified(unified, theListener);
+            } else {
+                // Struct without args
+                final boolean unified = unify(theInputBindings.getReferrer(), theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+                notifyIfUnified(unified, theListener);
+            }
+        } else {
+            // Not a Struct
+
+            final Var xx = new Var("XX");
+            final Var zz = new Var("ZZ");
+            final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
+            final Bindings mappingBindings = new Bindings(mappingGoal);
+            final Object[] sol = new Object[] { theInputBindings.getReferrer() };
+            final boolean unify = getProlog().getUnifier().unify(theInputBindings.getReferrer(), theInputBindings, xx, mappingBindings);
+            if (unify) {
+                try {
+                    final SolutionListener singleMappingResultListener = new SolutionListener() {
+                        @Override
+                        public Continuation onSolution() {
+                            logger.info("Found mapping for {} as {}", mappingGoal, theOutputBindings);
+                            final Object substitute = TermApi.substitute(zz, mappingBindings);
+                            sol[0] = substitute;
+                            logger.info("solution: substituted={}", substitute);
+                            return Continuation.USER_ABORT;
+                        }
+                    };
+                    getProlog().getSolver().solveGoal(mappingBindings, singleMappingResultListener);
+                } finally {
+                    deunify();
                 }
             }
-            final boolean unified = unify(theTransformedStructure, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
-            notifyIfUnified(unified, theListener);
-        }
-
-        final Struct transformationGoal = new Struct((String) thePredicate, theInputBindings.getReferrer(), theOutputBindings.getReferrer());
-        final Bindings goal = Bindings.shallowCopy(theInputBindings, transformationGoal);
-
-        final SolutionListenerBase singleMappingResultListener = new SolutionListenerBase() {
-            @Override
-            public Continuation onSolution() {
-                logger.info("Found mapping for {} as {}", goal, theOutputBindings);
-                notifySolution(theListener);
-                super.onSolution();
-                return Continuation.USER_ABORT;
-            }
-        };
-        Continuation mappingResult = getProlog().getSolver().solveGoal(goal, singleMappingResultListener);
-        if (mappingResult == Continuation.CONTINUE) {
-            // No solution found (otherwise we would have returned a USER_ABORT), no mapping, return original
-            final boolean unified = unify(theInputBindings.getReferrer(), theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+            final boolean unified = unify(sol[0], theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
         }
     }
@@ -134,7 +161,7 @@ public class FunctionLibrary extends LibraryBase {
     // ---------------------------------------------------------------------------------------
 
     private Continuation findall(SolutionListener theListener, final Bindings theBindings, final Object theTemplate, final Object theGoal, final Object theResult) {
-        final Bindings subGoalBindings = theBindings.focus(theGoal, Object.class);
+        final Bindings subGoalBindings = theBindings.narrow(theGoal, Object.class);
         ensureBindingIsNotAFreeVar(subGoalBindings, "findall/3");
 
         // Define a listener to collect all solutions for the goal specified
