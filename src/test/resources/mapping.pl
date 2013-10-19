@@ -9,3 +9,4 @@ map(9, notNine) :- fail.
 
 map(11, [10,1]).
 
+map(original(X), transformed(X)).

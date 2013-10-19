@@ -88,7 +88,6 @@ public class FunctionLibrary extends LibraryBase {
                     index++;
                     final int indx = index;
                     logger.debug("Going to attempt to transform {}", arg);
-
                     final Var xx = new Var("XX");
                     final Var zz = new Var("ZZ");
                     final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
@@ -108,19 +107,47 @@ public class FunctionLibrary extends LibraryBase {
                                 }
                             };
                             traverseAndMap(thePredicate, mappingBindings.narrow(xx, Object.class), mappingBindings.narrow(zz, Object.class), singleMappingResultListener);
-                            // getProlog().getSolver().solveGoal(transformationBindings, singleMappingResultListener);
                         } finally {
                             deunify();
                         }
                     }
 
                 }
-                final Struct theTransformedStructure = new Struct(struct.getName(), transformedArgs);
+                final Struct withTransformedArguments = new Struct(struct.getName(), transformedArgs);
 
-                final boolean unified = unify(theTransformedStructure, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+                // Now after having done the arguments, we should transform the structure itself!
+                logger.debug("Going to attempt to transform {}", withTransformedArguments);
+                final Var xx = new Var("XX");
+                final Var zz = new Var("ZZ");
+                final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
+                final Bindings mappingBindings = new Bindings(mappingGoal);
+                final boolean unify = getProlog().getUnifier().unify(withTransformedArguments, theInputBindings, xx, mappingBindings);
+                final Object transformedStructHolder[] = new Struct[1];
+                transformedStructHolder[0] = withTransformedArguments;
+                if (unify) {
+                    try {
+                        final SolutionListener singleMappingResultListener = new SolutionListener() {
+                            @Override
+                            public Continuation onSolution() {
+                                final Object substitute = TermApi.substitute(zz, mappingBindings);
+                                logger.debug("solution: substituted={}", substitute);
+                                transformedStructHolder[0] = substitute;
+                                return Continuation.USER_ABORT;
+                            }
+                        };
+                        getProlog().getSolver().solveGoal(mappingBindings, singleMappingResultListener);
+                        // traverseAndMap(thePredicate, mappingBindings.narrow(xx, Object.class), mappingBindings.narrow(zz, Object.class),
+                        // singleMappingResultListener);
+                    } finally {
+                        deunify();
+                    }
+                }
+                Object transformedStruct = transformedStructHolder[0];
+
+                final boolean unified = unify(transformedStruct, theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
                 notifyIfUnified(unified, theListener);
             } else {
-                // Struct without args
+                // Just an atom to transform
                 final boolean unified = unify(theInputBindings.getReferrer(), theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
                 notifyIfUnified(unified, theListener);
             }

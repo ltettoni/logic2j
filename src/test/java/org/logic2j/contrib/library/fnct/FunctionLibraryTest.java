@@ -31,10 +31,14 @@ public class FunctionLibraryTest extends PrologTestBase {
         loadLibrary(new FunctionLibrary(this.prolog));
         loadTheoryFromTestResourcesDir("mapping.pl");
 
+        assertEquals("transformed(a)", assertOneSolution("mapBottomUp(map, original(a), X)").binding("X").toString());
+
+        assertEquals("[10,1]", assertOneSolution("mapBottomUp(map, 11, X)").binding("X").toString());
+
+        assertEquals("transformed([10,1])", assertOneSolution("mapBottomUp(map, original(11), X)").binding("X").toString());
+
         //
         // Mapped struct
-
-        // logger.info("XXXXXXXXXXXXXXX: {}", getProlog().solve("mapBottomUp(map, f(1,2), X)").all().binding("X").toString());
 
         assertEquals("f(one, 2)", assertOneSolution("mapBottomUp(map, f(1,2), X)").binding("X").toString());
         assertEquals("g(one, f(one, 2))", assertOneSolution("mapBottomUp(map, g(1, f(1,2)), X)").binding("X").toString());
@@ -51,6 +55,7 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertOneSolution("mapBottomUp(map, 1, one)");
         assertNoSolution("mapBottomUp(map, 1, other)");
         assertEquals("one", assertOneSolution("IN=1, mapBottomUp(map, IN, X)").binding("X"));
+
         //
         // Unmapped atoms
         assertOneSolution("mapBottomUp(map, 2, 2)");
