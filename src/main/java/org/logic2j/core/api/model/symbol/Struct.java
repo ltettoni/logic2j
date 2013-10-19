@@ -183,21 +183,28 @@ public final class Struct extends Term {
     }
 
     /**
-     * Static factory to create a Prolog List structure from a Java List.
-     * 
-     * @param theJavaList
+     * @param theJavaCollection
+     * @return A Prolog List structure from a Java {@link Collection}.
      */
-    public static Struct createPList(Collection<Object> theJavaList) {
-        final int size = theJavaList.size();
-        // Store elements into an array in reverse order (we need this since we don't have an index-addressable structure)
+    public static Struct createPList(Collection<Object> theJavaCollection) {
+        final int size = theJavaCollection.size();
+        // Unroll elements into an array (we need this since we don't have an index-addressable structure)
         final Object[] array = new Object[size];
-        int index = size;
-        for (Object element : theJavaList) {
-            array[--index] = element;
+        int index = 0;
+        for (Object element : theJavaCollection) {
+            array[index++] = element;
         }
-        // Now assemble the prolog list (head|tail) nodes from the last to the first element
+        return createPList(array);
+    }
+
+    /**
+     * @param array
+     * @return A Prolog List structure from a Java array.
+     */
+    public static Struct createPList(final Object[] array) {
+        // Assemble the prolog list (head|tail) nodes from the last to the first element
         Struct tail = Struct.EMPTY_LIST;
-        for (int i = 0; i < array.length; i++) {
+        for (int i = array.length - 1; i >= 0; i--) {
             final Object head = array[i];
             tail = Struct.createPList(head, tail);
         }
