@@ -41,6 +41,23 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
     // Element separator in lists: [a,b,c]
     static final String ELEM_SEPARATOR = ",".intern();
 
+    private final PrologImplementation prolog;
+
+    /**
+     * This constructor should only be used internally - for basic formatting.
+     */
+    public DefaultTermExchanger() {
+        this.prolog = null;
+    }
+
+    public DefaultTermExchanger(PrologReferenceImplementation theProlog) {
+        this.prolog = theProlog;
+    }
+
+    // ---------------------------------------------------------------------------
+    // PART 1: FORMATTING (ie. Marshalling Term hierarchies into serial format)
+    // ---------------------------------------------------------------------------
+
     /**
      * @param theStruct
      * @param theBindings When null, will format the structure with raw variables names. When not null, will resolve bound vars.
@@ -86,10 +103,10 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         return String.valueOf(theDouble);
     }
 
-     @Override
-     public String visit(Object theObject) {
-       return String.valueOf(theObject);
-     }
+    @Override
+    public String visit(Object theObject) {
+        return String.valueOf(theObject);
+    }
 
     /**
      * Gets the string representation of this structure
@@ -244,8 +261,6 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         return sb.toString();
     }
 
-    private final PrologImplementation prolog;
-
     /**
      * @param theText
      * @return
@@ -269,22 +284,6 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         return theText.toString();
     }
 
-    public DefaultTermExchanger(PrologReferenceImplementation theProlog) {
-        this.prolog = theProlog;
-    }
-
-    public DefaultTermExchanger() {
-        this.prolog = null;
-    }
-
-    @Override
-    public Object unmarshall(CharSequence theChars) {
-        final Parser parser = new Parser(this.prolog.getOperatorManager(), theChars.toString());
-        final Object parsed = parser.parseSingleTerm();
-        final Object normalized = TermApi.normalize(parsed, this.prolog.getLibraryManager().wholeContent());
-        return normalized;
-    }
-
     @Override
     public CharSequence marshall(Object theTerm) {
         // Basic Term.toString() will use this method. For normal marshalling we have this.prolog insantiated!
@@ -296,6 +295,18 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
             return TermApi.accept(this, b.getReferrer(), b);
         }
         return TermApi.accept(this, theTerm, null);
+    }
+
+    // ---------------------------------------------------------------------------
+    // PART 2: Parsing, ie. unmarshalling from sequential format into Term hierarchies.
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public Object unmarshall(CharSequence theChars) {
+        final Parser parser = new Parser(this.prolog, theChars);
+        final Object parsed = parser.parseSingleTerm();
+        final Object normalized = TermApi.normalize(parsed, this.prolog.getLibraryManager().wholeContent());
+        return normalized;
     }
 
 }
