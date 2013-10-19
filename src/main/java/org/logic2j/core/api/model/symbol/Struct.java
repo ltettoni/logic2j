@@ -159,7 +159,9 @@ public final class Struct extends Term {
     public static Object atom(String theFunctor) {
         // Search in the catalog of atoms for exact match
         final String functor = theFunctor.intern();
-        if (!(functor == Struct.FUNCTOR_CUT || functor == Struct.FUNCTOR_TRUE || functor == Struct.FUNCTOR_FALSE)) {
+        final boolean specialAtomRequiresStruct = functor == Struct.FUNCTOR_CUT || functor == Struct.FUNCTOR_TRUE || functor == Struct.FUNCTOR_FALSE;
+        if (!specialAtomRequiresStruct) {
+            // We can return an internalized String
             return functor;
         }
         final Struct instance = new Struct(functor, 0);
@@ -187,11 +189,19 @@ public final class Struct extends Term {
      */
     public static Struct createPList(List<Object> theJavaList) {
         final int size = theJavaList.size();
-        Struct pList = Struct.EMPTY_LIST;
-        for (int i = size - 1; i >= 0; i--) {
-            pList = Struct.createPList(theJavaList.get(i), pList);
+        // Store elements into an array in reverse order (we need this since we don't have an index-addressable structure)
+        final Object[] array = new Object[size];
+        int index = size;
+        for (Object element : theJavaList) {
+          array[--index] = element;
         }
-        return pList;
+        // Now assemble the prolog list (head|tail) nodes from the last to the first element
+        Struct tail = Struct.EMPTY_LIST;
+        for (int i = 0; i < array.length; i++) {
+          final Object head = array[i];
+          tail = Struct.createPList(head, tail);
+        }
+        return tail;
     }
 
     /**
