@@ -18,11 +18,13 @@
 package org.logic2j.contrib.library.pojo;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.var.Bindings;
@@ -115,13 +117,18 @@ public class PojoLibrary extends LibraryBase {
         ensureBindingIsNotAFreeVar(bindingsForPropertyName, "property/3");
         final String propertyName = (String) bindingsForPropertyName.getReferrer();
         //
-        final Object value = introspect(pojo, propertyName);
-        if (value == null) {
+        Object javaValue = introspect(pojo, propertyName);
+        if (javaValue == null) {
             logger.debug("Property {} value is null or does not exist", propertyName);
             return Continuation.CONTINUE;
         }
+        if (javaValue instanceof Collection<?>) {
+          // Convert collection to a Prolog list
+          javaValue = getProlog().getTermAdapter().term(javaValue, FactoryMode.ATOM);
+        }
+        
 
-        final boolean unified = unify(theValue, theBindings, value, theBindings);
+        final boolean unified = unify(theValue, theBindings, javaValue, theBindings);
         return notifyIfUnified(unified, theListener);
     }
 
