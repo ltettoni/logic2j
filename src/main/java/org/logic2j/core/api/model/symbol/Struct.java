@@ -187,19 +187,19 @@ public final class Struct extends Term {
      * 
      * @param theJavaList
      */
-    public static Struct createPList(List<Object> theJavaList) {
+    public static Struct createPList(Collection<Object> theJavaList) {
         final int size = theJavaList.size();
         // Store elements into an array in reverse order (we need this since we don't have an index-addressable structure)
         final Object[] array = new Object[size];
         int index = size;
         for (Object element : theJavaList) {
-          array[--index] = element;
+            array[--index] = element;
         }
         // Now assemble the prolog list (head|tail) nodes from the last to the first element
         Struct tail = Struct.EMPTY_LIST;
         for (int i = 0; i < array.length; i++) {
-          final Object head = array[i];
-          tail = Struct.createPList(head, tail);
+            final Object head = array[i];
+            tail = Struct.createPList(head, tail);
         }
         return tail;
     }
