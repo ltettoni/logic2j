@@ -63,13 +63,13 @@ public class DefaultTheoryManager implements TheoryManager {
     }
 
     public TheoryContent load(CharSequence theTheoryText) {
-        final Parser parser = new Parser(this.prolog.getOperatorManager(), theTheoryText.toString());
+        final Parser parser = new Parser(this.prolog, theTheoryText.toString());
         // final Iterator<Term> iterator = parser.iterator();
         return loadAllClauses(parser);
     }
 
     public TheoryContent load(Reader theReader) {
-        final Parser parser = new Parser(this.prolog.getOperatorManager(), theReader);
+        final Parser parser = new Parser(this.prolog, theReader);
         return loadAllClauses(parser);
     }
 
