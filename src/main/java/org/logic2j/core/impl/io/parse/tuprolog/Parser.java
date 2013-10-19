@@ -39,11 +39,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.OperatorManager;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.operator.Operator;
 
 /**
@@ -89,17 +91,21 @@ public class Parser {
         }
     }
 
-    private final Tokenizer tokenizer;
-    private final OperatorManager opManager;
+    private final PrologImplementation prolog;
 
-    public Parser(OperatorManager theOperatorManager, Reader theoryText) {
-        this.tokenizer = new Tokenizer(new BufferedReader(theoryText));
-        this.opManager = theOperatorManager;
+    private final Tokenizer tokenizer;
+    private final OperatorManager operatorManager;
+
+    public Parser(PrologImplementation theProlog, CharSequence theoryText) {
+        this.prolog = theProlog;
+        this.tokenizer = new Tokenizer(theoryText.toString());
+        this.operatorManager = theProlog.getOperatorManager();
     }
 
-    public Parser(OperatorManager theOperatorManager, String theoryText) {
-        this.tokenizer = new Tokenizer(theoryText);
-        this.opManager = theOperatorManager;
+    public Parser(PrologImplementation theProlog, Reader theoryText) {
+        this.prolog = theProlog;
+        this.tokenizer = new Tokenizer(new BufferedReader(theoryText));
+        this.operatorManager = theProlog.getOperatorManager();
     }
 
     /**
@@ -167,17 +173,17 @@ public class Parser {
         Token oper = this.tokenizer.readToken();
         for (; oper.isOperator(commaIsEndMarker); oper = this.tokenizer.readToken()) {
 
-            int yfx = this.opManager.opPrio(oper.text, Operator.YFX);
+            int yfx = this.operatorManager.opPrio(oper.text, Operator.YFX);
             if (yfx < leftSide.priority || yfx > maxPriority) {
                 yfx = -1;
             }
 
-            int yf = this.opManager.opPrio(oper.text, Operator.YF);
+            int yf = this.operatorManager.opPrio(oper.text, Operator.YF);
             if (yf < leftSide.priority || yf > maxPriority) {
                 yf = -1;
             }
 
-            int yfy = this.opManager.opPrio(oper.text, Operator.YFY);
+            int yfy = this.operatorManager.opPrio(oper.text, Operator.YFY);
             if (yfy < leftSide.priority || yfy > maxPriority) {
                 yfy = -1;
             }
@@ -196,7 +202,7 @@ public class Parser {
                         this.tokenizer.unreadToken(oper);
                         break;
                     }
-                    yfy = this.opManager.opPrio(oper.text, Operator.YFY);
+                    yfy = this.operatorManager.opPrio(oper.text, Operator.YFY);
                     if (yfy < leftSide.priority || yfy > maxPriority) {
                         yfy = -1;
                     }
@@ -233,9 +239,9 @@ public class Parser {
         // 2.left is followed by either xfx, xfy or xf operators, parse these
         Token oper = this.tokenizer.readToken();
         for (; oper.isOperator(commaIsEndMarker); oper = this.tokenizer.readToken()) {
-            int xfx = this.opManager.opPrio(oper.text, Operator.XFX);
-            int xfy = this.opManager.opPrio(oper.text, Operator.XFY);
-            int xf = this.opManager.opPrio(oper.text, Operator.XF);
+            int xfx = this.operatorManager.opPrio(oper.text, Operator.XFX);
+            int xfy = this.operatorManager.opPrio(oper.text, Operator.XFY);
+            int xf = this.operatorManager.opPrio(oper.text, Operator.XF);
 
             // check that no operator has a priority higher than permitted
             // or a lower priority than the left side expression
@@ -306,8 +312,8 @@ public class Parser {
         // 1. prefix expression
         final Token oper = this.tokenizer.readToken();
         if (oper.isOperator(commaIsEndMarker)) {
-            int fx = this.opManager.opPrio(oper.text, Operator.FX);
-            int fy = this.opManager.opPrio(oper.text, Operator.FY);
+            int fx = this.operatorManager.opPrio(oper.text, Operator.FX);
+            int fy = this.operatorManager.opPrio(oper.text, Operator.FY);
 
             if (oper.text.equals("-")) {
                 final Token t = this.tokenizer.readToken();
@@ -375,11 +381,9 @@ public class Parser {
         if (t1.isType(ATOM) || t1.isType(SQ_SEQUENCE) || t1.isType(DQ_SEQUENCE)) {
             final String functor = t1.text.intern();
             if (!t1.isFunctor()) {
-                if (functor == Struct.FUNCTOR_CUT || functor == Struct.FUNCTOR_TRUE || functor == Struct.FUNCTOR_FALSE) {
-                    return new Struct(functor);
-                } else {
-                    return functor.intern();
-                }
+                // We delegate the instantiation of the atom to our TermAdapter
+                final Object term = this.prolog.getTermAdapter().term(functor, FactoryMode.ATOM);
+                return term;
             }
 
             final Token t2 = this.tokenizer.readToken(); // reading left par
