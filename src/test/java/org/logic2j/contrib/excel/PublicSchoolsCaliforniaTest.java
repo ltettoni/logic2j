@@ -18,13 +18,12 @@
 
 package org.logic2j.contrib.excel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.impl.unify.DefaultUnifier;
 
 public class PublicSchoolsCaliforniaTest extends ExcelReaderTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PublicSchoolsCaliforniaTest.class);
@@ -34,7 +33,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelReaderTest {
         setExcelClauseProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
         final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").all().number();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").binding("E").toString());
-        logger.info("unification: {}, solutions: {}", ((DefaultUnifier) getProlog().getUnifier()).counter, number);
+        logger.info("unification: solutions: {}", number);
         assertEquals(15, number);
     }
 
@@ -43,7 +42,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelReaderTest {
         setExcelDataFactProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
         final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").all().number();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").binding("E").toString());
-        logger.info("unification: {}, solutions: {}", ((DefaultUnifier) getProlog().getUnifier()).counter, number);
+        logger.info("unification: solutions: {}", number);
         assertEquals(15, number);
     }
 

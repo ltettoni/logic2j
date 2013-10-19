@@ -31,11 +31,8 @@ import org.logic2j.core.impl.util.ReportUtils;
  */
 public class DefaultUnifier implements Unifier {
 
-    public int counter = 0;
-
     @Override
     public boolean unify(Object term1, Bindings theBindings1, Object term2, Bindings theBindings2) {
-        this.counter++;
         // Remember where we were so that we can deunify
         final StepInfo stepInfo = BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
@@ -121,13 +118,16 @@ public class DefaultUnifier implements Unifier {
             }
             return false;
         } else {
+          if (term1==null) {
+            throw new NullPointerException("Cannot unify term1=null with term2=" + term2);
+          }
+
             return term1.equals(term2);
         }
     }
 
     @Override
     public boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact) {
-        this.counter++;
         if (!(goalTerm instanceof Struct)) {
             // Only Struct could match a DataFact
             return false;
