@@ -31,6 +31,8 @@ import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 
 public class PojoLibrary extends LibraryBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PojoLibrary.class);
+
     private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
 
         @Override
@@ -114,6 +116,10 @@ public class PojoLibrary extends LibraryBase {
         final String propertyName = (String) bindingsForPropertyName.getReferrer();
         //
         final Object value = introspect(pojo, propertyName);
+        if (value == null) {
+            logger.debug("Property {} value is null or does not exist", propertyName);
+            return Continuation.CONTINUE;
+        }
 
         final boolean unified = unify(theValue, theBindings, value, theBindings);
         return notifyIfUnified(unified, theListener);
