@@ -18,7 +18,10 @@
 package org.logic2j.core.impl;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -31,85 +34,105 @@ import org.logic2j.core.api.model.symbol.TermApi;
  */
 public class DefaultTermAdapter implements TermAdapter {
 
-    protected final PrologImplementation prolog;
+  protected final PrologImplementation prolog;
+  private IdentityHashMap<String, Object> predefinedAtoms = null;
 
-    public DefaultTermAdapter(PrologImplementation theProlog) {
-        this.prolog = theProlog;
-    }
+  public DefaultTermAdapter(PrologImplementation theProlog) {
+    this.prolog = theProlog;
+  }
 
-    // TODO be smarter to handle Arrays and Collections, and Iterables
-    @Override
-    public Object term(Object theObject, FactoryMode theMode) {
-        // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermExchanger
-        if (theObject instanceof CharSequence) {
-            if (theMode == FactoryMode.ATOM) {
-                // return new Struct(theObject.toString());
-                return Struct.atom(theObject.toString());
-            }
-            throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermExchanger instead");
+  // TODO be smarter to handle Arrays and Collections, and Iterables
+  @Override
+  public Object term(Object theObject, FactoryMode theMode) {
+    // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermExchanger
+    if (theObject instanceof CharSequence) {
+      if (theMode == FactoryMode.ATOM) {
+        final String string = theObject.toString();
+        if (this.predefinedAtoms != null) {
+          final Object predefinedAtom = this.predefinedAtoms.get(string);
+          if (predefinedAtom != null) {
+            return predefinedAtom;
+          }
         }
-        final Object created = termFrom(theObject, theMode);
-        final Object normalized = TermApi.normalize(created, this.prolog.getLibraryManager().wholeContent());
-        return normalized;
+        return Struct.atom(string);
+      }
+      throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermExchanger instead");
     }
+    final Object created = termFrom(theObject, theMode);
+    final Object normalized = TermApi.normalize(created, this.prolog.getLibraryManager().wholeContent());
+    return normalized;
+  }
 
-    @Override
-    public Object term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
-        final Object[] convertedArgs = new Object[theArguments.length];
-        for (int i = 0; i < theArguments.length; i++) {
-            convertedArgs[i] = termFrom(theArguments[i], theMode);
-        }
-        final Term created = new Struct(thePredicateName, convertedArgs);
-        final Object normalized = TermApi.normalize(created, this.prolog.getLibraryManager().wholeContent());
-        return normalized;
+  @Override
+  public Object term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
+    final Object[] convertedArgs = new Object[theArguments.length];
+    for (int i = 0; i < theArguments.length; i++) {
+      convertedArgs[i] = termFrom(theArguments[i], theMode);
     }
+    final Term created = new Struct(thePredicateName, convertedArgs);
+    final Object normalized = TermApi.normalize(created, this.prolog.getLibraryManager().wholeContent());
+    return normalized;
+  }
 
-    /**
-     * Factory that can be overridden.
-     * 
-     * @param theObject
-     * @param theMode
-     * @return An instance of Term
-     */
-    protected Object termFrom(Object theObject, FactoryMode theMode) {
-        Object result = null;
-        if (theObject == null) {
-            if (theMode == FactoryMode.ATOM) {
-                result = Struct.atom(""); // The empty string atom, see note on FactoryMode.ATOM
-            } else {
-                throw new InvalidTermException("Cannot create Term from a null argument");
-            }
-        }
-        if (theObject instanceof CharSequence || theObject instanceof Character) {
-            // Rudimentary parsing
-            final String chars = String.valueOf(theObject);
-            if (theMode == FactoryMode.ATOM) {
-                // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
-                // result = new Struct(chars);
-                result = Struct.atom(chars);
-            }
-        }
-        // Otherwise apply basic algorithm from TermApi
-        if (result == null) {
-            result = TermApi.valueOf(theObject, theMode);
-        }
-        return result;
+  /**
+   * Factory that can be overridden.
+   * 
+   * @param theObject
+   * @param theMode
+   * @return An instance of Term
+   */
+  protected Object termFrom(Object theObject, FactoryMode theMode) {
+    Object result = null;
+    if (theObject == null) {
+      if (theMode == FactoryMode.ATOM) {
+        result = Struct.atom(""); // The empty string atom, see note on FactoryMode.ATOM
+      } else {
+        throw new InvalidTermException("Cannot create Term from a null argument");
+      }
     }
+    if (theObject instanceof CharSequence || theObject instanceof Character) {
+      // Rudimentary parsing
+      final String chars = String.valueOf(theObject);
+      if (theMode == FactoryMode.ATOM) {
+        // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
+        // result = new Struct(chars);
+        result = Struct.atom(chars);
+      }
+    }
+    // Otherwise apply basic algorithm from TermApi
+    if (result == null) {
+      result = TermApi.valueOf(theObject, theMode);
+    }
+    return result;
+  }
 
-    /**
-     * @return a List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
-     */
-    @Override
-    public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {
-        final List<Object> result = new ArrayList<Object>();
-        final Object term = term(theObject, FactoryMode.ATOM);
-        result.add(term);
-        return result;
-    }
+  /**
+   * @return a List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+   */
+  @Override
+  public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {
+    final List<Object> result = new ArrayList<Object>();
+    final Object term = term(theObject, FactoryMode.ATOM);
+    result.add(term);
+    return result;
+  }
 
-    @Override
-    public <T> T object(Term t, Class<T> theTargetClass) {
-        throw new UnsupportedOperationException("Not yet implemented");
+  @Override
+  public <T> T object(Term t, Class<T> theTargetClass) {
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  /**
+   * Allow changing default behaviour of {@link #termFrom(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}
+   * when FactoryMode is ATOM, and the first agrument exactly matches one of the keys of the map: will return the value
+   * as the atom.
+   * @param theAtoms
+   */
+  public void setPredefinedAtoms(Map<String, Object> theAtoms) {
+    this.predefinedAtoms = new IdentityHashMap<String, Object>(theAtoms.size());
+    for (Entry<String, Object> entry : theAtoms.entrySet()) {
+      this.predefinedAtoms.put(entry.getKey().intern(), entry.getValue());
     }
+  }
 
 }
