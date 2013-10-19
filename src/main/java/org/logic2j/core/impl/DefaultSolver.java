@@ -38,7 +38,6 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
 public class DefaultSolver implements Solver {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
     private static final boolean debug = logger.isDebugEnabled();
-    private static final boolean info = logger.isInfoEnabled();
 
     private final PrologImplementation prolog;
 
