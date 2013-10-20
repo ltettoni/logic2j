@@ -27,6 +27,11 @@ public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
 
     @Test
+    public void placeholder() {
+        //
+    }
+
+    @Test
     public void mapBottomUp() {
         loadLibrary(new FunctionLibrary(this.prolog));
         loadTheoryFromTestResourcesDir("mapping.pl");
@@ -61,5 +66,9 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertOneSolution("mapBottomUp(map, 2, 2)");
         assertNoSolution("mapBottomUp(map, 2, other)");
         assertEquals(2L, assertOneSolution("IN=2, mapBottomUp(map, IN, X)").binding("X"));
+
+        // Free var
+        assertOneSolution("mapBottomUp(map, X, X)");
+        assertEquals("f(X)", assertOneSolution("mapBottomUp(map, f(X), Result)").binding("Result").toString());
     }
 }
