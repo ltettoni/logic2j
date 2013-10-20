@@ -186,7 +186,7 @@ public final class Struct extends Term {
      * @param theJavaCollection
      * @return A Prolog List structure from a Java {@link Collection}.
      */
-    public static Struct createPList(Collection<Object> theJavaCollection) {
+    public static Struct createPList(Collection<?> theJavaCollection) {
         final int size = theJavaCollection.size();
         // Unroll elements into an array (we need this since we don't have an index-addressable structure)
         final Object[] array = new Object[size];
