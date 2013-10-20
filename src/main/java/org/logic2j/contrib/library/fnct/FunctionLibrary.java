@@ -85,13 +85,18 @@ public class FunctionLibrary extends LibraryBase {
                     index++;
                     final int indx = index;
                     logger.debug("Going to attempt to transform {}", arg);
+                    transformedArgs[indx] = arg;
+                    
+                    // Won't transform free vars
+                    if (arg instanceof Var && theInputBindings.getBinding(((Var)arg).getIndex()).followLinks().isFree()) {
+                      continue;
+                    }
                     final Var xx = new Var("XX");
                     final Var zz = new Var("ZZ");
                     final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
                     final Bindings mappingBindings = new Bindings(mappingGoal);
 
                     final boolean unify = getProlog().getUnifier().unify(arg, theInputBindings, xx, mappingBindings);
-                    transformedArgs[indx] = arg;
                     if (unify) {
                         try {
                             final SolutionListener singleMappingResultListener = new SolutionListener() {
