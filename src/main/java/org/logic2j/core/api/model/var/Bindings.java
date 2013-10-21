@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.TermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologInternalError;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
@@ -128,7 +129,8 @@ public class Bindings {
     }
 
     /**
-     * Just assign the 2 fields of this new Bindings.
+     * Create a new Binding by just assign the 2 fields, we use this when deep-copying
+     * with a new array of {@link Binding} of when shallow-copying with the same reference to the array.
      * 
      * @param theNewReferrerTerm
      * @param theArrayOfBinding
@@ -202,20 +204,12 @@ public class Bindings {
         // Deep cloning of the individual Binding
         final Binding[] originalBindings = theOriginal.bindings;
         final int nbVars = originalBindings.length;
-        final Binding[] copiedArray = new Binding[nbVars];
+        final Binding[] copiedArrayOfBinding = new Binding[nbVars];
         // All bindings need cloning
         for (int i = 0; i < nbVars; i++) {
-            copiedArray[i] = new Binding(originalBindings[i]);
+            copiedArrayOfBinding[i] = new Binding(originalBindings[i]);
         }
-        return new Bindings(theNewReferrer, copiedArray);
-    }
-
-    /**
-     * Create a new Bindings, just setting the specified referrer, but referring to the same
-     * array of {@link Binding}.
-     */
-    public static Bindings shallowCopy(Bindings theOriginal, Object theNewReferrerTerm) {
-        return new Bindings(theNewReferrerTerm, theOriginal.bindings);
+        return new Bindings(theNewReferrer, copiedArrayOfBinding);
     }
 
     // ---------------------------------------------------------------------------
@@ -235,26 +229,33 @@ public class Bindings {
         if (theTerm instanceof Var) {
             final Var origin = (Var) theTerm;
             if (origin.isAnonymous()) {
-                return null; // See method contract
+                return null; // See method contract - but I don't like returning nulls!
             }
             // Go to fetch the effective variable value if any
             final Binding startingBinding = origin.bindingWithin(this);
             final Binding finalBinding = startingBinding.followLinks();
-            if (finalBinding.getType() == BindingType.LITERAL) {
-                return shallowCopy(finalBinding.getLiteralBindings(), finalBinding.getTerm());
-            } else if (finalBinding.getType() == BindingType.FREE) {
+            switch (finalBinding.getType()) {
+            case LITERAL:
+                return new Bindings(finalBinding.getTerm(), finalBinding.getLiteralBindings().bindings);
+            case FREE:
                 // Refocus on original var (we now know it is free), keep the same original bindings
-                return shallowCopy(this, origin);
-            } else {
-                throw new PrologNonSpecificError("Should not have been here");
+                return new Bindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
+            default:
+                throw new PrologInternalError("Should never have been here");
             }
         }
-        // Now it's anything else than a Var
+        // It's anything else than a Var - no need to follow links
+
         // Make sure it's of the desired class
         ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
 
-        // will return a cloned Bindings with theTerm as referrer
-        return shallowCopy(this, theTerm);
+        // If we already have the same referrer, don't shallow-copy
+        if (this.getReferrer() == theTerm) {
+            return this;
+        }
+
+        // will return a shallow-copy Bindings with theTerm as referrer
+        return new Bindings(theTerm, this.bindings);
     }
 
     /**
