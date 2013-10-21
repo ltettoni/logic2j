@@ -34,9 +34,8 @@ import org.logic2j.core.api.model.var.Bindings;
 public final class Var extends Term {
     private static final long serialVersionUID = 1L;
 
-    public static final String ANONYMOUS_VAR_NAME = "_".intern(); // TODO
-                                                                  // Document
-                                                                  // this
+    public static final String ANONYMOUS_VAR_NAME = "_".intern();
+
     public static final Term ANONYMOUS_VAR = new Var();
 
     /**
