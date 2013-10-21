@@ -106,7 +106,7 @@ public final class Var extends Term {
         if (this.index >= theBindings.getSize()) {
             throw new PrologNonSpecificError(theBindings + " has space for " + theBindings.getSize() + " bindings, trying to dereference " + this + " at index " + this.index);
         }
-        // Since this var is properly indexed, use its index!
+        // Since this Var is properly indexed, use its index!
         return theBindings.getBinding(this.index);
     }
 
