@@ -47,12 +47,12 @@ public class AdapterTest extends PrologTestBase {
     }
 
     @Test
-    public void retrieveJavaObjects() throws Exception {
+    public void retrieveJavaObjects() {
         assertEquals(new Long(5), this.prolog.solve("X is 2+3").unique().binding("X", Long.class));
     }
 
     @Test
-    public void plainDouble() throws Exception {
+    public void plainDouble() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         //
         final List<Object> binding = this.prolog.solve("dbl(X)").all().binding("X");
@@ -60,7 +60,7 @@ public class AdapterTest extends PrologTestBase {
     }
 
     @Test
-    public void javaEnum() throws Exception {
+    public void javaEnum() {
         Object term = this.prolog.getTermAdapter().term("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
         final Object binding = this.prolog.solve(term).unique().binding("X");
         assertSame(MyEnum.V2, binding);

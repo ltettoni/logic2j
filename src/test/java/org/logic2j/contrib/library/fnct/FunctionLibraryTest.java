@@ -20,11 +20,19 @@ package org.logic2j.contrib.library.fnct;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
+
+    @Before
+    public void setUp() {
+        super.setUp();
+        loadLibrary(new FunctionLibrary(this.prolog));
+        loadTheoryFromTestResourcesDir("mapping.pl");
+    };
 
     @Test
     public void placeholder() {
@@ -32,10 +40,12 @@ public class FunctionLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void mapBottomUp() {
-        loadLibrary(new FunctionLibrary(this.prolog));
-        loadTheoryFromTestResourcesDir("mapping.pl");
+    public void simplerApiToTransform() {
 
+    }
+
+    @Test
+    public void mapBottomUp() {
         assertEquals("transformed(a)", assertOneSolution("mapBottomUp(map, original(a), X)").binding("X").toString());
 
         assertEquals("[10,1]", assertOneSolution("mapBottomUp(map, 11, X)").binding("X").toString());
@@ -74,8 +84,6 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void mapIterative() {
-        loadLibrary(new FunctionLibrary(this.prolog));
-        loadTheoryFromTestResourcesDir("mapping.pl");
         assertEquals("t4", assertOneSolution("mapBottomUp(map, t3, X)").binding("X"));
         // Should work: assertEquals("t4", assertOneSolution("mapBottomUp(map, t2, X)").binding("X"));
     }

@@ -274,7 +274,7 @@ public class HigherLevelTest extends PrologTestBase {
     }
 
     @Test
-    public void mappingTransformer() throws Exception {
+    public void mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pl");
         assertEquals("[{ID=ID, Z=','(eav(ID, class, 'Committee'), eav(ID, classification, 'LEVEL_MAIN'))}]", this.prolog.solve("transformForContext(tc(ID), Z)").all().bindings().toString());
         assertEquals("[{Z=eav(13, classification, 'LEVEL_MAIN')}]", this.prolog.solve("transformForContext(main(13), Z)").all().bindings().toString());

@@ -43,7 +43,7 @@ public class TermApiTest {
     private final PrologImplementation prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
 
     @Test
-    public void placeholderToReproduceError() throws Exception {
+    public void placeholderToReproduceError() {
         //
     }
 

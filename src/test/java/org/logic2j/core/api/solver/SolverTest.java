@@ -98,11 +98,11 @@ public class SolverTest extends PrologTestBase {
 
     @Test
     public void iterator() {
-        final Iterator<Solution> iterator = this.prolog.solve("member(X, [1,2,3,4])").iterator();
-        assertNotNull(iterator);
+        final Iterator<Solution> solutionIterator = this.prolog.solve("member(X, [1,2,3,4])").iterator();
+        assertNotNull(solutionIterator);
         int counter = 0;
-        while (iterator.hasNext()) {
-            logger.info(" value of next()={}", iterator.next());
+        while (solutionIterator.hasNext()) {
+            logger.info(" value of next()={}", solutionIterator.next());
             counter++;
         }
         assertEquals(4, counter);
@@ -111,7 +111,8 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void iterable() {
         int counter = 0;
-        for (final Solution solution : this.prolog.solve("member(X, [1,2,3,4])")) {
+        final Iterable<Solution> solutionIterable = this.prolog.solve("member(X, [1,2,3,4])");
+        for (final Solution solution : solutionIterable) {
             logger.info(" iterable Solution={}", solution);
             counter++;
         }

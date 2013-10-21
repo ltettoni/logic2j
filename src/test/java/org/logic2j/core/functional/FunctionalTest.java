@@ -206,7 +206,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void binding_single_var_1() throws Exception {
+    public void binding_single_var_1() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ab(X,Y)");
         assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.bindings().toString());
@@ -215,7 +215,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
-    public void binding_single_var_2() throws Exception {
+    public void binding_single_var_2() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ac(X,Y)");
         assertEquals("[{X=1, Y=11}, {X=2, Y=twelve}, {X=3, Y=13}, {X=4, Y=fourteen}, {X=5, Y=15}, {X=6, Y=sixteen}]", assertNSolutions.bindings().toString());
