@@ -71,4 +71,12 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertOneSolution("mapBottomUp(map, X, X)");
         assertEquals("f(X)", assertOneSolution("mapBottomUp(map, f(X), Result)").binding("Result").toString());
     }
+
+    @Test
+    public void mapIterative() {
+        loadLibrary(new FunctionLibrary(this.prolog));
+        loadTheoryFromTestResourcesDir("mapping.pl");
+        assertEquals("t4", assertOneSolution("mapBottomUp(map, t3, X)").binding("X"));
+        // Should work: assertEquals("t4", assertOneSolution("mapBottomUp(map, t2, X)").binding("X"));
+    }
 }
