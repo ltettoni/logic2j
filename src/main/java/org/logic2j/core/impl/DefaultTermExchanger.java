@@ -71,7 +71,7 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
     @Override
     public String visit(Var theVar, Bindings theBindings) {
         if (theBindings == null) {
-            return theVar.getName();
+            return theVar.getName(); // + '@' + theVar.getIndex();
         }
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
