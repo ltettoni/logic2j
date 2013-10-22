@@ -125,6 +125,7 @@ public final class Var extends Term {
     }
 
     /**
+     * Expensive!
      * 
      * @param theBindings The {@link Bindings} within which this {@link Var} is referenced
      * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables

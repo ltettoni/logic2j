@@ -396,6 +396,7 @@ public final class Struct extends Term {
     /**
      * Substitute all children. If nothing changes, return this, otherwise returned a cloned structure
      * with all bound variables substituted to their literal values.
+     * Expensive!
      */
     Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         final Object[] substArgs = new Object[this.arity]; // All arguments after substitution
