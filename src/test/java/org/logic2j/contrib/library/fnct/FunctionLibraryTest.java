@@ -19,10 +19,19 @@
 package org.logic2j.contrib.library.fnct;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.var.Bindings;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
@@ -40,8 +49,143 @@ public class FunctionLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void simplerApiToTransform() {
+    public void anonymousAndFreeVarsAreNotTransformed() {
+        assertNotTransformed("_", false);
+        assertNotTransformed("X", false); // Free var
+    }
 
+    @Test
+    public void atomicNotTransformed() {
+        assertNotTransformed("atom", false);
+        assertNotTransformed("123", false);
+        assertNotTransformed("123.456", false);
+    }
+
+    @Test
+    public void atomicTransformed() {
+        assertTransformed("t4", "t3", false);
+        assertTransformed("one", "1", false);
+    }
+
+    @Test
+    public void structNotTransformed() {
+        assertNotTransformed("f(a,b,c)", false);
+        assertNotTransformed("[1,2]", false);
+    }
+
+    @Test
+    public void structTransformed() {
+        Object[] termAndBindings;
+        termAndBindings = assertTransformed("transformed(a)", "original(a)", false);
+        termAndBindings = assertTransformed("transformed(X)", "original(X)", false);
+        termAndBindings = assertTransformed("transformed(X)", "original(_)", false); // Dubious
+        assertNotTransformed("transformed(X, Y)", false);
+    }
+
+    @Test
+    public void mapNonIterative() {
+        assertNotTransformed("t4", false);
+        assertTransformed("t4", "t3", false);
+        assertTransformed("t3", "t2", false);
+        assertTransformed("t2", "t1", false);
+    }
+
+    @Test
+    public void mapIterative() {
+        assertNotTransformed("t4", true);
+        assertTransformed("t4", "t3", true);
+        assertTransformed("t4", "t2", true);
+        assertTransformed("t4", "t1", true);
+    }
+
+    /**
+     * @param termToParse
+     */
+    private void assertNotTransformed(String termToParse, boolean iterative) {
+        final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
+        final Bindings originalBindings = new Bindings(originalTerm);
+        logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
+        final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
+        final boolean transform = iterative ? transformAll("map", termAndBindings) : transformOnce("map", termAndBindings);
+        assertFalse(transform);
+        assertSame(termAndBindings[0], originalTerm);
+        assertSame(termAndBindings[1], originalBindings);
+    }
+
+    /**
+     * @param string
+     * @return
+     */
+    private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative) {
+        final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
+        final Bindings originalBindings = new Bindings(originalTerm);
+        logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
+        final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
+        final boolean transform = iterative ? transformAll("map", termAndBindings) : transformOnce("map", termAndBindings);
+        assertTrue(transform);
+        String substituted = TermApi.substitute(termAndBindings[0], (Bindings) termAndBindings[1]).toString();
+        String toString = termAndBindings[0].toString();
+        assertEquals(toStringExpected, substituted);
+        return termAndBindings;
+    }
+
+    /**
+     * @param termAndBindings
+     */
+    public boolean transformAll(final String transformationPredicate, final Object[] termAndBindings) {
+        boolean anyTransformed = false;
+        boolean transformed;
+        int iterationLimiter = 10;
+        do {
+            transformed = transformOnce(transformationPredicate, termAndBindings);
+            anyTransformed |= transformed;
+            iterationLimiter--;
+        } while (transformed && iterationLimiter > 0);
+        return anyTransformed;
+    }
+
+    /**
+     * @param termAndBindings
+     */
+    public boolean transformOnce(final String transformationPredicate, final Object[] termAndBindings) {
+        final Object inputTerm = termAndBindings[0];
+        if (inputTerm instanceof Var) {
+            Var var = (Var) inputTerm;
+            if (var.isAnonymous()) {
+                // Anonymous var not transformed
+                return false;
+            }
+            final Bindings inputBindings = (Bindings) termAndBindings[1];
+            if (var.bindingWithin(inputBindings).followLinks().isFree()) {
+                // Free variable, no transformation
+                return false;
+            }
+        }
+        final Var transIn = new Var("TransIn");
+        final Var transOut = new Var("TransOut");
+        final Struct transformationGoal = (Struct) TermApi.normalize(new Struct((String) transformationPredicate, transIn, transOut), null);
+        final Bindings transformationBindings = new Bindings(transformationGoal);
+
+        // Now bind our transIn var to the original term. Note: we won't have to unbind here since our modified bindings are a local var!
+        transIn.bindingWithin(transformationBindings).bindTo(termAndBindings[0], (Bindings) termAndBindings[1]);
+
+        // Now solving
+        final SolutionListener singleMappingResultListener = new SolutionListener() {
+            @Override
+            public Continuation onSolution() {
+                logger.debug("solution: transformationBindings={}", transformationBindings);
+                final Bindings narrowed = transformationBindings.narrow(transOut, Object.class);
+                termAndBindings[0] = narrowed.getReferrer();
+                termAndBindings[1] = Bindings.deepCopyWithSameReferrer(narrowed);
+                logger.debug("solution: narrow={} bindings={}", termAndBindings[0], termAndBindings[1]);
+                // Don't need anything more than the first solution. Also this value will be returned
+                // from Solver.solveGoal() and this will indicate we reached one solution!
+                return Continuation.USER_ABORT;
+            }
+        };
+        final Continuation continuation = getProlog().getSolver().solveGoal(transformationBindings, singleMappingResultListener);
+        final boolean oneSolutionFound = continuation == Continuation.USER_ABORT;
+        return oneSolutionFound;
     }
 
     @Test
@@ -82,9 +226,4 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals("f(X)", assertOneSolution("mapBottomUp(map, f(X), Result)").binding("Result").toString());
     }
 
-    @Test
-    public void mapIterative() {
-        assertEquals("t4", assertOneSolution("mapBottomUp(map, t3, X)").binding("X"));
-        // Should work: assertEquals("t4", assertOneSolution("mapBottomUp(map, t2, X)").binding("X"));
-    }
 }
