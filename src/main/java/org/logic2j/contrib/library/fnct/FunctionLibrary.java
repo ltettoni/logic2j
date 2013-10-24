@@ -79,14 +79,21 @@ public class FunctionLibrary extends LibraryBase {
             logger.debug("Found a struct {}", struct);
             final Object[] args = struct.getArgs();
             if (args != null) {
+
                 final Object[] transformedArgs = new Object[args.length];
                 int index = -1;
                 for (Object arg : args) {
                     index++;
                     final int indx = index;
                     logger.debug("Going to attempt to transform {}", arg);
-                    transformedArgs[indx] = arg;
 
+                    final Object[] termAndBindings = new Object[] { arg, theInputBindings };
+                    transformOnce(thePredicate, termAndBindings, 0);
+                    // If struct we should recurse here!
+
+                    transformedArgs[indx] = termAndBindings[0];
+
+                    /*
                     // Won't transform free vars
                     if (arg instanceof Var && theInputBindings.getBinding(((Var) arg).getIndex()).followLinks().isFree()) {
                         continue;
@@ -113,7 +120,7 @@ public class FunctionLibrary extends LibraryBase {
                             deunify();
                         }
                     }
-
+                    */
                 }
                 final Struct withTransformedArguments = new Struct(struct.getName(), transformedArgs);
 
@@ -155,32 +162,108 @@ public class FunctionLibrary extends LibraryBase {
             }
         } else {
             // Not a Struct
+            final Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
+            transformOnce(thePredicate, termAndBindings, 0);
 
-            final Var xx = new Var("XX");
-            final Var zz = new Var("ZZ");
-            final Struct mappingGoal = (Struct) TermApi.normalize(new Struct((String) thePredicate, xx, zz), null);
-            final Bindings mappingBindings = new Bindings(mappingGoal);
-            final Object[] sol = new Object[] { theInputBindings.getReferrer() };
-            final boolean unify = getProlog().getUnifier().unify(theInputBindings.getReferrer(), theInputBindings, xx, mappingBindings);
-            if (unify) {
-                try {
-                    final SolutionListener singleMappingResultListener = new SolutionListener() {
-                        @Override
-                        public Continuation onSolution() {
-                            final Object substitute = TermApi.substitute(zz, mappingBindings);
-                            sol[0] = substitute;
-                            logger.debug("solution: substituted={}", substitute);
-                            return Continuation.USER_ABORT;
-                        }
-                    };
-                    getProlog().getSolver().solveGoal(mappingBindings, singleMappingResultListener);
-                } finally {
-                    deunify();
-                }
-            }
-            final boolean unified = unify(sol[0], theInputBindings, theOutputBindings.getReferrer(), theOutputBindings);
+            final boolean unified = unify(termAndBindings[0], (Bindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
         }
+    }
+
+    /**
+     * @param termAndBindings
+     */
+    public boolean transformAll(final String transformationPredicate, final Object[] termAndBindings) {
+        boolean anyTransformed = false;
+        boolean transformed;
+        int iterationLimiter = 10;
+        do {
+            transformed = transformOnce(transformationPredicate, termAndBindings, 0);
+            anyTransformed |= transformed;
+            iterationLimiter--;
+        } while (transformed && iterationLimiter > 0);
+        return anyTransformed;
+    }
+
+    public boolean transformOnce(final String transformationPredicate, final Object[] termAndBindings, int childrenFirst) {
+        if (termAndBindings[0] instanceof Struct && ((Struct) (termAndBindings[0])).getArity() > 0) {
+            Struct struct = (Struct) termAndBindings[0];
+            logger.debug("Found a struct {}", struct);
+            final Object[] args = struct.getArgs();
+            final Object[] transformedArgs = new Object[args.length];
+            boolean transformed = false;
+            if (childrenFirst > 0) {
+                int index = -1;
+                for (Object arg : args) {
+                    index++;
+                    final int indx = index;
+                    logger.debug("Going to attempt to transform element {}", arg);
+
+                    final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
+                    final boolean argTransformed = transformOnce(transformationPredicate, trans2, childrenFirst);
+                    transformed |= argTransformed;
+                    transformedArgs[indx] = trans2[0];
+                }
+            }
+            if (transformed) {
+                struct = new Struct(struct.getName(), transformedArgs);
+            }
+            final Object[] trans3 = new Object[] { struct, termAndBindings[1] };
+            final boolean structTransformed = transformOnce(transformationPredicate, trans3);
+            transformed |= structTransformed;
+            termAndBindings[0] = trans3[0];
+            termAndBindings[1] = trans3[1];
+            return transformed;
+        } else {
+            return transformOnce(transformationPredicate, termAndBindings);
+        }
+    }
+
+    /**
+     * @param termAndBindings
+     * @param deep TODO
+     */
+    public boolean transformOnce(final String transformationPredicate, final Object[] termAndBindings) {
+        final Object inputTerm = termAndBindings[0];
+        if (inputTerm instanceof Var) {
+            Var var = (Var) inputTerm;
+            if (var.isAnonymous()) {
+                // Anonymous var not transformed
+                return false;
+            }
+            final Bindings inputBindings = (Bindings) termAndBindings[1];
+            if (var.bindingWithin(inputBindings).followLinks().isFree()) {
+                // Free variable, no transformation
+                return false;
+            }
+        }
+
+        final Var transIn = new Var("TransIn");
+        final Var transOut = new Var("TransOut");
+        final Struct transformationGoal = (Struct) TermApi.normalize(new Struct((String) transformationPredicate, transIn, transOut), null);
+        final Bindings transformationBindings = new Bindings(transformationGoal);
+
+        // Now bind our transIn var to the original term. Note: we won't have to unbind here since our modified bindings are a local
+        // var!
+        transIn.bindingWithin(transformationBindings).bindTo(termAndBindings[0], (Bindings) termAndBindings[1]);
+
+        // Now solving
+        final SolutionListener singleMappingResultListener = new SolutionListener() {
+            @Override
+            public Continuation onSolution() {
+                logger.debug("solution: transformationBindings={}", transformationBindings);
+                final Bindings narrowed = transformationBindings.narrow(transOut, Object.class);
+                termAndBindings[0] = narrowed.getReferrer();
+                termAndBindings[1] = Bindings.deepCopyWithSameReferrer(narrowed);
+                logger.debug("solution: narrow={} bindings={}", termAndBindings[0], termAndBindings[1]);
+                // Don't need anything more than the first solution. Also this value will be returned
+                // from Solver.solveGoal() and this will indicate we reached one solution!
+                return Continuation.USER_ABORT;
+            }
+        };
+        final Continuation continuation = getProlog().getSolver().solveGoal(transformationBindings, singleMappingResultListener);
+        final boolean oneSolutionFound = continuation == Continuation.USER_ABORT;
+        return oneSolutionFound;
     }
 
 }
