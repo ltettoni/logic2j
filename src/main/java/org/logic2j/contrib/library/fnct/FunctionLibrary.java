@@ -88,7 +88,7 @@ public class FunctionLibrary extends LibraryBase {
                     logger.debug("Going to attempt to transform {}", arg);
 
                     final Object[] termAndBindings = new Object[] { arg, theInputBindings };
-                    transformOnce(thePredicate, termAndBindings, 0);
+                    transformOnce(thePredicate, termAndBindings, 0, 0);
                     // If struct we should recurse here!
 
                     transformedArgs[indx] = termAndBindings[0];
@@ -163,7 +163,7 @@ public class FunctionLibrary extends LibraryBase {
         } else {
             // Not a Struct
             final Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
-            transformOnce(thePredicate, termAndBindings, 0);
+            transformOnce(thePredicate, termAndBindings, 0, 0);
 
             final boolean unified = unify(termAndBindings[0], (Bindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
@@ -178,45 +178,75 @@ public class FunctionLibrary extends LibraryBase {
         boolean transformed;
         int iterationLimiter = 10;
         do {
-            transformed = transformOnce(transformationPredicate, termAndBindings, 0);
+            transformed = transformOnce(transformationPredicate, termAndBindings, 0, 0);
             anyTransformed |= transformed;
             iterationLimiter--;
         } while (transformed && iterationLimiter > 0);
         return anyTransformed;
     }
 
-    public boolean transformOnce(final String transformationPredicate, final Object[] termAndBindings, int childrenFirst) {
+    public boolean transformOnce(final String transformationPredicate, final Object[] termAndBindings, int childrenBefore, int childrenAfter) {
+        boolean anyTransform = false;
         if (termAndBindings[0] instanceof Struct && ((Struct) (termAndBindings[0])).getArity() > 0) {
             Struct struct = (Struct) termAndBindings[0];
             logger.debug("Found a struct {}", struct);
-            final Object[] args = struct.getArgs();
-            final Object[] transformedArgs = new Object[args.length];
-            boolean transformed = false;
-            if (childrenFirst > 0) {
+
+            // Transform children first (before structure)
+            final Object[] preArgs = struct.getArgs();
+            final Object[] preTransformedArgs = new Object[preArgs.length];
+            if (childrenBefore > 0) {
                 int index = -1;
-                for (Object arg : args) {
-                    index++;
-                    final int indx = index;
+                for (Object arg : preArgs) {
+                    ++index;
                     logger.debug("Going to attempt to transform element {}", arg);
 
                     final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
-                    final boolean argTransformed = transformOnce(transformationPredicate, trans2, childrenFirst);
-                    transformed |= argTransformed;
-                    transformedArgs[indx] = trans2[0];
+                    final boolean argTransformed = transformOnce(transformationPredicate, trans2, childrenBefore, childrenAfter);
+                    anyTransform |= argTransformed;
+                    preTransformedArgs[index] = trans2[0];
                 }
             }
-            if (transformed) {
-                struct = new Struct(struct.getName(), transformedArgs);
+            if (anyTransform) {
+                // If any children have changed, we need to build a new structure
+                struct = new Struct(struct.getName(), preTransformedArgs);
             }
+
+            // Now transform the main structure
             final Object[] trans3 = new Object[] { struct, termAndBindings[1] };
             final boolean structTransformed = transformOnce(transformationPredicate, trans3);
-            transformed |= structTransformed;
+            anyTransform |= structTransformed;
+
+            // Assemble result; note the side-effect on arg :-(
             termAndBindings[0] = trans3[0];
             termAndBindings[1] = trans3[1];
-            return transformed;
         } else {
-            return transformOnce(transformationPredicate, termAndBindings);
+            anyTransform = transformOnce(transformationPredicate, termAndBindings);
         }
+
+        //
+        // Transform children after
+        if (termAndBindings[0] instanceof Struct && childrenAfter > 0) {
+            Struct newStruct = (Struct) termAndBindings[0];
+            if (newStruct.getArity() > 0) {
+                boolean postArgTransformed = false;
+                final Object[] postArgs = newStruct.getArgs();
+                final Object[] postTransformedArgs = new Object[postArgs.length];
+                int index = -1;
+                for (Object arg : postArgs) {
+                    ++index;
+                    final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
+                    final boolean argTransformed = transformOnce(transformationPredicate, trans2, childrenBefore, childrenAfter);
+                    postArgTransformed |= argTransformed;
+                    postTransformedArgs[index] = trans2[0];
+                }
+                if (postArgTransformed) {
+                    newStruct = new Struct(newStruct.getName(), postTransformedArgs);
+                    termAndBindings[0] = newStruct;
+                }
+            }
+        }
+
+        return anyTransform;
     }
 
     /**

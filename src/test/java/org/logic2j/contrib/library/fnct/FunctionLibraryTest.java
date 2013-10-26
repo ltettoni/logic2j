@@ -49,91 +49,94 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertNotTransformed("_", false, 0);
-        assertNotTransformed("X", false, 0); // Free var
+        assertNotTransformed("_", false, 0, 0);
+        assertNotTransformed("X", false, 0, 0); // Free var
     }
 
     @Test
     public void atomicNotTransformed() {
-        assertNotTransformed("atom", false, 0);
-        assertNotTransformed("123", false, 0);
-        assertNotTransformed("123.456", false, 0);
+        assertNotTransformed("atom", false, 0, 0);
+        assertNotTransformed("123", false, 0, 0);
+        assertNotTransformed("123.456", false, 0, 0);
     }
 
     @Test
     public void atomicTransformed() {
-        assertTransformed("t4", "t3", false, 0);
-        assertTransformed("one", "1", false, 0);
+        assertTransformed("t4", "t3", false, 0, 0);
+        assertTransformed("one", "1", false, 0, 0);
     }
 
     @Test
     public void structNotTransformed() {
-        assertNotTransformed("f(a,b,c)", false, 0);
-        assertNotTransformed("[1,2]", false, 0);
+        assertNotTransformed("f(a,b,c)", false, 0, 0);
+        assertNotTransformed("[1,2]", false, 0, 0);
     }
 
     @Test
     public void structTransformed() {
-        assertTransformed("transformed(a)", "original(a)", false, 0);
-        assertTransformed("transformed(X)", "original(X)", false, 0);
-        assertTransformed("transformed(X)", "original(_)", false, 0); // Dubious
-        assertNotTransformed("transformed(X, Y)", false, 0);
+        assertTransformed("transformed(a)", "original(a)", false, 0, 0);
+        assertTransformed("transformed(X)", "original(X)", false, 0, 0);
+        assertTransformed("transformed(X)", "original(_)", false, 0, 0); // Dubious
+        assertNotTransformed("transformed(X, Y)", false, 0, 0);
     }
 
     @Test
     public void mapNonIterative() {
-        assertNotTransformed("t4", false, 0);
-        assertTransformed("t4", "t3", false, 0);
-        assertTransformed("t3", "t2", false, 0);
-        assertTransformed("t2", "t1", false, 0);
+        assertNotTransformed("t4", false, 0, 0);
+        assertTransformed("t4", "t3", false, 0, 0);
+        assertTransformed("t3", "t2", false, 0, 0);
+        assertTransformed("t2", "t1", false, 0, 0);
     }
 
     @Test
     public void mapIterative() {
-        assertNotTransformed("t4", true, 0);
-        assertTransformed("t4", "t3", true, 0);
-        assertTransformed("t4", "t2", true, 0);
-        assertTransformed("t4", "t1", true, 0);
+        assertNotTransformed("t4", true, 0, 0);
+        assertTransformed("t4", "t3", true, 0, 0);
+        assertTransformed("t4", "t2", true, 0, 0);
+        assertTransformed("t4", "t1", true, 0, 0);
     }
 
     @Test
     public void structTransformedRecursiveBefore() {
-        assertTransformed("[one,ten]", "[1,10]", false, 1);
-        assertTransformed("f(one, 2)", "f(1,2)", false, 1);
-        assertTransformed("g(one, f(one, 2))", "g(1, f(1,2))", false, 1);
+        assertTransformed("[one,ten]", "[1,10]", false, 1, 0);
+        assertTransformed("f(one, 2)", "f(1,2)", false, 1, 0);
+        assertTransformed("g(one, f(one, 2))", "g(1, f(1,2))", false, 1, 0);
     }
 
     @Test
     public void structTransformedRecursiveAfter() {
-        assertTransformed("[one,ten]", "11", false, 1);
+        assertTransformed("h([ten,one])", "h(11)", false, 1, 1);
+        assertTransformed("[ten,one]", "11", false, 1, 1);
     }
 
     /**
      * @param termToParse
-     * @param childrenFirst TODO
+     * @param childrenBefore TODO
+     * @param childrenAfter TODO
      */
-    private void assertNotTransformed(String termToParse, boolean iterative, int childrenFirst) {
+    private void assertNotTransformed(String termToParse, boolean iterative, int childrenBefore, int childrenAfter) {
         final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-        final boolean transform = iterative ? functionLibrary.transformAll("map", termAndBindings) : functionLibrary.transformOnce("map", termAndBindings, childrenFirst);
+        final boolean transform = iterative ? functionLibrary.transformAll("map", termAndBindings) : functionLibrary.transformOnce("map", termAndBindings, childrenBefore, childrenAfter);
         assertFalse(transform);
         assertSame(termAndBindings[0], originalTerm);
         assertSame(termAndBindings[1], originalBindings);
     }
 
     /**
-     * @param childrenFirst TODO
+     * @param childrenBefore TODO
+     * @param childrenAfter TODO
      * @param string
      * @return
      */
-    private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, int childrenFirst) {
+    private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, int childrenBefore, int childrenAfter) {
         final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-        final boolean transform = iterative ? functionLibrary.transformAll("map", termAndBindings) : functionLibrary.transformOnce("map", termAndBindings, childrenFirst);
+        final boolean transform = iterative ? functionLibrary.transformAll("map", termAndBindings) : functionLibrary.transformOnce("map", termAndBindings, childrenBefore, childrenAfter);
         assertTrue(transform);
         String substituted = TermApi.substitute(termAndBindings[0], (Bindings) termAndBindings[1]).toString();
         String toString = termAndBindings[0].toString();
