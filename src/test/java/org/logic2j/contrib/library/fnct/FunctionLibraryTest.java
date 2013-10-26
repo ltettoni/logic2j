@@ -44,7 +44,6 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-
     }
 
     @Test
@@ -148,9 +147,9 @@ public class FunctionLibraryTest extends PrologTestBase {
     public void mapBottomUp() {
         assertEquals("transformed(a)", assertOneSolution("mapBottomUp(map, original(a), X)").binding("X").toString());
 
-        assertEquals("[10,1]", assertOneSolution("mapBottomUp(map, 11, X)").binding("X").toString());
+        assertEquals("[ten,one]", assertOneSolution("mapBottomUp(map, 11, X)").binding("X").toString());
 
-        assertEquals("transformed([10,1])", assertOneSolution("mapBottomUp(map, original(11), X)").binding("X").toString());
+        assertEquals("transformed([ten,one])", assertOneSolution("mapBottomUp(map, original(11), X)").binding("X").toString());
 
         //
         // Free vars and anonymous should not be mapped
