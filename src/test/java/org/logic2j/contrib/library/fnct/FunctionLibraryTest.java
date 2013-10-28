@@ -147,8 +147,6 @@ public class FunctionLibraryTest extends PrologTestBase {
     public void mapBottomUp() {
         assertEquals("transformed(a)", assertOneSolution("mapBottomUp(map, original(a), X)").binding("X").toString());
 
-        assertEquals("[ten,one]", assertOneSolution("mapBottomUp(map, 11, X)").binding("X").toString());
-
         assertEquals("transformed([ten,one])", assertOneSolution("mapBottomUp(map, original(11), X)").binding("X").toString());
 
         //
