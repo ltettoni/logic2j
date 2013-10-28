@@ -24,11 +24,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-
 import org.junit.Test;
 import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
@@ -99,16 +96,16 @@ public class TermApiTest {
     @Test
     public void assignIndexes() {
         int nbVars;
-        nbVars = TermApi.assignIndexes(new Struct("f"), (short)0);
+        nbVars = TermApi.assignIndexes(new Struct("f"), (short) 0);
         assertEquals(0, nbVars);
-        nbVars = TermApi.assignIndexes(new Var("X"), (short)0);
+        nbVars = TermApi.assignIndexes(new Var("X"), (short) 0);
         assertEquals(1, nbVars);
-        nbVars = TermApi.assignIndexes(new Var("_"), (short)0);
+        nbVars = TermApi.assignIndexes(new Var("_"), (short) 0);
         assertEquals(0, nbVars);
         //
-        nbVars = TermApi.assignIndexes(Long.valueOf(2), (short)0);
+        nbVars = TermApi.assignIndexes(Long.valueOf(2), (short) 0);
         assertEquals(0, nbVars);
-        nbVars = TermApi.assignIndexes(Double.valueOf(1.1), (short)0);
+        nbVars = TermApi.assignIndexes(Double.valueOf(1.1), (short) 0);
         assertEquals(0, nbVars);
     }
 
@@ -132,19 +129,6 @@ public class TermApiTest {
 
         final Object x = this.prolog.getTermExchanger().unmarshall("X");
         TermApi.substitute(x, new Bindings(x));
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void avoidCycle() {
-        final Struct cyclic = new Struct("s", Struct.EMPTY_LIST);
-        cyclic.setArg(0, cyclic);
-        try {
-            cyclic.avoidCycle(new ArrayList<Term>());
-            fail("Should have thrown an IllegalStateException");
-        } catch (final PrologNonSpecificError e) {
-            // OK
-        }
     }
 
     @Test
