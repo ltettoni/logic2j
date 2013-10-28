@@ -66,16 +66,16 @@ public class Binding {
     }
 
     /**
-     * Copy constructor.
+     * Shallow copy constructor.
      * 
-     * @param toClone
+     * @param original
      */
-    public Binding(Binding toClone) {
-        this.link = toClone.link;
-        this.literalBindings = toClone.literalBindings;
-        this.term = toClone.term;
-        this.type = toClone.type;
-        this.var = toClone.var;
+    public Binding(Binding original) {
+        this.link = original.link;
+        this.literalBindings = original.literalBindings;
+        this.term = original.term;
+        this.type = original.type;
+        this.var = original.var;
     }
 
     /**
