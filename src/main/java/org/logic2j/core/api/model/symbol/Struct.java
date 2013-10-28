@@ -114,18 +114,17 @@ public final class Struct extends Term {
 
     /**
      * Copy constructor.
-     * 
-     * @return
+     * Creates a shallow copy but with all children which are Struct also cloned.
      */
-    public Struct(Struct toClone) {
-        this.name = toClone.name;
-        this.arity = toClone.arity;
-        this.signature = toClone.signature;
-        this.primitiveInfo = toClone.primitiveInfo;
+    public Struct(Struct original) {
+        this.name = original.name;
+        this.arity = original.arity;
+        this.signature = original.signature;
+        this.primitiveInfo = original.primitiveInfo;
         if (this.arity > 0) {
             this.args = new Object[this.arity];
             for (int i = 0; i < this.arity; i++) {
-                Object cloned = toClone.args[i];
+                Object cloned = original.args[i];
                 if (cloned instanceof Struct) {
                     cloned = new Struct((Struct) cloned);
                 }
@@ -136,7 +135,7 @@ public final class Struct extends Term {
 
     /**
      * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-     * by {@link TermApi#valueOf(Object, ANY_TERM)}.
+     * by {@link TermApi#valueOf(Object, FactoryMode#ANY_TERM)}.
      * 
      * @note This method is a static factory, not a constructor, to emphasize that arguments
      *       are not of the type needed by this class, but need transformation.
