@@ -17,13 +17,14 @@
  */
 package org.logic2j.core.api.model.symbol;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
@@ -38,8 +39,8 @@ import org.logic2j.core.library.mgmt.LibraryContent;
 
 /**
  * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
- * subclasses, so they can invoke its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Term)}) and
- * normalization ({@link #normalize(Term, LibraryContent)} .
+ * subclasses, so they can invoke its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Object)}) and
+ * normalization ({@link #normalize(Object, LibraryContent)} .
  * 
  * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods
  *       there. I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
@@ -91,8 +92,8 @@ public class TermApi {
     }
 
     /**
-     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link #index} to
-     * {@link #NO_INDEX}. This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Term)}; see a more
+     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link Term#index} to
+     * {@link Term#NO_INDEX}. This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Object)}; see a more
      * detailed description there.
      * 
      * @param collection Recipient collection, {@link Term}s add here.
@@ -109,7 +110,7 @@ public class TermApi {
     }
 
     /**
-     * Recursively collect all terms at and under theTerm, and also initialize their {@link #index} to {@link #NO_INDEX}. For example for a
+     * Recursively collect all terms at and under theTerm, and also initialize their {@link Term#index} to {@link Term#NO_INDEX}. For example for a
      * structure "s(a,b(c),d(b(a)),X,X,Y)", the result will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
      * 
      * @param theTerm
@@ -139,9 +140,8 @@ public class TermApi {
      * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection.
      * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal. A factorized {@link Struct}
      * will have all occurences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
-     * public API entry point is {@link TermApi#factorize(Term)}; see a more detailed description there.
+     * public API entry point is {@link TermApi#factorize(Object)}; see a more detailed description there.
      * 
-     * @param theCollectedTerms The reference Terms to search for.
      * @return Either this, or a new equivalent but factorized Term.
      */
     public static Object factorize(Object theTerm, Collection<Object> collection) {
@@ -201,8 +201,7 @@ public class TermApi {
     }
 
     /**
-     * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s. This is an internal template method: the public API entry
-     * point is {@link TermApi#assignIndexes(Term)}; see a more detailed description there.
+     * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s. 
      * 
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
@@ -216,16 +215,6 @@ public class TermApi {
             // Not a Term but a plain Java object - can't assign an index
             return theIndexOfNextNonIndexedVar;
         }
-    }
-
-    /**
-     * Assign the {@link Term#index} value for any {@link Term} hierarchy.
-     * 
-     * @param theTerm
-     * @return The number of variables found (recursively).
-     */
-    static short assignIndexes(Object theTerm) {
-        return TermApi.assignIndexes(theTerm, (short) 0); // Start assigning indexes with zero
     }
 
     /**
@@ -285,7 +274,7 @@ public class TermApi {
      */
     public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
         final Object factorized = factorize(theTerm);
-        assignIndexes(factorized);
+        assignIndexes(factorized, (short)0);
         if (factorized instanceof Struct && theLibraryContent != null) {
             ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
         }
@@ -430,4 +419,73 @@ public class TermApi {
         }
         return (T) theTerm;
     }
+    
+    private static final PartialTermVisitor<Object> cloningVisitor(final Map<Object, Object> remapper) {
+      return new PartialTermVisitor<Object>() {
+
+      @Override
+      public Object visit(Struct theStruct, Bindings theBindings) {
+        if (remapper.containsKey(theStruct)) {
+          return remapper.get(theStruct);
+        }
+        final int arity = theStruct.getArity();
+        final Object[] elements = new Object[arity];
+        for (int i = 0; i < arity; i++) {
+          final Object recursedClonedElement = TermApi.accept(this, theStruct.getArg(i), theBindings);
+          elements[i] = recursedClonedElement;
+        }
+        return new Struct(theStruct.getName(), elements);
+      }
+
+      @Override
+      public Object visit(Var theVar, Bindings theBindings) {
+        if (remapper.containsKey(theVar)) {
+          return remapper.get(theVar);
+        }
+        return new Var(theVar);
+      }
+
+      @Override
+      public Object visit(String theAtomString) {
+        if (remapper.containsKey(theAtomString)) {
+          return remapper.get(theAtomString);
+        }
+        return theAtomString;
+      }
+
+      @Override
+      public Object visit(Long theLong) {
+        if (remapper.containsKey(theLong)) {
+          return remapper.get(theLong);
+        }
+        return theLong;
+      }
+
+      @Override
+      public Object visit(Double theDouble) {
+        if (remapper.containsKey(theDouble)) {
+          return remapper.get(theDouble);
+        }
+        return theDouble;
+      }
+
+      @Override
+      public Object visit(Object theObject) {
+        if (remapper.containsKey(theObject)) {
+          return remapper.get(theObject);
+        }
+        return theObject;
+      }
+
+    };
+    }
+    
+    public static Object clone(Object theTerm, Bindings theBindings, Map<Object, Object> remapper) {
+      if (remapper==null) {
+        remapper = Collections.emptyMap();
+      }
+      final Object cloned = accept(cloningVisitor(remapper), theTerm, theBindings);
+      return cloned;
+    }
+    
 }
