@@ -19,6 +19,8 @@ package org.logic2j.core.api.model.var;
 
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -112,7 +114,6 @@ public class Bindings {
             this.index = theIndex;
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public Var visit(Var theVar, Bindings theBindings) {
             if (theVar.getIndex() == this.index) {
@@ -412,6 +413,39 @@ public class Bindings {
             return this.getClass().getSimpleName() + address + "(novars):" + getReferrer();
         }
         return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings) + ':' + getReferrer();
+    }
+
+    /**
+     * Merge a number of {@link Bindings} into a single new one, making sure all variables are
+     * distinct.
+     * 
+     * @param allBindings
+     * @param theRemappedVars
+     * @return
+     */
+    public static Bindings merge(List<Bindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
+        // Keep only distinct ones (as per object equality, in our case same references), but preseving order
+        LinkedHashSet<Bindings> distinctBindings = new LinkedHashSet<>(allBindings);
+        // Count total number of vars
+        int numberOfVars = 0;
+        for (Bindings element : distinctBindings) {
+            numberOfVars += element.bindings.length;
+        }
+        // Allocate
+        final Binding[] array = new Binding[numberOfVars];
+        int index = 0;
+        for (Bindings element : distinctBindings) {
+            for (Binding binding : element.bindings) {
+                final Binding clonedBinding = new Binding(binding);
+                array[index] = clonedBinding;
+                Var originalVar = clonedBinding.getVar();
+                Var clonedVar = new Var(originalVar.getName());
+                theRemappedVars.put(originalVar, clonedVar);
+                clonedBinding.setVar(clonedVar);
+                index++;
+            }
+        }
+        return new Bindings(null, array);
     }
 
 }
