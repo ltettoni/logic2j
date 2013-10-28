@@ -292,16 +292,6 @@ public final class Struct extends Term {
         return this.name + VARARG_PREDICATE_TRAILER;
     }
 
-    /**
-     * Sets the i-th element of this structure
-     * 
-     * @deprecated Do not use - only for white-box testing from TestCases
-     */
-    @Deprecated
-    void setArg(int theIndex, Term argument) {
-        this.args[theIndex] = argument;
-    }
-
     public PrimitiveInfo getPrimitiveInfo() {
         return this.primitiveInfo;
     }
