@@ -47,6 +47,13 @@ public final class Var extends Term {
     private final String name;
 
     /**
+     * Create an anonymous variable.
+     */
+    private Var() {
+        this.name = ANONYMOUS_VAR_NAME;
+    }
+    
+    /**
      * Creates a variable identified by a name.
      * 
      * The name must starts with an upper case letter or the underscore. If an underscore is specified as a name, the variable is anonymous.
@@ -60,10 +67,12 @@ public final class Var extends Term {
     }
 
     /**
-     * Create an anonymous variable.
+     * Copy constructor.
+     * @param original
      */
-    private Var() {
-        this.name = ANONYMOUS_VAR_NAME;
+    public Var(Var original) {
+      this.name = original.name;
+      // index will be the default value
     }
 
     /**
