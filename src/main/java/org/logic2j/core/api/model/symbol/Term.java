@@ -29,9 +29,9 @@ import org.logic2j.core.impl.DefaultTermExchanger;
  * Term class is the root abstract class for all Prolog data types. The following notions apply on terms, see also the {@link TermApi} class
  * for methods to manage {@link Term}s.
  * <ul>
- * <li>Structural equality, see {@link #structurallyEquals(Term)}</li>
- * <li>Factorization, see {@link #factorize(Collection)}</li>
- * <li>Initialization of {@link Var} indexes, see {@link #assignIndexes(short)}</li>
+ * <li>Structural equality, see {@link TermApi#structurallyEquals(Object, Object)}</li>
+ * <li>Factorization, see {@link TermApi#factorize(Object)}</li>
+ * <li>Initialization of {@link Var} indexes, see {@link TermApi#assignIndexes(Object)}</li>
  * <li>Normalization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
  * 
