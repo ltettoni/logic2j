@@ -29,11 +29,6 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class TermVisitorBase<T> implements PartialTermVisitor<T> {
 
-    @Override
-    public T visit(Var theVar, Bindings theBindings) {
-        return null;
-    }
-
     /**
      * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... until the last OR until the first
      * that returns a non-null result.
@@ -50,6 +45,11 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
                 return result;
             }
         }
+        return null;
+    } 
+
+    @Override
+    public T visit(Var theVar, Bindings theBindings) {
         return null;
     }
 
