@@ -21,7 +21,8 @@
    <logger name="org.logic2j" level="info" />
    <logger name="org.logic2j.core.api.solver.listener" level="info" />
    <logger name="org.logic2j.core.impl.DefaultSolver" level="info" />
-   <logger name="org.logic2j.contrib.excel.TabularDataClauseProvider" level="debug" />
+   <logger name="org.logic2j.contrib.excel.TabularDataClauseProvider" level="info" />
+   <logger name="org.logic2j.contrib.library.fnct.FunctionLibrary" level="info" />
 
    <root level="warn">
       <appender-ref ref="console" />
