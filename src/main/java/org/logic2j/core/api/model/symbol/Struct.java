@@ -35,6 +35,7 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
 /**
  * Struct class represents either Prolog compound {@link Term}s or atoms (an atom is represented by a 0-arity compound).
  * This class is now final, one we'll have to carefully think if this could be user-extended.
+ * Note: This class MUST be immutable.
  */
 public final class Struct extends Term {
     private static final long serialVersionUID = 1L;
@@ -243,10 +244,16 @@ public final class Struct extends Term {
     }
 
     /**
-     * @return The array of all arguments
+     * @return A cloned array of all arguments (cloned to avoid any possibility to mutate)
      */
     public Object[] getArgs() {
-        return this.args;
+        if (this.args == null) {
+            return new Object[0];
+        }
+        final int length = this.args.length;
+        final Object[] copy = new Object[length];
+        System.arraycopy(this.args, 0, copy, 0, length);
+        return copy;
     }
 
     /**
