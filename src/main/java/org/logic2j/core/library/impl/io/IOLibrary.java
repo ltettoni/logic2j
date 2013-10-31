@@ -43,6 +43,7 @@ public class IOLibrary extends LibraryBase {
     public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
+        // Argument methodName is {@link String#intern()}alized so OK to check by reference
         if (theMethodName == "nolog") {
             result = nolog(theListener, theGoalVars, args);
         } else if (theMethodName == "write") {

@@ -206,12 +206,12 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = Struct.FUNCTOR_TRUE)
     // We can't name the method "true" it's a Java reserved word...
-    public Continuation trueFunctor(SolutionListener theListener, Bindings theBindings) {
+    public Continuation trueFunctor(SolutionListener theListener, @SuppressWarnings("unused") Bindings theBindings) {
         return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation fail(SolutionListener theListener, Bindings theBindings) {
+    public Continuation fail(@SuppressWarnings("unused") SolutionListener theListener, @SuppressWarnings("unused") Bindings theBindings) {
         // Do not propagate a solution - that's all
         return Continuation.CONTINUE;
     }
@@ -509,7 +509,7 @@ public class CoreLibrary extends LibraryBase {
         Number apply(Number val1, Number val2);
     }
 
-    private Object binaryFunctor(SolutionListener theListener, Bindings theBindings, Object t1, Object t2, AggregationFunction theEvaluationFunction) {
+    private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, Bindings theBindings, Object t1, Object t2, AggregationFunction theEvaluationFunction) {
         t1 = evaluate(t1, theBindings);
         t2 = evaluate(t2, theBindings);
         if (t1 instanceof Number && t2 instanceof Number) {
