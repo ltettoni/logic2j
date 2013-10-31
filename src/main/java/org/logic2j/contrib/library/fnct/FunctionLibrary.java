@@ -39,14 +39,20 @@ import org.logic2j.core.library.mgmt.Primitive;
 public class FunctionLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibrary.class);
 
+    /**
+     * Maximal number of iterations when transforming all (until nothing changes). This prevents infinit
+     * recursion in case of a cycle in the transformation mappings.
+     */
+    private static final int MAX_TRANFORM_ITERATIONS = 100;
+
     public FunctionLibrary(PrologImplementation theProlog) {
         super(theProlog);
     }
 
     @Primitive
-    public Continuation mapBottomUp(SolutionListener theListener, final Bindings theBindings, final Object thePredicate, final Object theInput, final Object theOutput) {
+    public Continuation map(SolutionListener theListener, final Bindings theBindings, final Object thePredicate, final Object theInput, final Object theOutput) {
         if (!(thePredicate instanceof String)) {
-            throw new InvalidTermException("Predicate for mapBottomUp/3 must be a String, was " + thePredicate);
+            throw new InvalidTermException("Predicate for map/3 must be a String, was " + thePredicate);
         }
         final Bindings theInputBindings = theBindings.narrow(theInput, Object.class);
         if (theInputBindings == null) {
@@ -55,10 +61,10 @@ public class FunctionLibrary extends LibraryBase {
         } else {
             final Bindings theOutputBindings = theBindings.narrow(theOutput, Object.class);
 
-            // traverseAndMap((String) thePredicate, theInputBindings, theOutputBindings, theListener);
+            final Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
 
-            Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
-            transformOnce((String) thePredicate, termAndBindings, 1, 1);
+            transformOnce((String) thePredicate, termAndBindings, true, true);
+
             final boolean unified = unify(termAndBindings[0], (Bindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
         }
@@ -70,12 +76,12 @@ public class FunctionLibrary extends LibraryBase {
      * 
      * @param termAndBindings
      */
-    public boolean transformAll(final String theTransformationPredicate, final Object[] termAndBindings) {
+    public boolean transformAll(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
         boolean anyTransformed = false;
         boolean transformed;
-        int iterationLimiter = 10;
+        int iterationLimiter = MAX_TRANFORM_ITERATIONS;
         do {
-            transformed = transformOnce(theTransformationPredicate, termAndBindings, 0, 0);
+            transformed = transformOnce(theTransformationPredicate, termAndBindings, transformArgsBefore, transformArgsAfter);
             anyTransformed |= transformed;
             iterationLimiter--;
         } while (transformed && iterationLimiter > 0);
@@ -86,11 +92,11 @@ public class FunctionLibrary extends LibraryBase {
      * 
      * @param theTransformationPredicate
      * @param termAndBindings
-     * @param childrenBefore
-     * @param childrenAfter
-     * @return
+     * @param transformArgsBefore
+     * @param transformArgsAfter
+     * @return true when a transformation occured
      */
-    public boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, int childrenBefore, int childrenAfter) {
+    public boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
         boolean anyTransform = false;
         boolean needTransformAfter = false;
         logger.debug("> Enter transform with {}, {}", termAndBindings[0], termAndBindings[1]);
@@ -100,15 +106,12 @@ public class FunctionLibrary extends LibraryBase {
             // Transform children first (before structure)
             final Object[] preArgs = struct.getArgs();
             final Object[][] preTransformedArgs = new Object[preArgs.length][2];
-            if (childrenBefore > 0) {
+            if (transformArgsBefore) {
                 int index = -1;
                 for (Object arg : preArgs) {
                     ++index;
                     final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
-                    final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, childrenBefore, childrenAfter);
-                    if (argTransformed) {
-                        logger.info("!! Argument was really transformed (pre): {}, {}", trans2[0], trans2[1]);
-                    }
+                    final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, transformArgsBefore, transformArgsAfter);
                     anyTransform |= argTransformed;
                     preTransformedArgs[index][0] = trans2[0];
                     preTransformedArgs[index][1] = trans2[1];
@@ -156,7 +159,7 @@ public class FunctionLibrary extends LibraryBase {
 
         //
         // Transform children after
-        if (needTransformAfter && childrenAfter > 0 && termAndBindings[0] instanceof Struct) {
+        if (needTransformAfter && transformArgsAfter && termAndBindings[0] instanceof Struct) {
             Struct newStruct = (Struct) termAndBindings[0];
             if (newStruct.getArity() > 0) {
                 boolean postArgTransformed = false;
@@ -166,10 +169,7 @@ public class FunctionLibrary extends LibraryBase {
                 for (Object arg : postArgs) {
                     ++index;
                     final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
-                    final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, childrenBefore, childrenAfter);
-                    if (argTransformed) {
-                        logger.info("!! Argument was really transformed (post): {}, {}", trans2[0], trans2[1]);
-                    }
+                    final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, transformArgsBefore, transformArgsAfter);
                     postArgTransformed |= argTransformed;
                     postTransformedArgs[index] = trans2[0];
                 }
@@ -215,7 +215,8 @@ public class FunctionLibrary extends LibraryBase {
         // Build the transformation goal in form of "theTransformationPredicate(TransIn, TransOu)"
         final Var transIn = new Var("TransIn");
         final Var transOut = new Var("TransOut");
-        final Struct transformationGoal = (Struct) TermApi.normalize(new Struct(theTransformationPredicate, transIn, transOut), /* no library to consider */null);
+        final Struct transformationGoal = (Struct) TermApi.normalize(new Struct(theTransformationPredicate, transIn, transOut), /* no library to consider */
+                null);
         final Bindings transformationBindings = new Bindings(transformationGoal);
 
         // Now bind our transIn var to the original term. Note: we won't have to remember and unbind here since our modified bindings are a
