@@ -30,6 +30,7 @@ import org.logic2j.core.api.model.var.Bindings;
 /**
  * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
  * ('_') name.
+ * Note: This class MUST be immutable.
  */
 public final class Var extends Term {
     private static final long serialVersionUID = 1L;
@@ -52,7 +53,7 @@ public final class Var extends Term {
     private Var() {
         this.name = ANONYMOUS_VAR_NAME;
     }
-    
+
     /**
      * Creates a variable identified by a name.
      * 
@@ -68,11 +69,12 @@ public final class Var extends Term {
 
     /**
      * Copy constructor.
+     * 
      * @param original
      */
     public Var(Var original) {
-      this.name = original.name;
-      // index will be the default value
+        this.name = original.name;
+        // index will be the default value
     }
 
     /**
