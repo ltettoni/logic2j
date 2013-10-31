@@ -191,7 +191,7 @@ public final class Struct extends Term {
         // Unroll elements into an array (we need this since we don't have an index-addressable structure)
         final Object[] array = new Object[size];
         int index = 0;
-        for (Object element : theJavaCollection) {
+        for (final Object element : theJavaCollection) {
             array[index++] = element;
         }
         return createPList(array);

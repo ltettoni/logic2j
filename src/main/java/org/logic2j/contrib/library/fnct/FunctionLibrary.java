@@ -108,7 +108,7 @@ public class FunctionLibrary extends LibraryBase {
             final Object[][] preTransformedArgs = new Object[preArgs.length][2];
             if (transformArgsBefore) {
                 int index = -1;
-                for (Object arg : preArgs) {
+                for (final Object arg : preArgs) {
                     ++index;
                     final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
                     final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, transformArgsBefore, transformArgsAfter);
@@ -122,20 +122,20 @@ public class FunctionLibrary extends LibraryBase {
                 // Merge all bindings (every transformation might have produced a new Bindings)
 
                 // Collect all transformed results
-                List<Bindings> allTransformedBindings = new ArrayList<>();
-                List<Object> allTransformedArgs = new ArrayList<>();
-                for (Object[] pair : preTransformedArgs) {
+                final List<Bindings> allTransformedBindings = new ArrayList<>();
+                final List<Object> allTransformedArgs = new ArrayList<>();
+                for (final Object[] pair : preTransformedArgs) {
                     allTransformedBindings.add((Bindings) pair[1]);
                     allTransformedArgs.add(pair[0]);
                 }
 
                 final IdentityHashMap<Object, Object> remappedVar = new IdentityHashMap<>();
-                Bindings mergedBindings = Bindings.merge(allTransformedBindings, remappedVar);
+                final Bindings mergedBindings = Bindings.merge(allTransformedBindings, remappedVar);
                 termAndBindings[1] = mergedBindings;
 
                 // Clone the structure
-                Struct structWithNewArgs = new Struct(struct.getName(), allTransformedArgs.toArray());
-                Object cloned = TermApi.clone(structWithNewArgs, mergedBindings, remappedVar);
+                final Struct structWithNewArgs = new Struct(struct.getName(), allTransformedArgs.toArray());
+                final Object cloned = TermApi.clone(structWithNewArgs, mergedBindings, remappedVar);
                 TermApi.assignIndexes(cloned, (short) 0);
                 struct = (Struct) cloned;
             }
@@ -166,7 +166,7 @@ public class FunctionLibrary extends LibraryBase {
                 final Object[] postArgs = newStruct.getArgs();
                 final Object[] postTransformedArgs = new Object[postArgs.length];
                 int index = -1;
-                for (Object arg : postArgs) {
+                for (final Object arg : postArgs) {
                     ++index;
                     final Object[] trans2 = new Object[] { arg, termAndBindings[1] };
                     final boolean argTransformed = transformOnce(theTransformationPredicate, trans2, transformArgsBefore, transformArgsAfter);

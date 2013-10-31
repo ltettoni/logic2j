@@ -115,7 +115,7 @@ public class IOLibrary extends LibraryBase {
         for (final Object term : terms) {
             final Bindings b = theBindings.narrow(term, Object.class);
             ensureBindingIsNotAFreeVar(b, "log/*");
-            String format = getProlog().getTermExchanger().marshall(b).toString();
+            final String format = getProlog().getTermExchanger().marshall(b).toString();
             sb.append(format);
             sb.append(' ');
         }

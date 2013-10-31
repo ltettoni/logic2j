@@ -118,9 +118,9 @@ public class DefaultUnifier implements Unifier {
             }
             return false;
         } else {
-          if (term1==null) {
-            throw new NullPointerException("Cannot unify term1=null with term2=" + term2);
-          }
+            if (term1 == null) {
+                throw new NullPointerException("Cannot unify term1=null with term2=" + term2);
+            }
 
             return term1.equals(term2);
         }

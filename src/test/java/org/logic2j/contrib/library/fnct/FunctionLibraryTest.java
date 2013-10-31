@@ -122,8 +122,8 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(MAPPING_PREDICATE, termAndBindings,
-                childrenBefore, childrenAfter);
+        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
+                MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter);
         assertFalse(transform);
         assertSame(termAndBindings[0], originalTerm);
         assertSame(termAndBindings[1], originalBindings);
@@ -141,10 +141,10 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(MAPPING_PREDICATE, termAndBindings,
-                childrenBefore, childrenAfter);
+        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
+                MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter);
         assertTrue(transform);
-        String substituted = TermApi.substitute(termAndBindings[0], (Bindings) termAndBindings[1]).toString();
+        final String substituted = TermApi.substitute(termAndBindings[0], (Bindings) termAndBindings[1]).toString();
         assertEquals(toStringExpected, substituted);
         return termAndBindings;
     }

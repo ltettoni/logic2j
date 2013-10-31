@@ -46,7 +46,7 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
             }
         }
         return null;
-    } 
+    }
 
     @Override
     public T visit(Var theVar, Bindings theBindings) {
@@ -68,8 +68,8 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
         return null;
     }
 
-     @Override
-     public T visit(Object theObject) {
-       return null;
-     }
+    @Override
+    public T visit(Object theObject) {
+        return null;
+    }
 }

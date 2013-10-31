@@ -30,5 +30,5 @@ public interface TermVisitor<T> {
     T visit(Var theVar, Bindings theBindings);
 
     T visit(Struct theStruct, Bindings theBindings);
-    
+
 }

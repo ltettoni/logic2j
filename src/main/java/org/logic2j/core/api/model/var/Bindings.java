@@ -425,21 +425,21 @@ public class Bindings {
      */
     public static Bindings merge(List<Bindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
-        LinkedHashSet<Bindings> distinctBindings = new LinkedHashSet<>(allBindings);
+        final LinkedHashSet<Bindings> distinctBindings = new LinkedHashSet<>(allBindings);
         // Count total number of vars
         int numberOfVars = 0;
-        for (Bindings element : distinctBindings) {
+        for (final Bindings element : distinctBindings) {
             numberOfVars += element.bindings.length;
         }
         // Allocate
         final Binding[] array = new Binding[numberOfVars];
         int index = 0;
-        for (Bindings element : distinctBindings) {
-            for (Binding binding : element.bindings) {
+        for (final Bindings element : distinctBindings) {
+            for (final Binding binding : element.bindings) {
                 final Binding clonedBinding = new Binding(binding);
                 array[index] = clonedBinding;
-                Var originalVar = clonedBinding.getVar();
-                Var clonedVar = new Var(originalVar.getName());
+                final Var originalVar = clonedBinding.getVar();
+                final Var clonedVar = new Var(originalVar.getName());
                 theRemappedVars.put(originalVar, clonedVar);
                 clonedBinding.setVar(clonedVar);
                 index++;
