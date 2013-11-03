@@ -17,22 +17,11 @@
  */
 package org.logic2j.core.impl.io.parse.tuprolog;
 
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.ATOM;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.DQ_SEQUENCE;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.END;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.FLOAT;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.INTEGER;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.LBRA;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.LBRA2;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.LPAR;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.RBRA;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.RBRA2;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.RPAR;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.SQ_SEQUENCE;
-import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.VARIABLE;
+import static org.logic2j.core.impl.io.parse.tuprolog.MaskConstants.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -92,19 +81,21 @@ public class Parser {
     }
 
     private final PrologImplementation prolog;
-
+    private final Reader reader;
     private final Tokenizer tokenizer;
     private final OperatorManager operatorManager;
 
     public Parser(PrologImplementation theProlog, CharSequence theoryText) {
         this.prolog = theProlog;
+        this.reader = null;
         this.tokenizer = new Tokenizer(theoryText.toString());
         this.operatorManager = theProlog.getOperatorManager();
     }
 
-    public Parser(PrologImplementation theProlog, Reader theoryText) {
+    public Parser(PrologImplementation theProlog, Reader theReader) {
         this.prolog = theProlog;
-        this.tokenizer = new Tokenizer(new BufferedReader(theoryText));
+        this.reader = new LineNumberReader(new BufferedReader(theReader), 10000);
+        this.tokenizer = new Tokenizer(this.reader);
         this.operatorManager = theProlog.getOperatorManager();
     }
 
@@ -135,6 +126,13 @@ public class Parser {
             return term;
         } catch (final IOException ex) {
             throw new InvalidTermException("An I/O error occured.");
+        } catch (InvalidTermException e) {
+          if (this.reader instanceof LineNumberReader) {
+            LineNumberReader lnr = (LineNumberReader)this.reader;
+            int lineNumber = lnr.getLineNumber();
+            throw new InvalidTermException("Error on line " + lineNumber + ": " + e.getMessage());
+          } 
+          throw e;
         }
     }
 
