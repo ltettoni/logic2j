@@ -45,6 +45,11 @@ C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
 C -> T      :- call(C), !, call(T).
 
 
+
+countall(Predicate, NumberOfOccurences) :- 
+   findall(_, Predicate, ListOfResults),
+   length(ListOfResults, NumberOfOccurences).
+
 /*
   This is a working version of OR implemented in prolog. 
   However we prefer the N-arity implmentation of OR in Java, see DefaultSolver.
