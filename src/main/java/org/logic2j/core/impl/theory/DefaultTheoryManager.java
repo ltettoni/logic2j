@@ -64,7 +64,6 @@ public class DefaultTheoryManager implements TheoryManager {
 
     public TheoryContent load(CharSequence theTheoryText) {
         final Parser parser = new Parser(this.prolog, theTheoryText.toString());
-        // final Iterator<Term> iterator = parser.iterator();
         return loadAllClauses(parser);
     }
 
@@ -145,7 +144,7 @@ public class DefaultTheoryManager implements TheoryManager {
             logger.debug("Parsed clause: {}", clauseTerm);
             final Clause cl = new Clause(this.prolog, clauseTerm);
             content.add(cl);
-            clauseTerm = theParser.nextTerm(true);
+              clauseTerm = theParser.nextTerm(true);
         }
         return content;
     }
