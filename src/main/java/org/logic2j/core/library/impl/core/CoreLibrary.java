@@ -367,6 +367,28 @@ public class CoreLibrary extends LibraryBase {
         return notifyIfUnified(unified, theListener);
     }
 
+    /**
+     * Length of a list
+     * @param theListener
+     * @param theBindings
+     * @param theList
+     * @param theLength
+     * @return
+     */
+    @Primitive
+    public Continuation length(SolutionListener theListener, Bindings theBindings, Object theList, Object theLength) {
+        final Bindings listBindings = theBindings.narrow(theList, Object.class);
+        ensureBindingIsNotAFreeVar(listBindings, "length/2");
+        final Object prologList = listBindings.getReferrer();
+        if (! TermApi.isList(prologList)) {
+          throw new InvalidTermException("A Prolog list is required for length/2,  was " + prologList);
+        }
+        final ArrayList<Object> javalist = ((Struct)prologList).javaListFromPList(new ArrayList<Object>(), null);
+        final Long listLength = Long.valueOf(javalist.size());
+        final boolean unified = unify(listLength, listBindings, theLength, theBindings);
+        return notifyIfUnified(unified, theListener);
+    }
+
     @Primitive
     public Continuation clause(SolutionListener theListener, Bindings theBindings, Object theHead, Object theBody) {
         final Binding dereferencedBinding = dereferencedBinding(theHead, theBindings);
