@@ -63,7 +63,8 @@ public class FunctionLibrary extends LibraryBase {
 
             final Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
 
-            transformOnce((String) thePredicate, termAndBindings, true, true);
+//            transformOnce((String) thePredicate, termAndBindings, true, true);
+            transformAll((String) thePredicate, termAndBindings, true, true);
 
             final boolean unified = unify(termAndBindings[0], (Bindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
