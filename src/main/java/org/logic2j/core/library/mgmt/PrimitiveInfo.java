@@ -83,7 +83,7 @@ public class PrimitiveInfo {
         }
         // We did not do a direct invocation - we will have to rely on reflection
         if (!methodNeedingReflectiveInvocation.contains(this.methodName)) {
-            logger.warn("Invocation of library primitive \"{}\" uses reflection - consider direct dispatch by implementing PLibrary.dispatch()", this.methodName);
+            logger.warn("Invocation of library primitive \"{}\" uses reflection - consider implementing {}.dispatch()", this.methodName, this.library);
             // Avoid multiple logging
             methodNeedingReflectiveInvocation.add(this.methodName);
         }
