@@ -49,6 +49,28 @@ public class FunctionLibrary extends LibraryBase {
         super(theProlog);
     }
 
+
+    @Override
+    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+        final Object result;
+        // Argument methodName is {@link String#intern()}alized so OK to check by reference
+        final int arity = theGoalStruct.getArity();
+        if (arity == 3) {
+            final Object arg0 = theGoalStruct.getArg(0);
+            final Object arg1 = theGoalStruct.getArg(1);
+            final Object arg2 = theGoalStruct.getArg(2);
+            if (theMethodName == "map") {
+                result = map(theListener, theGoalVars, arg0, arg1, arg2);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else {
+            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        }
+        return result;
+    }
+
+    
     @Primitive
     public Continuation map(SolutionListener theListener, final Bindings theBindings, final Object thePredicate, final Object theInput, final Object theOutput) {
         if (!(thePredicate instanceof String)) {
@@ -77,7 +99,7 @@ public class FunctionLibrary extends LibraryBase {
      * 
      * @param termAndBindings
      */
-    public boolean transformAll(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
+    boolean transformAll(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
         boolean anyTransformed = false;
         boolean transformed;
         int iterationLimiter = MAX_TRANFORM_ITERATIONS;
@@ -97,7 +119,7 @@ public class FunctionLibrary extends LibraryBase {
      * @param transformArgsAfter
      * @return true when a transformation occured
      */
-    public boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
+    boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
         boolean anyTransform = false;
         boolean needTransformAfter = false;
         logger.debug("> Enter transform with {}, {}", termAndBindings[0], termAndBindings[1]);
