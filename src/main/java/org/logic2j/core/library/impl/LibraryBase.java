@@ -43,7 +43,9 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
-     * You MAY override this method, if you don't, reflection will be used.
+     * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
+     * 
+     * TODO: Document example of typical overriding of dispatch()
      * 
      * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
