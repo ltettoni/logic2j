@@ -84,29 +84,37 @@ public class IOLibrary extends LibraryBase {
 
     @Primitive
     public Continuation debug(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      if (logger.isDebugEnabled()) {
         final String substring = formatForLog(theBindings, terms);
         logger.debug(substring);
+      }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation info(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      if (logger.isInfoEnabled()) {
         final String substring = formatForLog(theBindings, terms);
         logger.info(substring);
+      }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation warn(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      if (logger.isWarnEnabled()) {
         final String substring = formatForLog(theBindings, terms);
         logger.warn(substring);
+      }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation error(SolutionListener theListener, Bindings theBindings, Object... terms) {
+      if (logger.isErrorEnabled()) {
         final String substring = formatForLog(theBindings, terms);
         logger.error(substring);
+      }
         return notifySolution(theListener);
     }
 
