@@ -29,7 +29,7 @@ public interface LibraryManager {
      * Load a {@link PLibrary}
      * 
      * @param theLibrary
-     * @return
+     * @return The content of the library
      */
     LibraryContent loadLibrary(PLibrary theLibrary);
 

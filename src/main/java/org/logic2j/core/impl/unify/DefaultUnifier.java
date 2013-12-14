@@ -178,13 +178,6 @@ public class DefaultUnifier implements Unifier {
         */
     }
 
-    /**
-     * @param stepInfo
-     * @param term1
-     * @param theGoalBindings
-     * @param term2
-     * @return
-     */
     private boolean simpleUnification(StepInfo stepInfo, Object term1, Bindings theBindings1, Object term2) {
         if (term1 instanceof Var) {
             final Var var1 = (Var) term1;

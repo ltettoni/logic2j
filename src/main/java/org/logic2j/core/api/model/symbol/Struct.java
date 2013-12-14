@@ -136,7 +136,7 @@ public final class Struct extends Term {
 
     /**
      * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-     * by {@link TermApi#valueOf(Object, FactoryMode#ANY_TERM)}.
+     * by {@link TermApi#valueOf(Object, FactoryMode)}.
      * 
      * @note This method is a static factory, not a constructor, to emphasize that arguments
      *       are not of the type needed by this class, but need transformation.

@@ -54,7 +54,7 @@ public interface TheoryManager extends ClauseProvider {
 
     /**
      * @param theTheory
-     * @return
+     * @return The content of the theory
      */
     TheoryContent load(URL theTheory);
 

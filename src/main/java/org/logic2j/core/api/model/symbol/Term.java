@@ -31,7 +31,7 @@ import org.logic2j.core.impl.DefaultTermExchanger;
  * <ul>
  * <li>Structural equality, see {@link TermApi#structurallyEquals(Object, Object)}</li>
  * <li>Factorization, see {@link TermApi#factorize(Object)}</li>
- * <li>Initialization of {@link Var} indexes, see {@link TermApi#assignIndexes(Object)}</li>
+ * <li>Initialization of {@link Var} indexes, see {@link TermApi#assignIndexes(Object, short)}</li>
  * <li>Normalization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
  * 

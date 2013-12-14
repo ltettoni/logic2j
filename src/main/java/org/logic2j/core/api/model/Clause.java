@@ -111,8 +111,8 @@ public class Clause {
             return true;
         }
         // We know it's a clause functor, arity must be 2, check the body
-        final Object body = s.getRHS();
-        if (Struct.ATOM_TRUE.equals(body)) {
+        final Object clauseBody = s.getRHS();
+        if (Struct.ATOM_TRUE.equals(clauseBody)) {
             return true;
         }
         // The body is more complex, it's certainly a rule

@@ -23,7 +23,9 @@ import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 
 /**
- * Generic Visitor for the {@link Term} hierarchy. For reference, see the Visitor design pattern.
+ * Generic Visitor for the two subclasses of the {@link Term} hierarchy: {@link Var} and {@link Struct}.
+ * For reference, see the Visitor design pattern.
+ * See also the {@link PartialTermVisitor}.
  */
 public interface TermVisitor<T> {
 

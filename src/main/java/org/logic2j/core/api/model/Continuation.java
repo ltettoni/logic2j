@@ -28,11 +28,11 @@ import org.logic2j.core.api.SolutionListener;
  */
 public enum Continuation {
     /**
-     * Value that {@link #onSolution()} must return for the inference engine to continue solving (search for alternate solutions).
+     * Value that {@link SolutionListener#onSolution()} must return for the inference engine to continue solving (search for alternate solutions).
      */
     CONTINUE,
     /**
-     * Value that {@link #onSolution()} must return for the inference engine to stop solving (ie. means caller requests abort).
+     * Value that {@link SolutionListener#onSolution()} must return for the inference engine to stop solving (ie. means caller requests abort).
      */
     USER_ABORT,
     /**

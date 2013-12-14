@@ -148,8 +148,9 @@ public class Binding {
      * 
      * @note On problem queens(11,_) this is invoked 68M times, with 59M real steps followed, and a longest chain of 13!
      * 
-     * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. The result is guaranteed to satisfy
-     *         either of {@link #isFree()} or {@link #isLiteral()}.
+     * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. 
+     *          The result is guaranteed not null, and to satisfy
+     *          either of {@link #isFree()} or {@link #isLiteral()}.
      */
     public final Binding followLinks() {
         Binding result = this;

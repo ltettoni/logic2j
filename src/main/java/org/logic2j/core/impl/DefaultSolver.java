@@ -36,8 +36,8 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
  * Solve goals - that's the core of the engine.
  */
 public class DefaultSolver implements Solver {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
-    private static final boolean debug = logger.isDebugEnabled();
+    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
+    static final boolean debug = logger.isDebugEnabled();
 
     private final PrologImplementation prolog;
 
@@ -48,7 +48,7 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Term, Bindings, SolutionListener)} method. The referrer goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, Bindings, SolutionListener)} method. The referrer goal to solve
      * is in the callerFrame
      * 
      * @param theSolutionListener
@@ -191,12 +191,6 @@ public class DefaultSolver implements Solver {
         return result;
     }
 
-    /**
-     * @param goalTerm
-     * @param theGoalBindings
-     * @param theSolutionListener
-     * @return
-     */
     private Continuation solveAgainstClauseProviders(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
         final Unifier unifier = this.prolog.getUnifier();

@@ -40,17 +40,18 @@ public final class BindingTrail {
 
         /**
          * The "trail" is a stack implemented with a auto-extending array.
+         * Default package visibility to avoid synthetic accessors
          */
-        private int[] trailStack;
-        private int trailSize;
-        private int trailTop;
+        int[] trailStack;
+        int trailSize;
+        int trailTop;
 
         /**
          * The "bindings" is a stack implemented with a auto-extending array.
          */
-        private Binding[] bindingStack;
-        private int bindingSize;
-        private int bindingTop;
+        Binding[] bindingStack;
+        int bindingSize;
+        int bindingTop;
 
     }
 
@@ -80,7 +81,7 @@ public final class BindingTrail {
     /**
      * Register a valid new StepInfo on our trail, but with empty content.
      * 
-     * @return
+     * @return The new {@link StepInfo}.
      */
     public static StepInfo markBeforeAddingBindings() {
         final StepInfo current = stepInfoOfThisThread.get();
@@ -106,7 +107,7 @@ public final class BindingTrail {
 
     /**
      * @param current
-     * @param binding1
+     * @param theBinding
      */
     public static void addBinding(StepInfo current, Binding theBinding) {
         final int top = ++current.bindingTop;

@@ -107,7 +107,7 @@ public class DefaultTermAdapter implements TermAdapter {
     }
 
     /**
-     * @return a List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+     * @return A List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
      */
     @Override
     public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {

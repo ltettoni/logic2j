@@ -177,8 +177,8 @@ public class DefaultTheoryManager implements TheoryManager {
         return this.clauseProviders;
     }
 
-    public void setClauseProviders(List<ClauseProvider> clauseProviders) {
-        this.clauseProviders = clauseProviders;
+    public void setClauseProviders(List<ClauseProvider> theClauseProviders) {
+        this.clauseProviders = theClauseProviders;
     }
 
     @Override
@@ -191,8 +191,8 @@ public class DefaultTheoryManager implements TheoryManager {
         return this.dataFactProviders;
     }
 
-    public void setDataFactProviders(List<DataFactProvider> dataFactProviders) {
-        this.dataFactProviders = dataFactProviders;
+    public void setDataFactProviders(List<DataFactProvider> theDataFactProviders) {
+        this.dataFactProviders = theDataFactProviders;
     }
 
     // ---------------------------------------------------------------------------

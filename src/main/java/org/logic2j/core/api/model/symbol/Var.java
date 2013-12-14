@@ -140,7 +140,7 @@ public final class Var extends Term {
      * 
      * @param theBindings The {@link Bindings} within which this {@link Var} is referenced
      * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
-     * @return
+     * @return Substituted term.
      */
     Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         if (isAnonymous()) {

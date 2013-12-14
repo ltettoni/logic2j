@@ -99,7 +99,7 @@ public interface TermAdapter {
      * Instantiate a list of Terms from one (possibly large) {@link Object}.
      * 
      * @param theObject
-     * @return
+     * @return A List of terms.
      */
     List<Object> terms(Object theObject, AssertionMode theAssertionMode);
 
@@ -107,7 +107,7 @@ public interface TermAdapter {
      * Convert a Term into the desired target Class.
      * 
      * @param theTargetClass
-     * @return
+     * @return Not yet implemented
      */
     <T> T object(Term t, Class<T> theTargetClass);
 }

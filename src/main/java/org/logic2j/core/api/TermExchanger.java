@@ -30,15 +30,15 @@ public interface TermExchanger {
      * Parse a character stream into a {@link Term}.
      * 
      * @param theChars
-     * @return
+     * @return The new {@link Term} obtained from its textual representation.
      */
     Object unmarshall(CharSequence theChars);
 
     /**
-     * Formats a {@link Term} into a character stream.
+     * Formats a {@link Term} to its character representation.
      * 
      * @param theTerm
-     * @return
+     * @return The character representation of theTerm.
      */
     CharSequence marshall(Object theTerm);
 
