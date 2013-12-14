@@ -191,11 +191,9 @@ public class Bindings {
     }
 
     /**
-     * Create a new {@link Bindings} with the same referrer, but a deep copy of the {@link Binding} array
-     * contained therein. A new array is allocated, and every {@link Binding} is cloned also.
-     * 
      * @param theOriginal
-     * @return
+     * @return A new {@link Bindings} with the same referrer, but a deep copy of the {@link Binding} array
+     * contained therein. A new array is allocated, and every {@link Binding} is cloned also.
      */
     public static Bindings deepCopyWithSameReferrer(Bindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
@@ -267,15 +265,7 @@ public class Bindings {
      * @return All variable bindings resolved, represented as specified for the case of free bindings.
      */
     public Map<String, Object> explicitBindings(FreeVarRepresentation theRepresentation) {
-        // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
-        // ending up with either null (on a literal), or a real Var (on a free var).
-        final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
-        for (final Binding initialBinding : this.bindings) {
-            // Follow linked bindings
-            final Binding finalBinding = initialBinding.followLinks();
-            // At this stage finalBinding may be either literal, or free
-            bindingToInitialVar.put(finalBinding, initialBinding.getVar());
-        }
+        final IdentityHashMap<Binding, Var> bindingToInitialVar = finalBindingsToInitialVar();
 
         final Map<String, Object> result = new TreeMap<String, Object>();
         for (final Binding initialBinding : this.bindings) {
@@ -326,6 +316,39 @@ public class Bindings {
             }
         }
         return result;
+    }
+
+    /**
+     * @return An {@link IdentityHashMap} from the final bindings (literals or free vars) to the initial {@link Var}s.
+     * Notice that because several vars may lead to the same final bindings, this reverse mapping may only be partial. Which
+     * var is referenced is not deterministic.
+     */
+    public IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
+      // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
+      // ending up with either null (on a literal), or a real Var (on a free var).
+      final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
+      for (final Binding initialBinding : this.bindings) {
+          final Var initialVar = initialBinding.getVar();
+          // Follow linked bindings
+          final Binding finalBinding = initialBinding.followLinks();
+          // At this stage finalBinding may be either literal, or free
+          bindingToInitialVar.put(finalBinding, initialVar);
+      }
+      return bindingToInitialVar;
+    }
+
+    public IdentityHashMap<Var, Binding> initialVartoFinalBinding() {
+      // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
+      // ending up with either null (on a literal), or a real Var (on a free var).
+      final IdentityHashMap<Var, Binding> bindingToInitialVar = new IdentityHashMap<Var, Binding>();
+      for (final Binding initialBinding : this.bindings) {
+          final Var initialVar = initialBinding.getVar();
+          // Follow linked bindings
+          final Binding finalBinding = initialBinding.followLinks();
+          // At this stage finalBinding may be either literal, or free
+          bindingToInitialVar.put(initialVar, finalBinding);
+      }
+      return bindingToInitialVar;
     }
 
     /**
@@ -416,12 +439,10 @@ public class Bindings {
     }
 
     /**
-     * Merge a number of {@link Bindings} into a single new one, making sure all variables are
-     * distinct.
-     * 
      * @param allBindings
      * @param theRemappedVars
-     * @return
+     * @return A new Bindings with a number of {@link Bindings} into a single new one, making sure all variables are
+     * distinct.
      */
     public static Bindings merge(List<Bindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
