@@ -175,8 +175,8 @@ public class TabularData implements Serializable {
         return this.primaryKeyColumn;
     }
 
-    public void setPrimaryKeyColumn(int primaryKeyColumn) {
-        this.primaryKeyColumn = primaryKeyColumn;
+    public void setPrimaryKeyColumn(int thePrimaryKeyColumn) {
+        this.primaryKeyColumn = thePrimaryKeyColumn;
     }
 
     // ---------------------------------------------------------------------------

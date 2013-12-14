@@ -38,8 +38,8 @@ public class DynamicClauseProvider implements ClauseProvider {
     private final PrologImplementation prolog;
     private final List<Clause> clauses = new ArrayList<Clause>();
 
-    public DynamicClauseProvider(PrologImplementation prolog) {
-        this.prolog = prolog;
+    public DynamicClauseProvider(PrologImplementation theProlog) {
+        this.prolog = theProlog;
     }
 
     @Override

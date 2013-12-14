@@ -310,7 +310,7 @@ public class CoreLibrary extends LibraryBase {
 
         // final Term target = resolveNonVar(theGoal, theBindings, "not");
         final class NegationListener implements SolutionListener {
-            private boolean found = false;
+            boolean found = false;
 
             @Override
             public Continuation onSolution() {
@@ -369,6 +369,7 @@ public class CoreLibrary extends LibraryBase {
 
     /**
      * Length of a list
+     * 
      * @param theListener
      * @param theBindings
      * @param theList
@@ -380,10 +381,10 @@ public class CoreLibrary extends LibraryBase {
         final Bindings listBindings = theBindings.narrow(theList, Object.class);
         ensureBindingIsNotAFreeVar(listBindings, "length/2");
         final Object prologList = listBindings.getReferrer();
-        if (! TermApi.isList(prologList)) {
-          throw new InvalidTermException("A Prolog list is required for length/2,  was " + prologList);
+        if (!TermApi.isList(prologList)) {
+            throw new InvalidTermException("A Prolog list is required for length/2,  was " + prologList);
         }
-        final ArrayList<Object> javalist = ((Struct)prologList).javaListFromPList(new ArrayList<Object>(), null);
+        final ArrayList<Object> javalist = ((Struct) prologList).javaListFromPList(new ArrayList<Object>(), null);
         final Long listLength = Long.valueOf(javalist.size());
         final boolean unified = unify(listLength, listBindings, theLength, theBindings);
         return notifyIfUnified(unified, theListener);

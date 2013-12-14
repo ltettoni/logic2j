@@ -31,8 +31,8 @@ public class TabularDataFactProvider implements DataFactProvider {
     private final AssertionMode assertionMode;
     final ArrayList<DataFact> dataFacts = new ArrayList<DataFact>();
 
-    public TabularDataFactProvider(TabularData tabularData, AssertionMode theMode) {
-        this.tabularData = tabularData;
+    public TabularDataFactProvider(TabularData theTabularData, AssertionMode theMode) {
+        this.tabularData = theTabularData;
         this.assertionMode = theMode;
         initDataFacts();
     }

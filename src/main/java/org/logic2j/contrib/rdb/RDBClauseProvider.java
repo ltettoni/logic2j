@@ -51,9 +51,9 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     private final HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
     private final String prefix;
 
-    public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource, String prefix) {
+    public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource, String thePrefix) {
         super(theProlog, theDataSource);
-        this.prefix = prefix;
+        this.prefix = thePrefix;
     }
 
     public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource) {

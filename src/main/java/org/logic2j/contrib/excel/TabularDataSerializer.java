@@ -39,11 +39,11 @@ public class TabularDataSerializer {
     private final File file;
 
     /**
-     * @param file
+     * @param theFile
      */
-    public TabularDataSerializer(File file) {
+    public TabularDataSerializer(File theFile) {
         super();
-        this.file = file;
+        this.file = theFile;
     }
 
     public TabularData read() throws IOException, ClassNotFoundException {

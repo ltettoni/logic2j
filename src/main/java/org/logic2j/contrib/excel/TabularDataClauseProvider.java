@@ -40,10 +40,10 @@ public class TabularDataClauseProvider implements ClauseProvider {
 
     private final ArrayList<Clause> clauses = new ArrayList<Clause>();
 
-    public TabularDataClauseProvider(PrologImplementation prolog, TabularData tabularData, TermAdapter.AssertionMode mode) {
-        this.prolog = prolog;
-        this.tabularData = tabularData;
-        this.mode = mode;
+    public TabularDataClauseProvider(PrologImplementation theProlog, TabularData theTabularData, TermAdapter.AssertionMode theMode) {
+        this.prolog = theProlog;
+        this.tabularData = theTabularData;
+        this.mode = theMode;
         initClauses();
     }
 

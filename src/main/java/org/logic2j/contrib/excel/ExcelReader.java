@@ -45,22 +45,22 @@ public class ExcelReader {
     private final int primaryKeyColumn;
 
     /**
-     * @param file
-     * @param firstRowIsHeaders
+     * @param theFile
+     * @param theFirstRowIsHeaders
      */
-    public ExcelReader(File file, boolean firstRowIsHeaders) {
-        this(file, firstRowIsHeaders, -1);
+    public ExcelReader(File theFile, boolean theFirstRowIsHeaders) {
+        this(theFile, theFirstRowIsHeaders, -1);
     }
 
     /**
-     * @param file
-     * @param firstRowIsHeaders True when first row contains column headers.
-     * @param primaryKeyColumn The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
+     * @param theFile
+     * @param theFirstRowIsHeaders True when first row contains column headers.
+     * @param thePrimaryKeyColumn The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
      */
-    public ExcelReader(File file, boolean firstRowIsHeaders, int primaryKeyColumn) {
-        this.file = file;
-        this.firstRowIsHeaders = firstRowIsHeaders;
-        this.primaryKeyColumn = primaryKeyColumn;
+    public ExcelReader(File theFile, boolean theFirstRowIsHeaders, int thePrimaryKeyColumn) {
+        this.file = theFile;
+        this.firstRowIsHeaders = theFirstRowIsHeaders;
+        this.primaryKeyColumn = thePrimaryKeyColumn;
     }
 
     /**

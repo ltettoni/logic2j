@@ -126,8 +126,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     @Override
-    public void setTermAdapter(TermAdapter termAdapter) {
-        this.termAdapter = termAdapter;
+    public void setTermAdapter(TermAdapter theTermAdapter) {
+        this.termAdapter = theTermAdapter;
     }
 
     @Override
@@ -145,8 +145,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
         return this.libraryManager;
     }
 
-    public void setLibraryManager(LibraryManager libraryManager) {
-        this.libraryManager = libraryManager;
+    public void setLibraryManager(LibraryManager theLibraryManager) {
+        this.libraryManager = theLibraryManager;
     }
 
     @Override
@@ -154,8 +154,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
         return this.operatorManager;
     }
 
-    public void setOperatorManager(OperatorManager operatorManager) {
-        this.operatorManager = operatorManager;
+    public void setOperatorManager(OperatorManager theOperatorManager) {
+        this.operatorManager = theOperatorManager;
     }
 
     @Override
@@ -163,8 +163,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
         return this.solver;
     }
 
-    public void setSolver(Solver solver) {
-        this.solver = solver;
+    public void setSolver(Solver theSolver) {
+        this.solver = theSolver;
     }
 
     @Override
@@ -172,8 +172,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
         return this.unifier;
     }
 
-    public void setUnifier(Unifier unifier) {
-        this.unifier = unifier;
+    public void setUnifier(Unifier theUnifier) {
+        this.unifier = theUnifier;
     }
 
     // ---------------------------------------------------------------------------

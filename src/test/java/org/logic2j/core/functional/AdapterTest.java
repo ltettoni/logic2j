@@ -35,7 +35,7 @@ public class AdapterTest extends PrologTestBase {
     // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);
 
     public static class MyOutputObject {
-
+        // Empty
     }
 
     public static enum MyEnum {

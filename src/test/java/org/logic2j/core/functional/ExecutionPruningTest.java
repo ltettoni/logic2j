@@ -25,8 +25,6 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 
 /**
  * Test the cut and user abort features.
@@ -194,7 +192,11 @@ public class ExecutionPruningTest extends PrologTestBase {
      * A {@link SolutionListener} that will request user cancellation after the first solution was found.
      */
     private static class Max1Listener implements SolutionListener {
-        private int counter = 0;
+        int counter = 0;
+
+        public Max1Listener() {
+            // Nothing - just create public constructor for accessibility
+        }
 
         @Override
         public Continuation onSolution() {
@@ -207,7 +209,11 @@ public class ExecutionPruningTest extends PrologTestBase {
      * A {@link SolutionListener} that will request user cancellation after 5 solutions were found.
      */
     private static class Max5Listener implements SolutionListener {
-        private int counter = 0;
+        int counter = 0;
+
+        public Max5Listener() {
+            // Nothing - just create public constructor for accessibility
+        }
 
         @Override
         public Continuation onSolution() {
@@ -221,7 +227,11 @@ public class ExecutionPruningTest extends PrologTestBase {
      * A {@link SolutionListener} that counts solutions - won't request user cancellation.
      */
     private static class CountingListener implements SolutionListener {
-        private int counter = 0;
+        int counter = 0;
+
+        public CountingListener() {
+            // Nothing - just create public constructor for accessibility
+        }
 
         @Override
         public Continuation onSolution() {
@@ -232,18 +242,17 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void userCancel() {
-        final PrologImplementation prolog = new PrologReferenceImplementation();
         final Object term = this.prolog.getTermExchanger().unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
-        prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
+        this.prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);
         // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
+        this.prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
         assertEquals(1, maxOneSolution.counter);
         // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
-        prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
+        this.prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
         assertEquals(5, maxFiveSolutions.counter);
     }
 

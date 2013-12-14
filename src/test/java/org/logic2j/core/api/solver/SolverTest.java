@@ -50,26 +50,26 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unique() {
         // Use a different init level for this test
-        final Prolog prolog = new PrologReferenceImplementation(InitLevel.L2_BASE_LIBRARIES);
+        final Prolog impl = new PrologReferenceImplementation(InitLevel.L2_BASE_LIBRARIES);
         //
         try {
-            prolog.solve("1=2").unique();
+            impl.solve("1=2").unique();
             fail("There was no solution, unique() should have failed because it immediately solves the goal (unlike all()).");
         } catch (final Exception e) {
             // Expected
         }
         try {
-            prolog.solve("2=2").unique().binding("X");
+            impl.solve("2=2").unique().binding("X");
             fail("There was one solution, but no variable X, variable() should have failed.");
         } catch (final Exception e) {
             // Expected
         }
         // Value of a non-bound variable
-        assertEquals(null, prolog.solve("Z=Z").unique().binding("Z"));
-        assertEquals(null, prolog.solve("Z=Y").unique().binding("Z"));
-        assertEquals(null, prolog.solve("write(Z_written_from_SolverTest)").unique().binding("Z_written_from_SolverTest"));
+        assertEquals(null, impl.solve("Z=Z").unique().binding("Z"));
+        assertEquals(null, impl.solve("Z=Y").unique().binding("Z"));
+        assertEquals(null, impl.solve("write(Z_written_from_SolverTest)").unique().binding("Z_written_from_SolverTest"));
         // Obtain values of bound variables
-        final UniqueSolutionHolder unique = prolog.solve("X=2, Y=3").unique();
+        final UniqueSolutionHolder unique = impl.solve("X=2, Y=3").unique();
         assertEquals(2L, unique.binding("X"));
         assertEquals(3L, unique.binding("Y"));
         // Obtain all variables

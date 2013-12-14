@@ -62,7 +62,7 @@ public class DefaultSolver implements Solver {
         return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
 
-    private Continuation solveGoalRecursive(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+    Continuation solveGoalRecursive(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
         if (debug) {
             logger.debug(">> Entering solveRecursive(\"{}\") with {}", goalTerm, theGoalBindings);
         }
