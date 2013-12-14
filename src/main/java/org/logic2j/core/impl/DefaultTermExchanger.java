@@ -50,7 +50,7 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         this.prolog = null;
     }
 
-    public DefaultTermExchanger(PrologReferenceImplementation theProlog) {
+    public DefaultTermExchanger(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 
@@ -79,13 +79,14 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         // Go to fetch the effective variable value if any
         final Binding startingBinding = theVar.bindingWithin(theBindings);
         final Binding finalBinding = startingBinding.followLinks();
+        final String formatted;
         if (finalBinding.isFree()) {
-            return theVar.getName();
+          formatted = theVar.getName();
         } else {
-            // Must be literal: recurse
-            return TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
+            // Here it can only be a literal: recurse
+          formatted = TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
         }
-
+        return formatted;
     }
 
     @Override
@@ -148,12 +149,12 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         if (TermApi.isList(tail)) {
             final Struct tailS = (Struct) tail;
             if (tailS.isEmptyList()) {
-                return head.toString();
+                return TermApi.accept(this, head, theBindings);
             }
             if (head instanceof Var) {
-                return (visit((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings));
+                return visit((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings);
             }
-            return (head.toString() + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings));
+            return TermApi.accept(this, head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings);
         }
         String h0;
         String t0;
@@ -261,10 +262,6 @@ public class DefaultTermExchanger implements TermExchanger, PartialTermVisitor<S
         return sb.toString();
     }
 
-    /**
-     * @param theText
-     * @return
-     */
     public static String possiblyQuote(CharSequence theText) {
         if (theText == null) {
             return null;
