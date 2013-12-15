@@ -91,9 +91,8 @@ public class CoreLibrary extends LibraryBase {
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
                 return Long.valueOf(val1.longValue() + val2.longValue());
-            } else {
-                return Double.valueOf(val1.longValue() + val2.longValue());
             }
+            return Double.valueOf(val1.longValue() + val2.longValue());
         }
 
     };
@@ -102,9 +101,8 @@ public class CoreLibrary extends LibraryBase {
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
                 return Long.valueOf(val1.longValue() - val2.longValue());
-            } else {
-                return Double.valueOf(val1.longValue() - val2.longValue());
             }
+            return Double.valueOf(val1.longValue() - val2.longValue());
         }
 
     };
@@ -113,9 +111,8 @@ public class CoreLibrary extends LibraryBase {
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
                 return Long.valueOf(val1.longValue() * val2.longValue());
-            } else {
-                return Double.valueOf(val1.longValue() * val2.longValue());
             }
+            return Double.valueOf(val1.longValue() * val2.longValue());
         }
 
     };
@@ -124,9 +121,8 @@ public class CoreLibrary extends LibraryBase {
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
                 return Long.valueOf(-val1.longValue());
-            } else {
-                return Double.valueOf(-val1.longValue());
             }
+            return Double.valueOf(-val1.longValue());
         }
 
     };
@@ -384,7 +380,7 @@ public class CoreLibrary extends LibraryBase {
         if (!TermApi.isList(prologList)) {
             throw new InvalidTermException("A Prolog list is required for length/2,  was " + prologList);
         }
-        final ArrayList<Object> javalist = ((Struct) prologList).javaListFromPList(new ArrayList<Object>(), null);
+        final ArrayList<Object> javalist = ((Struct) prologList).javaListFromPList(new ArrayList<Object>(), Object.class);
         final Long listLength = Long.valueOf(javalist.size());
         final boolean unified = unify(listLength, listBindings, theLength, theBindings);
         return notifyIfUnified(unified, theListener);
@@ -532,15 +528,14 @@ public class CoreLibrary extends LibraryBase {
         Number apply(Number val1, Number val2);
     }
 
-    private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, Bindings theBindings, Object t1, Object t2, AggregationFunction theEvaluationFunction) {
-        t1 = evaluate(t1, theBindings);
-        t2 = evaluate(t2, theBindings);
+    private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, Bindings theBindings, Object theTerm1, Object theTerm2, AggregationFunction theEvaluationFunction) {
+        final Object t1 = evaluate(theTerm1, theBindings);
+        final Object t2 = evaluate(theTerm2, theBindings);
         if (t1 instanceof Number && t2 instanceof Number) {
             if (t1 instanceof Long && t2 instanceof Long) {
                 return Long.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).longValue());
-            } else {
-                return Double.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue());
             }
+            return Double.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue());
         }
         throw new InvalidTermException("Could not add because 2 terms are not Numbers: " + t1 + " and " + t2);
     }

@@ -38,7 +38,7 @@ import javax.sql.DataSource;
 public class SqlRunner {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlRunner.class);
     private static final boolean DEBUG_ENABLED = logger.isDebugEnabled();
-    private static final Object[] EMPTY_PARAMS = new Object[0];
+    // private static final Object[] EMPTY_PARAMS = new Object[0];
 
     private final DataSource dataSource;
 
@@ -56,10 +56,9 @@ public class SqlRunner {
      * @throws SQLException
      */
     public List<Object[]> query(String theSelect, Object[] theParameters) throws SQLException {
-
-        if (theParameters == null) {
-            theParameters = EMPTY_PARAMS;
-        }
+        // if (theParameters == null) {
+        // theParameters = EMPTY_PARAMS;
+        // }
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<Object[]> result = null;

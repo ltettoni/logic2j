@@ -556,10 +556,6 @@ public final class Struct extends Term {
 
     @SuppressWarnings("unchecked")
     public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementClassOrNull) {
-        if (theElementClassOrNull == null) {
-            theElementClassOrNull = (Class<Q>) Object.class;
-        }
-
         final T result;
         if (theCollectionToFillOrNull == null) {
             result = (T) new ArrayList<Q>();

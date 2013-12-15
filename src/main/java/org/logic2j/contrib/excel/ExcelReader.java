@@ -78,14 +78,13 @@ public class ExcelReader {
             } catch (final ClassNotFoundException e) {
                 throw new IOException("Recent cached version of " + this.file + " located at " + cached + " was not loadable: " + e);
             }
-        } else {
-            // Read the file
-            final TabularData data = read();
-            // Cache it
-            cached.getParentFile().mkdirs();
-            new TabularDataSerializer(cached).write(data);
-            return data;
         }
+        // Read the file
+        final TabularData data = read();
+        // Cache it
+        cached.getParentFile().mkdirs();
+        new TabularDataSerializer(cached).write(data);
+        return data;
     }
 
     public TabularData read() throws IOException {
@@ -121,9 +120,8 @@ public class ExcelReader {
             final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
             tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
             return tbl;
-        } else {
-            throw new IOException("According to extension file may not be of Excel format: " + this.file);
         }
+        throw new IOException("According to extension file may not be of Excel format: " + this.file);
         // else if (this.fileName.endsWith(".xlsx")) {
         // if (this.sheet == null) {
         // final XSSFWorkbook workBook = new XSSFWorkbook(this.fileName);
@@ -240,8 +238,7 @@ public class ExcelReader {
         final int second = index % 26;
         if (first < 1) {
             return String.valueOf((char) ('A' + second));
-        } else {
-            return createSequenceElement(first) + (char) ('A' + second);
         }
+        return createSequenceElement(first) + (char) ('A' + second);
     }
 }
