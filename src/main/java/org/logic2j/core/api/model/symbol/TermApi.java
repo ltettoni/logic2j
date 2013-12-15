@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.model.PartialTermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -286,7 +287,7 @@ public class TermApi {
     /**
      * Primitive factory for simple {@link Term}s from plain Java {@link Object}s, use this
      * with parcimony at low-level.
-     * Higher-level must use {@link TermAdapter} or {@link TermExchanger} instead which can be
+     * Higher-level must use {@link TermAdapter} or {@link TermUnmarshaller} instead which can be
      * overridden and defined with user logic and features.
      * 
      * Character input will be converted to Struct or Var according to Prolog's syntax convention:

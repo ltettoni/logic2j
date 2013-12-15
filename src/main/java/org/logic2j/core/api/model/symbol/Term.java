@@ -61,9 +61,9 @@ public abstract class Term implements Serializable {
     protected short index = NO_INDEX;
 
     /**
-     * A {@link TermExchanger} for the default's {@link #toString()} to render this {@link Term}.
+     * A {@link TermMarshaller} for the default's {@link #toString()} to render this {@link Term}.
      * Calling {@link #toString()} should be avoided from caller code, use your preferred
-     * instance of {@link TermExchanger} instead. Yet we need {@link #toString()} to work for the cases of
+     * instance of {@link TermMarshaller} instead. Yet we need {@link #toString()} to work for the cases of
      * logging and while debugging, so let's use a fixed (static) one.
      */
     private static final TermMarshaller basicMarshaller = new DefaultTermMarshaller();
@@ -105,7 +105,7 @@ public abstract class Term implements Serializable {
     // ---------------------------------------------------------------------------
 
     /**
-     * Delegate formatting to our basic {@link TermExchanger}.
+     * Delegate formatting to our basic {@link TermMarshaller}.
      */
     @Override
     public String toString() {

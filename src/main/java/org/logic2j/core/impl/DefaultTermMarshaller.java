@@ -30,7 +30,7 @@ import org.logic2j.core.impl.io.operator.Operator;
 import org.logic2j.core.impl.io.parse.tuprolog.Parser;
 
 /**
- * Default and reference implementation of {@link TermExchanger#marshall(Object)}.
+ * Default and reference implementation of {@link TermMarshaller#marshall(Object)}.
  * This implementation may be derived or composed to your wish.
  */
 public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor<String> {

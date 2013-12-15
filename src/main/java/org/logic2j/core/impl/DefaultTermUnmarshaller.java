@@ -23,7 +23,7 @@ import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.impl.io.parse.tuprolog.Parser;
 
 /**
- * Default and reference implementation of {@link TermExchanger}.
+ * Default and reference implementation of {@link TermUnmarshaller}.
  */
 public class DefaultTermUnmarshaller implements TermUnmarshaller {
 

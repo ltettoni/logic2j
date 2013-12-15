@@ -44,7 +44,7 @@ public class DefaultTermAdapter implements TermAdapter {
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
     public Object term(Object theObject, FactoryMode theMode) {
-        // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermExchanger
+        // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermUnmarshaller
         if (theObject instanceof CharSequence) {
             if (theMode == FactoryMode.ATOM) {
                 final String string = theObject.toString();
@@ -56,7 +56,7 @@ public class DefaultTermAdapter implements TermAdapter {
                 }
                 return Struct.atom(string);
             }
-            throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermExchanger instead");
+            throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermUnmarshaller instead");
         }
         final Object created = termFrom(theObject, theMode);
         final Object normalized = TermApi.normalize(created, this.prolog.getLibraryManager().wholeContent());

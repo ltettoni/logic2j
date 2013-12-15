@@ -18,12 +18,13 @@
 
 package org.logic2j.optional.io.format;
 
+import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
 /**
- * A {@link TermExchanger} with more detailed information, use for debugging.
+ * A {@link TermMarshaller} with more detailed information, may be used for debugging.
  */
 public class DetailedMarshaller extends DefaultTermMarshaller {
 
