@@ -44,10 +44,6 @@ public class ExcelReader {
     private final boolean firstRowIsHeaders;
     private final int primaryKeyColumn;
 
-    /**
-     * @param theFile
-     * @param theFirstRowIsHeaders
-     */
     public ExcelReader(File theFile, boolean theFirstRowIsHeaders) {
         this(theFile, theFirstRowIsHeaders, -1);
     }
@@ -164,9 +160,6 @@ public class ExcelReader {
         // }
     }
 
-    /**
-     * @return
-     */
     private File cachedFile() {
         final File tempDir = new File(System.getProperty("java.io.tmpdir"));
         final String relativePath = this.file.getPath();
@@ -221,10 +214,6 @@ public class ExcelReader {
         return values;
     }
 
-    /**
-     * @param value
-     * @return
-     */
     private Object mapCellValue(Object value) {
         if (value instanceof CharSequence) {
             return value.toString().trim();
