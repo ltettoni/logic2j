@@ -55,8 +55,21 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         this.prolog = theProlog;
     }
 
+    @Override
+    public CharSequence marshall(Object theTerm) {
+        // Basic Term.toString() will use this method. For normal marshalling we have this.prolog insantiated!
+        if (this.prolog != null && theTerm instanceof Struct) {
+            return this.toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
+        }
+        if (theTerm instanceof Bindings) {
+            final Bindings b = (Bindings) theTerm;
+            return TermApi.accept(this, b.getReferrer(), b);
+        }
+        return TermApi.accept(this, theTerm, null);
+    }
+
     // ---------------------------------------------------------------------------
-    // PART 1: FORMATTING (ie. Marshalling Term hierarchies into serial format)
+    // Visitor
     // ---------------------------------------------------------------------------
 
     /**
@@ -109,6 +122,10 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     public String visit(Object theObject) {
         return String.valueOf(theObject);
     }
+
+    // ---------------------------------------------------------------------------
+    // Support methods
+    // ---------------------------------------------------------------------------
 
     /**
      * Gets the string representation of this structure
@@ -280,19 +297,6 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             return sb.toString();
         }
         return theText.toString();
-    }
-
-    @Override
-    public CharSequence marshall(Object theTerm) {
-        // Basic Term.toString() will use this method. For normal marshalling we have this.prolog insantiated!
-        if (this.prolog != null && theTerm instanceof Struct) {
-            return this.toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
-        }
-        if (theTerm instanceof Bindings) {
-            final Bindings b = (Bindings) theTerm;
-            return TermApi.accept(this, b.getReferrer(), b);
-        }
-        return TermApi.accept(this, theTerm, null);
     }
 
 }
