@@ -21,10 +21,10 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.OperatorManager;
-import org.logic2j.core.api.model.symbol.Term;
 
 /**
  * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog} intended for client
@@ -57,9 +57,14 @@ public interface PrologImplementation extends Prolog {
     OperatorManager getOperatorManager();
 
     /**
-     * @return Exchanger to parse or format {@link Term}s.
+     * @return Unmarshalling
      */
-    TermExchanger getTermExchanger();
+    TermUnmarshaller getTermUnmarshaller();
+
+    /**
+     * @return Marshalling
+     */
+    TermMarshaller getTermMarshaller();
 
     void setTermAdapter(TermAdapter termAdapter);
 

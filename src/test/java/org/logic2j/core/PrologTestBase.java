@@ -177,7 +177,7 @@ public abstract class PrologTestBase {
      * @return A single Term, corresponding to theObject.
      */
     protected Object term(CharSequence theText) {
-        return this.prolog.getTermExchanger().unmarshall(theText);
+        return this.prolog.getTermUnmarshaller().unmarshall(theText);
     }
 
     /**

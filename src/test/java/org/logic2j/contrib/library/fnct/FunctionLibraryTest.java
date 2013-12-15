@@ -118,7 +118,7 @@ public class FunctionLibraryTest extends PrologTestBase {
      * @param childrenAfter True for recursive post-transformation (top-down)
      */
     private void assertNotTransformed(String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
-        final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
+        final Object originalTerm = getProlog().getTermUnmarshaller().unmarshall(termToParse);
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
@@ -137,7 +137,7 @@ public class FunctionLibraryTest extends PrologTestBase {
      * @return
      */
     private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
-        final Object originalTerm = getProlog().getTermExchanger().unmarshall(termToParse);
+        final Object originalTerm = getProlog().getTermUnmarshaller().unmarshall(termToParse);
         final Bindings originalBindings = new Bindings(originalTerm);
         logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };

@@ -120,20 +120,20 @@ public class TermApiTest {
             // Expected to happen
         }
 
-        final Object a = this.prolog.getTermExchanger().unmarshall("a");
+        final Object a = this.prolog.getTermUnmarshaller().unmarshall("a");
         // Empty binding yields same term since no bindings to resolve
         assertSame(a, TermApi.substitute(a, new Bindings(a)));
 
         // Bindings without
         TermApi.substitute(a, new Bindings(a));
 
-        final Object x = this.prolog.getTermExchanger().unmarshall("X");
+        final Object x = this.prolog.getTermUnmarshaller().unmarshall("X");
         TermApi.substitute(x, new Bindings(x));
     }
 
     @Test
     public void selectTerm() {
-        final Object term = this.prolog.getTermExchanger().unmarshall("a(b(c,c2),b2)");
+        final Object term = this.prolog.getTermUnmarshaller().unmarshall("a(b(c,c2),b2)");
         //
         assertSame(term, TermApi.selectTerm(term, "", Struct.class));
         assertSame(term, TermApi.selectTerm(term, "a", Struct.class));

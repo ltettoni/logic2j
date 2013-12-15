@@ -68,7 +68,7 @@ public class IOLibrary extends LibraryBase {
             final Bindings b = theBindings.narrow(term, Term.class);
             final Object value = b.getReferrer();
 
-            String format = getProlog().getTermExchanger().marshall(value).toString();
+            String format = getProlog().getTermMarshaller().marshall(value).toString();
             format = IOLibrary.unquote(format);
             this.writer.print(format);
         }
@@ -84,37 +84,37 @@ public class IOLibrary extends LibraryBase {
 
     @Primitive
     public Continuation debug(SolutionListener theListener, Bindings theBindings, Object... terms) {
-      if (logger.isDebugEnabled()) {
-        final String substring = formatForLog(theBindings, terms);
-        logger.debug(substring);
-      }
+        if (logger.isDebugEnabled()) {
+            final String substring = formatForLog(theBindings, terms);
+            logger.debug(substring);
+        }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation info(SolutionListener theListener, Bindings theBindings, Object... terms) {
-      if (logger.isInfoEnabled()) {
-        final String substring = formatForLog(theBindings, terms);
-        logger.info(substring);
-      }
+        if (logger.isInfoEnabled()) {
+            final String substring = formatForLog(theBindings, terms);
+            logger.info(substring);
+        }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation warn(SolutionListener theListener, Bindings theBindings, Object... terms) {
-      if (logger.isWarnEnabled()) {
-        final String substring = formatForLog(theBindings, terms);
-        logger.warn(substring);
-      }
+        if (logger.isWarnEnabled()) {
+            final String substring = formatForLog(theBindings, terms);
+            logger.warn(substring);
+        }
         return notifySolution(theListener);
     }
 
     @Primitive
     public Continuation error(SolutionListener theListener, Bindings theBindings, Object... terms) {
-      if (logger.isErrorEnabled()) {
-        final String substring = formatForLog(theBindings, terms);
-        logger.error(substring);
-      }
+        if (logger.isErrorEnabled()) {
+            final String substring = formatForLog(theBindings, terms);
+            logger.error(substring);
+        }
         return notifySolution(theListener);
     }
 
@@ -123,7 +123,7 @@ public class IOLibrary extends LibraryBase {
         for (final Object term : terms) {
             final Bindings b = theBindings.narrow(term, Object.class);
             ensureBindingIsNotAFreeVar(b, "log/*");
-            final String format = getProlog().getTermExchanger().marshall(b).toString();
+            final String format = getProlog().getTermMarshaller().marshall(b).toString();
             sb.append(format);
             sb.append(' ');
         }

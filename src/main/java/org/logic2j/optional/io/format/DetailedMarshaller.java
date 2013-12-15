@@ -18,15 +18,14 @@
 
 package org.logic2j.optional.io.format;
 
-import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.impl.DefaultTermExchanger;
+import org.logic2j.core.impl.DefaultTermMarshaller;
 
 /**
  * A {@link TermExchanger} with more detailed information, use for debugging.
  */
-public class DetailedFormatter extends DefaultTermExchanger {
+public class DetailedMarshaller extends DefaultTermMarshaller {
 
     /**
      * Variables are reported with their offset in their {@link Bindings}.

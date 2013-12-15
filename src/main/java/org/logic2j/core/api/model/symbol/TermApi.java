@@ -29,7 +29,6 @@ import java.util.Map;
 
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.TermExchanger;
 import org.logic2j.core.api.model.PartialTermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -484,10 +483,8 @@ public class TermApi {
     }
 
     public static Object clone(Object theTerm, Bindings theBindings, Map<Object, Object> remapper) {
-        if (remapper == null) {
-            remapper = Collections.emptyMap();
-        }
-        final Object cloned = accept(cloningVisitor(remapper), theTerm, theBindings);
+        final Map<Object, Object> effectiveRemapper = remapper != null ? remapper : Collections.emptyMap();
+        final Object cloned = accept(cloningVisitor(effectiveRemapper), theTerm, theBindings);
         return cloned;
     }
 

@@ -20,10 +20,10 @@ package org.logic2j.core.api.model.symbol;
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.impl.DefaultTermExchanger;
+import org.logic2j.core.impl.DefaultTermMarshaller;
 
 /**
  * Term class is the root abstract class for all Prolog data types. The following notions apply on terms, see also the {@link TermApi} class
@@ -66,10 +66,10 @@ public abstract class Term implements Serializable {
      * instance of {@link TermExchanger} instead. Yet we need {@link #toString()} to work for the cases of
      * logging and while debugging, so let's use a fixed (static) one.
      */
-    private static final TermExchanger basicExchanger = new DefaultTermExchanger();
+    private static final TermMarshaller basicMarshaller = new DefaultTermMarshaller();
 
     // Use the following line instead to really debug the display of terms:
-    // private static final Formatter basicExchanger = new
+    // private static final Formatter basicMarshaller = new
     // org.logic2j.core.optional.io.format.DetailedFormatter();
 
     // ---------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public abstract class Term implements Serializable {
      */
     @Override
     public String toString() {
-        return basicExchanger.marshall(this).toString();
+        return basicMarshaller.marshall(this).toString();
     }
 
 }

@@ -21,7 +21,8 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.TermExchanger;
+import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.OperatorManager;
 import org.logic2j.core.api.model.var.Bindings;
@@ -65,7 +66,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // ---------------------------------------------------------------------------
 
     private TermAdapter termAdapter = new DefaultTermAdapter(this);
-    private final TermExchanger termExchanger = new DefaultTermExchanger(this);
+    private final TermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller(this);
+    private final TermMarshaller termMarshaller = new DefaultTermMarshaller(this);
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
     private OperatorManager operatorManager = new DefaultOperatorManager();
@@ -103,7 +105,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public SolutionHolder solve(CharSequence theGoal) {
-        final Object parsed = getTermExchanger().unmarshall(theGoal);
+        final Object parsed = getTermUnmarshaller().unmarshall(theGoal);
         return solve(parsed);
     }
 
@@ -130,9 +132,12 @@ public class PrologReferenceImplementation implements PrologImplementation {
         this.termAdapter = theTermAdapter;
     }
 
-    @Override
-    public TermExchanger getTermExchanger() {
-        return this.termExchanger;
+    public TermUnmarshaller getTermUnmarshaller() {
+        return this.termUnmarshaller;
+    }
+
+    public TermMarshaller getTermMarshaller() {
+        return this.termMarshaller;
     }
 
     @Override
