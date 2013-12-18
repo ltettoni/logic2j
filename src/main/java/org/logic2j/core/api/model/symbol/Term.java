@@ -62,11 +62,11 @@ public abstract class Term implements Serializable {
 
     /**
      * A {@link TermMarshaller} for the default's {@link #toString()} to render this {@link Term}.
-     * Calling {@link #toString()} should be avoided from caller code, use your preferred
+     * Calling {@link #toString()} should be avoided from application code, use your preferred
      * instance of {@link TermMarshaller} instead. Yet we need {@link #toString()} to work for the cases of
      * logging and while debugging, so let's use a fixed (static) one.
      */
-    private static final TermMarshaller basicMarshaller = new DefaultTermMarshaller();
+    private static final TermMarshaller basicMarshaller = new DefaultTermMarshaller(); // Has the reference to Prolog engine == null
 
     // Use the following line instead to really debug the display of terms:
     // private static final Formatter basicMarshaller = new
