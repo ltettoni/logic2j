@@ -29,6 +29,7 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class FinalVarTermMarshaller extends DefaultTermMarshaller {
 
+    // Never null
     private final Bindings bindings;
 
     /**
@@ -40,17 +41,14 @@ public class FinalVarTermMarshaller extends DefaultTermMarshaller {
         this.bindings = theBindingsForCriteria;
     }
 
-    @Override
-    public CharSequence marshall(Object theTerm) {
-        if (theTerm instanceof Bindings) {
-            final Bindings b = (Bindings) theTerm;
-            return TermApi.accept(this, b.getReferrer(), b);
-        }
-        return TermApi.accept(this, theTerm, null);
-    }
 
     @Override
-    public String visit(Var theVar, Bindings theBindings) {
+    protected String accept(Object theTerm, Bindings theBindingsIgnored) {
+      return TermApi.accept(this, theTerm, this.bindings);
+    }
+    
+    @Override
+    public String visit(Var theVar, Bindings theBindingsIgnored) {
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
         }
@@ -60,7 +58,7 @@ public class FinalVarTermMarshaller extends DefaultTermMarshaller {
         if (finalBinding.isFree()) {
             formatted = finalBinding.getVar().getName();
         } else {
-            formatted = TermApi.accept(this, finalBinding.getTerm(), theBindings);
+            formatted = TermApi.accept(this, finalBinding.getTerm(), this.bindings);
         }
         return formatted;
     }
