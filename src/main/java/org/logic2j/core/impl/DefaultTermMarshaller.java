@@ -42,6 +42,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     // Element separator in lists: [a,b,c]
     static final String ELEM_SEPARATOR = ",".intern();
 
+    // Watch out, may be null
     private final PrologImplementation prolog;
 
     /**
@@ -55,22 +56,27 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         this.prolog = theProlog;
     }
 
+    /**
+     * Entry point for mashalling, normally this.prolog is initialized, but
+     * Term.toString() will use this method with this.prolog==null.
+     */
     @Override
     public CharSequence marshall(Object theTerm) {
-        // Basic Term.toString() will use this method. For normal marshalling we have this.prolog insantiated!
-        if (this.prolog != null && theTerm instanceof Struct) {
-            return this.toStringAsArgY(theTerm, this.prolog.getOperatorManager(), Operator.OP_HIGH);
+        if (theTerm instanceof Struct && this.prolog != null) {
+            // Rich formatting takes care of operators and lists
+            return this.toStringAsArgY(theTerm, Operator.OP_HIGHEST);
         }
         if (theTerm instanceof Bindings) {
             final Bindings b = (Bindings) theTerm;
-            return TermApi.accept(this, b.getReferrer(), b);
+            return accept(b.getReferrer(), b);
         }
-        return TermApi.accept(this, theTerm, null);
+        return accept(theTerm, null);
     }
 
     // ---------------------------------------------------------------------------
     // Visitor
     // ---------------------------------------------------------------------------
+
 
     /**
      * @param theStruct
@@ -98,7 +104,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             formatted = theVar.getName();
         } else {
             // Here it can only be a literal: recurse
-            formatted = TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
+            formatted = accept(finalBinding.getTerm(), finalBinding.getLiteralBindings());
         }
         return formatted;
     }
@@ -128,6 +134,17 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     // ---------------------------------------------------------------------------
 
     /**
+     * Just a derivable shortcut to {@link TermApi#accept(PartialTermVisitor, Object, Bindings)}.
+     * 
+     * @param theTerm
+     * @param theBindings
+     * @return The formatted term.
+     */
+    protected String accept(Object theTerm, Bindings theBindings) {
+      return TermApi.accept(this, theTerm, theBindings);
+    }
+    
+    /**
      * Gets the string representation of this structure
      * 
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
@@ -150,8 +167,8 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             sb.append('(');
             for (int c = 0; c < arity; c++) {
                 final Object arg = theStruct.getArg(c);
-                final String accept = TermApi.accept(this, arg, theBindings);
-                sb.append(accept);
+                final String formatted = accept(arg, theBindings);
+                sb.append(formatted);
                 if (c < arity - 1) {
                     sb.append(ARG_SEPARATOR);
                 }
@@ -165,26 +182,26 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         final Object head = theStruct.getLHS();
         final Object tail = theStruct.getRHS();
         if (TermApi.isList(tail)) {
-            final Struct tailS = (Struct) tail;
-            if (tailS.isEmptyList()) {
-                return TermApi.accept(this, head, theBindings);
+            final Struct tailStruct = (Struct) tail;
+            if (tailStruct.isEmptyList()) {
+                return accept(head, theBindings);
             }
             if (head instanceof Var) {
-                return visit((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings);
+                return visit((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailStruct, theBindings);
             }
-            return TermApi.accept(this, head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailS, theBindings);
+            return accept(head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailStruct, theBindings);
         }
         String h0;
         String t0;
         if (head instanceof Var) {
             h0 = visit((Var) head, theBindings);
         } else {
-            h0 = head.toString();
+            h0 = accept(head, theBindings);
         }
         if (tail instanceof Var) {
             t0 = visit((Var) tail, theBindings);
         } else {
-            t0 = tail.toString();
+            t0 = accept(tail, theBindings);
         }
         return (h0 + "|" + t0);
     }
@@ -192,36 +209,36 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     /**
      * Gets the string representation of this term as an X argument of an operator, considering the associative property.
      */
-    private String toStringAsArgX(Object theTerm, OperatorManager op, int prio) {
-        return toStringAsArg(theTerm, op, prio, true);
+    private String toStringAsArgX(Object theTerm, int prio) {
+        return toStringAsArg(theTerm, prio, true);
     }
 
     /**
      * Gets the string representation of this term as an Y argument of an operator, considering the associative property.
      */
-    String toStringAsArgY(Object theTerm, OperatorManager op, int prio) {
-        return toStringAsArg(theTerm, op, prio, false);
+    private String toStringAsArgY(Object theTerm, int prio) {
+        return toStringAsArg(theTerm, prio, false);
     }
 
-    private String toStringAsList(Struct theStruct, OperatorManager op) {
+    private String toStringAsList(Struct theStruct) {
         final Object h = theStruct.getLHS();
         final Object t = theStruct.getRHS();
         if (TermApi.isList(t)) {
             final Struct tl = (Struct) t;
             if (tl.isEmptyList()) {
-                return toStringAsArgY(h, op, 0);
+                return toStringAsArgY(h, 0);
             }
-            return (toStringAsArgY(h, op, 0) + ARG_SEPARATOR + toStringAsList(tl, op));
+            return (toStringAsArgY(h, 0) + ARG_SEPARATOR + toStringAsList(tl));
         }
-        return (toStringAsArgY(h, op, 0) + "|" + toStringAsArgY(t, op, 0));
+        return (toStringAsArgY(h, 0) + "|" + toStringAsArgY(t, 0));
     }
 
-    private String toStringAsArg(Object theTerm, OperatorManager op, int prio, boolean x) {
+    private String toStringAsArg(Object theTerm, int prio, boolean x) {
         if (theTerm instanceof CharSequence) {
             return possiblyQuote((CharSequence) theTerm);
         }
         if (!(theTerm instanceof Struct)) {
-            return theTerm.toString();
+            return accept(theTerm, null);
         }
         final Struct theStruct = (Struct) theTerm;
         int p = 0;
@@ -232,38 +249,39 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             if (theStruct.getLHS() instanceof Struct && ((Struct) theStruct.getLHS()).isEmptyList()) {
                 return Struct.FUNCTOR_LIST_EMPTY;
             }
-            return ("[" + toStringAsList(theStruct, op) + "]");
+            return ("[" + toStringAsList(theStruct) + "]");
         }
 
+        final OperatorManager op = this.prolog.getOperatorManager();
         if (arity == 2) {
-            if ((p = op.opPrio(name, Operator.XFX)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+            if ((p = op.opPrio(name, Operator.XFX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
                         : ""));
             }
-            if ((p = op.opPrio(name, Operator.YFX)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), op, p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+            if ((p = op.opPrio(name, Operator.YFX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
                         : ""));
             }
-            if ((p = op.opPrio(name, Operator.XFY)) >= Operator.OP_LOW) {
+            if ((p = op.opPrio(name, Operator.XFY)) >= Operator.OP_LOWEST) {
                 if (!name.equals(ARG_SEPARATOR)) {
-                    return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p) + " " + name + " " + toStringAsArgY(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+                    return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
                             : ""));
                 }
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p) + ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
                         : ""));
             }
         } else if (arity == 1) {
-            if ((p = op.opPrio(name, Operator.FX)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgX(theStruct.getLHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = op.opPrio(name, Operator.FX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgX(theStruct.getLHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name, Operator.FY)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgY(theStruct.getLHS(), op, p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = op.opPrio(name, Operator.FY)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgY(theStruct.getLHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name, Operator.XF)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), op, p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = op.opPrio(name, Operator.XF)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
-            if ((p = op.opPrio(name, Operator.YF)) >= Operator.OP_LOW) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), op, p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = op.opPrio(name, Operator.YF)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
             }
         }
         final StringBuilder sb = new StringBuilder(Parser.isAtom(name) ? name : "'" + name + "'");
@@ -272,15 +290,15 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         }
         sb.append('(');
         for (p = 1; p < arity; p++) {
-            sb.append(toStringAsArgY(theStruct.getArg(p - 1), op, 0));
+            sb.append(toStringAsArgY(theStruct.getArg(p - 1), 0));
             sb.append(ARG_SEPARATOR);
         }
-        sb.append(toStringAsArgY(theStruct.getArg(arity - 1), op, 0));
+        sb.append(toStringAsArgY(theStruct.getArg(arity - 1), 0));
         sb.append(')');
         return sb.toString();
     }
 
-    public static String possiblyQuote(CharSequence theText) {
+    private static String possiblyQuote(CharSequence theText) {
         if (theText == null) {
             return null;
         }
