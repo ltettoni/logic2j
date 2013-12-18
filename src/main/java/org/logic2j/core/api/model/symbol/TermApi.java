@@ -53,16 +53,22 @@ public class TermApi {
         // Forbid instantiation
     }
 
+    /**
+     * Apply a {@link PartialTermVisitor} to visit theTerm.
+     * @param theVisitor
+     * @param theTerm
+     * @param theBindings
+     * @return The transformed result as per theVisitor's logic
+     */
     public static <T> T accept(PartialTermVisitor<T> theVisitor, Object theTerm, Bindings theBindings) {
-        // TermVisitor
+        // Most common cases are Struct and Var, handled by super interface TermVisitor
         if (theTerm instanceof Struct) {
             return theVisitor.visit((Struct) theTerm, theBindings);
         }
         if (theTerm instanceof Var) {
             return theVisitor.visit((Var) theTerm, theBindings);
         }
-        // throw new PrologNonSpecificError("Should not happen here");
-        // Extension
+        // Other possible cases require instanceof since any Object can be 
         if (theTerm instanceof String) {
             return theVisitor.visit((String) theTerm);
         }
