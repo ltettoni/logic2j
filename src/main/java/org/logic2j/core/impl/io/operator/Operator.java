@@ -36,9 +36,9 @@ final public class Operator implements Serializable {
     public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
 
     /** highest operator priority */
-    public static final int OP_HIGH = 1200;
+    public static final int OP_HIGHEST = 1200;
     /** lowest operator priority */
-    public static final int OP_LOW = 1;
+    public static final int OP_LOWEST = 1;
 
     /** operator name */
     String name;

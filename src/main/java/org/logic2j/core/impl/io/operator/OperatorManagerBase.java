@@ -39,7 +39,7 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
     @Override
     public void addOperator(String theName, String theAssociativityType, int thePriority) {
         final Operator op = new Operator(theName, theAssociativityType, thePriority);
-        if (thePriority >= Operator.OP_LOW && thePriority <= Operator.OP_HIGH) {
+        if (thePriority >= Operator.OP_LOWEST && thePriority <= Operator.OP_HIGHEST) {
             this.operatorList.addOperator(op);
         } else {
             throw new PrologNonSpecificError("Operator priority not in valid range for " + op);

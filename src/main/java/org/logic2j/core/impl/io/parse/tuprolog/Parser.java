@@ -161,7 +161,7 @@ public class Parser {
     // ---------------------------------------------------------------------------
 
     private Object expr(boolean commaIsEndMarker) throws InvalidTermException, IOException {
-        return exprA(Operator.OP_HIGH, commaIsEndMarker).result;
+        return exprA(Operator.OP_HIGHEST, commaIsEndMarker).result;
     }
 
     private IdentifiedTerm exprA(int maxPriority, boolean commaIsEndMarker) throws InvalidTermException, IOException {
@@ -187,11 +187,11 @@ public class Parser {
             }
 
             // VERY VERY PROTOTYPICAL - SHOULD ACTUALLY NOT BE USED
-            if (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOW) {
+            if (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOWEST) {
                 final List<Object> elements = new ArrayList<Object>();
                 elements.add(leftSide.result);
                 final String functor = oper.text;
-                while (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOW) {
+                while (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOWEST) {
                     final IdentifiedTerm tb = exprB(yfy, commaIsEndMarker);
                     elements.add(tb.result);
                     oper = this.tokenizer.readToken();
@@ -210,7 +210,7 @@ public class Parser {
             }
 
             // YFX has priority over YF
-            if (yfx >= yf && yfx >= Operator.OP_LOW) {
+            if (yfx >= yf && yfx >= Operator.OP_LOWEST) {
                 final IdentifiedTerm ta = exprA(yfx - 1, commaIsEndMarker);
                 if (ta != null) {
                     leftSide = new IdentifiedTerm(yfx, new Struct(oper.text, leftSide.result, ta.result));
@@ -219,7 +219,7 @@ public class Parser {
                 throw new IllegalStateException("Should we really get to here in the Parser?");
             }
             // either YF has priority over YFX or YFX failed
-            if (yf >= Operator.OP_LOW) {
+            if (yf >= Operator.OP_LOWEST) {
                 leftSide = new IdentifiedTerm(yf, new Struct(oper.text, leftSide.result));
                 continue;
             }
@@ -243,13 +243,13 @@ public class Parser {
 
             // check that no operator has a priority higher than permitted
             // or a lower priority than the left side expression
-            if (xfx > maxPriority || xfx < Operator.OP_LOW) {
+            if (xfx > maxPriority || xfx < Operator.OP_LOWEST) {
                 xfx = -1;
             }
-            if (xfy > maxPriority || xfy < Operator.OP_LOW) {
+            if (xfy > maxPriority || xfy < Operator.OP_LOWEST) {
                 xfy = -1;
             }
-            if (xf > maxPriority || xf < Operator.OP_LOW) {
+            if (xf > maxPriority || xf < Operator.OP_LOWEST) {
                 xf = -1;
             }
 
@@ -331,7 +331,7 @@ public class Parser {
 
             // FX has priority over FY
             boolean haveAttemptedFX = false;
-            if (fx >= fy && fx >= Operator.OP_LOW) {
+            if (fx >= fy && fx >= Operator.OP_LOWEST) {
                 final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
                 if (found != null) {
                     return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
@@ -340,7 +340,7 @@ public class Parser {
                 throw new IllegalStateException("Should we really get to here in the Parser?");
             }
             // FY has priority over FX, or FX has failed
-            if (fy >= Operator.OP_LOW) {
+            if (fy >= Operator.OP_LOWEST) {
                 final IdentifiedTerm found = exprA(fy, commaIsEndMarker); // op(fy,n) exprA(1200) or op(fy,n) exprA(n)
                 if (found != null) {
                     return new IdentifiedTerm(fy, new Struct(oper.text, found.result));
@@ -348,7 +348,7 @@ public class Parser {
                 throw new IllegalStateException("Should we really get to here in the Parser?");
             }
             // FY has priority over FX, but FY failed
-            if (!haveAttemptedFX && fx >= Operator.OP_LOW) {
+            if (!haveAttemptedFX && fx >= Operator.OP_LOWEST) {
                 final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
                 if (found != null) {
                     return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
