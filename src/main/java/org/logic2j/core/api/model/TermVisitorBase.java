@@ -30,8 +30,8 @@ import org.logic2j.core.api.model.var.Bindings;
 public class TermVisitorBase<T> implements PartialTermVisitor<T> {
 
     /**
-     * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... until the last OR until the first
-     * that returns a non-null result.
+     * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... 
+     * until the last OR until the first that returns a non-null result.
      * 
      * @return The first returning a non-null result breaks the traveral of children and the result is returned.
      */
