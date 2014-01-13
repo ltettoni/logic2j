@@ -19,6 +19,7 @@ package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -26,6 +27,7 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.impl.FinalVarTermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
@@ -78,8 +80,7 @@ public class LibraryBase implements PLibrary {
      * Notify theSolutionListener that a solution has been found.
      * 
      * @param theSolutionListener
-     * 
-     * @return
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution()}
      */
     protected Continuation notifySolution(SolutionListener theSolutionListener) {
         final Continuation continuation = theSolutionListener.onSolution();
@@ -92,7 +93,7 @@ public class LibraryBase implements PLibrary {
      * 
      * @param unified
      * @param theListener
-     * @return
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution()}
      */
     protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener) {
         final Continuation continuation;
@@ -178,6 +179,18 @@ public class LibraryBase implements PLibrary {
         }
         final boolean unified = unify(new Struct("group", (Object[]) theVariables), theBindings, new Struct("group", values), theBindings);
         notifyIfUnified(unified, theListener);
+    }
+
+    /**
+     * Format a Term with renditions of final vars, and taking operators into account.
+     * @param theTerm
+     * @param theBindings
+     * @return The formatted String
+     */
+    protected String format(Object theTerm, final Bindings theBindings) {
+      final TermMarshaller niceFormat2 = new FinalVarTermMarshaller(getProlog(), theBindings);
+      final String formatted = niceFormat2.marshall(theTerm).toString();
+      return formatted;
     }
 
     // ---------------------------------------------------------------------------
