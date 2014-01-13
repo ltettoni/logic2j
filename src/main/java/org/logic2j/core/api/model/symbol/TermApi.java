@@ -238,12 +238,23 @@ public class TermApi {
         return String.valueOf(thePredicate) + "/0";
     }
 
+    /**
+     * Substitute by resolving bound vars to their target variables or literal terms.
+     * 
+     * @param theTerm
+     * @param theBindings
+     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
+     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
+     *         know if the returned reference was cloned or not, so it must never mutate it!
+     */
     public static Object substitute(Object theTerm, Bindings theBindings) {
         return substitute(theTerm, theBindings, null);
     }
 
     /**
+     * Substitute by resolving bound vars to their target variables or literal terms.
      * 
+     * @param theTerm
      * @param theBindings
      * @param remapFreeBindingsToOriginalVars Specify non-null to remap free variables found in a Binding onto their original Var.
      * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
@@ -493,6 +504,29 @@ public class TermApi {
         final Map<Object, Object> effectiveRemapper = remapper != null ? remapper : Collections.emptyMap();
         final Object cloned = accept(cloningVisitor(effectiveRemapper), theTerm, theBindings);
         return cloned;
+    }
+
+    /**
+     * @param theTerm
+     * @param theFunctor
+     * @param theArity
+     * @return 
+     */
+    public static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
+      final String functorSpec = theFunctor != null ? "functor " + theFunctor : "any functor";
+      final String aritySpec = theArity >=0 ? "arity of " + theArity : "any arity";
+      if (! (theTerm instanceof Struct)) {
+        final String message = "A Struct of " + functorSpec + " and " + aritySpec + " was expected, got instead: " + theTerm + " of class " + theTerm.getClass().getName();
+        throw new InvalidTermException(message);
+      }
+      final Struct s = (Struct)theTerm;
+      if (theFunctor!=null && s.getName() != theFunctor) {
+        throw new InvalidTermException("Got a Struct of wrong functor \"" + s.getName() + "\" instead of " + functorSpec + " and " + aritySpec);
+      }
+      if (theArity>=0 && s.getArity() != theArity) {
+        throw new InvalidTermException("Got a Struct of wrong arity (" + s.getArity() + ") instead of " + aritySpec);
+      }
+      return s;
     }
 
 }
