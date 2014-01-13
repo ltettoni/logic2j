@@ -34,6 +34,8 @@ import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.contrib.rdb.util.CollectionMap;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.ColumnOperatorParameterCriterion;
+import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.api.SolutionListener;
@@ -159,7 +161,7 @@ public class RDBLibrary extends LibraryBase {
     // And convert Struct to references to tables, columns and column criteria
     // Meanwhile, check individual predicates
     final SqlBuilder3 builder = new SqlBuilder3();
-    final List<SqlBuilder3.Criterion> rawColumns = new ArrayList<SqlBuilder3.Criterion>();
+    final List<SqlBuilder3.ColumnOperatorParameterCriterion> rawColumns = new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>();
     int aliasIndex = 1;
     final Set<Var> projectVars = new LinkedHashSet<Var>();
     for (final Struct tbls : javaListRoot) {
@@ -177,9 +179,9 @@ public class RDBLibrary extends LibraryBase {
         final String tableName = TermApi.selectTerm(tbl, "tbl[1]", Struct.class).getName();
         final String columnName = TermApi.selectTerm(tbl, "tbl[2]", Struct.class).getName();
         final Term valueTerm = TermApi.selectTerm(tbl, "tbl[4]", Term.class);
-        String operator = SqlBuilder3.OPERATOR_EQ_OR_IN;
+        Operator operator = SqlBuilder3.Operator.EQ;
         if (tbl.getArity() >= 5) {
-          operator = TermApi.selectTerm(tbl, "tbl[5]", Struct.class).getName();
+          operator = Operator.valueOfProlog(TermApi.selectTerm(tbl, "tbl[5]", Struct.class).getName());
         }
         final Table table = builder.table(tableName, alias);
         final Column sqlColumn = builder.column(table, columnName);
@@ -197,11 +199,11 @@ public class RDBLibrary extends LibraryBase {
             rawColumns.add(builder.criterion(sqlColumn, var));
           } else {
             // A variable has a defined value, substitute by its direct value
-            final String specifiedOperator = assignedVarOperator.get(varName);
+            final Operator specifiedOperator = Operator.valueOfProlog(assignedVarOperator.get(varName));
             if (specifiedOperator != null) {
               operator = specifiedOperator;
             }
-            rawColumns.add(builder.criterion(sqlColumn, sqlOperator(operator), jdbcFromTerm(varValue)));
+            rawColumns.add(builder.criterion(sqlColumn, operator, jdbcFromTerm(varValue)));
             // Although we have a constant value and not a free variable, we will have to project its
             // _real_ value extracted from the database. In case of "=" this is dubious as the DB will
             // of course return the same. But for other operators (e.g. ">"), the real DB value will be needed!
@@ -219,11 +221,11 @@ public class RDBLibrary extends LibraryBase {
     logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
     // Now collect join conditions: all columns having the same variable
-    final CollectionMap<String, SqlBuilder3.Criterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.Criterion>();
+    final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion>();
     // Join clauses
-    for (final SqlBuilder3.Criterion column : rawColumns) {
-      if (column.getOperand()[0] instanceof Var) {
-        final Var var = (Var) column.getOperand()[0];
+    for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
+      if (column.getOperand() instanceof Var) {
+        final Var var = (Var) column.getOperand();
         projectVars.add(var);
         columnsPerVariable.add(var.getName(), column);
       }
@@ -231,10 +233,10 @@ public class RDBLibrary extends LibraryBase {
     logger.debug("** colPerVar: {}", columnsPerVariable);
 
     // Every variable referenced contributes one projection. If more than on column for same variable (-->join), use only first of them
-    for (final Collection<SqlBuilder3.Criterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
+    for (final Collection<ColumnOperatorParameterCriterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
       builder.addProjection(clausesOfOneJoinExpression.iterator().next().getColumn());
       if (clausesOfOneJoinExpression.size() >= 2) {
-        final List<SqlBuilder3.Criterion> toJoin = new ArrayList<SqlBuilder3.Criterion>(clausesOfOneJoinExpression);
+        final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin = new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>(clausesOfOneJoinExpression);
         for (int i = 1; i < toJoin.size(); i++) {
           builder.innerJoin(toJoin.get(0).getColumn(), toJoin.get(i).getColumn());
         }
@@ -242,8 +244,8 @@ public class RDBLibrary extends LibraryBase {
     }
 
     // Collect criteria (where value is constant)
-    for (final SqlBuilder3.Criterion column : rawColumns) {
-      if (!(column.getOperand()[0] instanceof Var)) {
+    for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
+      if (!(column.getOperand() instanceof Var)) {
         builder.addConjunction(column);
       }
     }
@@ -254,11 +256,11 @@ public class RDBLibrary extends LibraryBase {
     // Generate
     builder.setDistinct(isDistinct);
     if (builder.getNbProjections() == 0) {
-      builder.generateSelectCount();
+      builder.getSelectCount();
     } else {
-      builder.generateSelect();
+      builder.getSelect();
     }
-    final String effectiveSql = builder.getSql();
+    final String effectiveSql = builder.getStatement();
     logger.debug("SQL   : {}", effectiveSql);
     logger.debug("Params: {}", Arrays.asList(builder.getParameters()));
     // Execution
@@ -314,21 +316,22 @@ public class RDBLibrary extends LibraryBase {
     return Continuation.CONTINUE;
   }
 
-  /**
-   * Translate prolog operators into SQL operator.
-   * 
-   * @param theOperator
-   * @return The valid SQL operator.
-   */
-  private String sqlOperator(String theOperator) {
-    if ("=<".equals(theOperator)) {
-      return "<=";
-    }
-    if ("\\=".equals(theOperator)) {
-      return "!=";
-    }
-    return theOperator;
-  }
+//  /**
+//   * Translate prolog operators into SQL operator.
+//   * 
+//   * @param theOperator
+//   * @return The valid SQL operator.
+//   */
+//  private String sqlOperator(Operator theOperator) {
+//    return theOperator.getSql();
+////    if ("=<".equals(theOperator)) {
+////      return "<=";
+////    }
+////    if ("\\=".equals(theOperator)) {
+////      return "!=";
+////    }
+////    return theOperator;
+//  }
 
   /**
    * @param theTerm

@@ -98,7 +98,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
             final boolean isAtom = TermApi.isAtom(t);
             if (t instanceof Struct && (isAtom || TermApi.isList(t))) {
                 if (isAtom) {
-                    builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.OPERATOR_EQ_OR_IN, ((Struct) t).getName()));
+                    builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));
                 } else if (TermApi.isList(t)) {
                     addConjunctionList(builder, table, i, ((Struct) t).javaListFromPList(new ArrayList<Object>(), Object.class));
                 }
@@ -123,8 +123,8 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         final List<Clause> clauses = new ArrayList<Clause>();
         List<Object[]> rows;
         try {
-            builder.generateSelect();
-            rows = new SqlRunner(getDataSource()).query(builder.getSql(), builder.getParameters());
+            builder.getSelect();
+            rows = new SqlRunner(getDataSource()).query(builder.getStatement(), builder.getParameters());
             for (final Object[] row : rows) {
                 final Object[] args = new Object[row.length];
                 for (int i = 0; i < row.length; i++) {
