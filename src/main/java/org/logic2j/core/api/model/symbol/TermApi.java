@@ -513,8 +513,8 @@ public class TermApi {
      * @return 
      */
     public static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
-      final String functorSpec = theFunctor != null ? "functor " + theFunctor : "any functor";
-      final String aritySpec = theArity >=0 ? "arity of " + theArity : "any arity";
+      final String functorSpec = theFunctor != null ? "functor \"" + theFunctor + '"' : "any functor";
+      final String aritySpec = theArity >=0 ? "arity=" + theArity : "any arity";
       if (! (theTerm instanceof Struct)) {
         final String message = "A Struct of " + functorSpec + " and " + aritySpec + " was expected, got instead: " + theTerm + " of class " + theTerm.getClass().getName();
         throw new InvalidTermException(message);
