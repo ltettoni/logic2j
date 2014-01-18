@@ -20,10 +20,9 @@ package org.logic2j.contrib.rdb.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
- * A {@link Map} whose values are {@link Collection}s of TypeValue.
+ * A {@link LinkedHashMap} whose values are {@link Collection}s of TypeValue.
  */
 public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Collection<TypeValue>> {
 
@@ -45,6 +44,11 @@ public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Co
         collection.add(theElement);
     }
 
+  /**
+   * @param theKey
+   * @return The collection associated to theKey, or a just created empty one
+   * (see {@link #instantiateCollection()}, will never return null.
+   */
     public Collection<TypeValue> getOrCreate(TypeKey theKey) {
         if (this.containsKey(theKey)) {
             return get(theKey);
@@ -54,15 +58,19 @@ public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Co
         return value;
     }
 
+  /**
+   * Override this to provide your preferred implementation of Collection.
+   * @return An empty {@link ArrayList}.
+   */
     protected Collection<TypeValue> instantiateCollection() {
         return new ArrayList<TypeValue>();
     }
 
     /**
      * @param theValue
-     * @return true if contained in keys or collections of values (ie anywhere).
+   * @return true if theValue is contained either in keys or collections of values (ie anywhere).
      */
-    public boolean contains(TypeValue theValue) {
+    public boolean containsInKeysOrValues(TypeValue theValue) {
         if (this.keySet().contains(theValue)) {
             return true;
         }
