@@ -34,7 +34,7 @@ import org.logic2j.core.impl.io.parse.tuprolog.Parser;
  * This implementation may be derived or composed to your wish.
  */
 public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor<String> {
-    public static final char QUOTE = '\'';
+    static final char QUOTE = '\'';
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
     static final String ARG_SEPARATOR = ", ".intern();
