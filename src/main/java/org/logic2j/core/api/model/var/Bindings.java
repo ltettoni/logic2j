@@ -413,7 +413,7 @@ public class Bindings {
      * @param theIndex
      * @return The {@link Binding} at theIndex.
      */
-    public Binding getBinding(short theIndex) {
+    public Binding getBinding(int theIndex) {
         return this.bindings[theIndex];
     }
 

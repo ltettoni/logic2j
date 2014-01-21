@@ -32,7 +32,7 @@ public class FinalVarTermMarshallerTest extends PrologTestBase {
     public void xBoundToY() {
         Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
-        bindings.getBinding((short) 0).bindTo(bindings.getBinding((short) 1).getVar(), bindings);
+        bindings.getBinding(0).bindTo(bindings.getBinding(1).getVar(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);
         assertEquals("f(Y, Y)", formatted);
     }
@@ -41,7 +41,7 @@ public class FinalVarTermMarshallerTest extends PrologTestBase {
     public void yBoundToX() {
         Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
-        bindings.getBinding((short) 1).bindTo(bindings.getBinding((short) 0).getVar(), bindings);
+        bindings.getBinding(1).bindTo(bindings.getBinding(0).getVar(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);
         assertEquals("f(X, X)", formatted);
     }

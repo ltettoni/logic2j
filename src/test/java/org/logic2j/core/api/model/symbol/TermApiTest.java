@@ -96,16 +96,16 @@ public class TermApiTest {
     @Test
     public void assignIndexes() {
         int nbVars;
-        nbVars = TermApi.assignIndexes(new Struct("f"), (short) 0);
+        nbVars = TermApi.assignIndexes(new Struct("f"), 0);
         assertEquals(0, nbVars);
-        nbVars = TermApi.assignIndexes(new Var("X"), (short) 0);
+        nbVars = TermApi.assignIndexes(new Var("X"), 0);
         assertEquals(1, nbVars);
-        nbVars = TermApi.assignIndexes(new Var("_"), (short) 0);
+        nbVars = TermApi.assignIndexes(new Var("_"), 0);
         assertEquals(0, nbVars);
         //
-        nbVars = TermApi.assignIndexes(Long.valueOf(2), (short) 0);
+        nbVars = TermApi.assignIndexes(Long.valueOf(2), 0);
         assertEquals(0, nbVars);
-        nbVars = TermApi.assignIndexes(Double.valueOf(1.1), (short) 0);
+        nbVars = TermApi.assignIndexes(Double.valueOf(1.1), 0);
         assertEquals(0, nbVars);
     }
 

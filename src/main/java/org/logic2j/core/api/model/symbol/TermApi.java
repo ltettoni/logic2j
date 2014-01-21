@@ -215,7 +215,7 @@ public class TermApi {
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
      */
-    public static short assignIndexes(Object theTerm, short theIndexOfNextNonIndexedVar) {
+    public static int assignIndexes(Object theTerm, int theIndexOfNextNonIndexedVar) {
         if (theTerm instanceof Struct) {
             return ((Struct) theTerm).assignIndexes(theIndexOfNextNonIndexedVar);
         } else if (theTerm instanceof Var) {
@@ -294,7 +294,7 @@ public class TermApi {
      */
     public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
         final Object factorized = factorize(theTerm);
-        assignIndexes(factorized, (short) 0);
+        assignIndexes(factorized, 0);
         if (factorized instanceof Struct && theLibraryContent != null) {
             ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
         }

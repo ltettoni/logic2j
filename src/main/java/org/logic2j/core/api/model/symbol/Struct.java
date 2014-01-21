@@ -441,18 +441,18 @@ public final class Struct extends Term {
      * For {@link Struct}s, the {@link Term#index} will be the maximal index of any variables that can be found, recursively, under all
      * arguments.
      */
-    short assignIndexes(short theIndexOfNextNonIndexedVar) {
+    int assignIndexes(int theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
             // Already assigned, do nothing and return same index since we did
             // not assigned a new var
             return theIndexOfNextNonIndexedVar;
         }
         // Recursive assignment
-        short runningCounter = theIndexOfNextNonIndexedVar;
+        int runningCounter = theIndexOfNextNonIndexedVar;
         for (int i = 0; i < this.arity; i++) {
             runningCounter = TermApi.assignIndexes(this.args[i], runningCounter);
         }
-        this.index = runningCounter;
+        this.index = (short)runningCounter;
         return runningCounter;
     }
 

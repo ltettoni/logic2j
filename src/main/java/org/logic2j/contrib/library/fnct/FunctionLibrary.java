@@ -159,7 +159,7 @@ public class FunctionLibrary extends LibraryBase {
                 // Clone the structure
                 final Struct structWithNewArgs = new Struct(struct.getName(), allTransformedArgs.toArray());
                 final Object cloned = TermApi.clone(structWithNewArgs, mergedBindings, remappedVar);
-                TermApi.assignIndexes(cloned, (short) 0);
+                TermApi.assignIndexes(cloned, 0);
                 struct = (Struct) cloned;
             }
 

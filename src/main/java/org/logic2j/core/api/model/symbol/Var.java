@@ -209,7 +209,7 @@ public final class Var extends Term {
     /**
      * Assign a new {@link Term#index} to a Var if it was not assigned before.
      */
-    short assignIndexes(short theIndexOfNextNonIndexedVar) {
+    int assignIndexes(int theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
             // Already assigned, do nothing
             return theIndexOfNextNonIndexedVar; // return same index since we did nothing
@@ -221,8 +221,8 @@ public final class Var extends Term {
             return theIndexOfNextNonIndexedVar; // return same index since we did nothing
         }
         // Index this var
-        this.index = theIndexOfNextNonIndexedVar;
-        return (short) (theIndexOfNextNonIndexedVar + 1);
+        this.index = (short)theIndexOfNextNonIndexedVar;
+        return theIndexOfNextNonIndexedVar + 1;
     }
 
     <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
