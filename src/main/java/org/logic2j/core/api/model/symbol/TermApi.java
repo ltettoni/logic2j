@@ -506,12 +506,6 @@ public class TermApi {
         return cloned;
     }
 
-    /**
-     * @param theTerm
-     * @param theFunctor
-     * @param theArity
-     * @return 
-     */
     public static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
       final String functorSpec = theFunctor != null ? "functor \"" + theFunctor + '"' : "any functor";
       final String aritySpec = theArity >=0 ? "arity=" + theArity : "any arity";
