@@ -17,9 +17,7 @@
  */
 package org.logic2j.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,6 +31,8 @@ import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.var.Binding;
+import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
@@ -159,7 +159,28 @@ public abstract class PrologTestBase {
         }
         return holder;
     }
+    
+    /**
+     * Utility to unmarshall terms - just a shortcut.
+     * @param theString
+     * @return The unmarshalled object.
+     */
+    protected Object unmarshall(CharSequence theString) {
+      return this.prolog.getTermUnmarshaller().unmarshall(theString);
+    }
+    
 
+    /**
+     * @param theString
+     * @return The unmarshalled object.
+     */
+    protected Binding unmarshallAsBinding(CharSequence theString) {
+      final Object term = unmarshall(theString);
+      final Binding binding = Binding.createLiteralBinding(term, new Bindings(term));
+      return binding;
+    }
+    
+    
     /**
      * Factory.
      * 
@@ -177,7 +198,7 @@ public abstract class PrologTestBase {
      * @return A single Term, corresponding to theObject.
      */
     protected Object term(CharSequence theText) {
-        return this.prolog.getTermUnmarshaller().unmarshall(theText);
+        return unmarshall(theText);
     }
 
     /**
@@ -237,4 +258,5 @@ public abstract class PrologTestBase {
         return this.prolog.getLibraryManager().loadLibrary(theLibrary);
     }
 
+    
 }
