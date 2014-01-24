@@ -142,7 +142,7 @@ public class Bindings {
     }
 
     /**
-     * Allocate a {@link Bindings} to hold the values of all {@link Var}iables of a given {@link Term},
+     * Allocate a {@link Bindings} to hold the values of all {@link Var}iables of a given term,
      * named further the "referrer", which is ususally a {@link Struct}.
      * 
      * @note This constructor needs quite a lot of processing - there should be ways to optimize it
@@ -425,19 +425,6 @@ public class Bindings {
         return this.referrer;
     }
 
-    // ---------------------------------------------------------------------------
-    // Methods of java.lang.Object
-    // ---------------------------------------------------------------------------
-
-    @Override
-    public String toString() {
-        final String address = isDebug ? ('@' + Integer.toHexString(super.hashCode())) : "";
-        if (isEmpty()) {
-            return this.getClass().getSimpleName() + address + "(novars):" + getReferrer();
-        }
-        return this.getClass().getSimpleName() + address + Arrays.asList(this.bindings) + ':' + getReferrer();
-    }
-
     /**
      * @param allBindings
      * @param theRemappedVars
@@ -467,6 +454,29 @@ public class Bindings {
             }
         }
         return new Bindings(null, array);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Methods of java.lang.Object
+    // ---------------------------------------------------------------------------
+
+    @Override
+    public String toString() {
+      final StringBuilder sb = new StringBuilder();
+      sb.append(this.getClass().getSimpleName());
+      sb.append(this.bindings.length);
+      if (isDebug) {
+        sb.append('@');
+        sb.append(Integer.toHexString(super.hashCode()));
+      }
+      if (isEmpty()) {
+        sb.append("():");
+      } else {
+        sb.append(Arrays.asList(this.bindings));
+        sb.append(':');
+      }
+      sb.append(getReferrer());
+      return sb.toString();
     }
 
 }
