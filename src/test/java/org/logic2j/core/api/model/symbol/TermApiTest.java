@@ -17,33 +17,32 @@
  */
 package org.logic2j.core.api.model.symbol;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
  */
-public class TermApiTest {
+public class TermApiTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);
 
-    private final PrologImplementation prolog = new PrologReferenceImplementation(InitLevel.L0_BARE);
+    @Override
+    protected InitLevel initLevel() {
+      return InitLevel.L0_BARE;
+    }
 
     @Test
     public void placeholderToReproduceError() {
         //
     }
 
+    
     @Test
     public void structurallyEquals() {
         // Vars are never structurally equal ...
@@ -120,20 +119,20 @@ public class TermApiTest {
             // Expected to happen
         }
 
-        final Object a = this.prolog.getTermUnmarshaller().unmarshall("a");
+        final Object a = unmarshall("a");
         // Empty binding yields same term since no bindings to resolve
         assertSame(a, TermApi.substitute(a, new Bindings(a)));
 
         // Bindings without
         TermApi.substitute(a, new Bindings(a));
 
-        final Object x = this.prolog.getTermUnmarshaller().unmarshall("X");
+        final Object x = unmarshall("X");
         TermApi.substitute(x, new Bindings(x));
     }
 
     @Test
     public void selectTerm() {
-        final Object term = this.prolog.getTermUnmarshaller().unmarshall("a(b(c,c2),b2)");
+        final Object term = unmarshall("a(b(c,c2),b2)");
         //
         assertSame(term, TermApi.selectTerm(term, "", Struct.class));
         assertSame(term, TermApi.selectTerm(term, "a", Struct.class));
@@ -177,5 +176,129 @@ public class TermApiTest {
         assertSame("c", TermApi.selectTerm(term, "a/b[1]", String.class));
         assertSame("c", TermApi.selectTerm(term, "a/[1]", String.class));
         assertSame("c2", TermApi.selectTerm(term, "a/b[2]", String.class));
+    }
+    
+    //---------------------------------------------------------------------------
+    // Substitute non-free variables
+    //---------------------------------------------------------------------------
+
+    @Test
+    public void substituteAtom() throws Exception {
+      final Binding orig = unmarshallAsBinding("atom");
+      final Binding subst = orig.substituteNew2();
+      assertSame("atom", subst.getTerm());
+      assertTrue(orig.sameAs(subst));
+    }
+    
+    @Test
+    public void substituteObject() throws Exception {
+      final Binding orig = unmarshallAsBinding("1234");
+      final Binding subst = orig.substituteNew2();
+      assertEquals(1234L, subst.getTerm());
+      assertTrue(orig.sameAs(subst));
+    }
+    
+    @Test
+    public void substituteFreeVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("X");
+      final Binding subst = orig.substituteNew2();
+      assertEquals("X", subst.getTerm().toString()); // Quite insufficient
+    }
+    
+    @Test
+    public void substituteAnonymousVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("_");
+      final Binding subst = orig.substituteNew2();
+      assertSame(orig.getTerm(), subst.getTerm());
+      assertTrue(orig.sameAs(subst));
+    }
+    
+    @Test
+    public void substituteLinkedFreeVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("X");
+      // Link the free var to another free var 
+      final Binding target = unmarshallAsBinding("Y");
+      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertEquals("X", subst.getTerm().toString()); // Quite insufficient
+    }
+    
+    
+    @Test
+    public void substituteBoundVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("X");
+      // Bind the free var to a literal
+      final Binding target = unmarshallAsBinding("targetAtom");
+      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertSame("targetAtom", subst.getTerm());
+      // assertTrue(orig.sameAs(subst));  // Because after substitution the subst Binding has an empty Bindings
+    }
+    
+    @Test
+    public void substituteConstantStruct() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(a,b)");
+      final Binding subst = orig.substituteNew2();
+      assertSame(orig.getTerm(), subst.getTerm());
+      assertTrue(orig.sameAs(subst));
+    }
+    
+    
+    @Test
+    public void substituteStructWithFreeVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(a,X)");
+      final Binding subst = orig.substituteNew2();
+      assertEquals(orig.getTerm(), subst.getTerm());
+    }
+    
+    
+    @Test
+    public void substituteStructWithLinkedFreeVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(a,X)");
+      // Bind the free var to another free var
+      final Binding target = unmarshallAsBinding("Y");
+      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertEquals("f(a, X)", subst.getTerm().toString());
+      assertEquals(orig.getLiteralBindings().toString(), subst.getLiteralBindings().toString());
+    }
+
+    @Test
+    public void substituteStructWithBoundVar() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(a,X)");
+      // Bind the free var to a literal
+      final Binding target = unmarshallAsBinding("targetAtom");
+      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertEquals("f(a, targetAtom)", subst.getTerm().toString());
+    }
+     
+    
+    @Test
+    public void substituteStruct1() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(X)");
+      // Bind the free var to a literal
+      final Binding target = unmarshallAsBinding("g(A,B)");
+      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertEquals("f(g(A, B))", subst.getTerm().toString());
+    }
+    
+    @Test
+    public void substituteStruct2() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(X, Y)");
+      // Bind the free var to a literal
+      final Binding target1 = unmarshallAsBinding("g(A,B)");
+      orig.getLiteralBindings().getBinding(0).bindTo(target1.getTerm(), target1.getLiteralBindings());
+      final Binding target2 = unmarshallAsBinding("h(C,D,E)");
+      orig.getLiteralBindings().getBinding(1).bindTo(target2.getTerm(), target2.getLiteralBindings());
+      //
+      final Binding subst = orig.substituteNew2();
+      assertEquals("f(g(A, B), h(C, D, E))", subst.getTerm().toString());
     }
 }
