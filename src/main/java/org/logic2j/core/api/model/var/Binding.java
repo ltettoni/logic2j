@@ -17,9 +17,16 @@
  */
 package org.logic2j.core.api.model.var;
 
+import java.util.IdentityHashMap;
+import java.util.Map.Entry;
+
+import org.logic2j.core.api.model.PartialTermVisitor;
+import org.logic2j.core.api.model.TermVisitorBase;
+import org.logic2j.core.api.model.exception.PrologInternalError;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
+import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 
 /**
@@ -34,7 +41,7 @@ import org.logic2j.core.api.model.symbol.Var;
  * type     literalBindings               term           link                                         var
  * -----------------------------------------------------------------------------------------------------
  * FREE     null                          null(*)        null
- * LITERAL      bindings of the literal term  ref to term    null
+ * LITERAL  bindings of the literal term  ref to term    null
  * LINK     null                          null           ref to a Binding representing the bound var
  * 
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
@@ -132,6 +139,16 @@ public class Binding {
         return true;
     }
 
+    private void linkTo(Binding targetBinding) {
+      if (! this.isFree()) {
+        throw new PrologInternalError("Should never try to bind a non-free var, was: " + this + ", to be bound to " + targetBinding);
+      }
+      this.type = BindingType.LINK;
+      this.term = null;
+      this.literalBindings = null;
+      this.link = targetBinding;
+    }
+    
     /**
      * Free the binding, i.e. revert a possibly bound variable to the {@value BindingType#FREE} state.
      */
@@ -144,13 +161,13 @@ public class Binding {
     }
 
     /**
-     * Follow chains of linked bindings.
+     * Follow chains of linked bindings, or remain on this (return this) if not a {@link BindingType#LINK}.
      * 
      * @note On problem queens(11,_) this is invoked 68M times, with 59M real steps followed, and a longest chain of 13!
      * 
      * @return The last binding of a chain, or this instance if it is not {@link BindingType#LINK}. 
      *          The result is guaranteed not null, and to satisfy
-     *          either of {@link #isFree()} or {@link #isLiteral()}.
+     *          either condition: {@link #isFree()} or {@link #isLiteral()} but not both.
      */
     public final Binding followLinks() {
         Binding result = this;
@@ -161,9 +178,137 @@ public class Binding {
         return result;
     }
 
+    
+
+    public boolean sameAs(Binding that) {
+      return this==that || (this.getTerm()==that.getTerm() && this.getLiteralBindings()==that.getLiteralBindings());
+    }
+
+
+    public Binding substituteNew2() {
+      
+      // -> final binding if var is free
+      final IdentityHashMap<Var, Binding> bindingOfOriginalVar = new IdentityHashMap<Var, Binding>();
+      
+      // First pass: identify vars and their final bindings
+      final PartialTermVisitor<Void> registrer = new TermVisitorBase<Void>() {
+
+        @Override
+        public Void visit(Var theVar, Bindings theBindings) {
+          if (theVar.isAnonymous()) {
+            return null;
+          }
+          final Binding finalBinding = theVar.bindingWithin(theBindings).followLinks();
+          if (finalBinding.isFree()) {
+            // return binding with original var
+            bindingOfOriginalVar.put(theVar, finalBinding);
+            return null;
+          }
+          // Is literal - will recurse
+          TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
+          return null;
+        }
+
+        @Override
+        public Void visit(Struct theStruct, Bindings theBindings) {
+          // Recurse through children
+          for (int i = 0; i < theStruct.getArity(); i++) {
+            TermApi.accept(this, theStruct.getArg(i), theBindings);
+          }
+          return null;
+        }
+      };
+      TermApi.accept(registrer, this.term, this.literalBindings);
+      
+      // Allocate new vars with same names are originals but will receive new indexes
+      final IdentityHashMap<Var, Var> newVarsFromOld = new IdentityHashMap<Var, Var>();
+      for (Entry<Var, Binding> entry : bindingOfOriginalVar.entrySet()) {
+        Var oldVar = entry.getKey();
+        Var newVar = new Var(oldVar.getName());
+        newVarsFromOld.put(oldVar, newVar);
+      }
+      
+      Object copy = copy(this.term, this.literalBindings, bindingOfOriginalVar, newVarsFromOld);
+      
+      if (copy==this.term) {
+        return this;
+      }
+      
+      // Assign indexes
+      if (copy instanceof Term) {
+        if (((Term)copy).getIndex()==Term.NO_INDEX) {
+          TermApi.assignIndexes(copy, 0);
+        }
+      }
+      // Create new Bindings
+      Bindings resultBindings;
+      
+      resultBindings = new Bindings(copy);
+      
+      // Bind new vars to the final bindings of original free vars
+      for (Entry<Var, Binding> entry : bindingOfOriginalVar.entrySet()) {
+        Var oldVar = entry.getKey();
+        Binding bindingOfOldVar = entry.getValue();
+        Var newVar = newVarsFromOld.get(oldVar);
+        newVar.bindingWithin(resultBindings).linkTo(bindingOfOldVar);
+      }
+      
+      return Binding.createLiteralBinding(copy, resultBindings);
+    }
+
+    
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
+
+    /**
+     * @param theTerm
+     * @param theBindings
+     * @param theBindingOfOriginalVar
+     * @param theNewVarsFromOld 
+     */
+    private Object copy(Object theTerm, Bindings theBindings, IdentityHashMap<Var, Binding> theBindingOfOriginalVar, IdentityHashMap<Var, Var> theNewVarsFromOld) {
+      if (theBindings.isEmpty()) {
+        return theTerm;
+      }
+      if (theTerm instanceof Var) {
+        final Var v = (Var)theTerm;
+        if (v.isAnonymous()) {
+          return v;
+        }
+        Binding finalBinding = v.bindingWithin(theBindings).followLinks();
+        if (finalBinding.isFree()) {
+          final Var newVar = theNewVarsFromOld.get(v);
+          if (newVar == null) {
+            throw new PrologInternalError("Oops");
+          }
+          return newVar;
+        }
+        // Literal: recurse
+        return copy(finalBinding.term, finalBinding.literalBindings, theBindingOfOriginalVar, theNewVarsFromOld);
+      }
+      if (theTerm instanceof Struct) {
+        final Struct struct = (Struct)theTerm;
+        final Object[] substArgs = new Object[struct.getArity()]; // All arguments after substitution
+        boolean anyChildWasChanged = false;
+        for (int i = 0; i < struct.getArity(); i++) {
+            // Recurse for all children
+            substArgs[i] = copy(struct.getArg(i), theBindings, theBindingOfOriginalVar, theNewVarsFromOld);
+            anyChildWasChanged |= substArgs[i] != struct.getArg(i);
+        }
+        final Struct substitutedOrThis;
+        if (anyChildWasChanged) {
+            // New cloned structure
+            substitutedOrThis = new Struct(struct.getName(), substArgs);
+        } else {
+            // Original unchanged - same reference
+            substitutedOrThis = struct;
+        }
+        return substitutedOrThis;
+      }
+      // Any other object
+      return theTerm;
+    }
 
     public BindingType getType() {
         return this.type;
@@ -210,26 +355,27 @@ public class Binding {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(getVar());
 
         switch (this.type) {
         case LITERAL:
-            sb.append("=>");
-            sb.append(this.term.toString());
+            sb.append(String.valueOf(this.term));
             if (debug) {
                 sb.append('@');
                 sb.append(Integer.toHexString(this.literalBindings.hashCode()));
             }
             break;
         case LINK:
+            sb.append(getVar());
             sb.append("->");
             sb.append(this.link);
             break;
         case FREE:
-            sb.append(":(free)");
+            sb.append(getVar());
+            sb.append(":ø");
             break;
         }
         return sb.toString();
     }
+
 
 }
