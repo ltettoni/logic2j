@@ -40,24 +40,24 @@ public class ParsingAndFormattingTest extends PrologTestBase {
 
     @Test
     public void parsing() {
-        logger.info("Term: {}", this.prolog.getTermUnmarshaller().unmarshall("p(X,Y) :- a;b,c,d"));
-        logger.info("Term: {}", this.prolog.getTermUnmarshaller().unmarshall("[1,2,3]"));
+        logger.info("Term: {}", unmarshall("p(X,Y) :- a;b,c,d"));
+        logger.info("Term: {}", unmarshall("[1,2,3]"));
     }
 
     @Test
     public void parseNarityOperator() {
         this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
-        logger.info("Result: {}", this.prolog.getTermUnmarshaller().unmarshall("a oo b oo c oo d"));
+        logger.info("Result: {}", unmarshall("a oo b oo c oo d"));
     }
 
     @Test
     public void formatting() {
         Object t;
         //
-        t = this.prolog.getTermUnmarshaller().unmarshall("'An atom'");
+        t = unmarshall("'An atom'");
         assertEquals(String.class, t.getClass());
         //
-        t = this.prolog.getTermUnmarshaller().unmarshall("t('A', b, 'C')");
+        t = unmarshall("t('A', b, 'C')");
         logger.info("Formatted: {}", t);
         assertEquals("t('A', b, 'C')", t.toString());
     }

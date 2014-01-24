@@ -24,13 +24,11 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.var.Bindings;
 
-/**
- */
 public class FinalVarTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void xBoundToY() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
+        Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
         bindings.getBinding(0).bindTo(bindings.getBinding(1).getVar(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);
@@ -39,7 +37,7 @@ public class FinalVarTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void yBoundToX() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
+        Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
         bindings.getBinding(1).bindTo(bindings.getBinding(0).getVar(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);

@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.var.Bindings;
 
-/**
- */
 public class DefaultTermMarshallerTest extends PrologTestBase {
 
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshallerTest.class);
@@ -35,7 +33,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void simpleToString() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall(REFERENCE_EXPRESSION);
+        Object term = unmarshall(REFERENCE_EXPRESSION);
         String formatted = term.toString();
         logger.info("toString: {}", formatted);
         assertEquals(EXPECTED_TOSTRING, formatted);
@@ -43,7 +41,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void defaultMarshallerUninitialized() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall(REFERENCE_EXPRESSION);
+        Object term = unmarshall(REFERENCE_EXPRESSION);
         CharSequence formatted = new DefaultTermMarshaller().marshall(term);
         logger.info("uninitialized marshaller: {}", formatted);
         assertEquals(EXPECTED_TOSTRING, formatted);
@@ -51,7 +49,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void defaultMarshaller() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall(REFERENCE_EXPRESSION);
+        Object term = unmarshall(REFERENCE_EXPRESSION);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
         logger.info("prolog initialized marshaller: {}", formatted);
         assertEquals("a , b ; c , d ; e", formatted);
@@ -59,7 +57,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void xBoundToY() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
+        Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
         bindings.getBinding(0).bindTo(bindings.getBinding(1).getVar(), bindings);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
@@ -68,7 +66,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void yBoundToX() {
-        Object term = getProlog().getTermUnmarshaller().unmarshall("f(X, Y)");
+        Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
         bindings.getBinding(1).bindTo(bindings.getBinding(0).getVar(), bindings);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
