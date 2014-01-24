@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.impl.DefaultTermMarshaller;
@@ -100,6 +101,13 @@ public abstract class Term implements Serializable {
         return this.index;
     }
 
+    // ---------------------------------------------------------------------------
+    // Visitor
+    // ---------------------------------------------------------------------------
+    
+    public abstract <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings);
+    
+    
     // ---------------------------------------------------------------------------
     // Methods of java.lang.Object
     // ---------------------------------------------------------------------------

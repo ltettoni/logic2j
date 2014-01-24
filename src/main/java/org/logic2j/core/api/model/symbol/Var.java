@@ -168,6 +168,7 @@ public final class Var extends Term {
         throw new PrologInternalError("substitute() internal error, " + this + " is neither literal nor free");
     }
 
+    
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
      * 
@@ -225,7 +226,8 @@ public final class Var extends Term {
         return theIndexOfNextNonIndexedVar + 1;
     }
 
-    <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
+    @Override
+    public <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
         return theVisitor.visit(this, theBindings);
     }
 
@@ -253,5 +255,6 @@ public final class Var extends Term {
         }
         return this.name.hashCode();
     }
+
 
 }

@@ -413,6 +413,9 @@ public final class Struct extends Term {
         return substitutedOrThis;
     }
 
+
+    
+    
     /**
      * @param theOther
      * @return true when references are the same, or when theOther Struct has same predicate name, arity, and all arguments are also equal.
@@ -609,7 +612,8 @@ public final class Struct extends Term {
         this.args[1] = co;
     }
 
-    <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
+    @Override
+    public <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
         return theVisitor.visit(this, theBindings);
     }
 
