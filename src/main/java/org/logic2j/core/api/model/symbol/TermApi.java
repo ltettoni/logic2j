@@ -417,7 +417,7 @@ public class TermApi {
             end = max(par, end);
             functor = level0.substring(0, par);
             if (!level0.endsWith("]")) {
-                throw new InvalidTermException("Malformed TPath expresson: \"" + theTPathExpression + "\": missing ending ']'");
+                throw new InvalidTermException("Malformed TPath expression: \"" + theTPathExpression + "\": missing ending ']'");
             }
             position = Integer.parseInt(level0.substring(par + 1, level0.length() - 1));
             if (position <= 0) {
