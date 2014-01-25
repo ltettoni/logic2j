@@ -246,7 +246,9 @@ public class TermApi {
      * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
      *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
      *         know if the returned reference was cloned or not, so it must never mutate it!
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
+    @Deprecated
     public static Object substitute(Object theTerm, Bindings theBindings) {
         return substitute(theTerm, theBindings, null);
     }
@@ -260,7 +262,9 @@ public class TermApi {
      * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
      *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
      *         know if the returned reference was cloned or not, so it must never mutate it!
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
+    @Deprecated
     public static Object substitute(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         if (theBindings.isEmpty()) {
             return theTerm;

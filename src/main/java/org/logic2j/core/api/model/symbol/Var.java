@@ -141,7 +141,9 @@ public final class Var extends Term {
      * @param theBindings The {@link Bindings} within which this {@link Var} is referenced
      * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
      * @return Substituted term.
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
+    @Deprecated
     Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         if (isAnonymous()) {
             // Anonymous variable is never bound - won't substitute
@@ -236,7 +238,7 @@ public final class Var extends Term {
     // ---------------------------------------------------------------------------
 
     /**
-     * Equality is done by name.
+     * Equality is done by name - but does that make any sense?
      */
     @Override
     public boolean equals(Object other) {
@@ -255,6 +257,5 @@ public final class Var extends Term {
         }
         return this.name.hashCode();
     }
-
 
 }

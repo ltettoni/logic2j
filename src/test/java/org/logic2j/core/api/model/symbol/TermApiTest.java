@@ -301,4 +301,17 @@ public class TermApiTest extends PrologTestBase {
       final Binding subst = orig.substituteNew2();
       assertEquals("f(g(A, B), h(C, D, E))", subst.getTerm().toString());
     }
+    
+    @Test
+    public void oldSubstituteStruct2() throws Exception {
+      final Binding orig = unmarshallAsBinding("f(X, Y)");
+      // Bind the free var to a literal
+      final Binding target1 = unmarshallAsBinding("g(A,B)");
+      orig.getLiteralBindings().getBinding(0).bindTo(target1.getTerm(), target1.getLiteralBindings());
+      final Binding target2 = unmarshallAsBinding("h(C,D,E)");
+      orig.getLiteralBindings().getBinding(1).bindTo(target2.getTerm(), target2.getLiteralBindings());
+      //
+      Object subst = TermApi.substitute(orig.getTerm(), orig.getLiteralBindings());
+      assertEquals("f(g(A, B), h(C, D, E))", subst.toString());
+    }
 }
