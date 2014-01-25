@@ -44,7 +44,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall(REFERENCE_EXPRESSION);
         CharSequence formatted = new DefaultTermMarshaller().marshall(term);
         logger.info("uninitialized marshaller: {}", formatted);
-        assertEquals(EXPECTED_TOSTRING, formatted);
+        assertEquals(EXPECTED_TOSTRING, formatted.toString());
     }
 
     @Test

@@ -45,6 +45,12 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     // Element separator in lists: [a,b,c]
     static final String ELEM_SEPARATOR = ",".intern();
 
+    private static final char PAR_CLOSE = ')';
+    private static final char PAR_OPEN = '(';
+    private static final char LIST_OPEN = '[';
+    private static final char LIST_CLOSE = ']';
+    private static final char HEAD_TAIL_SEPARATOR = '|';
+
     // Watch out, may be null
     private final PrologImplementation prolog;
 
@@ -93,7 +99,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
 
     @Override
     public CharSequence visit(Var theVar, Bindings theBindings) {
-      final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (theBindings == null) {
             sb.append(theVar.getName());
             if (isDebug) {
@@ -101,7 +107,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
                 sb.append('#');
                 sb.append(theVar.getIndex());
             }
-            return sb.toString();
+            return sb;
         }
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
@@ -166,15 +172,25 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         if (theStruct.isEmptyList()) {
             return Struct.FUNCTOR_LIST_EMPTY;
         }
+        final StringBuilder sb = new StringBuilder();
         final String name = theStruct.getName();
         final int arity = theStruct.getArity();
         // list case
         if (name.equals(Struct.FUNCTOR_LIST) && arity == 2) {
-            return ("[" + formatPListRecursive(theStruct, theBindings) + "]");
+          sb.append(LIST_OPEN);
+          sb.append(formatPListRecursive(theStruct, theBindings));
+          sb.append(LIST_CLOSE);
+          return sb;
         }
-        final StringBuilder sb = new StringBuilder((Parser.isAtom(name) ? name : (QUOTE + name + QUOTE)));
+        if (Parser.isAtom(name)) {
+          sb.append(name);
+        } else {
+          sb.append(QUOTE);
+          sb.append(name);
+          sb.append(QUOTE);
+        }
         if (arity > 0) {
-            sb.append('(');
+            sb.append(PAR_OPEN);
             for (int c = 0; c < arity; c++) {
                 final Object arg = theStruct.getArg(c);
                 final CharSequence formatted = accept(arg, theBindings);
@@ -183,9 +199,9 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
                     sb.append(ARG_SEPARATOR);
                 }
             }
-            sb.append(')');
+            sb.append(PAR_CLOSE);
         }
-        return sb.toString();
+        return sb;
     }
 
     private CharSequence formatPListRecursive(Struct theStruct, Bindings theBindings) {
@@ -196,24 +212,31 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             if (tailStruct.isEmptyList()) {
                 return accept(head, theBindings);
             }
+            // Why this special test?
             if (head instanceof Var) {
                 return visit((Var) head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailStruct, theBindings);
             }
             return accept(head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailStruct, theBindings);
         }
-        CharSequence h0;
-        CharSequence t0;
+        final StringBuilder sb = new StringBuilder();
+        // Head
+        final CharSequence h0;
         if (head instanceof Var) {
             h0 = visit((Var) head, theBindings);
         } else {
             h0 = accept(head, theBindings);
         }
+        sb.append(h0);
+        sb.append(HEAD_TAIL_SEPARATOR);
+        // Tail
+        final CharSequence t0;
         if (tail instanceof Var) {
             t0 = visit((Var) tail, theBindings);
         } else {
             t0 = accept(tail, theBindings);
         }
-        return (h0 + "|" + t0);
+        sb.append(t0);
+        return sb;
     }
 
     /**
@@ -238,9 +261,17 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             if (tl.isEmptyList()) {
                 return toStringAsArgY(h, 0);
             }
-            return (toStringAsArgY(h, 0) + ARG_SEPARATOR + toStringAsList(tl));
+            final StringBuilder sb = new StringBuilder();
+            sb.append(toStringAsArgY(h, 0));
+            sb.append(ARG_SEPARATOR);
+            sb.append(toStringAsList(tl));
+            return sb;
         }
-        return (toStringAsArgY(h, 0) + "|" + toStringAsArgY(t, 0));
+        final StringBuilder sb = new StringBuilder();
+        sb.append(toStringAsArgY(h, 0));
+        sb.append(HEAD_TAIL_SEPARATOR);
+        sb.append(toStringAsArgY(t, 0));
+        return sb;
     }
 
     private CharSequence toStringAsArg(Object theTerm, int prio, boolean x) {
@@ -259,7 +290,11 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             if (theStruct.getLHS() instanceof Struct && ((Struct) theStruct.getLHS()).isEmptyList()) {
                 return Struct.FUNCTOR_LIST_EMPTY;
             }
-            return ("[" + toStringAsList(theStruct) + "]");
+            final StringBuilder sb = new StringBuilder();
+            sb.append(LIST_OPEN);
+            sb.append(toStringAsList(theStruct));
+            sb.append(LIST_CLOSE);
+            return sb;
         }
 
         final OperatorManager op = this.prolog.getOperatorManager();
@@ -298,33 +333,39 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         if (arity == 0) {
             return sb.toString();
         }
-        sb.append('(');
+        sb.append(PAR_OPEN);
         for (p = 1; p < arity; p++) {
             sb.append(toStringAsArgY(theStruct.getArg(p - 1), 0));
             sb.append(ARG_SEPARATOR);
         }
         sb.append(toStringAsArgY(theStruct.getArg(arity - 1), 0));
-        sb.append(')');
+        sb.append(PAR_CLOSE);
         return sb.toString();
     }
 
+    /**
+     * Quote atoms if needed.
+     * @param theText
+     * @return theText, quoted if necessary (typically "X" will become "'X'" whereas "x" will remain unchanged.
+     * Null will return null. The empty string will become "''". If not quoted, the same reference (theText) is returned.
+     */
     private static CharSequence possiblyQuote(CharSequence theText) {
         if (theText == null) {
             return null;
         }
         if (theText.length() == 0) {
+            // Probably that the empty string is not allowed in regular Prolog
             return "''";
         }
-        final String str = theText.toString();
-        final boolean needQuote = !Character.isLowerCase(str.charAt(0)) || str.indexOf('.') >= 0;
+        final boolean needQuote = !Character.isLowerCase(theText.charAt(0)) || theText.toString().indexOf('.') >= 0;
         if (needQuote) {
-            final StringBuilder sb = new StringBuilder(str.length() + 2);
+            final StringBuilder sb = new StringBuilder(theText.length() + 2);
             sb.append(QUOTE);
             sb.append(theText);
             sb.append(QUOTE);
-            return sb.toString();
+            return sb;
         }
-        return theText.toString();
+        return theText;
     }
 
 }
