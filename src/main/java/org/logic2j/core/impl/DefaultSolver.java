@@ -48,8 +48,8 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, Bindings, SolutionListener)} method. The referrer goal to solve
-     * is in the callerFrame
+     * Just calls the recursive {@link #solveGoalRecursive(Object, Bindings, SolutionListener)} method. The goal to solve
+     * is in the theGoalBindings's referrer.
      * 
      * @param theSolutionListener
      * @param theGoalBindings
@@ -262,7 +262,7 @@ public class DefaultSolver implements Solver {
                             if (isDebug) {
                                 logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
                             }
-                            // Solve the body in our current subFrame
+                            // Solve the body in our current recursion context
                             continuation = solveGoalRecursive(newGoalTerm, clauseVars, theSolutionListener);
                             if (isDebug) {
                                 logger.debug("  back to clause {} with continuation={}", clause, continuation);
