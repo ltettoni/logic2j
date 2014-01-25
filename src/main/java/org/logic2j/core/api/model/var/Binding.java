@@ -40,9 +40,9 @@ import org.logic2j.core.api.model.symbol.Var;
  * -----------------------------------------------------------------------------------------------------
  * type     literalBindings               term           link                                         var
  * -----------------------------------------------------------------------------------------------------
- * FREE     null                          null(*)        null
- * LITERAL  bindings of the literal term  ref to term    null
- * LINK     null                          null           ref to a Binding representing the bound var
+ * FREE     null                          null(*)        null                                         the variable
+ * LITERAL  bindings of the literal term  ref to term    null                                         ?
+ * LINK     null                          null           ref to a Binding representing the bound var  null
  * 
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
  *     member to point to the variable, this allows retrieving its name for reporting
@@ -60,33 +60,39 @@ public class Binding {
     private Bindings literalBindings;
     private Binding link;
 
-    // Ref to the variable associated to this binding in the "owning" Struct. This is solely
-    // used for reporting and extracting the "original" variable name from solutions.
-    // This field is not "functionally" needed
+    /**
+     * Reference to the variable associated to this binding in the "owning" Struct.
+     * Used for reporting (display) and extracting the "original" variable name when extracting solutions.
+     */
     private Var var;
 
-    /**
-     * New binding, for a (yet) free variable.
-     */
-    public Binding() {
-        this.type = BindingType.FREE;
+    private Binding() {
+        // Just forbid instantiation from outside - use static factory methods instead
     }
 
     /**
-     * Shallow copy constructor.
+     * Shallow copy constructor, used from peer class {@link Bindings}.
      * 
-     * @param original
+     * @param originalToCopy
      */
-    public Binding(Binding original) {
-        this.link = original.link;
-        this.literalBindings = original.literalBindings;
-        this.term = original.term;
-        this.type = original.type;
-        this.var = original.var;
+    Binding(Binding originalToCopy) {
+        this.type = originalToCopy.type;
+        this.term = originalToCopy.term;
+        this.literalBindings = originalToCopy.literalBindings;
+        this.link = originalToCopy.link;
+        this.var = originalToCopy.var;
     }
 
+    public static Binding createFreeBinding() {
+        final Binding instance = new Binding();
+        instance.type = BindingType.FREE;
+        // The other fields will remain null by default
+        return instance;
+    }
+    
     /**
      * Factory method to create one "fake" binding to a literal.
+     * @note Maybe make it a constructor.
      * 
      * @param theLiteral
      * @param theLiteralBindings
@@ -94,25 +100,26 @@ public class Binding {
      */
     // TODO assess if needed - used only once
     public static Binding createLiteralBinding(Object theLiteral, Bindings theLiteralBindings) {
-        final Binding binding = new Binding();
-        binding.type = BindingType.LITERAL;
-        binding.link = null;
-        binding.term = theLiteral;
-        binding.literalBindings = theLiteralBindings;
-        binding.setVar(null);
-        return binding;
+        final Binding instance = new Binding();
+        instance.type = BindingType.LITERAL;
+        instance.term = theLiteral;
+        instance.literalBindings = theLiteralBindings;
+        // The other fields will remain null by default
+        // instance.link = null;
+        // instance.var = null;
+        return instance;
     }
 
     /**
-     * Bind this to a {@link Term}, may be a literal or another variable.
+     * Modify this {@link Binding} by associateing it to a {@link Term}, may be a literal or another variable.
      * 
      * @param theTerm
-     * @param theFrame When theTerm is a literal, here are its current value bindings
+     * @param theBindings When theTerm is a literal, here are its current value bindings
      * @return true if a binding was done, false otherwise. Caller needs to know if future un-binding will be needed.
      */
-    public boolean bindTo(Object theTerm, Bindings theFrame) {
+    public boolean bindTo(Object theTerm, Bindings theBindings) {
         if (!isFree()) {
-            throw new PrologNonSpecificError("Should never attempt to re-bind a Binding that is not free!");
+            throw new PrologNonSpecificError("Cannot overwrite a non-free Binding! Was trying to bind existing " + this + " to " + theTerm + " with " + theBindings + " ");
         }
         if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
             // Bind Var -> Var, see description at top of class
@@ -120,9 +127,9 @@ public class Binding {
             // We have to follow the links, otherwise we might be creating loops.
             // See test case org.logic2j.core.functional.BugRegressionTest.infiniteLoopWhenUnifying2Vars()
             // Here, in case we are binding Y to X, and X->Y, we should avoid it...
-            final Binding targetBinding = other.bindingWithin(theFrame).followLinks();
+            final Binding targetBinding = other.bindingWithin(theBindings).followLinks();
             if (targetBinding == this) {
-                // Don't bind onto oneself!
+                // Don't bind onto oneself this creates a loop!
                 return false;
             }
             this.type = BindingType.LINK;
@@ -132,16 +139,20 @@ public class Binding {
         } else {
             this.type = BindingType.LITERAL;
             this.term = theTerm;
-            this.literalBindings = theFrame;
+            this.literalBindings = theBindings;
             this.link = null;
         }
         // Bound OK
         return true;
     }
 
+    /**
+     * Modify this Binding's to link it to a target binding. It must be free to do that!
+     * @param targetBinding
+     */
     private void linkTo(Binding targetBinding) {
       if (! this.isFree()) {
-        throw new PrologInternalError("Should never try to bind a non-free var, was: " + this + ", to be bound to " + targetBinding);
+          throw new PrologNonSpecificError("Cannot overwrite a non-free Binding! Was trying to link existing " + this + " to " + targetBinding);
       }
       this.type = BindingType.LINK;
       this.term = null;
@@ -154,7 +165,8 @@ public class Binding {
      */
     public void free() {
         this.type = BindingType.FREE;
-        // The following is not functionally necessary but let's have values as documented (useful while debugging)
+        // Resetting the following fields is not functionally necessary, we could leave previous data in, but
+        // let's have the fields as documented, this will also help us while debugging to not find non-understandable garbage
         this.term = null;
         this.literalBindings = null;
         this.link = null;
@@ -179,14 +191,13 @@ public class Binding {
     }
 
     
-
+    // Maybe no longer needed
     public boolean sameAs(Binding that) {
       return this==that || (this.getTerm()==that.getTerm() && this.getLiteralBindings()==that.getLiteralBindings());
     }
 
 
     public Binding substituteNew2() {
-      
       // -> final binding if var is free
       final IdentityHashMap<Var, Binding> bindingOfOriginalVar = new IdentityHashMap<Var, Binding>();
       
@@ -256,11 +267,6 @@ public class Binding {
       return Binding.createLiteralBinding(copy, resultBindings);
     }
 
-    
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
     /**
      * @param theTerm
      * @param theBindings
@@ -310,8 +316,21 @@ public class Binding {
       return theTerm;
     }
 
+    
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
     public BindingType getType() {
         return this.type;
+    }
+
+    /**
+     * Reference to a bound term: for {@link BindingType#LITERAL}, this is the literal, for {@link BindingType#LINK}, it refers to the
+     * {@link Term} of subclass {@link Var}.
+     */
+    public Object getTerm() {
+        return this.term;
     }
 
     /**
@@ -322,14 +341,6 @@ public class Binding {
      */
     public Bindings getLiteralBindings() {
         return this.literalBindings;
-    }
-
-    /**
-     * Reference to a bound term: for {@link BindingType#LITERAL}, this is the literal, for {@link BindingType#LINK}, it refers to the
-     * {@link Term} of subclass {@link Var}.
-     */
-    public Object getTerm() {
-        return this.term;
     }
 
     public Var getVar() {
@@ -366,12 +377,12 @@ public class Binding {
             }
             break;
         case LINK:
-            sb.append(getVar());
+            sb.append(this.var);
             sb.append("->");
             sb.append(this.link);
             break;
         case FREE:
-            sb.append(getVar());
+            sb.append(this.var);
             // Indicate the free variable with the empty set character
             sb.append(":ø");
             break;

@@ -182,7 +182,7 @@ public class Bindings {
         this.bindings = new Binding[nbVars];
         for (int i = 0; i < nbVars; i++) {
             final int varIndex = i; // Need a final var for visitor subclass
-            final Binding binding = new Binding(); // Will be a free variable's value
+            final Binding binding = Binding.createFreeBinding();
             this.bindings[varIndex] = binding;
             // Assign Binding.var field
             // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
