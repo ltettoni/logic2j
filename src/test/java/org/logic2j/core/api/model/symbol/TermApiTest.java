@@ -218,7 +218,7 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("X");
       // Link the free var to another free var 
       final Binding target = unmarshallAsBinding("Y");
-      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertEquals("X", subst.getTerm().toString()); // Quite insufficient
@@ -230,7 +230,7 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("X");
       // Bind the free var to a literal
       final Binding target = unmarshallAsBinding("targetAtom");
-      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertSame("targetAtom", subst.getTerm());
@@ -259,11 +259,11 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("f(a,X)");
       // Bind the free var to another free var
       final Binding target = unmarshallAsBinding("Y");
-      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertEquals("f(a, X)", subst.getTerm().toString());
-      assertEquals(orig.getLiteralBindings().toString(), subst.getLiteralBindings().toString());
+      assertEquals(orig.getBindings().toString(), subst.getBindings().toString());
     }
 
     @Test
@@ -271,7 +271,7 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("f(a,X)");
       // Bind the free var to a literal
       final Binding target = unmarshallAsBinding("targetAtom");
-      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertEquals("f(a, targetAtom)", subst.getTerm().toString());
@@ -283,7 +283,7 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("f(X)");
       // Bind the free var to a literal
       final Binding target = unmarshallAsBinding("g(A,B)");
-      orig.getLiteralBindings().getBinding(0).bindTo(target.getTerm(), target.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertEquals("f(g(A, B))", subst.getTerm().toString());
@@ -294,9 +294,9 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("f(X, Y)");
       // Bind the free var to a literal
       final Binding target1 = unmarshallAsBinding("g(A,B)");
-      orig.getLiteralBindings().getBinding(0).bindTo(target1.getTerm(), target1.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target1.getTerm(), target1.getBindings());
       final Binding target2 = unmarshallAsBinding("h(C,D,E)");
-      orig.getLiteralBindings().getBinding(1).bindTo(target2.getTerm(), target2.getLiteralBindings());
+      orig.getBindings().getBinding(1).bindTo(target2.getTerm(), target2.getBindings());
       //
       final Binding subst = orig.substituteNew2();
       assertEquals("f(g(A, B), h(C, D, E))", subst.getTerm().toString());
@@ -307,11 +307,11 @@ public class TermApiTest extends PrologTestBase {
       final Binding orig = unmarshallAsBinding("f(X, Y)");
       // Bind the free var to a literal
       final Binding target1 = unmarshallAsBinding("g(A,B)");
-      orig.getLiteralBindings().getBinding(0).bindTo(target1.getTerm(), target1.getLiteralBindings());
+      orig.getBindings().getBinding(0).bindTo(target1.getTerm(), target1.getBindings());
       final Binding target2 = unmarshallAsBinding("h(C,D,E)");
-      orig.getLiteralBindings().getBinding(1).bindTo(target2.getTerm(), target2.getLiteralBindings());
+      orig.getBindings().getBinding(1).bindTo(target2.getTerm(), target2.getBindings());
       //
-      Object subst = TermApi.substitute(orig.getTerm(), orig.getLiteralBindings());
+      Object subst = TermApi.substitute(orig.getTerm(), orig.getBindings());
       assertEquals("f(g(A, B), h(C, D, E))", subst.toString());
     }
 }

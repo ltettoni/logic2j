@@ -394,7 +394,7 @@ public class CoreLibrary extends LibraryBase {
             for (final Clause clause : cp.listMatchingClauses(realHead, theBindings)) {
                 // Clone the clause so that we can unify against its bindings
                 final Clause clauseToUnify = new Clause(clause);
-                final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getLiteralBindings());
+                final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getBindings(), realHead, dereferencedBinding.getBindings());
                 if (headUnified) {
                     try {
                         final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getBindings(), theBody, theBindings);

@@ -59,7 +59,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     public void xBoundToY() {
         Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
-        bindings.getBinding(0).bindTo(bindings.getBinding(1).getVar(), bindings);
+        bindings.getBinding(0).bindTo(bindings.getBinding(1).getReferrer(), bindings);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
         assertEquals("f(X, Y)", formatted);
     }
@@ -68,7 +68,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     public void yBoundToX() {
         Object term = unmarshall("f(X, Y)");
         Bindings bindings = new Bindings(term);
-        bindings.getBinding(1).bindTo(bindings.getBinding(0).getVar(), bindings);
+        bindings.getBinding(1).bindTo(bindings.getBinding(0).getReferrer(), bindings);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
         assertEquals("f(X, Y)", formatted);
     }

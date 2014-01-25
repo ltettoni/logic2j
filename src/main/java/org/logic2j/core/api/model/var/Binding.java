@@ -30,19 +30,23 @@ import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 
 /**
- * Define the effective value of a variable, it can be either free, bound to a final term, or unified to another variable (either free,
- * bound, or chaining).
+ * A {@link Binding} fully describes all possible states of a Prolog {@link Var}iable: free, chain-linked to another
+ * {@link Var}iable, or assigned to a literal term (either an atom, or a {@link Struct} that can further have {@link Var}iables.
+ * In the case of assignement to a literal term, two informations are required: the reference to the term hierarchy, and
+ * to the {@link Bindings} that define the current state of its variables.
+ * By extension, a {@link Binding} can also be used to hold a single pair of (Object term, Bindings), which is more convenient
+ * than having to program with 2 references at a time.
  * 
- * The properties of a {@link Binding} depend on its type according to the following table:
+ * The field values of a {@link Binding} depend on its "type" according to the following table:
  * 
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
- * type     literalBindings               term           link                                         var
+ * type     bindings               term           link                                         referrer
  * -----------------------------------------------------------------------------------------------------
- * FREE     null                          null(*)        null                                         the variable
+ * FREE     null                          null(*)        null                                         the variable that "points" to this
  * LITERAL  bindings of the literal term  ref to term    null                                         ?
- * LINK     null                          null           ref to a Binding representing the bound var  null
+ * LINK     null                          null           ref to a Binding representing the bound referrer  null
  * 
  * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
  *     member to point to the variable, this allows retrieving its name for reporting
@@ -56,15 +60,18 @@ public class Binding {
     // See description of fields in this class' Javadoc, and on getters.
 
     private BindingType type;
+    
+    // The magic "pair" of values that make one single handle to hold a complete Prolog term
     private Object term;
-    private Bindings literalBindings;
+    private Bindings bindings;
+    
     private Binding link;
 
     /**
-     * Reference to the variable associated to this binding in the "owning" Struct.
+     * The "referrer" to a Binding is the {@link Var}iable whose index is such that it "points" to this {@link Binding}.
      * Used for reporting (display) and extracting the "original" variable name when extracting solutions.
      */
-    private Var var;
+    private Var referrer;
 
     private Binding() {
         // Just forbid instantiation from outside - use static factory methods instead
@@ -78,9 +85,9 @@ public class Binding {
     Binding(Binding originalToCopy) {
         this.type = originalToCopy.type;
         this.term = originalToCopy.term;
-        this.literalBindings = originalToCopy.literalBindings;
+        this.bindings = originalToCopy.bindings;
         this.link = originalToCopy.link;
-        this.var = originalToCopy.var;
+        this.referrer = originalToCopy.referrer;
     }
 
     public static Binding createFreeBinding() {
@@ -95,15 +102,15 @@ public class Binding {
      * @note Maybe make it a constructor.
      * 
      * @param theLiteral
-     * @param theLiteralBindings
+     * @param theBindings
      * @return This is used to return a pair (Term, Bindings) where needed.
      */
     // TODO assess if needed - used only once
-    public static Binding createLiteralBinding(Object theLiteral, Bindings theLiteralBindings) {
+    public static Binding createLiteralBinding(Object theLiteral, Bindings theBindings) {
         final Binding instance = new Binding();
         instance.type = BindingType.LITERAL;
         instance.term = theLiteral;
-        instance.literalBindings = theLiteralBindings;
+        instance.bindings = theBindings;
         // The other fields will remain null by default
         // instance.link = null;
         // instance.var = null;
@@ -134,12 +141,12 @@ public class Binding {
             }
             this.type = BindingType.LINK;
             this.term = null;
-            this.literalBindings = null;
+            this.bindings = null;
             this.link = targetBinding;
         } else {
             this.type = BindingType.LITERAL;
             this.term = theTerm;
-            this.literalBindings = theBindings;
+            this.bindings = theBindings;
             this.link = null;
         }
         // Bound OK
@@ -156,7 +163,7 @@ public class Binding {
       }
       this.type = BindingType.LINK;
       this.term = null;
-      this.literalBindings = null;
+      this.bindings = null;
       this.link = targetBinding;
     }
     
@@ -168,7 +175,7 @@ public class Binding {
         // Resetting the following fields is not functionally necessary, we could leave previous data in, but
         // let's have the fields as documented, this will also help us while debugging to not find non-understandable garbage
         this.term = null;
-        this.literalBindings = null;
+        this.bindings = null;
         this.link = null;
     }
 
@@ -193,12 +200,12 @@ public class Binding {
     
     // Maybe no longer needed
     public boolean sameAs(Binding that) {
-      return this==that || (this.getTerm()==that.getTerm() && this.getLiteralBindings()==that.getLiteralBindings());
+      return this==that || (this.getTerm()==that.getTerm() && this.getBindings()==that.getBindings());
     }
 
 
     public Binding substituteNew2() {
-      // -> final binding if var is free
+      // -> final binding if referrer is free
       final IdentityHashMap<Var, Binding> bindingOfOriginalVar = new IdentityHashMap<Var, Binding>();
       
       // First pass: identify vars and their final bindings
@@ -211,12 +218,12 @@ public class Binding {
           }
           final Binding finalBinding = theVar.bindingWithin(theBindings).followLinks();
           if (finalBinding.isFree()) {
-            // return binding with original var
+            // return binding with original referrer
             bindingOfOriginalVar.put(theVar, finalBinding);
             return null;
           }
           // Is literal - will recurse
-          TermApi.accept(this, finalBinding.getTerm(), finalBinding.getLiteralBindings());
+          TermApi.accept(this, finalBinding.getTerm(), finalBinding.getBindings());
           return null;
         }
 
@@ -229,7 +236,7 @@ public class Binding {
           return null;
         }
       };
-      TermApi.accept(registrer, this.term, this.literalBindings);
+      TermApi.accept(registrer, this.term, this.bindings);
       
       // Allocate new vars with same names are originals but will receive new indexes
       final IdentityHashMap<Var, Var> newVarsFromOld = new IdentityHashMap<Var, Var>();
@@ -239,7 +246,7 @@ public class Binding {
         newVarsFromOld.put(oldVar, newVar);
       }
       
-      Object copy = copy(this.term, this.literalBindings, bindingOfOriginalVar, newVarsFromOld);
+      Object copy = copy(this.term, this.bindings, bindingOfOriginalVar, newVarsFromOld);
       
       if (copy==this.term) {
         return this;
@@ -291,7 +298,7 @@ public class Binding {
           return newVar;
         }
         // Literal: recurse
-        return copy(finalBinding.term, finalBinding.literalBindings, theBindingOfOriginalVar, theNewVarsFromOld);
+        return copy(finalBinding.term, finalBinding.bindings, theBindingOfOriginalVar, theNewVarsFromOld);
       }
       if (theTerm instanceof Struct) {
         final Struct struct = (Struct)theTerm;
@@ -339,16 +346,16 @@ public class Binding {
      * 
      * @return The {@link Bindings} associated to the Term from {@link #getTerm()}.
      */
-    public Bindings getLiteralBindings() {
-        return this.literalBindings;
+    public Bindings getBindings() {
+        return this.bindings;
     }
 
-    public Var getVar() {
-        return this.var;
+    public Var getReferrer() {
+        return this.referrer;
     }
 
-    void setVar(Var theVar) {
-        this.var = theVar;
+    void setReferrer(Var theVar) {
+        this.referrer = theVar;
     }
 
     public boolean isFree() {
@@ -373,16 +380,16 @@ public class Binding {
             if (isDebug) {
                 // Java reference (hex address) when on isDebug
                 sb.append('@');
-                sb.append(Integer.toHexString(this.literalBindings.hashCode()));
+                sb.append(Integer.toHexString(this.bindings.hashCode()));
             }
             break;
         case LINK:
-            sb.append(this.var);
+            sb.append(this.referrer);
             sb.append("->");
             sb.append(this.link);
             break;
         case FREE:
-            sb.append(this.var);
+            sb.append(this.referrer);
             // Indicate the free variable with the empty set character
             sb.append(":ø");
             break;

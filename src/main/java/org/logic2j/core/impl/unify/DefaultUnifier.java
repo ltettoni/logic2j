@@ -94,7 +94,7 @@ public class DefaultUnifier implements Unifier {
                 // We have followed term1 to end up with a literal. It may either unify or not depending if
                 // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
                 // part as term2
-                return unifyInternal(stepInfo, term2, theBindings2, binding1.getTerm(), binding1.getLiteralBindings());
+                return unifyInternal(stepInfo, term2, theBindings2, binding1.getTerm(), binding1.getBindings());
             } else {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }
@@ -194,7 +194,7 @@ public class DefaultUnifier implements Unifier {
                 }
                 return true;
             } else if (binding1.isLiteral()) {
-                return simpleUnification(stepInfo, binding1.getTerm(), binding1.getLiteralBindings(), term2);
+                return simpleUnification(stepInfo, binding1.getTerm(), binding1.getBindings(), term2);
             } else {
                 throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
             }

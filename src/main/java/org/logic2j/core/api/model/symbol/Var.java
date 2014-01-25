@@ -152,7 +152,7 @@ public final class Var extends Term {
         final Binding binding = bindingWithin(theBindings).followLinks();
         if (binding.isLiteral()) {
             // For a literal, we have a reference to the literal term and to its own variables, so recurse further
-            return TermApi.substitute(binding.getTerm(), binding.getLiteralBindings(), remapFreeBindingsToOriginalVars);
+            return TermApi.substitute(binding.getTerm(), binding.getBindings(), remapFreeBindingsToOriginalVars);
         }
         if (binding.isFree()) {
             // Free variable has no value, if we have a remapping table let's use it

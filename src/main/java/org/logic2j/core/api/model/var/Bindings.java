@@ -106,7 +106,7 @@ public class Bindings {
         private final int index;
 
         /**
-         * @param theBinding The {@link Binding} whose {@link Binding#setVar(Var)} needs to be initialized.
+         * @param theBinding The {@link Binding} whose {@link Binding#setReferrer(Var)} needs to be initialized.
          * @param theIndex Initialize only {@link Var} whose {@link Term#getIndex()} match this index value.
          */
         VisitorToAssignVarWithinBinding(Binding theBinding, int theIndex) {
@@ -117,7 +117,7 @@ public class Bindings {
         @Override
         public Var visit(Var theVar, Bindings theBindings) {
             if (theVar.getIndex() == this.index) {
-                this.binding.setVar(theVar);
+                this.binding.setReferrer(theVar);
                 // Job done - there are no other variable to set for this index, since goals are always factorized (see def of factorized
                 // Term)
                 // Returning non-null will stop useless recursion
@@ -235,7 +235,7 @@ public class Bindings {
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
             case LITERAL:
-                return new Bindings(finalBinding.getTerm(), finalBinding.getLiteralBindings().bindings);
+                return new Bindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
             case FREE:
                 // Refocus on original var (we now know it is free), keep the same original bindings
                 return new Bindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
@@ -269,7 +269,7 @@ public class Bindings {
 
         final Map<String, Object> result = new TreeMap<String, Object>();
         for (final Binding initialBinding : this.bindings) {
-            final Var originalVar = initialBinding.getVar();
+            final Var originalVar = initialBinding.getReferrer();
             if (originalVar == null) {
                 throw new PrologNonSpecificError("Bindings not properly initialized: Binding " + initialBinding + " does not refer to Var (null)");
             }
@@ -277,7 +277,7 @@ public class Bindings {
             final String originalVarName = originalVar.getName();
             // Now reach the effective lastest binding
             final Binding finalBinding = initialBinding.followLinks(); // FIXME we did this above already - can't we remember it???
-            final Var finalVar = finalBinding.getVar();
+            final Var finalVar = finalBinding.getReferrer();
             switch (finalBinding.getType()) {
             case LITERAL:
                 if (originalVarName == null) {
@@ -285,7 +285,7 @@ public class Bindings {
                             + " can't be assigned a variable name");
                 }
                 final Object boundTerm = finalBinding.getTerm();
-                final Object substitute = TermApi.substitute(boundTerm, finalBinding.getLiteralBindings(), bindingToInitialVar);
+                final Object substitute = TermApi.substitute(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
                 // Literals are not unbound terms, they are returned the same way for all types of representations asked
                 result.put(originalVarName, substitute);
                 break;
@@ -328,7 +328,7 @@ public class Bindings {
       // ending up with either null (on a literal), or a real Var (on a free var).
       final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
       for (final Binding initialBinding : this.bindings) {
-          final Var initialVar = initialBinding.getVar();
+          final Var initialVar = initialBinding.getReferrer();
           // Follow linked bindings
           final Binding finalBinding = initialBinding.followLinks();
           // At this stage finalBinding may be either literal, or free
@@ -342,7 +342,7 @@ public class Bindings {
       // ending up with either null (on a literal), or a real Var (on a free var).
       final IdentityHashMap<Var, Binding> bindingToInitialVar = new IdentityHashMap<Var, Binding>();
       for (final Binding initialBinding : this.bindings) {
-          final Var initialVar = initialBinding.getVar();
+          final Var initialVar = initialBinding.getReferrer();
           // Follow linked bindings
           final Binding finalBinding = initialBinding.followLinks();
           // At this stage finalBinding may be either literal, or free
@@ -377,7 +377,7 @@ public class Bindings {
         int index = 0;
         for (final Binding binding : this.bindings) {
             // FIXME dubious use of == instead of structural equality
-            if (binding.getVar() == theVar && index == theVar.getIndex()) {
+            if (binding.getReferrer() == theVar && index == theVar.getIndex()) {
                 return this;
             }
             index++;
@@ -385,7 +385,7 @@ public class Bindings {
         // Not found: search deeper through bindings
         for (final Binding binding : this.bindings) {
             if (binding.getType() == BindingType.LITERAL) {
-                final Bindings foundDeeper = binding.getLiteralBindings().findBindings(theVar);
+                final Bindings foundDeeper = binding.getBindings().findBindings(theVar);
                 if (foundDeeper != null) {
                     return foundDeeper;
                 }
@@ -447,10 +447,10 @@ public class Bindings {
             for (final Binding binding : element.bindings) {
                 final Binding clonedBinding = new Binding(binding);
                 array[index] = clonedBinding;
-                final Var originalVar = clonedBinding.getVar();
+                final Var originalVar = clonedBinding.getReferrer();
                 final Var clonedVar = new Var(originalVar.getName());
                 theRemappedVars.put(originalVar, clonedVar);
-                clonedBinding.setVar(clonedVar);
+                clonedBinding.setReferrer(clonedVar);
                 index++;
             }
         }
