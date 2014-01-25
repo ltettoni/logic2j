@@ -182,7 +182,7 @@ public class Bindings {
         this.bindings = new Binding[nbVars];
         for (int i = 0; i < nbVars; i++) {
             final int varIndex = i; // Need a final var for visitor subclass
-            final Binding binding = new Binding();
+            final Binding binding = new Binding(); // Will be a free variable's value
             this.bindings[varIndex] = binding;
             // Assign Binding.var field
             // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
@@ -366,7 +366,8 @@ public class Bindings {
 
     /**
      * Find the local bindings corresponding to one of the variables of the Struct referred to by this Bindings. FIXME Uh - what does this
-     * mean??? TODO This method is only used once from a library - ensure it makes sense and belongs here
+     * mean??? 
+     * TODO This method is only used once from a library - ensure it makes sense and belongs here
      * 
      * @param theVar
      * @return null when not found
