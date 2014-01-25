@@ -32,7 +32,7 @@ public class DetailedMarshaller extends DefaultTermMarshaller {
      * Variables are reported with their offset in their {@link Bindings}.
      */
     @Override
-    public String visit(Var theVar, Bindings theBindings) {
+    public CharSequence visit(Var theVar, Bindings theBindings) {
         if (theVar.isAnonymous()) {
             // The anonymous variable has no index - won't report it!
             return Var.ANONYMOUS_VAR_NAME;

@@ -33,7 +33,7 @@ import org.logic2j.core.impl.io.parse.tuprolog.Parser;
  * Default and reference implementation of {@link TermMarshaller#marshall(Object)}.
  * This implementation may be derived or composed to your wish.
  */
-public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor<String> {
+public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor<CharSequence> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshaller.class);
     static final boolean isDebug = logger.isDebugEnabled();
   
@@ -86,13 +86,13 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
      * @param theBindings When null, will format the structure with raw variables names. When not null, will resolve bound vars.
      */
     @Override
-    public String visit(Struct theStruct, Bindings theBindings) {
-        final String formatted = formatStruct(theStruct, theBindings);
+    public CharSequence visit(Struct theStruct, Bindings theBindings) {
+        final CharSequence formatted = formatStruct(theStruct, theBindings);
         return formatted;
     }
 
     @Override
-    public String visit(Var theVar, Bindings theBindings) {
+    public CharSequence visit(Var theVar, Bindings theBindings) {
       final StringBuilder sb = new StringBuilder();
         if (theBindings == null) {
             sb.append(theVar.getName());
@@ -109,7 +109,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         // Go to fetch the effective variable value if any
         final Binding startingBinding = theVar.bindingWithin(theBindings);
         final Binding finalBinding = startingBinding.followLinks();
-        final String formatted;
+        final CharSequence formatted;
         if (finalBinding.isFree()) {
             formatted = theVar.getName();
         } else {
@@ -120,22 +120,22 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     }
 
     @Override
-    public String visit(String theAtomString) {
+    public CharSequence visit(String theAtomString) {
         return possiblyQuote(theAtomString);
     }
 
     @Override
-    public String visit(Long theLong) {
+    public CharSequence visit(Long theLong) {
         return String.valueOf(theLong);
     }
 
     @Override
-    public String visit(Double theDouble) {
+    public CharSequence visit(Double theDouble) {
         return String.valueOf(theDouble);
     }
 
     @Override
-    public String visit(Object theObject) {
+    public CharSequence visit(Object theObject) {
         return String.valueOf(theObject);
     }
 
@@ -150,7 +150,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
      * @param theBindings
      * @return The formatted term.
      */
-    protected String accept(Object theTerm, Bindings theBindings) {
+    protected CharSequence accept(Object theTerm, Bindings theBindings) {
       return TermApi.accept(this, theTerm, theBindings);
     }
     
@@ -161,7 +161,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
      * 
      * @param theBindings
      */
-    private String formatStruct(Struct theStruct, Bindings theBindings) {
+    private CharSequence formatStruct(Struct theStruct, Bindings theBindings) {
         // empty list case
         if (theStruct.isEmptyList()) {
             return Struct.FUNCTOR_LIST_EMPTY;
@@ -177,7 +177,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             sb.append('(');
             for (int c = 0; c < arity; c++) {
                 final Object arg = theStruct.getArg(c);
-                final String formatted = accept(arg, theBindings);
+                final CharSequence formatted = accept(arg, theBindings);
                 sb.append(formatted);
                 if (c < arity - 1) {
                     sb.append(ARG_SEPARATOR);
@@ -188,7 +188,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         return sb.toString();
     }
 
-    private String formatPListRecursive(Struct theStruct, Bindings theBindings) {
+    private CharSequence formatPListRecursive(Struct theStruct, Bindings theBindings) {
         final Object head = theStruct.getLHS();
         final Object tail = theStruct.getRHS();
         if (TermApi.isList(tail)) {
@@ -201,8 +201,8 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             }
             return accept(head, theBindings) + ELEM_SEPARATOR + formatPListRecursive(tailStruct, theBindings);
         }
-        String h0;
-        String t0;
+        CharSequence h0;
+        CharSequence t0;
         if (head instanceof Var) {
             h0 = visit((Var) head, theBindings);
         } else {
@@ -219,18 +219,18 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     /**
      * Gets the string representation of this term as an X argument of an operator, considering the associative property.
      */
-    private String toStringAsArgX(Object theTerm, int prio) {
+    private CharSequence toStringAsArgX(Object theTerm, int prio) {
         return toStringAsArg(theTerm, prio, true);
     }
 
     /**
      * Gets the string representation of this term as an Y argument of an operator, considering the associative property.
      */
-    private String toStringAsArgY(Object theTerm, int prio) {
+    private CharSequence toStringAsArgY(Object theTerm, int prio) {
         return toStringAsArg(theTerm, prio, false);
     }
 
-    private String toStringAsList(Struct theStruct) {
+    private CharSequence toStringAsList(Struct theStruct) {
         final Object h = theStruct.getLHS();
         final Object t = theStruct.getRHS();
         if (TermApi.isList(t)) {
@@ -243,7 +243,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         return (toStringAsArgY(h, 0) + "|" + toStringAsArgY(t, 0));
     }
 
-    private String toStringAsArg(Object theTerm, int prio, boolean x) {
+    private CharSequence toStringAsArg(Object theTerm, int prio, boolean x) {
         if (theTerm instanceof CharSequence) {
             return possiblyQuote((CharSequence) theTerm);
         }
@@ -308,7 +308,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         return sb.toString();
     }
 
-    private static String possiblyQuote(CharSequence theText) {
+    private static CharSequence possiblyQuote(CharSequence theText) {
         if (theText == null) {
             return null;
         }

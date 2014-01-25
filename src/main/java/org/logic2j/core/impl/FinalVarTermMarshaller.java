@@ -43,12 +43,12 @@ public class FinalVarTermMarshaller extends DefaultTermMarshaller {
 
 
     @Override
-    protected String accept(Object theTerm, Bindings theBindingsIgnored) {
+    protected CharSequence accept(Object theTerm, Bindings theBindingsIgnored) {
       return TermApi.accept(this, theTerm, theBindingsIgnored);
     }
     
     @Override
-    public String visit(Var theVar, Bindings theBindingsIgnored) {
+    public CharSequence visit(Var theVar, Bindings theBindingsIgnored) {
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
         }
@@ -57,7 +57,7 @@ public class FinalVarTermMarshaller extends DefaultTermMarshaller {
         }
         final Binding initialBinding = theVar.bindingWithin(theBindingsIgnored);
         final Binding finalBinding = initialBinding.followLinks();
-        final String formatted;
+        final CharSequence formatted;
         if (finalBinding.isFree()) {
             formatted = finalBinding.getVar().getName();
         } else {
