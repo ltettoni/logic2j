@@ -34,6 +34,9 @@ import org.logic2j.core.impl.io.parse.tuprolog.Parser;
  * This implementation may be derived or composed to your wish.
  */
 public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor<String> {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshaller.class);
+    static final boolean isDebug = logger.isDebugEnabled();
+  
     static final char QUOTE = '\'';
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
@@ -90,8 +93,15 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
 
     @Override
     public String visit(Var theVar, Bindings theBindings) {
+      final StringBuilder sb = new StringBuilder();
         if (theBindings == null) {
-            return theVar.getName(); // + '@' + theVar.getIndex();
+            sb.append(theVar.getName());
+            if (isDebug) {
+                // Report index of var
+                sb.append('#');
+                sb.append(theVar.getIndex());
+            }
+            return sb.toString();
         }
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
