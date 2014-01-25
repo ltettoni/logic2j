@@ -23,6 +23,9 @@
    <logger name="org.logic2j.core.impl.DefaultSolver" level="info" />
    <logger name="org.logic2j.contrib.excel.TabularDataClauseProvider" level="info" />
    <logger name="org.logic2j.contrib.library.fnct.FunctionLibrary" level="info" />
+   
+   <!-- Verbosity of toString in particular for Term hierarchies -->
+   <logger name="org.logic2j.core.impl.DefaultTermMarshaller" level="info" />
 
    <root level="warn">
       <appender-ref ref="console" />
