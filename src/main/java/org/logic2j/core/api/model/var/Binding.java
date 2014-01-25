@@ -51,7 +51,7 @@ import org.logic2j.core.api.model.symbol.Var;
  */
 public class Binding {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Binding.class);
-    private static final boolean debug = logger.isDebugEnabled();
+    private static final boolean isDebug = logger.isDebugEnabled();
 
     // See description of fields in this class' Javadoc, and on getters.
 
@@ -359,7 +359,8 @@ public class Binding {
         switch (this.type) {
         case LITERAL:
             sb.append(String.valueOf(this.term));
-            if (debug) {
+            if (isDebug) {
+                // Java reference (hex address) when on isDebug
                 sb.append('@');
                 sb.append(Integer.toHexString(this.literalBindings.hashCode()));
             }
@@ -371,6 +372,7 @@ public class Binding {
             break;
         case FREE:
             sb.append(getVar());
+            // Indicate the free variable with the empty set character
             sb.append(":ø");
             break;
         }
