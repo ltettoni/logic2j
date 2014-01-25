@@ -463,18 +463,20 @@ public class Bindings {
     @Override
     public String toString() {
       final StringBuilder sb = new StringBuilder();
+      // Name is "BindingN", with N the number of Binding
       sb.append(this.getClass().getSimpleName());
       sb.append(this.bindings.length);
       if (isDebug) {
+        // Java reference (hex address) when on isDebug
         sb.append('@');
         sb.append(Integer.toHexString(super.hashCode()));
       }
-      if (isEmpty()) {
-        sb.append("():");
-      } else {
+      if (! isEmpty()) {
+        // Just format with the Binding's toString() method, as a list (enclosed in brackets [])
         sb.append(Arrays.asList(this.bindings));
-        sb.append(':');
       }
+      // Referrer
+      sb.append(':');
       sb.append(getReferrer());
       return sb.toString();
     }
