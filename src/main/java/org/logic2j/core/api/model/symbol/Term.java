@@ -32,7 +32,7 @@ import org.logic2j.core.impl.DefaultTermMarshaller;
  * <ul>
  * <li>Structural equality, see {@link TermApi#structurallyEquals(Object, Object)}</li>
  * <li>Factorization, see {@link TermApi#factorize(Object)}</li>
- * <li>Initialization of {@link Var} indexes, see {@link TermApi#assignIndexes(Object, short)}</li>
+ * <li>Initialization of {@link Var} indexes, see {@link TermApi#assignIndexes(Object, int)}</li>
  * <li>Normalization: includes initialization of indexes, factorization, and identification of primitive functors</li>
  * </ul>
  * 
@@ -67,10 +67,10 @@ public abstract class Term implements Serializable {
      * instance of {@link TermMarshaller} instead. Yet we need {@link #toString()} to work for the cases of
      * logging and while debugging, so let's use a fixed (static) one.
      */
-    private static final TermMarshaller basicMarshaller = new DefaultTermMarshaller(); // Has the reference to Prolog engine == null
+    private static final TermMarshaller defaultMarshaller = new DefaultTermMarshaller(); // Has the reference to Prolog engine == null
 
-    // Use the following line instead to really debug the display of terms:
-    // private static final Formatter basicMarshaller = new
+    // Use the following line instead to really isDebug the display of terms:
+    // private static final Formatter defaultMarshaller = new
     // org.logic2j.core.optional.io.format.DetailedFormatter();
 
     // ---------------------------------------------------------------------------
@@ -117,7 +117,7 @@ public abstract class Term implements Serializable {
      */
     @Override
     public String toString() {
-        return basicMarshaller.marshall(this).toString();
+        return defaultMarshaller.marshall(this).toString();
     }
 
 }
