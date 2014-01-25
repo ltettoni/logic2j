@@ -37,7 +37,7 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
  */
 public class DefaultSolver implements Solver {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
-    static final boolean debug = logger.isDebugEnabled();
+    static final boolean isDebug = logger.isDebugEnabled();
 
     private final PrologImplementation prolog;
 
@@ -63,7 +63,7 @@ public class DefaultSolver implements Solver {
     }
 
     Continuation solveGoalRecursive(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
-        if (debug) {
+        if (isDebug) {
             logger.debug(">> Entering solveRecursive(\"{}\") with {}", goalTerm, theGoalBindings);
         }
         Continuation result = Continuation.CONTINUE;
@@ -90,7 +90,7 @@ public class DefaultSolver implements Solver {
             listeners[arity - 1] = theSolutionListener;
             // Allocates N-1 listeners, usually this means one.
             // On solution, each will trigger solving of the next term
-            if (debug) {
+            if (isDebug) {
                 logger.debug("Handling AND, arity={}", arity);
             }
             final Object lhs = goalStruct.getArg(0);
@@ -100,7 +100,7 @@ public class DefaultSolver implements Solver {
 
                     @Override
                     public Continuation onSolution() {
-                        if (debug) {
+                        if (isDebug) {
                             logger.debug("AND's internal solution listener called for {} with {}", lhs, theGoalBindings);
                         }
                         final int nextIndex = index + 1;
@@ -113,7 +113,7 @@ public class DefaultSolver implements Solver {
             // Solve the first goal, redirecting all solutions to the first listener defined above
             result = solveGoalRecursive(lhs, theGoalBindings, listeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            if (debug) {
+            if (isDebug) {
                 logger.debug("Handling OR, arity={}", arity);
             }
             /*
@@ -142,7 +142,7 @@ public class DefaultSolver implements Solver {
                 throw new InvalidTermException("Argument to primitive 'call' may not be a free variable, was " + goalStruct.getArg(0));
             }
             final Object target = effectiveGoalBindings.getReferrer();
-            if (debug) {
+            if (isDebug) {
                 logger.debug("Invoking call({})", target);
             }
             result = solveGoalRecursive(target, effectiveGoalBindings, theSolutionListener);
@@ -168,7 +168,7 @@ public class DefaultSolver implements Solver {
                 result = (Continuation) resultOfPrimitive;
                 break;
             case FUNCTOR:
-                if (debug) {
+                if (isDebug) {
                     logger.debug("Result of Functor {}: {}", goalStruct, resultOfPrimitive);
                 }
                 logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
@@ -185,7 +185,7 @@ public class DefaultSolver implements Solver {
                 solveAgainstDataProviders(goalTerm, theGoalBindings, theSolutionListener);
             }
         }
-        if (debug) {
+        if (isDebug) {
             logger.debug("<< Exit    solveGoalRecursive(\"{}\") with {}, continuation=" + result, goalTerm, theGoalBindings);
         }
         return result;
@@ -207,18 +207,18 @@ public class DefaultSolver implements Solver {
             // logger.info("matchingClauses: {}", ((List<?>) matchingClauses).size());
             for (final Clause clause : matchingClauses) {
                 if (result == Continuation.CUT) {
-                    if (debug) {
+                    if (isDebug) {
                         logger.debug("Current status is {}: stop finding more clauses", result);
                     }
                     break;
                 }
                 if (result == Continuation.USER_ABORT) {
-                    if (debug) {
+                    if (isDebug) {
                         logger.debug("Current status is {}: abort finding more clauses", result);
                     }
                     break;
                 }
-                if (debug) {
+                if (isDebug) {
                     logger.debug("Trying clause {}, current status={}", clause, result);
                 }
 
@@ -230,7 +230,7 @@ public class DefaultSolver implements Solver {
                 final Bindings clauseVars = Bindings.deepCopyWithSameReferrer(immutableVars);
 
                 final Object clauseHead = clause.getHead();
-                if (debug) {
+                if (isDebug) {
                     logger.debug(" Unifying goal  : {}   with   {}", goalTerm, theGoalBindings);
                     logger.debug("  to clause head: {}   with   {}", clauseHead, clauseVars);
                 }
@@ -240,7 +240,7 @@ public class DefaultSolver implements Solver {
                 // Solutions will be notified from within this method.
                 // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
                 final boolean headUnified = unifier.unify(goalTerm, theGoalBindings, clauseHead, clauseVars);
-                if (debug) {
+                if (isDebug) {
                     logger.debug(" headUnified=" + headUnified + ", now: goal {}, clause {}", theGoalBindings, clauseVars);
                 }
 
@@ -248,7 +248,7 @@ public class DefaultSolver implements Solver {
                     try {
                         final Continuation continuation;
                         if (clause.isFact()) {
-                            if (debug) {
+                            if (isDebug) {
                                 logger.debug("{} is a fact, callback one solution", clauseHead);
                             }
                             // Notify one solution, and handle result if user wants to continue or not.
@@ -259,12 +259,12 @@ public class DefaultSolver implements Solver {
                         } else {
                             // Not a fact, it's a theorem - it has a body
                             final Object newGoalTerm = clause.getBody();
-                            if (debug) {
+                            if (isDebug) {
                                 logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
                             }
                             // Solve the body in our current subFrame
                             continuation = solveGoalRecursive(newGoalTerm, clauseVars, theSolutionListener);
-                            if (debug) {
+                            if (isDebug) {
                                 logger.debug("  back to clause {} with continuation={}", clause, continuation);
                             }
                             if (continuation == Continuation.USER_ABORT) {
@@ -299,11 +299,11 @@ public class DefaultSolver implements Solver {
                     }
                 }
             }
-            if (debug) {
+            if (isDebug) {
                 logger.debug("Last Clause of {} iterated", provider);
             }
         }
-        if (debug) {
+        if (isDebug) {
             logger.debug("Last ClauseProvider iterated");
         }
 

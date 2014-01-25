@@ -50,7 +50,7 @@ public class IOLibrary extends LibraryBase {
             result = write(theListener, theGoalVars, args);
         } else if (theMethodName == "info") {
             result = info(theListener, theGoalVars, args);
-        } else if (theMethodName == "debug") {
+        } else if (theMethodName == "isDebug") {
             result = debug(theListener, theGoalVars, args);
         } else if (theMethodName == "warn") {
             result = warn(theListener, theGoalVars, args);

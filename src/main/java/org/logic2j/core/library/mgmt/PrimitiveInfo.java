@@ -40,7 +40,7 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class PrimitiveInfo {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
-    private static final boolean debug = logger.isDebugEnabled();
+    private static final boolean isDebug = logger.isDebugEnabled();
 
     private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<String>();
 
@@ -88,7 +88,7 @@ public class PrimitiveInfo {
             methodNeedingReflectiveInvocation.add(this.methodName);
         }
         try {
-            if (debug) {
+            if (isDebug) {
                 logger.debug("PRIMITIVE > invocation of {}", this);
             }
             return invokeReflective(theGoalStruct, theGoalVars, theListener);
@@ -148,7 +148,7 @@ public class PrimitiveInfo {
             }
         }
         final Object result = this.method.invoke(this.library, args);
-        if (debug) {
+        if (isDebug) {
             logger.debug("PRIMITIVE < result={}", result);
         }
         return result;
