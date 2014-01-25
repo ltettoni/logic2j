@@ -146,7 +146,7 @@ public final class BindingTrail {
      * 
      * @deprecated Use only from test cases
      */
-    @Deprecated
+    @Deprecated // Use only from test cases
     // Use only from test cases
     static void reset() {
         stepInfoOfThisThread.remove();
@@ -160,7 +160,7 @@ public final class BindingTrail {
      * @return The number of bindings that would be deunified.
      * @deprecated To be used only from test cases for low-level white-box unit testing of unification.
      */
-    @Deprecated
+    @Deprecated // To be used only from test cases for low-level white-box unit testing of unification.
     static int nbBindings() {
         final StepInfo current = stepInfoOfThisThread.get();
         if (current.trailTop < 0) {
@@ -177,7 +177,7 @@ public final class BindingTrail {
      * @deprecated Use only from test cases
      * @return The current stack bindingSize
      */
-    @Deprecated
+    @Deprecated // Use only from test cases
     static int size() {
         final StepInfo current = stepInfoOfThisThread.get();
         return current.trailTop + 1;
