@@ -128,7 +128,7 @@ public class LibraryBase implements PLibrary {
         if (theTerm instanceof Var) {
             return ((Var) theTerm).bindingWithin(theBindings).followLinks();
         }
-        return Binding.createLiteralBinding(theTerm, theBindings);
+        return Binding.newLiteral(theTerm, theBindings);
     }
 
     /**

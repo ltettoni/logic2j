@@ -90,10 +90,16 @@ public class Binding {
         this.referrer = originalToCopy.referrer;
     }
 
-    public static Binding createFreeBinding() {
+    /**
+     * Create a free {@link Binding}. The {@link #referrer} remains null for the moment but
+     * will be assigned in {@link Bindings#Bindings(Object)} constructor.
+     * @return A free Binding.
+     */
+    public static Binding newFree() {
         final Binding instance = new Binding();
         instance.type = BindingType.FREE;
         // The other fields will remain null by default
+        // Note that the referrer will be assigned by 
         return instance;
     }
     
@@ -105,8 +111,7 @@ public class Binding {
      * @param theBindings
      * @return This is used to return a pair (Term, Bindings) where needed.
      */
-    // TODO assess if needed - used only once
-    public static Binding createLiteralBinding(Object theLiteral, Bindings theBindings) {
+    public static Binding newLiteral(Object theLiteral, Bindings theBindings) {
         final Binding instance = new Binding();
         instance.type = BindingType.LITERAL;
         instance.term = theLiteral;
@@ -271,7 +276,7 @@ public class Binding {
         newVar.bindingWithin(resultBindings).linkTo(bindingOfOldVar);
       }
       
-      return Binding.createLiteralBinding(copy, resultBindings);
+      return Binding.newLiteral(copy, resultBindings);
     }
 
     /**

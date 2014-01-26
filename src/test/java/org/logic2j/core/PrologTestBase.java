@@ -176,7 +176,7 @@ public abstract class PrologTestBase {
      */
     protected Binding unmarshallAsBinding(CharSequence theString) {
       final Object term = unmarshall(theString);
-      final Binding binding = Binding.createLiteralBinding(term, new Bindings(term));
+      final Binding binding = Binding.newLiteral(term, new Bindings(term));
       return binding;
     }
     

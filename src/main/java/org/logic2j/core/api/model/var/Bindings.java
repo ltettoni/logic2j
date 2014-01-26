@@ -51,6 +51,8 @@ public class Bindings {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
     private static boolean isDebug = logger.isDebugEnabled();
 
+    private static final Binding[] EMPTY_BINDINGS_ARRAY = new Binding[0];
+
     /**
      * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link Bindings} through their indexes.
      */
@@ -150,43 +152,45 @@ public class Bindings {
      * @see Bindings#getReferrer() to further access theTerm
      */
     public Bindings(Object theReferrer) {
-        // Note: this constructor should be called only with Var or Struct as arguments, but we don't check this. Should we?
-        final short index;
-        if (theReferrer instanceof Var) {
-            index = ((Var) theReferrer).getIndex();
-        } else if (theReferrer instanceof Struct) {
-            index = ((Struct) theReferrer).getIndex();
-        } else {
-            // It's a plain Java object
-            index = 0;
-        }
-        if (index == Term.NO_INDEX) {
-            throw new InvalidTermException("Index of Term '" + theReferrer + "' is not yet initialized, cannot create Bindings because Term is not ready for inference. Normalize it first.");
-        }
         this.referrer = theReferrer;
-        // Determine number of distinct variables
-        final int nbVars;
-        if (theReferrer instanceof Var) {
-            if (((Var) theReferrer).isAnonymous()) {
-                nbVars = 0;
-            } else {
-                nbVars = 1;
-            }
+        if (!(theReferrer instanceof Term)) {
+            // Will be no variables - used constant empty array
+            this.bindings = EMPTY_BINDINGS_ARRAY;
         } else {
-            // Will be a Struct; in that case the index is the number of distinct variables
-            nbVars = index;
-        }
-        //
-        // Allocate and initialize a Binding for every variable
-        //
-        this.bindings = new Binding[nbVars];
-        for (int i = 0; i < nbVars; i++) {
-            final int varIndex = i; // Need a final var for visitor subclass
-            final Binding binding = Binding.createFreeBinding();
-            this.bindings[varIndex] = binding;
-            // Assign Binding.var field
-            // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
-            TermApi.accept(new VisitorToAssignVarWithinBinding(binding, varIndex), theReferrer, this);
+            // Can now only be Var or Struct
+            final short index;
+            final int nbVars; // Determine number of distinct variables
+            final boolean isVar = theReferrer instanceof Var;
+            if (isVar) {
+                final Var var = (Var) theReferrer;
+                index = var.getIndex();
+                if (var.isAnonymous()) {
+                    nbVars = 0;
+                } else {
+                    nbVars = 1;
+                }
+            } else {
+                // Must be Struct
+                index = ((Struct) theReferrer).getIndex();
+                // Will be a Struct; in that case the index is the number of distinct variables
+                nbVars = index;
+            }
+            if (index == Term.NO_INDEX) {
+                throw new InvalidTermException("Index of Term '" + theReferrer
+                                + "' is not yet initialized, cannot create Bindings because Term is not ready for inference. Normalize it first.");
+            }
+
+            //
+            // Allocate and initialize a Binding for every variable
+            //
+            this.bindings = new Binding[nbVars];
+            for (int varIndex = 0; varIndex < nbVars; varIndex++) {
+                final Binding binding = Binding.newFree();
+                this.bindings[varIndex] = binding;
+                // Assign Binding.var field
+                // TODO (issue) This is costly see https://github.com/ltettoni/logic2j/issues/26
+                TermApi.accept(new VisitorToAssignVarWithinBinding(binding, varIndex), theReferrer, this);
+            }
         }
     }
 
@@ -234,13 +238,13 @@ public class Bindings {
             final Binding startingBinding = origin.bindingWithin(this);
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
-            case LITERAL:
-                return new Bindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
-            case FREE:
-                // Refocus on original var (we now know it is free), keep the same original bindings
-                return new Bindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
-            default:
-                throw new PrologInternalError("Should never have been here");
+                case LITERAL:
+                    return new Bindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
+                case FREE:
+                    // Refocus on original var (we now know it is free), keep the same original bindings
+                    return new Bindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
+                default:
+                    throw new PrologInternalError("Should never have been here");
             }
         }
         // It's anything else than a Var - no need to follow links
@@ -279,40 +283,41 @@ public class Bindings {
             final Binding finalBinding = initialBinding.followLinks(); // FIXME we did this above already - can't we remember it???
             final Var finalVar = finalBinding.getReferrer();
             switch (finalBinding.getType()) {
-            case LITERAL:
-                if (originalVarName == null) {
-                    throw new PrologNonSpecificError("Cannot assign null (undefined) var, not all variables of " + this + " are referenced from Term " + this.referrer + ", binding " + initialBinding
-                            + " can't be assigned a variable name");
-                }
-                final Object boundTerm = finalBinding.getTerm();
-                final Object substitute = TermApi.substitute(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
-                // Literals are not unbound terms, they are returned the same way for all types of representations asked
-                result.put(originalVarName, substitute);
-                break;
-            case FREE:
-                // Here we will use different representations for free vars
-                switch (theRepresentation) {
-                case SKIPPED:
-                    // Nothing added to the resulting bindings: no Map entry (no key, no value)
-                    break;
-                case NULL:
-                    // Add one entry with null value
-                    result.put(originalVarName, null);
+                case LITERAL:
+                    if (originalVarName == null) {
+                        throw new PrologNonSpecificError("Cannot assign null (undefined) var, not all variables of " + this + " are referenced from Term " + this.referrer
+                                        + ", binding " + initialBinding
+                                        + " can't be assigned a variable name");
+                    }
+                    final Object boundTerm = finalBinding.getTerm();
+                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
+                    // Literals are not unbound terms, they are returned the same way for all types of representations asked
+                    result.put(originalVarName, substitute);
                     break;
                 case FREE:
-                    result.put(originalVarName, finalVar);
-                    break;
-                case FREE_NOT_SELF:
-                    // Names are {@link String#intern()}alized so OK to check by reference
-                    if (originalVar.getName() != finalVar.getName()) {
-                        // Avoid reporting "X=null" for free variables or "X=X" as a binding...
-                        result.put(originalVarName, finalVar);
+                    // Here we will use different representations for free vars
+                    switch (theRepresentation) {
+                        case SKIPPED:
+                            // Nothing added to the resulting bindings: no Map entry (no key, no value)
+                            break;
+                        case NULL:
+                            // Add one entry with null value
+                            result.put(originalVarName, null);
+                            break;
+                        case FREE:
+                            result.put(originalVarName, finalVar);
+                            break;
+                        case FREE_NOT_SELF:
+                            // Names are {@link String#intern()}alized so OK to check by reference
+                            if (originalVar.getName() != finalVar.getName()) {
+                                // Avoid reporting "X=null" for free variables or "X=X" as a binding...
+                                result.put(originalVarName, finalVar);
+                            }
+                            break;
                     }
                     break;
-                }
-                break;
-            case LINK:
-                throw new PrologNonSpecificError("Should not happen we have followed links already");
+                case LINK:
+                    throw new PrologNonSpecificError("Should not happen we have followed links already");
             }
         }
         return result;
@@ -324,31 +329,31 @@ public class Bindings {
      * var is referenced is not deterministic.
      */
     public IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
-      // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
-      // ending up with either null (on a literal), or a real Var (on a free var).
-      final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
-      for (final Binding initialBinding : this.bindings) {
-          final Var initialVar = initialBinding.getReferrer();
-          // Follow linked bindings
-          final Binding finalBinding = initialBinding.followLinks();
-          // At this stage finalBinding may be either literal, or free
-          bindingToInitialVar.put(finalBinding, initialVar);
-      }
-      return bindingToInitialVar;
+        // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
+        // ending up with either null (on a literal), or a real Var (on a free var).
+        final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
+        for (final Binding initialBinding : this.bindings) {
+            final Var initialVar = initialBinding.getReferrer();
+            // Follow linked bindings
+            final Binding finalBinding = initialBinding.followLinks();
+            // At this stage finalBinding may be either literal, or free
+            bindingToInitialVar.put(finalBinding, initialVar);
+        }
+        return bindingToInitialVar;
     }
 
     public IdentityHashMap<Var, Binding> initialVartoFinalBinding() {
-      // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
-      // ending up with either null (on a literal), or a real Var (on a free var).
-      final IdentityHashMap<Var, Binding> bindingToInitialVar = new IdentityHashMap<Var, Binding>();
-      for (final Binding initialBinding : this.bindings) {
-          final Var initialVar = initialBinding.getReferrer();
-          // Follow linked bindings
-          final Binding finalBinding = initialBinding.followLinks();
-          // At this stage finalBinding may be either literal, or free
-          bindingToInitialVar.put(initialVar, finalBinding);
-      }
-      return bindingToInitialVar;
+        // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
+        // ending up with either null (on a literal), or a real Var (on a free var).
+        final IdentityHashMap<Var, Binding> bindingToInitialVar = new IdentityHashMap<Var, Binding>();
+        for (final Binding initialBinding : this.bindings) {
+            final Var initialVar = initialBinding.getReferrer();
+            // Follow linked bindings
+            final Binding finalBinding = initialBinding.followLinks();
+            // At this stage finalBinding may be either literal, or free
+            bindingToInitialVar.put(initialVar, finalBinding);
+        }
+        return bindingToInitialVar;
     }
 
     /**
@@ -463,23 +468,23 @@ public class Bindings {
 
     @Override
     public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      // Name is "BindingN", with N the number of Binding
-      sb.append(this.getClass().getSimpleName());
-      sb.append(this.bindings.length);
-      if (isDebug) {
-        // Java reference (hex address) when on isDebug
-        sb.append('@');
-        sb.append(Integer.toHexString(super.hashCode()));
-      }
-      if (! isEmpty()) {
-        // Just format with the Binding's toString() method, as a list (enclosed in brackets [])
-        sb.append(Arrays.asList(this.bindings));
-      }
-      // Referrer
-      sb.append(':');
-      sb.append(getReferrer());
-      return sb.toString();
+        final StringBuilder sb = new StringBuilder();
+        // Name is "BindingN", with N the number of Binding
+        sb.append(this.getClass().getSimpleName());
+        sb.append(this.bindings.length);
+        if (isDebug) {
+            // Java reference (hex address) when on isDebug
+            sb.append('@');
+            sb.append(Integer.toHexString(super.hashCode()));
+        }
+        if (!isEmpty()) {
+            // Just format with the Binding's toString() method, as a list (enclosed in brackets [])
+            sb.append(Arrays.asList(this.bindings));
+        }
+        // Referrer
+        sb.append(':');
+        sb.append(getReferrer());
+        return sb.toString();
     }
 
 }
