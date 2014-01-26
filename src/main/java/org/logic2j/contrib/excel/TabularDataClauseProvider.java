@@ -26,7 +26,7 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 
 public class TabularDataClauseProvider implements ClauseProvider {
@@ -57,7 +57,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
     }
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, TermBindings theGoalBindings) {
         final String predicateSignature = TermApi.getPredicateSignature(theGoal);
         switch (this.mode) {
         case EAV_NAMED:
