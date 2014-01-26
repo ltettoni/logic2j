@@ -138,7 +138,7 @@ public class LibraryBase implements PLibrary {
         if (theTerm == null) {
             return null;
         }
-        // TODO are the lines below this exactly as in resolve() / substitute() method?
+        // TODO are the lines below this exactly as in resolve() / substituteOld() method?
         if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
             final Binding binding = ((Var) theTerm).bindingWithin(theBindings).followLinks();
             if (!binding.isLiteral()) {

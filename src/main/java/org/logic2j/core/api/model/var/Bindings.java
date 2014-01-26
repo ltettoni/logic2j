@@ -67,71 +67,6 @@ public class Bindings {
     private final Binding[] bindings;
 
     /**
-     * Determine how free (unbound) variables will be represented in resulting bindings returned by
-     * {@link Bindings#explicitBindings(FreeVarRepresentation)}.
-     */
-    public enum FreeVarRepresentation {
-        /**
-         * Free variables will not be included in result bindings. Asking the value of a variable that is not bound to a literal Term is
-         * likely to throw a {@link RuntimeException}.
-         */
-        SKIPPED,
-
-        /**
-         * Free variables will be represented by the existence of a Map {@link Entry} with a valid key, and a value equal to null. You are
-         * required to use {@link Map#containsKey(Object)} to identify this case, since {@link Map#get(Object)} returning null won't allow
-         * you to distinguish between a free variable (asking for "X" when X is still unbound) or asking the value of an undefined variable
-         * (asking "TOTO" when not in original goal).
-         */
-        NULL,
-
-        /**
-         * Free variables will be reported with their terminal value. If we have the chain of bindings being X -> Y -> Z, this mode will
-         * represent X with the mapping "X"->"Z". A particular case is when X is unified to itself (via a loop), then the mapping becomes
-         * "X" -> "X" which may not be desireable... See FREE_NOT_SELF.
-         */
-        FREE,
-
-        /**
-         * TBD.
-         */
-        FREE_NOT_SELF
-
-    }
-
-    /**
-     * A {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
-     */
-    private static class VisitorToAssignVarWithinBinding extends TermVisitorBase<Var> {
-
-        private final Binding binding;
-        private final int index;
-
-        /**
-         * @param theBinding The {@link Binding} whose {@link Binding#setReferrer(Var)} needs to be initialized.
-         * @param theIndex Initialize only {@link Var} whose {@link Term#getIndex()} match this index value.
-         */
-        VisitorToAssignVarWithinBinding(Binding theBinding, int theIndex) {
-            this.binding = theBinding;
-            this.index = theIndex;
-        }
-
-        @Override
-        public Var visit(Var theVar, Bindings theBindings) {
-            if (theVar.getIndex() == this.index) {
-                this.binding.setReferrer(theVar);
-                // Job done - there are no other variable to set for this index, since goals are always factorized (see def of factorized
-                // Term)
-                // Returning non-null will stop useless recursion
-                return theVar;
-            }
-            // Nothing done - continue visiting more
-            return null;
-        }
-
-    }
-
-    /**
      * Create a new Binding by just assign the 2 fields, we use this when deep-copying
      * with a new array of {@link Binding} of when shallow-copying with the same reference to the array.
      * 
@@ -194,6 +129,10 @@ public class Bindings {
         }
     }
 
+    // ---------------------------------------------------------------------------
+    // Copy methods
+    // ---------------------------------------------------------------------------
+
     /**
      * @param theOriginal
      * @return A new {@link Bindings} with the same referrer, but a deep copy of the {@link Binding} array
@@ -215,6 +154,10 @@ public class Bindings {
         return new Bindings(theNewReferrer, copiedArrayOfBinding);
     }
 
+    public Binding toLiteralBinding() {
+        return Binding.newLiteral(this.referrer, this);
+    }
+    
     // ---------------------------------------------------------------------------
     // Methods for extracting values from variable Bindings
     // ---------------------------------------------------------------------------
@@ -290,7 +233,7 @@ public class Bindings {
                                         + " can't be assigned a variable name");
                     }
                     final Object boundTerm = finalBinding.getTerm();
-                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
+                    final Object substitute = TermApi.substituteOld(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
                     // Literals are not unbound terms, they are returned the same way for all types of representations asked
                     result.put(originalVarName, substitute);
                     break;
@@ -345,15 +288,15 @@ public class Bindings {
     public IdentityHashMap<Var, Binding> initialVartoFinalBinding() {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
         // ending up with either null (on a literal), or a real Var (on a free var).
-        final IdentityHashMap<Var, Binding> bindingToInitialVar = new IdentityHashMap<Var, Binding>();
+        final IdentityHashMap<Var, Binding> result = new IdentityHashMap<Var, Binding>();
         for (final Binding initialBinding : this.bindings) {
             final Var initialVar = initialBinding.getReferrer();
             // Follow linked bindings
             final Binding finalBinding = initialBinding.followLinks();
             // At this stage finalBinding may be either literal, or free
-            bindingToInitialVar.put(initialVar, finalBinding);
+            result.put(initialVar, finalBinding);
         }
-        return bindingToInitialVar;
+        return result;
     }
 
     /**
@@ -485,6 +428,75 @@ public class Bindings {
         sb.append(':');
         sb.append(getReferrer());
         return sb.toString();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Support classes
+    // ---------------------------------------------------------------------------
+
+    /**
+     * Determine how free (unbound) variables will be represented in resulting bindings returned by
+     * {@link Bindings#explicitBindings(FreeVarRepresentation)}.
+     */
+    public enum FreeVarRepresentation {
+        /**
+         * Free variables will not be included in result bindings. Asking the value of a variable that is not bound to a literal Term is
+         * likely to throw a {@link RuntimeException}.
+         */
+        SKIPPED,
+
+        /**
+         * Free variables will be represented by the existence of a Map {@link Entry} with a valid key, and a value equal to null. You are
+         * required to use {@link Map#containsKey(Object)} to identify this case, since {@link Map#get(Object)} returning null won't allow
+         * you to distinguish between a free variable (asking for "X" when X is still unbound) or asking the value of an undefined variable
+         * (asking "TOTO" when not in original goal).
+         */
+        NULL,
+
+        /**
+         * Free variables will be reported with their terminal value. If we have the chain of bindings being X -> Y -> Z, this mode will
+         * represent X with the mapping "X"->"Z". A particular case is when X is unified to itself (via a loop), then the mapping becomes
+         * "X" -> "X" which may not be desireable... See FREE_NOT_SELF.
+         */
+        FREE,
+
+        /**
+         * TBD.
+         */
+        FREE_NOT_SELF
+
+    }
+
+    /**
+     * A {@link TermVisitor} used to assign a reference to the original {@link Var}iable into a {@link Binding}.
+     */
+    private static class VisitorToAssignVarWithinBinding extends TermVisitorBase<Var> {
+
+        private final Binding binding;
+        private final int index;
+
+        /**
+         * @param theBinding The {@link Binding} whose {@link Binding#setReferrer(Var)} needs to be initialized.
+         * @param theIndex Initialize only {@link Var} whose {@link Term#getIndex()} match this index value.
+         */
+        VisitorToAssignVarWithinBinding(Binding theBinding, int theIndex) {
+            this.binding = theBinding;
+            this.index = theIndex;
+        }
+
+        @Override
+        public Var visit(Var theVar, Bindings theBindings) {
+            if (theVar.getIndex() == this.index) {
+                this.binding.setReferrer(theVar);
+                // Job done - there are no other variable to set for this index, since goals are always factorized (see def of factorized
+                // Term)
+                // Returning non-null will stop useless recursion
+                return theVar;
+            }
+            // Nothing done - continue visiting more
+            return null;
+        }
+
     }
 
 }

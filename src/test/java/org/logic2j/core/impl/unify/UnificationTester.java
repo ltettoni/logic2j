@@ -22,12 +22,13 @@ import static org.junit.Assert.assertEquals;
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
+import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.Bindings;
 import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
 
 /**
- * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. TODO replace this class by hamctest 1.3
- * high-level assertions that can be reused
+ * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. 
+ * TODO replace this class by hamctest 1.3 high-level assertions that can be reused
  */
 class UnificationTester {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);
@@ -88,6 +89,7 @@ class UnificationTester {
         logger.debug(" result={}", unified);
         logger.debug(" leftVars={}", this.leftVars);
         logger.debug(" rightVars={}", this.rightVars);
+        
         logger.debug(" left={}   bindings={}", TermApi.substitute(this.left, this.leftVars), this.leftVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         logger.debug(" right={}  bindings={}", TermApi.substitute(this.right, this.rightVars), this.rightVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         appendSignature(theSignature, this.leftVars, this.rightVars);

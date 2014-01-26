@@ -239,6 +239,15 @@ public class TermApi {
     }
 
     /**
+     * @param theTerm
+     * @param theBindings
+     * @return Old substituted term only
+     */
+    public static Object substitute(Object theTerm, Bindings theBindings) {
+        return Binding.newLiteral(theTerm, theBindings).substitute().getTerm();
+    }
+    
+    /**
      * Substitute by resolving bound vars to their target variables or literal terms.
      * 
      * @param theTerm
@@ -249,8 +258,8 @@ public class TermApi {
      * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
     @Deprecated
-    public static Object substitute(Object theTerm, Bindings theBindings) {
-        return substitute(theTerm, theBindings, null);
+    public static Object substituteOld(Object theTerm, Bindings theBindings) {
+        return substituteOld(theTerm, theBindings, null);
     }
 
     /**
@@ -265,7 +274,7 @@ public class TermApi {
      * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
     @Deprecated
-    public static Object substitute(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+    public static Object substituteOld(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         if (theBindings.isEmpty()) {
             return theTerm;
         }
@@ -274,10 +283,10 @@ public class TermApi {
                 // Struct has no variables below
                 return theTerm;
             }
-            return ((Struct) theTerm).substitute(theBindings, remapFreeBindingsToOriginalVars);
+            return ((Struct) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
         }
         if (theTerm instanceof Var) {
-            return ((Var) theTerm).substitute(theBindings, remapFreeBindingsToOriginalVars);
+            return ((Var) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
         }
         // Not a Term but a plain Java object - cannot substitute
         return theTerm;
@@ -526,5 +535,6 @@ public class TermApi {
       }
       return s;
     }
+
 
 }

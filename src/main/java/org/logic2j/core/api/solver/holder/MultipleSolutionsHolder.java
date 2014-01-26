@@ -88,7 +88,9 @@ public class MultipleSolutionsHolder {
                 if (var == null) {
                     throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
                 }
-                final Object substituted = TermApi.substitute(var, bnd);
+//                final Object substituted = TermApi.substituteOld(var, bnd);
+//                final Object substituted = var.substituteOld(bnd, null);
+                final Object substituted = var.bindingWithin(bnd).followLinks().substitute().getTerm();
                 results.add(substituted);
                 return super.onSolution();
             }

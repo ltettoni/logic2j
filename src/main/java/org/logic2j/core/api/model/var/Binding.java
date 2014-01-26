@@ -209,8 +209,8 @@ public class Binding {
     }
 
 
-    public Binding substituteNew2() {
-      // -> final binding if referrer is free
+    public Binding substitute() {
+      // Var found in traversal => final binding if referrer is free
       final IdentityHashMap<Var, Binding> bindingOfOriginalVar = new IdentityHashMap<Var, Binding>();
       
       // First pass: identify vars and their final bindings
@@ -326,6 +326,17 @@ public class Binding {
       }
       // Any other object
       return theTerm;
+    }
+
+
+    /**
+     * @return TBD
+     */
+    public Object effectiveValue() {
+        if (isLiteral()) {
+          return this.term;
+        }
+        return getReferrer();
     }
 
     

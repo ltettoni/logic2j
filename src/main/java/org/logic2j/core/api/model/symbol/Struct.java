@@ -396,12 +396,12 @@ public final class Struct extends Term {
      * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
      */
     @Deprecated
-    Object substitute(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+    Object substituteOld(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
         final Object[] substArgs = new Object[this.arity]; // All arguments after substitution
         boolean anyChildWasChanged = false;
         for (int i = 0; i < this.arity; i++) {
             // Recurse for all children
-            substArgs[i] = TermApi.substitute(this.args[i], theBindings, remapFreeBindingsToOriginalVars);
+            substArgs[i] = TermApi.substituteOld(this.args[i], theBindings, remapFreeBindingsToOriginalVars);
             anyChildWasChanged |= substArgs[i] != this.args[i];
         }
         final Struct substitutedOrThis;

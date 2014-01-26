@@ -55,7 +55,8 @@ public class Solution {
      * @param theBindings
      */
     public Solution(Bindings theBindings) {
-        this.solution = TermApi.substitute(theBindings.getReferrer(), theBindings);
+//        this.solution = TermApi.substituteOld(theBindings.getReferrer(), theBindings);
+        this.solution = theBindings.toLiteralBinding().substitute().getTerm();
         this.bindings = theBindings.explicitBindings(FreeVarRepresentation.NULL);
     }
 
