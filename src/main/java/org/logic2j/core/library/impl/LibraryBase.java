@@ -26,7 +26,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.FinalVarTermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
@@ -55,7 +55,7 @@ public class LibraryBase implements PLibrary {
      * @param theListener Regular argument for invoking a primitive
      */
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
         return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
 
@@ -68,7 +68,7 @@ public class LibraryBase implements PLibrary {
      * @param theBindings2
      * @return The result of unification.
      */
-    protected boolean unify(Object t1, Bindings theBindings1, Object t2, Bindings theBindings2) {
+    protected boolean unify(Object t1, TermBindings theBindings1, Object t2, TermBindings theBindings2) {
         return this.prolog.getUnifier().unify(t1, theBindings1, t2, theBindings2);
     }
 
@@ -110,13 +110,13 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
-     * Make sure a {@link Bindings} does not have a {@link Bindings#getReferrer()} that is a free {@link Var}.
+     * Make sure a {@link TermBindings} does not have a {@link TermBindings#getReferrer()} that is a free {@link Var}.
      * 
      * @param theBindings
      * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
      * @throws InvalidTermException
      */
-    protected void ensureBindingIsNotAFreeVar(Bindings theBindings, String nameOfPrimitive) {
+    protected void ensureBindingIsNotAFreeVar(TermBindings theBindings, String nameOfPrimitive) {
         if (theBindings.isFreeReferrer()) {
             // TODO should be sort of an InvalidGoalException?
             throw new InvalidTermException("Cannot call primitive " + nameOfPrimitive + " with a Variable that is free");
@@ -124,7 +124,7 @@ public class LibraryBase implements PLibrary {
     }
 
     // TODO assess if needed - used only once
-    protected Binding dereferencedBinding(Object theTerm, Bindings theBindings) {
+    protected Binding dereferencedBinding(Object theTerm, TermBindings theBindings) {
         if (theTerm instanceof Var) {
             return ((Var) theTerm).bindingWithin(theBindings).followLinks();
         }
@@ -134,7 +134,7 @@ public class LibraryBase implements PLibrary {
     /**
      * Evaluates an expression. Returns null value if the argument is not an evaluable expression
      */
-    protected Object evaluate(Object theTerm, Bindings theBindings) {
+    protected Object evaluate(Object theTerm, TermBindings theBindings) {
         if (theTerm == null) {
             return null;
         }
@@ -172,7 +172,7 @@ public class LibraryBase implements PLibrary {
     }
 
     // Only one use!
-    protected void unifyAndNotify(Var[] theVariables, Object[] theValues, Bindings theBindings, SolutionListener theListener) {
+    protected void unifyAndNotify(Var[] theVariables, Object[] theValues, TermBindings theBindings, SolutionListener theListener) {
         final Object[] values = new Object[theValues.length];
         for (int i = 0; i < theValues.length; i++) {
             values[i] = createConstantTerm(theValues[i]);
@@ -187,7 +187,7 @@ public class LibraryBase implements PLibrary {
      * @param theBindings
      * @return The formatted String
      */
-    protected String format(Object theTerm, final Bindings theBindings) {
+    protected String format(Object theTerm, final TermBindings theBindings) {
       final TermMarshaller niceFormat2 = new FinalVarTermMarshaller(getProlog(), theBindings);
       final String formatted = niceFormat2.marshall(theTerm).toString();
       return formatted;

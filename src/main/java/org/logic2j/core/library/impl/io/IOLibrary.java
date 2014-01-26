@@ -23,7 +23,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -40,7 +40,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
@@ -63,9 +63,9 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation write(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation write(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         for (final Object term : terms) {
-            final Bindings b = theBindings.narrow(term, Term.class);
+            final TermBindings b = theBindings.narrow(term, Term.class);
             final Object value = b.getReferrer();
 
             String format = getProlog().getTermMarshaller().marshall(value).toString();
@@ -77,13 +77,13 @@ public class IOLibrary extends LibraryBase {
 
     @SuppressWarnings("unused")
     @Primitive
-    public Continuation nl(SolutionListener theListener, Bindings theBindings) {
+    public Continuation nl(SolutionListener theListener, TermBindings theBindings) {
         this.writer.print('\n');
         return notifySolution(theListener);
     }
 
     @Primitive
-    public Continuation debug(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation debug(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         if (logger.isDebugEnabled()) {
             final String substring = formatForLog(theBindings, terms);
             logger.debug(substring);
@@ -92,7 +92,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation info(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation info(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         if (logger.isInfoEnabled()) {
             final String substring = formatForLog(theBindings, terms);
             logger.info(substring);
@@ -101,7 +101,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation warn(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation warn(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         if (logger.isWarnEnabled()) {
             final String substring = formatForLog(theBindings, terms);
             logger.warn(substring);
@@ -110,7 +110,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation error(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation error(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         if (logger.isErrorEnabled()) {
             final String substring = formatForLog(theBindings, terms);
             logger.error(substring);
@@ -118,10 +118,10 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener);
     }
 
-    private String formatForLog(Bindings theBindings, Object... terms) {
+    private String formatForLog(TermBindings theBindings, Object... terms) {
         final StringBuilder sb = new StringBuilder("P ");
         for (final Object term : terms) {
-            final Bindings b = theBindings.narrow(term, Object.class);
+            final TermBindings b = theBindings.narrow(term, Object.class);
             ensureBindingIsNotAFreeVar(b, "log/*");
             final String format = getProlog().getTermMarshaller().marshall(b).toString();
             sb.append(format);
@@ -140,7 +140,7 @@ public class IOLibrary extends LibraryBase {
      * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
      */
     @Primitive
-    public Continuation nolog(SolutionListener theListener, Bindings theBindings, Object... terms) {
+    public Continuation nolog(SolutionListener theListener, TermBindings theBindings, Object... terms) {
         // Do nothing, but succeeds!
         return notifySolution(theListener);
     }

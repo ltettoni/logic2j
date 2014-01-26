@@ -20,7 +20,7 @@ package org.logic2j.core.api.model;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Base implementation of {@link TermVisitor} that does nothing except for {@link Struct}, which are traversed recursively until the first
@@ -36,7 +36,7 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
      * @return The first returning a non-null result breaks the traveral of children and the result is returned.
      */
     @Override
-    public T visit(Struct theStruct, Bindings theBindings) {
+    public T visit(Struct theStruct, TermBindings theBindings) {
         // Recurse through children
         for (int i = 0; i < theStruct.getArity(); i++) {
             final T result = TermApi.accept(this, theStruct.getArg(i), theBindings);
@@ -49,7 +49,7 @@ public class TermVisitorBase<T> implements PartialTermVisitor<T> {
     }
 
     @Override
-    public T visit(Var theVar, Bindings theBindings) {
+    public T visit(Var theVar, TermBindings theBindings) {
         return null;
     }
 

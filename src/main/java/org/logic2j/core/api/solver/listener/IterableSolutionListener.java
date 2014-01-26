@@ -21,7 +21,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.Solution;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * A {@link SolutionListener} that allows the caller of the inference engine to enumerates solutions to his goal, like all Prolog APIs do.
@@ -30,12 +30,12 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class IterableSolutionListener implements SolutionListener {
 
-    private final Bindings bindings;
+    private final TermBindings bindings;
 
     /**
      * @param theBindings
      */
-    public IterableSolutionListener(Bindings theBindings) {
+    public IterableSolutionListener(TermBindings theBindings) {
         super();
         this.bindings = theBindings;
     }

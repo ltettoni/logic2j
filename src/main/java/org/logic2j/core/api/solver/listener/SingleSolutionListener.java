@@ -20,7 +20,7 @@ package org.logic2j.core.api.solver.listener;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.Solution;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * A {@link SolutionListener} that will retain the first solution only; see subclasses for features. In any case, no more than 2 solutions
@@ -40,7 +40,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
      */
     private Solution solution;
 
-    protected Bindings bindings;
+    protected TermBindings bindings;
 
     /**
      * Create a {@link SolutionListener} that will enumerate solutions up to theMaxCount before aborting by "user request". We will usually
@@ -51,7 +51,7 @@ public abstract class SingleSolutionListener implements SolutionListener {
      *            whether there might be others; specify 2 to if you want the first and make sure there are no others (the inference engine
      *            will try to continue after the first).
      */
-    public SingleSolutionListener(Bindings theBindings, int theMaxCount) {
+    public SingleSolutionListener(TermBindings theBindings, int theMaxCount) {
         super();
         this.bindings = theBindings;
         this.maxCount = theMaxCount;

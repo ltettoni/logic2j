@@ -23,8 +23,8 @@ import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.api.model.var.TermBindings;
+import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 
 /**
  * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. 
@@ -37,8 +37,8 @@ class UnificationTester {
 
     public Object left;
     public Object right;
-    public Bindings leftVars;
-    public Bindings rightVars;
+    public TermBindings leftVars;
+    public TermBindings rightVars;
     private Boolean expectedResult = null; // TODO Good candidates for hamctest 1.3
     private Boolean result = null; // TODO Good candidates for hamctest 1.3
 
@@ -52,7 +52,7 @@ class UnificationTester {
     }
 
     /**
-     * Every term has its own {@link Bindings}.
+     * Every term has its own {@link TermBindings}.
      * 
      * @param theLeft
      * @param theRight
@@ -60,18 +60,18 @@ class UnificationTester {
     private void init2(Term theLeft, Term theRight) {
         this.left = TermApi.normalize(theLeft, null);
         this.right = TermApi.normalize(theRight, null);
-        this.leftVars = new Bindings(this.left);
-        this.rightVars = new Bindings(this.right);
+        this.leftVars = new TermBindings(this.left);
+        this.rightVars = new TermBindings(this.right);
     }
 
     /**
-     * Share same {@link Bindings} for both terms.
+     * Share same {@link TermBindings} for both terms.
      * 
      * @param theLeft
      * @param theRight
      * @param bindings
      */
-    private void init1(Object theLeft, Object theRight, Bindings bindings) {
+    private void init1(Object theLeft, Object theRight, TermBindings bindings) {
         this.left = TermApi.normalize(theLeft, null);
         this.right = TermApi.normalize(theRight, null);
         this.leftVars = bindings;
@@ -144,7 +144,7 @@ class UnificationTester {
         assertEquals("Same post-unification state signatures", signatureLR.toString(), signatureRL.toString());
     }
 
-    public void unify2ways(Object theLeft, Object theRight, Bindings bindings) {
+    public void unify2ways(Object theLeft, Object theRight, TermBindings bindings) {
         init1(theLeft, theRight, bindings);
         final StringBuilder signatureLR = new StringBuilder();
         final boolean unifyLR = unifyLR(signatureLR);
@@ -165,7 +165,7 @@ class UnificationTester {
      * @param theBindings1
      * @param theBindings2
      */
-    private void appendSignature(StringBuilder theSignature, Bindings theBindings1, Bindings theBindings2) {
+    private void appendSignature(StringBuilder theSignature, TermBindings theBindings1, TermBindings theBindings2) {
         theSignature.append(theBindings1.toString());
         theSignature.append("  ");
         theSignature.append(theBindings2.toString());

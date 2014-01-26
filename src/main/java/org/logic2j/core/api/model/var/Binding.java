@@ -33,8 +33,8 @@ import org.logic2j.core.api.model.symbol.Var;
  * A {@link Binding} fully describes all possible states of a Prolog {@link Var}iable: free, chain-linked to another
  * {@link Var}iable, or assigned to a literal term (either an atom, or a {@link Struct} that can further have {@link Var}iables.
  * In the case of assignement to a literal term, two informations are required: the reference to the term hierarchy, and
- * to the {@link Bindings} that define the current state of its variables.
- * By extension, a {@link Binding} can also be used to hold a single pair of (Object term, Bindings), which is more convenient
+ * to the {@link TermBindings} that define the current state of its variables.
+ * By extension, a {@link Binding} can also be used to hold a single pair of (Object term, TermBindings), which is more convenient
  * than having to program with 2 references at a time.
  * 
  * The field values of a {@link Binding} depend on its "type" according to the following table:
@@ -48,7 +48,7 @@ import org.logic2j.core.api.model.symbol.Var;
  * LITERAL  bindings of the literal term  ref to term    null                                         ?
  * LINK     null                          null           ref to a Binding representing the bound referrer  null
  * 
- * (*) In case of a variable, there is a method in Bindings that post-assigns the "term"
+ * (*) In case of a variable, there is a method in TermBindings that post-assigns the "term"
  *     member to point to the variable, this allows retrieving its name for reporting
  *     bindings to the application code.
  * </pre>
@@ -63,7 +63,7 @@ public class Binding {
     
     // The magic "pair" of values that make one single handle to hold a complete Prolog term
     private Object term;
-    private Bindings bindings;
+    private TermBindings bindings;
     
     private Binding link;
 
@@ -78,7 +78,7 @@ public class Binding {
     }
 
     /**
-     * Shallow copy constructor, used from peer class {@link Bindings}.
+     * Shallow copy constructor, used from peer class {@link TermBindings}.
      * 
      * @param originalToCopy
      */
@@ -92,7 +92,7 @@ public class Binding {
 
     /**
      * Create a free {@link Binding}. The {@link #referrer} remains null for the moment but
-     * will be assigned in {@link Bindings#Bindings(Object)} constructor.
+     * will be assigned in {@link TermBindings#Bindings(Object)} constructor.
      * @return A free Binding.
      */
     public static Binding newFree() {
@@ -109,9 +109,9 @@ public class Binding {
      * 
      * @param theLiteral
      * @param theBindings
-     * @return This is used to return a pair (Term, Bindings) where needed.
+     * @return This is used to return a pair (Term, TermBindings) where needed.
      */
-    public static Binding newLiteral(Object theLiteral, Bindings theBindings) {
+    public static Binding newLiteral(Object theLiteral, TermBindings theBindings) {
         final Binding instance = new Binding();
         instance.type = BindingType.LITERAL;
         instance.term = theLiteral;
@@ -129,7 +129,7 @@ public class Binding {
      * @param theBindings When theTerm is a literal, here are its current value bindings
      * @return true if a binding was done, false otherwise. Caller needs to know if future un-binding will be needed.
      */
-    public boolean bindTo(Object theTerm, Bindings theBindings) {
+    public boolean bindTo(Object theTerm, TermBindings theBindings) {
         if (!isFree()) {
             throw new PrologNonSpecificError("Cannot overwrite a non-free Binding! Was trying to bind existing " + this + " to " + theTerm + " with " + theBindings + " ");
         }
@@ -217,7 +217,7 @@ public class Binding {
       final PartialTermVisitor<Void> registrer = new TermVisitorBase<Void>() {
 
         @Override
-        public Void visit(Var theVar, Bindings theBindings) {
+        public Void visit(Var theVar, TermBindings theBindings) {
           if (theVar.isAnonymous()) {
             return null;
           }
@@ -233,7 +233,7 @@ public class Binding {
         }
 
         @Override
-        public Void visit(Struct theStruct, Bindings theBindings) {
+        public Void visit(Struct theStruct, TermBindings theBindings) {
           // Recurse through children
           for (int i = 0; i < theStruct.getArity(); i++) {
             TermApi.accept(this, theStruct.getArg(i), theBindings);
@@ -263,10 +263,10 @@ public class Binding {
           TermApi.assignIndexes(copy, 0);
         }
       }
-      // Create new Bindings
-      Bindings resultBindings;
+      // Create new TermBindings
+      TermBindings resultBindings;
       
-      resultBindings = new Bindings(copy);
+      resultBindings = new TermBindings(copy);
       
       // Bind new vars to the final bindings of original free vars
       for (Entry<Var, Binding> entry : bindingOfOriginalVar.entrySet()) {
@@ -285,7 +285,7 @@ public class Binding {
      * @param theBindingOfOriginalVar
      * @param theNewVarsFromOld 
      */
-    private Object copy(Object theTerm, Bindings theBindings, IdentityHashMap<Var, Binding> theBindingOfOriginalVar, IdentityHashMap<Var, Var> theNewVarsFromOld) {
+    private Object copy(Object theTerm, TermBindings theBindings, IdentityHashMap<Var, Binding> theBindingOfOriginalVar, IdentityHashMap<Var, Var> theNewVarsFromOld) {
       if (theBindings.isEmpty()) {
         return theTerm;
       }
@@ -358,11 +358,11 @@ public class Binding {
 
     /**
      * When {@link #getType()} is {@link BindingType#LITERAL}, the {@link #getTerm()} is a literal {@link Struct}, and this represents the
-     * {@link Bindings} storing the content of those variables.
+     * {@link TermBindings} storing the content of those variables.
      * 
-     * @return The {@link Bindings} associated to the Term from {@link #getTerm()}.
+     * @return The {@link TermBindings} associated to the Term from {@link #getTerm()}.
      */
-    public Bindings getBindings() {
+    public TermBindings getBindings() {
         return this.bindings;
     }
 

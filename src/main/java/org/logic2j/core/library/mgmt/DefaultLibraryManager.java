@@ -31,7 +31,7 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
@@ -41,7 +41,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Difference between number of args in Prolog's primitive invocation, and number of varargs
-     * passed to Java implementation of the primitive: (SolutionListener theListener, Bindings theBindings, Object...)
+     * passed to Java implementation of the primitive: (SolutionListener theListener, TermBindings theBindings, Object...)
      */
     private static final int NB_EXTRA_PARAMS = 2;
 
@@ -154,8 +154,8 @@ public class DefaultLibraryManager implements LibraryManager {
                     throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
                 }
                 i++;
-                if (!(Bindings.class.isAssignableFrom(paramTypes[i]))) {
-                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + Bindings.class);
+                if (!(TermBindings.class.isAssignableFrom(paramTypes[i]))) {
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + TermBindings.class);
                 }
                 i++;
                 boolean varargs = false;

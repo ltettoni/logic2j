@@ -24,7 +24,7 @@ import java.util.List;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.theory.TheoryManager;
 
@@ -43,7 +43,7 @@ public class DynamicClauseProvider implements ClauseProvider {
     }
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, TermBindings theGoalBindings) {
         final List<Clause> nonNull = new ArrayList<Clause>(this.clauses.size());
         for (final Clause cl : this.clauses) {
             if (cl != null) {

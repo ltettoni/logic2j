@@ -47,7 +47,7 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.solver.listener.UniqueSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
@@ -57,7 +57,7 @@ import org.logic2j.core.library.mgmt.Primitive;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(SolutionListener, Bindings, Term...)} method should actually take the goal and create a constraint graph, then
+ * TODO the {@link #select(SolutionListener, TermBindings, Term...)} method should actually take the goal and create a constraint graph, then
  * transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
@@ -81,12 +81,12 @@ public class RDBLibrary extends LibraryBase {
   }
 
   @Primitive
-  public Continuation select(SolutionListener theListener, Bindings theBindings, Object... theArguments) throws SQLException {
+  public Continuation select(SolutionListener theListener, TermBindings theBindings, Object... theArguments) throws SQLException {
     final Object theDataSource = theArguments[0];
     final Object theExpression = theArguments[1];
     final DataSource ds = bound(theDataSource, theBindings, DataSource.class);
 
-    final Bindings expressionBindings = theBindings.narrow(theExpression, Struct.class);
+    final TermBindings expressionBindings = theBindings.narrow(theExpression, Struct.class);
     ensureBindingIsNotAFreeVar(expressionBindings, "select/*");
     final Struct conditions = (Struct) expressionBindings.getReferrer();
 
@@ -105,7 +105,7 @@ public class RDBLibrary extends LibraryBase {
     }
     // Watch out this destroys the indexes in the original expression !!!!
     internalGoal = TermApi.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
-    final Bindings internalBindings = new Bindings(internalGoal);
+    final TermBindings internalBindings = new TermBindings(internalGoal);
     final UniqueSolutionListener internalListener = new UniqueSolutionListener(internalBindings);
     getProlog().getSolver().solveGoal(internalBindings, internalListener);
     final Object result = internalListener.getSolution().getBinding(resultVar);
@@ -285,7 +285,7 @@ public class RDBLibrary extends LibraryBase {
       final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
       // Vars referenced in projections
       final Var projectedVars[] = new Var[projectVars.size()];
-      Bindings originalBindings = null;
+      TermBindings originalBindings = null;
       int counter = 0;
       for (final Var var : projectVars) {
         final Var originalVar = TermApi.findVar(conditions, var.getName());
@@ -293,7 +293,7 @@ public class RDBLibrary extends LibraryBase {
           throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
         }
         projectedVars[counter] = originalVar;
-        final Bindings bindingsForVar = theBindings.findBindings(originalVar);
+        final TermBindings bindingsForVar = theBindings.findBindings(originalVar);
         if (bindingsForVar == null) {
           throw new InvalidTermException("Could no find originalBindings for variable " + var.getName());
         }
@@ -360,8 +360,8 @@ public class RDBLibrary extends LibraryBase {
    * @param desiredClassOrInterface
    * @return The object bound to a Term by its name
    */
-  private <T> T bound(Object theBinding, Bindings theBindings, Class<T> desiredClassOrInterface) {
-    final Bindings b = theBindings.narrow(theBinding, Struct.class);
+  private <T> T bound(Object theBinding, TermBindings theBindings, Class<T> desiredClassOrInterface) {
+    final TermBindings b = theBindings.narrow(theBinding, Struct.class);
     ensureBindingIsNotAFreeVar(b, "bound");
     final Struct bindingName = (Struct) b.getReferrer();
 

@@ -69,7 +69,7 @@ public final class BindingTrail {
             si.trailSize = TRAIL_STACK_CHUNK;
             si.trailStack = new int[si.trailSize];
             si.trailTop = -1; // Be ready for the first "markBeforeAddingBindings()"
-            // Bindings stack
+            // TermBindings stack
             si.bindingSize = BINDING_STACK_CHUNK;
             si.bindingStack = new Binding[si.bindingSize];
             si.bindingTop = -1; // We will be pushing just after this index

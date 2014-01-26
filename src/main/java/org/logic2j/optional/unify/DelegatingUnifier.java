@@ -30,12 +30,12 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.unify.BindingTrail;
 
 /**
  * A {@link Unifier} that uses reflecton to determine which method to invoke to unify 2 concrete {@link Term}s. The methods invoked must
- * have the exact signature unify(Term term1, Term term2, Bindings theBindings1, Bindings theBindings2) where the
+ * have the exact signature unify(Term term1, Term term2, TermBindings theBindings1, TermBindings theBindings2) where the
  * classes of term1 and term2 are the effective final subclasses.
  */
 public class DelegatingUnifier implements Unifier {
@@ -58,7 +58,7 @@ public class DelegatingUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Object term1, Bindings theBindings1, Object term2, Bindings theBindings2) {
+    public boolean unify(Object term1, TermBindings theBindings1, Object term2, TermBindings theBindings2) {
         for (final Method method : this.getClass().getMethods()) {
             if ("unify".equals(method.getName())) {
                 final Class<?>[] parameterTypes = method.getParameterTypes();
@@ -100,7 +100,7 @@ public class DelegatingUnifier implements Unifier {
 
     // TODO The methods should be in protected visibility, we just have to make sure we can invoke them by reflection!
 
-    public boolean unify(Struct s1, Struct s2, Bindings theBindings1, Bindings theBindings2) {
+    public boolean unify(Struct s1, Struct s2, TermBindings theBindings1, TermBindings theBindings2) {
         // Signatures are {@link String#intern()}alized so OK to check by reference
         if (s1.getPredicateSignature() != s2.getPredicateSignature()) {
             return false;
@@ -114,20 +114,20 @@ public class DelegatingUnifier implements Unifier {
         return true;
     }
 
-    public boolean unify(Struct term1, Var term2, Bindings theBindings1, Bindings theBindings2) {
+    public boolean unify(Struct term1, Var term2, TermBindings theBindings1, TermBindings theBindings2) {
         // Second term is var, we prefer have it first
         return unify(term2, term1, theBindings2, theBindings1);
     }
 
-    public boolean unify(Var term1, Struct term2, Bindings theBindings1, Bindings theBindings2) {
+    public boolean unify(Var term1, Struct term2, TermBindings theBindings1, TermBindings theBindings2) {
         return unifyVarToWhatever(term1, term2, theBindings1, theBindings2);
     }
 
-    public boolean unify(Var term1, Var term2, Bindings theBindings1, Bindings theBindings2) {
+    public boolean unify(Var term1, Var term2, TermBindings theBindings1, TermBindings theBindings2) {
         return unifyVarToWhatever(term1, term2, theBindings1, theBindings2);
     }
 
-    private boolean unifyVarToWhatever(Var var1, Term term2, Bindings theBindings1, Bindings theBindings2) {
+    private boolean unifyVarToWhatever(Var var1, Term term2, TermBindings theBindings1, TermBindings theBindings2) {
         // Variable:
         // - when anonymous, unifies
         // - when free, bind it
@@ -163,7 +163,7 @@ public class DelegatingUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+    public boolean unify(Object goalTerm, TermBindings theGoalBindings, DataFact dataFact) {
         throw new PrologNonSpecificError("Not implemented");
     }
 }

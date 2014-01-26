@@ -28,8 +28,8 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.api.model.var.TermBindings;
+import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 
 /**
@@ -77,19 +77,17 @@ public class MultipleSolutionsHolder {
     public List<Object> binding(final String theVariableName) {
         final List<Object> results = new ArrayList<Object>();
 
-        final Bindings originalBindings = this.solutionHolder.bindings;
+        final TermBindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                final Bindings bnd = originalBindings;
+                final TermBindings bnd = originalBindings;
                 final Object term = bnd.getReferrer();
                 final Var var = TermApi.findVar(term, theVariableName);
                 if (var == null) {
                     throw new InvalidTermException("No variable named \"" + theVariableName + "\" in " + term);
                 }
-//                final Object substituted = TermApi.substituteOld(var, bnd);
-//                final Object substituted = var.substituteOld(bnd, null);
                 final Object substituted = var.bindingWithin(bnd).followLinks().substitute().getTerm();
                 results.add(substituted);
                 return super.onSolution();
@@ -109,12 +107,12 @@ public class MultipleSolutionsHolder {
      */
     public List<Map<String, Object>> bindings() {
         final List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
-        final Bindings originalBindings = this.solutionHolder.bindings;
+        final TermBindings originalBindings = this.solutionHolder.bindings;
         final SolutionListener listener = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution() {
-                final Bindings bnd = originalBindings;
+                final TermBindings bnd = originalBindings;
                 results.add(bnd.explicitBindings(FreeVarRepresentation.FREE));
                 return super.onSolution();
             }

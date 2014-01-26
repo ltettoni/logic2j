@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.logic2j.core.api.model.Solution;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.solver.listener.IterableSolutionListener;
 import org.logic2j.core.api.solver.listener.UniqueSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
@@ -47,9 +47,9 @@ public class SolutionHolder implements Iterable<Solution> {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
 
     protected final PrologImplementation prolog;
-    protected final Bindings bindings;
+    protected final TermBindings bindings;
 
-    public SolutionHolder(PrologImplementation theProlog, Bindings theBindings) {
+    public SolutionHolder(PrologImplementation theProlog, TermBindings theBindings) {
         this.prolog = theProlog;
         this.bindings = theBindings;
     }

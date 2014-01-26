@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.DataFact;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Functionality to unify terms together. Various implementations possible.
@@ -35,7 +35,7 @@ public interface Unifier {
      * @param theBindings2
      * @return true if term1 and term2 could be unified together.
      */
-    boolean unify(Object term1, Bindings theBindings1, Object term2, Bindings theBindings2);
+    boolean unify(Object term1, TermBindings theBindings1, Object term2, TermBindings theBindings2);
 
     /**
      * Unify a Term against plain data.
@@ -44,7 +44,7 @@ public interface Unifier {
      * @param theGoalBindings
      * @param dataFact
      */
-    boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact);
+    boolean unify(Object goalTerm, TermBindings theGoalBindings, DataFact dataFact);
 
     /**
      * Deunify to the last unification that returned true.

@@ -28,7 +28,7 @@ import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
 
@@ -48,21 +48,21 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, Bindings, SolutionListener)} method. The goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, TermBindings, SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      * 
      * @param theSolutionListener
      * @param theGoalBindings
      */
     @Override
-    public Continuation solveGoal(final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+    public Continuation solveGoal(final TermBindings theGoalBindings, final SolutionListener theSolutionListener) {
         // Check if we will have to deal with DataFacts in this session of solving.
         // This slightly improves performance - we can bypass calling the mehod that deals with that
         this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         return solveGoalRecursive(theGoalBindings.getReferrer(), theGoalBindings, theSolutionListener);
     }
 
-    Continuation solveGoalRecursive(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+    Continuation solveGoalRecursive(final Object goalTerm, final TermBindings theGoalBindings, final SolutionListener theSolutionListener) {
         if (isDebug) {
             logger.debug(">> Entering solveRecursive(\"{}\") with {}", goalTerm, theGoalBindings);
         }
@@ -137,7 +137,7 @@ public class DefaultSolver implements Solver {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
             }
             final Object argumentOfCall = goalStruct.getArg(0);
-            final Bindings effectiveGoalBindings = theGoalBindings.narrow(argumentOfCall, Term.class);
+            final TermBindings effectiveGoalBindings = theGoalBindings.narrow(argumentOfCall, Term.class);
             if (effectiveGoalBindings == null) {
                 throw new InvalidTermException("Argument to primitive 'call' may not be a free variable, was " + goalStruct.getArg(0));
             }
@@ -191,7 +191,7 @@ public class DefaultSolver implements Solver {
         return result;
     }
 
-    private Continuation solveAgainstClauseProviders(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+    private Continuation solveAgainstClauseProviders(final Object goalTerm, final TermBindings theGoalBindings, final SolutionListener theSolutionListener) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
         final Unifier unifier = this.prolog.getUnifier();
 
@@ -223,11 +223,11 @@ public class DefaultSolver implements Solver {
                 }
 
                 // Clone the variables so that we won't mutate our current clause's ones
-                final Bindings immutableVars = clause.getBindings();
+                final TermBindings immutableVars = clause.getBindings();
 
                 // TODO apparently we cannot afford a shallow copy?
-                // final Bindings clauseVars = Bindings.shallowCopyWithSameReferrer(immutableVars);
-                final Bindings clauseVars = Bindings.deepCopyWithSameReferrer(immutableVars);
+                // final TermBindings clauseVars = TermBindings.shallowCopyWithSameReferrer(immutableVars);
+                final TermBindings clauseVars = TermBindings.deepCopyWithSameReferrer(immutableVars);
 
                 final Object clauseHead = clause.getHead();
                 if (isDebug) {
@@ -310,7 +310,7 @@ public class DefaultSolver implements Solver {
         return result;
     }
 
-    private Continuation solveAgainstDataProviders(final Object goalTerm, final Bindings theGoalBindings, final SolutionListener theSolutionListener) {
+    private Continuation solveAgainstDataProviders(final Object goalTerm, final TermBindings theGoalBindings, final SolutionListener theSolutionListener) {
         final Unifier unifier = this.prolog.getUnifier();
         Continuation result = Continuation.CONTINUE;
         // Now fetch data

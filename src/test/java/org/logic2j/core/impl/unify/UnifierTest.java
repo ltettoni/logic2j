@@ -29,8 +29,8 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.api.model.var.TermBindings;
+import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
@@ -131,7 +131,7 @@ public class UnifierTest extends PrologTestBase {
         this.tester.setExpectedUnificationResult(true);
         this.tester.setExpectedNbBindings(0);
         final Object term = unmarshall("X");
-        this.tester.unify2ways(term, term, new Bindings(term));
+        this.tester.unify2ways(term, term, new TermBindings(term));
     }
 
     /**
@@ -140,9 +140,9 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void unifyVarToBoundTerm() { // Once a nasty bug
         final Object varA = TermApi.normalize(new Var("A"), null);
-        final Bindings bindingsA = new Bindings(varA);
+        final TermBindings bindingsA = new TermBindings(varA);
         final Object tlong = TermApi.normalize(123L, null);
-        final boolean aToLiteral = this.unifier.unify(varA, bindingsA, tlong, new Bindings(tlong));
+        final boolean aToLiteral = this.unifier.unify(varA, bindingsA, tlong, new TermBindings(tlong));
         logger.info("A={}", varA);
         logger.info("A={}", TermApi.substitute(varA, bindingsA));
         assertTrue(aToLiteral);
@@ -154,9 +154,9 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void unifyVarToVar() {
         final Object varA = TermApi.normalize(new Var("A"), null);
-        final Bindings bindingsA = new Bindings(varA);
+        final TermBindings bindingsA = new TermBindings(varA);
         final Object varX = TermApi.normalize(new Var("X"), null);
-        final Bindings bindingsX = new Bindings(varX);
+        final TermBindings bindingsX = new TermBindings(varX);
         final boolean xToA = this.unifier.unify(varA, bindingsA, varX, bindingsX);
         assertTrue(xToA);
         logger.info("X={}", varX);
@@ -174,12 +174,12 @@ public class UnifierTest extends PrologTestBase {
         final Long two = 2L;
         goalTerm = new Struct(Struct.FUNCTOR_COMMA, new Struct("unify", x, y), new Struct("unify", x, two));
         final Object goalTermNormalized = TermApi.normalize(goalTerm, null);
-        final Bindings goalVars = new Bindings(goalTermNormalized);
+        final TermBindings goalVars = new TermBindings(goalTermNormalized);
         final boolean unify = this.unifier.unify(x, goalVars, y, goalVars);
         final boolean unify2 = this.unifier.unify(x, goalVars, two, goalVars);
         logger.info("goalTerm={}", goalTerm);
         logger.info("Vars: {}", goalVars);
-        logger.info("Bindings: {}", goalVars.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.info("TermBindings: {}", goalVars.explicitBindings(FreeVarRepresentation.SKIPPED));
         logger.info("goalTerm={}", TermApi.substitute(goalTerm, goalVars));
         assertStaticallyEquals("unify(2,2),unify(2,2)", TermApi.substitute(goalTerm, goalVars));
         if (unify2) {
@@ -194,9 +194,9 @@ public class UnifierTest extends PrologTestBase {
     public void explicitBindings_1() {
         // Bind bindings1 to var
         final Object t0 = unmarshall("t(U)");
-        final Bindings bindings0 = new Bindings(t0);
+        final TermBindings bindings0 = new TermBindings(t0);
         final Object t1 = unmarshall("t(X)");
-        final Bindings bindings1 = new Bindings(t1);
+        final TermBindings bindings1 = new TermBindings(t1);
         final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0);
         assertEquals("t(X)", TermApi.substitute(t1, bindings1).toString());
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
@@ -209,9 +209,9 @@ public class UnifierTest extends PrologTestBase {
     public void explicitBindings_2() {
         // Bind bindings2 to const
         final Object t0 = unmarshall("t(U)");
-        final Bindings bindings0 = new Bindings(t0);
+        final TermBindings bindings0 = new TermBindings(t0);
         final Object t2 = unmarshall("t(123)");
-        final Bindings bindings2 = new Bindings(t2);
+        final TermBindings bindings2 = new TermBindings(t2);
         final boolean unify = this.unifier.unify(t0, bindings0, t2, bindings2);
         assertEquals("t(123)", TermApi.substitute(t0, bindings0).toString());
         assertEquals("{U=123}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
@@ -223,7 +223,7 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings_representation_1() {
         final Object t1 = unmarshall("t(X)");
-        final Bindings bindings1 = new Bindings(t1);
+        final TermBindings bindings1 = new TermBindings(t1);
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
         assertEquals("{X=X}", bindings1.explicitBindings(FreeVarRepresentation.FREE).toString());
@@ -234,7 +234,7 @@ public class UnifierTest extends PrologTestBase {
     public void explicitBindings_representation_2() {
         // No bindings since no variable in this one:
         final Object t2 = unmarshall("t(_)");
-        final Bindings bindings2 = new Bindings(t2);
+        final TermBindings bindings2 = new TermBindings(t2);
         assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.FREE_NOT_SELF).toString());
         assertEquals("{}", bindings2.explicitBindings(FreeVarRepresentation.FREE).toString());
@@ -245,11 +245,11 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings2() {
         final Object t0 = unmarshall("append2([1],[2,3],X)");
-        final Bindings bindings0 = new Bindings(t0);
+        final TermBindings bindings0 = new TermBindings(t0);
         // Bind bindings1 to var
         final Struct clause = (Struct) unmarshall("append2([E|T1],L2,[E|T2]) :- append2(T1,L2,T2)");
         final Object t1 = clause.getLHS(); // Term of first hitting clause
-        final Bindings bindings1 = new Bindings(t1);
+        final TermBindings bindings1 = new TermBindings(t1);
         final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0);
         assertTrue(unify);
         assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t0, bindings0).toString());
@@ -259,7 +259,7 @@ public class UnifierTest extends PrologTestBase {
         // Bind bindings2 to const
         final Object t1b = clause.getRHS(); // Body of first hitting clause
         final Object t2 = unmarshall("append2([],L2,L2)"); // Body of second hitting clause
-        final Bindings bindings2 = new Bindings(t2);
+        final TermBindings bindings2 = new TermBindings(t2);
         final boolean unify2 = this.unifier.unify(t1b, bindings1, t2, bindings2);
         assertTrue(unify2);
         assertEquals("append2([], [2,3], [2,3])", TermApi.substitute(t1b, bindings1).toString());

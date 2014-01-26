@@ -34,7 +34,7 @@ import org.logic2j.core.api.model.PartialTermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.mgmt.LibraryContent;
 
@@ -60,7 +60,7 @@ public class TermApi {
      * @param theBindings
      * @return The transformed result as per theVisitor's logic
      */
-    public static <T> T accept(PartialTermVisitor<T> theVisitor, Object theTerm, Bindings theBindings) {
+    public static <T> T accept(PartialTermVisitor<T> theVisitor, Object theTerm, TermBindings theBindings) {
         // Most common cases are Struct and Var, handled by super interface TermVisitor
         if (theTerm instanceof Struct) {
             return theVisitor.visit((Struct) theTerm, theBindings);
@@ -243,55 +243,10 @@ public class TermApi {
      * @param theBindings
      * @return Old substituted term only
      */
-    public static Object substitute(Object theTerm, Bindings theBindings) {
+    public static Object substitute(Object theTerm, TermBindings theBindings) {
         return Binding.newLiteral(theTerm, theBindings).substitute().getTerm();
     }
     
-    /**
-     * Substitute by resolving bound vars to their target variables or literal terms.
-     * 
-     * @param theTerm
-     * @param theBindings
-     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
-     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
-     *         know if the returned reference was cloned or not, so it must never mutate it!
-     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
-     */
-    @Deprecated
-    public static Object substituteOld(Object theTerm, Bindings theBindings) {
-        return substituteOld(theTerm, theBindings, null);
-    }
-
-    /**
-     * Substitute by resolving bound vars to their target variables or literal terms.
-     * 
-     * @param theTerm
-     * @param theBindings
-     * @param remapFreeBindingsToOriginalVars Specify non-null to remap free variables found in a Binding onto their original Var.
-     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
-     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
-     *         know if the returned reference was cloned or not, so it must never mutate it!
-     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
-     */
-    @Deprecated
-    public static Object substituteOld(Object theTerm, Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
-        if (theBindings.isEmpty()) {
-            return theTerm;
-        }
-        if (theTerm instanceof Struct) {
-            if (((Struct) theTerm).index == 0) {
-                // Struct has no variables below
-                return theTerm;
-            }
-            return ((Struct) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
-        }
-        if (theTerm instanceof Var) {
-            return ((Var) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
-        }
-        // Not a Term but a plain Java object - cannot substitute
-        return theTerm;
-    }
-
     // TODO Currently unused - but probably we should!
     void avoidCycle(Struct theClause) {
         final List<Term> visited = new ArrayList<Term>(20);
@@ -457,7 +412,7 @@ public class TermApi {
         return new PartialTermVisitor<Object>() {
 
             @Override
-            public Object visit(Struct theStruct, Bindings theBindings) {
+            public Object visit(Struct theStruct, TermBindings theBindings) {
                 if (remapper.containsKey(theStruct)) {
                     return remapper.get(theStruct);
                 }
@@ -471,7 +426,7 @@ public class TermApi {
             }
 
             @Override
-            public Object visit(Var theVar, Bindings theBindings) {
+            public Object visit(Var theVar, TermBindings theBindings) {
                 if (remapper.containsKey(theVar)) {
                     return remapper.get(theVar);
                 }
@@ -513,7 +468,7 @@ public class TermApi {
         };
     }
 
-    public static Object clone(Object theTerm, Bindings theBindings, Map<Object, Object> remapper) {
+    public static Object clone(Object theTerm, TermBindings theBindings, Map<Object, Object> remapper) {
         final Map<Object, Object> effectiveRemapper = remapper != null ? remapper : Collections.emptyMap();
         final Object cloned = accept(cloningVisitor(effectiveRemapper), theTerm, theBindings);
         return cloned;
@@ -536,5 +491,53 @@ public class TermApi {
       return s;
     }
 
+    //---------------------------------------------------------------------------
+    // Oldies
+    //---------------------------------------------------------------------------
+
+    /**
+     * Substitute by resolving bound vars to their target variables or literal terms.
+     * 
+     * @param theTerm
+     * @param theBindings
+     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
+     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
+     *         know if the returned reference was cloned or not, so it must never mutate it!
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
+     */
+    @Deprecated
+    public static Object substituteOld(Object theTerm, TermBindings theBindings) {
+        return substituteOld(theTerm, theBindings, null);
+    }
+
+    /**
+     * Substitute by resolving bound vars to their target variables or literal terms.
+     * 
+     * @param theTerm
+     * @param theBindings
+     * @param remapFreeBindingsToOriginalVars Specify non-null to remap free variables found in a Binding onto their original Var.
+     * @return An equivalent Term with all bound variables pointing to literals, this implies a deep cloning of substructures that contain
+     *         variables. When no variables are bound, then the same reference as theTerm is returned. Important note: the caller cannot
+     *         know if the returned reference was cloned or not, so it must never mutate it!
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
+     */
+    @Deprecated
+    public static Object substituteOld(Object theTerm, TermBindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+        if (theBindings.isEmpty()) {
+            return theTerm;
+        }
+        if (theTerm instanceof Struct) {
+            if (((Struct) theTerm).index == 0) {
+                // Struct has no variables below
+                return theTerm;
+            }
+            return ((Struct) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
+        }
+        if (theTerm instanceof Var) {
+            return ((Var) theTerm).substituteOld(theBindings, remapFreeBindingsToOriginalVars);
+        }
+        // Not a Term but a plain Java object - cannot substitute
+        return theTerm;
+    }
 
 }

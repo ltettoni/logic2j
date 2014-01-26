@@ -20,7 +20,7 @@ package org.logic2j.core.api.model;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.theory.TheoryManager;
 
@@ -42,9 +42,9 @@ public class Clause {
     private final Object content; // Immutable, not null
 
     /**
-     * An empty {@link Bindings} reserved for unifying this clause with goals.
+     * An empty {@link TermBindings} reserved for unifying this clause with goals.
      */
-    private final Bindings bindings; // Immutable, not null
+    private final TermBindings bindings; // Immutable, not null
 
     private final boolean isFact;
     private final boolean isWithClauseFunctor;
@@ -64,7 +64,7 @@ public class Clause {
         // }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
         this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
-        this.bindings = new Bindings(this.content);
+        this.bindings = new TermBindings(this.content);
         this.isFact = evaluateIsFact();
         this.isWithClauseFunctor = evaluateIsWithClauseFunctor();
         this.head = evaluateHead();
@@ -72,7 +72,7 @@ public class Clause {
     }
 
     /**
-     * Copy constructor. Will clone the {@link Clause}'s content and the current {@link Bindings}.
+     * Copy constructor. Will clone the {@link Clause}'s content and the current {@link TermBindings}.
      * 
      * @param theOriginal
      */
@@ -84,7 +84,7 @@ public class Clause {
             this.content = theOriginal;
         }
         // Clone the block of variables
-        this.bindings = Bindings.deepCopyWithSameReferrer(theOriginal.getBindings());
+        this.bindings = TermBindings.deepCopyWithSameReferrer(theOriginal.getBindings());
         this.isFact = theOriginal.isFact;
         this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
         this.head = theOriginal.head;
@@ -188,7 +188,7 @@ public class Clause {
     /**
      * @return the bindings
      */
-    public Bindings getBindings() {
+    public TermBindings getBindings() {
         return this.bindings;
     }
 

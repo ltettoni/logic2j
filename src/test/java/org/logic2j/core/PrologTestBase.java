@@ -32,7 +32,7 @@ import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
@@ -176,7 +176,7 @@ public abstract class PrologTestBase {
      */
     protected Binding unmarshallAsBinding(CharSequence theString) {
       final Object term = unmarshall(theString);
-      final Binding binding = Binding.newLiteral(term, new Bindings(term));
+      final Binding binding = Binding.newLiteral(term, new TermBindings(term));
       return binding;
     }
     

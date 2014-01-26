@@ -28,7 +28,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -51,7 +51,7 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -72,23 +72,23 @@ public class FunctionLibrary extends LibraryBase {
 
     
     @Primitive
-    public Continuation map(SolutionListener theListener, final Bindings theBindings, final Object thePredicate, final Object theInput, final Object theOutput) {
+    public Continuation map(SolutionListener theListener, final TermBindings theBindings, final Object thePredicate, final Object theInput, final Object theOutput) {
         if (!(thePredicate instanceof String)) {
             throw new InvalidTermException("Predicate for map/3 must be a String, was " + thePredicate);
         }
-        final Bindings theInputBindings = theBindings.narrow(theInput, Object.class);
+        final TermBindings theInputBindings = theBindings.narrow(theInput, Object.class);
         if (theInputBindings == null) {
             // Anonymous var. No need to try to unify it will succeed. Notify one solution.
             notifySolution(theListener);
         } else {
-            final Bindings theOutputBindings = theBindings.narrow(theOutput, Object.class);
+            final TermBindings theOutputBindings = theBindings.narrow(theOutput, Object.class);
 
             final Object[] termAndBindings = new Object[] { theInputBindings.getReferrer(), theInputBindings };
 
 //            transformOnce((String) thePredicate, termAndBindings, true, true);
             transformAll((String) thePredicate, termAndBindings, true, true);
 
-            final boolean unified = unify(termAndBindings[0], (Bindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
+            final boolean unified = unify(termAndBindings[0], (TermBindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
             notifyIfUnified(unified, theListener);
         }
         return Continuation.CONTINUE;
@@ -142,18 +142,18 @@ public class FunctionLibrary extends LibraryBase {
             }
             if (anyTransform) {
                 // If any children have changed, we need to build a new structure
-                // Merge all bindings (every transformation might have produced a new Bindings)
+                // Merge all bindings (every transformation might have produced a new TermBindings)
 
                 // Collect all transformed results
-                final List<Bindings> allTransformedBindings = new ArrayList<>();
+                final List<TermBindings> allTransformedBindings = new ArrayList<>();
                 final List<Object> allTransformedArgs = new ArrayList<>();
                 for (final Object[] pair : preTransformedArgs) {
-                    allTransformedBindings.add((Bindings) pair[1]);
+                    allTransformedBindings.add((TermBindings) pair[1]);
                     allTransformedArgs.add(pair[0]);
                 }
 
                 final IdentityHashMap<Object, Object> remappedVar = new IdentityHashMap<>();
-                final Bindings mergedBindings = Bindings.merge(allTransformedBindings, remappedVar);
+                final TermBindings mergedBindings = TermBindings.merge(allTransformedBindings, remappedVar);
                 termAndBindings[1] = mergedBindings;
 
                 // Clone the structure
@@ -219,7 +219,7 @@ public class FunctionLibrary extends LibraryBase {
      */
     public boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings) {
         final Object inputTerm = termAndBindings[0];
-        final Bindings inputBindings = (Bindings) termAndBindings[1];
+        final TermBindings inputBindings = (TermBindings) termAndBindings[1];
         logger.debug(" > Enter transformOnce with {}, {}", termAndBindings[0], termAndBindings[1]);
         if (inputTerm instanceof Var) {
             final Var var = (Var) inputTerm;
@@ -240,7 +240,7 @@ public class FunctionLibrary extends LibraryBase {
         final Var transOut = new Var("TransOut");
         final Struct transformationGoal = (Struct) TermApi.normalize(new Struct(theTransformationPredicate, transIn, transOut), /* no library to consider */
                 null);
-        final Bindings transformationBindings = new Bindings(transformationGoal);
+        final TermBindings transformationBindings = new TermBindings(transformationGoal);
 
         // Now bind our transIn var to the original term. Note: we won't have to remember and unbind here since our modified bindings are a
         // local var!
@@ -251,9 +251,9 @@ public class FunctionLibrary extends LibraryBase {
             @Override
             public Continuation onSolution() {
                 logger.debug("solution: transformationBindings={}", transformationBindings);
-                final Bindings narrowed = transformationBindings.narrow(transOut, Object.class);
+                final TermBindings narrowed = transformationBindings.narrow(transOut, Object.class);
                 termAndBindings[0] = narrowed.getReferrer();
-                termAndBindings[1] = Bindings.deepCopyWithSameReferrer(narrowed);
+                termAndBindings[1] = TermBindings.deepCopyWithSameReferrer(narrowed);
                 logger.debug("solution: narrow={} bindings={}", termAndBindings[0], termAndBindings[1]);
                 // Don't need anything more than the first solution. Also this value will be returned
                 // from Solver.solveGoal() and this will indicate we reached one solution!

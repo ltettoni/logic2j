@@ -20,7 +20,7 @@ package org.logic2j.core.api;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Interface to access the inference engine algorithm, in order to solve goals.
@@ -36,6 +36,6 @@ public interface Solver {
      * @return Indicate how the solving has completed, either {@value Continuation#CONTINUE} for a successful
      *         complete result, or if the solving has been cut or aborted by user callback.
      */
-    Continuation solveGoal(Bindings theGoal, SolutionListener theSolutionListener);
+    Continuation solveGoal(TermBindings theGoal, SolutionListener theSolutionListener);
 
 }

@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 /**
@@ -210,7 +210,7 @@ public class TermApiTest extends PrologTestBase {
         //
         final Binding subst = orig.substitute();
         assertSame("targetAtom", subst.getTerm());
-        // assertTrue(orig.sameAs(subst));  // Because after substitution the subst Binding has an empty Bindings
+        // assertTrue(orig.sameAs(subst));  // Because after substitution the subst Binding has an empty TermBindings
     }
 
     @Test

@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 
 /**
@@ -244,15 +244,15 @@ public class ExecutionPruningTest extends PrologTestBase {
     public void userCancel() {
         final Object term = unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingListener listenerAll = new CountingListener();
-        this.prolog.getSolver().solveGoal(new Bindings(term), listenerAll);
+        this.prolog.getSolver().solveGoal(new TermBindings(term), listenerAll);
         assertEquals(10, listenerAll.counter);
         // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
-        this.prolog.getSolver().solveGoal(new Bindings(term), maxOneSolution);
+        this.prolog.getSolver().solveGoal(new TermBindings(term), maxOneSolution);
         assertEquals(1, maxOneSolution.counter);
         // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
-        this.prolog.getSolver().solveGoal(new Bindings(term), maxFiveSolutions);
+        this.prolog.getSolver().solveGoal(new TermBindings(term), maxFiveSolutions);
         assertEquals(5, maxFiveSolutions.counter);
     }
 

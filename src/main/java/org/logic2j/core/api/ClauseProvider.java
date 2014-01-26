@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Provide {@link Clause}s (facts or rules) from various content sources to the {@link Solver} inference
@@ -27,7 +27,7 @@ import org.logic2j.core.api.model.var.Bindings;
  * Notice the {@link Iterable} nature of the returned clauses. This allows implementors to return iterable results sets, for example from
  * database cursors. The {@link Solver} does not need all clauses in memory at once!
  * 
- * Contract: The {@link Solver} will never cache the result from {@link #listMatchingClauses(Object, Bindings)},
+ * Contract: The {@link Solver} will never cache the result from {@link #listMatchingClauses(Object, TermBindings)},
  * therefore think of caching in case of remote content.
  */
 public interface ClauseProvider {
@@ -44,6 +44,6 @@ public interface ClauseProvider {
      *         it is not critical to return {@link Clause}s whose head would eventually not be used by the
      *         {@link Solver}.
      */
-    Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings);
+    Iterable<Clause> listMatchingClauses(Object theGoal, TermBindings theGoalBindings);
 
 }

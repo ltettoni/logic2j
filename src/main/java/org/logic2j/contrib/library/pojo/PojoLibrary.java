@@ -27,7 +27,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -49,7 +49,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -95,8 +95,8 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation bind(final SolutionListener theListener, Bindings theBindings, Object theBindingName, Object theTarget) {
-        final Bindings nameBindings = theBindings.narrow(theBindingName, Object.class);
+    public Continuation bind(final SolutionListener theListener, TermBindings theBindings, Object theBindingName, Object theTarget) {
+        final TermBindings nameBindings = theBindings.narrow(theBindingName, Object.class);
         ensureBindingIsNotAFreeVar(nameBindings, "bind/2");
         final Object nameTerm = nameBindings.getReferrer();
         final String name = nameTerm.toString();
@@ -107,13 +107,13 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation property(final SolutionListener theListener, Bindings theBindings, Object thePojo, Object thePropertyName, Object theValue) {
+    public Continuation property(final SolutionListener theListener, TermBindings theBindings, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
-        final Bindings bindingsForPojo = theBindings.narrow(thePojo, Object.class);
+        final TermBindings bindingsForPojo = theBindings.narrow(thePojo, Object.class);
         ensureBindingIsNotAFreeVar(bindingsForPojo, "property/3");
         final Object pojo = bindingsForPojo.getReferrer();
         // Second argument
-        final Bindings bindingsForPropertyName = theBindings.narrow(thePropertyName, String.class);
+        final TermBindings bindingsForPropertyName = theBindings.narrow(thePropertyName, String.class);
         ensureBindingIsNotAFreeVar(bindingsForPropertyName, "property/3");
         final String propertyName = (String) bindingsForPropertyName.getReferrer();
         //

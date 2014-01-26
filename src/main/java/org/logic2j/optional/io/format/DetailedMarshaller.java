@@ -20,7 +20,7 @@ package org.logic2j.optional.io.format;
 
 import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
 /**
@@ -29,10 +29,10 @@ import org.logic2j.core.impl.DefaultTermMarshaller;
 public class DetailedMarshaller extends DefaultTermMarshaller {
 
     /**
-     * Variables are reported with their offset in their {@link Bindings}.
+     * Variables are reported with their offset in their {@link TermBindings}.
      */
     @Override
-    public CharSequence visit(Var theVar, Bindings theBindings) {
+    public CharSequence visit(Var theVar, TermBindings theBindings) {
         if (theVar.isAnonymous()) {
             // The anonymous variable has no index - won't report it!
             return Var.ANONYMOUS_VAR_NAME;

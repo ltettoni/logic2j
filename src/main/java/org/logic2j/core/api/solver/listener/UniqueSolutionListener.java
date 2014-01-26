@@ -21,7 +21,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Solution;
 import org.logic2j.core.api.model.exception.IllegalSolutionException;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * A {@link SolutionListener} that will collect only the first solution, yet making sure there is no other solution provided by the goal
@@ -29,7 +29,7 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 
-    public UniqueSolutionListener(Bindings theBindings) {
+    public UniqueSolutionListener(TermBindings theBindings) {
         // We wish to make sure the first solution is the ONLY one, so we
         // are going to try to reach further, at least 2 solutions.
         // Then we will be able to determine for sure if there was actually

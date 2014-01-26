@@ -19,7 +19,7 @@ package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.exception.IllegalSolutionException;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * A {@link SolutionListener} that will collect only the first solution but won't care if the goal solver can provide more. It will atually
@@ -27,7 +27,7 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public class FirstSolutionListener extends SingleSolutionListener {
 
-    public FirstSolutionListener(Bindings theBindings) {
+    public FirstSolutionListener(TermBindings theBindings) {
         // We are only interested in the first result so we will tell the SolutionListener
         // to stop the solver after the first solution. Using this argument we won't be
         // able to tell if there are actually more, or not. But we are not interested.

@@ -34,7 +34,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologImplementation;
 
 /**
@@ -74,7 +74,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     // ---------------------------------------------------------------------------
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, Bindings theGoalBindings) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, TermBindings theGoalBindings) {
         if (!(theGoal instanceof Struct)) {
             throw new InvalidTermException("Need a Struct term instead of " + theGoal);
         }

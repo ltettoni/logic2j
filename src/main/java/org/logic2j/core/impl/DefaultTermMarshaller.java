@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.io.operator.Operator;
 import org.logic2j.core.impl.io.parse.tuprolog.Parser;
 
@@ -75,8 +75,8 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             // Rich formatting takes care of operators and lists
             return this.toStringAsArgY(theTerm, Operator.OP_HIGHEST);
         }
-        if (theTerm instanceof Bindings) {
-            final Bindings b = (Bindings) theTerm;
+        if (theTerm instanceof TermBindings) {
+            final TermBindings b = (TermBindings) theTerm;
             return accept(b.getReferrer(), b);
         }
         return accept(theTerm, null);
@@ -92,13 +92,13 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
      * @param theBindings When null, will format the structure with raw variables names. When not null, will resolve bound vars.
      */
     @Override
-    public CharSequence visit(Struct theStruct, Bindings theBindings) {
+    public CharSequence visit(Struct theStruct, TermBindings theBindings) {
         final CharSequence formatted = formatStruct(theStruct, theBindings);
         return formatted;
     }
 
     @Override
-    public CharSequence visit(Var theVar, Bindings theBindings) {
+    public CharSequence visit(Var theVar, TermBindings theBindings) {
         final StringBuilder sb = new StringBuilder();
         if (theBindings == null) {
             sb.append(theVar.getName());
@@ -150,13 +150,13 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
     // ---------------------------------------------------------------------------
 
     /**
-     * Just a derivable shortcut to {@link TermApi#accept(PartialTermVisitor, Object, Bindings)}.
+     * Just a derivable shortcut to {@link TermApi#accept(PartialTermVisitor, Object, TermBindings)}.
      * 
      * @param theTerm
      * @param theBindings
      * @return The formatted term.
      */
-    protected CharSequence accept(Object theTerm, Bindings theBindings) {
+    protected CharSequence accept(Object theTerm, TermBindings theBindings) {
       return TermApi.accept(this, theTerm, theBindings);
     }
     
@@ -167,7 +167,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
      * 
      * @param theBindings
      */
-    private CharSequence formatStruct(Struct theStruct, Bindings theBindings) {
+    private CharSequence formatStruct(Struct theStruct, TermBindings theBindings) {
         // empty list case
         if (theStruct.isEmptyList()) {
             return Struct.FUNCTOR_LIST_EMPTY;
@@ -204,7 +204,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
         return sb;
     }
 
-    private CharSequence formatPListRecursive(Struct theStruct, Bindings theBindings) {
+    private CharSequence formatPListRecursive(Struct theStruct, TermBindings theBindings) {
         final Object head = theStruct.getLHS();
         final Object tail = theStruct.getRHS();
         if (TermApi.isList(tail)) {

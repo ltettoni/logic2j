@@ -26,7 +26,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
 import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Describe a {@link Primitive}, which is either a:
@@ -76,7 +76,7 @@ public class PrimitiveInfo {
         this.isVarargs = theVarargs;
     }
 
-    public Object invoke(Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) {
+    public Object invoke(Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
         final Object result = this.library.dispatch(this.methodName, theGoalStruct, theGoalVars, theListener);
         if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
             return result;
@@ -124,7 +124,7 @@ public class PrimitiveInfo {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    private Object invokeReflective(Struct theGoalStruct, Bindings theGoalVars, SolutionListener theListener) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private Object invokeReflective(Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final int arity = theGoalStruct.getArity();
         final int nbargs = this.isVarargs ? 3 : (2 + arity);
         final Object[] args = new Object[nbargs];

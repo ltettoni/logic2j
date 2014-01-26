@@ -22,13 +22,13 @@ import java.util.Map;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
-import org.logic2j.core.api.model.var.Bindings.FreeVarRepresentation;
+import org.logic2j.core.api.model.var.TermBindings;
+import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 
 /**
  * Describes one of the solution(s) to a goal; this includes the resolved {@link Term} (with all bound variables substituted to their actual
  * values - only free variables remaining), and all variable bindings exposed.<br/>
- * The internal storage is denormalized at the time the object is instantiated, see {@link #Solution(Bindings)}.
+ * The internal storage is denormalized at the time the object is instantiated, see {@link #Solution(TermBindings)}.
  * If the goal to be solved was
  * g(X, a(Y, Z)) with X already bound to 2, and Z bound to 3 when the goal was solved, then Solution provides: {@link #getSolution()}==g(2,
  * a(Y, 3)) , {@link #getBindings()}=={X -> 2, Y -> null, Z -> 3} , {@link #getBinding(String)}==2 when argument is "X".
@@ -51,11 +51,10 @@ public class Solution {
      * 
      * @note This costs a little: in logic2j the solver is very efficient, but extracting results is a little more costly. This is caused by
      *       the shared-structures approach.
-     * @note Maybe it could be more efficient to just clone the {@link Bindings} and then calculate the solution on demand?
+     * @note Maybe it could be more efficient to just clone the {@link TermBindings} and then calculate the solution on demand?
      * @param theBindings
      */
-    public Solution(Bindings theBindings) {
-//        this.solution = TermApi.substituteOld(theBindings.getReferrer(), theBindings);
+    public Solution(TermBindings theBindings) {
         this.solution = theBindings.toLiteralBinding().substitute().getTerm();
         this.bindings = theBindings.explicitBindings(FreeVarRepresentation.NULL);
     }

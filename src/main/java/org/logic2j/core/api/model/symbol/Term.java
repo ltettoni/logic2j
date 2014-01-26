@@ -23,7 +23,7 @@ import java.util.Collection;
 import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
 /**
@@ -54,7 +54,7 @@ public abstract class Term implements Serializable {
     public static final int ANON_INDEX = -2;
 
     /**
-     * For {@link Var}s: defines the position index within {@link Bindings} where the {@link Binding} of this variable can be found.<br/>
+     * For {@link Var}s: defines the position index within {@link TermBindings} where the {@link Binding} of this variable can be found.<br/>
      * For a {@link Struct}: defines the maximal index of any variables that can be found, recursively, under all arguments.<br/>
      * For anyghing else: value is 0 to indicate it was processed (non-default).<br/>
      * The default value is NO_INDEX.
@@ -105,7 +105,7 @@ public abstract class Term implements Serializable {
     // Visitor
     // ---------------------------------------------------------------------------
     
-    public abstract <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings);
+    public abstract <T> T accept(TermVisitor<T> theVisitor, TermBindings theBindings);
     
     
     // ---------------------------------------------------------------------------

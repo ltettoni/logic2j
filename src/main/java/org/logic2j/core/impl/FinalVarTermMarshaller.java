@@ -21,7 +21,7 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Like {@link DefaultTermMarshaller} but for every free var, report the variable at the end of
@@ -30,25 +30,25 @@ import org.logic2j.core.api.model.var.Bindings;
 public class FinalVarTermMarshaller extends DefaultTermMarshaller {
 
     // Never null
-    private final Bindings bindings;
+    private final TermBindings bindings;
 
     /**
      * @param theProlog
      * @param theBindingsForCriteria
      */
-    public FinalVarTermMarshaller(PrologImplementation theProlog, Bindings theBindingsForCriteria) {
+    public FinalVarTermMarshaller(PrologImplementation theProlog, TermBindings theBindingsForCriteria) {
         super(theProlog);
         this.bindings = theBindingsForCriteria;
     }
 
 
     @Override
-    protected CharSequence accept(Object theTerm, Bindings theBindingsIgnored) {
+    protected CharSequence accept(Object theTerm, TermBindings theBindingsIgnored) {
       return TermApi.accept(this, theTerm, theBindingsIgnored);
     }
     
     @Override
-    public CharSequence visit(Var theVar, Bindings theBindingsIgnored) {
+    public CharSequence visit(Var theVar, TermBindings theBindingsIgnored) {
         if (theVar.isAnonymous()) {
             return Var.ANONYMOUS_VAR_NAME;
         }

@@ -96,10 +96,10 @@ public class BenchmarkTest extends PrologTestBase {
         getProlog().solve(goal).number();
         ProfilingInfo.reportAll("Number of solutions to " + goal);
 
-        // Bindings
+        // TermBindings
         ProfilingInfo.setTimer1();
         getProlog().solve(goal).all().bindings();
-        ProfilingInfo.reportAll("Bindings of solutions to " + goal);
+        ProfilingInfo.reportAll("TermBindings of solutions to " + goal);
     }
 
     @Ignore("Use this in conjuction with jvisualvm to profile")

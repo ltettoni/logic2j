@@ -20,7 +20,7 @@ package org.logic2j.core.api.model;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * Generic Visitor for the two subclasses of the {@link Term} hierarchy: {@link Var} and {@link Struct}.
@@ -29,8 +29,8 @@ import org.logic2j.core.api.model.var.Bindings;
  */
 public interface TermVisitor<T> {
 
-    T visit(Var theVar, Bindings theBindings);
+    T visit(Var theVar, TermBindings theBindings);
 
-    T visit(Struct theStruct, Bindings theBindings);
+    T visit(Struct theStruct, TermBindings theBindings);
 
 }

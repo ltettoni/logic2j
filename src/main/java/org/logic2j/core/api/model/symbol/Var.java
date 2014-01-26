@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologInternalError;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 /**
  * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
@@ -94,17 +94,17 @@ public final class Var extends Term {
     }
 
     /**
-     * Obtain the current {@link Binding} to this Var among all contained in the specified {@link Bindings}.
-     * Principally, this would search through all {@link Binding}s contained in the specified {@link Bindings} and return the one that
-     * refer to this {@link Var}. But since the {@link Bindings} is indexed, let's use the index!
+     * Obtain the current {@link Binding} to this Var among all contained in the specified {@link TermBindings}.
+     * Principally, this would search through all {@link Binding}s contained in the specified {@link TermBindings} and return the one that
+     * refer to this {@link Var}. But since the {@link TermBindings} is indexed, let's use the index!
      * Notice that the variable index must have been assigned, and
      * this var must NOT be the anonymous variable (that cannot be bound to anything).
      * 
      * @param theBindings
      * @return The current binding of this Var.
      */
-    // TODO Does this method belong here, or to the Bindings class?
-    public Binding bindingWithin(Bindings theBindings) {
+    // TODO Does this method belong here, or to the TermBindings class?
+    public Binding bindingWithin(TermBindings theBindings) {
         if (this.index < 0) {
             // An error situation
             if (this.index == NO_INDEX) {
@@ -135,43 +135,6 @@ public final class Var extends Term {
         return null;
     }
 
-    /**
-     * Expensive!
-     * 
-     * @param theBindings The {@link Bindings} within which this {@link Var} is referenced
-     * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
-     * @return Substituted term.
-     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
-     */
-    @Deprecated
-    public
-    Object substituteOld(Bindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
-        if (isAnonymous()) {
-            // Anonymous variable is never bound - won't substitute
-            return this;
-        }
-        final Binding binding = bindingWithin(theBindings).followLinks();
-        if (binding.isLiteral()) {
-            // For a literal, we have a reference to the literal term and to its own variables, so recurse further
-            return TermApi.substituteOld(binding.getTerm(), binding.getBindings(), remapFreeBindingsToOriginalVars);
-        }
-        if (binding.isFree()) {
-            // Free variable has no value, if we have a remapping table let's use it
-            if (remapFreeBindingsToOriginalVars != null) {
-                final Var originalVar = remapFreeBindingsToOriginalVars.get(binding);
-                if (originalVar != null) {
-                    return originalVar;
-                }
-                return ANONYMOUS_VAR;
-            }
-            // Return this free variable
-            return this;
-        }
-        // Neither literal nor free? That's not possible.
-        throw new PrologInternalError("substituteOld() internal error, " + this + " is neither literal nor free");
-    }
-
-    
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
      * 
@@ -230,7 +193,7 @@ public final class Var extends Term {
     }
 
     @Override
-    public <T> T accept(TermVisitor<T> theVisitor, Bindings theBindings) {
+    public <T> T accept(TermVisitor<T> theVisitor, TermBindings theBindings) {
         return theVisitor.visit(this, theBindings);
     }
 
@@ -259,4 +222,45 @@ public final class Var extends Term {
         return this.name.hashCode();
     }
 
+    //---------------------------------------------------------------------------
+    // Oldies
+    //---------------------------------------------------------------------------
+
+    /**
+     * Expensive!
+     * 
+     * @param theBindings The {@link TermBindings} within which this {@link Var} is referenced
+     * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
+     * @return Substituted term.
+     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
+     */
+    @Deprecated
+    public
+    Object substituteOld(TermBindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
+        if (isAnonymous()) {
+            // Anonymous variable is never bound - won't substitute
+            return this;
+        }
+        final Binding binding = bindingWithin(theBindings).followLinks();
+        if (binding.isLiteral()) {
+            // For a literal, we have a reference to the literal term and to its own variables, so recurse further
+            return TermApi.substituteOld(binding.getTerm(), binding.getBindings(), remapFreeBindingsToOriginalVars);
+        }
+        if (binding.isFree()) {
+            // Free variable has no value, if we have a remapping table let's use it
+            if (remapFreeBindingsToOriginalVars != null) {
+                final Var originalVar = remapFreeBindingsToOriginalVars.get(binding);
+                if (originalVar != null) {
+                    return originalVar;
+                }
+                return ANONYMOUS_VAR;
+            }
+            // Return this free variable
+            return this;
+        }
+        // Neither literal nor free? That's not possible.
+        throw new PrologInternalError("substituteOld() internal error, " + this + " is neither literal nor free");
+    }
+
+    
 }

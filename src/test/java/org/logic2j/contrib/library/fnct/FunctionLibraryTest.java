@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
@@ -119,7 +119,7 @@ public class FunctionLibraryTest extends PrologTestBase {
      */
     private void assertNotTransformed(String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
         final Object originalTerm = unmarshall(termToParse);
-        final Bindings originalBindings = new Bindings(originalTerm);
+        final TermBindings originalBindings = new TermBindings(originalTerm);
         logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
         final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
@@ -138,13 +138,13 @@ public class FunctionLibraryTest extends PrologTestBase {
      */
     private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
         final Object originalTerm = unmarshall(termToParse);
-        final Bindings originalBindings = new Bindings(originalTerm);
+        final TermBindings originalBindings = new TermBindings(originalTerm);
         logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
         final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
         final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
                 MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter);
         assertTrue(transform);
-        final String substituted = TermApi.substitute(termAndBindings[0], (Bindings) termAndBindings[1]).toString();
+        final String substituted = TermApi.substitute(termAndBindings[0], (TermBindings) termAndBindings[1]).toString();
         assertEquals(toStringExpected, substituted);
         return termAndBindings;
     }

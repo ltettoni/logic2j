@@ -22,7 +22,7 @@ import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.unify.BindingTrail.StepInfo;
 import org.logic2j.core.impl.util.ReportUtils;
 
@@ -32,7 +32,7 @@ import org.logic2j.core.impl.util.ReportUtils;
 public class DefaultUnifier implements Unifier {
 
     @Override
-    public boolean unify(Object term1, Bindings theBindings1, Object term2, Bindings theBindings2) {
+    public boolean unify(Object term1, TermBindings theBindings1, Object term2, TermBindings theBindings2) {
         // Remember where we were so that we can deunify
         final StepInfo stepInfo = BindingTrail.markBeforeAddingBindings();
         // Now attempt unifiation
@@ -44,7 +44,7 @@ public class DefaultUnifier implements Unifier {
     }
 
     /**
-     * Starts the unification and recurse; this method DOES changes to both {@link Bindings} and could leave changes even if it eventually
+     * Starts the unification and recurse; this method DOES changes to both {@link TermBindings} and could leave changes even if it eventually
      * cannot succeed and will return false. You MUST make sure to deunify if it returned false.
      * 
      * @param stepInfo
@@ -56,9 +56,9 @@ public class DefaultUnifier implements Unifier {
      * @param theBindings1
      * @param term2
      * @param theBindings2
-     * @return true when unified, false when not (but partial changes might have been done to either {@link Bindings})
+     * @return true when unified, false when not (but partial changes might have been done to either {@link TermBindings})
      */
-    private boolean unifyInternal(StepInfo stepInfo, Object term1, Bindings theBindings1, Object term2, Bindings theBindings2) {
+    private boolean unifyInternal(StepInfo stepInfo, Object term1, TermBindings theBindings1, Object term2, TermBindings theBindings2) {
         if (term1 == term2 && theBindings1 == theBindings2) {
             // Atoms now share the same address - we can optimize their unification.
             // Notice that due to factorization, struct such as [H|T] may also share the same location
@@ -127,7 +127,7 @@ public class DefaultUnifier implements Unifier {
     }
 
     @Override
-    public boolean unify(Object goalTerm, Bindings theGoalBindings, DataFact dataFact) {
+    public boolean unify(Object goalTerm, TermBindings theGoalBindings, DataFact dataFact) {
         if (!(goalTerm instanceof Struct)) {
             // Only Struct could match a DataFact
             return false;
@@ -178,7 +178,7 @@ public class DefaultUnifier implements Unifier {
         */
     }
 
-    private boolean simpleUnification(StepInfo stepInfo, Object term1, Bindings theBindings1, Object term2) {
+    private boolean simpleUnification(StepInfo stepInfo, Object term1, TermBindings theBindings1, Object term2) {
         if (term1 instanceof Var) {
             final Var var1 = (Var) term1;
             if (var1.isAnonymous()) {

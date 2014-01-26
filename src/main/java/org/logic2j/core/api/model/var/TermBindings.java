@@ -44,17 +44,17 @@ import org.logic2j.core.impl.util.ReflectUtils;
  * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified.
  * @note The Term referring to this object is called the "referrer".<br/>
  * 
- *       TODO Improve performance: pre instantiation of {@link #Bindings(Term)} instead of many times during solving. See note on
+ *       TODO Improve performance: pre instantiation of {@link #TermBindings(Term)} instead of many times during solving. See note on
  *       constructor.
  */
-public class Bindings {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Bindings.class);
+public class TermBindings {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermBindings.class);
     private static boolean isDebug = logger.isDebugEnabled();
 
     private static final Binding[] EMPTY_BINDINGS_ARRAY = new Binding[0];
 
     /**
-     * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link Bindings} through their indexes.
+     * The Term, usually a {@link Struct}, whose {@link Var}iables refer to this {@link TermBindings} through their indexes.
      */
     private final Object referrer;
 
@@ -73,20 +73,20 @@ public class Bindings {
      * @param theNewReferrerTerm
      * @param theArrayOfBinding
      */
-    private Bindings(Object theNewReferrerTerm, Binding[] theArrayOfBinding) {
+    private TermBindings(Object theNewReferrerTerm, Binding[] theArrayOfBinding) {
         this.referrer = theNewReferrerTerm;
         this.bindings = theArrayOfBinding;
     }
 
     /**
-     * Allocate a {@link Bindings} to hold the values of all {@link Var}iables of a given term,
+     * Allocate a {@link TermBindings} to hold the values of all {@link Var}iables of a given term,
      * named further the "referrer", which is ususally a {@link Struct}.
      * 
      * @note This constructor needs quite a lot of processing - there should be ways to optimize it
      * @param theReferrer The Term whose {@link Var}iables's values are to be found in this object.
-     * @see Bindings#getReferrer() to further access theTerm
+     * @see TermBindings#getReferrer() to further access theTerm
      */
-    public Bindings(Object theReferrer) {
+    public TermBindings(Object theReferrer) {
         this.referrer = theReferrer;
         if (!(theReferrer instanceof Term)) {
             // Will be no variables - used constant empty array
@@ -112,7 +112,7 @@ public class Bindings {
             }
             if (index == Term.NO_INDEX) {
                 throw new InvalidTermException("Index of Term '" + theReferrer
-                                + "' is not yet initialized, cannot create Bindings because Term is not ready for inference. Normalize it first.");
+                                + "' is not yet initialized, cannot create TermBindings because Term is not ready for inference. Normalize it first.");
             }
 
             //
@@ -135,14 +135,14 @@ public class Bindings {
 
     /**
      * @param theOriginal
-     * @return A new {@link Bindings} with the same referrer, but a deep copy of the {@link Binding} array
+     * @return A new {@link TermBindings} with the same referrer, but a deep copy of the {@link Binding} array
      * contained therein. A new array is allocated, and every {@link Binding} is cloned also.
      */
-    public static Bindings deepCopyWithSameReferrer(Bindings theOriginal) {
+    public static TermBindings deepCopyWithSameReferrer(TermBindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
     }
 
-    private static Bindings deepCopyWithNewReferrer(Object theNewReferrer, Bindings theOriginal) {
+    private static TermBindings deepCopyWithNewReferrer(Object theNewReferrer, TermBindings theOriginal) {
         // Deep cloning of the individual Binding
         final Binding[] originalBindings = theOriginal.bindings;
         final int nbVars = originalBindings.length;
@@ -151,7 +151,7 @@ public class Bindings {
         for (int i = 0; i < nbVars; i++) {
             copiedArrayOfBinding[i] = new Binding(originalBindings[i]);
         }
-        return new Bindings(theNewReferrer, copiedArrayOfBinding);
+        return new TermBindings(theNewReferrer, copiedArrayOfBinding);
     }
 
     public Binding toLiteralBinding() {
@@ -159,19 +159,19 @@ public class Bindings {
     }
     
     // ---------------------------------------------------------------------------
-    // Methods for extracting values from variable Bindings
+    // Methods for extracting values from variable TermBindings
     // ---------------------------------------------------------------------------
 
     /**
-     * Create a new {@link Bindings} with the specified {@link Term} as new Referrer.
+     * Create a new {@link TermBindings} with the specified {@link Term} as new Referrer.
      * When Term is a bound {@link Var}iable, will follow through until a free Var or literal is found.
      * 
      * @param theTerm Must be either the referrer or on of the children {@link Term}s that was
-     *            used to instantiate this {@link Bindings}
+     *            used to instantiate this {@link TermBindings}
      * @param theClass of the expected referrer Term, or Object.class for any
      * @return null if theTerm was the anonymous {@link Var}iable
      */
-    public Bindings narrow(Object theTerm, Class<? extends Object> theClass) {
+    public TermBindings narrow(Object theTerm, Class<? extends Object> theClass) {
         if (theTerm instanceof Var) {
             final Var origin = (Var) theTerm;
             if (origin.isAnonymous()) {
@@ -182,10 +182,10 @@ public class Bindings {
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
                 case LITERAL:
-                    return new Bindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
+                    return new TermBindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
                 case FREE:
                     // Refocus on original var (we now know it is free), keep the same original bindings
-                    return new Bindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
+                    return new TermBindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
                 default:
                     throw new PrologInternalError("Should never have been here");
             }
@@ -200,8 +200,8 @@ public class Bindings {
             return this;
         }
 
-        // will return a shallow-copy Bindings with theTerm as referrer
-        return new Bindings(theTerm, this.bindings);
+        // will return a shallow-copy TermBindings with theTerm as referrer
+        return new TermBindings(theTerm, this.bindings);
     }
 
     /**
@@ -218,7 +218,7 @@ public class Bindings {
         for (final Binding initialBinding : this.bindings) {
             final Var originalVar = initialBinding.getReferrer();
             if (originalVar == null) {
-                throw new PrologNonSpecificError("Bindings not properly initialized: Binding " + initialBinding + " does not refer to Var (null)");
+                throw new PrologNonSpecificError("TermBindings not properly initialized: Binding " + initialBinding + " does not refer to Var (null)");
             }
             // The original name of our variable
             final String originalVarName = originalVar.getName();
@@ -302,7 +302,7 @@ public class Bindings {
     /**
      * Detection of goals in the form of X(...) where X is free.
      * 
-     * @return true if this {@link Bindings}'s {@link #getReferrer()} is a free variable.
+     * @return true if this {@link TermBindings}'s {@link #getReferrer()} is a free variable.
      */
     public boolean isFreeReferrer() {
         if (!(this.referrer instanceof Var)) {
@@ -313,14 +313,14 @@ public class Bindings {
     }
 
     /**
-     * Find the local bindings corresponding to one of the variables of the Struct referred to by this Bindings. FIXME Uh - what does this
+     * Find the local bindings corresponding to one of the variables of the Struct referred to by this TermBindings. FIXME Uh - what does this
      * mean??? 
      * TODO This method is only used once from a library - ensure it makes sense and belongs here
      * 
      * @param theVar
      * @return null when not found
      */
-    public Bindings findBindings(Var theVar) {
+    public TermBindings findBindings(Var theVar) {
         // Search root level
         int index = 0;
         for (final Binding binding : this.bindings) {
@@ -333,7 +333,7 @@ public class Bindings {
         // Not found: search deeper through bindings
         for (final Binding binding : this.bindings) {
             if (binding.getType() == BindingType.LITERAL) {
-                final Bindings foundDeeper = binding.getBindings().findBindings(theVar);
+                final TermBindings foundDeeper = binding.getBindings().findBindings(theVar);
                 if (foundDeeper != null) {
                     return foundDeeper;
                 }
@@ -368,7 +368,7 @@ public class Bindings {
 
     /**
      * @return The Term whose variable values are held in this structure, actually the one that was provided to the consturctor
-     *         {@link #Bindings(Term)}.
+     *         {@link #TermBindings(Term)}.
      */
     public Object getReferrer() {
         return this.referrer;
@@ -377,21 +377,21 @@ public class Bindings {
     /**
      * @param allBindings
      * @param theRemappedVars
-     * @return A new Bindings with a number of {@link Bindings} into a single new one, making sure all variables are
+     * @return A new TermBindings with a number of {@link TermBindings} into a single new one, making sure all variables are
      * distinct.
      */
-    public static Bindings merge(List<Bindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
+    public static TermBindings merge(List<TermBindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
-        final LinkedHashSet<Bindings> distinctBindings = new LinkedHashSet<>(allBindings);
+        final LinkedHashSet<TermBindings> distinctBindings = new LinkedHashSet<>(allBindings);
         // Count total number of vars
         int numberOfVars = 0;
-        for (final Bindings element : distinctBindings) {
+        for (final TermBindings element : distinctBindings) {
             numberOfVars += element.bindings.length;
         }
         // Allocate
         final Binding[] array = new Binding[numberOfVars];
         int index = 0;
-        for (final Bindings element : distinctBindings) {
+        for (final TermBindings element : distinctBindings) {
             for (final Binding binding : element.bindings) {
                 final Binding clonedBinding = new Binding(binding);
                 array[index] = clonedBinding;
@@ -402,7 +402,7 @@ public class Bindings {
                 index++;
             }
         }
-        return new Bindings(null, array);
+        return new TermBindings(null, array);
     }
 
     // ---------------------------------------------------------------------------
@@ -436,7 +436,7 @@ public class Bindings {
 
     /**
      * Determine how free (unbound) variables will be represented in resulting bindings returned by
-     * {@link Bindings#explicitBindings(FreeVarRepresentation)}.
+     * {@link TermBindings#explicitBindings(FreeVarRepresentation)}.
      */
     public enum FreeVarRepresentation {
         /**
@@ -485,7 +485,7 @@ public class Bindings {
         }
 
         @Override
-        public Var visit(Var theVar, Bindings theBindings) {
+        public Var visit(Var theVar, TermBindings theBindings) {
             if (theVar.getIndex() == this.index) {
                 this.binding.setReferrer(theVar);
                 // Job done - there are no other variable to set for this index, since goals are always factorized (see def of factorized

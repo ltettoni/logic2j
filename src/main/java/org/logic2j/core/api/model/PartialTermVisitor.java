@@ -23,7 +23,7 @@ import org.logic2j.core.api.model.symbol.TermApi;
 /**
  * Extension of the {@link TermVisitor} for type of classes that are NOT
  * subclasses of {@link Term}. 
- * This requires calling {@link TermApi#accept(PartialTermVisitor, Object, org.logic2j.core.api.model.var.Bindings)}
+ * This requires calling {@link TermApi#accept(PartialTermVisitor, Object, org.logic2j.core.api.model.var.TermBindings)}
  */
 public interface PartialTermVisitor<T> extends TermVisitor<T> {
 

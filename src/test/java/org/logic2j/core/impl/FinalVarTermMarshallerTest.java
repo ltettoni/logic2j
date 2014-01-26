@@ -22,14 +22,14 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.var.Bindings;
+import org.logic2j.core.api.model.var.TermBindings;
 
 public class FinalVarTermMarshallerTest extends PrologTestBase {
 
     @Test
     public void xBoundToY() {
         Object term = unmarshall("f(X, Y)");
-        Bindings bindings = new Bindings(term);
+        TermBindings bindings = new TermBindings(term);
         bindings.getBinding(0).bindTo(bindings.getBinding(1).getReferrer(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);
         assertEquals("f(Y, Y)", formatted);
@@ -38,7 +38,7 @@ public class FinalVarTermMarshallerTest extends PrologTestBase {
     @Test
     public void yBoundToX() {
         Object term = unmarshall("f(X, Y)");
-        Bindings bindings = new Bindings(term);
+        TermBindings bindings = new TermBindings(term);
         bindings.getBinding(1).bindTo(bindings.getBinding(0).getReferrer(), bindings);
         CharSequence formatted = new FinalVarTermMarshaller(getProlog(), bindings).marshall(term);
         assertEquals("f(X, X)", formatted);
