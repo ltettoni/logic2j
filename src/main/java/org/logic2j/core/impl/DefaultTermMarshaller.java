@@ -120,7 +120,7 @@ public class DefaultTermMarshaller implements TermMarshaller, PartialTermVisitor
             formatted = theVar.getName();
         } else {
             // Here it can only be a literal: recurse
-            formatted = accept(finalBinding.getTerm(), finalBinding.getBindings());
+            formatted = accept(finalBinding.getTerm(), finalBinding.getTermBindings());
         }
         return formatted;
     }

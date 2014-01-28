@@ -134,7 +134,8 @@ public class FunctionLibraryTest extends PrologTestBase {
      * @param termToParse
      * @param childrenBefore True for recursive pre-transformation (bottom-up)
      * @param childrenAfter True for recursive post-transformation (top-down)
-     * @return
+     * @return A Object[2] with the term and its binding
+     * FIXME Convert to a literal Binding
      */
     private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
         final Object originalTerm = unmarshall(termToParse);

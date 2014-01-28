@@ -223,7 +223,7 @@ public class DefaultSolver implements Solver {
                 }
 
                 // Clone the variables so that we won't mutate our current clause's ones
-                final TermBindings immutableVars = clause.getBindings();
+                final TermBindings immutableVars = clause.getTermBindings();
 
                 // TODO apparently we cannot afford a shallow copy?
                 // final TermBindings clauseVars = TermBindings.shallowCopyWithSameReferrer(immutableVars);

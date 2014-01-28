@@ -49,7 +49,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -57,7 +57,7 @@ public class PojoLibrary extends LibraryBase {
             final Object arg0 = theGoalStruct.getArg(0);
             final Object arg1 = theGoalStruct.getArg(1);
             if (theMethodName == "bind") {
-                result = bind(theListener, theGoalVars, arg0, arg1);
+                result = bind(theListener, theTermBindings, arg0, arg1);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -66,7 +66,7 @@ public class PojoLibrary extends LibraryBase {
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
             if (theMethodName == "property") {
-                result = property(theListener, theGoalVars, arg0, arg1, arg2);
+                result = property(theListener, theTermBindings, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -81,7 +81,7 @@ public class PojoLibrary extends LibraryBase {
      * 
      * @param theInstance
      * @param theExpression
-     * @return
+     * @return The value introspected
      */
     protected Object introspect(Object theInstance, String theExpression) {
         Object value;

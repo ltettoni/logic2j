@@ -42,15 +42,15 @@ import org.logic2j.core.api.model.symbol.Var;
  * <pre>
  * Value of fields depending on the BindingType
  * -----------------------------------------------------------------------------------------------------
- * type     bindings               term           link                                         referrer
+ * type     termBindings               term           link                                         referrer
  * -----------------------------------------------------------------------------------------------------
  * FREE     null                          null(*)        null                                         the variable that "points" to this
- * LITERAL  bindings of the literal term  ref to term    null                                         ?
+ * LITERAL  termBindings of the literal term  ref to term    null                                         ?
  * LINK     null                          null           ref to a Binding representing the bound referrer  null
  * 
  * (*) In case of a variable, there is a method in TermBindings that post-assigns the "term"
  *     member to point to the variable, this allows retrieving its name for reporting
- *     bindings to the application code.
+ *     termBindings to the application code.
  * </pre>
  */
 public class Binding {
@@ -63,7 +63,7 @@ public class Binding {
     
     // The magic "pair" of values that make one single handle to hold a complete Prolog term
     private Object term;
-    private TermBindings bindings;
+    private TermBindings termBindings;
     
     private Binding link;
 
@@ -85,14 +85,14 @@ public class Binding {
     Binding(Binding originalToCopy) {
         this.type = originalToCopy.type;
         this.term = originalToCopy.term;
-        this.bindings = originalToCopy.bindings;
+        this.termBindings = originalToCopy.termBindings;
         this.link = originalToCopy.link;
         this.referrer = originalToCopy.referrer;
     }
 
     /**
      * Create a free {@link Binding}. The {@link #referrer} remains null for the moment but
-     * will be assigned in {@link TermBindings#Bindings(Object)} constructor.
+     * will be assigned in {@link TermBindings#TermBindings(Object)} constructor.
      * @return A free Binding.
      */
     public static Binding newFree() {
@@ -115,7 +115,7 @@ public class Binding {
         final Binding instance = new Binding();
         instance.type = BindingType.LITERAL;
         instance.term = theLiteral;
-        instance.bindings = theBindings;
+        instance.termBindings = theBindings;
         // The other fields will remain null by default
         // instance.link = null;
         // instance.var = null;
@@ -126,7 +126,7 @@ public class Binding {
      * Modify this {@link Binding} by associateing it to a {@link Term}, may be a literal or another variable.
      * 
      * @param theTerm
-     * @param theBindings When theTerm is a literal, here are its current value bindings
+     * @param theBindings When theTerm is a literal, here are its current value termBindings
      * @return true if a binding was done, false otherwise. Caller needs to know if future un-binding will be needed.
      */
     public boolean bindTo(Object theTerm, TermBindings theBindings) {
@@ -146,12 +146,12 @@ public class Binding {
             }
             this.type = BindingType.LINK;
             this.term = null;
-            this.bindings = null;
+            this.termBindings = null;
             this.link = targetBinding;
         } else {
             this.type = BindingType.LITERAL;
             this.term = theTerm;
-            this.bindings = theBindings;
+            this.termBindings = theBindings;
             this.link = null;
         }
         // Bound OK
@@ -168,7 +168,7 @@ public class Binding {
       }
       this.type = BindingType.LINK;
       this.term = null;
-      this.bindings = null;
+      this.termBindings = null;
       this.link = targetBinding;
     }
     
@@ -180,12 +180,12 @@ public class Binding {
         // Resetting the following fields is not functionally necessary, we could leave previous data in, but
         // let's have the fields as documented, this will also help us while debugging to not find non-understandable garbage
         this.term = null;
-        this.bindings = null;
+        this.termBindings = null;
         this.link = null;
     }
 
     /**
-     * Follow chains of linked bindings, or remain on this (return this) if not a {@link BindingType#LINK}.
+     * Follow chains of linked termBindings, or remain on this (return this) if not a {@link BindingType#LINK}.
      * 
      * @note On problem queens(11,_) this is invoked 68M times, with 59M real steps followed, and a longest chain of 13!
      * 
@@ -205,7 +205,7 @@ public class Binding {
     
     // Maybe no longer needed
     public boolean sameAs(Binding that) {
-      return this==that || (this.getTerm()==that.getTerm() && this.getBindings()==that.getBindings());
+      return this==that || (this.getTerm()==that.getTerm() && this.getTermBindings()==that.getTermBindings());
     }
 
 
@@ -213,7 +213,7 @@ public class Binding {
       // Var found in traversal => final binding if referrer is free
       final IdentityHashMap<Var, Binding> bindingOfOriginalVar = new IdentityHashMap<Var, Binding>();
       
-      // First pass: identify vars and their final bindings
+      // First pass: identify vars and their final termBindings
       final PartialTermVisitor<Void> registrer = new TermVisitorBase<Void>() {
 
         @Override
@@ -228,7 +228,7 @@ public class Binding {
             return null;
           }
           // Is literal - will recurse
-          TermApi.accept(this, finalBinding.getTerm(), finalBinding.getBindings());
+          TermApi.accept(this, finalBinding.getTerm(), finalBinding.getTermBindings());
           return null;
         }
 
@@ -241,7 +241,7 @@ public class Binding {
           return null;
         }
       };
-      TermApi.accept(registrer, this.term, this.bindings);
+      TermApi.accept(registrer, this.term, this.termBindings);
       
       // Allocate new vars with same names are originals but will receive new indexes
       final IdentityHashMap<Var, Var> newVarsFromOld = new IdentityHashMap<Var, Var>();
@@ -251,7 +251,7 @@ public class Binding {
         newVarsFromOld.put(oldVar, newVar);
       }
       
-      Object copy = copy(this.term, this.bindings, bindingOfOriginalVar, newVarsFromOld);
+      Object copy = copy(this.term, this.termBindings, bindingOfOriginalVar, newVarsFromOld);
       
       if (copy==this.term) {
         return this;
@@ -268,7 +268,7 @@ public class Binding {
       
       resultBindings = new TermBindings(copy);
       
-      // Bind new vars to the final bindings of original free vars
+      // Bind new vars to the final termBindings of original free vars
       for (Entry<Var, Binding> entry : bindingOfOriginalVar.entrySet()) {
         Var oldVar = entry.getKey();
         Binding bindingOfOldVar = entry.getValue();
@@ -303,7 +303,7 @@ public class Binding {
           return newVar;
         }
         // Literal: recurse
-        return copy(finalBinding.term, finalBinding.bindings, theBindingOfOriginalVar, theNewVarsFromOld);
+        return copy(finalBinding.term, finalBinding.termBindings, theBindingOfOriginalVar, theNewVarsFromOld);
       }
       if (theTerm instanceof Struct) {
         final Struct struct = (Struct)theTerm;
@@ -362,8 +362,8 @@ public class Binding {
      * 
      * @return The {@link TermBindings} associated to the Term from {@link #getTerm()}.
      */
-    public TermBindings getBindings() {
-        return this.bindings;
+    public TermBindings getTermBindings() {
+        return this.termBindings;
     }
 
     public Var getReferrer() {
@@ -396,7 +396,7 @@ public class Binding {
             if (isDebug) {
                 // Java reference (hex address) when on isDebug
                 sb.append('@');
-                sb.append(Integer.toHexString(this.bindings.hashCode()));
+                sb.append(Integer.toHexString(this.termBindings.hashCode()));
             }
             break;
         case LINK:

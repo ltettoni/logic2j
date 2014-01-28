@@ -60,9 +60,7 @@ public class ExcelReader {
     }
 
     /**
-     * Cache and read from cache.
-     * 
-     * @return
+     * @return Data read from cache and cached.
      * @throws IOException
      */
     public TabularData readCached() throws IOException {
@@ -169,7 +167,8 @@ public class ExcelReader {
 
     /**
      * @param sheet
-     * @param row Row index
+     * @param rowNumber Row index
+     * @param theTargetClass
      * @return Null if row is empty or only containing nulls.
      */
     private <T> List<T> readRow(Sheet sheet, final int rowNumber, Class<T> theTargetClass) {

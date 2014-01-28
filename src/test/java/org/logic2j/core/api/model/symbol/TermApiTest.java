@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.var.Binding;
-import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 /**
@@ -195,7 +194,7 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("X");
         // Link the free var to another free var 
         final Binding target = unmarshallAsBinding("Y");
-        orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertEquals("X", subst.getTerm().toString()); // Quite insufficient
@@ -206,7 +205,7 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("X");
         // Bind the free var to a literal
         final Binding target = unmarshallAsBinding("targetAtom");
-        orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertSame("targetAtom", subst.getTerm());
@@ -233,11 +232,11 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("f(a,X)");
         // Bind the free var to another free var
         final Binding target = unmarshallAsBinding("Y");
-        orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertEquals("f(a, X)", subst.getTerm().toString());
-        assertEquals(orig.getBindings().toString(), subst.getBindings().toString());
+        assertEquals(orig.getTermBindings().toString(), subst.getTermBindings().toString());
     }
 
     @Test
@@ -245,7 +244,7 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("f(a,X)");
         // Bind the free var to a literal
         final Binding target = unmarshallAsBinding("targetAtom");
-        orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertEquals("f(a, targetAtom)", subst.getTerm().toString());
@@ -256,7 +255,7 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("f(X)");
         // Bind the free var to a literal
         final Binding target = unmarshallAsBinding("g(A,B)");
-        orig.getBindings().getBinding(0).bindTo(target.getTerm(), target.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertEquals("f(g(A, B))", subst.getTerm().toString());
@@ -267,9 +266,9 @@ public class TermApiTest extends PrologTestBase {
         final Binding orig = unmarshallAsBinding("f(X, Y)");
         // Bind the free var to a literal
         final Binding target1 = unmarshallAsBinding("g(A,B)");
-        orig.getBindings().getBinding(0).bindTo(target1.getTerm(), target1.getBindings());
+        orig.getTermBindings().getBinding(0).bindTo(target1.getTerm(), target1.getTermBindings());
         final Binding target2 = unmarshallAsBinding("h(C,D,E)");
-        orig.getBindings().getBinding(1).bindTo(target2.getTerm(), target2.getBindings());
+        orig.getTermBindings().getBinding(1).bindTo(target2.getTerm(), target2.getTermBindings());
         //
         final Binding subst = orig.substitute();
         assertEquals("f(g(A, B), h(C, D, E))", subst.getTerm().toString());

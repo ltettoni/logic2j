@@ -38,10 +38,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
     }
 
     /**
-     * TODO Almost the same code in {@link TabularDataFactProvider#listMatchingDataFacts(org.logic2j.core.api.model.symbol.Struct)
-     * acts(Struct)} we should use a
-     * common
-     * codebase
+     * TODO Almost the same code in {@link TabularDataFactProvider#listMatchingDataFacts(Object)} we should use a common codebase
      */
     @Override
     public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {

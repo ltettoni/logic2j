@@ -63,9 +63,6 @@ public class DynamicClauseProvider implements ClauseProvider {
         return this.clauses.size() - 1;
     }
 
-    /**
-     * @param theFact
-     */
     public void retractFactAt(int theIndex) {
         this.clauses.set(theIndex, null);
     }

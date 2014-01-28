@@ -40,22 +40,22 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         if (theMethodName == "nolog") {
-            result = nolog(theListener, theGoalVars, args);
+            result = nolog(theListener, theTermBindings, args);
         } else if (theMethodName == "write") {
-            result = write(theListener, theGoalVars, args);
+            result = write(theListener, theTermBindings, args);
         } else if (theMethodName == "info") {
-            result = info(theListener, theGoalVars, args);
+            result = info(theListener, theTermBindings, args);
         } else if (theMethodName == "isDebug") {
-            result = debug(theListener, theGoalVars, args);
+            result = debug(theListener, theTermBindings, args);
         } else if (theMethodName == "warn") {
-            result = warn(theListener, theGoalVars, args);
+            result = warn(theListener, theTermBindings, args);
         } else if (theMethodName == "error") {
-            result = error(theListener, theGoalVars, args);
+            result = error(theListener, theTermBindings, args);
         } else {
             result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }

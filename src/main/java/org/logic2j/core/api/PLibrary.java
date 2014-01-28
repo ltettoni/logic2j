@@ -29,6 +29,6 @@ public interface PLibrary {
 
     static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
 
-    Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener);
+    Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener);
 
 }

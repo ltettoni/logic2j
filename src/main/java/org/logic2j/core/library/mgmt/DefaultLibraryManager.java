@@ -86,10 +86,6 @@ public class DefaultLibraryManager implements LibraryManager {
         return extraContent;
     }
 
-    /**
-     * @param theLibrary
-     * @return
-     */
     private URL locationOfAssociatedTheory(PLibrary theLibrary) {
         final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
         final String name = libraryClass.getSimpleName() + ".prolog";
@@ -122,7 +118,7 @@ public class DefaultLibraryManager implements LibraryManager {
      * \=)
      * 
      * @param theLibrary
-     * @return
+     * @return The content of the library loaded
      */
     private LibraryContent loadLibraryInternal(PLibrary theLibrary) {
         final LibraryContent content = new LibraryContent();

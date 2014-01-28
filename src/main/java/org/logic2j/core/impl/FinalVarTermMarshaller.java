@@ -61,7 +61,7 @@ public class FinalVarTermMarshaller extends DefaultTermMarshaller {
         if (finalBinding.isFree()) {
             formatted = finalBinding.getReferrer().getName();
         } else {
-            formatted = TermApi.accept(this, finalBinding.getTerm(), finalBinding.getBindings());
+            formatted = TermApi.accept(this, finalBinding.getTerm(), finalBinding.getTermBindings());
         }
         return formatted;
     }

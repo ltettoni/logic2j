@@ -20,7 +20,6 @@ package org.logic2j.core.api.model;
 import java.util.Map;
 
 import org.logic2j.core.api.model.symbol.Term;
-import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;

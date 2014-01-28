@@ -174,14 +174,14 @@ public class UnifierTest extends PrologTestBase {
         final Long two = 2L;
         goalTerm = new Struct(Struct.FUNCTOR_COMMA, new Struct("unify", x, y), new Struct("unify", x, two));
         final Object goalTermNormalized = TermApi.normalize(goalTerm, null);
-        final TermBindings goalVars = new TermBindings(goalTermNormalized);
-        final boolean unify = this.unifier.unify(x, goalVars, y, goalVars);
-        final boolean unify2 = this.unifier.unify(x, goalVars, two, goalVars);
+        final TermBindings theTermBindings = new TermBindings(goalTermNormalized);
+        final boolean unify = this.unifier.unify(x, theTermBindings, y, theTermBindings);
+        final boolean unify2 = this.unifier.unify(x, theTermBindings, two, theTermBindings);
         logger.info("goalTerm={}", goalTerm);
-        logger.info("Vars: {}", goalVars);
-        logger.info("TermBindings: {}", goalVars.explicitBindings(FreeVarRepresentation.SKIPPED));
-        logger.info("goalTerm={}", TermApi.substitute(goalTerm, goalVars));
-        assertStaticallyEquals("unify(2,2),unify(2,2)", TermApi.substitute(goalTerm, goalVars));
+        logger.info("Vars: {}", theTermBindings);
+        logger.info("TermBindings: {}", theTermBindings.explicitBindings(FreeVarRepresentation.SKIPPED));
+        logger.info("goalTerm={}", TermApi.substitute(goalTerm, theTermBindings));
+        assertStaticallyEquals("unify(2,2),unify(2,2)", TermApi.substitute(goalTerm, theTermBindings));
         if (unify2) {
             this.unifier.deunify();
         }
@@ -245,27 +245,28 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings2() {
         final Object t0 = unmarshall("append2([1],[2,3],X)");
-        final TermBindings bindings0 = new TermBindings(t0);
+        final TermBindings tb0 = new TermBindings(t0);
         // Bind bindings1 to var
         final Struct clause = (Struct) unmarshall("append2([E|T1],L2,[E|T2]) :- append2(T1,L2,T2)");
         final Object t1 = clause.getLHS(); // Term of first hitting clause
-        final TermBindings bindings1 = new TermBindings(t1);
-        final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0);
+        final TermBindings tb1 = new TermBindings(t1);
+        final boolean unify = this.unifier.unify(t1, tb1, t0, tb0);
         assertTrue(unify);
-        assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t0, bindings0).toString());
-        assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t1, bindings1).toString());
-        assertEquals("{X=[1|_]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
-        assertEquals("{E=1, L2=[2,3], T1=[]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t0, tb0).toString());
+        assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t1, tb1).toString());
+        assertEquals("{X=[1|_]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+//        assertEquals("{X=[1|T2]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        assertEquals("{E=1, L2=[2,3], T1=[]}", tb1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         // Bind bindings2 to const
         final Object t1b = clause.getRHS(); // Body of first hitting clause
         final Object t2 = unmarshall("append2([],L2,L2)"); // Body of second hitting clause
         final TermBindings bindings2 = new TermBindings(t2);
-        final boolean unify2 = this.unifier.unify(t1b, bindings1, t2, bindings2);
+        final boolean unify2 = this.unifier.unify(t1b, tb1, t2, bindings2);
         assertTrue(unify2);
-        assertEquals("append2([], [2,3], [2,3])", TermApi.substitute(t1b, bindings1).toString());
+        assertEquals("append2([], [2,3], [2,3])", TermApi.substitute(t1b, tb1).toString());
         assertEquals("append2([], [2,3], [2,3])", TermApi.substitute(t2, bindings2).toString());
-        assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
-        assertEquals("{X=[1,2,3]}", bindings0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        assertEquals("{E=1, L2=[2,3], T1=[], T2=[2,3]}", tb1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        assertEquals("{X=[1,2,3]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         if (unify2) {
             this.unifier.deunify();
         }

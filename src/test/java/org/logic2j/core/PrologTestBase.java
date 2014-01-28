@@ -111,10 +111,9 @@ public abstract class PrologTestBase {
      * Make sure there are no soutions.
      * 
      * @param theGoals All goals to check for
-     * @return
      */
-    protected SolutionHolder assertNoSolution(CharSequence... theGoals) {
-        return internalAssert(0, theGoals);
+    protected void assertNoSolution(CharSequence... theGoals) {
+        internalAssert(0, theGoals);
     }
 
     /**
@@ -122,7 +121,7 @@ public abstract class PrologTestBase {
      * 
      * @param theNumber
      * @param theGoals All goals to check for
-     * @return
+     * @return The {@link MultipleSolutionsHolder}
      */
     protected MultipleSolutionsHolder assertNSolutions(int theNumber, CharSequence... theGoals) {
         return internalAssert(theNumber, theGoals).all();

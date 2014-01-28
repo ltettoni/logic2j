@@ -12,4 +12,3 @@ definition(tc(X), (committee(X), main(X))).
 transformForContext(X, Y) :- contextBinding(X, Y), info(simple_binding, X, Y), !.
 transformForContext(X, (Y1,Y2)) :- definition(X, (X1, X2)), info(matched_definition, X, X1, X2), transformForContext(X1, Y1), transformForContext(X2, Y2), !.
 transformForContext(X, X).
-

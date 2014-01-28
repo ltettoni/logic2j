@@ -51,7 +51,7 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -60,7 +60,7 @@ public class FunctionLibrary extends LibraryBase {
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
             if (theMethodName == "map") {
-                result = map(theListener, theGoalVars, arg0, arg1, arg2);
+                result = map(theListener, theTermBindings, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }

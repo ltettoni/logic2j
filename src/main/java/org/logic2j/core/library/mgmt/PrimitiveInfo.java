@@ -76,8 +76,8 @@ public class PrimitiveInfo {
         this.isVarargs = theVarargs;
     }
 
-    public Object invoke(Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
-        final Object result = this.library.dispatch(this.methodName, theGoalStruct, theGoalVars, theListener);
+    public Object invoke(Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) {
+        final Object result = this.library.dispatch(this.methodName, theGoalStruct, theTermBindings, theListener);
         if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
             return result;
         }
@@ -91,7 +91,7 @@ public class PrimitiveInfo {
             if (isDebug) {
                 logger.debug("PRIMITIVE > invocation of {}", this);
             }
-            return invokeReflective(theGoalStruct, theGoalVars, theListener);
+            return invokeReflective(theGoalStruct, theTermBindings, theListener);
         } catch (final IllegalArgumentException e) {
             throw e;
         } catch (final IllegalAccessException e) {
@@ -118,19 +118,18 @@ public class PrimitiveInfo {
 
     /**
      * @param theGoalStruct
-     * @param theGoalVars
-     * @param theGoalStruct
+     * @param theTermBindings
      * @throws InvocationTargetException
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    private Object invokeReflective(Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private Object invokeReflective(Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final int arity = theGoalStruct.getArity();
         final int nbargs = this.isVarargs ? 3 : (2 + arity);
         final Object[] args = new Object[nbargs];
         int i = 0;
         args[i++] = theListener;
-        args[i++] = theGoalVars;
+        args[i++] = theTermBindings;
         if (this.isVarargs) {
             // All arguments as an array
             final Object[] varargArray = new Object[arity];

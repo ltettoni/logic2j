@@ -51,11 +51,11 @@ public class LibraryBase implements PLibrary {
      * 
      * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
-     * @param theGoalVars Regular argument for invoking a primitive
+     * @param theTermBindings Regular argument for invoking a primitive
      * @param theListener Regular argument for invoking a primitive
      */
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theGoalVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, TermBindings theTermBindings, SolutionListener theListener) {
         return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
 

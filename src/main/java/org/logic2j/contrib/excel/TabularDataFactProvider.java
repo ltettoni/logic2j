@@ -91,7 +91,7 @@ public class TabularDataFactProvider implements DataFactProvider {
     }
 
     /**
-     * TODO Almost the same code in {@link TabularDataTermAdapter#terms(Object, AssertionMode) we should use a common
+     * TODO Almost the same code in {@link TabularDataTermAdapter#terms(Object, AssertionMode)} we should use a common
      * codebase
      */
     @Override

@@ -154,6 +154,9 @@ public class TermBindings {
         return new TermBindings(theNewReferrer, copiedArrayOfBinding);
     }
 
+    /**
+     * @return A new literal {@link Binding} expressing this {@link TermBindings}, using the {@link #getReferrer()} as the term.
+     */
     public Binding toLiteralBinding() {
         return Binding.newLiteral(this.referrer, this);
     }
@@ -182,7 +185,7 @@ public class TermBindings {
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
                 case LITERAL:
-                    return new TermBindings(finalBinding.getTerm(), finalBinding.getBindings().bindings);
+                    return new TermBindings(finalBinding.getTerm(), finalBinding.getTermBindings().bindings);
                 case FREE:
                     // Refocus on original var (we now know it is free), keep the same original bindings
                     return new TermBindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
@@ -212,7 +215,7 @@ public class TermBindings {
      * @return All variable bindings resolved, represented as specified for the case of free bindings.
      */
     public Map<String, Object> explicitBindings(FreeVarRepresentation theRepresentation) {
-        final IdentityHashMap<Binding, Var> bindingToInitialVar = finalBindingsToInitialVar();
+         final IdentityHashMap<Binding, Var> bindingToInitialVar = finalBindingsToInitialVar();
 
         final Map<String, Object> result = new TreeMap<String, Object>();
         for (final Binding initialBinding : this.bindings) {
@@ -233,7 +236,8 @@ public class TermBindings {
                                         + " can't be assigned a variable name");
                     }
                     final Object boundTerm = finalBinding.getTerm();
-                    final Object substitute = TermApi.substituteOld(boundTerm, finalBinding.getBindings(), bindingToInitialVar);
+                    final Object substitute = TermApi.substituteOld(boundTerm, finalBinding.getTermBindings(), bindingToInitialVar);
+//                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getTermBindings());
                     // Literals are not unbound terms, they are returned the same way for all types of representations asked
                     result.put(originalVarName, substitute);
                     break;
@@ -333,7 +337,7 @@ public class TermBindings {
         // Not found: search deeper through bindings
         for (final Binding binding : this.bindings) {
             if (binding.getType() == BindingType.LITERAL) {
-                final TermBindings foundDeeper = binding.getBindings().findBindings(theVar);
+                final TermBindings foundDeeper = binding.getTermBindings().findBindings(theVar);
                 if (foundDeeper != null) {
                     return foundDeeper;
                 }

@@ -35,20 +35,20 @@ public class CoreLibraryTest extends PrologTestBase {
     @Test
     public void unify() {
         final String[] SINGLE_SOLUTION_GOALS = new String[] { "2=2", //
-                "X=2", //
-                "2\\=4", //
-                "X=2, X\\=4", //
-                "X=2, 4\\=X", //
-                "X=2, Y=3, X\\=Y", //
+                        "X=2", //
+                        "2\\=4", //
+                        "X=2, X\\=4", //
+                        "X=2, 4\\=X", //
+                        "X=2, Y=3, X\\=Y", //
         };
         assertOneSolution(SINGLE_SOLUTION_GOALS);
 
         final String[] NO_SOLUTION_GOALS = new String[] { "1=2", //
-                "X=2,X=3", //
-                "4\\=4", //
-                "X=4, X\\=4", //
-                "X=4, 4\\=X", //
-                "X=2, Y=2, X\\=Y", //
+                        "X=2,X=3", //
+                        "4\\=4", //
+                        "X=4, X\\=4", //
+                        "X=4, 4\\=X", //
+                        "X=2, Y=2, X\\=Y", //
         };
         assertNoSolution(NO_SOLUTION_GOALS);
     }
@@ -111,7 +111,7 @@ public class CoreLibraryTest extends PrologTestBase {
         assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
         //
         final UniqueSolutionHolder sol = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]");
-        // assertEquals("coco(Com)", sol.binding("Expr").toString());
+        //        assertEquals("coco(Com)", sol.binding("Expr").toString());
         assertEquals("coco(Arg)", sol.binding("Expr").toString());
         assertEquals("coco", sol.binding("Pred").toString());
         assertNull(sol.binding("Arg"));

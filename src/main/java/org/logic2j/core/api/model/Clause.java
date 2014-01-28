@@ -44,7 +44,7 @@ public class Clause {
     /**
      * An empty {@link TermBindings} reserved for unifying this clause with goals.
      */
-    private final TermBindings bindings; // Immutable, not null
+    private final TermBindings termBindings; // Immutable, not null
 
     private final boolean isFact;
     private final boolean isWithClauseFunctor;
@@ -64,7 +64,7 @@ public class Clause {
         // }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
         this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
-        this.bindings = new TermBindings(this.content);
+        this.termBindings = new TermBindings(this.content);
         this.isFact = evaluateIsFact();
         this.isWithClauseFunctor = evaluateIsWithClauseFunctor();
         this.head = evaluateHead();
@@ -84,7 +84,7 @@ public class Clause {
             this.content = theOriginal;
         }
         // Clone the block of variables
-        this.bindings = TermBindings.deepCopyWithSameReferrer(theOriginal.getBindings());
+        this.termBindings = TermBindings.deepCopyWithSameReferrer(theOriginal.getTermBindings());
         this.isFact = theOriginal.isFact;
         this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
         this.head = theOriginal.head;
@@ -186,10 +186,10 @@ public class Clause {
     }
 
     /**
-     * @return the bindings
+     * @return the termBindings
      */
-    public TermBindings getBindings() {
-        return this.bindings;
+    public TermBindings getTermBindings() {
+        return this.termBindings;
     }
 
     // ---------------------------------------------------------------------------

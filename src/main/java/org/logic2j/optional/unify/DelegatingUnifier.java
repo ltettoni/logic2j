@@ -151,7 +151,7 @@ public class DelegatingUnifier implements Unifier {
             // We have followed term1 to end up with a literal. It may either unify or not depending if
             // term2 is a Var or the same literal. To simplify implementation we recurse with the constant
             // part as term2
-            return unify(term2, theBindings2, binding1.getTerm(), binding1.getBindings());
+            return unify(term2, theBindings2, binding1.getTerm(), binding1.getTermBindings());
         } else {
             throw new IllegalStateException("Internal error, unexpected binding type for " + binding1);
         }

@@ -17,12 +17,11 @@
  */
 package org.logic2j.core.impl.unify;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.logic2j.core.api.Unifier;
 import org.logic2j.core.api.model.symbol.Term;
 import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 

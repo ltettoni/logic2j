@@ -60,9 +60,6 @@ public class ProfilingInfo {
         return timer1;
     }
 
-    /**
-     * @param theMethodName
-     */
     public static int addEvent(Object theEventKey) {
         final Integer val = events.get(theEventKey);
         if (val == null) {
