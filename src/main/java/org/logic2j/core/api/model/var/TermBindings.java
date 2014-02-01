@@ -67,8 +67,8 @@ public class TermBindings {
     private final Binding[] bindings;
 
     /**
-     * Create a new Binding by just assign the 2 fields, we use this when deep-copying
-     * with a new array of {@link Binding} of when shallow-copying with the same reference to the array.
+     * Create a new {@link TermBindings} by just assign the 2 fields, we use this when deep-copying
+     * with a new array of {@link Binding}, or when shallow-copying with the same reference to the array.
      * 
      * @param theNewReferrerTerm
      * @param theArrayOfBinding
@@ -141,6 +141,10 @@ public class TermBindings {
     public static TermBindings deepCopyWithSameReferrer(TermBindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
     }
+    
+    public static TermBindings createFromLiteralBinding(Binding theLiteralBinding) {
+        return new TermBindings(theLiteralBinding.getTerm(), theLiteralBinding.getTermBindings().bindings);
+    }
 
     private static TermBindings deepCopyWithNewReferrer(Object theNewReferrer, TermBindings theOriginal) {
         // Deep cloning of the individual Binding
@@ -154,6 +158,11 @@ public class TermBindings {
         return new TermBindings(theNewReferrer, copiedArrayOfBinding);
     }
 
+    
+    // ---------------------------------------------------------------------------
+    // Methods for extracting values from TermBindings
+    // ---------------------------------------------------------------------------
+
     /**
      * @return A new literal {@link Binding} expressing this {@link TermBindings}, using the {@link #getReferrer()} as the term.
      */
@@ -161,10 +170,6 @@ public class TermBindings {
         return Binding.newLiteral(this.referrer, this);
     }
     
-    // ---------------------------------------------------------------------------
-    // Methods for extracting values from variable TermBindings
-    // ---------------------------------------------------------------------------
-
     /**
      * Create a new {@link TermBindings} with the specified {@link Term} as new Referrer.
      * When Term is a bound {@link Var}iable, will follow through until a free Var or literal is found.
@@ -176,19 +181,19 @@ public class TermBindings {
      */
     public TermBindings narrow(Object theTerm, Class<? extends Object> theClass) {
         if (theTerm instanceof Var) {
-            final Var origin = (Var) theTerm;
-            if (origin.isAnonymous()) {
+            final Var originVar = (Var) theTerm;
+            if (originVar.isAnonymous()) {
                 return null; // See method contract - but I don't like returning nulls!
             }
             // Go to fetch the effective variable value if any
-            final Binding startingBinding = origin.bindingWithin(this);
+            final Binding startingBinding = originVar.bindingWithin(this);
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
                 case LITERAL:
-                    return new TermBindings(finalBinding.getTerm(), finalBinding.getTermBindings().bindings);
+                    return finalBinding.createTermBindings();
                 case FREE:
                     // Refocus on original var (we now know it is free), keep the same original bindings
-                    return new TermBindings(origin, this.bindings); // I wonder if we should not focus on the final var instead?
+                    return new TermBindings(originVar, this.bindings); // I wonder if we should not focus on the final var instead?
                 default:
                     throw new PrologInternalError("Should never have been here");
             }
@@ -196,7 +201,7 @@ public class TermBindings {
         // It's anything else than a Var - no need to follow links
 
         // Make sure it's of the desired class
-        ReflectUtils.safeCastNotNull("obtaining resolved term", theTerm, theClass);
+        ReflectUtils.safeCastNotNull("obtaining narrowed-down term", theTerm, theClass);
 
         // If we already have the same referrer, don't shallow-copy
         if (this.getReferrer() == theTerm) {
@@ -275,7 +280,7 @@ public class TermBindings {
      * Notice that because several vars may lead to the same final bindings, this reverse mapping may only be partial. Which
      * var is referenced is not deterministic.
      */
-    public IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
+    private IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
         // ending up with either null (on a literal), or a real Var (on a free var).
         final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
@@ -289,7 +294,7 @@ public class TermBindings {
         return bindingToInitialVar;
     }
 
-    public IdentityHashMap<Var, Binding> initialVartoFinalBinding() {
+    private IdentityHashMap<Var, Binding> initialVartoFinalBinding() {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
         // ending up with either null (on a literal), or a real Var (on a free var).
         final IdentityHashMap<Var, Binding> result = new IdentityHashMap<Var, Binding>();
