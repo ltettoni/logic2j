@@ -19,18 +19,15 @@ package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.symbol.Struct;
 import org.logic2j.core.api.model.symbol.Var;
-import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.FinalVarTermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.mgmt.PrimitiveInfo;
-import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
 
 /**
  * Base class for libraries, provides convenience methods to unify, deunify, and access the underlying {@link PrologImplementation}
@@ -121,47 +118,6 @@ public class LibraryBase implements PLibrary {
             // TODO should be sort of an InvalidGoalException?
             throw new InvalidTermException("Cannot call primitive " + nameOfPrimitive + " with a Variable that is free");
         }
-    }
-
-    // TODO assess if needed - used only once
-    protected Binding dereferencedBinding(Object theTerm, TermBindings theBindings) {
-        if (theTerm instanceof Var) {
-            return ((Var) theTerm).bindingWithin(theBindings).followLinks();
-        }
-        return Binding.newLiteral(theTerm, theBindings);
-    }
-
-    /**
-     * Evaluates an expression. Returns null value if the argument is not an evaluable expression
-     */
-    protected Object evaluate(Object theTerm, TermBindings theBindings) {
-        if (theTerm == null) {
-            return null;
-        }
-        // TODO are the lines below this exactly as in resolve() / substituteOld() method?
-        if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
-            final Binding binding = ((Var) theTerm).bindingWithin(theBindings).followLinks();
-            if (!binding.isLiteral()) {
-                return null;
-            }
-            theTerm = binding.getTerm();
-        }
-
-        if (theTerm instanceof Struct) {
-            final Struct struct = (Struct) theTerm;
-            final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
-            if (primInfo == null) {
-                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
-                return null;
-            }
-            if (primInfo.getType() != PrimitiveType.FUNCTOR) {
-                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
-                return null;
-            }
-            final Object result = primInfo.invoke(struct, theBindings, /* no listener */null);
-            return result;
-        }
-        return theTerm;
     }
 
     protected Object createConstantTerm(Object anyObject) {

@@ -37,6 +37,8 @@ import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.library.mgmt.PrimitiveInfo;
+import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
 
 /**
  * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
@@ -238,6 +240,45 @@ public class TermApi {
         return String.valueOf(thePredicate) + "/0";
     }
 
+    //---------------------------------------------------------------------------
+    // Access and extract data from Terms
+    //---------------------------------------------------------------------------
+
+
+    /**
+     * Evaluates an expression. Returns null value if the argument is not an evaluable expression
+     */
+    public static Object evaluate(Object theTerm, TermBindings theBindings) {
+        if (theTerm == null) {
+            return null;
+        }
+        // TODO are the lines below this exactly as in resolve() / substituteOld() method?
+        if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
+            final Binding binding = ((Var) theTerm).bindingWithin(theBindings).followLinks();
+            if (!binding.isLiteral()) {
+                return null;
+            }
+            theTerm = binding.getTerm();
+        }
+
+        if (theTerm instanceof Struct) {
+            final Struct struct = (Struct) theTerm;
+            final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
+            if (primInfo == null) {
+                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
+                return null;
+            }
+            if (primInfo.getType() != PrimitiveType.FUNCTOR) {
+                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
+                return null;
+            }
+            final Object result = primInfo.invoke(struct, theBindings, /* no listener */null);
+            return result;
+        }
+        return theTerm;
+    }
+
+    
     /**
      * @param theTerm
      * @param theBindings
