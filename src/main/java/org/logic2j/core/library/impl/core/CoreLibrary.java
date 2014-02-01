@@ -386,7 +386,12 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive
     public Continuation clause(SolutionListener theListener, TermBindings theTermBindings, Object theHead, Object theBody) {
-        final Binding dereferencedBinding = dereferencedBinding(theHead, theTermBindings);
+        final Binding dereferencedBinding;
+        if (theHead instanceof Var) {
+            dereferencedBinding = ((Var) theHead).bindingWithin(theTermBindings).followLinks();
+        } else {
+            dereferencedBinding = Binding.newLiteral(theHead, theTermBindings);
+        }
         final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
         for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(realHead, theTermBindings)) {
@@ -445,7 +450,7 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive
     public Continuation is(SolutionListener theListener, TermBindings theTermBindings, Object t1, Object t2) {
-        final Object evaluated = evaluate(t2, theTermBindings);
+        final Object evaluated = TermApi.evaluate(t2, theTermBindings);
         if (evaluated == null) {
             return Continuation.CONTINUE;
         }
@@ -472,8 +477,8 @@ public class CoreLibrary extends LibraryBase {
      * @return The {@link Continuation} as returned by the solution notified.
      */
     private Continuation binaryComparisonPredicate(SolutionListener theListener, TermBindings theTermBindings, Object t1, Object t2, ComparisonFunction theEvaluationFunction) {
-        final Object effectiveT1 = evaluate(t1, theTermBindings);
-        final Object effectiveT2 = evaluate(t2, theTermBindings);
+        final Object effectiveT1 = TermApi.evaluate(t1, theTermBindings);
+        final Object effectiveT2 = TermApi.evaluate(t2, theTermBindings);
         Continuation continuation = Continuation.CONTINUE;
         if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
             final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
@@ -487,7 +492,6 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = ">")
     public Continuation expression_greater_than(SolutionListener theListener, TermBindings theTermBindings, Object t1, Object t2) {
-
         return binaryComparisonPredicate(theListener, theTermBindings, t1, t2, COMPARE_GT);
     }
 
@@ -508,13 +512,11 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = "=:=")
     public Continuation expression_equals(SolutionListener theListener, TermBindings theTermBindings, Object t1, Object t2) {
-
         return binaryComparisonPredicate(theListener, theTermBindings, t1, t2, COMPARISON_EQ);
     }
 
     @Primitive(name = "=\\=")
     public Continuation expression_not_equals(SolutionListener theListener, TermBindings theTermBindings, Object t1, Object t2) {
-
         return binaryComparisonPredicate(theListener, theTermBindings, t1, t2, COMPARISON_NE);
     }
 
@@ -527,8 +529,8 @@ public class CoreLibrary extends LibraryBase {
     }
 
     private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, TermBindings theTermBindings, Object theTerm1, Object theTerm2, AggregationFunction theEvaluationFunction) {
-        final Object t1 = evaluate(theTerm1, theTermBindings);
-        final Object t2 = evaluate(theTerm2, theTermBindings);
+        final Object t1 = TermApi.evaluate(theTerm1, theTermBindings);
+        final Object t2 = TermApi.evaluate(theTerm2, theTermBindings);
         if (t1 instanceof Number && t2 instanceof Number) {
             if (t1 instanceof Long && t2 instanceof Long) {
                 return Long.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).longValue());
