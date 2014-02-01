@@ -122,6 +122,10 @@ public class Binding {
         return instance;
     }
 
+    public TermBindings createTermBindings() {
+        return TermBindings.createFromLiteralBinding(this);
+    }
+    
     /**
      * Modify this {@link Binding} by associateing it to a {@link Term}, may be a literal or another variable.
      * 
@@ -328,17 +332,6 @@ public class Binding {
       return theTerm;
     }
 
-
-    /**
-     * @return TBD
-     */
-    public Object effectiveValue() {
-        if (isLiteral()) {
-          return this.term;
-        }
-        return getReferrer();
-    }
-
     
     // ---------------------------------------------------------------------------
     // Accessors
@@ -412,6 +405,7 @@ public class Binding {
         }
         return sb.toString();
     }
+
 
 
 }
