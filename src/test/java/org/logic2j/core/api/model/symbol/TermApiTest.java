@@ -192,12 +192,12 @@ public class TermApiTest extends PrologTestBase {
     @Test
     public void substituteLinkedFreeVar() throws Exception {
         final Binding orig = unmarshallAsBinding("X");
-        // Link the free var to another free var 
+        // Link the free var X to another free var Y
         final Binding target = unmarshallAsBinding("Y");
         orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
-        assertEquals("X", subst.getTerm().toString()); // Quite insufficient
+        assertEquals("Y", subst.getTerm().toString()); // Quite insufficient
     }
 
     @Test
@@ -230,13 +230,12 @@ public class TermApiTest extends PrologTestBase {
     @Test
     public void substituteStructWithLinkedFreeVar() throws Exception {
         final Binding orig = unmarshallAsBinding("f(a,X)");
-        // Bind the free var to another free var
+        // Bind the free var X to another free var Y
         final Binding target = unmarshallAsBinding("Y");
         orig.getTermBindings().getBinding(0).bindTo(target.getTerm(), target.getTermBindings());
         //
         final Binding subst = orig.substitute();
-        assertEquals("f(a, X)", subst.getTerm().toString());
-        assertEquals(orig.getTermBindings().toString(), subst.getTermBindings().toString());
+        assertEquals("f(a, Y)", subst.getTerm().toString());
     }
 
     @Test

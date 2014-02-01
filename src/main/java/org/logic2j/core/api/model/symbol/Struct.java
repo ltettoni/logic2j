@@ -19,14 +19,12 @@ package org.logic2j.core.api.model.symbol;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.var.Binding;
 import org.logic2j.core.api.model.var.TermBindings;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.mgmt.LibraryContent;
@@ -630,33 +628,6 @@ public final class Struct extends Term {
     //---------------------------------------------------------------------------
     // Oldies
     //---------------------------------------------------------------------------
-
-    /**
-     * Substitute all children. If nothing changes, return this, otherwise returned a cloned structure
-     * with all bound variables substituted to their literal values.
-     * Expensive!
-     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
-     */
-    @Deprecated
-    Object substituteOld(TermBindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
-        final Object[] substArgs = new Object[this.arity]; // All arguments after substitution
-        boolean anyChildWasChanged = false;
-        for (int i = 0; i < this.arity; i++) {
-            // Recurse for all children
-            substArgs[i] = TermApi.substituteOld(this.args[i], theBindings, remapFreeBindingsToOriginalVars);
-            anyChildWasChanged |= substArgs[i] != this.args[i];
-        }
-        final Struct substitutedOrThis;
-        if (anyChildWasChanged) {
-            // New cloned structure
-            substitutedOrThis = new Struct(getName(), substArgs);
-        } else {
-            // Original unchanged - same reference
-            substitutedOrThis = this;
-        }
-        return substitutedOrThis;
-    }
-
 
     
 }

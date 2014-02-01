@@ -251,7 +251,8 @@ public class Binding {
       final IdentityHashMap<Var, Var> newVarsFromOld = new IdentityHashMap<Var, Var>();
       for (Entry<Var, Binding> entry : bindingOfOriginalVar.entrySet()) {
         Var oldVar = entry.getKey();
-        Var newVar = new Var(oldVar.getName());
+        Binding original = entry.getValue();
+        Var newVar = new Var(original.getReferrer().getName());
         newVarsFromOld.put(oldVar, newVar);
       }
       

@@ -141,7 +141,7 @@ public class TermBindings {
     public static TermBindings deepCopyWithSameReferrer(TermBindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
     }
-    
+
     public static TermBindings createFromLiteralBinding(Binding theLiteralBinding) {
         return new TermBindings(theLiteralBinding.getTerm(), theLiteralBinding.getTermBindings().bindings);
     }
@@ -158,7 +158,6 @@ public class TermBindings {
         return new TermBindings(theNewReferrer, copiedArrayOfBinding);
     }
 
-    
     // ---------------------------------------------------------------------------
     // Methods for extracting values from TermBindings
     // ---------------------------------------------------------------------------
@@ -169,7 +168,7 @@ public class TermBindings {
     public Binding toLiteralBinding() {
         return Binding.newLiteral(this.referrer, this);
     }
-    
+
     /**
      * Create a new {@link TermBindings} with the specified {@link Term} as new Referrer.
      * When Term is a bound {@link Var}iable, will follow through until a free Var or literal is found.
@@ -220,8 +219,6 @@ public class TermBindings {
      * @return All variable bindings resolved, represented as specified for the case of free bindings.
      */
     public Map<String, Object> explicitBindings(FreeVarRepresentation theRepresentation) {
-         final IdentityHashMap<Binding, Var> bindingToInitialVar = finalBindingsToInitialVar();
-
         final Map<String, Object> result = new TreeMap<String, Object>();
         for (final Binding initialBinding : this.bindings) {
             final Var originalVar = initialBinding.getReferrer();
@@ -232,7 +229,6 @@ public class TermBindings {
             final String originalVarName = originalVar.getName();
             // Now reach the effective lastest binding
             final Binding finalBinding = initialBinding.followLinks(); // FIXME we did this above already - can't we remember it???
-            final Var finalVar = finalBinding.getReferrer();
             switch (finalBinding.getType()) {
                 case LITERAL:
                     if (originalVarName == null) {
@@ -241,9 +237,8 @@ public class TermBindings {
                                         + " can't be assigned a variable name");
                     }
                     final Object boundTerm = finalBinding.getTerm();
-                    final Object substitute = TermApi.substituteOld(boundTerm, finalBinding.getTermBindings(), bindingToInitialVar);
-//                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getTermBindings());
-                    // Literals are not unbound terms, they are returned the same way for all types of representations asked
+                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getTermBindings());
+                    // Literals are not free terms, they are returned the same way for all types of representations asked
                     result.put(originalVarName, substitute);
                     break;
                 case FREE:
@@ -253,19 +248,23 @@ public class TermBindings {
                             // Nothing added to the resulting bindings: no Map entry (no key, no value)
                             break;
                         case NULL:
-                            // Add one entry with null value
+                            // Add one entry with a key, and a null value
                             result.put(originalVarName, null);
                             break;
-                        case FREE:
+                        case FREE: {
+                            final Var finalVar = finalBinding.getReferrer();
                             result.put(originalVarName, finalVar);
                             break;
-                        case FREE_NOT_SELF:
+                        }
+                        case FREE_NOT_SELF: {
                             // Names are {@link String#intern()}alized so OK to check by reference
+                            final Var finalVar = finalBinding.getReferrer();
                             if (originalVar.getName() != finalVar.getName()) {
                                 // Avoid reporting "X=null" for free variables or "X=X" as a binding...
                                 result.put(originalVarName, finalVar);
                             }
                             break;
+                        }
                     }
                     break;
                 case LINK:
@@ -283,15 +282,15 @@ public class TermBindings {
     private IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
         // ending up with either null (on a literal), or a real Var (on a free var).
-        final IdentityHashMap<Binding, Var> bindingToInitialVar = new IdentityHashMap<Binding, Var>();
+        final IdentityHashMap<Binding, Var> result = new IdentityHashMap<Binding, Var>();
         for (final Binding initialBinding : this.bindings) {
             final Var initialVar = initialBinding.getReferrer();
             // Follow linked bindings
             final Binding finalBinding = initialBinding.followLinks();
             // At this stage finalBinding may be either literal, or free
-            bindingToInitialVar.put(finalBinding, initialVar);
+            result.put(finalBinding, initialVar);
         }
-        return bindingToInitialVar;
+        return result;
     }
 
     private IdentityHashMap<Var, Binding> initialVartoFinalBinding() {

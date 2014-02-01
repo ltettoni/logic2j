@@ -201,8 +201,8 @@ public class FunctionalTest extends PrologTestBase {
         // Below, Y must be equal to g(123,X), but does not solve to X!
         assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").binding("Y"));
 
-        // Is this really what we should have??? Free internal bindings popping up to higher levels?
-        assertEquals(term("f(_)"), assertOneSolution("final(X)").binding("X"));
+        // Is this really what we should have? // TuProlog returns a binding of X to an anonymous internal var
+        assertEquals(term("f(FinalVar)"), assertOneSolution("final(X)").binding("X"));
     }
 
     @Test

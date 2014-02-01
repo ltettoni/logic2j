@@ -17,13 +17,13 @@
  */
 package org.logic2j.core.library.impl.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
+
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
 
 public class CoreLibraryTest extends PrologTestBase {
 
@@ -105,18 +105,22 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void predicate2PList() {
+    public void predicate2PList_1() {
         assertNoSolution("a(b,c,d) =.. f");
         assertEquals("[a,b,c,d]", assertOneSolution("a(b,c,d) =.. X").binding("X").toString());
         assertEquals("a(b, c)", assertOneSolution("X =.. [a,b,c]").binding("X").toString());
-        //
-        final UniqueSolutionHolder sol = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]");
-        //        assertEquals("coco(Com)", sol.binding("Expr").toString());
-        assertEquals("coco(Arg)", sol.binding("Expr").toString());
-        assertEquals("coco", sol.binding("Pred").toString());
-        assertNull(sol.binding("Arg"));
-        // assertEquals("Com", sol.binding("Arg").toString());
-        // assertEquals("a(b,c)", prolog.solve("X =.. atom").unique().binding("X").toString());
+    }
+
+    @Test
+    public void predicate2PList_2() {
+        Map<String, Object> bindings = assertOneSolution("Expr=coco(Com), Expr=..[Pred, Arg]").bindings();
+
+        assertEquals("coco", bindings.get("Pred").toString());
+        assertNull(bindings.get("Arg"));
+        assertNull(bindings.get("Com"));
+
+        assertEquals("coco(Com)", bindings.get("Expr").toString());
+        //        assertEquals("coco(Arg)", bindings.get("Expr").toString());
     }
 
     @Test

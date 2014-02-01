@@ -18,7 +18,6 @@
 package org.logic2j.core.api.model.symbol;
 
 import java.util.Collection;
-import java.util.IdentityHashMap;
 
 import org.logic2j.core.api.model.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -225,42 +224,5 @@ public final class Var extends Term {
     //---------------------------------------------------------------------------
     // Oldies
     //---------------------------------------------------------------------------
-
-    /**
-     * Expensive!
-     * 
-     * @param theBindings The {@link TermBindings} within which this {@link Var} is referenced
-     * @param remapFreeBindingsToOriginalVars When non-null, used to remap free variables
-     * @return Substituted term.
-     * @deprecated Bogus - does not reassign indexes, and indexes of vars are wrong!
-     */
-    @Deprecated
-    public
-    Object substituteOld(TermBindings theBindings, IdentityHashMap<Binding, Var> remapFreeBindingsToOriginalVars) {
-        if (isAnonymous()) {
-            // Anonymous variable is never bound - won't substitute
-            return this;
-        }
-        final Binding binding = bindingWithin(theBindings).followLinks();
-        if (binding.isLiteral()) {
-            // For a literal, we have a reference to the literal term and to its own variables, so recurse further
-            return TermApi.substituteOld(binding.getTerm(), binding.getTermBindings(), remapFreeBindingsToOriginalVars);
-        }
-        if (binding.isFree()) {
-            // Free variable has no value, if we have a remapping table let's use it
-            if (remapFreeBindingsToOriginalVars != null) {
-                final Var originalVar = remapFreeBindingsToOriginalVars.get(binding);
-                if (originalVar != null) {
-                    return originalVar;
-                }
-                return ANONYMOUS_VAR;
-            }
-            // Return this free variable
-            return this;
-        }
-        // Neither literal nor free? That's not possible.
-        throw new PrologInternalError("substituteOld() internal error, " + this + " is neither literal nor free");
-    }
-
     
 }

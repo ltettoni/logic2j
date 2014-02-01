@@ -193,13 +193,14 @@ public class UnifierTest extends PrologTestBase {
     @Test
     public void explicitBindings_1() {
         // Bind bindings1 to var
-        final Object t0 = unmarshall("t(U)");
-        final TermBindings bindings0 = new TermBindings(t0);
-        final Object t1 = unmarshall("t(X)");
-        final TermBindings bindings1 = new TermBindings(t1);
-        final boolean unify = this.unifier.unify(t1, bindings1, t0, bindings0);
-        assertEquals("t(X)", TermApi.substitute(t1, bindings1).toString());
-        assertEquals("{}", bindings1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        final Object tU = unmarshall("t(U)");
+        final TermBindings tbU = new TermBindings(tU);
+        final Object tX = unmarshall("t(X)");
+        final TermBindings tbX = new TermBindings(tX);
+        final boolean unify = this.unifier.unify(tX, tbX, tU, tbU);
+        assertTrue(unify);
+        assertEquals("t(U)", TermApi.substitute(tX, tbX).toString());
+        assertEquals("{}", tbX.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         if (unify) {
             this.unifier.deunify();
         }
@@ -252,10 +253,11 @@ public class UnifierTest extends PrologTestBase {
         final TermBindings tb1 = new TermBindings(t1);
         final boolean unify = this.unifier.unify(t1, tb1, t0, tb0);
         assertTrue(unify);
+        
         assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t0, tb0).toString());
         assertEquals("append2([1], [2,3], [1|T2])", TermApi.substitute(t1, tb1).toString());
-        assertEquals("{X=[1|_]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
-//        assertEquals("{X=[1|T2]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+//        assertEquals("{X=[1|_]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
+        assertEquals("{X=[1|T2]}", tb0.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         assertEquals("{E=1, L2=[2,3], T1=[]}", tb1.explicitBindings(FreeVarRepresentation.SKIPPED).toString());
         // Bind bindings2 to const
         final Object t1b = clause.getRHS(); // Body of first hitting clause
