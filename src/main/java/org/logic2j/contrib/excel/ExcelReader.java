@@ -194,7 +194,6 @@ public class ExcelReader {
                     value = cell.getStringCellValue();
                     break;
                 case Cell.CELL_TYPE_BLANK:
-                    value = null;
                     break;
                 default:
                     throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " not handled, value is " + value);
