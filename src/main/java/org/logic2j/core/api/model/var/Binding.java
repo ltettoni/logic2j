@@ -122,6 +122,11 @@ public class Binding {
         return instance;
     }
 
+    public static Binding newLiteral(TermBindings theTermBindings) {
+        return newLiteral(theTermBindings.getReferrer(), theTermBindings);        
+    }
+
+
     public TermBindings createTermBindings() {
         return TermBindings.createFromLiteralBinding(this);
     }
@@ -406,7 +411,6 @@ public class Binding {
         }
         return sb.toString();
     }
-
 
 
 }
