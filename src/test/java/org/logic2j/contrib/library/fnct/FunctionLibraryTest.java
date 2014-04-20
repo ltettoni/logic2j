@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.var.TermBindings;
+import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
@@ -44,7 +46,11 @@ public class FunctionLibraryTest extends PrologTestBase {
         loadLibrary(this.functionLibrary);
         loadTheoryFromTestResourcesDir("mapping.pl");
     }
-
+    
+    protected InitLevel initLevel() {
+        return InitLevel.L2_BASE_LIBRARIES;
+    }
+    
     @Test
     public void placeholder() {
         //
@@ -177,6 +183,13 @@ public class FunctionLibraryTest extends PrologTestBase {
         // Free var
         assertOneSolution("map(map, X, X)");
         assertEquals("f(X)", assertOneSolution("map(map, f(X), Result)").binding("Result").toString());
+    }
+
+    @Test
+    public void mapGoesToInfiniteLoop() {
+        UniqueSolutionHolder sol = assertOneSolution("gd3((tcNumber(a, b), c))");
+//        UniqueSolutionHolder sol = assertOneSolution("map(dbBinding, (tcNumber(a, b), c), Z)");
+        logger.info("Solution: {}", sol.binding("Z"));
     }
 
 }
