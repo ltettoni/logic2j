@@ -111,8 +111,7 @@ public class TermBindings {
                 nbVars = index;
             }
             if (index == Term.NO_INDEX) {
-                throw new InvalidTermException("Index of Term '" + theReferrer
-                                + "' is not yet initialized, cannot create TermBindings because Term is not ready for inference. Normalize it first.");
+                throw new InvalidTermException("Index of Term '" + theReferrer + "' is not yet initialized, cannot create TermBindings because Term is not ready for inference. Normalize it first.");
             }
 
             //
@@ -136,7 +135,7 @@ public class TermBindings {
     /**
      * @param theOriginal
      * @return A new {@link TermBindings} with the same referrer, but a deep copy of the {@link Binding} array
-     * contained therein. A new array is allocated, and every {@link Binding} is cloned also.
+     *         contained therein. A new array is allocated, and every {@link Binding} is cloned also.
      */
     public static TermBindings deepCopyWithSameReferrer(TermBindings theOriginal) {
         return deepCopyWithNewReferrer(theOriginal.getReferrer(), theOriginal);
@@ -188,13 +187,13 @@ public class TermBindings {
             final Binding startingBinding = originVar.bindingWithin(this);
             final Binding finalBinding = startingBinding.followLinks();
             switch (finalBinding.getType()) {
-                case LITERAL:
-                    return finalBinding.createTermBindings();
-                case FREE:
-                    // Refocus on original var (we now know it is free), keep the same original bindings
-                    return new TermBindings(originVar, this.bindings); // I wonder if we should not focus on the final var instead?
-                default:
-                    throw new PrologInternalError("Should never have been here");
+            case LITERAL:
+                return finalBinding.createTermBindings();
+            case FREE:
+                // Refocus on original var (we now know it is free), keep the same original bindings
+                return new TermBindings(originVar, this.bindings); // I wonder if we should not focus on the final var instead?
+            default:
+                throw new PrologInternalError("Should never have been here");
             }
         }
         // It's anything else than a Var - no need to follow links
@@ -230,45 +229,44 @@ public class TermBindings {
             // Now reach the effective lastest binding
             final Binding finalBinding = initialBinding.followLinks(); // FIXME we did this above already - can't we remember it???
             switch (finalBinding.getType()) {
-                case LITERAL:
-                    if (originalVarName == null) {
-                        throw new PrologNonSpecificError("Cannot assign null (undefined) var, not all variables of " + this + " are referenced from Term " + this.referrer
-                                        + ", binding " + initialBinding
-                                        + " can't be assigned a variable name");
-                    }
-                    final Object boundTerm = finalBinding.getTerm();
-                    final Object substitute = TermApi.substitute(boundTerm, finalBinding.getTermBindings());
-                    // Literals are not free terms, they are returned the same way for all types of representations asked
-                    result.put(originalVarName, substitute);
+            case LITERAL:
+                if (originalVarName == null) {
+                    throw new PrologNonSpecificError("Cannot assign null (undefined) var, not all variables of " + this + " are referenced from Term " + this.referrer + ", binding " + initialBinding
+                            + " can't be assigned a variable name");
+                }
+                final Object boundTerm = finalBinding.getTerm();
+                final Object substitute = TermApi.substitute(boundTerm, finalBinding.getTermBindings());
+                // Literals are not free terms, they are returned the same way for all types of representations asked
+                result.put(originalVarName, substitute);
+                break;
+            case FREE:
+                // Here we will use different representations for free vars
+                switch (theRepresentation) {
+                case SKIPPED:
+                    // Nothing added to the resulting bindings: no Map entry (no key, no value)
                     break;
-                case FREE:
-                    // Here we will use different representations for free vars
-                    switch (theRepresentation) {
-                        case SKIPPED:
-                            // Nothing added to the resulting bindings: no Map entry (no key, no value)
-                            break;
-                        case NULL:
-                            // Add one entry with a key, and a null value
-                            result.put(originalVarName, null);
-                            break;
-                        case FREE: {
-                            final Var finalVar = finalBinding.getReferrer();
-                            result.put(originalVarName, finalVar);
-                            break;
-                        }
-                        case FREE_NOT_SELF: {
-                            // Names are {@link String#intern()}alized so OK to check by reference
-                            final Var finalVar = finalBinding.getReferrer();
-                            if (originalVar.getName() != finalVar.getName()) {
-                                // Avoid reporting "X=null" for free variables or "X=X" as a binding...
-                                result.put(originalVarName, finalVar);
-                            }
-                            break;
-                        }
+                case NULL:
+                    // Add one entry with a key, and a null value
+                    result.put(originalVarName, null);
+                    break;
+                case FREE: {
+                    final Var finalVar = finalBinding.getReferrer();
+                    result.put(originalVarName, finalVar);
+                    break;
+                }
+                case FREE_NOT_SELF: {
+                    // Names are {@link String#intern()}alized so OK to check by reference
+                    final Var finalVar = finalBinding.getReferrer();
+                    if (originalVar.getName() != finalVar.getName()) {
+                        // Avoid reporting "X=null" for free variables or "X=X" as a binding...
+                        result.put(originalVarName, finalVar);
                     }
                     break;
-                case LINK:
-                    throw new PrologNonSpecificError("Should not happen we have followed links already");
+                }
+                }
+                break;
+            case LINK:
+                throw new PrologNonSpecificError("Should not happen we have followed links already");
             }
         }
         return result;
@@ -276,8 +274,8 @@ public class TermBindings {
 
     /**
      * @return An {@link IdentityHashMap} from the final bindings (literals or free vars) to the initial {@link Var}s.
-     * Notice that because several vars may lead to the same final bindings, this reverse mapping may only be partial. Which
-     * var is referenced is not deterministic.
+     *         Notice that because several vars may lead to the same final bindings, this reverse mapping may only be partial. Which
+     *         var is referenced is not deterministic.
      */
     private IdentityHashMap<Binding, Var> finalBindingsToInitialVar() {
         // For every Binding in this object, identify to which Var it initially refered (following linked bindings)
@@ -321,8 +319,9 @@ public class TermBindings {
     }
 
     /**
-     * Find the local bindings corresponding to one of the variables of the Struct referred to by this TermBindings. FIXME Uh - what does this
-     * mean??? 
+     * Find the local bindings corresponding to one of the variables of the Struct referred to by this TermBindings. FIXME Uh - what does
+     * this
+     * mean???
      * TODO This method is only used once from a library - ensure it makes sense and belongs here
      * 
      * @param theVar
@@ -386,8 +385,9 @@ public class TermBindings {
      * @param allBindings
      * @param theRemappedVars
      * @return A new TermBindings with a number of {@link TermBindings} into a single new one, making sure all variables are
-     * distinct.
+     *         distinct.
      */
+    // TODO Clarify this!
     public static TermBindings merge(List<TermBindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
         final LinkedHashSet<TermBindings> distinctBindings = new LinkedHashSet<>(allBindings);
