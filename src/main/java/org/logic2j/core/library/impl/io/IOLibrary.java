@@ -29,7 +29,11 @@ import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 
 public class IOLibrary extends LibraryBase {
-    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(IOLibrary.class);
+    /**
+     * Name of the logger to which all logging events go.
+     */
+    private static final String LOGIC2J_PROLOG_LOGGER = "org.logic2j.logger";
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LOGIC2J_PROLOG_LOGGER);
 
     private static final String QUOTE = "'";
 
