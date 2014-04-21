@@ -3,6 +3,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.6
 version = '0.6.0-SNAPSHOT'
 
+
 description = """\
 logic2j : Bring Logic to your Java
 ----------------------------------
@@ -22,6 +23,7 @@ The driver was to implement a rule engine that &quot;reasons&quot; against large
 Although close to Prolog, this is NOT a Prolog environment, but would be a good candidate to build one...
 """
 
+
 repositories {
     mavenCentral()
 }
@@ -35,12 +37,13 @@ dependencies {
 }
 
 
-
+// Unit tests use a publicly available database exposed as Excel
 task downloadTestResources(type: MyDownload) {
     sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
     target = file('src/test/resources/cde.ca.gov/pubschls.xls')
 }
 
+// Unit tests use a public database embedded in the test resources
 task unzipTestDb {
     copy{
         from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
@@ -54,7 +57,7 @@ test.dependsOn downloadTestResources, unzipTestDb
 
 
 
-
+// Download sourceUrl to target file
 class MyDownload extends DefaultTask {
     @Input
     String sourceUrl
