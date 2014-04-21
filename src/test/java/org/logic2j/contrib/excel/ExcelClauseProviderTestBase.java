@@ -36,14 +36,22 @@ public abstract class ExcelClauseProviderTestBase extends PrologTestBase {
 
     protected void setExcelClauseProvider(String filename, AssertionMode theMode) throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, filename);
+        ensureResourceFile(file);
         final TabularData td = new ExcelReader(file, true, 0).readCached();
         td.addClauseProviderTo(getProlog(), theMode);
     }
 
     protected void setExcelDataFactProvider(String filename, AssertionMode theMode) throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, filename);
+        ensureResourceFile(file);
         final TabularData td = new ExcelReader(file, true, 0).readCached();
         getProlog().getTheoryManager().addDataFactProvider(new TabularDataFactProvider(td, theMode));
+    }
+
+    private void ensureResourceFile(File file) {
+        if (! file.canRead()) {
+            throw new IllegalStateException("Test resource \"" + file + "\" missing - check " + this + ", check maven or gradle build or read documentation near test class");
+        }
     }
 
 }
