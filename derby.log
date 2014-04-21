@@ -1,8 +1,8 @@
 ----------------------------------------------------------------
-Mon Apr 21 18:33:17 CEST 2014:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-0145-8522-6e5f-000002f489d0 
-on database directory C:\Users\Laurent\IdeaProjects\logic2j\src\test\db\zipcodes1\derby-v10.8.2.1  with class loader sun.misc.Launcher$AppClassLoader@1abc7b9 
-Loaded from file:/C:/Users/Laurent/.gradle/caches/modules-2/files-2.1/org.apache.derby/derby/10.8.1.2/2f8717d96eafe3eef3de445ba653f142d54ddab1/derby-10.8.1.2.jar
+Mon Apr 21 18:55:59 CEST 2014:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-0145-8537-32d9-000006963608 
+on database directory C:\Users\Laurent\IdeaProjects\logic2j\src\test\db\zipcodes1\derby-v10.8.2.1  with class loader sun.misc.Launcher$AppClassLoader@dd20f6 
+Loaded from file:/C:/Users/Laurent/.m2/repository/org/apache/derby/derby/10.8.1.2/derby-10.8.1.2.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.7.0_45-b18
 user.dir=C:\Users\Laurent\IdeaProjects\logic2j
