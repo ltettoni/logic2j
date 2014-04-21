@@ -90,18 +90,18 @@
       <dependency>
          <groupId>ch.qos.logback</groupId>
          <artifactId>logback-classic</artifactId>
-         <version>1.0.13</version>
+         <version>1.1.2</version>
       </dependency>
       <dependency>
          <groupId>org.apache.poi</groupId>
-         <artifactId>poi-ooxml</artifactId>
+         <artifactId>poi</artifactId>
          <version>3.9</version>
       </dependency>
       <!-- Optional - for PojoLibrary -->
       <dependency>
          <groupId>commons-beanutils</groupId>
          <artifactId>commons-beanutils</artifactId>
-         <version>1.8.3</version>
+         <version>1.9.1</version>
       </dependency>
    </dependencies>
    <url>https://github.com/ltettoni/logic2j</url>

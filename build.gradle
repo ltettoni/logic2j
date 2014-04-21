@@ -30,10 +30,11 @@ repositories {
 
 
 dependencies {
-    compile 'ch.qos.logback:logback-classic:1.+', 'commons-beanutils:commons-beanutils:1.+', 'org.apache.poi:poi-ooxml:3.+'
+    compile 'org.slf4j:slf4j-api:1.7.6', 'commons-beanutils:commons-beanutils:1.+', 'org.apache.poi:poi:3.+'
     // Need very specific Derby version since the test resource host
     // a zipped DB version in binary format. Require 10.8.1.2.
     testCompile 'junit:junit:4.+', 'org.apache.derby:derby:10.8.1.2'
+    runtime 'ch.qos.logback:logback-classic:1.+'
 }
 
 
