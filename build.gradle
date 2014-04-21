@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'ch.qos.logback:logback-classic:1.+', 'commons-beanutils:commons-beanutils:1.+', 'org.apache.poi:poi-ooxml:3.+'
+    testCompile 'junit:junit:4.+', 'org.apache.derby:derby:10.8.1.2'
+}
+
+
+
+task downloadTestResources(type: MyDownload) {
+    sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
+    target = file('src/test/resources/cde.ca.gov/pubschls.xls')
+}
+
+task unzipTestDb {
+    copy{
+        from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
+        into("src/test/db/zipcodes1")
+    }
+}
+
+
+test.dependsOn downloadTestResources, unzipTestDb
+
+
+
+
+
+class MyDownload extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+        if (!target.exists()) {
+            ant.get(src: sourceUrl, dest: target)
+        }
+    }
+}
