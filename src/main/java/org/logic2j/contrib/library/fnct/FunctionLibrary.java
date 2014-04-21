@@ -145,14 +145,14 @@ public class FunctionLibrary extends LibraryBase {
                 // Merge all bindings (every transformation might have produced a new TermBindings)
 
                 // Collect all transformed results
-                final List<TermBindings> allTransformedBindings = new ArrayList<>();
-                final List<Object> allTransformedArgs = new ArrayList<>();
+                final List<TermBindings> allTransformedBindings = new ArrayList<TermBindings>();
+                final List<Object> allTransformedArgs = new ArrayList<Object>();
                 for (final Object[] pair : preTransformedArgs) {
                     allTransformedBindings.add((TermBindings) pair[1]);
                     allTransformedArgs.add(pair[0]);
                 }
 
-                final IdentityHashMap<Object, Object> remappedVar = new IdentityHashMap<>();
+                final IdentityHashMap<Object, Object> remappedVar = new IdentityHashMap<Object, Object>();
                 final TermBindings mergedBindings = TermBindings.merge(allTransformedBindings, remappedVar);
                 termAndBindings[1] = mergedBindings;
 
