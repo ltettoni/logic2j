@@ -10,9 +10,6 @@
          <resource>
             <directory>src/main/resources</directory>
          </resource>
-         <resource>
-            <directory>src/main/prolog</directory>
-         </resource>
       </resources>
 
       <plugins>
