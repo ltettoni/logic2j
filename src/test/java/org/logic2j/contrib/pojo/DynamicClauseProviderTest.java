@@ -43,7 +43,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     }
 
     @After
-    public void reset() {
+    public void retractAll() {
         this.dynamic.retractAll();
     }
 

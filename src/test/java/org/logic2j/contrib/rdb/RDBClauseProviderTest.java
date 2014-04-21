@@ -30,10 +30,8 @@ import org.logic2j.core.api.model.symbol.Struct;
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     private RDBClauseProvider provider;
 
-    @Override
     @Before
-    public void setUp() {
-        super.setUp();
+    public void initRdbClauseProvider() {
         this.provider = new RDBClauseProvider(this.prolog, zipcodesDataSource());
         assertNotNull(this.provider);
     }

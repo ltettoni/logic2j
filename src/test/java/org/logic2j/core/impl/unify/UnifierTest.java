@@ -49,10 +49,8 @@ public class UnifierTest extends PrologTestBase {
         return InitLevel.L0_BARE;
     }
 
-    @Override
     @Before
-    public void setUp() {
-        super.setUp();
+    public void initUnifier() {
         this.unifier = new DefaultUnifier();
         this.tester = new UnificationTester(this.unifier);
     }

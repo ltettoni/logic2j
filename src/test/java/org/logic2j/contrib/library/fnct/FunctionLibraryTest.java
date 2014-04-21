@@ -39,10 +39,8 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     private FunctionLibrary functionLibrary;
 
-    @Override
     @Before
-    public void setUp() {
-        super.setUp();
+    public void loadFunctionLibrary() {
         this.functionLibrary = new FunctionLibrary(this.prolog);
         loadLibrary(this.functionLibrary);
         loadTheoryFromTestResourcesDir("mapping.pl");

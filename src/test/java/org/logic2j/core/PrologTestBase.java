@@ -70,14 +70,14 @@ public abstract class PrologTestBase {
      * Initialize the engine as per the {@link #initLevel()} specified.
      */
     @Before
-    public void setUp() {
+    public void initProlog() {
         this.prolog = new PrologReferenceImplementation(initLevel());
         // Here we should NOT NEED to reset the BindingTrail stack - however in certain cases it's useful just to enable this
         BindingTrailTestUtils.reset();
     }
 
     @After
-    public void tearDown() {
+    public void checkBindingTrail() {
         assertEquals("BindingTrail should be empty after any test method, checking stack size", 0, BindingTrailTestUtils.size());
         this.prolog = null;
     }
