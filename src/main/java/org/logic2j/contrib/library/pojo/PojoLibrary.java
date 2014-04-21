@@ -87,8 +87,14 @@ public class PojoLibrary extends LibraryBase {
         Object value;
         try {
             value = PropertyUtils.getProperty(theInstance, theExpression);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            // Property does not exist - cannot be matched - no solution
+        } catch (IllegalAccessException e) {
+            // No solution
+            return null;
+        } catch (InvocationTargetException e) {
+            // No solution
+            return null;
+        } catch (NoSuchMethodException e) {
+            // No solution
             return null;
         }
         return value;

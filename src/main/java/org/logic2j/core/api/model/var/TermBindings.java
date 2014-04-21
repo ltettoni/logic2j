@@ -44,7 +44,7 @@ import org.logic2j.core.impl.util.ReflectUtils;
  * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified.
  * @note The Term referring to this object is called the "referrer".<br/>
  * 
- *       TODO Improve performance: pre instantiation of {@link #TermBindings(Term)} instead of many times during solving. See note on
+ *       TODO Improve performance: pre instantiation of {@link #TermBindings(Object)} instead of many times during solving. See note on
  *       constructor.
  */
 public class TermBindings {
@@ -375,7 +375,7 @@ public class TermBindings {
 
     /**
      * @return The Term whose variable values are held in this structure, actually the one that was provided to the consturctor
-     *         {@link #TermBindings(Term)}.
+     *         {@link #TermBindings(Object)}.
      */
     public Object getReferrer() {
         return this.referrer;
@@ -390,7 +390,7 @@ public class TermBindings {
     // TODO Clarify this!
     public static TermBindings merge(List<TermBindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
-        final LinkedHashSet<TermBindings> distinctBindings = new LinkedHashSet<>(allBindings);
+        final LinkedHashSet<TermBindings> distinctBindings = new LinkedHashSet<TermBindings>(allBindings);
         // Count total number of vars
         int numberOfVars = 0;
         for (final TermBindings element : distinctBindings) {
