@@ -127,7 +127,7 @@ public abstract class PrologTestBase {
         return internalAssert(theNumber, theGoals).all();
     }
 
-    // FIXME Not good, should use direct Junit and @Expected
+    // FIXME Not good, should use direct Junit and expected=...
     protected void assertGoalMustFail(CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for assertGoalMustFail()", theGoals.length > 0);
         for (final CharSequence theGoal : theGoals) {

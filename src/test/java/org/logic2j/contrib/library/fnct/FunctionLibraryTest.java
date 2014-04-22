@@ -140,7 +140,7 @@ public class FunctionLibraryTest extends PrologTestBase {
      * @param childrenBefore True for recursive pre-transformation (bottom-up)
      * @param childrenAfter True for recursive post-transformation (top-down)
      * @return A Object[2] with the term and its binding
-     * FIXME Convert to a literal Binding
+     * TODO Should we use a literal Binding instead?
      */
     private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
         final Object originalTerm = unmarshall(termToParse);
@@ -184,8 +184,7 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals("f(X)", assertOneSolution("map(map, f(X), Result)").binding("Result").toString());
     }
 
-    // FIXME not yet funtional
-    @Ignore
+    @Ignore("FIXME not yet functional")
     @Test
     public void mapGoesToInfiniteLoop() {
         UniqueSolutionHolder sol = assertOneSolution("gd3((tcNumber(a, b), c))");

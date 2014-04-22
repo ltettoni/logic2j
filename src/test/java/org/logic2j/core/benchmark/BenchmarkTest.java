@@ -60,7 +60,7 @@ public class BenchmarkTest extends PrologTestBase {
     }
 
     /**
-     * Takes lots of time and stack - use with parcimony and with -Xss10m. By defaut we @Ignore this test.
+     * Takes lots of time and stack - use with parsimony and with -Xss10m. By default we will ignore this test.
      */
     @Ignore("Takes a lot of time and resources - temporarily disabled. Use with -Xss10m")
     @Test
@@ -102,7 +102,7 @@ public class BenchmarkTest extends PrologTestBase {
         ProfilingInfo.reportAll("TermBindings of solutions to " + goal);
     }
 
-    @Ignore("Use this in conjuction with jvisualvm to profile")
+    @Ignore("Use this in conjunction with jvisualvm to profile")
     @Test
     public void queensForJVisualVM() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");

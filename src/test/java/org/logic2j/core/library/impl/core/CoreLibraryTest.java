@@ -63,7 +63,7 @@ public class CoreLibraryTest extends PrologTestBase {
         assertNoSolution("var(X, Y, Z)");
     }
 
-    // TODO Some uncertainties re. the behaviour of no-op binding of free bindings. To be clarified.
+    // TODO Some uncertainties re. the desired behaviour of no-op binding of free bindings. To be clarified.
     @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
     @Test
     public void solvePrimitivePredicates_representation_FREE() {

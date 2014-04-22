@@ -27,7 +27,7 @@ import org.logic2j.core.api.model.var.TermBindings.FreeVarRepresentation;
 
 /**
  * Support the thorough testing of {@link Unifier} implementations, this is not a TestCase. 
- * TODO replace this class by hamctest 1.3 high-level assertions that can be reused
+ * TODO Replace this class by hamcrest high-level assertions that can be reused
  */
 class UnificationTester {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnificationTester.class);
@@ -38,8 +38,8 @@ class UnificationTester {
     public Object right;
     public TermBindings leftVars;
     public TermBindings rightVars;
-    private Boolean expectedResult = null; // TODO Good candidates for hamctest 1.3
-    private Boolean result = null; // TODO Good candidates for hamctest 1.3
+    private Boolean expectedResult = null; // TODO Good candidates for hamcrest
+    private Boolean result = null; // TODO Good candidates for hamcrest
 
     private Integer expectedNbBindings = null;
 

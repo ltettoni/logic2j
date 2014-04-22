@@ -124,7 +124,7 @@ public class HigherLevelTest extends PrologTestBase {
         assertNSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
     }
 
-    @Ignore("Takes a lot of time - used to study multicore use of 2-thread solving")
+    @Ignore("Takes a lot of time - used to study multi-core use of 2-thread solving")
     @Test
     public void multithreadedProducerConsumerIsNotFaster() {
         logger.info("Number of host cores = {}", Runtime.getRuntime().availableProcessors());
