@@ -62,8 +62,8 @@ public interface TheoryManager extends ClauseProvider {
 
     /**
      * @return All clause providers, in same order as when registered.
-     *         TODO But the actual ordering may not be always needed, it's only
-     *         important when the same predicate is available from several providers (not frequent). Could we in certain cases use
+     *         TODO The actual ordering of clause providers may not be always needed, it is only
+     *         important when the same predicate is available from several providers (rare). Could we in certain cases use
      *         multi-threaded access to all clause providers?
      */
     // TODO See if we can get rid of this and implement proper indexing of Goal -> List<Clause>

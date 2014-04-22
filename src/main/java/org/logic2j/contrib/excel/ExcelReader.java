@@ -116,46 +116,49 @@ public class ExcelReader {
             return tbl;
         }
         throw new IOException("According to extension file may not be of Excel format: " + this.file);
-        // else if (this.fileName.endsWith(".xlsx")) {
-        // if (this.sheet == null) {
-        // final XSSFWorkbook workBook = new XSSFWorkbook(this.fileName);
-        // this.sheet = workBook.getSheetAt(0);
-        // }
-        // final int totalRows = this.sheet.getPhysicalNumberOfRows();
-        // for (int i = this.firstRowIsHeaders ? 0 : 1; i < totalRows; i++) {
-        // final XSSFRow row = ((XSSFSheet) this.sheet).getRow(i);
-        // if (row != null) {
-        // final int cells = row.getPhysicalNumberOfCells();
-        // final Term[] args = new Term[cells];
-        // for (int c = 0; c < cells; c++) {
-        // final XSSFCell cell = row.getCell(c);
-        // String value = "";
-        // switch (cell.getCellType()) {
-        // case Cell.CELL_TYPE_FORMULA:
-        // value = cell.getCellFormula();
-        // // If it is a formula, then it must be a numeric value.
-        // args[c] = this.termAdapter.term(value, FactoryMode.ANY_TERM);
-        // break;
-        // case Cell.CELL_TYPE_NUMERIC:
-        // value = Double.toString(cell.getNumericCellValue());
-        // args[c] = this.termAdapter.term(value, FactoryMode.ANY_TERM);
-        // break;
-        // case Cell.CELL_TYPE_STRING:
-        // value = cell.getStringCellValue();
-        // args[c] = this.termAdapter.term("\"" + value.replace("\"", "").replaceAll("\\r|\\n", "") + "\"", FactoryMode.LITERAL);
-        // break;
-        // default:
-        // args[c] = this.termAdapter.term("\"" + value + "\"", FactoryMode.LITERAL);
-        // }
-        // // FIXME There is a problem if the content of the cell is too long
-        // // args[c] = prolog.getTermFactory().create("\""+value.replace("\"", "").replaceAll("\\r|\\n", "")+"\"",
-        // // FactoryMode.ANY_TERM);
-        // }
-        // final Clause cl = new Clause(this.prolog, new Struct(dataSetName, args));
-        // clauses.add(cl);
-        // }
-        // }
-        // }
+        /*
+         OOXML
+        else if (this.fileName.endsWith(".xlsx")) {
+            if (this.sheet == null) {
+                final XSSFWorkbook workBook = new XSSFWorkbook(this.fileName);
+                this.sheet = workBook.getSheetAt(0);
+            }
+            final int totalRows = this.sheet.getPhysicalNumberOfRows();
+            for (int i = this.firstRowIsHeaders ? 0 : 1; i < totalRows; i++) {
+                final XSSFRow row = ((XSSFSheet) this.sheet).getRow(i);
+                if (row != null) {
+                    final int cells = row.getPhysicalNumberOfCells();
+                    final Term[] args = new Term[cells];
+                    for (int c = 0; c < cells; c++) {
+                        final XSSFCell cell = row.getCell(c);
+                        String value = "";
+                        switch (cell.getCellType()) {
+                            case Cell.CELL_TYPE_FORMULA:
+                                value = cell.getCellFormula();
+                                // If it is a formula, then it must be a numeric value.
+                                args[c] = this.termAdapter.term(value, FactoryMode.ANY_TERM);
+                                break;
+                            case Cell.CELL_TYPE_NUMERIC:
+                                value = Double.toString(cell.getNumericCellValue());
+                                args[c] = this.termAdapter.term(value, FactoryMode.ANY_TERM);
+                                break;
+                            case Cell.CELL_TYPE_STRING:
+                                value = cell.getStringCellValue();
+                                args[c] = this.termAdapter.term("\"" + value.replace("\"", "").replaceAll("\\r|\\n", "") + "\"", FactoryMode.LITERAL);
+                                break;
+                            default:
+                                args[c] = this.termAdapter.term("\"" + value + "\"", FactoryMode.LITERAL);
+                        }
+                        // TODO There is a problem if the content of the cell is too long
+                        // args[c] = prolog.getTermFactory().create("\""+value.replace("\"", "").replaceAll("\\r|\\n", "")+"\"",
+                        // FactoryMode.ANY_TERM);
+                    }
+                    final Clause cl = new Clause(this.prolog, new Struct(dataSetName, args));
+                    clauses.add(cl);
+                }
+            }
+        }
+        */
     }
 
     private File cachedFile() {

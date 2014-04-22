@@ -23,8 +23,8 @@ import java.util.Arrays;
 import org.logic2j.core.api.model.var.Binding;
 
 /**
- * This class manages the deunification "trail" to undo what was previously unified while backtracking to other solutions.
- * TODO Explain the data structure used.
+ * This class manages the de-unification "trail" to undo what was previously unified while backtracking to other solutions.
+ * TODO Document the data structure used.
  */
 public final class BindingTrail {
 

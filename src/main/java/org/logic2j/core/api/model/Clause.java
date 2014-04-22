@@ -78,8 +78,8 @@ public class Clause {
      */
     public Clause(Clause theOriginal) {
         if (theOriginal.content instanceof Struct) {
-            this.content = new Struct((Struct) theOriginal.content); // TODO LT: Why do we need cloning the content in a structure-sharing
-                                                                     // design???
+            // TODO Why do we need cloning the content in a structure-sharing design???
+            this.content = new Struct((Struct) theOriginal.content);
         } else {
             this.content = theOriginal;
         }

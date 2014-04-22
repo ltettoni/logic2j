@@ -44,7 +44,7 @@ public class LibraryBase implements PLibrary {
      * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
      * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
      * 
-     * TODO: Document example of typical overriding of dispatch()
+     * TODO Document example of typical overriding of dispatch()
      * 
      * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
@@ -115,7 +115,7 @@ public class LibraryBase implements PLibrary {
      */
     protected void ensureBindingIsNotAFreeVar(TermBindings theBindings, String nameOfPrimitive) {
         if (theBindings.isFreeReferrer()) {
-            // TODO should be sort of an InvalidGoalException?
+            // TODO Should be a kind of InvalidGoalException instead?
             throw new InvalidTermException("Cannot call primitive " + nameOfPrimitive + " with a Variable that is free");
         }
     }

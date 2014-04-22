@@ -57,8 +57,7 @@ import org.logic2j.core.library.mgmt.Primitive;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(SolutionListener, TermBindings, Term...)} method should actually take the goal and create a constraint graph, then
- * transform the graph into SQL.
+ * TODO the {@link #select(SolutionListener, TermBindings, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);

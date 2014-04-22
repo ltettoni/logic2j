@@ -32,7 +32,7 @@ public class SolutionListenerBase implements SolutionListener {
 
     /**
      * Number of solutions (so far).
-     * TODO Should it deserve a "long"?
+     * TODO Does this deserve a "long"?
      */
     private int counter = 0;
 

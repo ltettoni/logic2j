@@ -41,7 +41,7 @@ import org.logic2j.core.impl.PrologImplementation;
  * 
  * <p/>
  * This type of API for extracting results from a data layer should further be analyzed and confronted to other APIs such as JDBC, JNDI,
- * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protégé. Also RDF frameworks APIs may be considered.
+ * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Protï¿½gï¿½. Also RDF frameworks APIs may be considered.
  */
 public class SolutionHolder implements Iterable<Solution> {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
@@ -61,7 +61,7 @@ public class SolutionHolder implements Iterable<Solution> {
      * @return true when {@link #number()} returns more than zero
      */
     public boolean exists() {
-        // TODO This is NOT an efficient implementation. We should use a FirstSolutionListener to reduce unnecessary inference.
+        // FIXME This is NOT an efficient implementation. We should use a FirstSolutionListener to reduce unnecessary inference
         return number() > 0;
     }
 

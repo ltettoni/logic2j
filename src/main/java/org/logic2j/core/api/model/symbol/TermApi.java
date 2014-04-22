@@ -286,7 +286,7 @@ public class TermApi {
         return Binding.newLiteral(theTerm, theBindings).substitute().getTerm();
     }
     
-    // TODO Currently unused - but probably we should!
+    // FIXME Currently unused - but probably we should detect cycles!
     void avoidCycle(Struct theClause) {
         final List<Term> visited = new ArrayList<Term>(20);
         theClause.avoidCycle(visited);

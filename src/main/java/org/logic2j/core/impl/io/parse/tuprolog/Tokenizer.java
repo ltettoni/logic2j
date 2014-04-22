@@ -427,8 +427,6 @@ class Tokenizer extends StreamTokenizer {
     }
 
     /**
-     * 
-     * 
      * @param typec
      * @param svalc
      * @return the intValue of the next character token, -1 if invalid needs a lookahead if typec is \
@@ -440,7 +438,7 @@ class Tokenizer extends StreamTokenizer {
             }
             if (svalc.length() > 1) {
                 // The following characters are not implemented:
-                // * 1 meta escape sequence (* 6.4.2.1 *) todo
+                // * 1 meta escape sequence (* 6.4.2.1 *)
                 // * 1 control escape sequence (* 6.4.2.1 *)
                 // * 1 octal escape sequence (* 6.4.2.1 *)
                 // * 1 hexadecimal escape sequence (* 6.4.2.1 *)

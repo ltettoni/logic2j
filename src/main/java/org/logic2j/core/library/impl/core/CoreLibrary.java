@@ -280,7 +280,7 @@ public class CoreLibrary extends LibraryBase {
         if (!unified) {
             continuation = notifySolution(theListener);
         }
-        // TODO Why not "else"?
+        // FIXME Why not "else"?
         if (unified) {
             deunify();
         }

@@ -373,7 +373,7 @@ public class Parser {
         }
 
         if (t1.isType(VARIABLE)) {
-            return new Var(t1.text); // todo switched to use the internal check for "_" in Var(String)
+            return new Var(t1.text);
         }
 
         if (t1.isType(ATOM) || t1.isType(SQ_SEQUENCE) || t1.isType(DQ_SEQUENCE)) {
@@ -386,7 +386,7 @@ public class Parser {
 
             final Token t2 = this.tokenizer.readToken(); // reading left par
             if (!t2.isType(LPAR)) {
-                throw new InvalidTermException("bug in parsing process. Something identified as functor misses its first left parenthesis");// todo
+                throw new InvalidTermException("bug in parsing process. Something identified as functor misses its first left parenthesis");
             }
             final LinkedList<Object> a = exprA0_arglist(); // reading arguments
             final Token t3 = this.tokenizer.readToken();

@@ -52,7 +52,7 @@ public class UniqueSolutionListener extends SingleSolutionListener {
 
     @Override
     protected void onSuperfluousSolution() {
-        // FIXME would be really useful to have some context information here, eg. the goal we are trying to solve...
+        // TODO would be really useful to have some context information here, eg. the goal we are trying to solve...
         throw new IllegalSolutionException("More than one solution found by " + this + ", was expecting exactly one");
     }
 

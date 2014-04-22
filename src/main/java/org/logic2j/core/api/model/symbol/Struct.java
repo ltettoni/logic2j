@@ -50,12 +50,10 @@ public final class Struct extends Term {
     private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
     // TODO Move these constants to a common place?
-    // TODO Replace all calls to intern() by some factory to initialize our
-    // constants. But aren't all java literal strings already internalized?
+    // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
     public static final String FUNCTOR_COMMA = ",".intern();
     public static final String FUNCTOR_SEMICOLON = ";".intern();
-    public static final String LIST_SEPARATOR = ",".intern(); // In notations
-                                                              // [a,b,c]
+    public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]
 
     public static final String FUNCTOR_LIST = ".".intern();
     public static final String FUNCTOR_LIST_EMPTY = "[]".intern(); // The

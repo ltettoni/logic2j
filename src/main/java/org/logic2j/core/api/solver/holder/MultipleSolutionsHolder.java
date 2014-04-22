@@ -43,8 +43,8 @@ public class MultipleSolutionsHolder {
         this.solutionHolder = theSolutionHolder;
     }
 
-    private Integer lowest = null; // FIXME to document
-    private Integer highest = null; // FIXME to document
+    private Integer lowest = null; // TODO to be documented
+    private Integer highest = null; // TODO to be documented
 
     /**
      * Start solving but indicating you are not interested by the actual solutions nor their bindings,

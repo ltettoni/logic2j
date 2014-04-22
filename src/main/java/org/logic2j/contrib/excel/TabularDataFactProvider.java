@@ -53,7 +53,7 @@ public class TabularDataFactProvider implements DataFactProvider {
                 for (int c = 0; c < nbColumns; c++) {
                     if (c != primaryKeyColumn) {
                         final String property = columnNames[c];
-                        // FIXME hack! - null values should actually just not be asserted!
+                        // FIXME Null values should actually just not be asserted!
                         Serializable value = row[c];
                         if (value == null) {
                             value = "n/a";
@@ -90,10 +90,6 @@ public class TabularDataFactProvider implements DataFactProvider {
         }
     }
 
-    /**
-     * TODO Almost the same code in {@link TabularDataTermAdapter#terms(Object, AssertionMode)} we should use a common
-     * codebase
-     */
     @Override
     public Iterable<DataFact> listMatchingDataFacts(Object theGoal) {
         return this.dataFacts;

@@ -44,8 +44,7 @@ import org.logic2j.core.impl.util.ReflectUtils;
  * @note Usually the {@link Term} is a {@link Struct} that represents a goal to be demonstrated or unified.
  * @note The Term referring to this object is called the "referrer".<br/>
  * 
- *       TODO Improve performance: pre instantiation of {@link #TermBindings(Object)} instead of many times during solving. See note on
- *       constructor.
+ * TODO Improve performance: pre instantiation of {@link #TermBindings(Object)} instead of many times during solving. See note on constructor.
  */
 public class TermBindings {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermBindings.class);
@@ -319,9 +318,8 @@ public class TermBindings {
     }
 
     /**
-     * Find the local bindings corresponding to one of the variables of the Struct referred to by this TermBindings. FIXME Uh - what does
-     * this
-     * mean???
+     * Find the local bindings corresponding to one of the variables of the Struct referred to by this TermBindings.
+     * FIXME Uh - what does this mean???
      * TODO This method is only used once from a library - ensure it makes sense and belongs here
      * 
      * @param theVar
@@ -386,8 +384,9 @@ public class TermBindings {
      * @param theRemappedVars
      * @return A new TermBindings with a number of {@link TermBindings} into a single new one, making sure all variables are
      *         distinct.
+     * TODO Clarify this method
      */
-    // TODO Clarify this!
+
     public static TermBindings merge(List<TermBindings> allBindings, IdentityHashMap<Object, Object> theRemappedVars) {
         // Keep only distinct ones (as per object equality, in our case same references), but preseving order
         final LinkedHashSet<TermBindings> distinctBindings = new LinkedHashSet<TermBindings>(allBindings);

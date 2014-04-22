@@ -20,7 +20,7 @@ package org.logic2j.core.impl.util;
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
  * micro-helper to java.lang.reflect.
- * TODO Rename this class this has nothing to do with the Java Reflection API.
+ * TODO Rename this class this has nothing to do with the Java Reflection API (any more)
  * 
  * @version $Revision: 1.24 $
  */
