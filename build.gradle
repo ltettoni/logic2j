@@ -1,0 +1,75 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.6
+version = '0.6.0-SNAPSHOT'
+
+
+description = """\
+logic2j : Bring Logic to your Java
+----------------------------------
+
+A library to bring declarative and logic programming to your Java software.
+
+It is designed for first-order predicate formal logic, and includes all necessary
+components to manage Terms and their representations, an inference engine solver,
+an extensible unification framework, an in-memory or database-backed knowledge base.
+
+This work was inspired by &quot;tuprolog&quot; from the University of Bologna, Italy.
+This is a major rewrite with different unification and inference algorithms.
+
+The design guidelines were: close bidirectionnal integration to any style of Java, minimal dependencies, fabulous features, small footprint, and high performance.
+The driver was to implement a rule engine that &quot;reasons&quot; against large data sets, not only objects in the VM.
+
+Although close to Prolog, this is NOT a Prolog environment, but would be a good candidate to build one...
+"""
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.6', 'commons-beanutils:commons-beanutils:1.+', 'org.apache.poi:poi:3.+'
+    // Need very specific Derby version since the test resource host
+    // a zipped DB version in binary format. Require 10.8.1.2.
+    testCompile 'junit:junit:4.+', 'org.apache.derby:derby:10.8.1.2'
+    runtime 'ch.qos.logback:logback-classic:1.+'
+}
+
+
+// Unit tests use a publicly available database exposed as Excel
+task downloadTestResources(type: MyDownload) {
+    sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
+    target = file('src/test/resources/cde.ca.gov/pubschls.xls')
+}
+
+// Unit tests use a public database embedded in the test resources
+task unzipTestDb {
+    copy{
+        from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
+        into("src/test/db/zipcodes1")
+    }
+}
+
+
+test.dependsOn downloadTestResources, unzipTestDb
+
+
+
+
+// Download sourceUrl to target file
+class MyDownload extends DefaultTask {
+    @Input
+    String sourceUrl
+
+    @OutputFile
+    File target
+
+    @TaskAction
+    void download() {
+        if (!target.exists()) {
+            ant.get(src: sourceUrl, dest: target)
+        }
+    }
+}
