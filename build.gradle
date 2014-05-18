@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 sourceCompatibility = 1.6
-version = '0.6.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 
 description = """\
@@ -40,20 +40,22 @@ dependencies {
 
 // Unit tests use a publicly available database exposed as Excel
 task downloadTestResources(type: MyDownload) {
-    sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
-    target = file('src/test/resources/cde.ca.gov/pubschls.xls')
+     sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
+     target = file('src/test/resources/cde.ca.gov/pubschls.xls')
 }
 
 // Unit tests use a public database embedded in the test resources
 task unzipTestDb {
-    copy{
-        from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
-        into("src/test/db/zipcodes1")
-    }
+    // Not yet needed - will be !
+//    copy{
+//        from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
+//        into("src/test/db/zipcodes1")
+//    }
 }
 
 
-test.dependsOn downloadTestResources, unzipTestDb
+// Not yet needed - will be !
+// test.dependsOn downloadTestResources, unzipTestDb
 
 
 
