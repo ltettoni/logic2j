@@ -1,0 +1,8 @@
+This documents a major refactoring of logic2j that came between versions 0.6.0 and 1.0.0
+----------------------------------------------------------------------------------------
+
+Search for :
+Binding
+BindingTrail
+BindingType
+TermBindings
