@@ -14,10 +14,29 @@ public class VarTest {
         assertEquals(Term.NO_INDEX, v1.getIndex());
     }
 
-    @Test
+    @Test(expected = InvalidTermException.class)
     public void constructorNull() throws Exception {
-        new Var((String)null);
+        new Var((String) null);
     }
+
+    @Test(expected = InvalidTermException.class)
+    public void constructorEmpty() throws Exception {
+        new Var("");
+    }
+
+    @Test(expected = InvalidTermException.class)
+    public void constructorCannotInstantiateAnonymous() throws Exception {
+        new Var("_");
+    }
+
+
+    @Test
+    public void constructorWithCharSequence() throws Exception {
+        final Var v1 = new Var(new StringBuilder("X"));
+        assertSame("X", v1.getName());
+        assertEquals(Term.NO_INDEX, v1.getIndex());
+    }
+
 
     @Test
     public void idempotence() throws Exception {
@@ -43,11 +62,6 @@ public class VarTest {
         assertEquals(Term.NO_INDEX, v1.getIndex());
     }
 
-
-    @Test(expected = InvalidTermException.class)
-    public void cannotInstantiateAnonymous() throws Exception {
-        new Var("_");
-    }
 
     @Test(expected = InvalidTermException.class)
     public void cannotCloneAnonymous() throws Exception {

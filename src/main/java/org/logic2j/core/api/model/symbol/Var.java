@@ -32,20 +32,21 @@ public final class Var extends Term {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Name of the anonymous variable is always "_".
+     * Name of the anonymous variable is always "_". This constant is internalized, you
+     * can safely compare it with ==.
      */
     public static final String ANONYMOUS_VAR_NAME = "_".intern();
 
     /**
-     * Singleton anonymous variable
+     * Singleton anonymous variable. You can safely compare them with ==.
      */
     public static final Var ANONYMOUS_VAR = new Var();
 
     /**
-     * The name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
-     * by {@link #Var(String)} it may actually be anything (although it may not be the smartest idea).<br/>
-     * A value of null means it's the anonymous variable (even though the anonymous variable is formatted as "_")<br/>
-     * Note: all variable names are internalized, i.e. it is legal to compare them with ==.
+     * The immutable name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
+     * by {@link #Var(CharSequence)} it can actually be anything (although it may not be the smartest idea).<br/>
+     * A value of Var.ANONYMOUS_VAR_NAME means it's the anonymous variable<br/>
+     * Note: all variables' names are internalized, i.e. it is legal to compare their names with ==.
      */
     private final String name;
 
@@ -66,11 +67,18 @@ public final class Var extends Term {
      * @throws InvalidTermException if n is not a valid Prolog variable name
      * @note Internally the {@link #name} is {@link String#intern()}alized so it's OK to compare by reference.
      */
-    public Var(String theName) {
+    public Var(CharSequence theName) {
         if (theName == Var.ANONYMOUS_VAR_NAME) {
             throw new InvalidTermException("Must not instantiate the anonymous variable (which is a singleton)!");
         }
-        this.name = theName.intern();
+        if (theName == null) {
+            throw new InvalidTermException("Name of a variable cannot be null");
+        }
+        final String str = theName.toString();
+        if (str.isEmpty()) {
+            throw new InvalidTermException("Name of a variable may not be the empty String");
+        }
+        this.name = str.intern();
     }
 
     /**
@@ -190,11 +198,7 @@ public final class Var extends Term {
 
     @Override
     public int hashCode() {
-        if (this.name == null) {
-            // Anonymous var
-            return 0;
-        }
-        return this.name.hashCode();
+        return this.name.hashCode() ^ this.index;
     }
 
     /**
@@ -209,7 +213,7 @@ public final class Var extends Term {
             return false;
         }
         final Var that = (Var) other;
-        return this.name == that.name && this.index==that.index; // Names are {@link String#intern()}alized so OK to check by reference
+        return this.name == that.name && this.index == that.index; // Names are {@link String#intern()}alized so OK to check by reference
     }
 
     //---------------------------------------------------------------------------

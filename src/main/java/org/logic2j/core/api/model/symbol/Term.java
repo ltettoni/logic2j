@@ -37,25 +37,44 @@ import java.util.Collection;
  * @see Var
  */
 public abstract class Term implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
-     * A value of index=={@value} means it was not initialized.
+     * A value of index=={@value} (NO_INDEX) means it was not initialized.
      */
     public static final int NO_INDEX = -1;
+
     /**
-     * For {@link Var}s: defines the <br/>
-     * For a {@link Struct}: defines <br/>
+     * For {@link Var}s: defines the TODO<br/>
+     * For a {@link Struct}: defines the TODO<br/>
      * The default value is NO_INDEX.
      */
     public short index = NO_INDEX;
+
     /**
-     * A value of index=={@value} means this is the anonymous variable.
+     * A value of index=={@value} (ANON_INDEX) means this is the anonymous variable.
      */
     public static final int ANON_INDEX = -2;
-    private static final long serialVersionUID = 1L;
 
     // Use the following line instead to really isDebug the display of terms:
     // private static final Formatter defaultMarshaller = new
     // org.logic2j.core.optional.io.format.DetailedFormatter();
+
+
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    public short getIndex() {
+        return this.index;
+    }
+
+    // ---------------------------------------------------------------------------
+    // TermVisitor
+    // ---------------------------------------------------------------------------
+
+    public abstract <T> T accept(TermVisitor<T> theVisitor);
+
 
     // ---------------------------------------------------------------------------
     // Graph traversal methods, template methods with "protected" scope, user code should use TermApi methods instead.
@@ -76,20 +95,6 @@ public abstract class Term implements Serializable {
 //        }
 //        return null;
 //    }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-    public short getIndex() {
-        return this.index;
-    }
-
-    // ---------------------------------------------------------------------------
-    // Visitor
-    // ---------------------------------------------------------------------------
-
-    public abstract <T> T accept(TermVisitor<T> theVisitor);
 
 
     // ---------------------------------------------------------------------------

@@ -36,8 +36,8 @@ public final class Struct extends Term {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Indicate the arity of a variable arguments predicate, such as write/N. (this is an extension to classic Prolog where only fixed arity
-     * is supported).
+     * Indicate the arity of a variable arguments predicate, such as write/N.
+     * This is an extension to classic Prolog where only fixed arity is supported.
      */
     public static final String VARARG_ARITY_SIGNATURE = "N";
 
@@ -46,40 +46,66 @@ public final class Struct extends Term {
      */
     private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
+    // ---------------------------------------------------------------------------
+    // Names of functors
+    // ---------------------------------------------------------------------------
+
     // TODO Move these constants to a common place?
     // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
     public static final String FUNCTOR_COMMA = ",".intern();
+
     public static final String FUNCTOR_SEMICOLON = ";".intern();
-    public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]
 
     public static final String FUNCTOR_LIST = ".".intern();
-    public static final String FUNCTOR_LIST_EMPTY = "[]".intern(); // The
 
-    public static final String FUNCTOR_CLAUSE = ":-".intern();
-    public static final String FUNCTOR_CLAUSE_QUOTED = ("'" + FUNCTOR_CLAUSE + "'").intern();
-
-    public static final String FUNCTOR_TRUE = "true";
-    public static final String FUNCTOR_FALSE = "false".intern();
-    public static final String FUNCTOR_CUT = "!";
-    public static final String FUNCTOR_CALL = "call";
-
-    // true and false constants
-    public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
-    public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
-    public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
+    public static final String FUNCTOR_LIST_EMPTY = "[]".intern(); // The list end marker
 
     /**
      * The empty list.
      */
-    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_LIST_EMPTY, 0);
+    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_LIST_EMPTY, 0); // TODO rename this ?
 
-    private String name; // Always "internalized" with String.intern(), you can compare with == !
-    private int arity;
-    private Object[] args;
-    private String signature;
+    public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]
+
+    public static final String FUNCTOR_CLAUSE = ":-".intern();
+
+    public static final String FUNCTOR_CLAUSE_QUOTED = ("'" + FUNCTOR_CLAUSE + "'").intern();
+
+    public static final String FUNCTOR_TRUE = "true".intern();
+
+    public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
+
+    public static final String FUNCTOR_FALSE = "false".intern(); // TODO do we need it?
+
+    // ---------------------------------------------------------------------------
+    // Some key atoms as singletons
+    // ---------------------------------------------------------------------------
+
+    public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
+
+    public static final String FUNCTOR_CUT = "!".intern();
+
+    public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
+
+    public static final String FUNCTOR_CALL = "call".intern();
 
     // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
     public PrimitiveInfo primitiveInfo;
+
+    /**
+     * The functor of the Struct is its "name". This is a final value but due to implementation via
+     * method setNameAndArity(), we cannot declare it final here the compiler is not that smart.
+     */
+    private String name; // Always "internalized" with String.intern(), you can compare with ==.
+
+    private int arity;
+
+    private Object[] args;
+
+    /**
+     * The signature is internalized and allows for fast matching during unification
+     */
+    private String signature;
 
     /**
      * Low-level constructor.
@@ -130,6 +156,7 @@ public final class Struct extends Term {
 
     /**
      * Efficient cloning of the structure header - but passing a specified set of already-cloned args
+     *
      * @param original
      * @param newArguments
      */
@@ -241,20 +268,6 @@ public final class Struct extends Term {
     }
 
     /**
-     * Gets the number of elements of this structure
-     */
-    public int getArity() {
-        return this.arity;
-    }
-
-    /**
-     * Gets the functor name of this structure
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
      * @return A cloned array of all arguments (cloned to avoid any possibility to mutate)
      */
     public Object[] getArgs() {
@@ -269,7 +282,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the i-th element of this structure
-     *
+     * <p/>
      * No bound check is done
      */
     public Object getArg(int theIndex) {
@@ -287,7 +300,7 @@ public final class Struct extends Term {
 
     /**
      * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0. It is assumed that the term MUST have an arity of 2, because
-     *         when there's a LHS, there's also a RHS!
+     * when there's a LHS, there's also a RHS!
      */
     public Object getLHS() {
         if (this.arity != 2) {
@@ -308,10 +321,6 @@ public final class Struct extends Term {
 
     public String getVarargsPredicateSignature() {
         return this.name + VARARG_PREDICATE_TRAILER;
-    }
-
-    public PrimitiveInfo getPrimitiveInfo() {
-        return this.primitiveInfo;
     }
 
 //    /**
@@ -401,7 +410,6 @@ public final class Struct extends Term {
 //    }
 
 
-
 //    /**
 //     * @param theOther
 //     * @return true when references are the same, or when theOther Struct has same predicate name, arity, and all arguments are also equal.
@@ -441,7 +449,7 @@ public final class Struct extends Term {
         for (int i = 0; i < this.arity; i++) {
             runningCounter = TermApi.assignIndexes(this.args[i], runningCounter);
         }
-        this.index = (short)runningCounter;
+        this.index = (short) runningCounter;
         return runningCounter;
     }
 
@@ -468,7 +476,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the head of this structure, which is supposed to be a list.
-     * 
+     * <p/>
      * <p>
      * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -481,7 +489,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the tail of this structure, which is supposed to be a list.
-     * 
+     * <p/>
      * <p>
      * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -494,7 +502,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the number of elements of this structure, which is supposed to be a list.
-     * 
+     * <p/>
      * <p>
      * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
      * <code>UnsupportedOperationException</code>
@@ -514,7 +522,7 @@ public final class Struct extends Term {
     /**
      * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
      * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
-     * 
+     * <p/>
      * If this structure is not a list, null object is returned
      */
     // TODO (issue) Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
@@ -598,14 +606,50 @@ public final class Struct extends Term {
         this.args[1] = co;
     }
 
+    // ---------------------------------------------------------------------------
+    // TermVistior
+    // ---------------------------------------------------------------------------
+
     @Override
     public <T> T accept(TermVisitor<T> theVisitor) {
         return theVisitor.visit(this);
     }
 
     // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    /**
+     * Gets the number of elements of this structure
+     */
+    public int getArity() {
+        return this.arity;
+    }
+
+    /**
+     * Gets the functor name of this structure
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    public PrimitiveInfo getPrimitiveInfo() {
+        return this.primitiveInfo;
+    }
+
+    // ---------------------------------------------------------------------------
     // Methods of java.lang.Object
     // ---------------------------------------------------------------------------
+
+    @Override
+    public int hashCode() {
+        int result = this.name.hashCode();
+        result ^= this.arity << 8;
+        for (int i = 0; i < this.arity; i++) {
+            result ^= this.args[i].hashCode();
+        }
+        return result;
+    }
 
     /**
      * @param other
@@ -628,21 +672,10 @@ public final class Struct extends Term {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        int result = this.name.hashCode();
-        result ^= this.arity << 8;
-        for (int i = 0; i < this.arity; i++) {
-            result ^= this.args[i].hashCode();
-        }
-        return result;
-    }
-
-
 
     //---------------------------------------------------------------------------
     // Oldies
     //---------------------------------------------------------------------------
 
-    
+
 }
