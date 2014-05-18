@@ -1,3 +1,6 @@
 settings.gradle
 gradlew*
+.gradle
+gradle
 *.iml
+.idea
