@@ -1,0 +1,52 @@
+Requirements for the API for solutions
+--------------------------------------
+
+>>>> IDEAS AND WORK IN PROGRESS - THIS IS NOT A DOCUMENTATION! <<<<
+
+
+Note: this API must be really reentrant, it may be called 
+- by a client of the engine,
+- from within a prolog-implemented primitive
+- from within a solution callback when trying to solve a sub-goal 
+
+
+
+UC 1: determine presence vs absence, or single vs multiple nature of solution to a goal, be able to assert 
+
+solve(goal).exists()          -> boolean true when there's at least one solution (will solve one and return)
+solve(goal).first()           -> return first solution or null if none
+solve(goal).unique()          -> return THE solution that must exist and be the only one, otherwise exception
+solve(goal).number();         -> return number of solutions (will solve all!)
+
+
+
+UC 2: access solutions when many
+
+solve(goal).all()        -> method invocation will consider all solutions in bulk, returning complete collections
+solve(goal).iterator()   -> Iterator<Solution> ???
+(note: result of solve(goal) is itself an Iterable<Solution>)
+
+
+
+
+UC 2: on every solution, obtain the matched goal
+
+solve("chr(a,Y)").unique().solution()    -> Term("chr(a,97)")
+solve("chr(X,Y)").all().solutions()      -> List<Term> = [Term("chr('NUL', 0)"), Term("chr('^a', 1)"), ...]
+
+
+
+
+UC 3: on every solution, obtain one particular or all bindings
+
+solve("chr(a,Y)").unique().binding("X")    -> Struct("a")
+solve("chr(a,Y)").unique().binding("Y")    -> TInteger(97)
+- note: binding() accepts a String, and will match by name. 
+        Must also accept exact reference to Var instance that may occur in the goal being solved 
+
+
+
+UC 4: obtain all solutions for one particular binding
+
+solve("chr(X,Y)").all().bindings()     -> List<Map<String, Term>> = ["NUL"->0, "^a"->1, "^b"->2, ...]
+

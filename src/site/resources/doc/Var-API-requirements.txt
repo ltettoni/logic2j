@@ -1,0 +1,48 @@
+Requirements for the API on variables
+-------------------------------------
+
+
+>>>> IDEAS AND WORK IN PROGRESS - THIS IS NOT A DOCUMENTATION! <<<<
+
+
+
+UC 1: make sure term is fully ground (no more free Vars anywhere) and obtain resolved solution.
+
+binding("X").isGround()
+binding("X").isFullyGround()
+
+binding("X").resolved()
+
+
+
+
+UC 2: Obtain values from within a java primtive
+
+	void atom_length(VarBindings bindings, Term atom) {
+	  bindings.binding(atom).resolved(Struct.class).ensureAtom().getName().length();
+	}
+	  
+  
+  @Primitive(name = ">")
+  public void expression_greater_than(SolutionListener theListener, Bindings theBindings, Object t1, Object t2) {
+    t1 = evaluateFunctor(theBindings, t1);
+    t2 = evaluateFunctor(theBindings, t2);
+    ...
+  }
+
+  protected Term evaluateFunctor(Bindings theBindings, Term theTerm) {
+    Term b = theBindings.binding(theTerm).resolved();
+    if (b instanceof Struct) {
+      Struct s = (Struct)b;
+      final PrimitiveInfo desc = struct.getPrimitiveInfo();
+      if (desc == null || desc.getType() != PrimitiveType.FUNCTOR) {
+        return null;
+      }
+      return desc.invokeFunctor(struct, theBindings);  
+    }
+    return null;
+  }
+  
+
+
+
