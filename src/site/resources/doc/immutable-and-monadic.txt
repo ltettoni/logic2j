@@ -6,3 +6,9 @@ Binding
 BindingTrail
 BindingType
 TermBindings
+PartialTermVisitor  --> ExtendedTermVisitor
+
+
+Review if we use all Exceptions (and appropriately). No others.
+
+

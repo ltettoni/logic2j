@@ -23,14 +23,16 @@ import org.logic2j.core.api.model.symbol.TermApi;
 import org.logic2j.core.api.model.symbol.Var;
 
 /**
- * Base implementation of {@link TermVisitor} that does nothing except for {@link org.logic2j.core.api.model.symbol.Struct}, which are traversed recursively until the first
- * accept() returns non-null.<br/>
- * Intended to be derived when implementing useful {@link TermVisitor}s. Appropriate for searching through structures, or traversing all.
+ * Base implementation of {@link TermVisitor} that does nothing except for
+ * {@link org.logic2j.core.api.model.symbol.Struct}, which are traversed recursively until the first
+ * accept() returns a non-null value - then returns that value.<br/>
+ * Intended to be derived when implementing useful {@link TermVisitor}s.
+ * Appropriate for searching through structures, or traversing all.
  */
-public class PartialTermVisitorBase<T> implements PartialTermVisitor<T> {
+public class ExtendedTermVisitorBase<T> implements ExtendedTermVisitor<T> {
 
     /**
-     * Delegate to all subelements, will traverse children in depth-first order starting with 0, 1, ... 
+     * Delegate to all sub-elements, will traverse children in depth-first order starting with 0, 1, ...
      * until the last OR until the first that returns a non-null result.
      * 
      * @return The first returning a non-null result breaks the traveral of children and the result is returned.

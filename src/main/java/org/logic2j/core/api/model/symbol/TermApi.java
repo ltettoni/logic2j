@@ -17,15 +17,14 @@
  */
 package org.logic2j.core.api.model.symbol;
 
+import org.logic2j.core.api.model.ExtendedTermVisitor;
+import org.logic2j.core.api.model.ExtendedTermVisitorBase;
 import org.logic2j.core.api.model.FactoryMode;
-import org.logic2j.core.api.model.PartialTermVisitor;
-import org.logic2j.core.api.model.PartialTermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.ReflectUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -51,12 +50,12 @@ public class TermApi {
     }
 
     /**
-     * Apply a {@link org.logic2j.core.api.model.PartialTermVisitor} to visit theTerm.
+     * Apply a {@link org.logic2j.core.api.model.ExtendedTermVisitor} to visit theTerm.
      * @param theVisitor
      * @param theTerm
      * @return The transformed result as per theVisitor's logic
      */
-    public static <T> T accept(PartialTermVisitor<T> theVisitor, Object theTerm) {
+    public static <T> T accept(ExtendedTermVisitor<T> theVisitor, Object theTerm) {
         // Most common cases are Struct and Var, handled by super interface TermVisitor
         if (theTerm instanceof Struct) {
             return theVisitor.visit((Struct) theTerm);
@@ -68,12 +67,6 @@ public class TermApi {
         if (theTerm instanceof String) {
             return theVisitor.visit((String) theTerm);
         }
-//        if (theTerm instanceof Long) {
-//            return theVisitor.visit((Long) theTerm);
-//        }
-//        if (theTerm instanceof Double) {
-//            return theVisitor.visit((Double) theTerm);
-//        }
         return theVisitor.visit(theTerm);
     }
 
@@ -476,7 +469,7 @@ public class TermApi {
     public static IdentityHashMap<Var, String> allVars(Object term) {
         final IdentityHashMap<Var, String> map = new IdentityHashMap<Var, String>();
 
-        final PartialTermVisitor<Void> findVarsVisitor = new PartialTermVisitorBase<Void>() {
+        final ExtendedTermVisitor<Void> findVarsVisitor = new ExtendedTermVisitorBase<Void>() {
             @Override
             public Void visit(Var theVar) {
                 if (theVar != Var.ANONYMOUS_VAR) {

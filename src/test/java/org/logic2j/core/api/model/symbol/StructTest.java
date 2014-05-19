@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 public class StructTest {
 
 
-
     // ---------------------------------------------------------------------------
     // Struct
     // ---------------------------------------------------------------------------
@@ -36,9 +35,22 @@ public class StructTest {
     public void atomAsStruct() throws Exception {
         Object a1 = Struct.atom("true");
         assertTrue(a1 instanceof Struct);
-        assertSame("true", ((Struct)a1).getName());
+        assertSame("true", ((Struct) a1).getName());
         Object a2 = Struct.atom("true");
         assertNotSame(a1, a2);
+    }
+
+    @Test
+    public void struct2() throws Exception {
+        Struct a1 = new Struct("f", "a", "b");
+        assertEquals(2, a1.getArity());
+        assertSame("f", a1.getName());
+        assertSame("a", a1.getArg(0));
+        assertSame("b", a1.getArg(1));
+        Struct a2 = new Struct("f", "a", "b");
+        assertNotSame(a1, a2);
+        assertEquals(a1, a2);
+        assertNotEquals(a1, new Struct("f", "b", "a"));
     }
 
     // ---------------------------------------------------------------------------
@@ -54,8 +66,10 @@ public class StructTest {
         assertEquals("./2", pList.getPredicateSignature());
         assertEquals(5, pList.getLHS());
         assertEquals(5, pList.listHead());
+        assertSame(pList.getLHS(), pList.listHead());
         assertEquals("[6,7]", pList.getRHS().toString());
         assertEquals("[6,7]", pList.listTail().toString());
+        assertSame(pList.getRHS(), pList.listTail());
     }
 
     @Test
@@ -107,6 +121,5 @@ public class StructTest {
         assertNotNull(pList);
         assertEquals(3, pList.listSize());
     }
-
 
 }

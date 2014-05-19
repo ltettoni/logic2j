@@ -17,20 +17,26 @@
  */
 package org.logic2j.core.api.model;
 
-
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Var;
-
 /**
- * Generic Visitor for the two subclasses of the {@link org.logic2j.core.api.model.symbol.Term}
- * hierarchy: {@link org.logic2j.core.api.model.symbol.Var} and
- * {@link org.logic2j.core.api.model.symbol.Struct}.
- * For reference, see the Visitor design pattern.
+ * Extension of the {@link TermVisitor} for type of classes that are NOT
+ * subclasses of {@link org.logic2j.core.api.model.symbol.Term}.
+ * This requires calling {@link org.logic2j.core.api.model.symbol.TermApi#accept(ExtendedTermVisitor, Object theTerm)}
  */
-public interface TermVisitor<T> {
+public interface ExtendedTermVisitor<T> extends TermVisitor<T> {
 
-    T visit(Var theVar);
+    /**
+     * Extra visiting method for String, because often String need special handling,
+     * for example in a visitor to marshall a Term, quoting needs to be done.
+     * @param theAtomString
+     * @return
+     */
+    T visit(String theAtomString);
 
-    T visit(Struct theStruct);
-
+    /**
+     * The "fallback" method on Object will be invoked if no other more specific visit() method
+     * could be found.
+     * @param theObject
+     * @return
+     */
+    T visit(Object theObject);
 }

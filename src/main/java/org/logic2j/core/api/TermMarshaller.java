@@ -15,20 +15,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model;
+package org.logic2j.core.api;
 
 /**
- * Extension of the {@link TermVisitor} for type of classes that are NOT
- * subclasses of {@link org.logic2j.core.api.model.symbol.Term}.
- * This requires calling {@link org.logic2j.core.api.model.symbol.TermApi#accept(PartialTermVisitor)}
+ * Marshall Prolog {@link org.logic2j.core.api.model.symbol.Term} hierarchies to streamable representations.
+ * <p>
+ * <em>
+ * Marshalling (Wikipedia): In computer science, marshalling (sometimes spelled marshaling) is the process of
+ * transforming the memory representation of an object to a data format suitable for
+ * storage or transmission, and it is typically used when data must be moved between
+ * different parts of a computer program or from one program to another
+ * </em>
+ * </p>
  */
-public interface PartialTermVisitor<T> extends TermVisitor<T> {
+public interface TermMarshaller {
 
-    T visit(String theAtomString);
+    /**
+     * Formats a {@link org.logic2j.core.api.model.symbol.Term} to its character representation.
+     * 
+     * @param theTerm
+     * @return The character representation of theTerm.
+     */
+    CharSequence marshall(Object theTerm);
 
-//    T visit(Long theLong);
-//
-//    T visit(Double theDouble);
-
-    T visit(Object theObject);
 }

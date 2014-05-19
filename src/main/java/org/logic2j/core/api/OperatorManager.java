@@ -1,5 +1,5 @@
 /*
- * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
+ * tuProlog - Copyright (C) 2001-2006  aliCE team at deis.unibo.it
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,24 +13,21 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package org.logic2j.core.api.model;
+package org.logic2j.core.api;
 
-
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Var;
 
 /**
- * Generic Visitor for the two subclasses of the {@link org.logic2j.core.api.model.symbol.Term}
- * hierarchy: {@link org.logic2j.core.api.model.symbol.Var} and
- * {@link org.logic2j.core.api.model.symbol.Struct}.
- * For reference, see the Visitor design pattern.
+ * This class manages Prolog operators.
+ * 
+ * @see org.logic2j.core.api.model.Operator
  */
-public interface TermVisitor<T> {
+public interface OperatorManager {
 
-    T visit(Var theVar);
+    void addOperator(String theName, String theAssociativityType, int thePriority);
 
-    T visit(Struct theStruct);
+    // TODO Unclear how this is an operation of a "manager"
+    int opPrio(String name, String type);
 
 }
