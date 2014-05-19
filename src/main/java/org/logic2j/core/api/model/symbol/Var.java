@@ -216,6 +216,14 @@ public final class Var extends Term {
         return this.name == that.name && this.index == that.index; // Names are {@link String#intern()}alized so OK to check by reference
     }
 
+    @Override
+    public String toString() {
+        if (logger.isDebugEnabled()) {
+            return this.name + '#' + this.getIndex();
+        }
+        return this.name;
+    }
+
     //---------------------------------------------------------------------------
     // Oldies
     //---------------------------------------------------------------------------
