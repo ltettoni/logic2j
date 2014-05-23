@@ -15,16 +15,16 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model;
+package org.logic2j.core.api.model.visitor;
 
 
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 
 /**
  * Base implementation of {@link TermVisitor} that does nothing except for
- * {@link org.logic2j.core.api.model.symbol.Struct}, which are traversed recursively until the first
+ * {@link org.logic2j.core.api.model.term.Struct}, which are traversed recursively until the first
  * accept() returns a non-null value - then returns that value.<br/>
  * Intended to be derived when implementing useful {@link TermVisitor}s.
  * Appropriate for searching through structures, or traversing all.

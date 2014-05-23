@@ -15,16 +15,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model.symbol;
+package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.ExtendedTermVisitor;
-import org.logic2j.core.api.model.ExtendedTermVisitorBase;
-import org.logic2j.core.api.model.FactoryMode;
+import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
+import org.logic2j.core.api.model.visitor.ExtendedTermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.ReflectUtils;
-
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermUnmarshaller;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -50,7 +51,7 @@ public class TermApi {
     }
 
     /**
-     * Apply a {@link org.logic2j.core.api.model.ExtendedTermVisitor} to visit theTerm.
+     * Apply a {@link org.logic2j.core.api.model.visitor.ExtendedTermVisitor} to visit theTerm.
      * @param theVisitor
      * @param theTerm
      * @return The transformed result as per theVisitor's logic
@@ -86,89 +87,91 @@ public class TermApi {
         return false;
     }
 
-//    /**
-//     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link Term#index} to
-//     * {@link Term#NO_INDEX}. This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Object)}; see a
-//     * more
-//     * detailed description there.
-//     *
-//     * @param collection Recipient collection, {@link Term}s add here.
-//     */
-//    public static void collectTermsInto(Object theTerm, Collection<Object> collection) {
-//        if (theTerm instanceof Struct) {
-//            ((Struct) theTerm).collectTermsInto(collection);
-//        } else if (theTerm instanceof Var) {
-//            ((Var) theTerm).collectTermsInto(collection);
-//        } else {
-//            // Not a Term but a plain Java object - won't collect
-//            collection.add(theTerm);
-//        }
-//    }
 
-//    /**
-//     * Recursively collect all terms at and under theTerm, and also initialize their {@link Term#index} to {@link Term#NO_INDEX}. For
-//     * example for a
-//     * structure "s(a,b(c),d(b(a)),X,X,Y)", the result will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
-//     *
-//     * @param theTerm
-//     * @return A collection of terms, never empty. Same terms may appear multiple times.
-//     */
-//    static Collection<Object> collectTerms(Object theTerm) {
-//        final ArrayList<Object> recipient = new ArrayList<Object>();
-//        collectTermsInto(theTerm, recipient);
-//        // Remove ourself from the result - we are always at the end of the collection
-//        recipient.remove(recipient.size() - 1);
-//        return recipient;
-//    }
+    /**
+     * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link Term#index} to
+     * {@link Term#NO_INDEX}. This is an internal template method: the public API entry point is {@link TermApi#collectTerms(Object)}; see a
+     * more
+     * detailed description there.
+     *
+     * @param collection Recipient collection, {@link Term}s add here.
+     * TODO use an ExtendedTermVisitor
+     */
+    public static void collectTermsInto(Object theTerm, Collection<Object> collection) {
+        if (theTerm instanceof Struct) {
+            ((Struct) theTerm).collectTermsInto(collection);
+        } else if (theTerm instanceof Var) {
+            ((Var) theTerm).collectTermsInto(collection);
+        } else {
+            // Not a Term but a plain Java object
+            collection.add(theTerm);
+        }
+    }
 
-//    /**
-//     * Factorize a {@link Term}, this means recursively traversing the {@link Term} structure and assigning any duplicates substructures to
-//     * the same references.
-//     *
-//     * @param theTerm
-//     * @return The factorized term, may be same as argument theTerm in case nothing was needed, or a new object.
-//     */
-//    public static Object factorize(Object theTerm) {
-//        final Collection<Object> collection = collectTerms(theTerm);
-//        return factorize(theTerm, collection);
-//    }
+    /**
+     * Recursively collect all terms at and under theTerm, and also reinit their {@link Term#index} to {@link Term#NO_INDEX}. For
+     * example for a
+     * structure "s(a,b(c),d(b(a)),X,X,Y)", the result Collection will hold [a, c, b(c), b(a), c(b(a)), X, X, Y]
+     *
+     * @param theTerm
+     * @return A collection of terms, never empty. Same terms may appear multiple times.
+     */
+    static Collection<Object> collectTerms(Object theTerm) {
+        final ArrayList<Object> recipient = new ArrayList<Object>();
+        collectTermsInto(theTerm, recipient);
+        // Remove ourself from the result - we are always at the end of the collection
+        recipient.remove(recipient.size() - 1);
+        return recipient;
+    }
 
-//    /**
-//     * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection.
-//     * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal. A factorized {@link Struct}
-//     * will have all occurences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
-//     * public API entry point is {@link TermApi#factorize(Object)}; see a more detailed description there.
-//     *
-//     * @return Either this, or a new equivalent but factorized Term.
-//     */
-//    public static Object factorize(Object theTerm, Collection<Object> collection) {
-//        if (theTerm instanceof Struct) {
-//            return ((Struct) theTerm).factorize(collection);
-//        } else if (theTerm instanceof Var) {
-//            return ((Var) theTerm).factorize(collection);
-//        } else {
-//            // Not a Term but a plain Java object - won't factorize
-//            return theTerm;
-//        }
-//    }
+    /**
+     * Factorize a {@link Term}, this means recursively traversing the {@link Term} structure and assigning any duplicates substructures to
+     * the same references.
+     *
+     * @param theTerm
+     * @return The factorized term, may be same as argument theTerm in case nothing was needed, or a new object.
+     */
+    public static Object factorize(Object theTerm) {
+        final Collection<Object> collection = collectTerms(theTerm);
+        return factorize(theTerm, collection);
+    }
 
-//    /**
-//     * Check structural equality, this means that the names of atoms, functors, arity and numeric values are all equal, that the same
-//     * variables are referred to, but irrelevant of the bound values of those variables.
-//     *
-//     * @param theOther
-//     * @return true when theOther is structurally equal to this. Same references (==) will always yield true.
-//     */
-//    public static boolean structurallyEquals(Object theTerm, Object theOther) {
-//        if (theTerm instanceof Struct) {
-//            return ((Struct) theTerm).structurallyEquals(theOther);
-//        } else if (theTerm instanceof Var) {
-//            return ((Var) theTerm).structurallyEquals(theOther);
-//        } else {
-//            // Not a Term but a plain Java object - calculate equality
-//            return theTerm.equals(theOther);
-//        }
-//    }
+    /**
+     * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection.
+     * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal. A factorized {@link Struct}
+     * will have all occurences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
+     * public API entry point is {@link TermApi#factorize(Object)}; see a more detailed description there.
+     *
+     * @return Either this, or a new equivalent but factorized Term.
+     */
+    public static Object factorize(Object theTerm, Collection<Object> collection) {
+        if (theTerm instanceof Struct) {
+            return ((Struct) theTerm).factorize(collection);
+        } else if (theTerm instanceof Var) {
+            return ((Var) theTerm).factorize(collection);
+        } else {
+            // Not a Term but a plain Java object - won't factorize
+            return theTerm;
+        }
+    }
+
+    /**
+     * Check structural equality, this means that the names of atoms, functors, arity and numeric values are all equal, that the same
+     * variables are referred to, but irrelevant of the bound values of those variables.
+     *
+     * @param theOther
+     * @return true when theOther is structurally equal to this. Same references (==) will always yield true.
+     */
+    public static boolean structurallyEquals(Object theTerm, Object theOther) {
+        if (theTerm instanceof Struct) {
+            return ((Struct) theTerm).structurallyEquals(theOther);
+        } else if (theTerm instanceof Var) {
+            return ((Var) theTerm).structurallyEquals(theOther);
+        } else {
+            // Not a Term but a plain Java object - calculate equality
+            return theTerm.equals(theOther);
+        }
+    }
 
 //    /**
 //     * Find the first instance of {@link Var} by name inside a Term, most often a {@link Struct}.
@@ -280,38 +283,38 @@ public class TermApi {
         theClause.avoidCycle(visited);
     }
 
-//    /**
-//     * Normalize a {@link Term} using the specified definitions of operators, primitives.
-//     *
-//     * @param theTerm To be normalized
-//     * @param theLibraryContent Defines primitives to be recognized, null for no assignment
-//     * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
-//     */
-//    public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
-//        final Object factorized = factorize(theTerm);
-//        assignIndexes(factorized, 0);
-//        if (factorized instanceof Struct && theLibraryContent != null) {
+    /**
+     * Normalize a {@link Term} using the specified definitions of operators, primitives.
+     *
+     * @param theTerm To be normalized
+     * @param theLibraryContent Defines primitives to be recognized, null for no assignment
+     * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
+     */
+    public static Object normalize(Object theTerm) {
+        final Object factorized = factorize(theTerm);
+        assignIndexes(factorized, 0);
+//        if (theLibraryContent != null && factorized instanceof Struct) {
 //            ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
 //        }
-//        return factorized;
-//    }
+        return factorized;
+    }
 
     /**
      * Primitive factory for simple {@link Term}s from plain Java {@link Object}s, use this
-     * with parcimony at low-level.
+     * with parsimony at low-level.
      * Higher-level must use {@link TermAdapter} or {@link TermUnmarshaller} instead which can be
      * overridden and defined with user logic and features.
-     * 
+     *
      * Character input will be converted to Struct or Var according to Prolog's syntax convention:
      * when starting with an underscore or an uppercase, this is a {@link Var}.
      * This method is not capable of instantiating a compound {@link Struct}, it may only create atoms.
-     * 
+     *
      * @param theObject Should usually be {@link CharSequence}, {@link Number}, {@link Boolean}
      * @param theMode
      * @return An instance of a subclass of {@link Term}.
      * @throws InvalidTermException If theObject cannot be converted to a Term
      */
-    public static Object valueOf(Object theObject, FactoryMode theMode) throws InvalidTermException {
+    public static Object valueOf(Object theObject, TermAdapter.FactoryMode theMode) throws InvalidTermException {
         if (theObject == null) {
             throw new InvalidTermException("Cannot create Term from a null argument");
         }
@@ -349,7 +352,8 @@ public class TermApi {
                     result = new Var(chars);
                 } else {
                     // Otherwise it's an atom
-                    result = new Struct(chars);
+                    // result = new Struct(chars);
+                    result = chars.intern();
                 }
                 break;
             }

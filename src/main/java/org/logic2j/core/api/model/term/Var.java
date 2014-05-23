@@ -15,11 +15,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model.symbol;
+package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.TermVisitor;
+import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.PrologInternalError;
 
 import java.util.Collection;
 
@@ -135,43 +134,43 @@ public final class Var extends Term {
 //        return null;
 //    }
 
-//    /**
-//     * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
-//     *
-//     * @param theCollectedTerms
-//     */
-//    void collectTermsInto(Collection<Object> theCollectedTerms) {
-//        this.index = NO_INDEX;
-//        theCollectedTerms.add(this);
-//    }
+    /**
+     * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
+     *
+     * @param theCollectedTerms
+     */
+    void collectTermsInto(Collection<Object> theCollectedTerms) {
+        this.index = NO_INDEX;
+        theCollectedTerms.add(this);
+    }
 
-//    Object factorize(Collection<Object> theCollectedTerms) {
-//        // If this term already has an equivalent in the provided collection, return that one
-//        final Object alreadyThere = findStructurallyEqualWithin(theCollectedTerms);
-//        if (alreadyThere != null) {
-//            return alreadyThere;
-//        }
-//        // Not found by structural equality, we match variables by their name
-//        // TODO I'm not actually sure why we do this - we should probably log and identify why this case
-//        for (final Object term : theCollectedTerms) {
-//            if (term instanceof Var) {
-//                final Var var = (Var) term;
-//                if (this.getName().equals(var.getName())) {
-//                    return var;
-//                }
-//            }
-//        }
-//        return this;
-//    }
+    Object factorize(Collection<Object> theCollectedTerms) {
+        // If this term already has an equivalent in the provided collection, return that one
+        final Object alreadyThere = findStructurallyEqualWithin(theCollectedTerms);
+        if (alreadyThere != null) {
+            return alreadyThere;
+        }
+        // Not found by structural equality, we match variables by their name
+        // TODO I'm not actually sure why we do this - we should probably log and identify why this case
+        for (final Object term : theCollectedTerms) {
+            if (term instanceof Var) {
+                final Var var = (Var) term;
+                if (this.getName().equals(var.getName())) {
+                    return var;
+                }
+            }
+        }
+        return this;
+    }
 
-//    /**
-//     * @param theOther
-//     * @return true only when references are the same, otherwise two distinct {@link Var}s will always be considered different, despite
-//     * their name, index, or whatever.
-//     */
-//    boolean structurallyEquals(Object theOther) {
-//        return theOther == this; // Check memory reference only
-//    }
+    /**
+     * @param theOther
+     * @return true only when references are the same, otherwise two distinct {@link Var}s will always be considered different, despite
+     * their name, index, or whatever.
+     */
+    boolean structurallyEquals(Object theOther) {
+        return theOther == this; // Check memory reference only
+    }
 
     /**
      * Assign a new {@link Term#index} to a Var if it was not assigned before.

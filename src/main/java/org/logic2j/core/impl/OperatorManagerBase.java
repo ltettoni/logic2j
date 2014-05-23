@@ -26,16 +26,17 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 /**
- * Base implementation.
+ * Base implementation for OperatorManager
  */
-public class OperatorManagerBase implements OperatorManager, Serializable {
+abstract class OperatorManagerBase implements OperatorManager, Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** current known operators */
+    /** currently known operators */
     private final OperatorRegister operatorList = new OperatorRegister();
 
     /**
-     * Creates a new operator. If the operator is already provided, it replaces it with the new one
+     * Creates and register a new operator. If the operator is already provided, it replaces it with the new one
+     * @throws PrologNonSpecificError
      */
     @Override
     public void addOperator(String theName, String theAssociativityType, int thePriority) {
@@ -49,6 +50,7 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
 
     /**
      * Returns the priority of an operator (0 if the operator is not defined).
+     * TODO rename method
      */
     @Override
     public int opPrio(String name, String type) {
@@ -57,7 +59,8 @@ public class OperatorManagerBase implements OperatorManager, Serializable {
     }
 
     /**
-     * Register for operators; caches operator by name+type description. Retains insertion order.
+     * A register for operators; caches operator by name+type description.
+     * Retains insertion order.
      * <p/>
      * Not 100% sure if 'insertion-order-priority' should be completely replaced by the explicit priority given to operators.
      * 

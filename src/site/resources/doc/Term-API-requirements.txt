@@ -1,10 +1,28 @@
-Requirements for the API on variables
--------------------------------------
+Requirements for the API on Terms
+---------------------------------
+
+Parsing of terms:
+
+Features for converting things into Terms hierarchies:
+1. Type conversion      (eg. BigDecimal to Long, StringBuilder to Struct, Java Collection to Prolog list)
+2. Interpretation       (eg. "x" is an atom, "X" is a variable)
+3. Operators            (eg. a:-b is ':-'(a,b), [a,b] is ".(a,.(b,[]))"
+4. Normalization        (unique Variables, common subtrees factorized, etc)
+5. Primitives           (eg. "true", "!" are actually not atoms but primitives)
+
+From the most basic conversion to the most evolved
+
+1.1 new Struct(functor, args...)
+1.2 Struct.createPList()
+1.3 Struct.valueOf(functor, args...)
+2.  TermApi.valueOf(Object)
+3.  TermUnmarshaller.unmarshall()
+
+
+
 
 
 >>>> IDEAS AND WORK IN PROGRESS - THIS IS NOT A DOCUMENTATION! <<<<
-
-
 
 UC 1: make sure term is fully ground (no more free Vars anywhere) and obtain resolved solution.
 

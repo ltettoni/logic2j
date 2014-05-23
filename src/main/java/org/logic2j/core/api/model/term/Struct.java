@@ -15,10 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model.symbol;
+package org.logic2j.core.api.model.term;
 
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.PrimitiveInfo;
-import org.logic2j.core.api.model.TermVisitor;
+import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.ReflectUtils;
@@ -39,15 +40,15 @@ public final class Struct extends Term {
     // Names of functors
     // ---------------------------------------------------------------------------
 
-    private static final char HEAD_TAIL_SEPARATOR = '|';
+    public static final char HEAD_TAIL_SEPARATOR = '|';
 
-    private static final char LIST_CLOSE = ']';
+    public static final char LIST_CLOSE = ']';
 
-    private static final char LIST_OPEN = '[';
+    public static final char LIST_OPEN = '[';
 
-    private static final char PAR_CLOSE = ')';
+    public static final char PAR_CLOSE = ')';
 
-    private static final char PAR_OPEN = '(';
+    public static final char PAR_OPEN = '(';
 
     public static final String FUNCTOR_CALL = "call".intern();
 
@@ -100,11 +101,11 @@ public final class Struct extends Term {
     private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
-    private static final String ARG_SEPARATOR = ", ".intern();
+    public static final String ARG_SEPARATOR = ", ".intern();
 
-    private static final String LIST_ELEM_SEPARATOR = ",".intern();
+    public static final String LIST_ELEM_SEPARATOR = ",".intern();
 
-    private static final char QUOTE = '\'';
+    public static final char QUOTE = '\'';
 
     // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
     public PrimitiveInfo primitiveInfo;
@@ -225,6 +226,22 @@ public final class Struct extends Term {
     }
 
     /**
+     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
+     * by {@link TermApi#valueOf(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+     *
+     * @note This method is a static factory, not a constructor, to emphasize that arguments
+     *       are not of the type needed by this class, but need transformation.
+     */
+    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
+        final Struct newInstance = new Struct(theFunctor, argList.length);
+        int i = 0;
+        for (final Object element : argList) {
+            newInstance.args[i++] = TermApi.valueOf(element, TermAdapter.FactoryMode.ANY_TERM);
+        }
+        return newInstance;
+    }
+
+    /**
      * Create a Prolog list from head and tail.
      *
      * @param head
@@ -291,44 +308,50 @@ public final class Struct extends Term {
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
 
-//    /**
-//     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms, and finally add this {@link Struct} to
-//     * theCollectedTerms. The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
-//     *
-//     * @param theCollectedTerms
-//     */
-//    void collectTermsInto(Collection<Object> theCollectedTerms) {
-//        this.index = NO_INDEX;
-//        for (int i = 0; i < this.arity; i++) {
-//            final Object child = this.args[i];
-//            TermApi.collectTermsInto(child, theCollectedTerms);
-//        }
-//        theCollectedTerms.add(this);
-//    }
+    /**
+     * Set {@link Term#index} to {@link Term#NO_INDEX}, recursively collect all argument's terms first,
+     * then finally add this {@link Struct} to theCollectedTerms.
+     * The functor alone (without its children) is NOT collected as a term. An atom is collected as itself.
+     *
+     * @param theCollectedTerms
+     */
+    void collectTermsInto(Collection<Object> theCollectedTerms) {
+        this.index = NO_INDEX;
+        for (int i = 0; i < this.arity; i++) {
+            final Object child = this.args[i];
+            TermApi.collectTermsInto(child, theCollectedTerms);
+        }
+        theCollectedTerms.add(this);
+    }
 
-//    Object factorize(Collection<Object> theCollectedTerms) {
-//        // Recursively factorize all arguments of this Struct
-//        final Object[] newArgs = new Object[this.arity];
-//        boolean anyChange = false;
-//        for (int i = 0; i < this.arity; i++) {
-//            newArgs[i] = TermApi.factorize(this.args[i], theCollectedTerms);
-//            anyChange |= (newArgs[i] != this.args[i]);
-//        }
-//        // Now initialize result - a new Struct only if any change was found below
-//        final Struct factorized;
-//        if (anyChange) {
-//            factorized = new Struct(this);
-//            factorized.args = newArgs;
-//        } else {
-//            factorized = this;
-//        }
-//        // If this Struct already has an equivalent in the provided collection, return that one
-//        final Object betterEquivalent = factorized.findStructurallyEqualWithin(theCollectedTerms);
-//        if (betterEquivalent != null) {
-//            return betterEquivalent;
-//        }
-//        return factorized;
-//    }
+    /**
+     * TODO
+     * @param theCollectedTerms
+     * @return
+     */
+    Object factorize(Collection<Object> theCollectedTerms) {
+        // Recursively factorize all arguments of this Struct
+        final Object[] newArgs = new Object[this.arity];
+        boolean anyChange = false;
+        for (int i = 0; i < this.arity; i++) {
+            newArgs[i] = TermApi.factorize(this.args[i], theCollectedTerms);
+            anyChange |= (newArgs[i] != this.args[i]);
+        }
+        // Now initialize result - a new Struct only if any change was found below
+        final Struct factorized;
+        if (anyChange) {
+            factorized = new Struct(this);
+            factorized.args = newArgs;
+        } else {
+            factorized = this;
+        }
+        // If this Struct already has an equivalent in the provided collection, return that one
+        final Object betterEquivalent = factorized.findStructurallyEqualWithin(theCollectedTerms);
+        if (betterEquivalent != null) {
+            return betterEquivalent;
+        }
+        return factorized;
+    }
 
 //    Var findVar(String theVariableName) {
 //        for (int i = 0; i < this.arity; i++) {
@@ -342,29 +365,29 @@ public final class Struct extends Term {
 //    }
 
 
-//    /**
-//     * @param theOther
-//     * @return true when references are the same, or when theOther Struct has same predicate name, arity, and all arguments are also equal.
-//     */
-//    boolean structurallyEquals(Object theOther) {
-//        if (theOther == this) {
-//            return true; // Same reference
-//        }
-//        if (!(theOther instanceof Struct)) {
-//            return false;
-//        }
-//        final Struct that = (Struct) theOther;
-//        // Arity and names must match.
-//        if (this.arity == that.arity && this.name == that.name) { // Names are {@link String#intern()}alized so OK to check by reference
-//            for (int i = 0; i < this.arity; i++) {
-//                if (!TermApi.structurallyEquals(this.args[i], that.args[i])) {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
-//    }
+    /**
+     * @param theOther
+     * @return true when references are the same, or when theOther Struct has same predicate name, arity, and all arguments are also equal.
+     */
+    boolean structurallyEquals(Object theOther) {
+        if (theOther == this) {
+            return true; // Same reference
+        }
+        if (!(theOther instanceof Struct)) {
+            return false;
+        }
+        final Struct that = (Struct) theOther;
+        // Arity and names must match.
+        if (this.arity == that.arity && this.name == that.name) { // Names are {@link String#intern()}alized so OK to check by reference
+            for (int i = 0; i < this.arity; i++) {
+                if (!TermApi.structurallyEquals(this.args[i], that.args[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Write major properties of the Struct, and also calculate read-only indexing signature for efficient access.

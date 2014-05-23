@@ -18,10 +18,10 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.model.Operator;
-import org.logic2j.core.api.model.symbol.Struct;
+import org.logic2j.core.api.model.term.Struct;
 
 /**
- * This class defines an operator manager with some standard operators defined
+ * This class defines an OperatorManager with many standard Prolog operators defined.
  */
 public class DefaultOperatorManager extends OperatorManagerBase {
     private static final long serialVersionUID = 1L;

@@ -15,9 +15,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model.symbol;
+package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.TermVisitor;
+import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,20 +84,20 @@ public abstract class Term implements Serializable {
     // Some traversal are implemented by the Visitor design pattern and the #accept() method
     // ---------------------------------------------------------------------------
 
-//    /**
-//     * Find the first {@link Term} that is either same, or structurally equal to this.
-//     *
-//     * @param findWithin
-//     * @return The {@link Term} found or null when none found.
-//     */
-//    protected Object findStructurallyEqualWithin(Collection<Object> findWithin) {
-//        for (final Object term : findWithin) {
-//            if (term != this && TermApi.structurallyEquals(term, this)) {
-//                return term;
-//            }
-//        }
-//        return null;
-//    }
+    /**
+     * Find the first {@link Term} that is either same, or structurally equal to this.
+     *
+     * @param findWithin
+     * @return The {@link Term} found or null when none found.
+     */
+    protected Object findStructurallyEqualWithin(Collection<Object> findWithin) {
+        for (final Object term : findWithin) {
+            if (term != this && TermApi.structurallyEquals(term, this)) {
+                return term;
+            }
+        }
+        return null;
+    }
 
 
     // ---------------------------------------------------------------------------

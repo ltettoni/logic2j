@@ -18,7 +18,7 @@
 package org.logic2j.core.api.model.exception;
 
 /**
- * Exception used to indicate that a {@link org.logic2j.core.api.model.symbol.Term} cannot be parsed from a text, of is used in a context where it should not.
+ * Exception used to indicate that a {@link org.logic2j.core.api.model.term.Term} cannot be parsed from a text, of is used in a context where it should not.
  */
 public class InvalidTermException extends PrologException {
 

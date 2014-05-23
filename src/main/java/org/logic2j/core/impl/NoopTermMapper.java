@@ -15,28 +15,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model;
+package org.logic2j.core.impl;
+
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermMapper;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.Term;
+import org.logic2j.core.api.model.term.TermApi;
+
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
- * Extension of the {@link TermVisitor} for type of classes that are NOT
- * subclasses of {@link org.logic2j.core.api.model.symbol.Term}.
- * This requires calling {@link org.logic2j.core.api.model.symbol.TermApi#accept(ExtendedTermVisitor, Object theTerm)}
+ * A TermMapper that does nothing.
  */
-public interface ExtendedTermVisitor<T> extends TermVisitor<T> {
+public class NoopTermMapper implements TermMapper {
 
     /**
-     * Extra visiting method for String, because often String need special handling,
-     * for example in a visitor to marshall a Term, quoting needs to be done.
-     * @param theAtomString
-     * @return
+     * Does nothing.
+     * @param theTerm
+     * @return theTerm
      */
-    T visit(String theAtomString);
-
-    /**
-     * The "fallback" method on Object will be invoked if no other more specific visit() method
-     * could be found.
-     * @param theObject
-     * @return
-     */
-    T visit(Object theObject);
+    @Override
+    public Object apply(Object theTerm) {
+        return theTerm;
+    }
 }

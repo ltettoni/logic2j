@@ -15,22 +15,19 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.model;
-
-
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.Var;
+package org.logic2j.core.api;
 
 /**
- * Generic Visitor for the two subclasses of the {@link org.logic2j.core.api.model.symbol.Term}
- * hierarchy: {@link org.logic2j.core.api.model.symbol.Var} and
- * {@link org.logic2j.core.api.model.symbol.Struct}.
- * For reference, see the Visitor design pattern.
+ * A Single Abstract Method defintion to transform Terms, used mostly for normalizing them.
  */
-public interface TermVisitor<T> {
+public interface TermMapper {
 
-    T visit(Var theVar);
-
-    T visit(Struct theStruct);
+    /**
+     * Transform a Term.
+     * 
+     * @param theTerm
+     * @return The transformed version of theTerm
+     */
+    Object apply(Object theTerm);
 
 }

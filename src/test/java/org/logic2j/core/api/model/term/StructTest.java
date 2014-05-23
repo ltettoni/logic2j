@@ -1,4 +1,4 @@
-package org.logic2j.core.api.model.symbol;
+package org.logic2j.core.api.model.term;
 
 import org.junit.Test;
 

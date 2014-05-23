@@ -20,11 +20,12 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.core.api.model.ExtendedTermVisitor;
+import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.Operator;
-import org.logic2j.core.api.model.symbol.Struct;
-import org.logic2j.core.api.model.symbol.TermApi;
-import org.logic2j.core.api.model.symbol.Var;
+import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 
 /**
  * Default and reference implementation of {@link org.logic2j.core.api.TermMarshaller#marshall(Object)}.
@@ -32,34 +33,23 @@ import org.logic2j.core.api.model.symbol.Var;
  */
 public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisitor<CharSequence> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshaller.class);
-    static final boolean isDebug = logger.isDebugEnabled();
+    private static final boolean isDebug = logger.isDebugEnabled();
 
-    static final char QUOTE = '\'';
+    public static final DefaultOperatorManager DEFAULT_OPERATOR_MANAGER = new DefaultOperatorManager();
 
-    // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
-    static final String ARG_SEPARATOR = ", ".intern();
+    private final OperatorManager operatorManager = DEFAULT_OPERATOR_MANAGER;
 
-    // Element separator in lists: [a,b,c]
-    static final String ELEM_SEPARATOR = ",".intern();
+    private final PoV pov;
 
-    private static final char PAR_CLOSE = ')';
-    private static final char PAR_OPEN = '(';
-    private static final char LIST_OPEN = '[';
-    private static final char LIST_CLOSE = ']';
-    private static final char HEAD_TAIL_SEPARATOR = '|';
-
-    final OperatorManager operatorManager = new DefaultOperatorManager();
-
-    /**
-     * This constructor should only be used internally - for basic formatting.
-     */
     public DefaultTermMarshaller() {
+        this(null);
     }
 
-    /**
-     * Entry point for mashalling, normally this.prolog is initialized, but
-     * Term.toString() will use this method with this.prolog==null.
-     */
+
+    public DefaultTermMarshaller(PoV pov) {
+        this.pov = pov;
+    }
+
     @Override
     public CharSequence marshall(Object theTerm) {
         if (theTerm instanceof Struct) {
@@ -73,21 +63,14 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     // Visitor
     // ---------------------------------------------------------------------------
 
-
-    /**
-     * @param theStruct
-     */
-    @Override
-    public CharSequence visit(Struct theStruct) {
-        final CharSequence formatted = formatStruct(theStruct);
-        return formatted;
-    }
-
     @Override
     public CharSequence visit(Var theVar) {
         // logger.info("Visiting: {}", theVar);
-        // Object finalValue = Reifier.current().finalValue(theVar);
-        Object finalValue = theVar;
+        final Object finalValue;
+        if (this.pov !=null)
+        finalValue = this.pov.finalValue(theVar);
+        else
+        finalValue = theVar;
         if (finalValue instanceof Var) {
             // Must be free
             if (theVar.isAnonymous()) {
@@ -96,6 +79,15 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             return theVar.getName();
         }
         return this.marshall(finalValue);
+    }
+
+    /**
+     * @param theStruct
+     */
+    @Override
+    public CharSequence visit(Struct theStruct) {
+        final CharSequence formatted = formatStruct(theStruct);
+        return formatted;
     }
 
     @Override
@@ -113,18 +105,18 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     // ---------------------------------------------------------------------------
 
     /**
-     * Just a derivable shortcut to {@link org.logic2j.core.api.model.symbol.TermApi#accept(ExtendedTermVisitor, Object)}.
-     * 
+     * Just a derivable shortcut to {@link org.logic2j.core.api.model.term.TermApi#accept(ExtendedTermVisitor, Object)}.
+     *
      * @param theTerm
      * @return The formatted term.
      */
     protected CharSequence accept(Object theTerm) {
-      return TermApi.accept(this, theTerm);
+        return TermApi.accept(this, theTerm);
     }
-    
+
     /**
      * Gets the string representation of this structure
-     * 
+     * <p/>
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
      */
     // TODO similar if not equal to the one in TermApi
@@ -138,29 +130,29 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         final int arity = theStruct.getArity();
         // list case
         if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
-          sb.append(LIST_OPEN);
-          sb.append(formatPListRecursive(theStruct));
-          sb.append(LIST_CLOSE);
-          return sb;
+            sb.append(Struct.LIST_OPEN);
+            sb.append(formatPListRecursive(theStruct));
+            sb.append(Struct.LIST_CLOSE);
+            return sb;
         }
         if (TermApi.isAtom(name)) {
-          sb.append(name);
+            sb.append(name);
         } else {
-          sb.append(QUOTE);
-          sb.append(name);
-          sb.append(QUOTE);
+            sb.append(Struct.QUOTE);
+            sb.append(name);
+            sb.append(Struct.QUOTE);
         }
         if (arity > 0) {
-            sb.append(PAR_OPEN);
+            sb.append(Struct.PAR_OPEN);
             for (int c = 0; c < arity; c++) {
                 final Object arg = theStruct.getArg(c);
                 final CharSequence formatted = accept(arg);
                 sb.append(formatted);
                 if (c < arity - 1) {
-                    sb.append(ARG_SEPARATOR);
+                    sb.append(Struct.ARG_SEPARATOR);
                 }
             }
-            sb.append(PAR_CLOSE);
+            sb.append(Struct.PAR_CLOSE);
         }
         return sb;
     }
@@ -176,9 +168,9 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             }
             // Why this special test?
             if (head instanceof Var) {
-                return visit((Var) head) + ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+                return visit((Var) head) + Struct.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
             }
-            return accept(head) + ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+            return accept(head) + Struct.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
         }
         final StringBuilder sb = new StringBuilder();
         // Head
@@ -189,7 +181,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             h0 = accept(head);
         }
         sb.append(h0);
-        sb.append(HEAD_TAIL_SEPARATOR);
+        sb.append(Struct.HEAD_TAIL_SEPARATOR);
         // Tail
         final CharSequence t0;
         if (tail instanceof Var) {
@@ -225,13 +217,13 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             }
             final StringBuilder sb = new StringBuilder();
             sb.append(toStringAsArgY(h, 0));
-            sb.append(ARG_SEPARATOR);
+            sb.append(Struct.ARG_SEPARATOR);
             sb.append(toStringAsList(tl));
             return sb;
         }
         final StringBuilder sb = new StringBuilder();
         sb.append(toStringAsArgY(h, 0));
-        sb.append(HEAD_TAIL_SEPARATOR);
+        sb.append(Struct.HEAD_TAIL_SEPARATOR);
         sb.append(toStringAsArgY(t, 0));
         return sb;
     }
@@ -253,9 +245,9 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
                 return Struct.FUNCTOR_EMPTY_LIST;
             }
             final StringBuilder sb = new StringBuilder();
-            sb.append(LIST_OPEN);
+            sb.append(Struct.LIST_OPEN);
             sb.append(toStringAsList(theStruct));
-            sb.append(LIST_CLOSE);
+            sb.append(Struct.LIST_CLOSE);
             return sb;
         }
 
@@ -263,19 +255,19 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         if (arity == 2) {
             if ((p = operatorManager.opPrio(name, Operator.XFX)) >= Operator.OP_LOWEST) {
                 return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
-                        : ""));
+                : ""));
             }
             if ((p = operatorManager.opPrio(name, Operator.YFX)) >= Operator.OP_LOWEST) {
                 return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
-                        : ""));
+                : ""));
             }
             if ((p = operatorManager.opPrio(name, Operator.XFY)) >= Operator.OP_LOWEST) {
-                if (!name.equals(ARG_SEPARATOR)) {
+                if (!name.equals(Struct.ARG_SEPARATOR)) {
                     return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
-                            : ""));
+                    : ""));
                 }
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
-                        : ""));
+                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + Struct.ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+                : ""));
             }
         } else if (arity == 1) {
             if ((p = operatorManager.opPrio(name, Operator.FX)) >= Operator.OP_LOWEST) {
@@ -295,18 +287,19 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         if (arity == 0) {
             return sb.toString();
         }
-        sb.append(PAR_OPEN);
+        sb.append(Struct.PAR_OPEN);
         for (p = 1; p < arity; p++) {
             sb.append(toStringAsArgY(theStruct.getArg(p - 1), 0));
-            sb.append(ARG_SEPARATOR);
+            sb.append(Struct.ARG_SEPARATOR);
         }
         sb.append(toStringAsArgY(theStruct.getArg(arity - 1), 0));
-        sb.append(PAR_CLOSE);
+        sb.append(Struct.PAR_CLOSE);
         return sb.toString();
     }
 
     /**
      * Quote atoms if needed.
+     *
      * @param theText
      * @return theText, quoted if necessary (typically "X" will become "'X'" whereas "x" will remain unchanged.
      * Null will return null. The empty string will become "''". If not quoted, the same reference (theText) is returned.
@@ -322,9 +315,9 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         final boolean needQuote = !Character.isLowerCase(theText.charAt(0)) || theText.toString().indexOf('.') >= 0;
         if (needQuote) {
             final StringBuilder sb = new StringBuilder(theText.length() + 2);
-            sb.append(QUOTE);
+            sb.append(Struct.QUOTE);
             sb.append(theText);
-            sb.append(QUOTE);
+            sb.append(Struct.QUOTE);
             return sb;
         }
         return theText;

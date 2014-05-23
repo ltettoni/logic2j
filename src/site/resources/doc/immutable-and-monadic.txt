@@ -12,3 +12,20 @@ PartialTermVisitor  --> ExtendedTermVisitor
 Review if we use all Exceptions (and appropriately). No others.
 
 
+
+Terminology:
+
+To name the monad that gives variables their actual values?
+  context, state, environment, milieu, condition,
+    state: Manner of being or form of existence: condition, mode, situation, status.
+     (but we are not "stateful")
+    context: relates to surrounding things - which is irrelevant here
+    mode -- : we are not in one or either "mode"
+    situation --  (location, place)
+    point of view???
+    perspective ?
+    viewpoint ?
+    reality?
+    image?
+    observer?
+

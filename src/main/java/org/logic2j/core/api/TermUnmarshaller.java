@@ -17,25 +17,19 @@
  */
 package org.logic2j.core.api;
 
+import org.logic2j.core.api.model.term.Term;
+
 /**
- * Marshall Prolog {@link org.logic2j.core.api.model.term.Term} hierarchies to streamable representations.
- * <p>
- * <em>
- * Marshalling (Wikipedia): In computer science, marshalling (sometimes spelled marshaling) is the process of
- * transforming the memory representation of an object to a data format suitable for
- * storage or transmission, and it is typically used when data must be moved between
- * different parts of a computer program or from one program to another
- * </em>
- * </p>
+ * Umnarshalls streamable representations back to create new {@link Term}s.
  */
-public interface TermMarshaller {
+public interface TermUnmarshaller {
 
     /**
-     * Formats a {@link org.logic2j.core.api.model.term.Term} to its character representation.
+     * Parse a character stream into a {@link Term}.
      * 
-     * @param theTerm
-     * @return The character representation of theTerm.
+     * @param theChars
+     * @return The new {@link Term} obtained from its textual representation.
      */
-    CharSequence marshall(Object theTerm);
+    Object unmarshall(CharSequence theChars);
 
 }
