@@ -10,22 +10,33 @@ import org.slf4j.LoggerFactory;
  * Created by Laurent on 25.05.2014.
  */
 public class LoggingAndCountingSolutionListener extends CountingSolutionListener {
+    private static final Logger logger = LoggerFactory.getLogger(LoggingAndCountingSolutionListener.class);
+
     private final Object theGoal;
 
     public LoggingAndCountingSolutionListener(Object theGoal) {
         this.theGoal = theGoal;
+        logger.info("Init listener for \"{}\"", theGoal);
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(LoggingAndCountingSolutionListener.class);
 
     @Override
     public Continuation onSolution(PoV thePoV) {
-        logger.info("Solution: {}", thePoV.reify(theGoal));
+        logger.info(" solution: {}", thePoV.reify(theGoal));
         return super.onSolution(thePoV);
     }
 
     public void report() {
-        logger.info("Solving \"{}\" yields {} solutions", theGoal, getCounter());
+        switch ((int)getCounter()) {
+            case 0:
+                logger.info("Solving \"{}\" yields no solution", theGoal);
+                break;
+            case 1:
+                logger.info("Solving \"{}\" yields a single solution", theGoal);
+                break;
+            default:
+                logger.info("Solving \"{}\" yields {} solution(s)", theGoal, getCounter());
+                break;
+        }
     }
 
 }

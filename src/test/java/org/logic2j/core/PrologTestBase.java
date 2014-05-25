@@ -24,6 +24,7 @@ import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
@@ -197,6 +198,15 @@ public abstract class PrologTestBase {
         return result;
     }
 
+
+    protected String marshall(Iterable<Object> terms) {
+        ArrayList<String> marshalled = new ArrayList<String>();
+        for (Object term : terms) {
+            marshalled.add(marshall(term));
+        }
+        return marshalled.toString();
+    }
+
     protected String marshall(Object term) {
         return getProlog().getTermMarshaller().marshall(term).toString();
     }
@@ -243,4 +253,18 @@ public abstract class PrologTestBase {
     }
 
 
+    protected long solveWithLoggingAndCountingListener(Object goal) {
+        final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
+        getProlog().getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
+        listener.report();
+        return listener.getCounter();
+    }
+
+
+    protected ExtractingSolutionListener solveWithExtractingListener(Object goal) {
+        final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
+        getProlog().getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
+        listener.report();
+        return listener;
+    }
 }

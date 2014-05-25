@@ -1,0 +1,93 @@
+package org.logic2j.core;
+
+import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+/**
+ * Created by Laurent on 25.05.2014.
+ */
+public class ExtractingSolutionListener extends CountingSolutionListener {
+    private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
+    public static final String WHOLE_SOLUTION_PSEUDOVAR = ".";
+
+    private final Object goal;
+    private final Set<Var> vars;
+    private final Set<String> varNames;
+    private final List<Map<String, Object>> solutions;
+
+    public ExtractingSolutionListener(Object theGoal) {
+        this.goal = theGoal;
+        vars = TermApi.allVars(this.goal).keySet();
+        varNames = new TreeSet<String>();
+        for (Var var : vars) {
+            varNames.add(var.getName());
+        }
+        varNames.add(WHOLE_SOLUTION_PSEUDOVAR); // This pseudo var means the whole solution
+
+
+        solutions = new ArrayList<Map<String, Object>>();
+
+        logger.info("Init listener for \"{}\"", theGoal);
+    }
+
+    @Override
+    public Continuation onSolution(PoV thePoV) {
+        final Object solution = thePoV.reify(goal);
+        logger.info(" solution: {}", solution);
+
+        final Map<String, Object> solutionVars = new HashMap<String, Object>();
+        solutionVars.put(WHOLE_SOLUTION_PSEUDOVAR, solution); // The global solution
+        for (Var var : vars) {
+            final Object varValue = thePoV.finalValue(var);
+            solutionVars.put(var.getName(), varValue);
+        }
+        this.solutions.add(solutionVars);
+
+        return super.onSolution(thePoV);
+    }
+
+    public void report() {
+        switch ((int) getCounter()) {
+            case 0:
+                logger.info("Solving \"{}\" yields no solution", goal);
+                break;
+            case 1:
+                logger.info("Solving \"{}\" yields a single solution", goal);
+                break;
+            default:
+                logger.info("Solving \"{}\" yields {} solution(s)", goal, getCounter());
+                break;
+        }
+    }
+
+    public Collection<Var> getVariables() {
+        return this.vars;
+    }
+
+    public List<Map<String, Object>> getSolutions() {
+        return this.solutions;
+    }
+
+    public List<Object> getValues(String varName) {
+        if (! varNames.contains(varName)) {
+            throw new IllegalArgumentException("Variable \"" + varName +"\" not defined in goal \"" + this.goal + '"');
+        }
+        List<Object> values = new ArrayList<Object>(this.solutions.size());
+        for (Map<String, Object> solution : this.solutions) {
+            values.add(solution.get(varName));
+        }
+        return values;
+    }
+
+
+    public Collection<String> getVarNames() {
+        return this.varNames;
+    }
+}
