@@ -447,6 +447,7 @@ public class CoreLibrary extends LibraryBase {
     public Continuation is(SolutionListener theListener, PoV pov, Object t1, Object t2) {
         final Object evaluated = evaluate(pov, t2);
         if (evaluated == null) {
+            // No solution
             return Continuation.CONTINUE;
         }
         return unify(theListener, pov, t1, evaluated);

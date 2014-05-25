@@ -3,8 +3,10 @@ package org.logic2j.core.impl;
 import org.junit.Test;
 import org.logic2j.core.ExtractingSolutionListener;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Lowest-level tests of the Solver: check core primitives: true, fail, cut, and, or. Check basic unification.
@@ -16,6 +18,7 @@ public class DefaultSolverTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
     // Simplest primitives and undefined goal
     // ---------------------------------------------------------------------------
+
 
     @Test
     public void primitiveFail() {
@@ -62,6 +65,74 @@ public class DefaultSolverTest extends PrologTestBase {
         assertEquals(2, nbSolutions);
     }
 
+    @Test
+    public void corePrimitivesThatYieldUniqueSolution() {
+        final String[] SINGLE_SOLUTION_GOALS = new String[] { //
+        "true", //
+        "true, true", //
+        "true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true", //
+        "!", //
+        "!, !", //
+        };
+        countOneSolution(SINGLE_SOLUTION_GOALS);
+    }
+
+
+    @Test
+    public void corePrimitivesThatYieldNoSolution() {
+        final String[] NO_SOLUTION_GOALS = new String[] { //
+        "fail", //
+        "fail, fail", //
+        "fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail, fail", //
+        "true, fail", //
+        "fail, true", //
+        "true, true, fail", //
+        "true, fail, !", //
+        };
+        countNoSolution(NO_SOLUTION_GOALS);
+    }
+
+
+    /**
+     * This is a special feature of logic2j: AND with any arity
+     */
+    @Test
+    public void nonBinaryAnd() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        final String[] SINGLE_SOLUTION_GOALS = new String[] { //
+        "','(true)", //
+        "','(true, true)", //
+        "','(true, !, true)", //
+        };
+        countOneSolution(SINGLE_SOLUTION_GOALS);
+    }
+
+
+    @Test
+    public void or() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        countNSolutions(2, "';'(true, true)");
+        countNSolutions(2, "true; true");
+        //
+        countNSolutions(3, "true; true; true");
+        //
+//        MultipleSolutionsHolder solutions;
+//        solutions = this.prolog.solve("X=a; X=b; X=c").all();
+//        assertEquals("[a, b, c]", solutions.binding("X").toString());
+    }
+
+
+    /**
+     * This is a special feature of logic2j: OR with any arity
+     */
+    @Test
+    public void nonBinaryOr() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        countNSolutions(1, "';'(true)");
+        countNSolutions(2, "';'(true, true)");
+        countNSolutions(3, "';'(true, true, true)");
+    }
+
     // ---------------------------------------------------------------------------
     // Basic unification
     // ---------------------------------------------------------------------------
@@ -81,7 +152,6 @@ public class DefaultSolverTest extends PrologTestBase {
         final long nbSolutions = solveWithLoggingAndCountingListener(goal);
         assertEquals(1, nbSolutions);
     }
-
 
 
     @Test

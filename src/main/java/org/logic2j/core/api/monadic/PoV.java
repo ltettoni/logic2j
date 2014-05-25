@@ -3,11 +3,13 @@ package org.logic2j.core.api.monadic;
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
+import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.impl.CloningTermVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -102,16 +104,16 @@ public class PoV {
 
 
     public Map<String, Object> bindings(Object term, FreeVarRepresentation representation) {
-
-//        for (Map.Entry<Var, String> entry : allVars.entrySet()) {
-//            final Object finalValue = theReifier.reify(entry.getKey());
-//            if (! (finalValue instanceof Var)) {
-//                varNameValues.put(entry.getValue(), finalValue);
-//            } else {
-//                varNameValues.put(entry.getValue(), null);
-//            }
-//        }
-        throw new UnsupportedOperationException("Not yet impl");
+        final Map<String, Object> result = new HashMap<String, Object>();
+        for (Map.Entry<Var, String> entry : TermApi.allVars(term).entrySet()) {
+            final Object finalValue = this.reify(entry.getKey());
+            if (! (finalValue instanceof Var)) {
+                result.put(entry.getValue(), finalValue);
+            } else {
+                result.put(entry.getValue(), null);
+            }
+        }
+        return result;
     }
     // --- Move elsewhere
 

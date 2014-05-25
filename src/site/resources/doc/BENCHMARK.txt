@@ -10,4 +10,57 @@ Solving "queens(11, X)" takes
         261 s on tuProlog v2.7.2
         7.8 s on logic2j v0.5.0
 
-        
+
+-- Reworking towards a monadic approach of variable assignments
+
+Comparison of performance
+A: classic logic2j (almost no slowdown due to added capacity for monadic version)
+B: monadic version - POC using sequential search for vars by reference (address)
+B+: like B with more efficient cloning before matching a clause
+C: variable indexing and lookup
+D: Pure monadic approach - no more Bindings
+
+algo     sol    A       B       B+      C       D
+-------------------------------------------------------------------
+queens7  40     43      300
+queens9  352    320     6000    3000    900     816
+queens10 724    1440    30000
+queens11 2680   7600    170000          23000
+
+
+Taking the reference of queens9 (6000 ms baseline) for optimizations.
+
+Optimizations in "dereference()" and "bind()"
+1. remove "instanceof Var" check and store an array of boolean that tell, at bind(), if the referred object is a var or not
+  -> 5900 ms - not worth keeping
+
+2. during bind(), follow the object bound until its final reference
+  -> 6060 ms - maybe not worth keeping - not really sure of
+
+3. By lookup on var indexes
+  -> 900 ms
+
+
+ 6360 INFO  [main] Profile report for: Number of solutions to queens(9, X) is 352
+ 6366 INFO  [main]   counter1     = 269195763   -- 300M number of searches
+ 6366 INFO  [main]   max1         = 241
+ 6366 INFO  [main]   nbInferences = 740000
+ 6366 INFO  [main]   nbFollowVar  = 2801248     -- 2.8M nubmer of searches for var
+ 6367 INFO  [main]   timer1       = 6070
+ 6367 INFO  [main] Profile report for: after test method
+
+By replacing the cloning and assignment of vars (old TermApi.clone()) by new CloningTermVisitor:
+ 3361 INFO  [main] Profile report for: Number of solutions to queens(9, X) is 352
+ 3368 INFO  [main]   counter1     = 269195763
+ 3368 INFO  [main]   max1         = 241
+ 3369 INFO  [main]   nbInferences = 740000
+ 3369 INFO  [main]   nbFollowVar  = 2801248
+ 3371 INFO  [main]   timer1       = 3081
+ 3371 INFO  [main] Profile report for: after test method
+
+Using the indexing monad
+ 1187 INFO  [main] Profile report for: Number of solutions to queens(9, Q) is 352
+ 1192 INFO  [main]   max1         = 354
+ 1192 INFO  [main]   nbInferences = 740000
+ 1193 INFO  [main]   timer1       = 906
+ 1193 INFO  [main] Profile report for: after test method

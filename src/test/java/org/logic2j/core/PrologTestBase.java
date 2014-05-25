@@ -17,13 +17,10 @@
  */
 package org.logic2j.core;
 
-import org.junit.After;
 import org.junit.Before;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
@@ -82,14 +79,38 @@ public abstract class PrologTestBase {
         return this.prolog;
     }
 
+
+    // ---------------------------------------------------------------------------
+    // Low-lever solution counting assertions just using a COuntingSolutionListener
+    // ---------------------------------------------------------------------------
+
+    protected void countOneSolution(CharSequence... theGoals) {
+        countNSolutions(1, theGoals);
+    }
+
+
+    protected void countNoSolution(CharSequence... theGoals) {
+        countNSolutions(0, theGoals);
+    }
+
+    protected void countNSolutions(int nbr, CharSequence... theGoals) {
+        for (CharSequence goalText : theGoals) {
+            final CountingSolutionListener listener = new CountingSolutionListener();
+            Object term = unmarshall(goalText);
+            getProlog().getSolver().solveGoal(term, new StateEngineByLookup().emptyPoV(), listener);
+            assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.getCounter());
+        }
+    }
+
+
     /**
      * Make sure there is only one solution to goals.
      *
      * @param theGoals All goals to check for
      * @return The UniqueSolutionHolder holding the last solution of theGoals
      */
-    protected UniqueSolutionHolder assertOneSolution(CharSequence... theGoals) {
-        assertTrue("theGoals must not be empty for assertOneSolution()", theGoals.length > 0);
+    protected UniqueSolutionHolder uniqueSolution(CharSequence... theGoals) {
+        assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
         UniqueSolutionHolder result = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
@@ -99,25 +120,15 @@ public abstract class PrologTestBase {
         return result;
     }
 
-    /**
-     * Make sure there are no soutions.
-     *
-     * @param theGoals All goals to check for
-     */
-    protected void assertNoSolution(CharSequence... theGoals) {
-        internalAssert(0, theGoals);
-    }
+//    /**
+//     * Make sure there are no soutions.
+//     *
+//     * @param theGoals All goals to check for
+//     */
+//    protected void countNoSolution(CharSequence... theGoals) {
+//        internalAssert(0, theGoals);
+//    }
 
-    /**
-     * Make sure there are exatly theNumber of solutions.
-     *
-     * @param theNumber
-     * @param theGoals  All goals to check for
-     * @return The {@link org.logic2j.core.api.solver.holder.MultipleSolutionsHolder}
-     */
-    protected MultipleSolutionsHolder assertNSolutions(int theNumber, CharSequence... theGoals) {
-        return internalAssert(theNumber, theGoals).all();
-    }
 
     // FIXME Not good, should use direct Junit and expected=...
     protected void assertGoalMustFail(CharSequence... theGoals) {
@@ -133,13 +144,26 @@ public abstract class PrologTestBase {
         }
     }
 
+
+
+    /**
+     * Make sure there are exatly theNumber of solutions.
+     *
+     * @param theNumber
+     * @param theGoals  All goals to check for
+     * @return The {@link org.logic2j.core.api.solver.holder.MultipleSolutionsHolder}
+     */
+    protected MultipleSolutionsHolder nSolutions(int theNumber, CharSequence... theGoals) {
+        return internalAssert(theNumber, theGoals).all();
+    }
+
     /**
      * @param theNumber
      * @param theGoals
      * @return The {@link org.logic2j.core.api.solver.holder.SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
-        assertTrue("theGoals must not be empty for assertOneSolution()", theGoals.length > 0);
+        assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
         SolutionHolder holder = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting {} solutions when solving goal \"{}\"", theNumber, goal);
