@@ -8,21 +8,22 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Laurent on 07.05.2014.
  */
+@Deprecated // basic implementation - for comparison - no efficient
 public class StateEngineByStack {
     private static final Logger logger = LoggerFactory.getLogger(StateEngineByStack.class);
-    private static final int REIFIER_STACK_CHUNK = 1000;
+    private static final int STACK_CHUNK = 1000;
 
     Var[] vars;
     Object[] refs;
 
     public StateEngineByStack() {
-        vars = new Var[REIFIER_STACK_CHUNK];
-        refs = new Object[REIFIER_STACK_CHUNK];
+        vars = new Var[STACK_CHUNK];
+        refs = new Object[STACK_CHUNK];
     }
 
 /*
 
-  public Reifier emptyReifier() {
+  public Reifier emptyPoV() {
         return new Reifier(this);
     }
 

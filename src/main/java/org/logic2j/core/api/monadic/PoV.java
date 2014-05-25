@@ -1,11 +1,14 @@
 package org.logic2j.core.api.monadic;
 
+import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.impl.CloningTermVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Created by Laurent on 07.05.2014.
@@ -20,12 +23,12 @@ public class PoV {
 
     private final StateEngineByLookup impl;
 
-    PoV(StateEngineByLookup reifierStack) {
-        this(reifierStack, 0, 5);
+    PoV(StateEngineByLookup implem) {
+        this(implem, 0, 5);
     }
 
-    PoV(StateEngineByLookup reifierStack, int currentTransaction, int topVarIndex) {
-        this.impl = reifierStack;
+    PoV(StateEngineByLookup implem, int currentTransaction, int topVarIndex) {
+        this.impl = implem;
         this.currentTransaction = currentTransaction;
         this.topVarIndex = topVarIndex;
 //        audit.info("New at t={}", currentTransaction);
@@ -98,6 +101,18 @@ public class PoV {
     }
 
 
+    public Map<String, Object> bindings(Object term, FreeVarRepresentation representation) {
+
+//        for (Map.Entry<Var, String> entry : allVars.entrySet()) {
+//            final Object finalValue = theReifier.reify(entry.getKey());
+//            if (! (finalValue instanceof Var)) {
+//                varNameValues.put(entry.getValue(), finalValue);
+//            } else {
+//                varNameValues.put(entry.getValue(), null);
+//            }
+//        }
+        throw new UnsupportedOperationException("Not yet impl");
+    }
     // --- Move elsewhere
 
     public PoV unify(Object t1, Object t2) {
@@ -163,9 +178,10 @@ public class PoV {
 
     @Override
     public String toString() {
-        return "Reifier#" + this.currentTransaction + impl.toString();
-//        return "Reifier#" + this.currentTransaction + '[' + impl.toString(this.currentTransaction) + ']';
+        return "pov#" + this.currentTransaction + impl.toString();
     }
+
+
 
     // ---------------------------------------------------------------------------
     // Oldies: ThreadLocal
@@ -176,8 +192,8 @@ public class PoV {
 //    private static final ThreadLocal<Reifier> currentInThread = new ThreadLocal<Reifier>() {
 //        @Override
 //        protected Reifier initialValue() {
-//            return new ReifierLookup().emptyReifier();
-////            return new ReifierStack().emptyReifier();
+//            return new ReifierLookup().emptyPoV();
+////            return new ReifierStack().emptyPoV();
 //        }
 //    };
 

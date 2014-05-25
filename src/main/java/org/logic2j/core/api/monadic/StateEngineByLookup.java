@@ -13,7 +13,7 @@ import java.util.TreeMap;
  */
 public class StateEngineByLookup {
     private static final Logger logger = LoggerFactory.getLogger(StateEngineByLookup.class);
-    private static final int REIFIER_LOOKUP_CHUNK = 2000;
+    private static final int LOOKUP_CHUNK = 2000;
 
 
     int[] transaction;
@@ -24,26 +24,24 @@ public class StateEngineByLookup {
     int   logWatermark;
 
     public StateEngineByLookup() {
-        transaction = new int[REIFIER_LOOKUP_CHUNK];
+        transaction = new int[LOOKUP_CHUNK];
         Arrays.fill(transaction, -1);
-        var = new Var[REIFIER_LOOKUP_CHUNK];
-        literal = new Object[REIFIER_LOOKUP_CHUNK];
-        boundVarIndex = new int[REIFIER_LOOKUP_CHUNK];
-        logOfWrittenSlots = new int[REIFIER_LOOKUP_CHUNK];
+        var = new Var[LOOKUP_CHUNK];
+        literal = new Object[LOOKUP_CHUNK];
+        boundVarIndex = new int[LOOKUP_CHUNK];
+        logOfWrittenSlots = new int[LOOKUP_CHUNK];
         logWatermark = 0;
     }
 
-     /*
-  */
 
-    public PoV emptyReifier() {
+    public PoV emptyPoV() {
         return new PoV(this);
     }
 
 
-    public PoV bind(PoV reifier, Var theVar, Object theRef) {
+    public PoV bind(PoV pov, Var theVar, Object theRef) {
         logger.debug(" bind {}->{}", theVar, theRef);
-        final int transactionNumber = reifier.currentTransaction;
+        final int transactionNumber = pov.currentTransaction;
         cleanupTo(transactionNumber);
         final int slot = theVar.getIndex();
         transaction[slot] = transactionNumber;
@@ -53,7 +51,7 @@ public class StateEngineByLookup {
         if (finalRef instanceof Var) {
             if (finalRef==theVar) {
                 // OOps, trying to bound Var to same Var (after its the ref was dereferenced)
-                return reifier; // So no change
+                return pov; // So no change
             }
             final Var finalVar = (Var) finalRef;
             final short finalVarIndex = finalVar.getIndex();
@@ -67,7 +65,7 @@ public class StateEngineByLookup {
         if (slot > ProfilingInfo.max1) {
             ProfilingInfo.max1 = slot;
         }
-        return new PoV(this, transactionNumber + 1, reifier.topVarIndex);
+        return new PoV(this, transactionNumber + 1, pov.topVarIndex);
     }
 
 
@@ -113,7 +111,7 @@ public class StateEngineByLookup {
     public String toString() {
         final TreeMap<Integer, String> sorted = new TreeMap<Integer, String>();
         final StringBuilder sb = new StringBuilder();
-        for (int slot=0; slot<REIFIER_LOOKUP_CHUNK; slot++) {
+        for (int slot=0; slot< LOOKUP_CHUNK; slot++) {
             final int transactionNumber = transaction[slot];
             if (transactionNumber ==-1) {
                 continue;

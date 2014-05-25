@@ -21,9 +21,13 @@ import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.visitor.ExtendedTermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
+import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.library.mgmt.PrimitiveInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -233,39 +237,35 @@ public class TermApi {
     // Access and extract data from Terms
     //---------------------------------------------------------------------------
 
+    /**
+     * Evaluates an expression. Returns null value if the argument is not an evaluable expression
+     */
+    public static Object evaluate(Object theTerm, PoV pov) {
+        if (theTerm == null) {
+            return null;
+        }
+        theTerm = pov.reify(theTerm);
+        // TODO are the lines below this exactly as in substitute() method?
+        if (theTerm instanceof Var) {
+            return null;
+        }
 
-//    /**
-//     * Evaluates an expression. Returns null value if the argument is not an evaluable expression
-//     */
-//    public static Object evaluate(Object theTerm, TermBindings theBindings) {
-//        if (theTerm == null) {
-//            return null;
-//        }
-//        // TODO are the lines below this exactly as in substitute() method?
-//        if (theTerm instanceof Var && !((Var) theTerm).isAnonymous()) {
-//            final Binding binding = ((Var) theTerm).bindingWithin(theBindings).followLinks();
-//            if (!binding.isLiteral()) {
-//                return null;
-//            }
-//            theTerm = binding.getTerm();
-//        }
-//
-//        if (theTerm instanceof Struct) {
-//            final Struct struct = (Struct) theTerm;
-//            final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
-//            if (primInfo == null) {
-//                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
-//                return null;
-//            }
-//            if (primInfo.getType() != PrimitiveType.FUNCTOR) {
-//                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
-//                return null;
-//            }
-//            final Object result = primInfo.invoke(struct, theBindings, /* no listener */null);
-//            return result;
-//        }
-//        return theTerm;
-//    }
+        if (theTerm instanceof Struct) {
+            final Struct struct = (Struct) theTerm;
+            final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
+            if (primInfo == null) {
+                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
+                return null;
+            }
+            if (primInfo.getType() != PrimitiveInfo.PrimitiveType.FUNCTOR) {
+                // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
+                return null;
+            }
+            final Object result = primInfo.invoke(struct, pov, /* no listener */null);
+            return result;
+        }
+        return theTerm;
+    }
 
     
 //    /**
@@ -293,9 +293,16 @@ public class TermApi {
     public static Object normalize(Object theTerm) {
         final Object factorized = factorize(theTerm);
         assignIndexes(factorized, 0);
-//        if (theLibraryContent != null && factorized instanceof Struct) {
-//            ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
-//        }
+        return factorized;
+    }
+
+
+    public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
+        final Object factorized = factorize(theTerm);
+        assignIndexes(factorized, 0);
+        if (theLibraryContent != null && factorized instanceof Struct) {
+            ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
+        }
         return factorized;
     }
 

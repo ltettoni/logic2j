@@ -18,11 +18,12 @@
 package org.logic2j.core.api.model.term;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.PrimitiveInfo;
 import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.ReflectUtils;
+import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.library.mgmt.PrimitiveInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +61,7 @@ public final class Struct extends Term {
     // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
     public static final String FUNCTOR_COMMA = ",".intern();
 
-    public static final String FUNCTOR_CUT = "!".intern();
+    public static final String FUNCTOR_CUT = "!";  // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
 
     public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
 
@@ -79,7 +80,7 @@ public final class Struct extends Term {
 
     public static final String FUNCTOR_SEMICOLON = ";".intern();
 
-    public static final String FUNCTOR_TRUE = "true".intern();
+    public static final String FUNCTOR_TRUE = "true";  // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
 
     public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
 
@@ -272,23 +273,23 @@ public final class Struct extends Term {
         return createPList(array);
     }
 
-//    /**
-//     * @param theContent
-//     */
-//    public void assignPrimitiveInfo(LibraryContent theContent) {
-//        // Find by exact arity match
-//        this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
-//        if (this.primitiveInfo == null) {
-//            // Alternate find by wildcard (varargs signature)
-//            this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
-//        }
-//        for (int i = 0; i < this.arity; i++) {
-//            final Object child = this.args[i];
-//            if (child instanceof Struct) {
-//                ((Struct) child).assignPrimitiveInfo(theContent);
-//            }
-//        }
-//    }
+    /**
+     * @param theContent
+     */
+    public void assignPrimitiveInfo(LibraryContent theContent) {
+        // Find by exact arity match
+        this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
+        if (this.primitiveInfo == null) {
+            // Alternate find by wildcard (varargs signature)
+            this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
+        }
+        for (int i = 0; i < this.arity; i++) {
+            final Object child = this.args[i];
+            if (child instanceof Struct) {
+                ((Struct) child).assignPrimitiveInfo(theContent);
+            }
+        }
+    }
 
     /**
      * @param array
