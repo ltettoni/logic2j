@@ -22,24 +22,23 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.monadic.PoV;
 
 /**
- * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached. The {@link #onSolution()}
- * method always returns true (dangerously allowing for potential infinite generation). Derive from this class to ease the programming of
+ * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached.
+ * The {@link #onSolution(PoV)} method always returns Continuation.CONTINUE (dangerously allowing for potential
+ * infinite generation). Derive from this class to ease the programming of
  * {@link SolutionListener}s in application code.
  */
-public class SolutionListenerBase implements SolutionListener {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionListenerBase.class);
-
+public class CountingSolutionListener implements SolutionListener {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CountingSolutionListener.class);
     private static final boolean DEBUG_ENABLED = logger.isDebugEnabled();
 
     /**
      * Number of solutions (so far).
-     * TODO Does this deserve a "long"?
      */
-    private int counter = 0;
+    private long counter = 0;
 
 
     @Override
-    public Continuation onSolution(PoV theReifier) {
+    public Continuation onSolution(PoV pov) {
         if (DEBUG_ENABLED) {
             logger.debug(" onSolution(#{})", this.counter);
         }
@@ -51,7 +50,7 @@ public class SolutionListenerBase implements SolutionListener {
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public int getCounter() {
+    public long getCounter() {
         return this.counter;
     }
 

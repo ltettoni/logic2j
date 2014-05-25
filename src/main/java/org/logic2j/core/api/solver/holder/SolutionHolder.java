@@ -71,7 +71,7 @@ public class SolutionHolder implements Iterable<Solution> {
      *
      * @return The value of {@link #all()}.{@link MultipleSolutionsHolder#number()}.
      */
-    public int number() {
+    public long number() {
         return all().number();
     }
 

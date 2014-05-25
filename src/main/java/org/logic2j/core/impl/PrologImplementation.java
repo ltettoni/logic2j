@@ -49,6 +49,8 @@ public interface PrologImplementation extends Prolog {
      */
     TermMarshaller getTermMarshaller();
 
+    TermUnmarshaller getTermUnmarshaller();
+
     void setTermAdapter(TermAdapter termAdapter);
 
 }

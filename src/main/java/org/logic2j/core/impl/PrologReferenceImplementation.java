@@ -18,6 +18,7 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
+import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
@@ -58,10 +59,17 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // ---------------------------------------------------------------------------
 
     private TermAdapter termAdapter = new DefaultTermAdapter();
+
     private TermMarshaller termMarshaller = new DefaultTermMarshaller();
+
+    private DefaultTermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller();
+
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
+
     private LibraryManager libraryManager = new DefaultLibraryManager(this);
+
     private OperatorManager operatorManager = new DefaultOperatorManager();
+
     private Solver solver = new DefaultSolver(this);
 
     /**
@@ -73,7 +81,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     /**
      * Constructor for a specific level of initialization.
-     * 
+     *
      * @param theLevel
      */
     public PrologReferenceImplementation(InitLevel theLevel) {
@@ -86,6 +94,13 @@ public class PrologReferenceImplementation implements PrologImplementation {
             final PLibrary lib = new IOLibrary(this);
             this.libraryManager.loadLibrary(lib);
         }
+        this.termUnmarshaller.setNormalizer(new TermMapper() {
+            @Override
+            public Object apply(Object theTerm) {
+                return TermApi.normalize(theTerm, getLibraryManager().wholeContent());
+            }
+        });
+        this.termUnmarshaller.setOperatorManager(getOperatorManager());
     }
 
     // ---------------------------------------------------------------------------
@@ -95,7 +110,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public SolutionHolder solve(CharSequence theGoal) {
-        final Object parsed = new DefaultTermUnmarshaller().unmarshall(theGoal);
+        final Object parsed = termUnmarshaller.unmarshall(theGoal);
         return solve(parsed);
     }
 
@@ -121,14 +136,6 @@ public class PrologReferenceImplementation implements PrologImplementation {
         this.termAdapter = theTermAdapter;
     }
 
-    public TermMarshaller getTermMarshaller() {
-        return this.termMarshaller;
-    }
-
-    public void setTermMarshaller(TermMarshaller newOne) {
-        this.termMarshaller = newOne;
-    }
-
     @Override
     public TheoryManager getTheoryManager() {
         return this.theoryManager;
@@ -144,17 +151,30 @@ public class PrologReferenceImplementation implements PrologImplementation {
     }
 
     @Override
+    public Solver getSolver() {
+        return this.solver;
+    }
+
+    @Override
     public OperatorManager getOperatorManager() {
         return this.operatorManager;
     }
 
-    public void setOperatorManager(OperatorManager theOperatorManager) {
-        this.operatorManager = theOperatorManager;
+    public TermMarshaller getTermMarshaller() {
+        return this.termMarshaller;
+    }
+
+    public void setTermMarshaller(TermMarshaller newOne) {
+        this.termMarshaller = newOne;
     }
 
     @Override
-    public Solver getSolver() {
-        return this.solver;
+    public TermUnmarshaller getTermUnmarshaller() {
+        return this.termUnmarshaller;
+    }
+
+    public void setOperatorManager(OperatorManager theOperatorManager) {
+        this.operatorManager = theOperatorManager;
     }
 
     public void setSolver(Solver theSolver) {
@@ -170,5 +190,6 @@ public class PrologReferenceImplementation implements PrologImplementation {
     public String toString() {
         return ReportUtils.shortDescription(this);
     }
+
 
 }

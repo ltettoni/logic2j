@@ -36,8 +36,6 @@ public class TermApiTest {
     }
 
 
-
-
     @Test
     public void structurallyEquals() {
         // Vars are never structurally equal ...
@@ -55,15 +53,6 @@ public class TermApiTest {
         assertTrue(TermApi.structurallyEquals(s2.getArg(0), s2.getArg(1)));
     }
 
-    // TODO (issue) Check this more carefully, see https://github.com/ltettoni/logic2j/issues/13
-    @Test
-    public void structurallyEquals2() {
-        // assertTrue(new Var().structurallyEquals(new Var()));
-        // assertTrue(new Var().structurallyEquals(new Var("_")));
-        // assertFalse(new Var("X").structurallyEquals(new Var()));
-        // assertFalse(new Var().structurallyEquals(new Var("X")));
-        // assertFalse(new Var("X").structurallyEquals(new Var("Y")));
-    }
 
     @Test
     public void collectTerms() {

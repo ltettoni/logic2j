@@ -20,13 +20,12 @@ package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 
 import java.util.*;
 
@@ -50,15 +49,15 @@ public class MultipleSolutionsHolder {
      * 
      * @return The number of solutions
      */
-    public int number() {
-        final SolutionListenerBase listener = new SolutionListenerBase();
+    public long number() {
+        final CountingSolutionListener listener = new CountingSolutionListener();
         this.solutionHolder.prolog.getSolver().solveGoal(this.solutionHolder.term, new StateEngineByLookup().emptyPoV(), listener);
-        final int counter = listener.getCounter();
+        final long counter = listener.getCounter();
         checkBounds(counter);
         return counter;
     }
 
-    private void checkBounds(int counter) {
+    private void checkBounds(long counter) {
         if (this.lowest != null && counter < this.lowest) {
             throw new PrologNonSpecificError("Number of solutions was expected to be at least " + this.lowest + " but was " + counter);
         }
@@ -105,21 +104,21 @@ public class MultipleSolutionsHolder {
     public List<Map<String, Object>> bindings() {
         final List<Map<String, Object>> results = new ArrayList<Map<String, Object>>();
         final Object originalTerm = this.solutionHolder.term;
-        final SolutionListener listener = new SolutionListenerBase() {
+        final SolutionListener listener = new CountingSolutionListener() {
 
             @Override
-            public Continuation onSolution(PoV theReifier) {
+            public Continuation onSolution(PoV pov) {
                 final Object term = originalTerm;
 
                 final Map<String, Object> explicitBindings = new TreeMap<String, Object>();
                 final IdentityHashMap<Var, String> vars = TermApi.allVars(term);
                 for (Map.Entry<Var, String> entry : vars.entrySet()) {
                     String varName = entry.getValue();
-                    Object boundValue = theReifier.finalValue(entry.getKey());
+                    Object boundValue = pov.finalValue(entry.getKey());
                     explicitBindings.put(varName, boundValue);
                 }
                 results.add(explicitBindings);
-                return super.onSolution(theReifier);
+                return super.onSolution(pov);
             }
         };
         this.solutionHolder.prolog.getSolver().solveGoal(originalTerm, new StateEngineByLookup().emptyPoV(), listener);

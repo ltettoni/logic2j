@@ -17,21 +17,16 @@
  */
 package org.logic2j.core.library.impl.core;
 
-import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.Solver;
-import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.PoV;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.impl.DefaultSolver;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 
@@ -212,7 +207,7 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = Struct.FUNCTOR_TRUE)
     // We can't name the method "true" it's a Java reserved word...
-    public Continuation trueFunctor(SolutionListener theListener, @SuppressWarnings("unused") PoV pov) {
+    public Continuation trueFunctor(SolutionListener theListener, PoV pov) {
         return notifySolution(theListener, pov);
     }
 

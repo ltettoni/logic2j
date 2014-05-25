@@ -152,7 +152,7 @@ public class DefaultSolver implements Solver {
             // Primitive implemented in Java
             // ---------------------------------------------------------------------------
 
-            final Object resultOfPrimitive = prim.invoke(goalStruct, null, theSolutionListener);
+            final Object resultOfPrimitive = prim.invoke(goalStruct, reifier, theSolutionListener);
             // Extract necessary objects from our current state
 
             switch (prim.getType()) {

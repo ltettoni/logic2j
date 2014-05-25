@@ -30,9 +30,9 @@ import org.logic2j.core.impl.io.tuprolog.parse.Parser;
  */
 public class DefaultTermUnmarshaller implements TermUnmarshaller {
 
-    private static final OperatorManager operatorManager = new DefaultOperatorManager();
-
     private static final TermAdapter termAdapter = new DefaultTermAdapter();
+
+    private OperatorManager operatorManager = new DefaultOperatorManager();
 
     private TermMapper normalizer = new TermMapper() {
 
@@ -50,4 +50,20 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
         return normalized;
     }
 
+
+    public TermMapper getNormalizer() {
+        return normalizer;
+    }
+
+    public void setNormalizer(TermMapper normalizer) {
+        this.normalizer = normalizer;
+    }
+
+    public OperatorManager getOperatorManager() {
+        return operatorManager;
+    }
+
+    public void setOperatorManager(OperatorManager operatorManager) {
+        this.operatorManager = operatorManager;
+    }
 }
