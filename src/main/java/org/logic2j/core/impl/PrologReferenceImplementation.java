@@ -19,6 +19,7 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
@@ -113,6 +114,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
         final Object parsed = termUnmarshaller.unmarshall(theGoal);
         return solve(parsed);
     }
+
 
     @Override
     public SolutionHolder solve(Object theGoal) {

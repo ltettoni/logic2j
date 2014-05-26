@@ -106,6 +106,13 @@ public class FunctionalTest extends PrologTestBase {
     }
 
     @Test
+    public void queensSimple() throws IOException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        final String goal = "queens(5, X)";
+        countNSolutions(10, goal);
+    }
+
+    @Test
     public void queensForTiming() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
         final String goal = "queens(9, X)";
@@ -173,26 +180,26 @@ public class FunctionalTest extends PrologTestBase {
 //        assertEquals("[11, twelve, 13, fourteen, 15, sixteen]", assertNSolutions.binding("Y").toString());
 //    }
 //
-//    @Test
-//    public void findall() {
-//        loadTheoryFromTestResourcesDir("test-functional.pl");
-//
-//        assertEquals("[]", assertOneSolution("findall(1, fail, L)").binding("L").toString());
-//        assertEquals("[1]", assertOneSolution("findall(1, true, L)").binding("L").toString());
-//        assertEquals("[1,1,1]", assertOneSolution("findall(1, (true;true;true), L)").binding("L").toString());
-//        assertEquals("[a(b),a(b)]", assertOneSolution("findall(a(b), (true;fail;true), L)").binding("L").toString());
-//
-//        assertEquals("[1,2,3]", assertOneSolution("findall(X, a(X), L)").binding("L").toString());
-//        assertEquals("[b(1),b(2),b(3)]", assertOneSolution("findall(b(X), a(X), L)").binding("L").toString());
-//        assertEquals("[Z,Z,Z]", assertOneSolution("findall(Z, a(X), L)").binding("L").toString());
-//        assertNoSolution("findall(X, a(X), [1])");
-//        assertOneSolution("findall(X, a(X), [1,2,3])");
-//    }
-//
-//    @Test
-//    public void findall_bindFreeVars() {
-//        final UniqueSolutionHolder sol = assertOneSolution("findall(X, member(X,[a,B,c]), Res)");
-//        assertEquals("[a,X,c]", sol.binding("Res").toString());
-//    }
+    @Test
+    public void findall() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+
+        assertEquals("[]", uniqueSolution("findall(1, fail, L)").binding("L").toString());
+        assertEquals("[1]", uniqueSolution("findall(1, true, L)").binding("L").toString());
+        assertEquals("[1,1,1]", uniqueSolution("findall(1, (true;true;true), L)").binding("L").toString());
+        assertEquals("[a(b),a(b)]", uniqueSolution("findall(a(b), (true;fail;true), L)").binding("L").toString());
+
+        assertEquals("[1,2,3]", uniqueSolution("findall(X, a(X), L)").binding("L").toString());
+        assertEquals("[b(1),b(2),b(3)]", uniqueSolution("findall(b(X), a(X), L)").binding("L").toString());
+        assertEquals("[Z,Z,Z]", uniqueSolution("findall(Z, a(X), L)").binding("L").toString());
+        countNoSolution("findall(X, a(X), [1])");
+        uniqueSolution("findall(X, a(X), [1,2,3])");
+    }
+
+    @Test
+    public void findall_bindFreeVars() {
+        final UniqueSolutionHolder sol = uniqueSolution("findall(X, member(X,[a,B,c]), Res)");
+        assertEquals("[a,X,c]", sol.binding("Res").toString());
+    }
 
 }

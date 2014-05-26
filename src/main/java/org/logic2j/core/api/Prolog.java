@@ -19,6 +19,7 @@ package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
@@ -36,7 +37,7 @@ public interface Prolog {
 
     /**
      * The top-level method for solving a goal (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API,
-     * internally it usess the low-level {@link SolutionListener}).
+     * internally it uses the low-level {@link SolutionListener}).
      * This does NOT YET start solving.
      * If you already have a parsed term, use {@link #solve(Object)} instead.
      *
@@ -71,5 +72,6 @@ public interface Prolog {
      * @return Our {@link TheoryManager}
      */
     TheoryManager getTheoryManager();
+
 
 }

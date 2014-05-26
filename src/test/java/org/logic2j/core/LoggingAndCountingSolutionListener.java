@@ -21,7 +21,10 @@ public class LoggingAndCountingSolutionListener extends CountingSolutionListener
 
     @Override
     public Continuation onSolution(PoV thePoV) {
-        logger.info(" solution: {}", thePoV.reify(theGoal));
+        if (logger.isInfoEnabled()) {
+            final Object value = thePoV.reify(theGoal);
+            logger.info(" solution: {}", value);
+        }
         return super.onSolution(thePoV);
     }
 

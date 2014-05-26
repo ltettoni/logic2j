@@ -187,10 +187,9 @@ public class CoreLibrary extends LibraryBase {
             final Object arg0 = theGoalStruct.getArg(0);
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
-//            if (theMethodName == "findall") {
-//                result = findall(theListener, pov, arg0, arg1, arg2);
-//            } else {
-            {
+            if (theMethodName == "findall") {
+                result = findall(theListener, pov, arg0, arg1, arg2);
+            } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 0) {
@@ -325,40 +324,31 @@ public class CoreLibrary extends LibraryBase {
         return Continuation.CONTINUE;
     }
 
-//    @Primitive
-//    public Continuation findall(SolutionListener theListener, final PoV pov, final Object theTemplate, final Object theGoal, final Object theResult) {
-//        final SolutionListener listenerForSubGoal;
-//        final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
-//        final TermBindings subGoalBindings;
-//            subGoalBindings = new TermBindings(theGoal);
-//            listenerForSubGoal = new SolutionListener() {
-//                @Override
-//                public Continuation onSolution() {
-//                    throw new UnsupportedOperationException("Should not be here");
-//                }
-//
-//                @Override
-//                public Continuation onSolution(Reifier theReifier) {
-//                    final Object templateReified = theReifier.reify(theTemplate);
-//                    javaResults.add(templateReified);
-//                    return Continuation.CONTINUE;
-//                }
-//            };
-//        }
-//        // Now solve the target sub goal
-//        getProlog().getSolver().solveGoal(subGoalBindings, listenerForSubGoal);
-//
-//        // Convert all results into a prolog list structure
-//        // Note on var indexes: all variables present in the projection term will be
-//        // copied into the resulting plist, so there's no need to reindex.
-//        // However, the root level Struct that makes up the list does contain a bogus
-//        // index value but -1.
-//        final Struct plist = Struct.createPList(javaResults);
-//
-//        // And unify with result
-//        final boolean unified = unify(theResult, pov, plist, theTermBindings);
-//        return notifyIfUnified(unified, theListener);
-//    }
+    @Primitive
+    public Continuation findall(SolutionListener theListener, final PoV pov, final Object theTemplate, final Object theGoal, final Object theResult) {
+        final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
+        final SolutionListener listenerForSubGoal = new SolutionListener() {
+
+            @Override
+            public Continuation onSolution(PoV pov) {
+                final Object templateReified = pov.reify(theTemplate);
+                javaResults.add(templateReified);
+                return Continuation.CONTINUE;
+            }
+        };
+        // Now solve the target sub goal
+        getProlog().getSolver().solveGoal(theGoal, pov, listenerForSubGoal);
+
+        // Convert all results into a prolog list structure
+        // Note on var indexes: all variables present in the projection term will be
+        // copied into the resulting plist, so there's no need to reindex.
+        // However, the root level Struct that makes up the list does contain a bogus
+        // index value but -1.
+        final Struct plist = Struct.createPList(javaResults);
+
+        // And unify with result
+        return unify(theListener, pov, theResult, plist);
+    }
 
     /**
      * @param theListener

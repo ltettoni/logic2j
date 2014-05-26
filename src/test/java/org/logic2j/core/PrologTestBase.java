@@ -95,8 +95,8 @@ public abstract class PrologTestBase {
 
     protected void countNSolutions(int nbr, CharSequence... theGoals) {
         for (CharSequence goalText : theGoals) {
-            final CountingSolutionListener listener = new CountingSolutionListener();
             Object term = unmarshall(goalText);
+            final CountingSolutionListener listener = new CountingSolutionListener();
             getProlog().getSolver().solveGoal(term, new StateEngineByLookup().emptyPoV(), listener);
             assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.getCounter());
         }
