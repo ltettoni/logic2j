@@ -354,16 +354,16 @@ public final class Struct extends Term {
         return factorized;
     }
 
-//    Var findVar(String theVariableName) {
-//        for (int i = 0; i < this.arity; i++) {
-//            final Object term = this.args[i];
-//            final Var found = TermApi.findVar(term, theVariableName);
-//            if (found != null) {
-//                return found;
-//            }
-//        }
-//        return null;
-//    }
+    Var findVar(String theVariableName) {
+        for (int i = 0; i < this.arity; i++) {
+            final Object term = this.args[i];
+            final Var found = TermApi.findVar(term, theVariableName);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
 
 
     /**

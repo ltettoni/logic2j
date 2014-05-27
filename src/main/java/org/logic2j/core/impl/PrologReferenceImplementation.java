@@ -110,15 +110,15 @@ public class PrologReferenceImplementation implements PrologImplementation {
     // ---------------------------------------------------------------------------
 
     @Override
-    public SolutionHolder solve(CharSequence theGoal) {
+    public GoalHolder solve(CharSequence theGoal) {
         final Object parsed = termUnmarshaller.unmarshall(theGoal);
         return solve(parsed);
     }
 
 
     @Override
-    public SolutionHolder solve(Object theGoal) {
-        return new SolutionHolder(this, theGoal);
+    public GoalHolder solve(Object theGoal) {
+        return new GoalHolder(this, theGoal);
     }
 
     // ---------------------------------------------------------------------------

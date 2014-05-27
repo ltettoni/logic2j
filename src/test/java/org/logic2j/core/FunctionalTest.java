@@ -19,8 +19,7 @@ package org.logic2j.core;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
@@ -54,34 +53,34 @@ public class FunctionalTest extends PrologTestBase {
     public void member() {
         countOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
         countNoSolution("member(d, [a,b,c])");
-        logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").all().ensureNumber(3).bindings(), 0));
+        logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").ensureNumber(3).vars().list(), 0));
 
-        assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").binding("X").toString());
+        assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").var("X").toString());
 
-        final MultipleSolutionsHolder all = nSolutions(3, "append(X,Y,[1,2])");
-        assertEquals(termList("[]", "[1]", "[1,2]"), all.binding("X"));
-        assertEquals(termList("[1,2]", "[2]", "[]"), all.binding("Y"));
+        final GoalHolder all = nSolutions(3, "append(X,Y,[1,2])");
+        assertEquals(termList("[]", "[1]", "[1,2]"), all.var("X"));
+        assertEquals(termList("[1,2]", "[2]", "[]"), all.var("Y"));
     }
 
     @Test
     public void sumial() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
-        assertEquals(term(0), uniqueSolution("sumial(0, X)").binding("X"));
-        assertEquals(term(1), uniqueSolution("sumial(1, X)").binding("X"));
-        assertEquals(term(3), uniqueSolution("sumial(2, X)").binding("X"));
-        assertEquals(term(15), uniqueSolution("sumial(5, X)").binding("X"));
-        assertEquals(term(55), uniqueSolution("sumial(10, X)").binding("X"));
-        assertEquals(term(5050), uniqueSolution("sumial(100, X)").binding("X"));
+        assertEquals(term(0), uniqueSolution("sumial(0, X)").longValue("X"));
+        assertEquals(term(1), uniqueSolution("sumial(1, X)").longValue("X"));
+        assertEquals(term(3), uniqueSolution("sumial(2, X)").longValue("X"));
+        assertEquals(term(15), uniqueSolution("sumial(5, X)").longValue("X"));
+        assertEquals(term(55), uniqueSolution("sumial(10, X)").longValue("X"));
+        assertEquals(term(5050), uniqueSolution("sumial(100, X)").longValue("X"));
     }
 
     @Test
     public void unify() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
         uniqueSolution("unifyterms(X,X)");
-        assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").binding("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").binding("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(X,123)").binding("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(123, X)").binding("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").longValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").longValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms22(X,123)").longValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms22(123, X)").longValue("X"));
     }
 
 
@@ -90,16 +89,16 @@ public class FunctionalTest extends PrologTestBase {
     public void queensNumbers() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
 
-        assertEquals(1, getProlog().solve("queens(1, _)").number());
-        assertEquals(0, getProlog().solve("queens(2, _)").number());
-        assertEquals(0, getProlog().solve("queens(3, _)").number());
-        assertEquals(2, getProlog().solve("queens(4, _)").number());
-        assertEquals(10, getProlog().solve("queens(5, _)").number());
-        assertEquals(4, getProlog().solve("queens(6, _)").number());
-        assertEquals(40, getProlog().solve("queens(7, _)").number());
-        assertEquals(92, getProlog().solve("queens(8, _)").number());
-        assertEquals(352, getProlog().solve("queens(9, _)").number());
-        assertEquals(724, getProlog().solve("queens(10, _)").number());
+        assertEquals(1, getProlog().solve("queens(1, _)").count());
+        assertEquals(0, getProlog().solve("queens(2, _)").count());
+        assertEquals(0, getProlog().solve("queens(3, _)").count());
+        assertEquals(2, getProlog().solve("queens(4, _)").count());
+        assertEquals(10, getProlog().solve("queens(5, _)").count());
+        assertEquals(4, getProlog().solve("queens(6, _)").count());
+        assertEquals(40, getProlog().solve("queens(7, _)").count());
+        assertEquals(92, getProlog().solve("queens(8, _)").count());
+        assertEquals(352, getProlog().solve("queens(9, _)").count());
+        assertEquals(724, getProlog().solve("queens(10, _)").count());
         // Comment out heavy ones
         // assertEquals(2680, getProlog().solve("queens(11, _)").number());
         // assertEquals(14200, getProlog().solve("queens(12, _)").number());
@@ -118,7 +117,7 @@ public class FunctionalTest extends PrologTestBase {
         final String goal = "queens(9, X)";
         // Numbers
         ProfilingInfo.setTimer1();
-        long number = getProlog().solve(goal).number();
+        long number = getProlog().solve(goal).count();
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + number);
 
         /*
@@ -143,7 +142,7 @@ public class FunctionalTest extends PrologTestBase {
                 break;
             }
             final long startTime = System.currentTimeMillis();
-            getProlog().solve(goal).number();
+            getProlog().solve(goal).count();
             logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
         }
     }
@@ -184,22 +183,22 @@ public class FunctionalTest extends PrologTestBase {
     public void findall() {
         loadTheoryFromTestResourcesDir("test-functional.pl");
 
-        assertEquals("[]", uniqueSolution("findall(1, fail, L)").binding("L").toString());
-        assertEquals("[1]", uniqueSolution("findall(1, true, L)").binding("L").toString());
-        assertEquals("[1,1,1]", uniqueSolution("findall(1, (true;true;true), L)").binding("L").toString());
-        assertEquals("[a(b),a(b)]", uniqueSolution("findall(a(b), (true;fail;true), L)").binding("L").toString());
+        assertEquals("[]", uniqueSolution("findall(1, fail, L)").toString("L"));
+        assertEquals("[1]", uniqueSolution("findall(1, true, L)").toString("L"));
+        assertEquals("[1,1,1]", uniqueSolution("findall(1, (true;true;true), L)").toString("L"));
+        assertEquals("[a(b),a(b)]", uniqueSolution("findall(a(b), (true;fail;true), L)").toString("L"));
 
-        assertEquals("[1,2,3]", uniqueSolution("findall(X, a(X), L)").binding("L").toString());
-        assertEquals("[b(1),b(2),b(3)]", uniqueSolution("findall(b(X), a(X), L)").binding("L").toString());
-        assertEquals("[Z,Z,Z]", uniqueSolution("findall(Z, a(X), L)").binding("L").toString());
+        assertEquals("[1,2,3]", uniqueSolution("findall(X, a(X), L)").toString("L"));
+        assertEquals("[b(1),b(2),b(3)]", uniqueSolution("findall(b(X), a(X), L)").toString("L"));
+        assertEquals("[Z,Z,Z]", uniqueSolution("findall(Z, a(X), L)").toString("L"));
         countNoSolution("findall(X, a(X), [1])");
         uniqueSolution("findall(X, a(X), [1,2,3])");
     }
 
     @Test
     public void findall_bindFreeVars() {
-        final UniqueSolutionHolder sol = uniqueSolution("findall(X, member(X,[a,B,c]), Res)");
-        assertEquals("[a,X,c]", sol.binding("Res").toString());
+        final GoalHolder sol = uniqueSolution("findall(X, member(X,[a,B,c]), Res)");
+        assertEquals("[a,X,c]", sol.toString("Res"));
     }
 
 }

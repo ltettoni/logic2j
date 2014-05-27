@@ -15,7 +15,6 @@ import java.util.*;
  */
 public class ExtractingSolutionListener extends CountingSolutionListener {
     private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
-    public static final String WHOLE_SOLUTION_PSEUDOVAR = ".";
 
     private final Object goal;
     private final Set<Var> vars;
@@ -29,7 +28,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
         for (Var var : vars) {
             varNames.add(var.getName());
         }
-        varNames.add(WHOLE_SOLUTION_PSEUDOVAR); // This pseudo var means the whole solution
+        varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
 
 
         solutions = new ArrayList<Map<String, Object>>();
@@ -43,7 +42,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
         logger.info(" solution: {}", solution);
 
         final Map<String, Object> solutionVars = new HashMap<String, Object>();
-        solutionVars.put(WHOLE_SOLUTION_PSEUDOVAR, solution); // The global solution
+        solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution
         for (Var var : vars) {
             final Object varValue = thePoV.finalValue(var);
             solutionVars.put(var.getName(), varValue);

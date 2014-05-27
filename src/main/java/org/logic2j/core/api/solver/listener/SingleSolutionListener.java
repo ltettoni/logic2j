@@ -36,34 +36,22 @@ public abstract class SingleSolutionListener implements SolutionListener {
 
     private final int maxCount; // Maximal number of solutions to fetch
 
-    private final Object term;
-
-
     /**
      * Current solution counter (number of times {@link #onSolution(PoV)} was called)
      */
     protected int counter;
 
     /**
-     * Current solution, initialized within {@link #onSolution(PoV)}
-     */
-    private Solution solution;
-
-    /**
      * Create a {@link SolutionListener} that will enumerate solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      * 
-     * @param term
      * @param theMaxCount The maximal number of solutions to ask the inference engine; specify 1 to only look for the first, irrelevant
      *            whether there might be others; specify 2 to if you want the first and make sure there are no others (the inference engine
      *            will try to continue after the first).
      */
-    public SingleSolutionListener(Object term, int theMaxCount) {
-        super();
-        this.term = term;
+    public SingleSolutionListener(int theMaxCount) {
         this.maxCount = theMaxCount;
         this.counter = 0;
-        this.solution = null;
     }
 
 
@@ -74,8 +62,6 @@ public abstract class SingleSolutionListener implements SolutionListener {
             onSuperfluousSolution();
         }
         logger.debug(" >>>>>>>>> onSolution(), iter=#{}", this.counter);
-
-        this.solution = new Solution(this.term, theReifier);
         this.counter++;
         return Continuation.requestContinuationWhen(this.counter < this.maxCount);
     }
@@ -93,13 +79,6 @@ public abstract class SingleSolutionListener implements SolutionListener {
      */
     public int getNbSolutions() {
         return this.counter;
-    }
-
-    /**
-     * @return the solution
-     */
-    public Solution getSolution() {
-        return this.solution;
     }
 
 }

@@ -44,7 +44,7 @@ public interface Prolog {
      * @param theGoal To solve, will be parsed into a Term.
      * @return A {@link org.logic2j.core.api.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
      */
-    SolutionHolder solve(CharSequence theGoal);
+    GoalHolder solve(CharSequence theGoal);
 
     /**
      * Solves a goal expressed as a {@link Term} (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API, internally it usess the low-level
@@ -53,7 +53,7 @@ public interface Prolog {
      * @param theGoal The {@link Term} to solve, usually a {@link Struct}
      * @return A {@link org.logic2j.core.api.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
      */
-    SolutionHolder solve(Object theGoal);
+    GoalHolder solve(Object theGoal);
 
     // ---------------------------------------------------------------------------
     // Accessors to the sub-features of the Prolog engine

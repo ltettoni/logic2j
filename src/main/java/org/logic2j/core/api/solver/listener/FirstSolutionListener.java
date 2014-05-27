@@ -26,11 +26,11 @@ import org.logic2j.core.api.model.exception.IllegalSolutionException;
  */
 public class FirstSolutionListener extends SingleSolutionListener {
 
-    public FirstSolutionListener(Object term) {
+    public FirstSolutionListener() {
         // We are only interested in the first result so we will tell the SolutionListener
         // to stop the solver after the first solution. Using this argument we won't be
         // able to tell if there are actually more, or not. But we are not interested.
-        super(term, 1);
+        super(1);
     }
 
     @Override

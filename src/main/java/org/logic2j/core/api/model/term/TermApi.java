@@ -177,22 +177,25 @@ public class TermApi {
         }
     }
 
-//    /**
-//     * Find the first instance of {@link Var} by name inside a Term, most often a {@link Struct}.
-//     *
-//     * @param theVariableName
-//     * @return A {@link Var} with the specified name, or null when not found.
-//     */
-//    public static Var findVar(Object theTerm, String theVariableName) {
-//        if (theTerm instanceof Struct) {
-//            return ((Struct) theTerm).findVar(theVariableName);
-//        } else if (theTerm instanceof Var) {
-//            return ((Var) theTerm).findVar(theVariableName);
-//        } else {
-//            // Not a Term but a plain Java object - no var
-//            return null;
-//        }
-//    }
+    /**
+     * Find the first instance of {@link Var} by name inside a Term, most often a {@link Struct}.
+     *
+     * @param theVariableName
+     * @return A {@link Var} with the specified name, or null when not found.
+     */
+    public static Var findVar(Object theTerm, String theVariableName) {
+        if (theVariableName==Var.WHOLE_SOLUTION_VAR_NAME) {
+            return Var.WHOLE_SOLUTION_VAR;
+        }
+        if (theTerm instanceof Struct) {
+            return ((Struct) theTerm).findVar(theVariableName);
+        } else if (theTerm instanceof Var && ((Var)theTerm).getName()==theVariableName) {
+            return (Var) theTerm;
+        } else {
+            // Not a Term but a plain Java object - no var
+            return null;
+        }
+    }
 
     /**
      * @return true if this Term denotes a Prolog list.

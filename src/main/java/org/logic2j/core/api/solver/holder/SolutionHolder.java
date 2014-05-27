@@ -84,16 +84,16 @@ public class SolutionHolder implements Iterable<Solution> {
         return new MultipleSolutionsHolder(this);
     }
 
-    /**
-     * Solves the goal, and holds the solution for further dereferencing.
-     *
-     * @return A relay object to access the unique solution.
-     */
-    public UniqueSolutionHolder unique() {
-        final UniqueSolutionListener listener = new UniqueSolutionListener(this.term);
-        this.prolog.getSolver().solveGoal(this.term, new StateEngineByLookup().emptyPoV(), listener);
-        return new UniqueSolutionHolder(listener.getSolution());
-    }
+//    /**
+//     * Solves the goal, and holds the solution for further dereferencing.
+//     *
+//     * @return A relay object to access the unique solution.
+//     */
+//    public UniqueSolutionHolder unique() {
+//        final UniqueSolutionListener listener = new UniqueSolutionListener();
+//        this.prolog.getSolver().solveGoal(this.term, new StateEngineByLookup().emptyPoV(), listener);
+//        return new UniqueSolutionHolder(listener.getSolution());
+//    }
 
     /**
      * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link Solution}s from this

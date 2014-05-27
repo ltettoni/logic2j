@@ -30,6 +30,8 @@ import java.util.Collection;
 public final class Var extends Term {
     private static final long serialVersionUID = 1L;
 
+    public static final String WHOLE_SOLUTION_VAR_NAME = ".".intern();
+
     /**
      * Name of the anonymous variable is always "_". This constant is internalized, you
      * can safely compare it with ==.
@@ -40,6 +42,11 @@ public final class Var extends Term {
      * Singleton anonymous variable. You can safely compare them with ==.
      */
     public static final Var ANONYMOUS_VAR = new Var();
+
+    /**
+     * Singleton "special" var that holds the value of a whole goal.
+     */
+    public static final Var WHOLE_SOLUTION_VAR = new Var(WHOLE_SOLUTION_VAR_NAME);
 
     /**
      * The immutable name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated

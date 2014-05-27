@@ -22,6 +22,7 @@ import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
 import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
@@ -109,13 +110,14 @@ public abstract class PrologTestBase {
      * @param theGoals All goals to check for
      * @return The UniqueSolutionHolder holding the last solution of theGoals
      */
-    protected UniqueSolutionHolder uniqueSolution(CharSequence... theGoals) {
+    protected GoalHolder uniqueSolution(CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
-        UniqueSolutionHolder result = null;
+        GoalHolder result = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-            final SolutionHolder holder = this.prolog.solve(goal);
-            result = holder.unique();
+            final GoalHolder holder = this.prolog.solve(goal);
+            assertEquals("Expecting unique number of solutions for goal \"" + goal + '"', 1, holder.count());
+            result = holder;
         }
         return result;
     }
@@ -135,7 +137,7 @@ public abstract class PrologTestBase {
         assertTrue("theGoals must not be empty for assertGoalMustFail()", theGoals.length > 0);
         for (final CharSequence theGoal : theGoals) {
             try {
-                this.prolog.solve(theGoal).number();
+                this.prolog.solve(theGoal).exists();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final RuntimeException e) {
                 // logger.warn("Goal failing - but expected: " + e, e);
@@ -153,8 +155,8 @@ public abstract class PrologTestBase {
      * @param theGoals  All goals to check for
      * @return The {@link org.logic2j.core.api.solver.holder.MultipleSolutionsHolder}
      */
-    protected MultipleSolutionsHolder nSolutions(int theNumber, CharSequence... theGoals) {
-        return internalAssert(theNumber, theGoals).all();
+    protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
+        return internalAssert(theNumber, theGoals);
     }
 
     /**
@@ -162,17 +164,17 @@ public abstract class PrologTestBase {
      * @param theGoals
      * @return The {@link org.logic2j.core.api.solver.holder.SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
-    private SolutionHolder internalAssert(int theNumber, CharSequence... theGoals) {
+    private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
-        SolutionHolder holder = null;
+        GoalHolder result = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting {} solutions when solving goal \"{}\"", theNumber, goal);
-            holder = this.prolog.solve(goal);
+            result = this.prolog.solve(goal);
             // Now execute the goal - only extracting the number of solutions
-            final long number = holder.number();
-            assertEquals("Goal \"" + goal + "\" has different number of solutions", theNumber, number);
+            final long number = result.count();
+            assertEquals("Checking number of solutions for goal \"" + goal + '"', theNumber, number);
         }
-        return holder;
+        return result;
     }
 
     /**

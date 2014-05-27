@@ -28,20 +28,12 @@ import org.logic2j.core.api.model.exception.MissingSolutionException;
  */
 public class UniqueSolutionListener extends SingleSolutionListener {
 
-    public UniqueSolutionListener(Object term) {
+    public UniqueSolutionListener() {
         // We wish to make sure the first solution is the ONLY one, so we
-        // are going to try to reach further, at least 2 solutions.
+        // are going to try to reach a little further, at least 2 solutions.
         // Then we will be able to determine for sure if there was actually
         // only one, or more.
-        super(term, 2);
-    }
-
-    @Override
-    public Solution getSolution() {
-        if (getNbSolutions() < 1) {
-            onMissingSolution();
-        }
-        return super.getSolution();
+        super(2);
     }
 
     private void onMissingSolution() {

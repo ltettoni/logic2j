@@ -25,11 +25,11 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void is() {
-        assertEquals(term(6), uniqueSolution("X is 2+4").binding("X"));
-        assertEquals(term(-5), uniqueSolution("X is 5-10").binding("X"));
-        assertEquals(term(-12), uniqueSolution("X is -12").binding("X"));
-        assertEquals(term(1), uniqueSolution("X is 6 - (2+3)").binding("X"));
-        assertEquals(term(9), uniqueSolution("N=10, M is N-1").binding("M"));
+        assertEquals(term(6), uniqueSolution("X is 2+4").longValue("X"));
+        assertEquals(term(-5), uniqueSolution("X is 5-10").longValue("X"));
+        assertEquals(term(-12), uniqueSolution("X is -12").longValue("X"));
+        assertEquals(term(1), uniqueSolution("X is 6 - (2+3)").longValue("X"));
+        assertEquals(term(9), uniqueSolution("N=10, M is N-1").longValue("M"));
     }
 
     @Test
