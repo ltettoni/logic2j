@@ -20,7 +20,13 @@ package org.logic2j.core.api.model;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.impl.PrologImplementation;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 /**
  * Represents a fact or a rule in a Theory; this is described by a {@link Struct}. This class provides extra features for efficient lookup
@@ -37,7 +43,8 @@ public class Clause {
      * The {@link Struct} that represents the content of either a rule (when it has a body) or a fact (does not have a body - or has "true"
      * as body), see description of {@link #isFact()}.
      */
-    private final Object content; // Immutable, not null
+    private final Struct content; // Immutable, not null
+    private final Var[] vars;
 
     private final boolean isFact;
     private final boolean isWithClauseFunctor;
@@ -51,36 +58,40 @@ public class Clause {
      * @param theProlog Required to normalize theClauseTerm according to the current libraries.
      * @param theClauseTerm
      */
-    public Clause(PrologImplementation theProlog, Object theClauseTerm) {
+    public Clause(PrologImplementation theProlog, Struct theClauseTerm) {
         // if (!(theClauseTerm instanceof Struct)) {
         // throw new InvalidTermException("Need a Struct to build a clause, not " + theClauseTerm);
         // }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
-        this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
+        this.content = (Struct)TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
+        // Store vars into an array, indexed by the var's index
+        final Set<Var> varSet = TermApi.allVars(content).keySet();
+        this.vars = new Var[varSet.size()];
+        for (Var var : varSet) {
+            this.vars[var.getIndex()] = var;
+        }
         this.isFact = evaluateIsFact();
         this.isWithClauseFunctor = evaluateIsWithClauseFunctor();
         this.head = evaluateHead();
         this.body = evaluateBody();
     }
 
-    /**
-     * Copy constructor. Will clone the {@link Clause}'s content and the current {@link TermBindings}.
-     *
-     * @param theOriginal
-     */
-    public Clause(Clause theOriginal) {
-        if (theOriginal.content instanceof Struct) {
-            // TODO Why do we need cloning the content in a structure-sharing design???
-            this.content = new Struct((Struct) theOriginal.content);
-        } else {
-            this.content = theOriginal;
-        }
-        // Clone the block of variables
-        this.isFact = theOriginal.isFact;
-        this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
-        this.head = theOriginal.head;
-        this.body = theOriginal.body;
-    }
+//    /**
+//     * Copy constructor.
+//     *
+//     * @param theOriginal
+//     */
+//    public Clause(Clause theOriginal) {
+//        // Should we clone???? Not sure, hopefully not.
+//        this.content = new Struct(theOriginal.content);
+//        this.vars = new Var[theOriginal.vars.length];
+//        System.arraycopy(theOriginal.vars, 0, this.vars, 0, theOriginal.vars.length);
+//        // Clone the block of variables
+//        this.isFact = theOriginal.isFact;
+//        this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
+//        this.head = theOriginal.head;
+//        this.body = theOriginal.body;
+//    }
 
     // ---------------------------------------------------------------------------
     // Methods to denormalize immutable fields
@@ -93,9 +104,6 @@ public class Clause {
      * @return True if the clause is a fact: if the {@link Struct} does not have ":-" as functor, or if the body is "true".
      */
     public boolean evaluateIsFact() {
-        if (!(this.content instanceof Struct)) {
-            return true;
-        }
         final Struct s = (Struct) this.content;
         // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
         if (Struct.FUNCTOR_CLAUSE != s.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
@@ -111,9 +119,6 @@ public class Clause {
     }
 
     private boolean evaluateIsWithClauseFunctor() {
-        if (this.content instanceof String) {
-            return false;
-        }
         return Struct.FUNCTOR_CLAUSE == ((Struct) (this.content)).getName(); // Names are {@link String#intern()}alized so OK to check by
                                                                              // reference
     }
@@ -141,6 +146,20 @@ public class Clause {
         return Struct.ATOM_TRUE;
     }
 
+
+    public boolean needCloning() {
+        if (! (this.content instanceof Struct)) {
+            return false;
+        }
+        final Struct cs = (Struct)this.content;
+        if (cs.getIndex()<=0) {
+            // No variables!
+            return false;
+        }
+        // Otherwise assume we need cloning
+        return true;
+    }
+
     // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
@@ -149,8 +168,12 @@ public class Clause {
         return this.isFact;
     }
 
-    public Object getContent() {
+    public Struct getContent() {
         return content;
+    }
+
+    public Var[] getVars() {
+        return vars;
     }
 
     /**

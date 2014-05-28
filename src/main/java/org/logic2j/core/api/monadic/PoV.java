@@ -1,5 +1,6 @@
 package org.logic2j.core.api.monadic;
 
+import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
@@ -10,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Laurent on 07.05.2014.
@@ -38,23 +41,52 @@ public class PoV {
     }
 
 
-
-
-    public Object cloneTermAndRemapIndexes(Object theTerm) {
-        if (theTerm instanceof Term) {
-//            audit.info("Clone  {}  (base={})", theTerm, this.topVarIndex);
-            final CloningTermVisitor cloningTermVisitor = new CloningTermVisitor();
-            final Object cloned = ((Term) theTerm).accept(cloningTermVisitor);
-            for (Var newVar: cloningTermVisitor.vars.values()) {
-                newVar.index += this.topVarIndex;
-            }
-            this.topVarIndex += cloningTermVisitor.vars.size();
-//            audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
-            return cloned;
+    public Object cloneClauseAndRemapIndexes(Clause theClause) {
+//            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
+        final Struct content = theClause.getContent();
+        final Var[] originalVars = theClause.getVars();
+        final int nbVars = originalVars.length;
+        // Allocate the new vars by cloning the original ones. Index is preserved meaning that
+        // when we traverse the original structure and find a Var of index N, we can replace it
+        // in the cloned structure by the clonedVar[N]
+        final Var[] clonedVars = new Var[nbVars];
+        for (int i = 0; i < nbVars; i++) {
+            clonedVars[i] = new Var(originalVars[i]);
         }
-        return theTerm;
+
+        final Struct cloned = cloneStruct(content, clonedVars);
+        // Now reindex the cloned vars
+        for (int i=0; i<nbVars; i++) {
+            clonedVars[i].index += this.topVarIndex;
+        }
+        this.topVarIndex += nbVars;
+//            audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
+        return cloned;
     }
 
+    private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
+        final int arity = theStruct.getArity();
+        final Object[] args = theStruct.getArgs();
+        final Object[] clonedArgs = new Object[arity];
+        for (int i = 0; i < arity; i++) {
+            final Object arg = args[i];
+            if (arg instanceof Struct) {
+                final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
+                clonedArgs[i] = recursedClonedElement;
+            } else if (arg instanceof Var) {
+                if (arg==Var.ANONYMOUS_VAR) {
+                    clonedArgs[i] = Var.ANONYMOUS_VAR;
+                } else {
+                    final short originalVarIndex = ((Var) arg).getIndex();
+                    clonedArgs[i] = clonedVars[originalVarIndex];
+                }
+            } else {
+                clonedArgs[i] = arg;
+            }
+        }
+        final Struct struct = new Struct(theStruct, clonedArgs);
+        return struct;
+    }
 
 
     public PoV bind(Var var, Object ref) {

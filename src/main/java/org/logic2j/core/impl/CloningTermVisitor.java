@@ -10,13 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by Laurent on 13.05.2014.
+ * TBD
  */
 public class CloningTermVisitor implements TermVisitor<Object> {
     public final Map<Var, Var> vars = new LinkedHashMap<Var, Var>();
-    public int highestVarIndex = 0;
-
-
 
     @Override
     public Object visit(Struct theStruct) {
@@ -43,9 +40,6 @@ public class CloningTermVisitor implements TermVisitor<Object> {
         Var alreadyCloned = vars.get(theVar);
         if (alreadyCloned!=null) {
             return alreadyCloned;
-        }
-        if (highestVarIndex < theVar.getIndex()) {
-            highestVarIndex = theVar.getIndex();
         }
         final Var cloned = new Var(theVar);
         vars.put(theVar, cloned);

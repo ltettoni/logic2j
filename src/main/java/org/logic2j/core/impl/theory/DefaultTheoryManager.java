@@ -23,6 +23,7 @@ import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
@@ -138,7 +139,14 @@ public class DefaultTheoryManager implements TheoryManager {
         Object clauseTerm = theParser.nextTerm(true);
         while (clauseTerm != null) {
             logger.debug("Parsed clause: {}", clauseTerm);
-            final Clause cl = new Clause(this.prolog, clauseTerm);
+            if (clauseTerm instanceof CharSequence) {
+                // Very rare case of facts being just a string (see "cut4" in our tests)
+                clauseTerm = Struct.valueOf(clauseTerm.toString());
+            }
+            if (! (clauseTerm instanceof Struct)) {
+                throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
+            }
+            final Clause cl = new Clause(this.prolog, (Struct)clauseTerm);
             content.add(cl);
               clauseTerm = theParser.nextTerm(true);
         }

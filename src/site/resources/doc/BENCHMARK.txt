@@ -19,11 +19,12 @@ B: monadic version - POC using sequential search for vars by reference (address)
 B+: like B with more efficient cloning before matching a clause
 C: variable indexing and lookup
 D: Pure monadic approach - no more Bindings
+D2: Optimized cloning of clauses (pre-stored array of Vars)
 
-algo     sol    A       B       B+      C       D
+algo     sol    A       B       B+      C       D       D2
 -------------------------------------------------------------------
 queens7  40     43      300
-queens9  352    320     6000    3000    900     816
+queens9  352    320     6000    3000    900     820     580
 queens10 724    1440    30000
 queens11 2680   7600    170000          23000
 

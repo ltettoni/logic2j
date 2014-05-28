@@ -449,15 +449,6 @@ public class TermApi {
         return (T) theTerm;
     }
 
-//    public static Object clone(Object theTerm, TermBindings theBindings, Map<Object, Object> remapper) {
-//        if (theTerm instanceof Term) {
-//            final Map<Object, Object> effectiveRemapper = remapper != null ? remapper : Collections.emptyMap();
-//            final Object cloned = ((Term)theTerm).accept(new CloningTermVisitor(effectiveRemapper), theBindings);
-//            return cloned;
-//        }
-//        return theTerm;
-//    }
-
     private static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
       final String functorSpec = theFunctor != null ? "functor \"" + theFunctor + '"' : "any functor";
       final String aritySpec = theArity >=0 ? "arity=" + theArity : "any arity";

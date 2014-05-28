@@ -130,12 +130,12 @@ public class FunctionalTest extends PrologTestBase {
 
     @Ignore("Use this in conjunction with jvisualvm to profile")
     @Test
-    public void queensForJVisualVM() throws IOException {
+    public void queensForJVisualVMInteractive() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
-            final String goal = "queens(11, X)";
+            final String goal = "queens(6, X)";
             System.out.print("Press any key to run, q to quit");
             final String readLine = br.readLine();
             if (readLine != null && readLine.startsWith("q")) {
@@ -145,6 +145,20 @@ public class FunctionalTest extends PrologTestBase {
             getProlog().solve(goal).count();
             logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
         }
+    }
+
+
+    @Ignore("Use this in conjunction with jvisualvm to profile")
+    @Test
+    public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        Thread.sleep(15000);
+        final String goal = "queens(7, X)";
+        getProlog().solve(goal).count();
+        ProfilingInfo.reportAll("VisualVM profiling");
+        Thread.sleep(1000000);
     }
 
 

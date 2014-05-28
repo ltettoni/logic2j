@@ -34,6 +34,7 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
  */
 public class DefaultSolver implements Solver {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
+
     static final boolean isDebug = logger.isDebugEnabled();
 
     protected final PrologImplementation prolog;
@@ -47,7 +48,6 @@ public class DefaultSolver implements Solver {
     /**
      * Just calls the recursive {@link #solveGoalRecursive(Object, TermBindings, org.logic2j.core.api.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
-     * 
      */
     @Override
     public Continuation solveGoal(Object goal, PoV pov, final SolutionListener theSolutionListener) {
@@ -135,8 +135,8 @@ public class DefaultSolver implements Solver {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
             }
             final Object argumentOfCall = goalStruct.getArg(0);
-                final Object argumentOfCall2 = reifier.reify(argumentOfCall);
-                result = solveGoalRecursive(argumentOfCall2, reifier, theSolutionListener);
+            final Object argumentOfCall2 = reifier.reify(argumentOfCall);
+            result = solveGoalRecursive(argumentOfCall2, reifier, theSolutionListener);
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
@@ -181,7 +181,6 @@ public class DefaultSolver implements Solver {
     }
 
 
-
     private Continuation solveAgainstClauseProviders(final Object goalTerm, PoV reifier, final SolutionListener theSolutionListener) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
 
@@ -212,25 +211,25 @@ public class DefaultSolver implements Solver {
                 if (isDebug) {
                     logger.debug("Trying clause {}, current status={}", clause, result);
                 }
-
-                // Clone the variables so that we won't mutate our current clause's ones
-                final Struct clonedClause = (Struct) reifier.cloneTermAndRemapIndexes(clause.getContent());
-
-                // Struct clonedClause = (Struct) TermApi.clone(originalClause, clauseVars, null);
-                // clonedClause = (Struct)TermApi.factorize(clonedClause);
+                final Struct clonedClause;
+                if (clause.needCloning()) {
+                    // Clone the variables so that we won't mutate our current clause's ones
+                    clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
+                } else {
+                    clonedClause = clause.getContent();
+                }
+                // BOGUS!!!
+                // final boolean isFact = clause.isFact();
+                // final Object clauseHead = isFact ? clonedClause : clonedClause.getArg(0);
 
                 final boolean isRule = Struct.FUNCTOR_CLAUSE == clonedClause.getName() && clonedClause.getArity()==2;
-
                 final Object clauseHead = isRule ? clonedClause.getArg(0) : clonedClause;
+
                 if (isDebug) {
                     logger.debug(" Unifying goal  : {}", goalTerm);
                     logger.debug("  to clause head: {}", clauseHead);
                 }
 
-                // Now unify - this is the only place where free variables may become bound, and
-                // the trailFrame will remember this.
-                // Solutions will be notified from within this method.
-                // As a consequence, deunification can happen immediately afterwards, in this method, not outside in the caller
                 final PoV reifier2 = reifier.unify(goalTerm, clauseHead);
                 boolean headUnified = reifier2 != null;
                 if (isDebug) {
@@ -238,58 +237,52 @@ public class DefaultSolver implements Solver {
                 }
 
                 if (headUnified) {
-                    try {
-                        final Continuation continuation;
-                        if (clause.isFact()) {
-                            if (isDebug) {
-                                logger.debug("{} is a fact, callback one solution", clauseHead);
-                            }
-                            // Notify one solution, and handle result if user wants to continue or not.
-                            continuation = theSolutionListener.onSolution(reifier2);
-                            if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
-                                result = continuation;
-                            }
-                        } else {
-                            // Not a fact, it's a theorem - it has a body
-                            final Object newGoalTerm = clonedClause.getArg(1);
-                            if (isDebug) {
-                                logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
-                            }
-                            // Solve the body in our current recursion context
-                            continuation = solveGoalRecursive(newGoalTerm, reifier2, theSolutionListener);
-                            if (isDebug) {
-                                logger.debug("  back to clause {} with continuation={}", clonedClause, continuation);
-                            }
-                            if (continuation == Continuation.USER_ABORT) {
-                                // TODO should we just "return" from here?
-                                result = Continuation.USER_ABORT;
-                            }
+                    final Continuation continuation;
+                    if (clause.isFact()) {
+                        if (isDebug) {
+                            logger.debug("{} is a fact, callback one solution", clauseHead);
+                        }
+                        // Notify one solution, and handle result if user wants to continue or not.
+                        continuation = theSolutionListener.onSolution(reifier2);
+                        if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
+                            result = continuation;
+                        }
+                    } else {
+                        // Not a fact, it's a theorem - it has a body
+                        final Object newGoalTerm = clonedClause.getArg(1);
+                        if (isDebug) {
+                            logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
+                        }
+                        // Solve the body in our current recursion context
+                        continuation = solveGoalRecursive(newGoalTerm, reifier2, theSolutionListener);
+                        if (isDebug) {
+                            logger.debug("  back to clause {} with continuation={}", clonedClause, continuation);
+                        }
+                        if (continuation == Continuation.USER_ABORT) {
+                            // TODO should we just "return" from here?
+                            result = Continuation.USER_ABORT;
+                        }
 
-                            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            // TODO There is something really ugly here but I'm in the middle of a big refactoring and
-                            // did not find anything better yet.
-                            // When we solve a goal such as "a,b,c,!,d", the cut must ascend up to the first ",", so that further
-                            // attempt to use clauses for a() are also cut.
-                            // However, when we solve main :- sub., then if sub has a cut inside, the cut must not ascend back to the
-                            // main.
-                            // we deal with that here.
-                            // Any other solution (much) welcome.
-                            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            if (newGoalTerm instanceof Struct) {
-                                final String bodyFunctor = ((Struct) newGoalTerm).getName();
-                                if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
-                                    if (continuation == Continuation.CUT) {
-                                        result = Continuation.CUT;
-                                    }
+                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        // TODO There is something really ugly here but I'm in the middle of a big refactoring and
+                        // did not find anything better yet.
+                        // When we solve a goal such as "a,b,c,!,d", the cut must ascend up to the first ",", so that further
+                        // attempt to use clauses for a() are also cut.
+                        // However, when we solve main :- sub., then if sub has a cut inside, the cut must not ascend back to the
+                        // main.
+                        // we deal with that here.
+                        // Any other solution (much) welcome.
+                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        if (newGoalTerm instanceof Struct) {
+                            final String bodyFunctor = ((Struct) newGoalTerm).getName();
+                            if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
+                                if (continuation == Continuation.CUT) {
+                                    result = Continuation.CUT;
                                 }
                             }
                         }
-
-                    } finally {
-                        // We have now fired our solution(s), we no longer need our bound bindings and can deunify
-                        // Go to next solution: start by clearing our trailing bindings
-                        // unifier.deunify();
                     }
+
                 }
             }
             if (isDebug) {

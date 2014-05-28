@@ -43,13 +43,13 @@ public class LibraryBase implements PLibrary {
     /**
      * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
      * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
-     * 
+     * <p/>
      * TODO Document example of typical overriding of dispatch()
-     * 
+     *
      * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
-     * @param pov Regular argument for invoking a primitive
-     * @param theListener Regular argument for invoking a primitive
+     * @param pov           Regular argument for invoking a primitive
+     * @param theListener   Regular argument for invoking a primitive
      */
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener) {
@@ -59,9 +59,9 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Notify theSolutionListener that a solution has been found.
-     * 
+     *
      * @param theSolutionListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution()}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}
      */
     protected Continuation notifySolution(SolutionListener theSolutionListener, PoV pov) {
         final Continuation continuation;
@@ -70,17 +70,16 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
-     * When unified is true, call {@link #notifySolution(SolutionListener)}, and then call {@link #deunify()}. Otherwise
-     * nothing is done.
-     * 
+     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.monadic.PoV)}. Otherwise nothing is done.
+     *
      * @param unified
      * @param theListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution()}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}
      */
     protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener, PoV pov) {
         final Continuation continuation;
         if (unified) {
-                continuation = notifySolution(theListener, pov);
+            continuation = notifySolution(theListener, pov);
         } else {
             continuation = Continuation.CONTINUE;
         }
@@ -88,8 +87,8 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
-     * Make sure a {@link TermBindings} does not have a {@link TermBindings#getReferrer()} that is a free {@link Var}.
-     * 
+     * Make sure term is not a free {@link Var}.
+     *
      * @param term
      * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
      * @throws org.logic2j.core.api.model.exception.InvalidTermException
@@ -120,14 +119,15 @@ public class LibraryBase implements PLibrary {
 
     /**
      * Format a Term with renditions of final vars, and taking operators into account.
+     *
      * @param theTerm
      * @param theBindings
      * @return The formatted String
      */
     protected String format(Object theTerm, final PoV pov) {
-      final TermMarshaller niceFormat2 = new DefaultTermMarshaller(pov);
-      final String formatted = niceFormat2.marshall(theTerm).toString();
-      return formatted;
+        final TermMarshaller niceFormat2 = new DefaultTermMarshaller(pov);
+        final String formatted = niceFormat2.marshall(theTerm).toString();
+        return formatted;
     }
 
     // ---------------------------------------------------------------------------
