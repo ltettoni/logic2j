@@ -23,9 +23,6 @@ import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.api.solver.holder.SolutionHolder;
-import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
@@ -108,7 +105,7 @@ public abstract class PrologTestBase {
      * Make sure there is only one solution to goals.
      *
      * @param theGoals All goals to check for
-     * @return The UniqueSolutionHolder holding the last solution of theGoals
+     * @return The GoalHolder holding the last solution of theGoals
      */
     protected GoalHolder uniqueSolution(CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
@@ -210,7 +207,7 @@ public abstract class PrologTestBase {
     }
 
     /**
-     * Utility factory.
+     * Create a Java list of Terms by parsing the arguments.
      *
      * @param elements The elements of the list to parse as Terms
      * @return A List of term, corresponding to the related elements passed as argument.

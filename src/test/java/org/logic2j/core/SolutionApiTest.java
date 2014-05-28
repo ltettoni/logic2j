@@ -17,23 +17,13 @@
  */
 package org.logic2j.core;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.holder.MultipleSolutionsHolder;
-import org.logic2j.core.api.solver.holder.UniqueSolutionHolder;
-import org.logic2j.core.impl.util.CollectionUtils;
-import org.logic2j.core.impl.util.ProfilingInfo;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test the solution API (and describe its use cases too).

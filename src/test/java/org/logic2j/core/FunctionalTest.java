@@ -55,11 +55,11 @@ public class FunctionalTest extends PrologTestBase {
         countNoSolution("member(d, [a,b,c])");
         logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").ensureNumber(3).vars().list(), 0));
 
-        assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").var("X").toString());
+        assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").var("X").unique().toString());
 
         final GoalHolder all = nSolutions(3, "append(X,Y,[1,2])");
-        assertEquals(termList("[]", "[1]", "[1,2]"), all.var("X"));
-        assertEquals(termList("[1,2]", "[2]", "[]"), all.var("Y"));
+        assertEquals(termList("[]", "[1]", "[1,2]"), all.var("X").list());
+        assertEquals(termList("[1,2]", "[2]", "[]"), all.var("Y").list());
     }
 
     @Test

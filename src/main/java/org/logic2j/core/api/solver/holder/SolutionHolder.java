@@ -1,109 +1,118 @@
-/*
- * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
 package org.logic2j.core.api.solver.holder;
 
-import org.logic2j.core.api.model.Solution;
+import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.listener.IterableSolutionListener;
-import org.logic2j.core.api.solver.listener.UniqueSolutionListener;
-import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.api.solver.listener.MultiVarSolutionListener;
+import org.logic2j.core.api.solver.listener.RangeSolutionListener;
+import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
- * Holds state necessary to describe the unique solution or multiple solutions to a goal; this object lies between the expression of a goal
- * (a request or query) and the extraction of any aspect of the solution (existence of a solution, number of a solutions, values of a given
- * binding, or values of all bindings or results). <br/>
- * IMPORTANT: This is a lazy proxy to solutions: obtaining a {@link SolutionHolder} does not imply that the execution has yet started -
- * state is held ready to execute, until you tell it what you need! <br/>
- * This object exposes strongly-typed, templated methods to extract results depending on how the calling code expects them (unique or
- * multiple solutions), and the type of data needed (just the number, resolved-term solutions or single variable bindings).<br/>
- * Depending on the case, the actual calculation of the goal may be performed immediately (then results are stored and returned as needed),
- * or delayed until access methods are called.
- *
- * TODO Maybe have a way to allow limiting "all" to a reasonable number.
- *
- * <p/>
- * This type of API for extracting results from a data layer should further be analyzed and confronted to other APIs such as JDBC, JNDI,
- * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Prot�g�. Also RDF frameworks APIs may be considered.
+ * Created by Laurent on 26.05.2014.
  */
-public class SolutionHolder implements Iterable<Object> {
-    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
+public class SolutionHolder<T> {
+    private static final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
 
-    protected final PrologImplementation prolog;
-    protected final Object term;
+    private final GoalHolder goalHolder;
 
-    public SolutionHolder(PrologImplementation theProlog, Object term) {
-        this.prolog = theProlog;
-        this.term = term;
-    }
+    private final boolean multiVar;
+
+    private final Var[] vars;
+
+    private final String varName;
 
     /**
-     * Existence of any (one or several) solutions - without their content.
-     * Calling this method will start solving.
-     *
-     * @return true when {@link #number()} returns more than zero
+     * Extract one variable or the solution to the goal.
+     * @param goalHolder
+     * @param varName
      */
-    public boolean exists() {
-        // FIXME This is NOT an efficient implementation. We should use a FirstSolutionListener to reduce unnecessary inference
-        return number() > 0;
+    public SolutionHolder(GoalHolder goalHolder, String varName) {
+        this.multiVar = false;
+        this.varName = varName;
+        this.goalHolder = goalHolder;
+        if (Var.WHOLE_SOLUTION_VAR_NAME.equals(varName)) {
+            this.vars = new Var[]{Var.WHOLE_SOLUTION_VAR};
+        } else {
+            final Var found = TermApi.findVar(this.goalHolder.goal, varName);
+            if (found == null) {
+                throw new MissingSolutionException("No var named \"" + varName + "\" in term " + this.goalHolder.goal);
+            }
+            this.vars = new Var[]{found};
+        }
     }
 
     /**
-     * Number of solutions - without their content.
-     * Calling this method will start solving.
-     *
-     * @return The value of {@link #all()}.{@link MultipleSolutionsHolder#number()}.
+     * Extract all variables.
+     * @param goalHolder
      */
-    public long number() {
-        return all().number();
+    public SolutionHolder(GoalHolder goalHolder) {
+        this.multiVar = true;
+        this.varName = null;
+        this.goalHolder = goalHolder;
+        this.vars = TermApi.allVars(this.goalHolder.goal).keySet().toArray(new Var[]{});
     }
 
-    /**
-     * Indicate you are interested in all results - calling this method does NOT start solving.
-     *
-     * @return A relay object to access all solutions.
-     */
-    public MultipleSolutionsHolder all() {
-        return new MultipleSolutionsHolder(this);
+    public T single() {
+        if (multiVar) {
+            final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
+            initListenerRangesAndSolve(listener, 0, 1);
+            return (T) listener.getResults().get(0);
+        } else {
+            final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
+            initListenerRangesAndSolve(listener, 0, 1);
+            return (T) listener.getResults().get(0);
+        }
     }
 
-//    /**
-//     * Solves the goal, and holds the solution for further dereferencing.
-//     *
-//     * @return A relay object to access the unique solution.
-//     */
-//    public UniqueSolutionHolder unique() {
-//        final UniqueSolutionListener listener = new UniqueSolutionListener();
-//        this.prolog.getSolver().solveGoal(this.term, new StateEngineByLookup().emptyPoV(), listener);
-//        return new UniqueSolutionHolder(listener.getSolution());
-//    }
+    public T unique() {
+        if (multiVar) {
+            final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
+            initListenerRangesAndSolve(listener, 1, 1);
+            return (T) listener.getResults().get(0);
+        } else {
+            final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
+            initListenerRangesAndSolve(listener, 1, 1);
+            return (T) listener.getResults().get(0);
+        }
+    }
+
+
+    public List<T> list() {
+        if (multiVar) {
+            final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
+            initListenerRangesAndSolve(listener, 0, Long.MAX_VALUE);
+            return (List<T>) listener.getResults();
+        } else {
+            final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
+            initListenerRangesAndSolve(listener, 0, Long.MAX_VALUE);
+            return (List<T>) listener.getResults();
+        }
+    }
+
+    private void initListenerRangesAndSolve(RangeSolutionListener listener, int min, long max) {
+        listener.setMinCount(min);
+        listener.setMaxCount(max);
+        this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, new StateEngineByLookup().emptyPoV(), listener);
+        listener.checkRange();
+    }
+
 
     /**
-     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link Solution}s from this
+     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link org.logic2j.core.api.model.Solution}s from this
      * {@link java.util.Iterator} at its own pace. This uses the {@link org.logic2j.core.api.solver.listener.IterableSolutionListener}.
-     * 
+     *
      * @return An iterator for all solutions.
      */
-    @Override
     public Iterator<Object> iterator() {
-        final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.term);
+        final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goalHolder.goal);
 
         final Runnable prologSolverThread = new Runnable() {
 
@@ -112,7 +121,7 @@ public class SolutionHolder implements Iterable<Object> {
                 logger.debug("Started producer (prolog solver engine) thread");
                 // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
                 // and will wait for the main thread to extract it
-                SolutionHolder.this.prolog.getSolver().solveGoal(SolutionHolder.this.term, new StateEngineByLookup().emptyPoV(), listener);
+                SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.goal, new StateEngineByLookup().emptyPoV(), listener);
                 logger.debug("Producer (prolog solver engine) thread finishes");
                 // Last solution was extracted. Producer's callback won't now be called any more - so to
                 // prevent the consumer for listening forever for the next solution that won't come...
@@ -159,4 +168,9 @@ public class SolutionHolder implements Iterable<Object> {
         };
     }
 
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '(' + this.goalHolder.goal + ')';
+    }
 }

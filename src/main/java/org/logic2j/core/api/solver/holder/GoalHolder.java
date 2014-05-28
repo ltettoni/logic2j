@@ -3,7 +3,7 @@ package org.logic2j.core.api.solver.holder;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
-import org.logic2j.core.api.solver.listener.FirstSolutionListener;
+import org.logic2j.core.api.solver.listener.RangeSolutionListener;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 
 import java.util.Map;
@@ -22,7 +22,13 @@ public class GoalHolder {
     }
 
     public boolean exists() {
-        final FirstSolutionListener listener = new FirstSolutionListener();
+        final RangeSolutionListener listener = new RangeSolutionListener() {
+            @Override
+            protected void onSuperfluousSolution() {
+                // Nothing wrong having more solutions - we just ignore them
+            }
+        };
+        listener.setMaxCount(1);
         prolog.getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
         return listener.getNbSolutions()>=1;
     }
@@ -33,20 +39,20 @@ public class GoalHolder {
         return listener.getCounter();
     }
 
-    public SolutionHolder2<Object> solution() {
-        return new SolutionHolder2<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME);
+    public SolutionHolder<Object> solution() {
+        return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME);
     }
 
-    public <T> SolutionHolder2<T> var(String varName, Class<? extends T> desiredTypeOfResult) {
-        return new SolutionHolder2<T>(this, varName);
+    public <T> SolutionHolder<T> var(String varName, Class<? extends T> desiredTypeOfResult) {
+        return new SolutionHolder<T>(this, varName);
     }
 
-    public SolutionHolder2<Object> var(String varName) {
+    public SolutionHolder<Object> var(String varName) {
         return var(varName, Object.class);
     }
 
-    public SolutionHolder2<Map<Var, Object>> vars() {
-        return new SolutionHolder2<Map<Var, Object>>(this);
+    public SolutionHolder<Map<Var, Object>> vars() {
+        return new SolutionHolder<Map<Var, Object>>(this);
     }
 
     public GoalHolder ensureNumber(int exactNumberExpected) {

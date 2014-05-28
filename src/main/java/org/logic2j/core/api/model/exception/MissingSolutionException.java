@@ -19,7 +19,7 @@ package org.logic2j.core.api.model.exception;
 
 
 /**
- * Thrown by {@link UniqueSolutionListener} when no solution could be found and one is required by the calling context.
+ * Thrown by the Solution API when no solution could be found and one is required by the calling context.
  * 
  * @author tettoni
  */

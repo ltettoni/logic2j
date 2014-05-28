@@ -20,7 +20,6 @@ package org.logic2j.core.api;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.api.solver.holder.SolutionHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
 /**
