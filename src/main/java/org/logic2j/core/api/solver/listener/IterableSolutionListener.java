@@ -43,18 +43,18 @@ public class IterableSolutionListener implements SolutionListener {
     /**
      * Interface between the main thread (consumer) and the prolog solver thread (producer).
      */
-    private final SynchronizedInterface<Solution> clientToEngineInterface = new SynchronizedInterface<Solution>();
+    private final SynchronizedInterface<Object> clientToEngineInterface = new SynchronizedInterface<Object>();
 
     /**
      * Interface between the prolog solver thread (producer) and the main thread (consumer).
      */
-    private final SynchronizedInterface<Solution> engineToClientInterface = new SynchronizedInterface<Solution>();
+    private final SynchronizedInterface<Object> engineToClientInterface = new SynchronizedInterface<Object>();
 
 
     @Override
     public Continuation onSolution(PoV theReifier) {
         // We've got one solution already!
-        final Solution solution = new Solution(this.term, theReifier);
+        final Object solution = theReifier.reify(this.term);
         // Ask our client to stop requesting more and wait!
         this.clientToEngineInterface.waitUntilAvailable();
         // Provide the solution to the client, this wakes him up
@@ -63,15 +63,15 @@ public class IterableSolutionListener implements SolutionListener {
         return Continuation.CONTINUE;
     }
 
-// ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public SynchronizedInterface<Solution> clientToEngineInterface() {
+    public SynchronizedInterface<Object> clientToEngineInterface() {
         return this.clientToEngineInterface;
     }
 
-    public SynchronizedInterface<Solution> engineToClientInterface() {
+    public SynchronizedInterface<Object> engineToClientInterface() {
         return this.engineToClientInterface;
     }
 

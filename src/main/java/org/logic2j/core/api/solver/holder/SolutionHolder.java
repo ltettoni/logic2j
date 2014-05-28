@@ -43,7 +43,7 @@ import java.util.Iterator;
  * This type of API for extracting results from a data layer should further be analyzed and confronted to other APIs such as JDBC, JNDI,
  * SAX/DOM, or more exotic ones such as JSon (MongoDB/Apache CouchDB), Neo4j and Prot�g�. Also RDF frameworks APIs may be considered.
  */
-public class SolutionHolder implements Iterable<Solution> {
+public class SolutionHolder implements Iterable<Object> {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionHolder.class);
 
     protected final PrologImplementation prolog;
@@ -102,7 +102,7 @@ public class SolutionHolder implements Iterable<Solution> {
      * @return An iterator for all solutions.
      */
     @Override
-    public Iterator<Solution> iterator() {
+    public Iterator<Object> iterator() {
         final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.term);
 
         final Runnable prologSolverThread = new Runnable() {
@@ -125,9 +125,9 @@ public class SolutionHolder implements Iterable<Solution> {
         };
         new Thread(prologSolverThread).start();
 
-        return new Iterator<Solution>() {
+        return new Iterator<Object>() {
 
-            private Solution solution;
+            private Object solution;
 
             @Override
             public boolean hasNext() {
@@ -140,11 +140,11 @@ public class SolutionHolder implements Iterable<Solution> {
             }
 
             @Override
-            public Solution next() {
+            public Object next() {
                 if (this.solution == null) {
                     throw new PrologNonSpecificError("Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
                 }
-                final Solution toReturn = this.solution;
+                final Object toReturn = this.solution;
                 // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext()
                 // will fail.
                 this.solution = null;

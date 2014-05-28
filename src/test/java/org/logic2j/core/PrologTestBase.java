@@ -153,7 +153,7 @@ public abstract class PrologTestBase {
      *
      * @param theNumber
      * @param theGoals  All goals to check for
-     * @return The {@link org.logic2j.core.api.solver.holder.MultipleSolutionsHolder}
+     * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder}
      */
     protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
         return internalAssert(theNumber, theGoals);
@@ -162,7 +162,7 @@ public abstract class PrologTestBase {
     /**
      * @param theNumber
      * @param theGoals
-     * @return The {@link org.logic2j.core.api.solver.holder.SolutionHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
+     * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
