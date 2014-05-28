@@ -62,7 +62,7 @@ public abstract class PrologTestBase {
     }
 
     /**
-     * Initialize the engine as per the {@link #initLevel()} specified.
+     * Fully initialize the engine as per the {@link #initLevel()} specified before every test method.
      */
     @Before
     public void initProlog() {

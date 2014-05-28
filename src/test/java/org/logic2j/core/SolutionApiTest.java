@@ -17,8 +17,11 @@
  */
 package org.logic2j.core;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.impl.PrologReferenceImplementation;
 
 import java.util.List;
 import java.util.Map;
@@ -32,14 +35,24 @@ import static org.junit.Assert.*;
 public class SolutionApiTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionApiTest.class);
 
+    @Before
+    public void loadTheory() {
+        loadTheoryFromTestResourcesDir("hex-chars.pl");
+    }
+
+    @Test
+    public void existsFalse() throws Exception {
+        assertFalse(getProlog().solve("fail").exists());
+    }
+
     @Test
     public void existsTrue() throws Exception {
         assertTrue(getProlog().solve("true").exists());
     }
 
     @Test
-    public void existsFalse() throws Exception {
-        assertFalse(getProlog().solve("fail").exists());
+    public void existsTrue2() throws Exception {
+        assertTrue(getProlog().solve("true;true").exists());
     }
 
     @Test
@@ -58,19 +71,48 @@ public class SolutionApiTest extends PrologTestBase {
     public void count2() throws Exception {
         assertEquals(2L, getProlog().solve("true;true").count());
     }
+    @Test
+    public void count6() throws Exception {
+        assertEquals(6L, getProlog().solve("hex_char(_,_)").count());
+    }
 
     // ---------------------------------------------------------------------------
     // Access whole-term solutions
     // ---------------------------------------------------------------------------
 
     @Test
-    public void solutionUnique() throws Exception {
-        assertEquals("'='(12, 12)", getProlog().solve("Q=12").solution().unique().toString());
+    public void solutionSingle1() throws Exception {
+        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().single()));
     }
 
     @Test
-    public void solutionSingle() throws Exception {
-        assertEquals("'='(12, 12)", getProlog().solve("Q=12").solution().single().toString());
+    public void solutionSingle0() throws Exception {
+        assertNull(getProlog().solve("hex_char(Q,'Z')").solution().single());
+    }
+
+    @Test(expected = TooManySolutionsException.class)
+    public void solutionSingle6() throws Exception {
+        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,_)").solution().single()));
+    }
+
+    @Test
+    public void solutionFirst1() throws Exception {
+        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().first()));
+    }
+
+    @Test
+    public void solutionFirst0() throws Exception {
+        assertNull(getProlog().solve("hex_char(Q,'Z')").solution().first());
+    }
+
+    @Test
+    public void solutionFirst6() throws Exception {
+        assertEquals("hex_char(10, 'A')", marshall(getProlog().solve("hex_char(Q,C)").solution().first()));
+    }
+
+    @Test
+    public void solutionUnique() throws Exception {
+        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().unique()));
     }
 
 
@@ -113,6 +155,6 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void ensureNumber() throws Exception {
-        final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").ensureNumber(1).vars().unique();
+        final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").exactCount(1).vars().unique();
     }
 }

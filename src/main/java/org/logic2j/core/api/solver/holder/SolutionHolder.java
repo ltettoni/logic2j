@@ -5,10 +5,10 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
+import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
 import org.logic2j.core.api.solver.listener.IterableSolutionListener;
 import org.logic2j.core.api.solver.listener.MultiVarSolutionListener;
 import org.logic2j.core.api.solver.listener.RangeSolutionListener;
-import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,26 +60,59 @@ public class SolutionHolder<T> {
         this.vars = TermApi.allVars(this.goalHolder.goal).keySet().toArray(new Var[]{});
     }
 
+    /**
+     * @return The only solution or null if none, but will throw an Exception if more than one.
+     */
     public T single() {
         if (multiVar) {
             final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
-            initListenerRangesAndSolve(listener, 0, 1);
+            initListenerRangesAndSolve(listener, 0, 1, 2);
+            if (listener.getNbSolutions()==0) {
+                return null;
+            }
             return (T) listener.getResults().get(0);
         } else {
             final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
-            initListenerRangesAndSolve(listener, 0, 1);
+            initListenerRangesAndSolve(listener, 0, 1, 2);
+            if (listener.getNbSolutions()==0) {
+                return null;
+            }
             return (T) listener.getResults().get(0);
         }
     }
 
-    public T unique() {
+    /**
+     * @return The first solution, or null if none. Will not generate any further - there may be or not - you won't notice.
+     */
+    public T first() {
         if (multiVar) {
             final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
-            initListenerRangesAndSolve(listener, 1, 1);
+            initListenerRangesAndSolve(listener, 0, 1, 1);
+            if (listener.getNbSolutions()==0) {
+                return null;
+            }
             return (T) listener.getResults().get(0);
         } else {
             final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
-            initListenerRangesAndSolve(listener, 1, 1);
+            initListenerRangesAndSolve(listener, 0, 1, 1);
+            if (listener.getNbSolutions()==0) {
+                return null;
+            }
+            return (T) listener.getResults().get(0);
+        }
+    }
+
+    /**
+     * @return Single and only solution. Will throw an Exception if zero or more than one.
+     */
+    public T unique() {
+        if (multiVar) {
+            final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
+            initListenerRangesAndSolve(listener, 1, 1, 2);
+            return (T) listener.getResults().get(0);
+        } else {
+            final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
+            initListenerRangesAndSolve(listener, 1, 1, 2);
             return (T) listener.getResults().get(0);
         }
     }
@@ -88,18 +121,23 @@ public class SolutionHolder<T> {
     public List<T> list() {
         if (multiVar) {
             final MultiVarSolutionListener listener = new MultiVarSolutionListener(goalHolder.prolog, goalHolder.goal);
-            initListenerRangesAndSolve(listener, 0, Long.MAX_VALUE);
+            solveAndCheckRanges(listener);
             return (List<T>) listener.getResults();
         } else {
             final SingleVarSolutionListener listener = new SingleVarSolutionListener(goalHolder.prolog, goalHolder.goal, varName);
-            initListenerRangesAndSolve(listener, 0, Long.MAX_VALUE);
+            solveAndCheckRanges(listener);
             return (List<T>) listener.getResults();
         }
     }
 
-    private void initListenerRangesAndSolve(RangeSolutionListener listener, int min, long max) {
-        listener.setMinCount(min);
-        listener.setMaxCount(max);
+    private void initListenerRangesAndSolve(RangeSolutionListener listener, int minCount, long maxCount, long maxFetch) {
+        listener.setMinCount(minCount);
+        listener.setMaxCount(maxCount);
+        listener.setMaxFetch(maxFetch);
+        solveAndCheckRanges(listener);
+    }
+
+    private void solveAndCheckRanges(RangeSolutionListener listener) {
         this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, new StateEngineByLookup().emptyPoV(), listener);
         listener.checkRange();
     }

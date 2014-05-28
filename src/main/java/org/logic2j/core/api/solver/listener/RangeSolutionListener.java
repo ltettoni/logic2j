@@ -21,6 +21,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.IllegalSolutionException;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
+import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.monadic.PoV;
 
 /**
@@ -30,8 +31,9 @@ import org.logic2j.core.api.monadic.PoV;
 public abstract class RangeSolutionListener implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RangeSolutionListener.class);
 
-    private long minCount; // Minimal number of solutions to fetch
-    private long maxCount; // Maximal number of solutions to fetch
+    private long minCount; // Minimal number of solutions allowed
+    private long maxCount; // Maximal number of solutions allowed
+    private long maxFetch; // Stop generating after this number of solutions
 
     /**
      * Current solution counter (number of times {@link #onSolution(org.logic2j.core.api.monadic.PoV)} was called)
@@ -45,18 +47,22 @@ public abstract class RangeSolutionListener implements SolutionListener {
      */
     public RangeSolutionListener() {
         this.counter = 0;
+        this.minCount = 0;
+        this.maxCount = Long.MAX_VALUE;
+        this.maxFetch = Long.MAX_VALUE;
     }
 
 
     @Override
     public Continuation onSolution(PoV pov) {
+        this.counter++;
         if (this.counter > this.maxCount) {
             // OOps, we already had solutions? This is not desired
             onSuperfluousSolution();
         }
-        logger.debug(" >>>>>>>>> onSolution(), iter=#{}", this.counter);
-        this.counter++;
-        return Continuation.requestContinuationWhen(this.counter < this.maxCount);
+        logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
+        final Continuation continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
+        return continuation;
     }
 
     public void checkRange() {
@@ -79,7 +85,7 @@ public abstract class RangeSolutionListener implements SolutionListener {
      */
     protected void onSuperfluousSolution() {
         // TODO would be really useful to have some context information here, eg. the goal we are trying to solve...
-        throw new IllegalSolutionException("More than " + maxCount + " solutions found by " + this + ", was expecting exactly one");
+        throw new TooManySolutionsException("More than " + maxCount + " solution(s) found by " + this + ", got at least " + this.counter);
     }
 
     // ---------------------------------------------------------------------------
@@ -104,6 +110,10 @@ public abstract class RangeSolutionListener implements SolutionListener {
         this.maxCount = maxCount;
     }
 
+    public void setMaxFetch(long maxFetch) {
+        this.maxFetch = maxFetch;
+    }
+
     /**
      * @return The number of solutions found
      */
@@ -111,4 +121,9 @@ public abstract class RangeSolutionListener implements SolutionListener {
         return this.counter;
     }
 
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '[' + this.minCount + ".." + this.maxCount + ']';
+    }
 }

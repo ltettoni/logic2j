@@ -53,7 +53,7 @@ public class FunctionalTest extends PrologTestBase {
     public void member() {
         countOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
         countNoSolution("member(d, [a,b,c])");
-        logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").ensureNumber(3).vars().list(), 0));
+        logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").exactCount(3).vars().list(), 0));
 
         assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").var("X").unique().toString());
 
@@ -100,8 +100,8 @@ public class FunctionalTest extends PrologTestBase {
         assertEquals(352, getProlog().solve("queens(9, _)").count());
         assertEquals(724, getProlog().solve("queens(10, _)").count());
         // Comment out heavy ones
-        // assertEquals(2680, getProlog().solve("queens(11, _)").number());
-        // assertEquals(14200, getProlog().solve("queens(12, _)").number());
+        // assertEquals(2680, getProlog().solve("queens(11, _)").count());
+        // assertEquals(14200, getProlog().solve("queens(12, _)").count());
     }
 
     @Test

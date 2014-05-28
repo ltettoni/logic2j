@@ -162,7 +162,7 @@ public class CoreLibraryTest extends PrologTestBase {
 //
 //    @Test
 //    public void perm() {
-//        assertEquals(720, this.prolog.solve("perm([a,b,c,d,e,f], L)").number());
+//        assertEquals(720, this.prolog.solve("perm([a,b,c,d,e,f], L)").count());
 //    }
 //
 

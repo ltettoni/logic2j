@@ -20,17 +20,17 @@ package org.logic2j.core.api.model;
 
 /**
  * Allows the application or library code to specify to the behaviour that the inference engine should take after
- * a solution was found, via {@link org.logic2j.core.api.SolutionListener#onSolution()}.
+ * a solution was found, via {@link org.logic2j.core.api.SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}.
  *
  * @author tettoni
  */
 public enum Continuation {
     /**
-     * Value that {@link org.logic2j.core.api.SolutionListener#onSolution()} must return for the inference engine to continue solving (search for alternate solutions).
+     * Value that {@link org.logic2j.core.api.SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)} must return for the inference engine to continue solving (search for alternate solutions).
      */
     CONTINUE,
     /**
-     * Value that {@link org.logic2j.core.api.SolutionListener#onSolution()} must return for the inference engine to stop solving (ie. means caller requests abort).
+     * Value that {@link org.logic2j.core.api.SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)} must return for the inference engine to stop solving (ie. means caller requests abort).
      */
     USER_ABORT,
     /**
@@ -38,13 +38,4 @@ public enum Continuation {
      */
     CUT;
 
-    /**
-     * Factory for a {@link Continuation} depending on a boolean condition.
-     * 
-     * @param conditionApplies
-     * @return {@value #CONTINUE} when conditionApplies (is true), otherwise {@value #USER_ABORT}
-     */
-    public static Continuation requestContinuationWhen(boolean conditionApplies) {
-        return conditionApplies ? CONTINUE : USER_ABORT;
-    }
 }

@@ -6,6 +6,13 @@
                 intN(I) will bind integers from 0 to N-1
 */
 
+% For demonstration purposes
+hexChar(10, 'A').
+hexChar(11, 'B').
+hexChar(12, 'C').
+hexChar(13, 'D').
+hexChar(14, 'E').
+hexChar(15, 'F').
 
 int10(1).
 int10(2).
