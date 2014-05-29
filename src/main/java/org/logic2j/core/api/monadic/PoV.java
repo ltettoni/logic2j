@@ -39,56 +39,6 @@ public class PoV {
     }
 
 
-    public Struct cloneClauseAndRemapIndexes(Clause theClause) {
-        ProfilingInfo.counter1++;
-//            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
-        final Var[] originalVars = theClause.getVars();
-        final int nbVars = originalVars.length;
-        // Allocate the new vars by cloning the original ones. Index is preserved meaning that
-        // when we traverse the original structure and find a Var of index N, we can replace it
-        // in the cloned structure by the clonedVar[N]
-        final Var[] clonedVars = new Var[nbVars];
-        for (int i = 0; i < nbVars; i++) {
-            clonedVars[i] = new Var(originalVars[i]);
-        }
-
-        final Struct cloned = cloneStruct(theClause.getContent(), clonedVars);
-        // Now reindex the cloned vars
-        for (int i = 0; i < nbVars; i++) {
-            clonedVars[i].index += this.topVarIndex;
-        }
-        // And increment the highest Var index accordingly
-        this.topVarIndex += nbVars;
-
-        if (this.topVarIndex > ProfilingInfo.max1) {
-            ProfilingInfo.max1 = this.topVarIndex;
-        }
-//    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
-        return cloned;
-    }
-
-
-    private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
-        final Object[] args = theStruct.getArgs();
-        final int arity = args.length;
-        final Object[] clonedArgs = new Object[arity];
-        for (int i = 0; i < arity; i++) {
-            final Object arg = args[i];
-            if (arg instanceof Struct) {
-                final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
-                clonedArgs[i] = recursedClonedElement;
-            } else if (arg instanceof Var && arg != Var.ANONYMOUS_VAR) {
-                final short originalVarIndex = ((Var) arg).getIndex();
-                clonedArgs[i] = clonedVars[originalVarIndex];
-            } else {
-                clonedArgs[i] = arg;
-            }
-        }
-        final Struct struct = new Struct(theStruct, clonedArgs);
-        return struct;
-    }
-
-
     public PoV bind(Var var, Object ref) {
         if (var == ref) {
             logger.debug("Not mapping {} onto itself", var);
@@ -107,7 +57,6 @@ public class PoV {
      */
     public Object finalValue(Var theVar) {
         final Object dereference = this.impl.dereference(theVar, this.currentTransaction);
-//        audit.info("Deref  {} yields {}", theVar, dereference);
         return dereference;
     }
 

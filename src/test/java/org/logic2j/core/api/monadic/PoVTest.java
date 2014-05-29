@@ -76,7 +76,7 @@ public class PoVTest {
         assertNotNull(m2);
         assertNotSame(m, m2);
         //
-        assertSame(v, m.finalValue(v));
+        assertSame(v, m.reify(v));
         //logger.info("Reify under original monad: {}", reified(m, v));
         logger.info("Term reified with returned PoV: {}", reified(m2, v));
         return m2;
@@ -112,7 +112,7 @@ public class PoVTest {
     @Test
     public void bindVarToVar() throws Exception {
         PoV m2 = bind(X, Y);
-        assertSame(Y, m2.finalValue(X));
+        assertSame(Y, m2.reify(X));
     }
 
     @Test

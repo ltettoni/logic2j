@@ -151,7 +151,7 @@ public class FunctionalTest extends PrologTestBase {
     }
 
 
-    @Ignore("Use this in conjunction with jvisualvm to profile")
+//    @Ignore("Use this in conjunction with jvisualvm to profile")
     @Test
     public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
         loadTheoryFromTestResourcesDir("queens.pl");

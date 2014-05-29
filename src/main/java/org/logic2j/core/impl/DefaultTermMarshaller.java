@@ -33,6 +33,7 @@ import org.logic2j.core.api.model.term.Var;
  */
 public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisitor<CharSequence> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshaller.class);
+
     private static final boolean isDebug = logger.isDebugEnabled();
 
     public static final DefaultOperatorManager DEFAULT_OPERATOR_MANAGER = new DefaultOperatorManager();
@@ -67,10 +68,11 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     public CharSequence visit(Var theVar) {
         // logger.info("Visiting: {}", theVar);
         final Object finalValue;
-        if (this.pov !=null)
-        finalValue = this.pov.finalValue(theVar);
-        else
-        finalValue = theVar;
+        if (this.pov != null) {
+            finalValue = this.pov.finalValue(theVar);
+        } else {
+            finalValue = theVar;
+        }
         if (finalValue instanceof Var) {
             // Must be free
             if (theVar.isAnonymous()) {
