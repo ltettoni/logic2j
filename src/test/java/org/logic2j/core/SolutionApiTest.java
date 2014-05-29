@@ -28,10 +28,12 @@ import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test the solution API (and describe its use cases too).
@@ -160,9 +162,12 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void ensureNumber() throws Exception {
+    public void exactCount() throws Exception {
         final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").exactCount(1).vars().unique();
     }
+
+
+
 
     // ---------------------------------------------------------------------------
     // Solution API on iterative predicate
@@ -218,10 +223,25 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final Struct[] values = holder.var("Q").array(new Struct[] {});
+        final Struct[] values = holder.var("Q").array(new Struct[]{});
         ProfilingInfo.reportAll("var()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
         assertEquals(40320, values.length);
+    }
+
+    @Test
+    public void permVarIterator() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final Iterator<Object> iter = holder.var("Q", Struct.class).iterator();
+        int counter = 0;
+        while (iter.hasNext()) {
+//            logger.info("Value: {}", iter.next());
+            counter++;
+        }
+        ProfilingInfo.reportAll("iterator()");
+        assertEquals(40320, counter);
     }
 
     @Test

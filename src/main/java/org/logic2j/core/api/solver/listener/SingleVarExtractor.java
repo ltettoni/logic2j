@@ -31,36 +31,37 @@ import java.util.List;
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public class SingleVarSolutionListener extends RangeSolutionListener {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarSolutionListener.class);
+public class SingleVarExtractor implements SolutionExtractor<Object> {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarExtractor.class);
 
-    private final SolutionExtractor<Object> extractor;
+    private final PrologImplementation prolog;
 
-    private final List<Object> results;
+    private final Object goal;
+
+    private final Var var;
 
     /**
      * Create a {@link org.logic2j.core.api.SolutionListener} that will enumerate
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */
-    public SingleVarSolutionListener(SolutionExtractor<Object> extractor) {
-        this.extractor = extractor;
-        this.results = new ArrayList<Object>();
+    public SingleVarExtractor(PrologImplementation prolog, Object goal, String varName) {
+        this.prolog = prolog;
+        this.goal = goal;
+        final Var found = TermApi.findVar(goal, varName);
+        if (found == null) {
+            throw new MissingSolutionException("No var named \"" + varName + "\" in term " + goal);
+        }
+        this.var = found;
     }
 
 
     @Override
-    public Continuation onSolution(PoV pov) {
-        results.add(extractor.extractSolution(pov));
-        return super.onSolution(pov);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-
-    public List<Object> getResults() {
-        return results;
+    public Object extractSolution(PoV pov) {
+        if (var == Var.WHOLE_SOLUTION_VAR) {
+            return pov.reify(goal);
+        } else {
+            return pov.reify(var);
+        }
     }
 }

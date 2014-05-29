@@ -22,13 +22,17 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.IllegalSolutionException;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.PoV;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public class RangeSolutionListener implements SolutionListener {
+public class RangeSolutionListener<T> implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RangeSolutionListener.class);
 
     private long minCount; // Minimal number of solutions allowed
@@ -120,6 +124,11 @@ public class RangeSolutionListener implements SolutionListener {
      */
     public long getNbSolutions() {
         return this.counter;
+    }
+
+
+    public List<T> getResults() {
+        throw new UnsupportedOperationException("Feature not yet implemented");
     }
 
 

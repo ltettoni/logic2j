@@ -35,13 +35,7 @@ import java.util.Map;
  */
 public class MultiVarSolutionListener extends RangeSolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MultiVarSolutionListener.class);
-
-    private final PrologImplementation prolog;
-
-    private final Object goal;
-
-    private final Var[] vars;
-
+    private final SolutionExtractor<Map<Var, Object>> extractor;
     private final List<Map<Var, Object>> results;
 
     /**
@@ -49,23 +43,15 @@ public class MultiVarSolutionListener extends RangeSolutionListener {
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */
-    public MultiVarSolutionListener(PrologImplementation prolog, Object goal) {
-        this.prolog = prolog;
-        this.goal = goal;
-        this.vars = TermApi.allVars(goal).keySet().toArray(new Var[]{});
+    public MultiVarSolutionListener(SolutionExtractor<Map<Var, Object>> extractor) {
+        this.extractor = extractor;
         this.results = new ArrayList<Map<Var, Object>>();
     }
 
 
     @Override
     public Continuation onSolution(PoV pov) {
-        final Map<Var, Object> result = new HashMap<Var, Object>();
-        for (Var v : vars) {
-            final Object value;
-            value = pov.reify(v);
-            result.put(v, value);
-        }
-        results.add(result);
+        results.add(extractor.extractSolution(pov));
         return super.onSolution(pov);
     }
 
@@ -77,4 +63,6 @@ public class MultiVarSolutionListener extends RangeSolutionListener {
     public List<Map<Var, Object>> getResults() {
         return results;
     }
+
+
 }
