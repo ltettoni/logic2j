@@ -20,9 +20,11 @@ package org.logic2j.core;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
 import java.io.IOException;
@@ -74,6 +76,7 @@ public class SolutionApiTest extends PrologTestBase {
     public void count2() throws Exception {
         assertEquals(2L, getProlog().solve("true;true").count());
     }
+
     @Test
     public void count6() throws Exception {
         assertEquals(6L, getProlog().solve("hex_char(_,_)").count());
@@ -162,20 +165,73 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     // ---------------------------------------------------------------------------
-    //
+    // Solution API on iterative predicate
+    // Shows that exists() is almost immediate, count takes a more time
+    // solution() and var() are quite efficient.
     // ---------------------------------------------------------------------------
 
+    @Test
+    public void permExists() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], X)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final boolean exists = holder.exists();
+        ProfilingInfo.reportAll("Existence of solutions to " + goal + " is " + exists);
+        assertTrue(exists);
+    }
 
     @Test
     public void permCount() throws IOException {
-        final String goal = "perm([a,b,c,d,e,f,g], X)";
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-//        final long count = holder.count();
-        final long count = holder.exists() ? 1 : 0;
+        final long count = holder.count();
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
-//        assertEquals(5040, count);
+        assertEquals(40320, count);
     }
 
 
+    @Test
+    public void permSolutions() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final List<Object> solutions = holder.solution().list();
+        ProfilingInfo.reportAll("list()");
+        logger.info(CollectionUtils.format("Solutions to " + goal + " are ", solutions, 10));
+        assertEquals(40320, solutions.size());
+    }
+
+    @Test
+    public void permVarList() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final List<Struct> values = holder.var("Q", Struct.class).list();
+        ProfilingInfo.reportAll("var()");
+        logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
+        assertEquals(40320, values.size());
+    }
+
+    @Test
+    public void permVarArray() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final Struct[] values = holder.var("Q").array(new Struct[] {});
+        ProfilingInfo.reportAll("var()");
+        logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
+        assertEquals(40320, values.length);
+    }
+
+    @Test
+    public void permVars() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final List<Map<Var, Object>> values = holder.vars().list();
+        ProfilingInfo.reportAll("vars()");
+        logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
+        assertEquals(40320, values.size());
+    }
 }

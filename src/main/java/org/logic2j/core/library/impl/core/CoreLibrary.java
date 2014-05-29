@@ -257,7 +257,7 @@ public class CoreLibrary extends LibraryBase {
      * Note: this implmentation is valid, yet may be bypassed by a "native" implementation in {@link DefaultSolver}.
      *
      * @param theListener
-     * @param theTermBindings
+     * @param pov
      * @return {@link Continuation#CUT}
      */
     @Primitive(name = Struct.FUNCTOR_CUT)
@@ -355,7 +355,7 @@ public class CoreLibrary extends LibraryBase {
 
     /**
      * @param theListener
-     * @param theTermBindings
+     * @param pov
      * @param theList
      * @param theLength
      * @return Length of a prolog list
@@ -458,7 +458,7 @@ public class CoreLibrary extends LibraryBase {
      * For all binary predicates that compare numeric values.
      *
      * @param theListener
-     * @param theTermBindings
+     * @param pov
      * @param t1
      * @param t2
      * @param theEvaluationFunction
@@ -537,7 +537,7 @@ public class CoreLibrary extends LibraryBase {
 
     /**
      * @param theListener
-     * @param theTermBindings
+     * @param pov
      * @param t1
      * @param t2
      * @return Binary minus (subtract)
@@ -562,7 +562,7 @@ public class CoreLibrary extends LibraryBase {
 
     /**
      * @param theListener
-     * @param theTermBindings
+     * @param pov
      * @param t1
      * @return Unary minus (negate)
      */

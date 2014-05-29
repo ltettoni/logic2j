@@ -2,6 +2,7 @@ package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
@@ -130,6 +131,11 @@ public class SolutionHolder<T> {
         }
     }
 
+
+    public <T> T[] array(T[] ts) {
+        return list().toArray(ts);
+    }
+
     private void initListenerRangesAndSolve(RangeSolutionListener listener, int minCount, long maxCount, long maxFetch) {
         listener.setMinCount(minCount);
         listener.setMaxCount(maxCount);
@@ -211,4 +217,5 @@ public class SolutionHolder<T> {
     public String toString() {
         return this.getClass().getSimpleName() + '(' + this.goalHolder.goal + ')';
     }
+
 }

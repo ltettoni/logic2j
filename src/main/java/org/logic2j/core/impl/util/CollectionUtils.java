@@ -186,7 +186,7 @@ public final class CollectionUtils {
                 sb.append(", ");
                 sb.append(value);
                 sb.append(' ');
-                sb.append(key.getClass().getSimpleName());
+                sb.append(key.getSimpleName());
             }
         }
         sb.append('.');
