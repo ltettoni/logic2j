@@ -95,7 +95,7 @@ public abstract class PrologTestBase {
         for (CharSequence goalText : theGoals) {
             Object term = unmarshall(goalText);
             final CountingSolutionListener listener = new CountingSolutionListener();
-            getProlog().getSolver().solveGoal(term, new StateEngineByLookup().emptyPoV(), listener);
+            getProlog().getSolver().solveGoal(term, listener);
             assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.getCounter());
         }
     }
@@ -278,7 +278,7 @@ public abstract class PrologTestBase {
 
     protected long solveWithLoggingAndCountingListener(Object goal) {
         final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
-        getProlog().getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
+        getProlog().getSolver().solveGoal(goal, listener);
         listener.report();
         return listener.getCounter();
     }
@@ -286,7 +286,7 @@ public abstract class PrologTestBase {
 
     protected ExtractingSolutionListener solveWithExtractingListener(Object goal) {
         final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
-        getProlog().getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
+        getProlog().getSolver().solveGoal(goal, listener);
         listener.report();
         return listener;
     }

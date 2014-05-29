@@ -29,6 +29,16 @@ import org.logic2j.core.api.monadic.PoV;
 public interface Solver {
 
     /**
+     * The method to solve a goal starting with all free Vars.
+     *
+     * @param goal Defines the {@link Term} and the {@link Var} values we are trying to solve.
+     * @param theSolutionListener Where solutions should be called back.
+     * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.model.Continuation#CONTINUE} for a successful
+     *         complete result, or if the solving has been cut or aborted by user callback.
+     */
+    Continuation solveGoal(Object goal, SolutionListener theSolutionListener);
+
+    /**
      * The method to solve a goal.
      *
      * @param goal Defines the {@link Term} and the {@link Var} values we are trying to solve.

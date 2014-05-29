@@ -25,6 +25,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
@@ -43,6 +44,12 @@ public class DefaultSolver implements Solver {
 
     public DefaultSolver(PrologImplementation theProlog) {
         this.prolog = theProlog;
+    }
+
+    @Override
+    public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
+        final PoV initialPoV = new StateEngineByLookup().emptyPoV();
+        return solveGoal(goal, initialPoV, theSolutionListener);
     }
 
     /**

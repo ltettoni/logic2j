@@ -144,7 +144,7 @@ public class SolutionHolder<T> {
     }
 
     private void solveAndCheckRanges(RangeSolutionListener listener) {
-        this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, new StateEngineByLookup().emptyPoV(), listener);
+        this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, listener);
         listener.checkRange();
     }
 
@@ -165,7 +165,7 @@ public class SolutionHolder<T> {
                 logger.debug("Started producer (prolog solver engine) thread");
                 // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
                 // and will wait for the main thread to extract it
-                SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.goal, new StateEngineByLookup().emptyPoV(), listener);
+                SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.goal, listener);
                 logger.debug("Producer (prolog solver engine) thread finishes");
                 // Last solution was extracted. Producer's callback won't now be called any more - so to
                 // prevent the consumer for listening forever for the next solution that won't come...
