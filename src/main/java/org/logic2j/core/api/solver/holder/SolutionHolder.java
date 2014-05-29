@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Laurent on 26.05.2014.
@@ -19,11 +20,8 @@ public class SolutionHolder<T> {
 
     private final GoalHolder goalHolder;
 
-    private final boolean multiVar;
-
-    private final Var[] vars;
-
-    private final String varName;
+    private final SingleVarExtractor<T> singleVarExtractor;
+    private final MultiVarExtractor multiVarExtractor;
 
     private final RangeSolutionListener rangeListener;
 
@@ -34,19 +32,10 @@ public class SolutionHolder<T> {
      * @param varName
      */
     public SolutionHolder(GoalHolder goalHolder, String varName) {
-        this.multiVar = false;
-        this.varName = varName;
         this.goalHolder = goalHolder;
-        if (Var.WHOLE_SOLUTION_VAR_NAME.equals(varName)) {
-            this.vars = new Var[]{Var.WHOLE_SOLUTION_VAR};
-        } else {
-            final Var found = TermApi.findVar(this.goalHolder.goal, varName);
-            if (found == null) {
-                throw new MissingSolutionException("No var named \"" + varName + "\" in term " + this.goalHolder.goal);
-            }
-            this.vars = new Var[]{found};
-        }
-        rangeListener = new SingleVarSolutionListener(new SingleVarExtractor(goalHolder.prolog, goalHolder.goal, varName));
+        this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.prolog, goalHolder.goal, varName);
+        this.rangeListener = new SingleVarSolutionListener(this.singleVarExtractor);
+        this.multiVarExtractor = null;
     }
 
     /**
@@ -55,11 +44,10 @@ public class SolutionHolder<T> {
      * @param goalHolder
      */
     public SolutionHolder(GoalHolder goalHolder) {
-        this.multiVar = true;
-        this.varName = null;
         this.goalHolder = goalHolder;
-        this.vars = TermApi.allVars(this.goalHolder.goal).keySet().toArray(new Var[]{});
-        rangeListener = new MultiVarSolutionListener(new MultiVarExtractor(goalHolder.prolog, goalHolder.goal));
+        this.singleVarExtractor = null;
+        this.multiVarExtractor = new MultiVarExtractor(goalHolder.prolog, goalHolder.goal);
+        rangeListener = new MultiVarSolutionListener(this.multiVarExtractor);
     }
 
     /**
@@ -122,7 +110,7 @@ public class SolutionHolder<T> {
      *
      * @return An iterator for all solutions.
      */
-    public Iterator<Object> iterator() {
+    public Iterator<T> iterator() {
         final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goalHolder.goal);
 
         final Runnable prologSolverThread = new Runnable() {
@@ -145,7 +133,7 @@ public class SolutionHolder<T> {
         };
         new Thread(prologSolverThread).start();
 
-        return new Iterator<Object>() {
+        return new Iterator<T>() {
 
             private Object solution;
 
@@ -160,7 +148,7 @@ public class SolutionHolder<T> {
             }
 
             @Override
-            public Object next() {
+            public T next() {
                 if (this.solution == null) {
                     throw new PrologNonSpecificError("Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
                 }
@@ -168,7 +156,7 @@ public class SolutionHolder<T> {
                 // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext()
                 // will fail.
                 this.solution = null;
-                return toReturn;
+                return (T)toReturn;
             }
 
             @Override

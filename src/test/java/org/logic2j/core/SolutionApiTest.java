@@ -234,7 +234,7 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final Iterator<Object> iter = holder.var("Q", Struct.class).iterator();
+        final Iterator<Struct> iter = holder.var("Q", Struct.class).iterator();
         int counter = 0;
         while (iter.hasNext()) {
 //            logger.info("Value: {}", iter.next());

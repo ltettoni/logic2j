@@ -31,21 +31,21 @@ import java.util.List;
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public class SingleVarSolutionListener extends RangeSolutionListener {
+public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarSolutionListener.class);
 
-    private final SolutionExtractor<Object> extractor;
+    private final SolutionExtractor<T> extractor;
 
-    private final List<Object> results;
+    private final List<T> results;
 
     /**
      * Create a {@link org.logic2j.core.api.SolutionListener} that will enumerate
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */
-    public SingleVarSolutionListener(SolutionExtractor<Object> extractor) {
+    public SingleVarSolutionListener(SolutionExtractor<T> extractor) {
         this.extractor = extractor;
-        this.results = new ArrayList<Object>();
+        this.results = new ArrayList<T>();
     }
 
 
@@ -60,7 +60,7 @@ public class SingleVarSolutionListener extends RangeSolutionListener {
     // ---------------------------------------------------------------------------
 
 
-    public List<Object> getResults() {
+    public List<T> getResults() {
         return results;
     }
 }

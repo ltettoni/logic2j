@@ -31,7 +31,7 @@ import java.util.List;
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public class SingleVarExtractor implements SolutionExtractor<Object> {
+public class SingleVarExtractor<T> implements SolutionExtractor<T> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarExtractor.class);
 
     private final PrologImplementation prolog;
@@ -57,11 +57,11 @@ public class SingleVarExtractor implements SolutionExtractor<Object> {
 
 
     @Override
-    public Object extractSolution(PoV pov) {
+    public T extractSolution(PoV pov) {
         if (var == Var.WHOLE_SOLUTION_VAR) {
-            return pov.reify(goal);
+            return (T)pov.reify(goal);
         } else {
-            return pov.reify(var);
+            return (T)pov.reify(var);
         }
     }
 }
