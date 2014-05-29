@@ -1,7 +1,6 @@
 package org.logic2j.core.api.monadic;
 
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,37 +12,56 @@ import java.util.TreeMap;
  */
 public class StateEngineByLookup {
     private static final Logger logger = LoggerFactory.getLogger(StateEngineByLookup.class);
-    private static final int LOOKUP_CHUNK = 1000;
+    private static final int INITIAL_SIZE = 500;
 
-
-    int[] transaction;
-    Var[] var;
-    Object[] literal;
-    int[] boundVarIndex;
-    int[] logOfWrittenSlots;  // Indexed by transaction number
-    int   logWatermark;
+    private int[] transaction;
+    private Var[] var;
+    private Object[] literal;
+    private int[] boundVarIndex;
+    private int[] logOfWrittenSlots;  // Indexed by transaction number
+    private int   logWatermark;
 
     public StateEngineByLookup() {
-        transaction = new int[LOOKUP_CHUNK];
+        transaction = new int[INITIAL_SIZE];
         Arrays.fill(transaction, -1);
-        var = new Var[LOOKUP_CHUNK];
-        literal = new Object[LOOKUP_CHUNK];
-        boundVarIndex = new int[LOOKUP_CHUNK];
-        logOfWrittenSlots = new int[LOOKUP_CHUNK];
+        var = new Var[INITIAL_SIZE];
+        literal = new Object[INITIAL_SIZE];
+        boundVarIndex = new int[INITIAL_SIZE];
+        logOfWrittenSlots = new int[INITIAL_SIZE];
         logWatermark = 0;
     }
 
+    /**
+     * Increase the size of all the arrays and copy existing data
+     * plus initialize extra space according to needs.
+     */
+    private void resizeArrays() {
+        // Current and new sizing algorithm
+        final int initialLength = transaction.length;
+        final int newLength = initialLength * 2;
+        logger.info("Resizing arrays to {}", newLength);
+        // Increase size and copy
+        transaction = Arrays.copyOf(transaction, newLength);
+        Arrays.fill(transaction, initialLength, newLength, -1); // Need some init (only the extra part)
+        var = Arrays.copyOf(var, newLength);
+        literal = Arrays.copyOf(literal, newLength);
+        boundVarIndex = Arrays.copyOf(boundVarIndex, newLength);
+        logOfWrittenSlots = Arrays.copyOf(logOfWrittenSlots, newLength);
+    }
 
     public PoV emptyPoV() {
         return new PoV(this);
     }
-
 
     public PoV bind(PoV pov, Var theVar, Object theRef) {
         logger.debug(" bind {}->{}", theVar, theRef);
         final int transactionNumber = pov.currentTransaction;
         cleanupTo(transactionNumber);
         final int slot = theVar.getIndex();
+        // Handle array sizing overflow
+        while (slot >= transaction.length) {
+            resizeArrays();
+        }
         transaction[slot] = transactionNumber;
         var[slot] = theVar;
 
@@ -80,6 +98,10 @@ public class StateEngineByLookup {
         int slot = runningVar.getIndex();
         int limiter = Integer.MAX_VALUE;
         while (--limiter >= 0) {
+            // Handle array sizing overflow
+            while (slot >= transaction.length) {
+                resizeArrays();
+            }
             final int slotTrans = transaction[slot];
             if (slotTrans==-1 || slotTrans >= transactionNumber) {
                 // Not bound or bound in the future
@@ -111,7 +133,7 @@ public class StateEngineByLookup {
     public String toString() {
         final TreeMap<Integer, String> sorted = new TreeMap<Integer, String>();
         final StringBuilder sb = new StringBuilder();
-        for (int slot=0; slot< LOOKUP_CHUNK; slot++) {
+        for (int slot=0; slot< INITIAL_SIZE; slot++) {
             final int transactionNumber = transaction[slot];
             if (transactionNumber ==-1) {
                 continue;
@@ -137,7 +159,5 @@ public class StateEngineByLookup {
         }
         return sorted.values().toString();
     }
-
-
 
 }
