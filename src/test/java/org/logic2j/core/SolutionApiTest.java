@@ -208,6 +208,23 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
+    public void permSolutionsIterator() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final Iterator<Object> iter = holder.solution().iterator();
+        int counter = 0;
+        while (iter.hasNext()) {
+            final Object next = iter.next();
+            if (counter<10) {
+                logger.info("Solution via iterator: {}", next);
+            }
+            counter++;
+        }
+        ProfilingInfo.reportAll("iterator()");
+        assertEquals(40320, counter);
+    }
+    @Test
     public void permVarList() throws IOException {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
@@ -237,7 +254,26 @@ public class SolutionApiTest extends PrologTestBase {
         final Iterator<Struct> iter = holder.var("Q", Struct.class).iterator();
         int counter = 0;
         while (iter.hasNext()) {
-//            logger.info("Value: {}", iter.next());
+            final Struct next = iter.next();
+            if (counter<10) {
+                logger.info("Value via iterator: {}", next);
+            }
+            counter++;
+        }
+        ProfilingInfo.reportAll("iterator()");
+        assertEquals(40320, counter);
+    }
+
+    @Test
+    public void permVarIterable() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        int counter = 0;
+        for (Struct next: holder.var("Q", Struct.class)) {
+            if (counter<10) {
+                logger.info("Value via iterable: {}", next);
+            }
             counter++;
         }
         ProfilingInfo.reportAll("iterator()");
@@ -253,5 +289,24 @@ public class SolutionApiTest extends PrologTestBase {
         ProfilingInfo.reportAll("vars()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
         assertEquals(40320, values.size());
+    }
+
+
+    @Test
+    public void permVarsIterator() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+        final Iterator<Map<Var, Object>> iter = holder.vars().iterator();
+        int counter = 0;
+        while (iter.hasNext()) {
+            final Map<Var, Object> next = iter.next();
+            if (counter<10) {
+                logger.info("Vars via iterator: {}", next);
+            }
+            counter++;
+        }
+        ProfilingInfo.reportAll("iterator()");
+        assertEquals(40320, counter);
     }
 }

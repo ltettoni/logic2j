@@ -28,16 +28,12 @@ import org.logic2j.core.api.monadic.PoV;
  * This uses synchronization between two threads, the Prolog engine being the producer thread that calls back this implementation of
  * {@link SolutionListener#onSolution(PoV)}, which in turn notifies the consumer thread (the caller) of a solution.
  */
-public class IterableSolutionListener implements SolutionListener {
+public class IterableSolutionListener<T> implements SolutionListener {
+    private final SolutionExtractor<T> extractor;
 
-    private final Object term;
-
-    /**
-     * @param term
-     */
-    public IterableSolutionListener(Object term) {
+    public IterableSolutionListener(SolutionExtractor<T> extractor) {
         super();
-        this.term = term;
+        this.extractor = extractor;
     }
 
     /**
@@ -52,9 +48,9 @@ public class IterableSolutionListener implements SolutionListener {
 
 
     @Override
-    public Continuation onSolution(PoV theReifier) {
+    public Continuation onSolution(PoV pov) {
         // We've got one solution already!
-        final Object solution = theReifier.reify(this.term);
+        final T solution = extractor.extractSolution(pov);
         // Ask our client to stop requesting more and wait!
         this.clientToEngineInterface.waitUntilAvailable();
         // Provide the solution to the client, this wakes him up
@@ -122,4 +118,6 @@ public class IterableSolutionListener implements SolutionListener {
             return this.content;
         }
     }
+
+
 }

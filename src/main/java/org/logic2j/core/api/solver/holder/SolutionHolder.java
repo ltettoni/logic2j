@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by Laurent on 26.05.2014.
  */
-public class SolutionHolder<T> {
+public class SolutionHolder<T> implements Iterable<T> {
     private static final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
 
     private final GoalHolder goalHolder;
@@ -111,7 +111,13 @@ public class SolutionHolder<T> {
      * @return An iterator for all solutions.
      */
     public Iterator<T> iterator() {
-        final IterableSolutionListener listener = new IterableSolutionListener(SolutionHolder.this.goalHolder.goal);
+        SolutionExtractor<?> effectiveExtractor;
+        if (SolutionHolder.this.singleVarExtractor!=null) {
+            effectiveExtractor = SolutionHolder.this.singleVarExtractor;
+        } else {
+            effectiveExtractor = SolutionHolder.this.multiVarExtractor;
+        }
+        final IterableSolutionListener listener = new IterableSolutionListener(effectiveExtractor);
 
         final Runnable prologSolverThread = new Runnable() {
 
