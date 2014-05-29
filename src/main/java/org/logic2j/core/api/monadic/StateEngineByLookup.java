@@ -13,7 +13,7 @@ import java.util.TreeMap;
  */
 public class StateEngineByLookup {
     private static final Logger logger = LoggerFactory.getLogger(StateEngineByLookup.class);
-    private static final int LOOKUP_CHUNK = 2000;
+    private static final int LOOKUP_CHUNK = 1000;
 
 
     int[] transaction;
@@ -62,9 +62,9 @@ public class StateEngineByLookup {
             literal[slot] = finalRef;
         }
         logOfWrittenSlots[logWatermark++] = slot;
-        if (slot > ProfilingInfo.max1) {
-            ProfilingInfo.max1 = slot;
-        }
+//        if (slot > ProfilingInfo.max1) {
+//            ProfilingInfo.max1 = slot;
+//        }
         return new PoV(this, transactionNumber + 1, pov.topVarIndex);
     }
 

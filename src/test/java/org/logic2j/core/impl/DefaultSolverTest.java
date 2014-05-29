@@ -187,8 +187,8 @@ public class DefaultSolverTest extends PrologTestBase {
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
         assertEquals(1, listener.getCounter());
         assertEquals("[., Q, Z]", listener.getVarNames().toString());
-        assertEquals("[Z = Z]", marshall(listener.getValues(".")));
-        assertEquals("[Z]", marshall(listener.getValues("Q")));
-        assertEquals("[Z]", marshall(listener.getValues("Z")));
+        assertEquals("[Q = Q]", marshall(listener.getValues(".")));
+        assertEquals("[Q]", marshall(listener.getValues("Q")));
+        assertEquals("[Q]", marshall(listener.getValues("Z")));
     }
 }

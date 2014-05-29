@@ -114,12 +114,13 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void queensForTiming() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
-        final String goal = "queens(9, X)";
+        final String goal = "queens(9, Q)";
         // Numbers
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-//        long count = holder.count();
-        long count = holder.exists() ? 1 : 0;
+//        long count = holder.var("Q").list().size();
+        long count = holder.count();
+//        long count = holder.exists() ? 1 : 0;
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
 
         /*
@@ -137,7 +138,7 @@ public class FunctionalTest extends PrologTestBase {
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
-            final String goal = "queens(6, X)";
+            final String goal = "queens(7, X)";
             System.out.print("Press any key to run, q to quit");
             final String readLine = br.readLine();
             if (readLine != null && readLine.startsWith("q")) {
@@ -157,7 +158,7 @@ public class FunctionalTest extends PrologTestBase {
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         Thread.sleep(15000);
-        final String goal = "queens(7, X)";
+        final String goal = "queens(8, X)";
         getProlog().solve(goal).count();
         ProfilingInfo.reportAll("VisualVM profiling");
         Thread.sleep(1000000);

@@ -46,7 +46,7 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, TermBindings, org.logic2j.core.api.SolutionListener)} method. The goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.monadic.PoV, org.logic2j.core.api.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      */
     @Override
@@ -214,7 +214,9 @@ public class DefaultSolver implements Solver {
                 final Struct clonedClause;
                 if (clause.needCloning()) {
                     // Clone the variables so that we won't mutate our current clause's ones
-                    clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
+                    // clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
+                    clonedClause = clause.cloned(reifier).getContent();
+
                 } else {
                     clonedClause = clause.getContent();
                 }

@@ -21,12 +21,13 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.util.ProfilingInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a fact or a rule in a Theory; this is described by a {@link Struct}. This class provides extra features for efficient lookup
@@ -38,7 +39,7 @@ import java.util.Set;
  * </ol>
  */
 public class Clause {
-
+    private static final Logger logger = LoggerFactory.getLogger(Clause.class);
     /**
      * The {@link Struct} that represents the content of either a rule (when it has a body) or a fact (does not have a body - or has "true"
      * as body), see description of {@link #isFact()}.
@@ -51,6 +52,8 @@ public class Clause {
 
     private final Object head;
     private final Object body;
+
+    private TreeMap<Integer, Clause> cache;
 
     /**
      * Make a Term (must be a Struct) read for inference, this requires to normalize it.
@@ -76,22 +79,87 @@ public class Clause {
         this.body = evaluateBody();
     }
 
-//    /**
-//     * Copy constructor.
-//     *
-//     * @param theOriginal
-//     */
-//    public Clause(Clause theOriginal) {
-//        // Should we clone???? Not sure, hopefully not.
-//        this.content = new Struct(theOriginal.content);
-//        this.vars = new Var[theOriginal.vars.length];
-//        System.arraycopy(theOriginal.vars, 0, this.vars, 0, theOriginal.vars.length);
-//        // Clone the block of variables
-//        this.isFact = theOriginal.isFact;
-//        this.isWithClauseFunctor = theOriginal.isWithClauseFunctor;
-//        this.head = theOriginal.head;
-//        this.body = theOriginal.body;
-//    }
+
+    private Clause(Clause original, Struct cloned, Var[] clonedVars) {
+        this.content = cloned;
+        this.vars = clonedVars;
+        this.cache = null; // That one should never be modified - we are on a clone
+        this.isFact = original.isFact;
+        this.isWithClauseFunctor = original.isWithClauseFunctor;
+        this.head = evaluateHead();
+        this.body = evaluateBody();
+    }
+
+
+    public Clause cloned(PoV pov) {
+        if (this.cache==null) {
+            this.cache = new TreeMap<Integer, Clause>();
+//            logger.warn("Instantiating Clause cache for {}", this.content);
+        }
+        final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(pov.topVarIndex);
+        if (ceilingEntry==null) {
+//            logger.warn("Cloning {}", this);
+            // No such entry: create and insert
+            final Clause clonedClause = cloneClauseAndRemapIndexes2(this, pov);
+            final int initialVarIndex = clonedClause.vars[0].getIndex(); // There MUST be at least one var otherwise we would not be cloning
+            this.cache.put(initialVarIndex, clonedClause);
+            return clonedClause;
+        }
+        final Clause reused = ceilingEntry.getValue();
+        pov.topVarIndex = reused.vars[reused.vars.length-1].getIndex() + 1;
+//        logger.warn("Reusing cloned clause {}", reused);
+        return reused;
+    }
+
+
+
+    public Clause cloneClauseAndRemapIndexes2(Clause theClause, PoV pov) {
+        ProfilingInfo.counter1++;
+//            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
+        final Var[] originalVars = theClause.getVars();
+        final int nbVars = originalVars.length;
+        // Allocate the new vars by cloning the original ones. Index is preserved meaning that
+        // when we traverse the original structure and find a Var of index N, we can replace it
+        // in the cloned structure by the clonedVar[N]
+        final Var[] clonedVars = new Var[nbVars];
+        for (int i = 0; i < nbVars; i++) {
+            clonedVars[i] = new Var(originalVars[i]);
+        }
+
+        final Struct cloned = cloneStruct(theClause.getContent(), clonedVars);
+        // Now reindex the cloned vars
+        for (int i = 0; i < nbVars; i++) {
+            clonedVars[i].index += pov.topVarIndex;
+        }
+        // And increment the highest Var index accordingly
+        pov.topVarIndex += nbVars;
+
+        if (pov.topVarIndex > ProfilingInfo.max1) {
+            ProfilingInfo.max1 = pov.topVarIndex;
+        }
+//    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
+        return new Clause(theClause, cloned, clonedVars);
+    }
+
+    private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
+        final Object[] args = theStruct.getArgs();
+        final int arity = args.length;
+        final Object[] clonedArgs = new Object[arity];
+        for (int i = 0; i < arity; i++) {
+            final Object arg = args[i];
+            if (arg instanceof Struct) {
+                final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
+                clonedArgs[i] = recursedClonedElement;
+            } else if (arg instanceof Var && arg != Var.ANONYMOUS_VAR) {
+                final short originalVarIndex = ((Var) arg).getIndex();
+                clonedArgs[i] = clonedVars[originalVarIndex];
+            } else {
+                clonedArgs[i] = arg;
+            }
+        }
+        final Struct struct = new Struct(theStruct, clonedArgs);
+        return struct;
+    }
 
     // ---------------------------------------------------------------------------
     // Methods to denormalize immutable fields

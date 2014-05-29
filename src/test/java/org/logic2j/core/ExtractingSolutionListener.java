@@ -24,6 +24,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     public ExtractingSolutionListener(Object theGoal) {
         this.goal = theGoal;
         vars = TermApi.allVars(this.goal).keySet();
+        // FIXME too expensive for typ 2-5 vars
         varNames = new TreeSet<String>();
         for (Var var : vars) {
             varNames.add(var.getName());

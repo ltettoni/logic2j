@@ -3,17 +3,14 @@ package org.logic2j.core.api.monadic;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.impl.CloningTermVisitor;
+import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Laurent on 07.05.2014.
@@ -24,7 +21,7 @@ public class PoV {
 
     final int currentTransaction;
 
-    int topVarIndex;
+    public int topVarIndex;
 
 
     private final StateEngineByLookup impl;
@@ -42,7 +39,8 @@ public class PoV {
     }
 
 
-    public Object cloneClauseAndRemapIndexes(Clause theClause) {
+    public Struct cloneClauseAndRemapIndexes(Clause theClause) {
+        ProfilingInfo.counter1++;
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
         final Var[] originalVars = theClause.getVars();
         final int nbVars = originalVars.length;
@@ -61,9 +59,14 @@ public class PoV {
         }
         // And increment the highest Var index accordingly
         this.topVarIndex += nbVars;
+
+        if (this.topVarIndex > ProfilingInfo.max1) {
+            ProfilingInfo.max1 = this.topVarIndex;
+        }
 //    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
         return cloned;
     }
+
 
     private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
         final Object[] args = theStruct.getArgs();
@@ -145,64 +148,82 @@ public class PoV {
         }
         return result;
     }
-    // --- Move elsewhere
 
-    public PoV unify(Object t1, Object t2) {
-//        audit.info("Unify  {}  ~  {}", t1, t2);
-        if (t1 == t2) {
+    public PoV unify(Object term1, Object term2) {
+//        audit.info("Unify  {}  ~  {}", term1, term2);
+        if (term1 == term2) {
             return this;
         }
-        if (t2 instanceof Var && !(t1 instanceof Var)) {
-            // Recursive inversion
-            return unify(t2, t1);
+        if (term2 instanceof Var) {
+            // Switch arguments - we prefer having term1 being the var.
+            // Notice that formally, we should check  && !(term1 instanceof Var)
+            // to avoid possible useless switching when unifying Var <-> Var.
+            // However, the extra instanceof total costs 3% more than a useless switch.
+            final Object term1held = term1;
+            term1 = term2;
+            term2 = term1held;
         }
-        if (t1 instanceof Var) {
-            Var v1 = (Var) t1;
-            Object f1 = finalValue(v1);
-            if (!(f1 instanceof Var)) {
-                return unify(f1, t2);
+        if (term1 instanceof Var) {
+            // term1 is a Var: we need to check if it is bound or not
+            Var var1 = (Var) term1;
+            final Object final1 = finalValue(var1);
+            if (! (final1 instanceof Var)) {
+                // term1 is bound - unify
+                return unify(final1, term2);
             }
-            // Ending up on free var f1
-            v1 = (Var) f1;
-            if (v1.isAnonymous()) {
-                return this; // Unified without effect
+            // Ended up with final1 being a free Var, so term1 was a free var
+            var1 = (Var) final1;
+            if (var1 == Var.ANONYMOUS_VAR) {
+                // Anonymous cannot be bound
+                // Unified successfully, yet without side-effect
+                return this;
             }
-            // Free var to bind
-            if (t2 instanceof Var) {
-                final Var v2 = (Var) t2;
-                Object f2 = finalValue(v2);
+            // free Var var1 need to be bound
+            if (term2 instanceof Var) {
+                // Binding two vars
+                final Var var2 = (Var) term2;
+                final Object final2 = finalValue(var2);
                 // Link one to two (should we link to the final or the initial value???)
-                if (f2 instanceof Var && ((Var) f2).isAnonymous()) {
+                if (final2 == Var.ANONYMOUS_VAR) {
+                    // term2 was the anonymous Var, cannot be bound
+                    // Unified successfully, yet without side-effect
                     return this; // Unified without effect
                 }
-                return bind(v1, v2);
+                // Now do the binding of two vars
+                return bind(var1, var2);
             } else {
-                return bind(v1, t2);
+                // Do the binding of one var to a literal
+                return bind(var1, term2);
             }
-        } else if (t1 instanceof Struct) {
-            // Struct - var already taken care of by recursive inversion
-            if (!(t2 instanceof Struct)) {
+        } else if (term1 instanceof Struct) {
+            // Case of Struct <-> Var: already taken care of by switching, see above
+            if (!(term2 instanceof Struct)) {
+                // Not unified - we can only unify 2 Struct
                 return null;
             }
-            Struct s1 = (Struct) t1;
-            Struct s2 = (Struct) t2;
+            final Struct s1 = (Struct) term1;
+            final Struct s2 = (Struct) term2;
+            // The two Struct must have compatible signatures (functor and arity)
             //noinspection StringEquality
             if (s1.getPredicateSignature() != s2.getPredicateSignature()) {
                 return null;
             }
-            Object[] s1Args = s1.getArgs();
-            Object[] s2Args = s2.getArgs();
+            // Now we will unify all arguments, stopping at the first that do not match
+            final Object[] s1Args = s1.getArgs();
+            final Object[] s2Args = s2.getArgs();
+            final int arity = s1Args.length;
             PoV runningMonad = this;
-            // Mark the monad
-            for (int i = 0; i != s1Args.length; i++) {
+            for (int i = 0; i < arity; i++) {
                 runningMonad = runningMonad.unify(s1Args[i], s2Args[i]);
                 if (runningMonad == null) {
+                    // Struct sub-element not unified - fail the whole unification
                     return null;
                 }
             }
+            // All matched, return the latest monad
             return runningMonad;
         } else {
-            return t1.equals(t2) ? this : null;
+            return term1.equals(term2) ? this : null;
         }
     }
 
