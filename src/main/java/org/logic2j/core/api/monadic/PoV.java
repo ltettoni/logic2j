@@ -23,11 +23,10 @@ public class PoV {
 
     public int topVarIndex;
 
-
     private final StateEngineByLookup impl;
 
     PoV(StateEngineByLookup implem) {
-        this(implem, 0, 5);
+        this(implem, 0, 0);
     }
 
     PoV(StateEngineByLookup implem, int currentTransaction, int topVarIndex) {

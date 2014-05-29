@@ -49,6 +49,11 @@ public class DefaultSolver implements Solver {
     @Override
     public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
         final PoV initialPoV = new StateEngineByLookup().emptyPoV();
+        if (goal instanceof Struct) {
+            // We will need to clone Clauses during resolution, hence the base index
+            // for any new var must be higher than any of the currently used vars.
+            initialPoV.topVarIndex += ((Struct)goal).getIndex();
+        }
         return solveGoal(goal, initialPoV, theSolutionListener);
     }
 
