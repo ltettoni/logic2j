@@ -21,8 +21,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.util.ProfilingInfo;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -157,4 +160,22 @@ public class SolutionApiTest extends PrologTestBase {
     public void ensureNumber() throws Exception {
         final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").exactCount(1).vars().unique();
     }
+
+    // ---------------------------------------------------------------------------
+    //
+    // ---------------------------------------------------------------------------
+
+
+    @Test
+    public void permCount() throws IOException {
+        final String goal = "perm([a,b,c,d,e,f,g], X)";
+        final GoalHolder holder = getProlog().solve(goal);
+        ProfilingInfo.setTimer1();
+//        final long count = holder.count();
+        final long count = holder.exists() ? 1 : 0;
+        ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
+//        assertEquals(5040, count);
+    }
+
+
 }

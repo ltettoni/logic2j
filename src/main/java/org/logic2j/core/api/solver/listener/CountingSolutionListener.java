@@ -39,10 +39,10 @@ public class CountingSolutionListener implements SolutionListener {
 
     @Override
     public Continuation onSolution(PoV pov) {
+        this.counter++;
         if (DEBUG_ENABLED) {
             logger.debug(" onSolution(#{})", this.counter);
         }
-        this.counter++;
         return Continuation.CONTINUE;
     }
 

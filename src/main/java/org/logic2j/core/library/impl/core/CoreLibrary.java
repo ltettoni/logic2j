@@ -317,11 +317,14 @@ public class CoreLibrary extends LibraryBase {
 
         Solver solver = getProlog().getSolver();
         solver.solveGoal(theGoal, pov, callListener);
-        if (!callListener.found) {
-            theListener.onSolution(pov);
+        final Continuation continuation;
+        if (callListener.found) {
+            continuation = Continuation.CONTINUE;
+        } else {
+            // Not found - notify a solution (that's the purpose of not/1 !)
+            continuation = theListener.onSolution(pov);
         }
-
-        return Continuation.CONTINUE;
+        return continuation;
     }
 
     @Primitive

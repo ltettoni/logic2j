@@ -37,7 +37,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void placeholderToReproduceError() {
-        //
+       //
     }
 
     @Test
@@ -116,9 +116,11 @@ public class FunctionalTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("queens.pl");
         final String goal = "queens(9, X)";
         // Numbers
+        final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        long number = getProlog().solve(goal).count();
-        ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + number);
+//        long count = holder.count();
+        long count = holder.exists() ? 1 : 0;
+        ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
 
         /*
         // TermBindings

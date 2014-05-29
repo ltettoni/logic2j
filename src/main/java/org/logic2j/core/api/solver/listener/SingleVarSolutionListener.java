@@ -66,8 +66,6 @@ public class SingleVarSolutionListener extends RangeSolutionListener {
         } else {
             results.add(pov.reify(var));
         }
-
-
         return super.onSolution(pov);
     }
 

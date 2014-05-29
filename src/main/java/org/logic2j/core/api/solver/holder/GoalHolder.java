@@ -22,13 +22,9 @@ public class GoalHolder {
     }
 
     public boolean exists() {
-        final RangeSolutionListener listener = new RangeSolutionListener() {
-            @Override
-            protected void onSuperfluousSolution() {
-                // Nothing wrong having more solutions - we just ignore them
-            }
-        };
-        listener.setMaxCount(1);
+        final RangeSolutionListener listener = new RangeSolutionListener();
+        listener.setMaxCount(2); // We won't get there - but we don't want to put a max to 1 otherwise an Exception will be thrown
+        listener.setMaxFetch(1);
         prolog.getSolver().solveGoal(goal, new StateEngineByLookup().emptyPoV(), listener);
         return listener.getNbSolutions()>=1;
     }

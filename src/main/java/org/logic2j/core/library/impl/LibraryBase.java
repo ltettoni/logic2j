@@ -64,8 +64,7 @@ public class LibraryBase implements PLibrary {
      * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}
      */
     protected Continuation notifySolution(SolutionListener theSolutionListener, PoV pov) {
-        final Continuation continuation;
-        continuation = theSolutionListener.onSolution(pov);
+        final Continuation continuation = theSolutionListener.onSolution(pov);
         return continuation;
     }
 

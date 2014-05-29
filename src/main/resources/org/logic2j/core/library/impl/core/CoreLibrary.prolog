@@ -36,7 +36,7 @@ perm(List, [H|Perm]) :- takeout(H, List, Rest), perm(Rest, Perm).
 perm([], []).
   
 
-%- not/1 is now implemented in the CoreLibrary in Java
+%- not/1 is now implemented in Java in the CoreLibrary
 %not(P) :- call(P), !, fail.
 %not(P).
 
@@ -52,7 +52,7 @@ countall(Predicate, NumberOfOccurences) :-
 
 /*
   This is a working version of OR implemented in prolog. 
-  However we prefer the N-arity implmentation of OR in Java, see DefaultSolver.
+  However we prefer the N-arity implementation of OR in Java, see DefaultSolver.
 
 A ; B :- call(A).
 A ; B :- call(B).

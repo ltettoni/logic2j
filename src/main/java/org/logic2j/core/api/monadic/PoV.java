@@ -19,10 +19,11 @@ import java.util.Set;
  * Created by Laurent on 07.05.2014.
  */
 public class PoV {
-   private static final Logger logger = LoggerFactory.getLogger(PoV.class);
+    private static final Logger logger = LoggerFactory.getLogger(PoV.class);
 //    static final Logger audit = LoggerFactory.getLogger("audit");
 
     final int currentTransaction;
+
     int topVarIndex;
 
 
@@ -43,7 +44,6 @@ public class PoV {
 
     public Object cloneClauseAndRemapIndexes(Clause theClause) {
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
-        final Struct content = theClause.getContent();
         final Var[] originalVars = theClause.getVars();
         final int nbVars = originalVars.length;
         // Allocate the new vars by cloning the original ones. Index is preserved meaning that
@@ -54,32 +54,29 @@ public class PoV {
             clonedVars[i] = new Var(originalVars[i]);
         }
 
-        final Struct cloned = cloneStruct(content, clonedVars);
+        final Struct cloned = cloneStruct(theClause.getContent(), clonedVars);
         // Now reindex the cloned vars
-        for (int i=0; i<nbVars; i++) {
+        for (int i = 0; i < nbVars; i++) {
             clonedVars[i].index += this.topVarIndex;
         }
+        // And increment the highest Var index accordingly
         this.topVarIndex += nbVars;
-//            audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
+//    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
         return cloned;
     }
 
     private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
-        final int arity = theStruct.getArity();
         final Object[] args = theStruct.getArgs();
+        final int arity = args.length;
         final Object[] clonedArgs = new Object[arity];
         for (int i = 0; i < arity; i++) {
             final Object arg = args[i];
             if (arg instanceof Struct) {
                 final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
                 clonedArgs[i] = recursedClonedElement;
-            } else if (arg instanceof Var) {
-                if (arg==Var.ANONYMOUS_VAR) {
-                    clonedArgs[i] = Var.ANONYMOUS_VAR;
-                } else {
-                    final short originalVarIndex = ((Var) arg).getIndex();
-                    clonedArgs[i] = clonedVars[originalVarIndex];
-                }
+            } else if (arg instanceof Var && arg != Var.ANONYMOUS_VAR) {
+                final short originalVarIndex = ((Var) arg).getIndex();
+                clonedArgs[i] = clonedVars[originalVarIndex];
             } else {
                 clonedArgs[i] = arg;
             }
@@ -90,7 +87,7 @@ public class PoV {
 
 
     public PoV bind(Var var, Object ref) {
-        if (var==ref) {
+        if (var == ref) {
             logger.debug("Not mapping {} onto itself", var);
             return this;
         }
@@ -101,6 +98,7 @@ public class PoV {
 
     /**
      * In principle one must use the recursive form reify()
+     *
      * @param theVar
      * @return
      */
@@ -118,7 +116,7 @@ public class PoV {
         if (term instanceof Struct) {
 //            audit.info("Reify Struct at t={}  {}", this.currentTransaction, term);
             final Struct s = (Struct) term;
-            if (s.getIndex()==0) {
+            if (s.getIndex() == 0) {
                 // Structure is an atom or a constant term - no need to further transform
                 return term;
             }
@@ -139,7 +137,7 @@ public class PoV {
         final Map<String, Object> result = new HashMap<String, Object>();
         for (Map.Entry<Var, String> entry : TermApi.allVars(term).entrySet()) {
             final Object finalValue = this.reify(entry.getKey());
-            if (! (finalValue instanceof Var)) {
+            if (!(finalValue instanceof Var)) {
                 result.put(entry.getValue(), finalValue);
             } else {
                 result.put(entry.getValue(), null);
@@ -209,12 +207,10 @@ public class PoV {
     }
 
 
-
     @Override
     public String toString() {
         return "pov#" + this.currentTransaction + impl.toString();
     }
-
 
 
     // ---------------------------------------------------------------------------

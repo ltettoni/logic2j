@@ -28,7 +28,7 @@ import org.logic2j.core.api.monadic.PoV;
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public abstract class RangeSolutionListener implements SolutionListener {
+public class RangeSolutionListener implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RangeSolutionListener.class);
 
     private long minCount; // Minimal number of solutions allowed
@@ -62,6 +62,7 @@ public abstract class RangeSolutionListener implements SolutionListener {
         }
         logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
         final Continuation continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
+        // FIXME big bug : on queens(9,X) we send back USER_ABORT and are called more!
         return continuation;
     }
 
