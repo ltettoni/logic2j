@@ -19,6 +19,7 @@ package org.logic2j.core;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
@@ -28,6 +29,7 @@ import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -134,10 +136,26 @@ public class SolutionApiTest extends PrologTestBase {
     // Access to bindings of vars
     // ---------------------------------------------------------------------------
 
+    @Test(expected=MissingSolutionException.class)
+    public void varMissing() throws Exception {
+        getProlog().solve("1=2").var("Q");
+    }
+
 
     @Test
     public void varUnique() throws Exception {
         assertEquals(new Long(12), getProlog().solve("Q=12").var("Q", Long.class).unique());
+    }
+
+
+    @Test
+    public void varFree() throws Exception {
+        assertEquals("Q", getProlog().solve("Q=Q").var("Q").unique().toString());
+    }
+
+    @Test
+    public void varBoundToFreeVar() throws Exception {
+        assertEquals("Q", getProlog().solve("Q=Z").var("Q").unique().toString());
     }
 
 
@@ -148,6 +166,8 @@ public class SolutionApiTest extends PrologTestBase {
     @Test
     public void varsUnique() throws Exception {
         final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").vars().unique();
+        assertTrue(unique.toString().contains("Q=12"));
+        assertTrue(unique.toString().contains("R=13"));
     }
 
 

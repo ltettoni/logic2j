@@ -85,86 +85,6 @@ public class FunctionalTest extends PrologTestBase {
 
 
 
-    @Test
-    public void queensNumbers() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-
-        assertEquals(1, getProlog().solve("queens(1, _)").count());
-        assertEquals(0, getProlog().solve("queens(2, _)").count());
-        assertEquals(0, getProlog().solve("queens(3, _)").count());
-        assertEquals(2, getProlog().solve("queens(4, _)").count());
-        assertEquals(10, getProlog().solve("queens(5, _)").count());
-        assertEquals(4, getProlog().solve("queens(6, _)").count());
-        assertEquals(40, getProlog().solve("queens(7, _)").count());
-        assertEquals(92, getProlog().solve("queens(8, _)").count());
-        assertEquals(352, getProlog().solve("queens(9, _)").count());
-        assertEquals(724, getProlog().solve("queens(10, _)").count());
-        // Comment out heavy ones
-        // assertEquals(2680, getProlog().solve("queens(11, _)").count());
-        // assertEquals(14200, getProlog().solve("queens(12, _)").count());
-    }
-
-    @Test
-    public void queensSimple() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-        final String goal = "queens(5, X)";
-        countNSolutions(10, goal);
-    }
-
-    @Test
-    public void queensForTiming() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-        final String goal = "queens(9, Q)";
-        // Numbers
-        final GoalHolder holder = getProlog().solve(goal);
-        ProfilingInfo.setTimer1();
-//        long count = holder.var("Q").list().size();
-        long count = holder.count();
-//        long count = holder.exists() ? 1 : 0;
-        ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
-
-        /*
-        // TermBindings
-        ProfilingInfo.setTimer1();
-        getProlog().solve(goal).all().bindings();
-        ProfilingInfo.reportAll("TermBindings of solutions to " + goal);
-        */
-    }
-
-    @Ignore("Use this in conjunction with jvisualvm to profile")
-    @Test
-    public void queensForJVisualVMInteractive() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        while (true) {
-            final String goal = "queens(7, X)";
-            System.out.print("Press any key to run, q to quit");
-            final String readLine = br.readLine();
-            if (readLine != null && readLine.startsWith("q")) {
-                break;
-            }
-            final long startTime = System.currentTimeMillis();
-            getProlog().solve(goal).count();
-            logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
-        }
-    }
-
-
-    @Ignore("Use this in conjunction with jvisualvm to profile")
-    @Test
-    public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        Thread.sleep(15000);
-        final String goal = "queens(8, X)";
-        getProlog().solve(goal).count();
-        ProfilingInfo.reportAll("VisualVM profiling");
-        Thread.sleep(1000000);
-    }
-
-
 //    /**
 //     * Sometimes (when?) X is bound to a term containing a unified var to another of our vars
 //     */
@@ -215,7 +135,7 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void findall_bindFreeVars() {
         final GoalHolder sol = uniqueSolution("findall(X, member(X,[a,B,c]), Res)");
-        assertEquals("[a,X,c]", sol.toString("Res"));
+        assertEquals("[a,B,c]", sol.toString("Res"));
     }
 
 }

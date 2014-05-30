@@ -48,7 +48,7 @@ public class DefaultSolver implements Solver {
 
     @Override
     public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
-        final PoV initialPoV = new StateEngineByLookup().emptyPoV();
+        final PoV initialPoV = initalPoV();
         if (goal instanceof Struct) {
             // We will need to clone Clauses during resolution, hence the base index
             // for any new var must be higher than any of the currently used vars.
@@ -67,6 +67,12 @@ public class DefaultSolver implements Solver {
         // This slightly improves performance - we can bypass calling the method that deals with that
 
         return solveGoalRecursive(goal, pov, theSolutionListener);
+    }
+
+    @Override
+    public PoV initalPoV() {
+        final PoV initialPoV = new StateEngineByLookup().emptyPoV();
+        return initialPoV;
     }
 
     public Continuation solveGoalRecursive(final Object goalTerm, final PoV reifier, final SolutionListener theSolutionListener) {

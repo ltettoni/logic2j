@@ -3,8 +3,10 @@ package org.logic2j.core.impl;
 import org.junit.Test;
 import org.logic2j.core.ExtractingSolutionListener;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Lowest-level tests of the Solver: check core primitives: true, fail, cut, and, or. Check basic unification.
@@ -114,9 +116,9 @@ public class DefaultSolverTest extends PrologTestBase {
         //
         countNSolutions(3, "true; true; true");
         //
-//        MultipleSolutionsHolder solutions;
-//        solutions = this.prolog.solve("X=a; X=b; X=c").all();
-//        assertEquals("[a, b, c]", solutions.binding("X").toString());
+        GoalHolder solutions;
+        solutions = this.prolog.solve("X=a; X=b; X=c");
+        assertEquals("[a, b, c]", solutions.var("X").list().toString());
     }
 
 
@@ -130,6 +132,38 @@ public class DefaultSolverTest extends PrologTestBase {
         countNSolutions(2, "';'(true, true)");
         countNSolutions(3, "';'(true, true, true)");
     }
+
+
+    @Test
+    public void orWithVars() {
+        GoalHolder solutions;
+        solutions = this.prolog.solve("X=1; Y=2");
+        final String actual = solutions.vars().list().toString();
+        assertTrue("[{Y=Y, X=1}, {Y=2, X=X}]".equals(actual) ||
+        "[{X=1, Y=Y}, {X=X, Y=2}]".equals(actual));
+    }
+
+    @Test
+    public void orWithClause() {
+        loadTheoryFromTestResourcesDir("test-functional.pl");
+        GoalHolder solutions;
+        solutions = this.prolog.solve("or3(X)");
+        assertEquals("[a, b, c]", solutions.var("X").list().toString());
+    }
+
+    @Test
+    public void not() {
+        // Surprisingly enough, the operator \+ means "not provable".
+        uniqueSolution("not(fail)", "\\+(fail)");
+        nSolutions(0, "not(true)", "\\+(true)");
+    }
+
+
+
+
+
+
+
 
     // ---------------------------------------------------------------------------
     // Basic unification

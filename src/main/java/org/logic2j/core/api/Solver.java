@@ -48,4 +48,6 @@ public interface Solver {
      */
     Continuation solveGoal(Object goal, PoV pov, SolutionListener theSolutionListener);
 
+    PoV initalPoV();
+
 }
