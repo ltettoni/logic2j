@@ -21,6 +21,7 @@ import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 /**
  * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
@@ -47,6 +48,13 @@ public final class Var extends Term {
      * Singleton "special" var that holds the value of a whole goal.
      */
     public static final Var WHOLE_SOLUTION_VAR = new Var(WHOLE_SOLUTION_VAR_NAME);
+
+    public static final Comparator<Var> COMPARATOR_BY_NAME = new Comparator<Var>() {
+        @Override
+        public int compare(Var left, Var right) {
+            return left.getName().compareTo(right.getName());
+        }
+    };
 
     /**
      * The immutable name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
@@ -230,8 +238,5 @@ public final class Var extends Term {
         return this.name;
     }
 
-    //---------------------------------------------------------------------------
-    // Oldies
-    //---------------------------------------------------------------------------
 
 }

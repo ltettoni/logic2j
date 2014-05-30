@@ -101,24 +101,6 @@ public abstract class PrologTestBase {
     }
 
 
-    /**
-     * Make sure there is only one solution to goals.
-     *
-     * @param theGoals All goals to check for
-     * @return The GoalHolder holding the last solution of theGoals
-     */
-    protected GoalHolder uniqueSolution(CharSequence... theGoals) {
-        assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
-        GoalHolder result = null;
-        for (final CharSequence goal : theGoals) {
-            logger.info("Expecting 1 solution when solving goal \"{}\"", goal);
-            final GoalHolder holder = this.prolog.solve(goal);
-            assertEquals("Expecting unique number of solutions for goal \"" + goal + '"', 1, holder.count());
-            result = holder;
-        }
-        return result;
-    }
-
 //    /**
 //     * Make sure there are no soutions.
 //     *
@@ -144,16 +126,35 @@ public abstract class PrologTestBase {
     }
 
 
+    /**
+     * Make sure there is only one solution to goals.
+     *
+     * @param theGoals All goals to check for
+     * @return The GoalHolder holding the last solution of theGoals
+     */
+    protected GoalHolder uniqueSolution(CharSequence... theGoals) {
+        return internalAssert(1, theGoals);
+    }
+
+        /**
+         * Make sure there are exactly theNumber of solutions.
+         *
+         * @param theNumber
+         * @param theGoals  All goals to check for
+         * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder}
+         */
+    protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
+        return internalAssert(theNumber, theGoals);
+    }
 
     /**
-     * Make sure there are exatly theNumber of solutions.
+     * Make sure there are no solutions to the goals.
      *
-     * @param theNumber
      * @param theGoals  All goals to check for
      * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder}
      */
-    protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
-        return internalAssert(theNumber, theGoals);
+    protected void noSolutions(CharSequence... theGoals) {
+        internalAssert(0, theGoals);
     }
 
     /**
@@ -165,7 +166,7 @@ public abstract class PrologTestBase {
         assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
         GoalHolder result = null;
         for (final CharSequence goal : theGoals) {
-            logger.info("Expecting {} solutions when solving goal \"{}\"", theNumber, goal);
+            logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
             result = this.prolog.solve(goal);
             // Now execute the goal - only extracting the number of solutions
             final long number = result.count();
