@@ -106,21 +106,22 @@ public class LibraryBase implements PLibrary {
         return this.prolog.getTermAdapter().term(anyObject, FactoryMode.ATOM);
     }
 
-//    // Only one use!
-//    protected void unifyAndNotify(Var[] theVariables, Object[] theValues, TermBindings theBindings, SolutionListener theListener) {
-//        final Object[] values = new Object[theValues.length];
-//        for (int i = 0; i < theValues.length; i++) {
-//            values[i] = createConstantTerm(theValues[i]);
-//        }
-//        final boolean unified = unify(new Struct("group", (Object[]) theVariables), theBindings, new Struct("group", values), theBindings);
-//        notifyIfUnified(unified, theListener);
-//    }
+
+    protected Continuation unifyInternal(SolutionListener theListener, PoV pov, Object t1, Object t2) {
+        final PoV after = pov.unify(t1, t2);
+        if (after == null) {
+            // Not unified
+            return Continuation.CONTINUE;
+        }
+        // Unified
+        return notifySolution(theListener, after);
+    }
 
     /**
      * Format a Term with renditions of final vars, and taking operators into account.
      *
      * @param theTerm
-     * @param theBindings
+     * @param pov
      * @return The formatted String
      */
     protected String format(Object theTerm, final PoV pov) {

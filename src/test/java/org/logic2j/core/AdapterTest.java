@@ -19,6 +19,7 @@ package org.logic2j.core;
 
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.term.Struct;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class AdapterTest extends PrologTestBase {
 
     @Test
     public void javaEnum() {
-        final Object term = this.prolog.getTermAdapter().term("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
+        final Struct term = this.prolog.getTermAdapter().term("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
         // FIXME - seems term was not "normalized" so cannot be solved.
         final Object binding = this.prolog.solve(term).var("X").unique();
         assertSame(MyEnum.V2, binding);

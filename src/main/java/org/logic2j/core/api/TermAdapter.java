@@ -93,7 +93,7 @@ public interface TermAdapter {
      * @param theArguments
      * @return A factorized and normalized {@link Term}.
      */
-    Object term(String thePredicateName, FactoryMode theMode, Object... theArguments);
+    Struct term(String thePredicateName, FactoryMode theMode, Object... theArguments);
 
     /**
      * Instantiate a list of Terms from one (possibly large) {@link Object}.

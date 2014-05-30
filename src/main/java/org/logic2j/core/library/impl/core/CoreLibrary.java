@@ -270,13 +270,7 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = "=")
     public Continuation unify(SolutionListener theListener, PoV pov, Object t1, Object t2) {
-        final PoV after = pov.unify(t1, t2);
-        if (after == null) {
-            // Not unified
-            return Continuation.CONTINUE;
-        }
-        // Unified
-        return notifySolution(theListener, after);
+        return unifyInternal(theListener, pov, t1, t2);
     }
 
     @Primitive(name = "\\=")

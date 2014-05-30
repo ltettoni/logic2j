@@ -63,13 +63,13 @@ public class DefaultTermAdapter implements TermAdapter {
 
 
     @Override
-    public Object term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
+    public Struct term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
         final Object[] convertedArgs = new Object[theArguments.length];
         for (int i = 0; i < theArguments.length; i++) {
             convertedArgs[i] = termFrom(theArguments[i], theMode);
         }
-        final Term created = new Struct(thePredicateName, convertedArgs);
-        final Object normalized = normalizer.apply(created);
+        final Struct created = new Struct(thePredicateName, convertedArgs);
+        final Struct normalized = (Struct) normalizer.apply(created);
         return normalized;
     }
 
