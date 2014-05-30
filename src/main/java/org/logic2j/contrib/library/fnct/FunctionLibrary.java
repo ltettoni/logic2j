@@ -19,19 +19,10 @@
 package org.logic2j.contrib.library.fnct;
 
 import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.monadic.PoV;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.library.mgmt.Primitive;
-
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
 
 /**
  * Functional features (mapping, etc).

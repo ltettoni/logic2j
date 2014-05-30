@@ -22,7 +22,6 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.impl.DefaultTermAdapter;
-import org.logic2j.core.impl.PrologImplementation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
