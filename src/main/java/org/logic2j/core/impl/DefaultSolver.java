@@ -205,7 +205,7 @@ public class DefaultSolver implements Solver {
 
         Continuation result = Continuation.CONTINUE;
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
-
+        final Object[] clauseHeadAndBody = new Object[2];
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
         for (final ClauseProvider provider : providers) {
             final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, reifier);
@@ -229,21 +229,24 @@ public class DefaultSolver implements Solver {
                 if (isDebug) {
                     logger.debug("Trying clause {}, current status={}", clause, result);
                 }
-                final Struct clonedClause;
-                if (clause.needCloning()) {
-                    // Clone the variables so that we won't mutate our current clause's ones
-                    // clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
-                    clonedClause = clause.cloned(reifier).getContent();
-
-                } else {
-                    clonedClause = clause.getContent();
-                }
+//                final Struct clonedClause;
+//                final Object clauseHead;
+//                if (clause.needCloning()) {
+//                    // Clone the variables so that we won't mutate our current clause's ones
+//                    // clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
+//                    clonedClause = (Struct)clause.cloned(reifier).getContent();
+//                    final boolean isRule = Struct.FUNCTOR_CLAUSE == clonedClause.getName() && clonedClause.getArity()==2;
+//                    clauseHead = isRule ? clonedClause.getArg(0) : clonedClause;
+//
+//                } else {
+//                    clonedClause = clause.getContent();
+//                }
                 // BOGUS!!!
                 // final boolean isFact = clause.isFact();
                 // final Object clauseHead = isFact ? clonedClause : clonedClause.getArg(0);
 
-                final boolean isRule = Struct.FUNCTOR_CLAUSE == clonedClause.getName() && clonedClause.getArity()==2;
-                final Object clauseHead = isRule ? clonedClause.getArg(0) : clonedClause;
+                clause.headAndBodyForSubgoal(reifier, clauseHeadAndBody);
+                final Object clauseHead = clauseHeadAndBody[0];
 
                 if (isDebug) {
                     logger.debug(" Unifying goal  : {}", goalTerm);
@@ -253,12 +256,14 @@ public class DefaultSolver implements Solver {
                 final PoV reifier2 = reifier.unify(goalTerm, clauseHead);
                 boolean headUnified = reifier2 != null;
                 if (isDebug) {
-                    logger.debug(" headUnified={}, now: goal={}", headUnified, clonedClause);
+                    logger.debug(" headUnified={}", headUnified);
                 }
 
                 if (headUnified) {
                     final Continuation continuation;
-                    if (clause.isFact()) {
+                    final Object clauseBody = clauseHeadAndBody[1];
+                    final boolean isFact = clauseBody == null;
+                    if (isFact) {
                         if (isDebug) {
                             logger.debug("{} is a fact, callback one solution", clauseHead);
                         }
@@ -269,14 +274,14 @@ public class DefaultSolver implements Solver {
                         }
                     } else {
                         // Not a fact, it's a theorem - it has a body
-                        final Object newGoalTerm = clonedClause.getArg(1);
+                        final Object newGoalTerm = clauseBody;
                         if (isDebug) {
                             logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
                         }
                         // Solve the body in our current recursion context
                         continuation = solveGoalRecursive(newGoalTerm, reifier2, theSolutionListener);
                         if (isDebug) {
-                            logger.debug("  back to clause {} with continuation={}", clonedClause, continuation);
+                            logger.debug("  back to clause {} with continuation={}", clause, continuation);
                         }
                         if (continuation == Continuation.USER_ABORT) {
                             // TODO should we just "return" from here?

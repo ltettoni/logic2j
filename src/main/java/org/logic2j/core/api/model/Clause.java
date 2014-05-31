@@ -30,29 +30,34 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Represents a fact or a rule in a Theory; this is described by a {@link Struct}. This class provides extra features for efficient lookup
- * and matching by {@link org.logic2j.core.impl.theory.TheoryManager}s. We implement by composition (by wrapping a {@link Struct}), not by derivation. Simple facts may
- * be represented in two manners:
+ * Represents a fact or a rule in a Theory; this is described by "content" Object.
+ * This class provides extra features for efficient lookup
+ * and matching by {@link org.logic2j.core.impl.theory.TheoryManager}s.
+ * Simple facts may be represented in two manners:
  * <ol>
- * <li>A Struct with any functor different from ':-' (this is recommended and more optimal)</li>
+ * <li>An Object, or a Struct with any functor different from ':-' (this is recommended and more optimal)</li>
  * <li>A Struct with functor ':-' and "true" as body (this is less optimal because this is actually a rule)</li>
+ * <li>A Struct with functor ':-' and a real body</li>
  * </ol>
  */
 public class Clause {
     private static final Logger logger = LoggerFactory.getLogger(Clause.class);
+
+    private final Object content; // Immutable, not null
+
     /**
-     * The {@link Struct} that represents the content of either a rule (when it has a body) or a fact (does not have a body - or has "true"
-     * as body), see description of {@link #isFact()}.
+     * TBD
      */
-    private final Struct content; // Immutable, not null
     private final Var[] vars;
 
-    private final boolean isFact;
-    private final boolean isWithClauseFunctor;
+    // Denormalized fields - stored for efficiency
+    private boolean isFact;
+    private Object head;
+    private Object body;
 
-    private final Object head;
-    private final Object body;
-
+    /**
+     * A number of clones of this Clause, to avoid many cloning during inference.
+     */
     private TreeMap<Integer, Clause> cache;
 
     /**
@@ -61,7 +66,7 @@ public class Clause {
      * @param theProlog Required to normalize theClauseTerm according to the current libraries.
      * @param theClauseTerm
      */
-    public Clause(PrologImplementation theProlog, Struct theClauseTerm) {
+    public Clause(PrologImplementation theProlog, Object theClauseTerm) {
         // if (!(theClauseTerm instanceof Struct)) {
         // throw new InvalidTermException("Need a Struct to build a clause, not " + theClauseTerm);
         // }
@@ -73,10 +78,7 @@ public class Clause {
         for (Var var : varSet) {
             this.vars[var.getIndex()] = var;
         }
-        this.isFact = evaluateIsFact();
-        this.isWithClauseFunctor = evaluateIsWithClauseFunctor();
-        this.head = evaluateHead();
-        this.body = evaluateBody();
+        initDenormalizedFields();
     }
 
 
@@ -84,14 +86,53 @@ public class Clause {
         this.content = cloned;
         this.vars = clonedVars;
         this.cache = null; // That one should never be modified - we are on a clone
-        this.isFact = original.isFact;
-        this.isWithClauseFunctor = original.isWithClauseFunctor;
-        this.head = evaluateHead();
-        this.body = evaluateBody();
+        initDenormalizedFields();
     }
 
 
-    public Clause cloned(PoV pov) {
+    private void initDenormalizedFields() {
+        if (! (this.content instanceof Struct)) {
+            // A single Object (typically a String) is a fact.
+            this.isFact = true;
+            this.head = this.content;
+            this.body = null;
+            return;
+        }
+        final Struct struct = (Struct) this.content;
+        // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
+        if (Struct.FUNCTOR_CLAUSE != struct.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
+            this.isFact = true;
+            this.head = this.content;
+            this.body = null;
+            return;
+        }
+        // We know it's a Struct with the clause functor, arity must be 2, check the body
+        final Object[] clauseArgs = struct.getArgs();
+        final Object body = clauseArgs[1];
+        if (Struct.ATOM_TRUE.equals(body)) {
+            this.isFact = true;
+            this.head = clauseArgs[0];
+            this.body = null;
+            return;
+        }
+        // The body is more complex, it's certainly a rule
+        this.isFact = false;
+        this.head = clauseArgs[0];
+        this.body = body;
+    }
+
+    public void headAndBodyForSubgoal(PoV pov, Object[] clauseHeadAndBody) {
+        final Clause clonedClause;
+        if (needCloning()) {
+            clonedClause = cloned(pov);
+        } else {
+            clonedClause = this;
+        }
+        clauseHeadAndBody[0] = clonedClause.head;
+        clauseHeadAndBody[1] = clonedClause.body; // Will be null for facts
+    }
+
+    private Clause cloned(PoV pov) {
         if (this.cache==null) {
             this.cache = new TreeMap<Integer, Clause>();
 //            logger.warn("Instantiating Clause cache for {}", this.content);
@@ -113,10 +154,10 @@ public class Clause {
 
 
 
-    public Clause cloneClauseAndRemapIndexes2(Clause theClause, PoV pov) {
+    private Clause cloneClauseAndRemapIndexes2(Clause theClause, PoV pov) {
         ProfilingInfo.counter1++;
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
-        final Var[] originalVars = theClause.getVars();
+        final Var[] originalVars = theClause.vars;
         final int nbVars = originalVars.length;
         // Allocate the new vars by cloning the original ones. Index is preserved meaning that
         // when we traverse the original structure and find a Var of index N, we can replace it
@@ -125,8 +166,8 @@ public class Clause {
         for (int i = 0; i < nbVars; i++) {
             clonedVars[i] = new Var(originalVars[i]);
         }
-
-        final Struct cloned = cloneStruct(theClause.getContent(), clonedVars);
+        assert theClause.content instanceof Struct;
+        final Struct cloned = cloneStruct((Struct)theClause.content, clonedVars);
         // Now reindex the cloned vars
         for (int i = 0; i < nbVars; i++) {
             clonedVars[i].index += pov.topVarIndex;
@@ -165,57 +206,15 @@ public class Clause {
     // Methods to denormalize immutable fields
     // ---------------------------------------------------------------------------
 
-    /**
-     * Use this method to determine if the {@link Clause} is a fact, before calling {@link #getBody()} that would return "true" and entering
-     * a sub-goal demonstration.
-     *
-     * @return True if the clause is a fact: if the {@link Struct} does not have ":-" as functor, or if the body is "true".
-     */
-    public boolean evaluateIsFact() {
-        final Struct s = (Struct) this.content;
-        // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
-        if (Struct.FUNCTOR_CLAUSE != s.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
-            return true;
-        }
-        // We know it's a clause functor, arity must be 2, check the body
-        final Object clauseBody = s.getRHS();
-        if (Struct.ATOM_TRUE.equals(clauseBody)) {
-            return true;
-        }
-        // The body is more complex, it's certainly a rule
-        return false;
-    }
-
-    private boolean evaluateIsWithClauseFunctor() {
+    private boolean calculateIsWithClauseFunctor() {
         return Struct.FUNCTOR_CLAUSE == ((Struct) (this.content)).getName(); // Names are {@link String#intern()}alized so OK to check by
                                                                              // reference
     }
 
     /**
-     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
-     * functor.
-     *
-     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
+     * @return true only if this Clause's content is a Struct which holds variables.
      */
-    public Object evaluateHead() {
-        if (this.isWithClauseFunctor) {
-            return ((Struct) this.content).getLHS();
-        }
-        return this.content;
-    }
-
-    /**
-     * @return The clause's body as a {@link Term}, normally a {@link Struct}.
-     */
-    public Object evaluateBody() {
-        if (this.isWithClauseFunctor) {
-            return ((Struct) this.content).getRHS();
-        }
-        return Struct.ATOM_TRUE;
-    }
-
-
-    public boolean needCloning() {
+    private boolean needCloning() {
         if (! (this.content instanceof Struct)) {
             return false;
         }
@@ -232,43 +231,43 @@ public class Clause {
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public boolean isFact() {
-        return this.isFact;
-    }
-
-    public Struct getContent() {
-        return content;
-    }
-
-    public Var[] getVars() {
-        return vars;
-    }
-
-    /**
-     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
-     * functor.
-     *
-     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
-     */
-    public Object getHead() {
-        return this.head;
-    }
-
-    /**
-     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
-     * functor.
-     *
-     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
-     */
-    public Object getBody() {
-        return this.body;
-    }
+//    public boolean isFact() {
+//        return this.isFact;
+//    }
+//
+//    private Object getContent() {
+//        return content;
+//    }
+//
+//    private Var[] getVars() {
+//        return vars;
+//    }
+//
+//    /**
+//     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
+//     * functor.
+//     *
+//     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
+//     */
+//    public Object getHead() {
+//        return this.head;
+//    }
+//
+//    /**
+//     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
+//     * functor.
+//     *
+//     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
+//     */
+//    public Object getBody() {
+//        return this.body;
+//    }
 
     /**
      * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.
      */
     public String getPredicateKey() {
-        return TermApi.getPredicateSignature(getHead());
+        return TermApi.getPredicateSignature(this.head);
     }
 
     // ---------------------------------------------------------------------------
