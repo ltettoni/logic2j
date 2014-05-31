@@ -71,7 +71,7 @@ public class Clause {
         // throw new InvalidTermException("Need a Struct to build a clause, not " + theClauseTerm);
         // }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
-        this.content = (Struct)TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
+        this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
         // Store vars into an array, indexed by the var's index
         final Set<Var> varSet = TermApi.allVars(content).keySet();
         this.vars = new Var[varSet.size()];

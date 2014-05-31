@@ -51,7 +51,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     public void assertSingleAtomFact() {
         noSolutions("aYetUnknownFact");
         // Assert
-        final Struct theFact = new Struct("aYetUnknownFact");
+        final Object theFact = "aYetUnknownFact";
         final int index = this.dynamic.assertFact(theFact); // Note: we use another string!
         assertEquals(0, index);
         uniqueSolution("" + "aYetUnknownFact");
