@@ -135,4 +135,7 @@ public class DefaultTermAdapter implements TermAdapter {
         }
     }
 
+    public void setNormalizer(TermMapper normalizer) {
+        this.normalizer = normalizer;
+    }
 }

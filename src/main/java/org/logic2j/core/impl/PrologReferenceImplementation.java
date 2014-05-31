@@ -94,13 +94,15 @@ public class PrologReferenceImplementation implements PrologImplementation {
             final PLibrary lib = new IOLibrary(this);
             this.libraryManager.loadLibrary(lib);
         }
-        this.termUnmarshaller.setNormalizer(new TermMapper() {
+        final TermMapper normalizer = new TermMapper() {
             @Override
             public Object apply(Object theTerm) {
                 return TermApi.normalize(theTerm, getLibraryManager().wholeContent());
             }
-        });
+        };
+        this.termUnmarshaller.setNormalizer(normalizer);
         this.termUnmarshaller.setOperatorManager(getOperatorManager());
+        ((DefaultTermAdapter)this.termAdapter).setNormalizer(normalizer);
     }
 
     // ---------------------------------------------------------------------------
