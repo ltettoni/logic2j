@@ -20,7 +20,7 @@ package org.logic2j.core.api;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 /**
  * Interface to access the inference engine algorithm, in order to solve goals.
@@ -46,8 +46,8 @@ public interface Solver {
      * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.model.Continuation#CONTINUE} for a successful
      *         complete result, or if the solving has been cut or aborted by user callback.
      */
-    Continuation solveGoal(Object goal, PoV pov, SolutionListener theSolutionListener);
+    Continuation solveGoal(Object goal, UnifyContext currentVars, SolutionListener theSolutionListener);
 
-    PoV initalPoV();
+    UnifyContext initialContext();
 
 }

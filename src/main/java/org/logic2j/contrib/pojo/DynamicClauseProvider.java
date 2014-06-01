@@ -20,8 +20,7 @@ package org.logic2j.contrib.pojo;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class DynamicClauseProvider implements ClauseProvider {
     }
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, PoV pov) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
         final List<Clause> nonNull = new ArrayList<Clause>(this.clauses.size());
         for (final Clause cl : this.clauses) {
             if (cl != null) {

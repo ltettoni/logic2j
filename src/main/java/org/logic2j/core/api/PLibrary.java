@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 /**
  * A library of Prolog primitives implemented in Java, as methods of a single class. Usually {@link PLibrary}es come together with an
@@ -29,6 +29,6 @@ public interface PLibrary {
 
     static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
 
-    Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener);
+    Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener);
 
 }

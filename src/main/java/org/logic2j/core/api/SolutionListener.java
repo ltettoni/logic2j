@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 /**
  * The lowest-level API through which the inference engine provides solutions. For easier programming, consider using
@@ -33,6 +33,6 @@ public interface SolutionListener {
      * @return The caller must return {@link Continuation#CONTINUE} for the inference engine to continue searching for other solutions, or
      *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation).
      */
-    Continuation onSolution(PoV thePoV);
+    Continuation onSolution(UnifyContext currentVars);
 
 }

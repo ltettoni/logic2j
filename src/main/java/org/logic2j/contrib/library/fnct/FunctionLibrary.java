@@ -20,7 +20,7 @@ package org.logic2j.contrib.library.fnct;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
@@ -42,7 +42,7 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -51,7 +51,7 @@ public class FunctionLibrary extends LibraryBase {
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
             if (theMethodName == "map") {
-//                result = map(theListener, pov, arg0, arg1, arg2);
+//                result = map(theListener, currentVars, arg0, arg1, arg2);
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
@@ -65,16 +65,16 @@ public class FunctionLibrary extends LibraryBase {
     // To be reworked completely - now that we don't have Bindings any longer
     
 //    @Primitive
-//    public Continuation map(SolutionListener theListener, final PoV pov, final Object thePredicate, final Object theInput, final Object theOutput) {
+//    public Continuation map(SolutionListener theListener, final UnifyContext currentVars, final Object thePredicate, final Object theInput, final Object theOutput) {
 //        if (!(thePredicate instanceof String)) {
 //            throw new InvalidTermException("Predicate for map/3 must be a String, was " + thePredicate);
 //        }
-//        final Object theInputBindings = pov.reify(theInput);
+//        final Object theInputBindings = currentVars.reify(theInput);
 //        if (theInputBindings == null) {
 //            // Anonymous var. No need to try to unify it will succeed. Notify one solution.
-//            notifySolution(theListener, pov);
+//            notifySolution(theListener, currentVars);
 //        } else {
-//            final Object theOutputBindings = pov.reify(theOutput);
+//            final Object theOutputBindings = currentVars.reify(theOutput);
 //
 //            final Object[] termAndBindings = new Object[] { theInputBindings, theInputBindings };
 //

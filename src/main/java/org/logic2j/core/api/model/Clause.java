@@ -18,10 +18,9 @@
 package org.logic2j.core.api.model;
 
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;
@@ -121,10 +120,10 @@ public class Clause {
         this.body = body;
     }
 
-    public void headAndBodyForSubgoal(PoV pov, Object[] clauseHeadAndBody) {
+    public void headAndBodyForSubgoal(UnifyContext currentVars, Object[] clauseHeadAndBody) {
         final Clause clonedClause;
         if (needCloning()) {
-            clonedClause = cloned(pov);
+            clonedClause = cloned(currentVars);
         } else {
             clonedClause = this;
         }
@@ -132,29 +131,29 @@ public class Clause {
         clauseHeadAndBody[1] = clonedClause.body; // Will be null for facts
     }
 
-    private Clause cloned(PoV pov) {
+    private Clause cloned(UnifyContext currentVars) {
         if (this.cache==null) {
             this.cache = new TreeMap<Integer, Clause>();
 //            logger.warn("Instantiating Clause cache for {}", this.content);
         }
-        final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(pov.topVarIndex);
+        final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(currentVars.topVarIndex);
         if (ceilingEntry==null) {
 //            logger.warn("Cloning {}", this);
             // No such entry: create and insert
-            final Clause clonedClause = cloneClauseAndRemapIndexes2(this, pov);
+            final Clause clonedClause = cloneClauseAndRemapIndexes2(this, currentVars);
             final int initialVarIndex = clonedClause.vars[0].getIndex(); // There MUST be at least one var otherwise we would not be cloning
             this.cache.put(initialVarIndex, clonedClause);
             return clonedClause;
         }
         final Clause reused = ceilingEntry.getValue();
-        pov.topVarIndex = reused.vars[reused.vars.length-1].getIndex() + 1;
+        currentVars.topVarIndex = reused.vars[reused.vars.length-1].getIndex() + 1;
 //        logger.warn("Reusing cloned clause {}", reused);
         return reused;
     }
 
 
 
-    private Clause cloneClauseAndRemapIndexes2(Clause theClause, PoV pov) {
+    private Clause cloneClauseAndRemapIndexes2(Clause theClause, UnifyContext currentVars) {
         ProfilingInfo.counter1++;
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
         final Var[] originalVars = theClause.vars;
@@ -170,13 +169,13 @@ public class Clause {
         final Struct cloned = cloneStruct((Struct)theClause.content, clonedVars);
         // Now reindex the cloned vars
         for (int i = 0; i < nbVars; i++) {
-            clonedVars[i].index += pov.topVarIndex;
+            clonedVars[i].index += currentVars.topVarIndex;
         }
         // And increment the highest Var index accordingly
-        pov.topVarIndex += nbVars;
+        currentVars.topVarIndex += nbVars;
 
-        if (pov.topVarIndex > ProfilingInfo.max1) {
-            ProfilingInfo.max1 = pov.topVarIndex;
+        if (currentVars.topVarIndex > ProfilingInfo.max1) {
+            ProfilingInfo.max1 = currentVars.topVarIndex;
         }
 //    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
         return new Clause(theClause, cloned, clonedVars);

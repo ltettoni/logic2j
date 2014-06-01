@@ -26,7 +26,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import javax.sql.DataSource;
@@ -72,11 +72,11 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     // ---------------------------------------------------------------------------
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, PoV pov) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
         if (!(theGoal instanceof Struct)) {
             throw new InvalidTermException("Need a Struct term instead of " + theGoal);
         }
-        final Struct goalStruct = (Struct) pov.reify(theGoal);
+        final Struct goalStruct = (Struct) currentVars.reify(theGoal);
         final String predicateName = goalStruct.getName();
         final SqlBuilder3 builder = new SqlBuilder3();
         builder.setInstruction(SqlBuilder3.SELECT);

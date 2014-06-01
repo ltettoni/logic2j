@@ -20,8 +20,7 @@ package org.logic2j.core.library.impl.io;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -44,22 +43,22 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         if (theMethodName == "nolog") {
-            result = nolog(theListener, pov, args);
+            result = nolog(theListener, currentVars, args);
         } else if (theMethodName == "write") {
-            result = write(theListener, pov, args);
+            result = write(theListener, currentVars, args);
         } else if (theMethodName == "info") {
-            result = info(theListener, pov, args);
+            result = info(theListener, currentVars, args);
         } else if (theMethodName == "isDebug") {
-            result = debug(theListener, pov, args);
+            result = debug(theListener, currentVars, args);
         } else if (theMethodName == "warn") {
-            result = warn(theListener, pov, args);
+            result = warn(theListener, currentVars, args);
         } else if (theMethodName == "error") {
-            result = error(theListener, pov, args);
+            result = error(theListener, currentVars, args);
         } else {
             result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }
@@ -67,64 +66,64 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation write(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         for (final Object term : terms) {
-            final Object value = pov.reify(term);
+            final Object value = currentVars.reify(term);
 
             String format = getProlog().getTermMarshaller().marshall(value).toString();
             format = IOLibrary.unquote(format);
             this.writer.print(format);
         }
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     @SuppressWarnings("unused")
     @Primitive
-    public Continuation nl(SolutionListener theListener, PoV pov) {
+    public Continuation nl(SolutionListener theListener, UnifyContext currentVars) {
         this.writer.print('\n');
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     @Primitive
-    public Continuation debug(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation debug(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isDebugEnabled()) {
-            final String substring = formatForLog(pov, terms);
+            final String substring = formatForLog(currentVars, terms);
             logger.debug(substring);
         }
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     @Primitive
-    public Continuation info(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation info(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isInfoEnabled()) {
-            final String substring = formatForLog(pov, terms);
+            final String substring = formatForLog(currentVars, terms);
             logger.info(substring);
         }
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     @Primitive
-    public Continuation warn(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation warn(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isWarnEnabled()) {
-            final String substring = formatForLog(pov, terms);
+            final String substring = formatForLog(currentVars, terms);
             logger.warn(substring);
         }
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     @Primitive
-    public Continuation error(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation error(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isErrorEnabled()) {
-            final String substring = formatForLog(pov, terms);
+            final String substring = formatForLog(currentVars, terms);
             logger.error(substring);
         }
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
-    private String formatForLog(PoV pov, Object... terms) {
+    private String formatForLog(UnifyContext currentVars, Object... terms) {
         final StringBuilder sb = new StringBuilder("P ");
         for (final Object term : terms) {
-            Object value = pov.reify(term);
+            Object value = currentVars.reify(term);
             ensureBindingIsNotAFreeVar(value, "log/*");
             final String format = getProlog().getTermMarshaller().marshall(value).toString();
             sb.append(format);
@@ -138,14 +137,14 @@ public class IOLibrary extends LibraryBase {
      * Replace any logging predicate by "nolog" to avoid any overhead with logging.
      * 
      * @param theListener
-     * @param theBindings
+     * @param currentVars
      * @param terms
      * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
      */
     @Primitive
-    public Continuation nolog(SolutionListener theListener, PoV pov, Object... terms) {
+    public Continuation nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         // Do nothing, but succeeds!
-        return notifySolution(theListener, pov);
+        return notifySolution(theListener, currentVars);
     }
 
     private static String unquote(String st) {

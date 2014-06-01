@@ -1,11 +1,9 @@
 package org.logic2j.core.api.monadic;
 
-import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +13,8 @@ import java.util.Map;
 /**
  * Created by Laurent on 07.05.2014.
  */
-public class PoV {
-    private static final Logger logger = LoggerFactory.getLogger(PoV.class);
+public class UnifyContext {
+    private static final Logger logger = LoggerFactory.getLogger(UnifyContext.class);
 //    static final Logger audit = LoggerFactory.getLogger("audit");
 
     final int currentTransaction;
@@ -25,11 +23,11 @@ public class PoV {
 
     private final StateEngineByLookup impl;
 
-    PoV(StateEngineByLookup implem) {
+    UnifyContext(StateEngineByLookup implem) {
         this(implem, 0, 0);
     }
 
-    PoV(StateEngineByLookup implem, int currentTransaction, int topVarIndex) {
+    UnifyContext(StateEngineByLookup implem, int currentTransaction, int topVarIndex) {
         this.impl = implem;
         this.currentTransaction = currentTransaction;
         this.topVarIndex = topVarIndex;
@@ -38,7 +36,7 @@ public class PoV {
     }
 
 
-    public PoV bind(Var var, Object ref) {
+    public UnifyContext bind(Var var, Object ref) {
         if (var == ref) {
             logger.debug("Not mapping {} onto itself", var);
             return this;
@@ -97,7 +95,7 @@ public class PoV {
         return result;
     }
 
-    public PoV unify(Object term1, Object term2) {
+    public UnifyContext unify(Object term1, Object term2) {
 //        audit.info("Unify  {}  ~  {}", term1, term2);
         if (term1 == term2) {
             return this;
@@ -160,7 +158,7 @@ public class PoV {
             final Object[] s1Args = s1.getArgs();
             final Object[] s2Args = s2.getArgs();
             final int arity = s1Args.length;
-            PoV runningMonad = this;
+            UnifyContext runningMonad = this;
             for (int i = 0; i < arity; i++) {
                 runningMonad = runningMonad.unify(s1Args[i], s2Args[i]);
                 if (runningMonad == null) {
@@ -178,7 +176,7 @@ public class PoV {
 
     @Override
     public String toString() {
-        return "pov#" + this.currentTransaction + impl.toString();
+        return "vars#" + this.currentTransaction + impl.toString();
     }
 
 
@@ -188,11 +186,11 @@ public class PoV {
 
 
     // We will use a separate class to implement a ThreadLocal if needed - maybe not
-//    private static final ThreadLocal<Reifier> currentInThread = new ThreadLocal<Reifier>() {
+//    private static final ThreadLocal<UnifyContext> currentInThread = new ThreadLocal<UnifyContext>() {
 //        @Override
-//        protected Reifier initialValue() {
-//            return new ReifierLookup().emptyPoV();
-////            return new ReifierStack().emptyPoV();
+//        protected UnifyContext initialValue() {
+//            return new StateEngineByLookup().emptyContext();
+////            return new StateEngineByLookup().emptyContext();
 //        }
 //    };
 
@@ -204,7 +202,7 @@ public class PoV {
 //        currentInThread.set(this);
 //    }
 //
-//    public static Reifier current() {
+//    public static UnifyContext current() {
 //        return currentInThread.get();
 //    }
 

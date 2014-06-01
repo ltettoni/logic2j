@@ -18,11 +18,7 @@
 package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.exception.MissingSolutionException;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
-import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +46,9 @@ public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
 
 
     @Override
-    public Continuation onSolution(PoV pov) {
-        results.add(extractor.extractSolution(pov));
-        return super.onSolution(pov);
+    public Continuation onSolution(UnifyContext currentVars) {
+        results.add(extractor.extractSolution(currentVars));
+        return super.onSolution(currentVars);
     }
 
     // ---------------------------------------------------------------------------

@@ -20,7 +20,7 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
@@ -198,7 +198,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         }
 
         @Override
-        public Continuation onSolution(PoV pov) {
+        public Continuation onSolution(UnifyContext currentVars) {
             this.counter++;
             return Continuation.USER_ABORT;
         }
@@ -215,7 +215,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         }
 
         @Override
-        public Continuation onSolution(PoV pov) {
+        public Continuation onSolution(UnifyContext currentVars) {
             this.counter++;
             final boolean requestContinue = this.counter < 5;
             return requestContinue ? Continuation.CONTINUE : Continuation.USER_ABORT;
@@ -233,7 +233,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         }
 
         @Override
-        public Continuation onSolution(PoV pov) {
+        public Continuation onSolution(UnifyContext currentVars) {
             this.counter++;
             return Continuation.CONTINUE;
         }

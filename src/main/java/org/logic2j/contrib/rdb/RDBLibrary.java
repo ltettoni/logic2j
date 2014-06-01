@@ -34,7 +34,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ReflectUtils;
@@ -47,7 +47,7 @@ import java.util.*;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(org.logic2j.core.api.SolutionListener, PoV, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO the {@link #select(org.logic2j.core.api.SolutionListener, org.logic2j.core.api.monadic.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);
@@ -70,12 +70,12 @@ public class RDBLibrary extends LibraryBase {
   }
 
   @Primitive
-  public Continuation select(SolutionListener theListener, PoV pov, Object... theArguments) throws SQLException {
+  public Continuation select(SolutionListener theListener, UnifyContext currentVars, Object... theArguments) throws SQLException {
     final Object theDataSource = theArguments[0];
     final Object theExpression = theArguments[1];
-    final DataSource ds = bound(theDataSource, pov, DataSource.class);
+    final DataSource ds = bound(theDataSource, currentVars, DataSource.class);
 
-      final Object finalExpression = pov.reify(theExpression);
+      final Object finalExpression = currentVars.reify(theExpression);
       ensureBindingIsNotAFreeVar(finalExpression, "select/*");
       final Struct conditions = (Struct) finalExpression;
 
@@ -266,7 +266,7 @@ public class RDBLibrary extends LibraryBase {
       int number = resultSet.intValue();
       while (number-- > 0) {
         // Generates solutions without binding variables, just the right number of them
-        notifySolution(theListener, pov);
+        notifySolution(theListener, currentVars);
       }
     } else {
         throw new UnsupportedOperationException("Feature not yet migrated to monadic version");
@@ -347,11 +347,11 @@ public class RDBLibrary extends LibraryBase {
 
   /**
    * @param theBinding
-   * @param pov
+   * @param currentVars
    *@param desiredClassOrInterface  @return The object bound to a Term by its name
    */
-  private <T> T bound(Object theBinding, PoV pov, Class<T> desiredClassOrInterface) {
-      final Object value = pov.reify(theBinding);
+  private <T> T bound(Object theBinding, UnifyContext currentVars, Class<T> desiredClassOrInterface) {
+      final Object value = currentVars.reify(theBinding);
       ensureBindingIsNotAFreeVar(value, "bound/1");
       final String bindingName = String.valueOf(value);
 

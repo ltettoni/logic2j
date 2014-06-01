@@ -20,7 +20,7 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.api.model.term.Struct;
@@ -40,15 +40,15 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
     private final OperatorManager operatorManager = DEFAULT_OPERATOR_MANAGER;
 
-    private final PoV pov;
+    private final UnifyContext currentVars;
 
     public DefaultTermMarshaller() {
         this(null);
     }
 
 
-    public DefaultTermMarshaller(PoV pov) {
-        this.pov = pov;
+    public DefaultTermMarshaller(UnifyContext currentVars) {
+        this.currentVars = currentVars;
     }
 
     @Override
@@ -68,8 +68,8 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     public CharSequence visit(Var theVar) {
         // logger.info("Visiting: {}", theVar);
         final Object finalValue;
-        if (this.pov != null) {
-            finalValue = this.pov.finalValue(theVar);
+        if (this.currentVars != null) {
+            finalValue = this.currentVars.finalValue(theVar);
         } else {
             finalValue = theVar;
         }

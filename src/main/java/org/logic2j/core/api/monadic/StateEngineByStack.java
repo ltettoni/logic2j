@@ -21,25 +21,6 @@ public class StateEngineByStack {
         refs = new Object[STACK_CHUNK];
     }
 
-/*
-
-  public Reifier emptyPoV() {
-        return new Reifier(this);
-    }
-
-    public Reifier bind(Var theVar, Object theRef, int topIndex, int topVarIndex) {
-        vars[topIndex] = theVar;
-        final Object finalRef = (theRef instanceof Var) ? dereference((Var) theRef, topIndex) : theRef;
-        refs[topIndex] = finalRef; // If theRef is a Var??? should we dereference it right now?
-        logger.debug(" bind {}->{}", theVar, theRef);
-        if (topIndex > ProfilingInfo.max1) {
-            ProfilingInfo.max1 = topIndex;
-        }
-        return new Reifier(this, topIndex + 1, topVarIndex);
-    }
-*/
-
-
 
 
 

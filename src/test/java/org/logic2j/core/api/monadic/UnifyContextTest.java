@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
 
-public class PoVTest {
-    private static final Logger logger = LoggerFactory.getLogger(PoVTest.class);
+public class UnifyContextTest {
+    private static final Logger logger = LoggerFactory.getLogger(UnifyContextTest.class);
 
     public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
     public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
@@ -34,7 +34,7 @@ public class PoVTest {
 
     protected Object f_ab, f_aZ, f_XY, f_XX, f_aZZ, f_XXa, f_XXb;
 
-    protected PoV initialPoV;
+    protected UnifyContext initialContext;
 
     @Before
     public void configureProlog() {
@@ -58,7 +58,7 @@ public class PoVTest {
         f_XXa = unmarshall("f(X4,X4,a)");
         f_XXb = unmarshall("f(X5,X5,b)");
 
-        initialPoV = new StateEngineByLookup().emptyPoV();
+        initialContext = new StateEngineByLookup().emptyContext();
 
         ProfilingInfo.setTimer1();
     }
@@ -68,25 +68,25 @@ public class PoVTest {
     }
 
 
-    private PoV bind(Var v, Object t2) {
+    private UnifyContext bind(Var v, Object t2) {
         logger.info("Binding   : {} -> {}", v, t2);
-        PoV m = initialPoV;
+        UnifyContext m = initialContext;
         assertNotNull(m);
-        PoV m2 = m.bind(v, t2);
+        UnifyContext m2 = m.bind(v, t2);
         assertNotNull(m2);
         assertNotSame(m, m2);
         //
         assertSame(v, m.reify(v));
         //logger.info("Reify under original monad: {}", reified(m, v));
-        logger.info("Term reified with returned PoV: {}", reified(m2, v));
+        logger.info("Term reified with returned UnifyContext: {}", reified(m2, v));
         return m2;
     }
 
 
-    private PoV unify(Object t1, Object t2) {
+    private UnifyContext unify(Object t1, Object t2) {
         logger.info("Unifying   : {}  ~  {}", t1, t2);
-        PoV m = initialPoV;
-        PoV m2 = m.unify(t1, t2);
+        UnifyContext m = initialContext;
+        UnifyContext m2 = m.unify(t1, t2);
         if (m2 != null) {
             logger.info("Unified");
             logger.info("Monad after: {}", m2);
@@ -97,7 +97,7 @@ public class PoVTest {
         return m2;
     }
 
-    public CharSequence reified(PoV r, Object term) {
+    public CharSequence reified(UnifyContext r, Object term) {
         return MARSHALLER.marshall(r.reify(term));
     }
 
@@ -111,7 +111,7 @@ public class PoVTest {
 
     @Test
     public void bindVarToVar() throws Exception {
-        PoV m2 = bind(X, Y);
+        UnifyContext m2 = bind(X, Y);
         assertSame(Y, m2.reify(X));
     }
 

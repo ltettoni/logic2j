@@ -19,7 +19,7 @@ package org.logic2j.core.api.model;
 
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 import java.util.Map;
 
@@ -52,9 +52,9 @@ public class Solution {
      * @note Maybe it could be more efficient to just clone the {@link TermBindings} and then calculate the solution on demand?
      * @param theBindings
      */
-    public Solution(Object theTerm, PoV thePoV) {
-        this.solution = thePoV.reify(theTerm);
-        this.varValues = thePoV.bindings(theTerm, FreeVarRepresentation.NULL);
+    public Solution(Object theTerm, UnifyContext currentVars) {
+        this.solution = currentVars.reify(theTerm);
+        this.varValues = currentVars.bindings(theTerm, FreeVarRepresentation.NULL);
     }
 
     public Solution(Object substituted, Map<String, Object> varValues) {

@@ -21,7 +21,7 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
 import static org.junit.Assert.assertEquals;
@@ -62,9 +62,9 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall("f(X, Y)");
         final Var v1 = TermApi.findVar(term, "X");
         final Var v2 = TermApi.findVar(term, "Y");
-        final PoV poV = getProlog().getSolver().initalPoV();
-        final PoV pov2 = poV.unify(v1, v2);
-        CharSequence formatted = new DefaultTermMarshaller(pov2).marshall(term);
+        final UnifyContext initialContext = getProlog().getSolver().initialContext();
+        final UnifyContext nextContext = initialContext.unify(v1, v2);
+        CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
         assertEquals("f(X, Y)", formatted);
     }
 
@@ -73,9 +73,9 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall("f(X, Y)");
         final Var v1 = TermApi.findVar(term, "X");
         final Var v2 = TermApi.findVar(term, "Y");
-        final PoV poV = getProlog().getSolver().initalPoV();
-        final PoV pov2 = poV.unify(v1, v2);
-        CharSequence formatted = new DefaultTermMarshaller(pov2).marshall(term);
+        final UnifyContext initialContext = getProlog().getSolver().initialContext();
+        final UnifyContext nextContext = initialContext.unify(v1, v2);
+        CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
         assertEquals("f(X, Y)", formatted);
     }
 

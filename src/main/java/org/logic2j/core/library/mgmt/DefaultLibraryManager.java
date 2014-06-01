@@ -26,7 +26,7 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
@@ -150,8 +150,8 @@ public class DefaultLibraryManager implements LibraryManager {
                     throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
                 }
                 i++;
-                if (!(PoV.class.isAssignableFrom(paramTypes[i]))) {
-                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + PoV.class);
+                if (!(UnifyContext.class.isAssignableFrom(paramTypes[i]))) {
+                    throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + UnifyContext.class);
                 }
                 i++;
                 boolean varargs = false;

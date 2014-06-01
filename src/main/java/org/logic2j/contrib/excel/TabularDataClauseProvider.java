@@ -24,7 +24,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
     }
 
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, PoV pov) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
         final String predicateSignature = TermApi.getPredicateSignature(theGoal);
         switch (this.mode) {
         case EAV_NAMED:

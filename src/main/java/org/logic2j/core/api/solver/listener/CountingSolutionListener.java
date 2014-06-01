@@ -19,11 +19,11 @@ package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 /**
  * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached.
- * The {@link #onSolution(PoV)} method always returns Continuation.CONTINUE (dangerously allowing for potential
+ * The {@link #onSolution(org.logic2j.core.api.monadic.UnifyContext)} method always returns Continuation.CONTINUE (dangerously allowing for potential
  * infinite generation). Derive from this class to ease the programming of
  * {@link SolutionListener}s in application code.
  */
@@ -38,7 +38,7 @@ public class CountingSolutionListener implements SolutionListener {
 
 
     @Override
-    public Continuation onSolution(PoV pov) {
+    public Continuation onSolution(UnifyContext currentVars) {
         this.counter++;
         if (DEBUG_ENABLED) {
             logger.debug(" onSolution(#{})", this.counter);

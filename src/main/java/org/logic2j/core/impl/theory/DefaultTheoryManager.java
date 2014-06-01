@@ -24,7 +24,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
 import org.logic2j.core.impl.util.ReflectUtils;
@@ -205,11 +205,11 @@ public class DefaultTheoryManager implements TheoryManager {
 
     /**
      * @param theGoal
-     * @param pov Not used in this method
+     * @param currentVars Not used in this method
      * @return All {@link Clause}s from the {@link TheoryContent} that may match theGoal.
      */
     @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, PoV pov) {
+    public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
         return this.wholeContent.find(theGoal);
     }
 

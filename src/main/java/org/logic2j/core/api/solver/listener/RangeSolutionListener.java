@@ -19,14 +19,11 @@ package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.exception.IllegalSolutionException;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
@@ -40,7 +37,7 @@ public class RangeSolutionListener<T> implements SolutionListener {
     private long maxFetch; // Stop generating after this number of solutions
 
     /**
-     * Current solution counter (number of times {@link #onSolution(org.logic2j.core.api.monadic.PoV)} was called)
+     * Current solution counter (number of times {@link #onSolution(org.logic2j.core.api.monadic.UnifyContext)} was called)
      */
     protected long counter;
 
@@ -58,7 +55,7 @@ public class RangeSolutionListener<T> implements SolutionListener {
 
 
     @Override
-    public Continuation onSolution(PoV pov) {
+    public Continuation onSolution(UnifyContext currentVars) {
         this.counter++;
         if (this.counter > this.maxCount) {
             // OOps, we already had solutions? This is not desired

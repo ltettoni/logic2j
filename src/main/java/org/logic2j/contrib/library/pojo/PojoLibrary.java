@@ -22,7 +22,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
@@ -49,7 +49,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final int arity = theGoalStruct.getArity();
@@ -57,7 +57,7 @@ public class PojoLibrary extends LibraryBase {
             final Object arg0 = theGoalStruct.getArg(0);
             final Object arg1 = theGoalStruct.getArg(1);
             if (theMethodName == "bind") {
-                result = bind(theListener, pov, arg0, arg1);
+                result = bind(theListener, currentVars, arg0, arg1);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -66,7 +66,7 @@ public class PojoLibrary extends LibraryBase {
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
             if (theMethodName == "property") {
-                result = property(theListener, pov, arg0, arg1, arg2);
+                result = property(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -101,23 +101,23 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation bind(final SolutionListener theListener, PoV pov, Object theBindingName, Object theTarget) {
-        final Object nameTerm = pov.reify(theBindingName);
+    public Continuation bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
+        final Object nameTerm = currentVars.reify(theBindingName);
         ensureBindingIsNotAFreeVar(nameTerm, "bind/2");
 
         final String name = nameTerm.toString();
         final Object instance = extract(name);
         final Object instanceTerm = createConstantTerm(instance);
-        return unifyInternal(theListener, pov, instanceTerm, theTarget);
+        return unifyInternal(theListener, currentVars, instanceTerm, theTarget);
     }
 
     @Primitive
-    public Continuation property(final SolutionListener theListener, PoV pov, Object thePojo, Object thePropertyName, Object theValue) {
+    public Continuation property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
-        final Object pojo = pov.reify(thePojo);
+        final Object pojo = currentVars.reify(thePojo);
         ensureBindingIsNotAFreeVar(pojo, "property/3");
         // Second argument
-        final Object propertyName = pov.reify(thePropertyName);
+        final Object propertyName = currentVars.reify(thePropertyName);
         ensureBindingIsNotAFreeVar(propertyName, "property/3");
         //
         Object javaValue = introspect(pojo, (String)propertyName);
@@ -129,7 +129,7 @@ public class PojoLibrary extends LibraryBase {
             // Convert collection to a Prolog list
             javaValue = getProlog().getTermAdapter().term(javaValue, FactoryMode.ATOM);
         }
-        return unifyInternal(theListener, pov, javaValue, theValue);
+        return unifyInternal(theListener, currentVars, javaValue, theValue);
     }
 
     /**

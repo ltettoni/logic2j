@@ -49,13 +49,13 @@ public class StateEngineByLookup {
         logOfWrittenSlots = Arrays.copyOf(logOfWrittenSlots, newLength);
     }
 
-    public PoV emptyPoV() {
-        return new PoV(this);
+    public UnifyContext emptyContext() {
+        return new UnifyContext(this);
     }
 
-    public PoV bind(PoV pov, Var theVar, Object theRef) {
+    public UnifyContext bind(UnifyContext currentVars, Var theVar, Object theRef) {
         logger.debug(" bind {}->{}", theVar, theRef);
-        final int transactionNumber = pov.currentTransaction;
+        final int transactionNumber = currentVars.currentTransaction;
         cleanupTo(transactionNumber);
         final int slot = theVar.getIndex();
         // Handle array sizing overflow
@@ -69,7 +69,7 @@ public class StateEngineByLookup {
         if (finalRef instanceof Var) {
             if (finalRef==theVar) {
                 // OOps, trying to bound Var to same Var (after its the ref was dereferenced)
-                return pov; // So no change
+                return currentVars; // So no change
             }
             final Var finalVar = (Var) finalRef;
             final short finalVarIndex = finalVar.getIndex();
@@ -83,7 +83,7 @@ public class StateEngineByLookup {
 //        if (slot > ProfilingInfo.max1) {
 //            ProfilingInfo.max1 = slot;
 //        }
-        return new PoV(this, transactionNumber + 1, pov.topVarIndex);
+        return new UnifyContext(this, transactionNumber + 1, currentVars.topVarIndex);
     }
 
 
@@ -121,12 +121,12 @@ public class StateEngineByLookup {
 
     private void cleanupTo(int transactionNumber) {
         if (logWatermark > transactionNumber) {
-            // Reifier.audit.info("Cleanup  {} up to {}", logWatermark, transactionNumber);
+            // UnifyContext.audit.info("Cleanup  {} up to {}", logWatermark, transactionNumber);
             while (logWatermark > transactionNumber) {
                 int slotToCleanup = logOfWrittenSlots[--logWatermark];
                 transaction[slotToCleanup] = -1;
             }
-            // Reifier.audit.info(" after, watermark={}", logWatermark);
+            // UnifyContext.audit.info(" after, watermark={}", logWatermark);
         }
     }
 

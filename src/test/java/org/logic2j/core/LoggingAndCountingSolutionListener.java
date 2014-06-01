@@ -1,7 +1,7 @@
 package org.logic2j.core;
 
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +20,12 @@ public class LoggingAndCountingSolutionListener extends CountingSolutionListener
     }
 
     @Override
-    public Continuation onSolution(PoV thePoV) {
+    public Continuation onSolution(UnifyContext currentVars) {
         if (logger.isInfoEnabled()) {
-            final Object value = thePoV.reify(theGoal);
+            final Object value = currentVars.reify(theGoal);
             logger.info(" solution: {}", value);
         }
-        return super.onSolution(thePoV);
+        return super.onSolution(currentVars);
     }
 
     public void report() {

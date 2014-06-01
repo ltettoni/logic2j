@@ -20,8 +20,7 @@ package org.logic2j.contrib.rdb;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -46,8 +45,8 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void listMatchingClauses() {
         this.provider.saveTableInfo("zip_code", new String[] { "zip_code", "city" });
         final Object goal = getProlog().getTermUnmarshaller().unmarshall("zip_code(Zip, City)");
-        final PoV pov = getProlog().getSolver().initalPoV();
-        final Iterator<Clause> iterator = this.provider.listMatchingClauses(goal, pov).iterator();
+        final UnifyContext currentVars = getProlog().getSolver().initialContext();
+        final Iterator<Clause> iterator = this.provider.listMatchingClauses(goal, currentVars).iterator();
         int counter;
         for (counter = 0; iterator.hasNext(); iterator.next()) {
             counter++;

@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -48,11 +48,11 @@ public class LibraryBase implements PLibrary {
      *
      * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
-     * @param pov           Regular argument for invoking a primitive
+     * @param currentVars           Regular argument for invoking a primitive
      * @param theListener   Regular argument for invoking a primitive
      */
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, PoV pov, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
 
@@ -61,24 +61,24 @@ public class LibraryBase implements PLibrary {
      * Notify theSolutionListener that a solution has been found.
      *
      * @param theSolutionListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.UnifyContext)}
      */
-    protected Continuation notifySolution(SolutionListener theSolutionListener, PoV pov) {
-        final Continuation continuation = theSolutionListener.onSolution(pov);
+    protected Continuation notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
+        final Continuation continuation = theSolutionListener.onSolution(currentVars);
         return continuation;
     }
 
     /**
-     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.monadic.PoV)}. Otherwise nothing is done.
+     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.monadic.UnifyContext)}. Otherwise nothing is done.
      *
      * @param unified
      * @param theListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.PoV)}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.UnifyContext)}
      */
-    protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener, PoV pov) {
+    protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener, UnifyContext currentVars) {
         final Continuation continuation;
         if (unified) {
-            continuation = notifySolution(theListener, pov);
+            continuation = notifySolution(theListener, currentVars);
         } else {
             continuation = Continuation.CONTINUE;
         }
@@ -107,8 +107,8 @@ public class LibraryBase implements PLibrary {
     }
 
 
-    protected Continuation unifyInternal(SolutionListener theListener, PoV pov, Object t1, Object t2) {
-        final PoV after = pov.unify(t1, t2);
+    protected Continuation unifyInternal(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
+        final UnifyContext after = currentVars.unify(t1, t2);
         if (after == null) {
             // Not unified
             return Continuation.CONTINUE;
@@ -121,11 +121,11 @@ public class LibraryBase implements PLibrary {
      * Format a Term with renditions of final vars, and taking operators into account.
      *
      * @param theTerm
-     * @param pov
+     * @param currentVars
      * @return The formatted String
      */
-    protected String format(Object theTerm, final PoV pov) {
-        final TermMarshaller niceFormat2 = new DefaultTermMarshaller(pov);
+    protected String format(Object theTerm, final UnifyContext currentVars) {
+        final TermMarshaller niceFormat2 = new DefaultTermMarshaller(currentVars);
         final String formatted = niceFormat2.marshall(theTerm).toString();
         return formatted;
     }

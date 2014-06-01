@@ -17,15 +17,11 @@
  */
 package org.logic2j.core.api.solver.listener;
 
-import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
@@ -57,11 +53,11 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
 
 
     @Override
-    public T extractSolution(PoV pov) {
+    public T extractSolution(UnifyContext currentVars) {
         if (var == Var.WHOLE_SOLUTION_VAR) {
-            return (T)pov.reify(goal);
+            return (T)currentVars.reify(goal);
         } else {
-            return (T)pov.reify(var);
+            return (T)currentVars.reify(var);
         }
     }
 }

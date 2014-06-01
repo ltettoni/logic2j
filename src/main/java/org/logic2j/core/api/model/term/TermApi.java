@@ -21,7 +21,7 @@ import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.visitor.ExtendedTermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
@@ -243,11 +243,11 @@ public class TermApi {
     /**
      * Evaluates an expression. Returns null value if the argument is not an evaluable expression
      */
-    public static Object evaluate(Object theTerm, PoV pov) {
+    public static Object evaluate(Object theTerm, UnifyContext currentVars) {
         if (theTerm == null) {
             return null;
         }
-        theTerm = pov.reify(theTerm);
+        theTerm = currentVars.reify(theTerm);
         // TODO are the lines below this exactly as in substitute() method?
         if (theTerm instanceof Var) {
             return null;
@@ -264,7 +264,7 @@ public class TermApi {
                 // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
                 return null;
             }
-            final Object result = primInfo.invoke(struct, pov, /* no listener */null);
+            final Object result = primInfo.invoke(struct, currentVars, /* no listener */null);
             return result;
         }
         return theTerm;

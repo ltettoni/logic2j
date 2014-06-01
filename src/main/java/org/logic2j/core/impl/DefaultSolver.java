@@ -20,11 +20,9 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.logic2j.core.impl.util.ReportUtils;
@@ -48,34 +46,34 @@ public class DefaultSolver implements Solver {
 
     @Override
     public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
-        final PoV initialPoV = initalPoV();
+        final UnifyContext initialContext = initialContext();
         if (goal instanceof Struct) {
             // We will need to clone Clauses during resolution, hence the base index
             // for any new var must be higher than any of the currently used vars.
-            initialPoV.topVarIndex += ((Struct)goal).getIndex();
+            initialContext.topVarIndex += ((Struct)goal).getIndex();
         }
-        return solveGoal(goal, initialPoV, theSolutionListener);
+        return solveGoal(goal, initialContext, theSolutionListener);
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.monadic.PoV, org.logic2j.core.api.SolutionListener)} method. The goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.monadic.UnifyContext, org.logic2j.core.api.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      */
     @Override
-    public Continuation solveGoal(Object goal, PoV pov, final SolutionListener theSolutionListener) {
+    public Continuation solveGoal(Object goal, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Check if we will have to deal with DataFacts in this session of solving.
         // This slightly improves performance - we can bypass calling the method that deals with that
 
-        return solveGoalRecursive(goal, pov, theSolutionListener);
+        return solveGoalRecursive(goal, currentVars, theSolutionListener);
     }
 
     @Override
-    public PoV initalPoV() {
-        final PoV initialPoV = new StateEngineByLookup().emptyPoV();
-        return initialPoV;
+    public UnifyContext initialContext() {
+        final UnifyContext initialContext = new StateEngineByLookup().emptyContext();
+        return initialContext;
     }
 
-    public Continuation solveGoalRecursive(final Object goalTerm, final PoV reifier, final SolutionListener theSolutionListener) {
+    public Continuation solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
         if (isDebug) {
             logger.debug(">> Entering solveRecursive(\"{}\")", goalTerm);
         }
@@ -115,19 +113,19 @@ public class DefaultSolver implements Solver {
                 listeners[index] = new SolutionListener() {
 
                     @Override
-                    public Continuation onSolution(PoV theReifier) {
+                    public Continuation onSolution(UnifyContext currentVars) {
                         if (isDebug) {
                             logger.debug("AND's internal solution listener called for {}", lhs);
                         }
                         final int nextIndex = index + 1;
                         final Object rhs = goalStruct.getArg(nextIndex); // Usually the right-hand-side of a binary ','
-                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, theReifier, listeners[nextIndex]);
+                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, listeners[nextIndex]);
                         return continuationFromSubGoal;
                     }
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
-            result = solveGoalRecursive(lhs, reifier, listeners[0]);
+            result = solveGoalRecursive(lhs, currentVars, listeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             if (isDebug) {
                 logger.debug("Handling OR, arity={}", arity);
@@ -141,7 +139,7 @@ public class DefaultSolver implements Solver {
             */
             for (int i = 0; i < arity; i++) {
                 // Solve all the left and right-and-sides, sequentially
-                result = solveGoalRecursive(goalStruct.getArg(i), reifier, theSolutionListener);
+                result = solveGoalRecursive(goalStruct.getArg(i), currentVars, theSolutionListener);
                 if (result == Continuation.CUT) {
                     break;
                 }
@@ -153,8 +151,8 @@ public class DefaultSolver implements Solver {
                 throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
             }
             final Object argumentOfCall = goalStruct.getArg(0);
-            final Object argumentOfCall2 = reifier.reify(argumentOfCall);
-            result = solveGoalRecursive(argumentOfCall2, reifier, theSolutionListener);
+            final Object argumentOfCall2 = currentVars.reify(argumentOfCall);
+            result = solveGoalRecursive(argumentOfCall2, currentVars, theSolutionListener);
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
@@ -162,7 +160,7 @@ public class DefaultSolver implements Solver {
             // Functionally, this code may be removed
 
             // Cut IS a valid solution in itself. We just ignore what the app tells us to do next.
-            theSolutionListener.onSolution(reifier);
+            theSolutionListener.onSolution(currentVars);
             // Stopping there for this iteration
             result = Continuation.CUT;
         } else if (prim != null) {
@@ -170,7 +168,7 @@ public class DefaultSolver implements Solver {
             // Primitive implemented in Java
             // ---------------------------------------------------------------------------
 
-            final Object resultOfPrimitive = prim.invoke(goalStruct, reifier, theSolutionListener);
+            final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars, theSolutionListener);
             // Extract necessary objects from our current state
 
             switch (prim.getType()) {
@@ -189,7 +187,7 @@ public class DefaultSolver implements Solver {
             }
 
         } else {
-            result = solveAgainstClauseProviders(goalTerm, reifier, theSolutionListener);
+            result = solveAgainstClauseProviders(goalTerm, currentVars, theSolutionListener);
 
         }
         if (isDebug) {
@@ -199,7 +197,7 @@ public class DefaultSolver implements Solver {
     }
 
 
-    private Continuation solveAgainstClauseProviders(final Object goalTerm, PoV reifier, final SolutionListener theSolutionListener) {
+    private Continuation solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
 
 
@@ -208,7 +206,7 @@ public class DefaultSolver implements Solver {
         final Object[] clauseHeadAndBody = new Object[2];
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
         for (final ClauseProvider provider : providers) {
-            final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, reifier);
+            final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, currentVars);
             if (matchingClauses == null) {
                 continue;
             }
@@ -233,8 +231,8 @@ public class DefaultSolver implements Solver {
 //                final Object clauseHead;
 //                if (clause.needCloning()) {
 //                    // Clone the variables so that we won't mutate our current clause's ones
-//                    // clonedClause = (Struct) reifier.cloneClauseAndRemapIndexes(clause);
-//                    clonedClause = (Struct)clause.cloned(reifier).getContent();
+//                    // clonedClause = (Struct) currentVars.cloneClauseAndRemapIndexes(clause);
+//                    clonedClause = (Struct)clause.cloned(currentVars).getContent();
 //                    final boolean isRule = Struct.FUNCTOR_CLAUSE == clonedClause.getName() && clonedClause.getArity()==2;
 //                    clauseHead = isRule ? clonedClause.getArg(0) : clonedClause;
 //
@@ -245,7 +243,7 @@ public class DefaultSolver implements Solver {
                 // final boolean isFact = clause.isFact();
                 // final Object clauseHead = isFact ? clonedClause : clonedClause.getArg(0);
 
-                clause.headAndBodyForSubgoal(reifier, clauseHeadAndBody);
+                clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
                 final Object clauseHead = clauseHeadAndBody[0];
 
                 if (isDebug) {
@@ -253,8 +251,8 @@ public class DefaultSolver implements Solver {
                     logger.debug("  to clause head: {}", clauseHead);
                 }
 
-                final PoV reifier2 = reifier.unify(goalTerm, clauseHead);
-                boolean headUnified = reifier2 != null;
+                final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, clauseHead);
+                boolean headUnified = varsAfterHeadUnified != null;
                 if (isDebug) {
                     logger.debug(" headUnified={}", headUnified);
                 }
@@ -268,7 +266,7 @@ public class DefaultSolver implements Solver {
                             logger.debug("{} is a fact, callback one solution", clauseHead);
                         }
                         // Notify one solution, and handle result if user wants to continue or not.
-                        continuation = theSolutionListener.onSolution(reifier2);
+                        continuation = theSolutionListener.onSolution(varsAfterHeadUnified);
                         if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
                             result = continuation;
                         }
@@ -279,7 +277,7 @@ public class DefaultSolver implements Solver {
                             logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
                         }
                         // Solve the body in our current recursion context
-                        continuation = solveGoalRecursive(newGoalTerm, reifier2, theSolutionListener);
+                        continuation = solveGoalRecursive(newGoalTerm, varsAfterHeadUnified, theSolutionListener);
                         if (isDebug) {
                             logger.debug("  back to clause {} with continuation={}", clause, continuation);
                         }

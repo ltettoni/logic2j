@@ -3,7 +3,7 @@ package org.logic2j.core;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +38,19 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     }
 
     @Override
-    public Continuation onSolution(PoV thePoV) {
-        final Object solution = thePoV.reify(goal);
+    public Continuation onSolution(UnifyContext currentVars) {
+        final Object solution = currentVars.reify(goal);
         logger.info(" solution: {}", solution);
 
         final Map<String, Object> solutionVars = new HashMap<String, Object>();
         solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution
         for (Var var : vars) {
-            final Object varValue = thePoV.finalValue(var);
+            final Object varValue = currentVars.finalValue(var);
             solutionVars.put(var.getName(), varValue);
         }
         this.solutions.add(solutionVars);
 
-        return super.onSolution(thePoV);
+        return super.onSolution(currentVars);
     }
 
     public void report() {

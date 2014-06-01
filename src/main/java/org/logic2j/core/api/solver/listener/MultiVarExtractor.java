@@ -17,16 +17,12 @@
  */
 package org.logic2j.core.api.solver.listener;
 
-import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.PoV;
+import org.logic2j.core.api.monadic.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
@@ -46,11 +42,11 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
 
 
     @Override
-    public Map<Var, Object> extractSolution(PoV pov) {
+    public Map<Var, Object> extractSolution(UnifyContext currentVars) {
         final Map<Var, Object> result = new HashMap<Var, Object>();
         for (Var v : vars) {
             final Object value;
-            value = pov.reify(v);
+            value = currentVars.reify(v);
             result.put(v, value);
         }
         return result;
