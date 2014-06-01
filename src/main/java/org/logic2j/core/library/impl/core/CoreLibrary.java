@@ -17,8 +17,10 @@
  */
 package org.logic2j.core.library.impl.core;
 
+import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.Solver;
+import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
@@ -27,6 +29,7 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.DefaultSolver;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 
@@ -174,10 +177,10 @@ public class CoreLibrary extends LibraryBase {
                 result = multiply(theListener, currentVars, arg0, arg1);
             } else if (theMethodName == "notUnify") {
                 result = notUnify(theListener, currentVars, arg0, arg1);
-//            } else if (theMethodName == "clause") {
-//                result = clause(theListener, currentVars, arg0, arg1);
-//            } else if (theMethodName == "predicate2PList") {
-//                result = predicate2PList(theListener, currentVars, arg0, arg1);
+            } else if (theMethodName == "clause") {
+                result = clause(theListener, currentVars, arg0, arg1);
+            } else if (theMethodName == "predicate2PList") {
+                result = predicate2PList(theListener, currentVars, arg0, arg1);
             } else if (theMethodName == "atom_length") {
                 result = atom_length(theListener, currentVars, arg0, arg1);
             } else {
@@ -366,69 +369,63 @@ public class CoreLibrary extends LibraryBase {
         return unify(theListener, currentVars, listLength, theLength);
     }
 
-//    @Primitive
-//    public Continuation clause(SolutionListener theListener, UnifyContext currentVars, Object theHead, Object theBody) {
-//        final Binding dereferencedBinding;
-//        if (theHead instanceof Var) {
-//            dereferencedBinding = ((Var) theHead).bindingWithin(theTermBindings).followLinks();
-//        } else {
-//            dereferencedBinding = Binding.newLiteral(theHead, theTermBindings);
-//        }
-//        final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argumnent for clause/2", dereferencedBinding.getTerm(), Struct.class);
-//        for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
-//            for (final Clause clause : cp.listMatchingClauses(realHead, theTermBindings)) {
-//                // Clone the clause so that we can unify against its bindings
-//                final Clause clauseToUnify = new Clause(clause);
-//                final boolean headUnified = unify(clauseToUnify.getHead(), clauseToUnify.getTermBindings(), realHead, dereferencedBinding.getTermBindings());
-//                if (headUnified) {
-//                    try {
-//                        final boolean bodyUnified = unify(clauseToUnify.getBody(), clauseToUnify.getTermBindings(), theBody, theTermBindings);
-//                        if (bodyUnified) {
-//                            try {
-//                                notifySolution(theListener);
-//                            } finally {
-//                                deunify();
-//                            }
-//                        }
-//                    } finally {
-//                        deunify();
-//                    }
-//                }
-//            }
-//        }
-//        return Continuation.CONTINUE;
-//    }
-//
-//    @Primitive(name = "=..")
-//    public Continuation predicate2PList(final SolutionListener theListener, UnifyContext currentVars, Object thePredicate, Object theList) {
-//        TermBindings resolvedBindings = theTermBindings.narrow(thePredicate, Object.class);
-//        Continuation continuation = Continuation.CONTINUE;
-//
-//        if (resolvedBindings.isFreeReferrer()) {
-//            // thePredicate is still free, going ot match from theList
-//            resolvedBindings = theTermBindings.narrow(theList, Term.class);
-//            ensureBindingIsNotAFreeVar(resolvedBindings, "=../2");
-//            final Struct lst2 = (Struct) resolvedBindings.getReferrer();
-//            final Struct flattened = lst2.predicateFromPList();
-//            final boolean unified = unify(thePredicate, currentVars, flattened, resolvedBindings);
-//            continuation = notifyIfUnified(unified, theListener);
-//        } else {
-//            final Object predResolved = resolvedBindings.getReferrer();
-//            if (predResolved instanceof Struct) {
-//                final Struct struct = (Struct) predResolved;
-//                final ArrayList<Object> elems = new ArrayList<Object>();
-//                elems.add(new Struct(struct.getName())); // Only copying the functor as an atom, not a deep copy of the struct!
-//                final int arity = struct.getArity();
-//                for (int i = 0; i < arity; i++) {
-//                    elems.add(struct.getArg(i));
-//                }
-//                final Struct plist = Struct.createPList(elems);
-//                final boolean unified = unify(theList, currentVars, plist, resolvedBindings);
-//                continuation = notifyIfUnified(unified, theListener);
-//            }
-//        }
-//        return continuation;
-//    }
+    @Primitive
+    public Continuation clause(SolutionListener theListener, UnifyContext currentVars, Object theHead, Object theBody) {
+        final Object headValue = currentVars.reify(theHead);
+        final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argument for clause/2", headValue, Struct.class);
+        final Object[] clauseHeadAndBody = new Object[2];
+        for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
+            for (final Clause clause : cp.listMatchingClauses(realHead, currentVars)) {
+                // Clone the clause so that we can unify against its bindings
+                clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
+                final Object clauseHead = clauseHeadAndBody[0];
+                final UnifyContext varsAfterHeadUnified = currentVars.unify(realHead, clauseHead);
+                final boolean headUnified = varsAfterHeadUnified != null;
+                if (headUnified) {
+                    // Determine body
+                    final boolean isRule = clauseHeadAndBody[1] != null;
+                    final Object clauseBody = isRule ? clauseHeadAndBody[1] : Struct.ATOM_TRUE;
+                    // Unify Body
+                    final UnifyContext varsAfterBodyUnified = varsAfterHeadUnified.unify(clauseBody, theBody);
+                    if (varsAfterBodyUnified != null) {
+                        final Continuation continuation = notifySolution(theListener, varsAfterBodyUnified);
+                        if (continuation != Continuation.CONTINUE) {
+                            return continuation;
+                        }
+                    }
+                }
+            }
+        }
+        return Continuation.CONTINUE;
+    }
+
+    @Primitive(name = "=..")
+    public Continuation predicate2PList(final SolutionListener theListener, UnifyContext currentVars, Object thePredicate, Object theList) {
+        final Object predicateValue = currentVars.reify(thePredicate);
+        if (predicateValue instanceof Var) {
+            // thePredicate is still free, going ot match from theList
+            final Object listValue = currentVars.reify(theList);
+            ensureBindingIsNotAFreeVar(listValue, "=../2");
+            final Struct lst2 = (Struct) listValue;
+            final Struct flattened = lst2.predicateFromPList();
+
+            return unify(theListener, currentVars, predicateValue, flattened);
+        } else {
+            // thePredicate is bound
+            if (predicateValue instanceof Struct) {
+                final Struct struct = (Struct) predicateValue;
+                final int arity = struct.getArity();
+                final ArrayList<Object> elems = new ArrayList<Object>(1 + arity);
+                elems.add(struct.getName());
+                for (Object arg : struct.getArgs()) {
+                    elems.add(arg);
+                }
+                final Struct plist = Struct.createPList(elems);
+                return unify(theListener, currentVars, plist, theList);
+            }
+        }
+        return Continuation.CONTINUE;
+    }
 
     @Primitive
     public Continuation is(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {

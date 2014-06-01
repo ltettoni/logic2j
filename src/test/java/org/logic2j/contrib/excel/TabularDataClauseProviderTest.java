@@ -74,21 +74,6 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         assertEquals("[7.8, 65.0, 85.4]", sixSolutions.var("Pop").list().toString());
     }
 
-    /**
-     * @param goalHolder
-     * @return All variables of a GoalHolder, ordered by name, converted to String.
-     */
-    protected String varsSortedToString(GoalHolder goalHolder) {
-        final List<Map<Var, Object>> listOfSortedMaps = new ArrayList<Map<Var, Object>>();
-        for (Map<Var, Object> unorderedMap: goalHolder.vars().list()) {
-            final TreeMap<Var, Object> orderedMap = new TreeMap<Var, Object>(Var.COMPARATOR_BY_NAME);
-            orderedMap.putAll(unorderedMap);
-            listOfSortedMaps.add(orderedMap);
-
-        }
-        return listOfSortedMaps.toString();
-    }
-
     @Test
     public void tabularClauseProvider_eav_big() {
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), largeData(), TermAdapter.AssertionMode.EAV_NAMED);

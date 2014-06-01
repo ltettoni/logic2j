@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
@@ -35,6 +36,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.*;
 
@@ -98,16 +101,6 @@ public abstract class PrologTestBase {
             assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.getCounter());
         }
     }
-
-
-//    /**
-//     * Make sure there are no soutions.
-//     *
-//     * @param theGoals All goals to check for
-//     */
-//    protected void countNoSolution(CharSequence... theGoals) {
-//        internalAssert(0, theGoals);
-//    }
 
 
     // FIXME Not good, should use direct Junit and expected=...
@@ -275,6 +268,20 @@ public abstract class PrologTestBase {
         return this.prolog.getLibraryManager().loadLibrary(theLibrary);
     }
 
+
+    /**
+     * @param goalHolder
+     * @return All variables of a GoalHolder, ordered by name, converted to String.
+     */
+    protected String varsSortedToString(GoalHolder goalHolder) {
+        final List<Map<Var, Object>> listOfSortedMaps = new ArrayList<Map<Var, Object>>();
+        for (Map<Var, Object> unorderedMap: goalHolder.vars().list()) {
+            final TreeMap<Var, Object> orderedMap = new TreeMap<Var, Object>(Var.COMPARATOR_BY_NAME);
+            orderedMap.putAll(unorderedMap);
+            listOfSortedMaps.add(orderedMap);
+        }
+        return listOfSortedMaps.toString();
+    }
 
     protected long solveWithLoggingAndCountingListener(Object goal) {
         final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
