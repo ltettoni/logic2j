@@ -1,5 +1,6 @@
 package org.logic2j.core.api.unify;
 
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
@@ -173,6 +174,37 @@ public class UnifyContext {
         }
     }
 
+
+    public UnifyContext unify(Object term1, DataFact dataFact) {
+        if (!(term1 instanceof Struct)) {
+            // Only Struct could match a DataFact
+            return null;
+        }
+        final Struct struct = (Struct) term1;
+        final Object[] dataFactElements = dataFact.elements;
+        if (struct.getName() != dataFactElements[0]) {// Names are {@link String#intern()}alized so OK to check by reference
+            // Functor must match
+            return null;
+        }
+        final int arity = struct.getArity();
+        if (arity != dataFactElements.length - 1) {
+            // Arity must match as well
+            return null;
+        }
+        final Object[] structArgs = struct.getArgs();
+        UnifyContext runningMonad = this;
+        // Unify all dataFactElements
+        for (int i = 0; i < arity; i++) {
+            final Object structArg = structArgs[i];
+            final Object dataFactElement = dataFactElements[1 + i];
+            runningMonad = runningMonad.unify(structArg, dataFactElement);
+            if (runningMonad == null) {
+                // Struct sub-dataFactElement not unified - fail the whole unification
+                return null;
+            }
+        }
+        return runningMonad;
+    }
 
     @Override
     public String toString() {

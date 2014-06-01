@@ -20,6 +20,7 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -46,6 +47,7 @@ public class DefaultSolver implements Solver {
 
     @Override
     public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
+        this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         final UnifyContext initialContext = initialContext();
         if (goal instanceof Struct) {
             // We will need to clone Clauses during resolution, hence the base index
@@ -189,6 +191,9 @@ public class DefaultSolver implements Solver {
         } else {
             result = solveAgainstClauseProviders(goalTerm, currentVars, theSolutionListener);
 
+            if (this.hasDataFactProviders && !(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
+                solveAgainstDataProviders(goalTerm, currentVars, theSolutionListener);
+            }
         }
         if (isDebug) {
             logger.debug("<< Exit    solveGoalRecursive(\"{}\"), continuation={}", goalTerm, result);
@@ -227,21 +232,6 @@ public class DefaultSolver implements Solver {
                 if (isDebug) {
                     logger.debug("Trying clause {}, current status={}", clause, result);
                 }
-//                final Struct clonedClause;
-//                final Object clauseHead;
-//                if (clause.needCloning()) {
-//                    // Clone the variables so that we won't mutate our current clause's ones
-//                    // clonedClause = (Struct) currentVars.cloneClauseAndRemapIndexes(clause);
-//                    clonedClause = (Struct)clause.cloned(currentVars).getContent();
-//                    final boolean isRule = Struct.FUNCTOR_CLAUSE == clonedClause.getName() && clonedClause.getArity()==2;
-//                    clauseHead = isRule ? clonedClause.getArg(0) : clonedClause;
-//
-//                } else {
-//                    clonedClause = clause.getContent();
-//                }
-                // BOGUS!!!
-                // final boolean isFact = clause.isFact();
-                // final Object clauseHead = isFact ? clonedClause : clonedClause.getArg(0);
 
                 clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
                 final Object clauseHead = clauseHeadAndBody[0];
@@ -252,7 +242,7 @@ public class DefaultSolver implements Solver {
                 }
 
                 final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, clauseHead);
-                boolean headUnified = varsAfterHeadUnified != null;
+                final boolean headUnified = varsAfterHeadUnified != null;
                 if (isDebug) {
                     logger.debug(" headUnified={}", headUnified);
                 }
@@ -319,31 +309,30 @@ public class DefaultSolver implements Solver {
         return result;
     }
 
-//    private Continuation solveAgainstDataProviders(final Object goalTerm, final TermBindings theGoalBindings, final SolutionListener theSolutionListener) {
-//        final Unifier unifier = this.prolog.getUnifier();
-//        Continuation result = Continuation.CONTINUE;
-//        // Now fetch data
-//        final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
-//        for (final DataFactProvider dataProvider : dataProviders) {
-//            final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalTerm);
-//            for (final DataFact dataFact : matchingDataFacts) {
-//                // We should probably try/finally between unification and deunification. However since we unify with data
-//                // and need efficiency, and we won't call any user code, we can assume not to.
-//                final boolean unifiedWithData = unifier.unify(goalTerm, theGoalBindings, dataFact);
-//                if (unifiedWithData) {
-//                    final Continuation continuation = theSolutionListener.onSolution();
-//                    if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
-//                        result = continuation;
-//                    }
-//                    unifier.deunify();
-//                }
-//            }
-//            if (logger.isInfoEnabled()) {
-//                logger.info("Last DataFact of {} iterated", dataProvider);
-//            }
-//        }
-//        return result;
-//    }
+    private Continuation solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
+        Continuation result = Continuation.CONTINUE;
+        // Now fetch data
+        final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
+        for (final DataFactProvider dataProvider : dataProviders) {
+            final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalTerm);
+            for (final DataFact dataFact : matchingDataFacts) {
+                // We should probably try/finally between unification and deunification. However since we unify with data
+                // and need efficiency, and we won't call any user code, we can assume not to.
+                final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
+                final boolean unified = varsAfterHeadUnified != null;
+                if (unified) {
+                    final Continuation continuation = theSolutionListener.onSolution(currentVars);
+                    if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
+                        result = continuation;
+                    }
+                }
+            }
+            if (logger.isInfoEnabled()) {
+                logger.info("Last DataFact of {} iterated", dataProvider);
+            }
+        }
+        return result;
+    }
 
     @Override
     public String toString() {
