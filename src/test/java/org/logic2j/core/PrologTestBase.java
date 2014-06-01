@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;

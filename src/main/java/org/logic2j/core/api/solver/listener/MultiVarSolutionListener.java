@@ -19,7 +19,7 @@ package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import java.util.ArrayList;
 import java.util.List;

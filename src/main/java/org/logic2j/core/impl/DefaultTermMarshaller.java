@@ -20,7 +20,7 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.api.model.term.Struct;

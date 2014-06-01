@@ -34,7 +34,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ReflectUtils;
@@ -47,7 +47,7 @@ import java.util.*;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(org.logic2j.core.api.SolutionListener, org.logic2j.core.api.monadic.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO the {@link #select(org.logic2j.core.api.SolutionListener, org.logic2j.core.api.unify.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);
@@ -269,7 +269,7 @@ public class RDBLibrary extends LibraryBase {
         notifySolution(theListener, currentVars);
       }
     } else {
-        throw new UnsupportedOperationException("Feature not yet migrated to monadic version");
+        throw new UnsupportedOperationException("Feature not yet migrated to unify version");
         /*
       final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
       // Vars referenced in projections

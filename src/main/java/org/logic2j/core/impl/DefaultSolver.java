@@ -22,8 +22,8 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
-import org.logic2j.core.api.monadic.StateEngineByLookup;
+import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.api.unify.UnifyStateByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.library.mgmt.PrimitiveInfo;
@@ -56,7 +56,7 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.monadic.UnifyContext, org.logic2j.core.api.SolutionListener)} method. The goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.unify.UnifyContext, org.logic2j.core.api.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      */
     @Override
@@ -69,7 +69,7 @@ public class DefaultSolver implements Solver {
 
     @Override
     public UnifyContext initialContext() {
-        final UnifyContext initialContext = new StateEngineByLookup().emptyContext();
+        final UnifyContext initialContext = new UnifyStateByLookup().emptyContext();
         return initialContext;
     }
 

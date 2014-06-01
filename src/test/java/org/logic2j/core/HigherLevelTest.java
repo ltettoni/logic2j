@@ -77,8 +77,6 @@ public class HigherLevelTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("queens.pl");
 
         assertEquals("[1]", uniqueSolution("queens(1, Positions)").var("Positions").unique().toString());
-        nSolutions(0, "queens(2, _)");
-        nSolutions(0, "queens(3, _)");
         GoalHolder solutions;
         //
         //
@@ -91,18 +89,14 @@ public class HigherLevelTest extends PrologTestBase {
         solutions = this.prolog.solve("queens(6, Positions)");
         assertEquals("[[5,3,1,6,4,2], [4,1,5,2,6,3], [3,6,2,5,1,4], [2,4,6,1,3,5]]", solutions.var("Positions").list().toString());
         //
+        nSolutions(0, "queens(2, _)");
+        nSolutions(0, "queens(3, _)");
+        nSolutions(2, "queens(4, _)");
+        nSolutions(10, "queens(5, _)");
+        nSolutions(4, "queens(6, _)");
         nSolutions(40, "queens(7, _)");
         nSolutions(92, "queens(8, _)");
-    }
-
-    @Test
-    public void queensWithFindall() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-        final String goal = "findall(X, queens(5, X), List)";
-        // Numbers
-        final Struct plist = getProlog().solve(goal).var("List", Struct.class).unique();
-        assertEquals(10, plist.listSize());
-        assertEquals("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]", plist.toString());
+        nSolutions(352, "queens(9, _)");
     }
 
     /**
@@ -113,12 +107,20 @@ public class HigherLevelTest extends PrologTestBase {
     @Test
     public void queensHeavier() {
         loadTheoryFromTestResourcesDir("queens.pl");
-
-        nSolutions(352, "queens(9, _)");
-        nSolutions(724, "queens(10, _)"); // tuProlog (GUI) needs 28s on my machine
+        nSolutions(724, "queens(10, _)");
         nSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
     }
 
+
+    @Test
+    public void queensWithFindall() throws IOException {
+        loadTheoryFromTestResourcesDir("queens.pl");
+        final String goal = "findall(X, queens(5, X), List)";
+        // Numbers
+        final Struct plist = getProlog().solve(goal).var("List", Struct.class).unique();
+        assertEquals(10, plist.listSize());
+        assertEquals("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]", plist.toString());
+    }
 
     @Test
     public void takeout() {

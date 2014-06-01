@@ -20,7 +20,7 @@ package org.logic2j.core.api.model;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;

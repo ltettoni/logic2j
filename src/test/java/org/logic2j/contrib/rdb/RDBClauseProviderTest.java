@@ -20,7 +20,7 @@ package org.logic2j.contrib.rdb;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import java.sql.SQLException;
 import java.util.Iterator;

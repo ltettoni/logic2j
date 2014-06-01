@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * The lowest-level API through which the inference engine provides solutions. For easier programming, consider using

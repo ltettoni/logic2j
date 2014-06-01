@@ -24,7 +24,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
 import org.logic2j.core.impl.util.ReflectUtils;

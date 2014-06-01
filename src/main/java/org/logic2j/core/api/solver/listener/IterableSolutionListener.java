@@ -20,12 +20,12 @@ package org.logic2j.core.api.solver.listener;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * A {@link SolutionListener} that allows the caller of the inference engine to enumerates solutions to his goal, like all Prolog APIs do.
  * This uses synchronization between two threads, the Prolog engine being the producer thread that calls back this implementation of
- * {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.UnifyContext)}, which in turn notifies the consumer thread (the caller) of a solution.
+ * {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}, which in turn notifies the consumer thread (the caller) of a solution.
  */
 public class IterableSolutionListener<T> implements SolutionListener {
     private final SolutionExtractor<T> extractor;

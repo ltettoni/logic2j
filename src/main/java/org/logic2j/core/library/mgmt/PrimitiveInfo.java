@@ -22,7 +22,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

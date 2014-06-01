@@ -1,4 +1,4 @@
-package org.logic2j.core.api.monadic;
+package org.logic2j.core.api.unify;
 
 import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
@@ -21,13 +21,13 @@ public class UnifyContext {
 
     public int topVarIndex;
 
-    private final StateEngineByLookup impl;
+    private final UnifyStateByLookup impl;
 
-    UnifyContext(StateEngineByLookup implem) {
+    UnifyContext(UnifyStateByLookup implem) {
         this(implem, 0, 0);
     }
 
-    UnifyContext(StateEngineByLookup implem, int currentTransaction, int topVarIndex) {
+    UnifyContext(UnifyStateByLookup implem, int currentTransaction, int topVarIndex) {
         this.impl = implem;
         this.currentTransaction = currentTransaction;
         this.topVarIndex = topVarIndex;
@@ -189,8 +189,8 @@ public class UnifyContext {
 //    private static final ThreadLocal<UnifyContext> currentInThread = new ThreadLocal<UnifyContext>() {
 //        @Override
 //        protected UnifyContext initialValue() {
-//            return new StateEngineByLookup().emptyContext();
-////            return new StateEngineByLookup().emptyContext();
+//            return new UnifyStateByLookup().emptyContext();
+////            return new UnifyStateByLookup().emptyContext();
 //        }
 //    };
 

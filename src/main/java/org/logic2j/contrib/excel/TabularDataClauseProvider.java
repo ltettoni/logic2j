@@ -24,7 +24,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;

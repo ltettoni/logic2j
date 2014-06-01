@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -61,7 +61,7 @@ public class LibraryBase implements PLibrary {
      * Notify theSolutionListener that a solution has been found.
      *
      * @param theSolutionListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.UnifyContext)}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
      */
     protected Continuation notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
         final Continuation continuation = theSolutionListener.onSolution(currentVars);
@@ -69,11 +69,11 @@ public class LibraryBase implements PLibrary {
     }
 
     /**
-     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.monadic.UnifyContext)}. Otherwise nothing is done.
+     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.unify.UnifyContext)}. Otherwise nothing is done.
      *
      * @param unified
      * @param theListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.monadic.UnifyContext)}
+     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
      */
     protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener, UnifyContext currentVars) {
         final Continuation continuation;

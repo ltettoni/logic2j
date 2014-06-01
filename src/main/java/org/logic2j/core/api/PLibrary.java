@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * A library of Prolog primitives implemented in Java, as methods of a single class. Usually {@link PLibrary}es come together with an

@@ -20,7 +20,7 @@ package org.logic2j.core.api;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * Interface to access the inference engine algorithm, in order to solve goals.

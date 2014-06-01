@@ -64,27 +64,8 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("1000 iterations, elapse {}", t2 - t1);
     }
 
-    /**
-     * Takes lots of time and stack - use with parsimony and with -Xss10m. By default we will ignore this test.
-     */
-    @Ignore("Takes a lot of time and resources - temporarily disabled. Use with -Xss10m")
     @Test
-    public void millionLoops() {
-        loadTheoryFromTestResourcesDir("test-data.pl");
-        // Using regular binary operator ","
-        long t1 = System.currentTimeMillis();
-        nSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
-        long t2 = System.currentTimeMillis();
-        logger.info("1000000 iterations, elapse {}", t2 - t1);
-        // Using n-ary operator ","
-        t1 = System.currentTimeMillis();
-        nSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
-        t2 = System.currentTimeMillis();
-        logger.info("1000000 iterations, elapse {}", t2 - t1);
-    }
-
-    @Test
-    public void profileMillionLoops() {
+    public void profileThousandsLoops() {
         loadTheoryFromTestResourcesDir("test-data.pl");
         final long t1 = System.currentTimeMillis();
         nSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
@@ -92,27 +73,26 @@ public class BenchmarkTest extends PrologTestBase {
         logger.info("Elapse {}", t2 - t1);
     }
 
+    /**
+     * Takes lots of time and stack - use with parsimony and with -Xss10m. By default we will ignore this test.
+     */
     @Test
-    public void queensNumbers() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
-
-        assertEquals(1, getProlog().solve("queens(1, _)").count());
-        assertEquals(0, getProlog().solve("queens(2, _)").count());
-        assertEquals(0, getProlog().solve("queens(3, _)").count());
-        assertEquals(2, getProlog().solve("queens(4, _)").count());
-        assertEquals(10, getProlog().solve("queens(5, _)").count());
-        assertEquals(4, getProlog().solve("queens(6, _)").count());
-        assertEquals(40, getProlog().solve("queens(7, _)").count());
-        assertEquals(92, getProlog().solve("queens(8, _)").count());
-        assertEquals(352, getProlog().solve("queens(9, _)").count());
-        assertEquals(724, getProlog().solve("queens(10, _)").count());
-        // Comment out heavy ones
-        // assertEquals(2680, getProlog().solve("queens(11, _)").count());
-        // assertEquals(14200, getProlog().solve("queens(12, _)").count());
+    public void millionLoops() {
+        loadTheoryFromTestResourcesDir("test-data.pl");
+        // Using regular binary operator ","
+        long t1 = System.currentTimeMillis();
+        nSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
+        long t2 = System.currentTimeMillis();
+        logger.info("1000000 iterations with binary AND, elapse {}", t2 - t1);
+        // Using n-ary operator ","
+        t1 = System.currentTimeMillis();
+        nSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
+        t2 = System.currentTimeMillis();
+        logger.info("1000000 iterations with N-ary AND, elapse {}", t2 - t1);
     }
 
     @Test
-    public void queensForTiming() throws IOException {
+    public void queensForReferenceTiming() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pl");
         final String goal = "queens(9, Q)";
         // Numbers

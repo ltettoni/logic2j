@@ -20,7 +20,7 @@ package org.logic2j.core.library.impl.io;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;

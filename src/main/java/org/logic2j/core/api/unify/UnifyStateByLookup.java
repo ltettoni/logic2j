@@ -1,4 +1,4 @@
-package org.logic2j.core.api.monadic;
+package org.logic2j.core.api.unify;
 
 import org.logic2j.core.api.model.term.Var;
 import org.slf4j.Logger;
@@ -10,8 +10,8 @@ import java.util.TreeMap;
 /**
  * Created by Laurent on 07.05.2014.
  */
-public class StateEngineByLookup {
-    private static final Logger logger = LoggerFactory.getLogger(StateEngineByLookup.class);
+public class UnifyStateByLookup {
+    private static final Logger logger = LoggerFactory.getLogger(UnifyStateByLookup.class);
     private static final int INITIAL_SIZE = 500;
 
     private int[] transaction;
@@ -21,7 +21,7 @@ public class StateEngineByLookup {
     private int[] logOfWrittenSlots;  // Indexed by transaction number
     private int   logWatermark;
 
-    public StateEngineByLookup() {
+    public UnifyStateByLookup() {
         transaction = new int[INITIAL_SIZE];
         Arrays.fill(transaction, -1);
         var = new Var[INITIAL_SIZE];

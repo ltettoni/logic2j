@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * Provide {@link Clause}s (facts or rules) from various content sources to the {@link Solver} inference
@@ -27,7 +27,7 @@ import org.logic2j.core.api.monadic.UnifyContext;
  * Notice the {@link Iterable} nature of the returned clauses. This allows implementors to return iterable results sets, for example from
  * database cursors. The {@link Solver} does not need all clauses in memory at once!
  * 
- * Contract: The {@link Solver} will never cache the result from {@link #listMatchingClauses(Object, org.logic2j.core.api.monadic.UnifyContext)},
+ * Contract: The {@link Solver} will never cache the result from {@link #listMatchingClauses(Object, org.logic2j.core.api.unify.UnifyContext)},
  * therefore think of caching in case of remote content.
  */
 public interface ClauseProvider {

@@ -21,7 +21,7 @@ import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class RangeSolutionListener<T> implements SolutionListener {
     private long maxFetch; // Stop generating after this number of solutions
 
     /**
-     * Current solution counter (number of times {@link #onSolution(org.logic2j.core.api.monadic.UnifyContext)} was called)
+     * Current solution counter (number of times {@link #onSolution(org.logic2j.core.api.unify.UnifyContext)} was called)
      */
     protected long counter;
 
@@ -63,7 +63,6 @@ public class RangeSolutionListener<T> implements SolutionListener {
         }
         logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
         final Continuation continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
-        // FIXME big bug : on queens(9,X) we send back USER_ABORT and are called more!
         return continuation;
     }
 

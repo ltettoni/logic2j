@@ -1,7 +1,6 @@
 package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.monadic.StateEngineByLookup;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.RangeSolutionListener;
 import org.logic2j.core.impl.PrologReferenceImplementation;

@@ -1,4 +1,4 @@
-package org.logic2j.core.api.monadic;
+package org.logic2j.core.api.unify;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class UnifyContextTest {
         f_XXa = unmarshall("f(X4,X4,a)");
         f_XXb = unmarshall("f(X5,X5,b)");
 
-        initialContext = new StateEngineByLookup().emptyContext();
+        initialContext = new UnifyStateByLookup().emptyContext();
 
         ProfilingInfo.setTimer1();
     }

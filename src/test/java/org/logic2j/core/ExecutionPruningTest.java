@@ -20,7 +20,7 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.api.SolutionListener;
 import org.logic2j.core.api.model.Continuation;
-import org.logic2j.core.api.monadic.UnifyContext;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
