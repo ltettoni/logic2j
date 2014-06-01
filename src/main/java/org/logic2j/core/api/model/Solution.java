@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * Describes one of the solution(s) to a goal; this includes the resolved {@link Term} (with all bound variables substituted to their actual
  * values - only free variables remaining), and all variable varValues exposed.<br/>
- * The internal storage is denormalized at the time the object is instantiated, see {@link #Solution(TermBindings)}.
  * If the goal to be solved was
  * g(X, a(Y, Z)) with X already bound to 2, and Z bound to 3 when the goal was solved, then Solution provides: {@link #getSolution()}==g(2,
  * a(Y, 3)) , {@link #getBindings()}=={X -> 2, Y -> null, Z -> 3} , {@link #getBinding(String)}==2 when argument is "X".
@@ -49,8 +48,7 @@ public class Solution {
      * 
      * @note This costs a little: in logic2j the solver is very efficient, but extracting results is a little more costly. This is caused by
      *       the shared-structures approach.
-     * @note Maybe it could be more efficient to just clone the {@link TermBindings} and then calculate the solution on demand?
-     * @param theBindings
+     * @param currentVars
      */
     public Solution(Object theTerm, UnifyContext currentVars) {
         this.solution = currentVars.reify(theTerm);

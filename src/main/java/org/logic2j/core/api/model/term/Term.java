@@ -51,6 +51,7 @@ public abstract class Term implements Serializable {
      * For {@link Var}s: defines the TODO<br/>
      * For a {@link Struct}: defines the TODO<br/>
      * The default value is NO_INDEX.
+     * FIXME Field must not be public !!!
      */
     public short index = NO_INDEX;
 

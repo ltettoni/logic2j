@@ -31,6 +31,9 @@ import java.util.Arrays;
  */
 public final class DataFact {
 
+    /**
+     * Elments are actually public - this object id just a data container, not a JavaBean.
+     */
     public Object[] elements;
 
     public DataFact(Object... arguments) {

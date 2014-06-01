@@ -107,23 +107,8 @@ public final class Struct extends Term {
     public static final char QUOTE = '\'';
 
     // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
-    public PrimitiveInfo primitiveInfo;
+    private PrimitiveInfo primitiveInfo;
 
-//    /**
-//     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-//     * by {@link TermApi#valueOf(Object, FactoryMode)}.
-//     *
-//     * @note This method is a static factory, not a constructor, to emphasize that arguments
-//     *       are not of the type needed by this class, but need transformation.
-//     */
-//    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
-//        final Struct newInstance = new Struct(theFunctor, argList.length);
-//        int i = 0;
-//        for (final Object element : argList) {
-//            newInstance.args[i++] = TermApi.valueOf(element, FactoryMode.ANY_TERM);
-//        }
-//        return newInstance;
-//    }
 
     /**
      * The functor of the Struct is its "name". This is a final value but due to implementation via
@@ -204,6 +189,22 @@ public final class Struct extends Term {
         this.index = original.index;
         this.args = newArguments;
     }
+
+//    /**
+//     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
+//     * by {@link TermApi#valueOf(Object, FactoryMode)}.
+//     *
+//     * @note This method is a static factory, not a constructor, to emphasize that arguments
+//     *       are not of the type needed by this class, but need transformation.
+//     */
+//    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
+//        final Struct newInstance = new Struct(theFunctor, argList.length);
+//        int i = 0;
+//        for (final Object element : argList) {
+//            newInstance.args[i++] = TermApi.valueOf(element, FactoryMode.ANY_TERM);
+//        }
+//        return newInstance;
+//    }
 
     /**
      * Obtain an atom from the catalog if it pre-existed, or create one an register in the catalog.

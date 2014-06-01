@@ -3,7 +3,9 @@ package org.logic2j.core.api.model;
 
 /**
  * Determine how free (unbound) variables will be represented.
+ * No longer used see what we can do.
  */
+@Deprecated
 public enum FreeVarRepresentation {
     /**
      * Free variables will not be included in result bindings. Asking the value of a variable that is not bound to a literal Term is

@@ -46,7 +46,7 @@ import static java.lang.Math.min;
  *       there. I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
  * @note Avoid static methods, prefer instantiating this class where needed.
  */
-public class TermApi {
+public final class TermApi {
 
     private static final Pattern ATOM_PATTERN = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
 
@@ -290,7 +290,6 @@ public class TermApi {
      * Normalize a {@link Term} using the specified definitions of operators, primitives.
      *
      * @param theTerm To be normalized
-     * @param theLibraryContent Defines primitives to be recognized, null for no assignment
      * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
      */
     public static Object normalize(Object theTerm) {
