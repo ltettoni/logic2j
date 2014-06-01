@@ -32,7 +32,7 @@ import java.sql.SQLException;
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
 
-    private static final String SRC_TEST_DB = "src/test/db";
+    private static final String SRC_TEST_DB = "src/test/resources/db";
     private static final String DERBY_VERSION_STRING = "v10.8.2.1";
     private static final String ZIPCODES_DERBY_DIR = SRC_TEST_DB + "/zipcodes1/derby-" + DERBY_VERSION_STRING;
     private static final String DERBY_USER = "APP"; // "APP" is a good default in Derby, see doc
