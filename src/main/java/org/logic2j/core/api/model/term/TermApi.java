@@ -333,13 +333,13 @@ public class TermApi {
             // Idempotence
             result = theObject;
         } else if (theObject instanceof Integer) {
-            result = Long.valueOf(((Integer) theObject).longValue());
+            result = ((Integer) theObject).longValue();
         } else if (theObject instanceof Long) {
             result = theObject;
         } else if (theObject instanceof Double) {
             result = theObject;
         } else if (theObject instanceof Float) {
-            result = Double.valueOf(((Float) theObject).doubleValue());
+            result = ((Float) theObject).doubleValue();
         } else if (theObject instanceof Boolean) {
             result = (Boolean) theObject ? Struct.ATOM_TRUE : Struct.ATOM_FALSE;
         } else if (theObject instanceof CharSequence || theObject instanceof Character) {
@@ -372,10 +372,10 @@ public class TermApi {
             final Number nbr = (Number) theObject;
             if (nbr.doubleValue() % 1 != 0) {
                 // Has floating point number
-                result = Double.valueOf(nbr.doubleValue());
+                result = nbr.doubleValue();
             } else {
                 // Is just an integer
-                result = Long.valueOf(nbr.longValue());
+                result = nbr.longValue();
             }
         } else if (theObject instanceof Enum<?>) {
             // Enums are just valid terms
@@ -395,12 +395,12 @@ public class TermApi {
      */
     // TODO Should this go to TermAdapter instead? - since we return a new Term
     @SuppressWarnings("unchecked")
-    public static <T extends Object> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
+    public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
         if (theTPathExpression.isEmpty()) {
             return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
         }
         if (theTerm instanceof String) {
-            if (!((String) theTerm).equals(theTPathExpression)) {
+            if (!theTerm.equals(theTPathExpression)) {
                 throw new InvalidTermException("Term \"" + theTerm + "\" cannot match expression \"" + theTPathExpression + '"');
             }
             return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
@@ -449,6 +449,7 @@ public class TermApi {
         return (T) theTerm;
     }
 
+    // FIXME unused?
     private static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
       final String functorSpec = theFunctor != null ? "functor \"" + theFunctor + '"' : "any functor";
       final String aritySpec = theArity >=0 ? "arity=" + theArity : "any arity";

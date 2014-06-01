@@ -110,7 +110,7 @@ class Tokenizer extends StreamTokenizer {
      * reads next available token
      */
     Token readToken() throws InvalidTermException, IOException {
-        return !this.tokenList.isEmpty() ? (Token) this.tokenList.removeFirst() : readNextToken();
+        return !this.tokenList.isEmpty() ? this.tokenList.removeFirst() : readNextToken();
     }
 
     /**
@@ -445,8 +445,8 @@ class Tokenizer extends StreamTokenizer {
      * used to implement lookahead for two tokens, super.pushBack() only handles one pushBack..
      */
     private static class PushBack {
-        int typea;
-        String svala;
+        final int typea;
+        final String svala;
 
         public PushBack(int i, String s) {
             this.typea = i;

@@ -63,7 +63,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         this.nameMapper.put(tableName, fieldName);
     }
 
-    private final String[] readTableInfo(String tableName) {
+    private String[] readTableInfo(String tableName) {
         return this.nameMapper.get(tableName);
     }
 

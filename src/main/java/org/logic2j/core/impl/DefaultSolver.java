@@ -33,11 +33,11 @@ import org.logic2j.core.library.mgmt.PrimitiveInfo;
  * Solve goals - that's the core of the engine.
  */
 public class DefaultSolver implements Solver {
-    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
 
-    static final boolean isDebug = logger.isDebugEnabled();
+    private static final boolean isDebug = logger.isDebugEnabled();
 
-    protected final PrologImplementation prolog;
+    private final PrologImplementation prolog;
 
     private boolean hasDataFactProviders;
 
@@ -75,7 +75,7 @@ public class DefaultSolver implements Solver {
         return initialContext;
     }
 
-    public Continuation solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
+    Continuation solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
         if (isDebug) {
             logger.debug(">> Entering solveRecursive(\"{}\")", goalTerm);
         }

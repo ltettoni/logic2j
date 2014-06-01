@@ -20,24 +20,18 @@ package org.logic2j.core.api.solver.listener;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MultiVarExtractor.class);
-
-    private final PrologImplementation prolog;
-
-    private final Object goal;
 
     private final Var[] vars;
 
-    public MultiVarExtractor(PrologImplementation prolog, Object goal) {
-        this.prolog = prolog;
-        this.goal = goal;
-        this.vars = TermApi.allVars(goal).keySet().toArray(new Var[]{});
+    public MultiVarExtractor(Object goal) {
+        Set<Var> var = TermApi.allVars(goal).keySet();
+        this.vars = var.toArray(new Var[var.size()]);
     }
 
 

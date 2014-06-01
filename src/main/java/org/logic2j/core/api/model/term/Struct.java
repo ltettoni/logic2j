@@ -55,8 +55,6 @@ public final class Struct extends Term {
 
     public static final String FUNCTOR_CLAUSE = ":-".intern();
 
-    public static final String FUNCTOR_CLAUSE_QUOTED = ("'" + FUNCTOR_CLAUSE + "'").intern();
-
     // TODO Move these constants to a common place?
     // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
     public static final String FUNCTOR_COMMA = ",".intern();

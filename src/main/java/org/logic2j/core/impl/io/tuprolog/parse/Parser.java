@@ -21,7 +21,6 @@ import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.model.term.Struct;
@@ -71,8 +70,8 @@ public class Parser {
     private static final Pattern ATOM_PATTERN = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
 
     private static class IdentifiedTerm {
-        int priority;
-        Object result;
+        final int priority;
+        final Object result;
 
         public IdentifiedTerm(int thePriority, Object theResult) {
             this.priority = thePriority;

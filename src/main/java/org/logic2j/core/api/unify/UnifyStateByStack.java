@@ -2,19 +2,16 @@ package org.logic2j.core.api.unify;
 
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.impl.util.ProfilingInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Laurent on 07.05.2014.
  */
 @Deprecated // basic implementation - for comparison - no efficient
 public class UnifyStateByStack {
-    private static final Logger logger = LoggerFactory.getLogger(UnifyStateByStack.class);
     private static final int STACK_CHUNK = 1000;
 
-    Var[] vars;
-    Object[] refs;
+    final Var[] vars;
+    final Object[] refs;
 
     public UnifyStateByStack() {
         vars = new Var[STACK_CHUNK];

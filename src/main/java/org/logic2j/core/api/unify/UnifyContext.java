@@ -1,7 +1,6 @@
 package org.logic2j.core.api.unify;
 
 import org.logic2j.core.api.model.DataFact;
-import org.logic2j.core.api.model.FreeVarRepresentation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
@@ -83,7 +82,7 @@ public class UnifyContext {
     }
 
 
-    public Map<String, Object> bindings(Object term, FreeVarRepresentation representation) {
+    public Map<String, Object> bindings(Object term) {
         final Map<String, Object> result = new HashMap<String, Object>();
         for (Map.Entry<Var, String> entry : TermApi.allVars(term).entrySet()) {
             final Object finalValue = this.reify(entry.getKey());

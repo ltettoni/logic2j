@@ -283,9 +283,7 @@ public class SqlBuilder3 {
     // Flatten out collections and arrays
     for (Object param : theParameters) {
       if (param instanceof Object[]) {
-        for (Object p : (Object[]) param) {
-          sqlParams.add(p);
-        }
+          Collections.addAll(sqlParams, (Object[]) param);
       } else if (param instanceof Collection<?>) {
         for (Object p : (Collection<?>) param) {
           sqlParams.add(p);
@@ -297,7 +295,7 @@ public class SqlBuilder3 {
       // TODO handle the case of enums - but by name or position???
       // If param was null nothing is added
     }
-    final Object[] array = sqlParams.toArray(new Object[] {});
+    final Object[] array = sqlParams.toArray(new Object[sqlParams.size()]);
     return array;
   }
 
@@ -418,7 +416,7 @@ public class SqlBuilder3 {
   }
 
   public Object[] getParameters() {
-    return this.parameters.toArray(new Object[] {});
+    return this.parameters.toArray(new Object[this.parameters.size()]);
   }
 
   public void setParameters(Object... theParameters) {

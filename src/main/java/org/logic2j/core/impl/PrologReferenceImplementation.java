@@ -62,7 +62,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     private TermMarshaller termMarshaller = new DefaultTermMarshaller();
 
-    private DefaultTermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller();
+    private final DefaultTermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller();
 
     private final TheoryManager theoryManager = new DefaultTheoryManager(this);
 

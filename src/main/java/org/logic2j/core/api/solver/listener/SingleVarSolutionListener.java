@@ -28,8 +28,6 @@ import java.util.List;
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarSolutionListener.class);
-
     private final SolutionExtractor<T> extractor;
 
     private final List<T> results;

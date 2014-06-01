@@ -30,7 +30,6 @@ import java.util.Map;
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class MultiVarSolutionListener extends RangeSolutionListener {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(MultiVarSolutionListener.class);
     private final SolutionExtractor<Map<Var, Object>> extractor;
     private final List<Map<Var, Object>> results;
 

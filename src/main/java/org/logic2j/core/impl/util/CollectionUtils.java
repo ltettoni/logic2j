@@ -42,7 +42,7 @@ public final class CollectionUtils {
      * @return A formatter string, never null. May span several lines depending on the element's toString() or on the separator value.
      * @throws IllegalArgumentException If coll is null.
      */
-    public static String formatSeparated(Collection<? extends Object> theCollection, String theSeparator) {
+    public static String formatSeparated(Collection<?> theCollection, String theSeparator) {
         if (theCollection == null) {
             throw new IllegalArgumentException("Cannot format null collection");
         }
@@ -51,7 +51,7 @@ public final class CollectionUtils {
             separator = "";
         }
         final StringBuilder sb = new StringBuilder();
-        for (final Iterator<? extends Object> iter = theCollection.iterator(); iter.hasNext();) {
+        for (final Iterator<?> iter = theCollection.iterator(); iter.hasNext();) {
             final String element = String.valueOf(iter.next());
             sb.append(element);
             if (iter.hasNext()) {
@@ -99,7 +99,7 @@ public final class CollectionUtils {
      * @param theClassName
      * @return The formatted collection, spans multiple lines.
      */
-    private static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported, String theClassName) {
+    private static String format(String theLabel, Collection<?> coll, int maxNumberReported, String theClassName) {
         final boolean showCollectionIndexes = false;
         final int half = (maxNumberReported == 0) ? 10000 : ((maxNumberReported - 1) / 2) + 1;
 
@@ -135,9 +135,9 @@ public final class CollectionUtils {
             Integer nbrOfThisClass = instancesByClass.get(theElementClass);
 
             if (nbrOfThisClass == null) {
-                nbrOfThisClass = Integer.valueOf(0);
+                nbrOfThisClass = 0;
             }
-            nbrOfThisClass = Integer.valueOf(nbrOfThisClass.intValue() + 1);
+            nbrOfThisClass = nbrOfThisClass.intValue() + 1;
             instancesByClass.put(theElementClass, nbrOfThisClass);
 
             // Report
@@ -146,9 +146,9 @@ public final class CollectionUtils {
                     final Entry<?, ?> entry = (Entry<?, ?>) element;
                     if (entry.getValue() instanceof Collection<?>) {
                         final int colLSize = ((Collection<?>) entry.getValue()).size();
-                        sb.append(" " + entry.getKey() + '[' + colLSize + "]=" + entry.getValue() + '\n');
+                        sb.append(" ").append(entry.getKey()).append('[').append(colLSize).append("]=").append(entry.getValue()).append('\n');
                     } else {
-                        sb.append(" " + entry.getKey() + '=' + entry.getValue() + '\n');
+                        sb.append(" ").append(entry.getKey()).append('=').append(entry.getValue()).append('\n');
                     }
                 } else {
                     sb.append(' ');
@@ -162,7 +162,7 @@ public final class CollectionUtils {
                 }
             } else {
                 if (!shownEllipsis) {
-                    sb.append(" [" + (half) + '-' + (size - half - 1) + "]=(" + (size - half - half) + " skipped)\n");
+                    sb.append(" [").append(half).append('-').append(size - half - 1).append("]=(").append(size - half - half).append(" skipped)\n");
                 }
                 shownEllipsis = true;
             }
@@ -204,7 +204,7 @@ public final class CollectionUtils {
      *         collection is empty, one line is output. If the collection is large, only the first and last elements are output, while "..."
      *         is shown in the middle.
      */
-    public static String format(String theLabel, Collection<? extends Object> coll, int maxNumberReported) {
+    public static String format(String theLabel, Collection<?> coll, int maxNumberReported) {
         String label = theLabel;
         if (coll == null) {
             if (label == null) {

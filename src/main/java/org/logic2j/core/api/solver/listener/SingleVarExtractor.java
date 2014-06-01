@@ -21,17 +21,12 @@ import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 /**
  * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class SingleVarExtractor<T> implements SolutionExtractor<T> {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SingleVarExtractor.class);
-
-    private final PrologImplementation prolog;
-
     private final Object goal;
 
     private final Var var;
@@ -41,8 +36,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */
-    public SingleVarExtractor(PrologImplementation prolog, Object goal, String varName) {
-        this.prolog = prolog;
+    public SingleVarExtractor(Object goal, String varName) {
         this.goal = goal;
         final Var found = TermApi.findVar(goal, varName);
         if (found == null) {

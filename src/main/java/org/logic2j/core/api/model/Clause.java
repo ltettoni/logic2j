@@ -23,8 +23,6 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.ProfilingInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -40,7 +38,6 @@ import java.util.*;
  * </ol>
  */
 public class Clause {
-    private static final Logger logger = LoggerFactory.getLogger(Clause.class);
 
     private final Object content; // Immutable, not null
 
@@ -49,8 +46,6 @@ public class Clause {
      */
     private final Var[] vars;
 
-    // Denormalized fields - stored for efficiency
-    private boolean isFact;
     private Object head;
     private Object body;
 
@@ -92,7 +87,6 @@ public class Clause {
     private void initDenormalizedFields() {
         if (! (this.content instanceof Struct)) {
             // A single Object (typically a String) is a fact.
-            this.isFact = true;
             this.head = this.content;
             this.body = null;
             return;
@@ -100,7 +94,6 @@ public class Clause {
         final Struct struct = (Struct) this.content;
         // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
         if (Struct.FUNCTOR_CLAUSE != struct.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
-            this.isFact = true;
             this.head = this.content;
             this.body = null;
             return;
@@ -109,13 +102,11 @@ public class Clause {
         final Object[] clauseArgs = struct.getArgs();
         final Object body = clauseArgs[1];
         if (Struct.ATOM_TRUE.equals(body)) {
-            this.isFact = true;
             this.head = clauseArgs[0];
             this.body = null;
             return;
         }
         // The body is more complex, it's certainly a rule
-        this.isFact = false;
         this.head = clauseArgs[0];
         this.body = body;
     }
@@ -205,11 +196,6 @@ public class Clause {
     // Methods to denormalize immutable fields
     // ---------------------------------------------------------------------------
 
-    private boolean calculateIsWithClauseFunctor() {
-        return Struct.FUNCTOR_CLAUSE == ((Struct) (this.content)).getName(); // Names are {@link String#intern()}alized so OK to check by
-                                                                             // reference
-    }
-
     /**
      * @return true only if this Clause's content is a Struct which holds variables.
      */
@@ -225,42 +211,6 @@ public class Clause {
         // Otherwise assume we need cloning
         return true;
     }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-//    public boolean isFact() {
-//        return this.isFact;
-//    }
-//
-//    private Object getContent() {
-//        return content;
-//    }
-//
-//    private Var[] getVars() {
-//        return vars;
-//    }
-//
-//    /**
-//     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
-//     * functor.
-//     *
-//     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
-//     */
-//    public Object getHead() {
-//        return this.head;
-//    }
-//
-//    /**
-//     * Obtain the head of the clause: for facts, this is the underlying {@link Struct}; for rules, this is the first argument to the clause
-//     * functor.
-//     *
-//     * @return The clause's head as a {@link Term}, normally a {@link Struct}.
-//     */
-//    public Object getBody() {
-//        return this.body;
-//    }
 
     /**
      * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.

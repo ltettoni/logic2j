@@ -146,7 +146,7 @@ public class DefaultTheoryManager implements TheoryManager {
             if (! (clauseTerm instanceof Struct)) {
                 throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
             }
-            final Clause cl = new Clause(this.prolog, (Struct)clauseTerm);
+            final Clause cl = new Clause(this.prolog, clauseTerm);
             content.add(cl);
               clauseTerm = theParser.nextTerm(true);
         }

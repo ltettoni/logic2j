@@ -54,7 +54,7 @@ public class Solution {
      */
     public Solution(Object theTerm, UnifyContext currentVars) {
         this.solution = currentVars.reify(theTerm);
-        this.varValues = currentVars.bindings(theTerm, FreeVarRepresentation.NULL);
+        this.varValues = currentVars.bindings(theTerm);
     }
 
     public Solution(Object substituted, Map<String, Object> varValues) {

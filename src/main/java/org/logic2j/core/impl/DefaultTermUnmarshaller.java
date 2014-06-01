@@ -44,7 +44,7 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
 
     @Override
     public Object unmarshall(CharSequence theChars) {
-        final Parser parser = new Parser(this.operatorManager, this.termAdapter, theChars);
+        final Parser parser = new Parser(this.operatorManager, termAdapter, theChars);
         final Object parsed = parser.parseSingleTerm();
         final Object normalized = normalizer.apply(parsed);
         return normalized;

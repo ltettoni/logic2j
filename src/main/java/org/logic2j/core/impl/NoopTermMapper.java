@@ -17,18 +17,7 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.model.term.TermApi;
-
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * A TermMapper that does nothing.

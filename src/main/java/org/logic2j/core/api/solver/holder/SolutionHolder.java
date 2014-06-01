@@ -1,16 +1,12 @@
 package org.logic2j.core.api.solver.holder;
 
-import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.listener.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Laurent on 26.05.2014.
@@ -33,7 +29,7 @@ public class SolutionHolder<T> implements Iterable<T> {
      */
     public SolutionHolder(GoalHolder goalHolder, String varName) {
         this.goalHolder = goalHolder;
-        this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.prolog, goalHolder.goal, varName);
+        this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.goal, varName);
         this.rangeListener = new SingleVarSolutionListener(this.singleVarExtractor);
         this.multiVarExtractor = null;
     }
@@ -46,7 +42,7 @@ public class SolutionHolder<T> implements Iterable<T> {
     public SolutionHolder(GoalHolder goalHolder) {
         this.goalHolder = goalHolder;
         this.singleVarExtractor = null;
-        this.multiVarExtractor = new MultiVarExtractor(goalHolder.prolog, goalHolder.goal);
+        this.multiVarExtractor = new MultiVarExtractor(goalHolder.goal);
         rangeListener = new MultiVarSolutionListener(this.multiVarExtractor);
     }
 
@@ -87,7 +83,7 @@ public class SolutionHolder<T> implements Iterable<T> {
     }
 
 
-    public <T> T[] array(T[] ts) {
+    public <AT> AT[] array(AT[] ts) {
         return list().toArray(ts);
     }
 

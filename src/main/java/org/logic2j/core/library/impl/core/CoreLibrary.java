@@ -37,8 +37,8 @@ import java.util.ArrayList;
  * Most is implemented in Java, but there is an associated Prolog theory at:
  * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.prolog
  */
+@SuppressWarnings("StringEquality")
 public class CoreLibrary extends LibraryBase {
-    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CoreLibrary.class);
 
     private static final ComparisonFunction COMPARE_GT = new ComparisonFunction() {
         @Override
@@ -91,9 +91,9 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
-                return Long.valueOf(val1.longValue() + val2.longValue());
+                return val1.longValue() + val2.longValue();
             }
-            return Double.valueOf(val1.longValue() + val2.longValue());
+            return (double) (val1.longValue() + val2.longValue());
         }
 
     };
@@ -102,9 +102,9 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
-                return Long.valueOf(val1.longValue() - val2.longValue());
+                return val1.longValue() - val2.longValue();
             }
-            return Double.valueOf(val1.longValue() - val2.longValue());
+            return (double) (val1.longValue() - val2.longValue());
         }
 
     };
@@ -113,9 +113,9 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
-                return Long.valueOf(val1.longValue() * val2.longValue());
+                return val1.longValue() * val2.longValue();
             }
-            return Double.valueOf(val1.longValue() * val2.longValue());
+            return (double) (val1.longValue() * val2.longValue());
         }
 
     };
@@ -124,9 +124,9 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public Number apply(Number val1, Number val2) {
             if (val1 instanceof Long && val2 instanceof Long) {
-                return Long.valueOf(-val1.longValue());
+                return -val1.longValue();
             }
-            return Double.valueOf(-val1.longValue());
+            return (double) -val1.longValue();
         }
 
     };
@@ -289,7 +289,7 @@ public class CoreLibrary extends LibraryBase {
         final Object value = currentVars.reify(theAtom);
         ensureBindingIsNotAFreeVar(value, "atom_length/2");
         final String atomText = value.toString();
-        final Long atomLength = Long.valueOf(atomText.length());
+        final Long atomLength = (long) atomText.length();
         return unify(theListener, currentVars, atomLength, theLength);
     }
 
@@ -362,7 +362,7 @@ public class CoreLibrary extends LibraryBase {
             throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
         }
         final ArrayList<Object> javalist = ((Struct) value).javaListFromPList(new ArrayList<Object>(), Object.class);
-        final Long listLength = Long.valueOf(javalist.size());
+        final Long listLength = (long) javalist.size();
         return unify(theListener, currentVars, listLength, theLength);
     }
 
@@ -516,9 +516,9 @@ public class CoreLibrary extends LibraryBase {
         final Object t2 = evaluate(currentVars, theTerm2);
         if (t1 instanceof Number && t2 instanceof Number) {
             if (t1 instanceof Long && t2 instanceof Long) {
-                return Long.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).longValue());
+                return theEvaluationFunction.apply((Number) t1, (Number) t2).longValue();
             }
-            return Double.valueOf(theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue());
+            return theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue();
         }
         throw new InvalidTermException("Could not add because 2 terms are not Numbers: " + t1 + " and " + t2);
     }

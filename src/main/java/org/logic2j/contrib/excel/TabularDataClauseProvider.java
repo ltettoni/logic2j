@@ -52,7 +52,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
         logger.debug("Starting to init clauses");
         final List<Object> terms = new TabularDataTermAdapter(this.prolog.getTermAdapter()).terms(this.tabularData, this.mode);
         for (final Object term : terms) {
-            this.clauses.add(new Clause(this.prolog, (Struct)term));
+            this.clauses.add(new Clause(this.prolog, term));
         }
         logger.debug("Finished to init clauses");
     }

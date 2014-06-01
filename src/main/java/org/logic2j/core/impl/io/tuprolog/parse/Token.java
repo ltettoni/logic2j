@@ -27,9 +27,9 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
 class Token implements Serializable {
     private static final long serialVersionUID = 1L;
     // token textual representation
-    String text;
+    final String text;
     // token type and attribute
-    int type;
+    final int type;
 
     public Token(String seq_, int type_) {
         this.text = seq_;
@@ -51,10 +51,7 @@ class Token implements Serializable {
     }
 
     public boolean isOperator(boolean commaIsEndMarker) {
-        if (commaIsEndMarker && ",".equals(this.text)) {
-            return false;
-        }
-        return getAttribute() == OPERATOR;
+        return !(commaIsEndMarker && ",".equals(this.text)) && getAttribute() == OPERATOR;
     }
 
     public boolean isFunctor() {

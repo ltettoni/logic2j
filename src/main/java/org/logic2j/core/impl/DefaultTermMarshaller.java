@@ -34,8 +34,6 @@ import org.logic2j.core.api.model.term.Var;
 public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisitor<CharSequence> {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshaller.class);
 
-    private static final boolean isDebug = logger.isDebugEnabled();
-
     public static final DefaultOperatorManager DEFAULT_OPERATOR_MANAGER = new DefaultOperatorManager();
 
     private final OperatorManager operatorManager = DEFAULT_OPERATOR_MANAGER;
@@ -238,7 +236,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             return accept(theTerm);
         }
         final Struct theStruct = (Struct) theTerm;
-        int p = 0;
+        int p;
         final String name = theStruct.getName();
         final int arity = theStruct.getArity();
 

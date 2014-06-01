@@ -24,7 +24,7 @@ package org.logic2j.core.impl.util;
  */
 public class ReportUtils {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ReportUtils.class);
-    private static boolean isDebug = logger.isDebugEnabled();
+    private static final boolean isDebug = logger.isDebugEnabled();
 
     public static String shortDescription(Object theInstance) {
         if (theInstance == null) {

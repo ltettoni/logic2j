@@ -61,10 +61,11 @@ public class TabularData implements Serializable {
      */
     public TabularData(String theDataSetName, List<String> colNames, List<List<Serializable>> listData) {
         this.dataSetName = theDataSetName;
-        this.columnNames = colNames.toArray(new String[0]);
+        this.columnNames = colNames.toArray(new String[colNames.size()]);
         this.data = new Serializable[listData.size()][];
         for (int i = 0; i < this.data.length; i++) {
-            final Serializable[] row = listData.get(i).toArray(new Serializable[0]);
+            List<Serializable> var = listData.get(i);
+            final Serializable[] row = var.toArray(new Serializable[var.size()]);
             this.data[i] = row;
         }
         checkAll();

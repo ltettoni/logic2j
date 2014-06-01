@@ -36,6 +36,6 @@ public enum Continuation {
     /**
      * A cut "!" has been found - this will prune the search tree to the last solution found.
      */
-    CUT;
+    CUT
 
 }
