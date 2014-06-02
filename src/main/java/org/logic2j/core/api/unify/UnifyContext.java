@@ -76,7 +76,11 @@ public class UnifyContext {
                 reifiedArgs[i] = reify(args[i]);
             }
             final Struct res = new Struct(s, reifiedArgs);
-            // FIXME here one must recalculate the index (number of sub vars)
+            if (s.getIndex()>0) {
+                // The original structure had variables, maybe the cloned one will still have (if those were free)
+                // We need to reassign indexes. It's costly, unfortunately.
+                TermApi.assignIndexes(res, 0);
+            }
 //            audit.info("               yields {}", res);
             return res;
         }
