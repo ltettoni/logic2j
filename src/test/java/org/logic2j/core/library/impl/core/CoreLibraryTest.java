@@ -113,7 +113,7 @@ public class CoreLibraryTest extends PrologTestBase {
 //    public void solvePrimitivePredicates_representation_FREE() {
 //        assertEquals(term("X"), uniqueSolution("X=X").var("X").unique());
 //        assertEquals(term("Y"), uniqueSolution("X=Y").var("X").unique());
-//        assertEquals(term("Y"), uniqueSolution("X=Y").binding("Y"));
+//        assertEquals(term("Y"), uniqueSolution("X=Y").var("Y").unique());
 //        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
 //        //
 //        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique());

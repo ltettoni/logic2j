@@ -103,7 +103,7 @@ public class FunctionalTest extends PrologTestBase {
 //        loadTheoryFromTestResourcesDir("test-functional.pl");
 //        final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ab(X,Y)");
 //        assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.vars().list().toString());
-//        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.binding("X").toString());
+//        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.var("X").list().toString());
 //        assertEquals("[11, 12, 13, 14, 15, 16]", assertNSolutions.var("Y").list().toString());
 //    }
 //
