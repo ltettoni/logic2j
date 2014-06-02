@@ -19,14 +19,12 @@ package org.logic2j.core;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.api.model.Solution;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.io.IOLibrary;
 import static org.junit.Assert.*;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Run higher-level tests such as whole programs.
