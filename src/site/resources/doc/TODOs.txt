@@ -9,3 +9,8 @@ Things possibly to be done:
 
 - Implement setof, bagof, etc. See http://www.csupomona.edu/~jrfisher/www/prolog_tutorial/4.html
 - How could we leverage multi-core architectures? Running "queens(11, _)" shows that only one core is busy.
+
+- assertions and/or DbC?
+  See last comment on http://stackoverflow.com/questions/1957645/when-to-use-assertion-vs-exception
+  See Google's "coforja"
+

@@ -41,7 +41,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Difference between number of args in Prolog's primitive invocation, and number of varargs
-     * passed to Java implementation of the primitive: (SolutionListener theListener, TermBindings theBindings, Object...)
+     * passed to Java implementation of the primitive: (SolutionListener theListener, UnifierState currentVars, Object...)
      */
     private static final int NB_EXTRA_PARAMS = 2;
 

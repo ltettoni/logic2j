@@ -92,28 +92,28 @@ public class FunctionalTest extends PrologTestBase {
 //    public void relink_vars() {
 //        loadTheoryFromTestResourcesDir("test-functional.pl");
 //        // Below, Y must be equal to g(123,X), but does not solve to X!
-//        assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").binding("Y"));
+//        assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").var("Y").unique());
 //
 //        // Is this really what we should have? // TuProlog returns a binding of X to an anonymous internal var
-//        assertEquals(term("f(FinalVar)"), assertOneSolution("final(X)").binding("X"));
+//        assertEquals(term("f(FinalVar)"), assertOneSolution("final(X)").var("X").unique());
 //    }
 //
 //    @Test
 //    public void binding_single_var_1() {
 //        loadTheoryFromTestResourcesDir("test-functional.pl");
 //        final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ab(X,Y)");
-//        assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.bindings().toString());
+//        assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.vars().list().toString());
 //        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.binding("X").toString());
-//        assertEquals("[11, 12, 13, 14, 15, 16]", assertNSolutions.binding("Y").toString());
+//        assertEquals("[11, 12, 13, 14, 15, 16]", assertNSolutions.var("Y").list().toString());
 //    }
 //
 //    @Test
 //    public void binding_single_var_2() {
 //        loadTheoryFromTestResourcesDir("test-functional.pl");
 //        final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ac(X,Y)");
-//        assertEquals("[{X=1, Y=11}, {X=2, Y=twelve}, {X=3, Y=13}, {X=4, Y=fourteen}, {X=5, Y=15}, {X=6, Y=sixteen}]", assertNSolutions.bindings().toString());
-//        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.binding("X").toString());
-//        assertEquals("[11, twelve, 13, fourteen, 15, sixteen]", assertNSolutions.binding("Y").toString());
+//        assertEquals("[{X=1, Y=11}, {X=2, Y=twelve}, {X=3, Y=13}, {X=4, Y=fourteen}, {X=5, Y=15}, {X=6, Y=sixteen}]", assertNSolutions.vars().list().toString());
+//        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.var("X").list().toString());
+//        assertEquals("[11, twelve, 13, fourteen, 15, sixteen]", assertNSolutions.var("Y").list().toString());
 //    }
 //
     @Test

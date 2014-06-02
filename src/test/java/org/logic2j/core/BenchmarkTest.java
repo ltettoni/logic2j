@@ -102,13 +102,6 @@ public class BenchmarkTest extends PrologTestBase {
         long count = holder.count();
 //        long count = holder.exists() ? 1 : 0;
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
-
-        /*
-        // TermBindings
-        ProfilingInfo.setTimer1();
-        getProlog().solve(goal).all().bindings();
-        ProfilingInfo.reportAll("TermBindings of solutions to " + goal);
-        */
     }
 
     @Ignore("Use this in conjunction with jvisualvm to profile")

@@ -111,14 +111,14 @@ public class CoreLibraryTest extends PrologTestBase {
 //    @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
 //    @Test
 //    public void solvePrimitivePredicates_representation_FREE() {
-//        assertEquals(term("X"), uniqueSolution("X=X").binding("X"));
-//        assertEquals(term("Y"), uniqueSolution("X=Y").binding("X"));
+//        assertEquals(term("X"), uniqueSolution("X=X").var("X").unique());
+//        assertEquals(term("Y"), uniqueSolution("X=Y").var("X").unique());
 //        assertEquals(term("Y"), uniqueSolution("X=Y").binding("Y"));
-//        assertEquals(term(2), uniqueSolution("X=2").binding("X"));
+//        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
 //        //
-//        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").binding("X"));
-//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").binding("X"));
-//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").binding("Y"));
+//        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique());
+//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("X").unique());
+//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("Y").unique());
 //        //
 //        uniqueSolution("2>1");
 //        uniqueSolution("A=1, 2>A");

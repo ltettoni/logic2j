@@ -37,7 +37,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
     @Test
     public void withClauseProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
-        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").binding("E").toString());
+        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
         assertEquals(15, number);
     }
@@ -45,7 +45,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
     @Test
     public void withDataProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
-        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").binding("E").toString());
+        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
         assertEquals(15, number);
     }

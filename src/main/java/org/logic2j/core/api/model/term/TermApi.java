@@ -211,7 +211,8 @@ public final class TermApi {
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
      * 
      * @param theIndexOfNextNonIndexedVar
-     * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment.
+     * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment. First caller
+     * must pass 0.
      */
     public static int assignIndexes(Object theTerm, int theIndexOfNextNonIndexedVar) {
         if (theTerm instanceof Struct) {
