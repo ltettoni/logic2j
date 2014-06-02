@@ -103,8 +103,9 @@ public class SolutionHolder<T> implements Iterable<T> {
 
 
     /**
-     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link org.logic2j.core.api.model.Solution}s from this
-     * {@link java.util.Iterator} at its own pace. This uses the {@link org.logic2j.core.api.solver.listener.IterableSolutionListener}.
+     * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume
+     * from this {@link java.util.Iterator} at its own pace.
+     * This uses the {@link org.logic2j.core.api.solver.listener.IterableSolutionListener}.
      * Note: there is no bounds checking when using iterator()
      * @return An iterator for all solutions.
      */

@@ -104,7 +104,6 @@ public class PrimitiveInfo {
             }
             if (targetException instanceof StackOverflowError) {
                 final RecursionException recursionException = new RecursionException("Stack overflow while executing primitive " + this);
-                recursionException.stackOverflow = true;
                 throw recursionException;
             }
             if (targetException instanceof RuntimeException) {

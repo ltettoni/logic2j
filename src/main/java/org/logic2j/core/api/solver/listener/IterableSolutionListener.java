@@ -76,8 +76,8 @@ public class IterableSolutionListener<T> implements SolutionListener {
     // ---------------------------------------------------------------------------
 
     public static class SynchronizedInterface<T> {
-        public boolean ready = false;
-        public T content = null;
+        boolean ready = false;
+        T content = null;
 
         /**
          * Indicate that the peer thread can be restart - but there is no data exchanged.

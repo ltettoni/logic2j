@@ -19,6 +19,7 @@ public class UnifyContext {
 
     final int currentTransaction;
 
+    // FIXME Make private - only Clause is using it yet
     public int topVarIndex;
 
     private final UnifyStateByLookup impl;

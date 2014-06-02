@@ -25,8 +25,6 @@ public class RecursionException extends PrologException {
 
     private static final long serialVersionUID = -4416801118548866803L;
 
-    public boolean stackOverflow = false;
-
     public RecursionException(String theString) {
         super(theString);
     }
