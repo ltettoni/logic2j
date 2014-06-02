@@ -136,7 +136,7 @@ public class SolutionApiTest extends PrologTestBase {
     // Access to bindings of vars
     // ---------------------------------------------------------------------------
 
-    @Test(expected=MissingSolutionException.class)
+    @Test(expected = MissingSolutionException.class)
     public void varMissing() throws Exception {
         getProlog().solve("1=2").var("Q");
     }
@@ -181,12 +181,54 @@ public class SolutionApiTest extends PrologTestBase {
     // Goodies
     // ---------------------------------------------------------------------------
 
+    @Test(expected = TooManySolutionsException.class)
+    public void exactly1() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().exactly(1).list();
+    }
+
     @Test
-    public void exactCount() throws Exception {
-        final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").exactCount(1).vars().unique();
+    public void exactly2() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().exactly(2).list();
+    }
+
+    @Test(expected = MissingSolutionException.class)
+    public void exactly3() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().exactly(3).list();
     }
 
 
+    @Test
+    public void atLeast1() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atLeast(1).list();
+    }
+
+
+    @Test
+    public void atLeast2() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atLeast(2).list();
+    }
+
+    @Test(expected = MissingSolutionException.class)
+    public void atLeast3() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atLeast(3).list();
+    }
+
+
+    @Test(expected = TooManySolutionsException.class)
+    public void atMost1() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atMost(1).list();
+    }
+
+
+    @Test
+    public void atMost2() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atMost(2).list();
+    }
+
+    @Test
+    public void atMost3() throws Exception {
+        getProlog().solve("Q=12;Q=13").vars().atMost(3).list();
+    }
 
 
     // ---------------------------------------------------------------------------
@@ -236,7 +278,7 @@ public class SolutionApiTest extends PrologTestBase {
         int counter = 0;
         while (iter.hasNext()) {
             final Object next = iter.next();
-            if (counter<10) {
+            if (counter < 10) {
                 logger.info("Solution via iterator: {}", next);
             }
             counter++;
@@ -244,6 +286,7 @@ public class SolutionApiTest extends PrologTestBase {
         ProfilingInfo.reportAll("iterator()");
         assertEquals(40320, counter);
     }
+
     @Test
     public void permVarList() throws IOException {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
@@ -275,7 +318,7 @@ public class SolutionApiTest extends PrologTestBase {
         int counter = 0;
         while (iter.hasNext()) {
             final Struct next = iter.next();
-            if (counter<10) {
+            if (counter < 10) {
                 logger.info("Value via iterator: {}", next);
             }
             counter++;
@@ -290,8 +333,8 @@ public class SolutionApiTest extends PrologTestBase {
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
         int counter = 0;
-        for (Struct next: holder.var("Q", Struct.class)) {
-            if (counter<10) {
+        for (Struct next : holder.var("Q", Struct.class)) {
+            if (counter < 10) {
                 logger.info("Value via iterable: {}", next);
             }
             counter++;
@@ -321,7 +364,7 @@ public class SolutionApiTest extends PrologTestBase {
         int counter = 0;
         while (iter.hasNext()) {
             final Map<Var, Object> next = iter.next();
-            if (counter<10) {
+            if (counter < 10) {
                 logger.info("Vars via iterator: {}", next);
             }
             counter++;

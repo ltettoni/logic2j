@@ -17,12 +17,17 @@ public class SolutionHolder<T> implements Iterable<T> {
     private final GoalHolder goalHolder;
 
     private final SingleVarExtractor<T> singleVarExtractor;
+
     private final MultiVarExtractor multiVarExtractor;
 
     private final RangeSolutionListener rangeListener;
 
+    private long minNbr = 0;
+
+    private long maxNbr = Long.MAX_VALUE - 1; // Keep possibility to add one because the RangeSolutionListener "fetch" property
+
     /**
-     * Extract one variable or the solution to the goal.
+     * Extract one particular variable or the solution to the goal.
      *
      * @param goalHolder
      * @param varName
@@ -45,6 +50,11 @@ public class SolutionHolder<T> implements Iterable<T> {
         this.multiVarExtractor = new MultiVarExtractor(goalHolder.goal);
         rangeListener = new MultiVarSolutionListener(this.multiVarExtractor);
     }
+
+    // ---------------------------------------------------------------------------
+    // Scalar extractors (zero or one solution)
+    // ---------------------------------------------------------------------------
+
 
     /**
      * @return The only solution or null if none, but will throw an Exception if more than one.
@@ -76,9 +86,13 @@ public class SolutionHolder<T> implements Iterable<T> {
         return (T) rangeListener.getResults().get(0);
     }
 
+    // ---------------------------------------------------------------------------
+    // Vectorial extractors (collections, arrays, iterables)
+    // ---------------------------------------------------------------------------
+
 
     public List<T> list() {
-        solveAndCheckRanges();
+        initListenerRangesAndSolve(this.minNbr, this.maxNbr, this.maxNbr+1);
         return (List<T>) rangeListener.getResults();
     }
 
@@ -87,28 +101,16 @@ public class SolutionHolder<T> implements Iterable<T> {
         return list().toArray(ts);
     }
 
-    private void initListenerRangesAndSolve(int minCount, long maxCount, long maxFetch) {
-        this.rangeListener.setMinCount(minCount);
-        this.rangeListener.setMaxCount(maxCount);
-        this.rangeListener.setMaxFetch(maxFetch);
-        solveAndCheckRanges();
-    }
-
-    private void solveAndCheckRanges() {
-        this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, this.rangeListener);
-        this.rangeListener.checkRange();
-    }
-
 
     /**
      * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume {@link org.logic2j.core.api.model.Solution}s from this
      * {@link java.util.Iterator} at its own pace. This uses the {@link org.logic2j.core.api.solver.listener.IterableSolutionListener}.
-     *
+     * Note: there is no bounds checking when using iterator()
      * @return An iterator for all solutions.
      */
     public Iterator<T> iterator() {
         SolutionExtractor<?> effectiveExtractor;
-        if (SolutionHolder.this.singleVarExtractor!=null) {
+        if (SolutionHolder.this.singleVarExtractor != null) {
             effectiveExtractor = SolutionHolder.this.singleVarExtractor;
         } else {
             effectiveExtractor = SolutionHolder.this.multiVarExtractor;
@@ -158,15 +160,71 @@ public class SolutionHolder<T> implements Iterable<T> {
                 // Indicate that we have just "consumed" the solution, and any subsequent call to next() without first calling hasNext()
                 // will fail.
                 this.solution = null;
-                return (T)toReturn;
+                return (T) toReturn;
             }
 
             @Override
             public void remove() {
-                throw new PrologNonSpecificError("iterator() provides a read-only Term interator, cannot remove elements");
+                throw new PrologNonSpecificError("iterator() provides a read-only Term iterator, cannot remove elements");
             }
 
         };
+    }
+
+    // ---------------------------------------------------------------------------
+    // Enforcement of cardinality
+    // ---------------------------------------------------------------------------
+
+    /**
+     * Specify that the number of solutions to be extracted by this SolutionHolder
+     * must be exactly as specified
+     * @note Does not apply to #iterator().
+     * @param expectedNumberOfSolutions
+     * @return
+     */
+    public SolutionHolder<T> exactly(int expectedNumberOfSolutions) {
+        return atLeast(expectedNumberOfSolutions).atMost(expectedNumberOfSolutions);
+    }
+
+
+    /**
+     * Specify that the number of solutions to be extracted by this SolutionHolder
+     * must at be at least minimalNumberOfSolutions.
+     * @note Does not apply to #iterator().
+     * @param minimalNumberOfSolutions
+     * @return this instance
+     */
+    public SolutionHolder<T> atLeast(int minimalNumberOfSolutions) {
+        this.minNbr = minimalNumberOfSolutions;
+        return this;
+    }
+
+    /**
+     * Specify that the number of solutions to be extracted by this SolutionHolder
+     * must at be at most minimalNumberOfSolutions.
+     * @note Does not apply to #iterator().
+     * @param maximalNumberOfSolutions
+     * @return this instance
+     */
+    public SolutionHolder<T> atMost(int maximalNumberOfSolutions) {
+        this.maxNbr = maximalNumberOfSolutions;
+        return this;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Support methods
+    // ---------------------------------------------------------------------------
+
+    private void initListenerRangesAndSolve(long minCount, long maxCount, long maxFetch) {
+        this.rangeListener.setMinCount(minCount);
+        this.rangeListener.setMaxCount(maxCount);
+        this.rangeListener.setMaxFetch(maxFetch);
+        solveAndCheckRanges();
+    }
+
+    private void solveAndCheckRanges() {
+        this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, this.rangeListener);
+        this.rangeListener.checkRange();
     }
 
 

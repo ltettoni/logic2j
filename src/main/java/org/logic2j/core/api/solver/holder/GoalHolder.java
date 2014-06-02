@@ -50,10 +50,6 @@ public class GoalHolder {
         return new SolutionHolder<Map<Var, Object>>(this);
     }
 
-    public GoalHolder exactCount(int exactNumberExpected) {
-        return this;
-    }
-
     // ---------------------------------------------------------------------------
     // Syntactic sugars
     // ---------------------------------------------------------------------------
