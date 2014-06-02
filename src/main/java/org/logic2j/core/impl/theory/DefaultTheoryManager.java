@@ -71,7 +71,7 @@ public class DefaultTheoryManager implements TheoryManager {
 
     @Override
     public TheoryContent load(File theFile) throws IOException {
-        // TODO Should use a LineNumberReader to improve error reporting further down
+        // FIXME Should use a LineNumberReader to improve error reporting further down
         final FileReader reader = new FileReader(theFile);
         try {
             return load(reader);

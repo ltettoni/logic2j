@@ -145,7 +145,7 @@ public class ExcelReader {
                             default:
                                 args[c] = this.termAdapter.term("\"" + value + "\"", FactoryMode.LITERAL);
                         }
-                        // TODO There is a problem if the content of the cell is too long
+                        // Note: There is a problem if the content of the cell is too long
                         // args[c] = prolog.getTermFactory().create("\""+value.replace("\"", "").replaceAll("\\r|\\n", "")+"\"",
                         // FactoryMode.ANY_TERM);
                     }

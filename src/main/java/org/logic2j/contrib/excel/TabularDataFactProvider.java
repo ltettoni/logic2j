@@ -53,7 +53,7 @@ public class TabularDataFactProvider implements DataFactProvider {
                 for (int c = 0; c < nbColumns; c++) {
                     if (c != primaryKeyColumn) {
                         final String property = columnNames[c];
-                        // FIXME Null values should actually just not be asserted!
+                        // FIXME Null values should actually just not be asserted - so we use "n/a" but it this a good idea?
                         Serializable value = row[c];
                         if (value == null) {
                             value = "n/a";

@@ -22,6 +22,8 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.Continuation;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.unify.UnifyStateByLookup;
@@ -54,7 +56,16 @@ public class DefaultSolver implements Solver {
             // for any new var must be higher than any of the currently used vars.
             initialContext.topVarIndex += ((Struct)goal).getIndex();
         }
-        return solveGoal(goal, initialContext, theSolutionListener);
+        try {
+            return solveGoal(goal, initialContext, theSolutionListener);
+        } catch (PrologException e) {
+            // "Functional" exception thrown during solving will just be forwarded
+            throw e;
+        }  catch (RuntimeException e) {
+            // Anything else will be encapsulated
+            throw new PrologNonSpecificError("Solver failed with " + e, e);
+        }
+
     }
 
     /**
@@ -87,7 +98,7 @@ public class DefaultSolver implements Solver {
         // At the moment we don't properly manage atoms as goals...
         final Struct goalStruct;
         if (goalTerm instanceof String) {
-            // Yet we are not capable of handing String below everywhere - so use a Struct still
+            // Yet we are not capable of handing String everywhere below - so use a Struct atom still
             goalStruct = new Struct((String) goalTerm);
         } else {
             goalStruct = (Struct) goalTerm;
@@ -272,7 +283,7 @@ public class DefaultSolver implements Solver {
                             logger.debug("  back to clause {} with continuation={}", clause, continuation);
                         }
                         if (continuation == Continuation.USER_ABORT) {
-                            // TODO should we just "return" from here?
+                            // TODO should we just "return" from here - yet we are not frequently here
                             result = Continuation.USER_ABORT;
                         }
 

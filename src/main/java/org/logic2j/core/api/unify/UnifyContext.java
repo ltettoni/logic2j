@@ -74,7 +74,7 @@ public class UnifyContext {
                 arr[i] = reify(s.getArg(i));
             }
             final Struct res = new Struct(s, arr);
-            // TODO here one must recalculate the index (number of sub vars)
+            // FIXME here one must recalculate the index (number of sub vars)
 //            audit.info("               yields {}", res);
             return res;
         }

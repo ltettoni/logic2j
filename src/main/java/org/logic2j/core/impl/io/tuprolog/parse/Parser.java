@@ -107,7 +107,6 @@ public class Parser {
      * @param endNeeded <tt>true</tt> if it is required to parse the end token (a period), <tt>false</tt> otherwise.
      * @throws org.logic2j.core.api.model.exception.InvalidTermException if a syntax error is found.
      */
-    // TODO I would prefer that the parser exposes an Iterable instead of a direct method
     public Object nextTerm(boolean endNeeded) throws InvalidTermException {
         try {
             final Token t = this.tokenizer.readToken();

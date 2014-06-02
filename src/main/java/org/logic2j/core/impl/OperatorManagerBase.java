@@ -50,7 +50,6 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
 
     /**
      * Returns the priority of an operator (0 if the operator is not defined).
-     * TODO rename method
      */
     @Override
     public int opPrio(String name, String type) {

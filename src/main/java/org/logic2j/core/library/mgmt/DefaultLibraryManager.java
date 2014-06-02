@@ -103,7 +103,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     private void mergeExtraContent(LibraryContent loadedContent) {
         this.wholeContent.addAll(loadedContent);
-        // TODO Houston we have a problem - we need to reassign our primitives upon loading libs!
+        // TODO Houston we have a problem - we need to reassign all primitives upon loading libs!
         // It's actually unclear if when we load a new library, the new available functors would influence theories currently loaded.
 
         // We need to assignPrimitiveInfo(), but let's use the TermApi directly and invoke normalize() it won't harm to do a little more.

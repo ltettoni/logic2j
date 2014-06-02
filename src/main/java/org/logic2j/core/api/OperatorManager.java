@@ -27,7 +27,7 @@ public interface OperatorManager {
 
     void addOperator(String theName, String theAssociativityType, int thePriority);
 
-    // TODO Unclear how this is an operation of a "manager"
+    // TODO Unclear how this is an operation of a "manager". Rename method?
     int opPrio(String name, String type);
 
 }

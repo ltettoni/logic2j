@@ -99,7 +99,6 @@ public final class TermApi {
      * detailed description there.
      *
      * @param collection Recipient collection, {@link Term}s add here.
-     * TODO use an ExtendedTermVisitor
      */
     public static void collectTermsInto(Object theTerm, Collection<Object> collection) {
         if (theTerm instanceof Struct) {
@@ -248,7 +247,6 @@ public final class TermApi {
             return null;
         }
         theTerm = currentVars.reify(theTerm);
-        // TODO are the lines below this exactly as in substitute() method?
         if (theTerm instanceof Var) {
             return null;
         }
@@ -270,17 +268,8 @@ public final class TermApi {
         return theTerm;
     }
 
-    
-//    /**
-//     * @param theTerm
-//     * @param theBindings
-//     * @return Only the substituted Term
-//     */
-//    public static Object substitute(Object theTerm, TermBindings theBindings) {
-//        return Binding.newLiteral(theTerm, theBindings).substitute().getTerm();
-//    }
-    
-    // FIXME Currently unused - but probably we should detect cycles!
+
+    // TODO Currently unused - but probably we should detect cycles!
     void avoidCycle(Struct theClause) {
         final List<Term> visited = new ArrayList<Term>(20);
         theClause.avoidCycle(visited);
@@ -392,7 +381,7 @@ public final class TermApi {
      * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
      * @param theClass The {@link Term} class or one of its subclass that the desired returned object should be.
      */
-    // TODO Should this go to TermAdapter instead? - since we return a new Term
+    // FIXME Should this go to TermAdapter instead? - since we return a new Term
     @SuppressWarnings("unchecked")
     public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
         if (theTPathExpression.isEmpty()) {
@@ -448,7 +437,7 @@ public final class TermApi {
         return (T) theTerm;
     }
 
-    // FIXME unused?
+    // TODO Currently unused but we probably should use an assertion method with very clean error handling as this one
     private static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {
       final String functorSpec = theFunctor != null ? "functor \"" + theFunctor + '"' : "any functor";
       final String aritySpec = theArity >=0 ? "arity=" + theArity : "any arity";
@@ -495,11 +484,6 @@ public final class TermApi {
     public static boolean isAtom(String s) {
         return ATOM_PATTERN.matcher(s).matches();
     }
-
-
-    //---------------------------------------------------------------------------
-    // Oldies
-    //---------------------------------------------------------------------------
 
 
 }

@@ -68,7 +68,7 @@ public final class Struct extends Term {
     /**
      * The empty list.
      */
-    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0); // TODO rename this ?
+    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
 
     public static final String FUNCTOR_LIST_NODE = ".".intern();
 
@@ -82,7 +82,7 @@ public final class Struct extends Term {
 
     public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
 
-    public static final String FUNCTOR_FALSE = "false".intern(); // TODO do we need it?
+    public static final String FUNCTOR_FALSE = "false".intern(); // TODO do we need "false" or is this "fail"?
 
     public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
 
@@ -105,6 +105,8 @@ public final class Struct extends Term {
     public static final String LIST_ELEM_SEPARATOR = ",".intern();
 
     public static final char QUOTE = '\'';
+
+    public static final Object[] EMPTY_ARGS_ARRAY = new Object[0];
 
     // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
     private PrimitiveInfo primitiveInfo;
@@ -324,11 +326,6 @@ public final class Struct extends Term {
         theCollectedTerms.add(this);
     }
 
-    /**
-     * TODO
-     * @param theCollectedTerms
-     * @return
-     */
     Object factorize(Collection<Object> theCollectedTerms) {
         // Recursively factorize all arguments of this Struct
         final Object[] newArgs = new Object[this.arity];
@@ -413,16 +410,12 @@ public final class Struct extends Term {
 
     /**
      * @return A cloned array of all arguments (cloned to avoid any possibility to mutate)
-     * TODO rework if we really need to clone, hopefully not.
      */
     public Object[] getArgs() {
         if (this.args == null) {
-            return new Object[0];
+            return EMPTY_ARGS_ARRAY;
         }
-        final int length = this.args.length;
-        final Object[] copy = new Object[length];
-        System.arraycopy(this.args, 0, copy, 0, length);
-        return copy;
+        return this.args;
     }
 
     /**
@@ -563,7 +556,7 @@ public final class Struct extends Term {
      * <p/>
      * If this structure is not a list, null object is returned
      */
-    // TODO (issue) Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
+    // FIXME (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
     public Struct predicateFromPList() {
         assertPList(this);
         final Object functor = getLHS();
@@ -816,4 +809,5 @@ public final class Struct extends Term {
         }
         return sb.toString();
     }
+
 }

@@ -17,10 +17,12 @@
  */
 package org.logic2j.core.impl.util;
 
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
  * micro-helper to java.lang.reflect.
- * TODO Rename this class this has nothing to do with the Java Reflection API (any more)
+ * TODO Rename this class this has nothing to do with the Java Reflection API (any longer)
  * 
  * @version $Revision: 1.24 $
  */
@@ -44,7 +46,7 @@ public abstract class ReflectUtils {
         }
         if (!(desiredClassOrInterface.isAssignableFrom(instance.getClass()))) {
             final String message = "Could not cast an instance of " + instance.getClass() + " to expected " + desiredClassOrInterface + " [formatted object was " + instance + "]";
-            throw new ClassCastException(message);
+            throw new PrologNonSpecificError(message);
         }
         return (T) instance;
     }

@@ -92,7 +92,6 @@ public class Clause {
             return;
         }
         final Struct struct = (Struct) this.content;
-        // TODO (issue) Cache this value, see https://github.com/ltettoni/logic2j/issues/16
         if (Struct.FUNCTOR_CLAUSE != struct.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
             this.head = this.content;
             this.body = null;

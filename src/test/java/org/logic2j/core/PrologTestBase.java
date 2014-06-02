@@ -20,6 +20,7 @@ package org.logic2j.core;
 import org.junit.Before;
 import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
@@ -103,16 +104,18 @@ public abstract class PrologTestBase {
     }
 
 
-    // FIXME Not good, should use direct Junit and expected=...
+    /**
+     * Will replace many test methods with JUnit's "expected=" feature
+     * @param theGoals
+     */
     protected void assertGoalMustFail(CharSequence... theGoals) {
         assertTrue("theGoals must not be empty for assertGoalMustFail()", theGoals.length > 0);
         for (final CharSequence theGoal : theGoals) {
             try {
                 this.prolog.solve(theGoal).exists();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
-            } catch (final RuntimeException e) {
-                // logger.warn("Goal failing - but expected: " + e, e);
-                // Normal
+            } catch (final PrologException e) {
+                // Expected
             }
         }
     }
