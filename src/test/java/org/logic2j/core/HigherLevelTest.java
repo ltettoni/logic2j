@@ -105,7 +105,7 @@ public class HigherLevelTest extends PrologTestBase {
      */
     @Ignore("Very CPU intensive - enable on demand")
     @Test
-    public void queensHeavier() {
+    public void queensHeavierForThePatient() {
         loadTheoryFromTestResourcesDir("queens.pl");
         nSolutions(724, "queens(10, _)");
         nSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
