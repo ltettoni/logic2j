@@ -40,8 +40,9 @@ public class ExtendedTermVisitorBase<T> implements ExtendedTermVisitor<T> {
     @Override
     public T visit(Struct theStruct) {
         // Recurse through children
-        for (int i = 0; i < theStruct.getArity(); i++) {
-            final T result = TermApi.accept(this, theStruct.getArg(i));
+        final Object[] args = theStruct.getArgs();
+        for (int i = 0; i < args.length; i++) {
+            final T result = TermApi.accept(this, args[i]);
             // Until the first returning a non-null result
             if (result != null) {
                 return result;

@@ -69,11 +69,13 @@ public class UnifyContext {
                 // Structure is an atom or a constant term - no need to further transform
                 return term;
             }
-            final Object[] arr = new Object[s.getArity()];
-            for (int i = 0; i < s.getArity(); i++) {
-                arr[i] = reify(s.getArg(i));
+            final Object[] args = s.getArgs();
+            final int arity = args.length;
+            final Object[] reifiedArgs = new Object[arity];
+            for (int i = 0; i < arity; i++) {
+                reifiedArgs[i] = reify(args[i]);
             }
-            final Struct res = new Struct(s, arr);
+            final Struct res = new Struct(s, reifiedArgs);
             // FIXME here one must recalculate the index (number of sub vars)
 //            audit.info("               yields {}", res);
             return res;

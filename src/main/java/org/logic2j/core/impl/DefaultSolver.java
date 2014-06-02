@@ -120,7 +120,8 @@ public class DefaultSolver implements Solver {
             if (isDebug) {
                 logger.debug("Handling AND, arity={}", arity);
             }
-            final Object lhs = goalStruct.getArg(0);
+            final Object[] goalStructArgs = goalStruct.getArgs();
+            final Object lhs = goalStructArgs[0];
             for (int i = 0; i < arity - 1; i++) {
                 final int index = i;
                 listeners[index] = new SolutionListener() {
@@ -131,7 +132,7 @@ public class DefaultSolver implements Solver {
                             logger.debug("AND's internal solution listener called for {}", lhs);
                         }
                         final int nextIndex = index + 1;
-                        final Object rhs = goalStruct.getArg(nextIndex); // Usually the right-hand-side of a binary ','
+                        final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
                         final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, listeners[nextIndex]);
                         return continuationFromSubGoal;
                     }

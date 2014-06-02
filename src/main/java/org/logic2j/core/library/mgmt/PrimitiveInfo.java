@@ -125,8 +125,8 @@ public class PrimitiveInfo {
      */
     private Object invokeReflective(Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final int arity = theGoalStruct.getArity();
-        final int nbargs = this.isVarargs ? 3 : (2 + arity);
-        final Object[] args = new Object[nbargs];
+        final int nbArgs = this.isVarargs ? 3 : (2 + arity);
+        final Object[] args = new Object[nbArgs];
         int i = 0;
         args[i++] = theListener;
         args[i++] = currentVars;

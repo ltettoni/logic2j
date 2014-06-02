@@ -21,6 +21,7 @@ import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.visitor.ExtendedTermVisitorBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.api.TermAdapter;
@@ -461,9 +462,10 @@ public final class TermApi {
      * @return {Var -> Name}
      */
     public static IdentityHashMap<Var, String> allVars(Object term) {
+        // TODO Does it make sense to use a Map for a few 1-5 vars?
         final IdentityHashMap<Var, String> map = new IdentityHashMap<Var, String>();
 
-        final ExtendedTermVisitor<Void> findVarsVisitor = new ExtendedTermVisitorBase<Void>() {
+        final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
             @Override
             public Void visit(Var theVar) {
                 if (theVar != Var.ANONYMOUS_VAR) {
@@ -471,8 +473,23 @@ public final class TermApi {
                 }
                 return null;
             }
+
+            @Override
+            public Void visit(Struct theStruct) {
+                // Recurse through children
+                final Object[] args = theStruct.getArgs();
+                for (int i = 0; i < args.length; i++) {
+                    final Object arg = args[i];
+                    if (arg instanceof Term) {
+                        ((Term) arg).accept(this);
+                    }
+                }
+                return null;
+            }
         };
-        accept(findVarsVisitor, term);
+        if (term instanceof Term) {
+            ((Term) term).accept(findVarsVisitor);
+        }
         return map;
     }
 

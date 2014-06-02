@@ -142,9 +142,10 @@ public class CoreLibrary extends LibraryBase {
     public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
-        final int arity = theGoalStruct.getArity();
+        final Object[] goalStructArgs = theGoalStruct.getArgs();
+        final int arity = goalStructArgs.length;
         if (arity == 1) {
-            final Object arg0 = theGoalStruct.getArg(0);
+            final Object arg0 = goalStructArgs[0];
             if (theMethodName == "not") {
                 result = not(theListener, currentVars, arg0);
             } else if (theMethodName == "var") {
@@ -153,8 +154,8 @@ public class CoreLibrary extends LibraryBase {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 2) {
-            final Object arg0 = theGoalStruct.getArg(0);
-            final Object arg1 = theGoalStruct.getArg(1);
+            final Object arg0 = goalStructArgs[0];
+            final Object arg1 = goalStructArgs[1];
             if (theMethodName == "unify") {
                 result = unify(theListener, currentVars, arg0, arg1);
             } else if (theMethodName == "expression_greater_equal_than") {
@@ -187,9 +188,9 @@ public class CoreLibrary extends LibraryBase {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 3) {
-            final Object arg0 = theGoalStruct.getArg(0);
-            final Object arg1 = theGoalStruct.getArg(1);
-            final Object arg2 = theGoalStruct.getArg(2);
+            final Object arg0 = goalStructArgs[0];
+            final Object arg1 = goalStructArgs[1];
+            final Object arg2 = goalStructArgs[2];
             if (theMethodName == "findall") {
                 result = findall(theListener, currentVars, arg0, arg1, arg2);
             } else {
