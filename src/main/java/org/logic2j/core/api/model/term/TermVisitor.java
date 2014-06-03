@@ -15,34 +15,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.solver.listener;
+package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.term.TermApi;
+
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.unify.UnifyContext;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+/**
+ * Generic Visitor for the two subclasses of the {@link org.logic2j.core.api.model.term.Term}
+ * hierarchy: {@link org.logic2j.core.api.model.term.Var} and
+ * {@link org.logic2j.core.api.model.term.Struct}.
+ * For reference, see the Visitor design pattern.
+ */
+public interface TermVisitor<T> {
 
-public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
+    T visit(Var theVar);
 
-    private final Var[] vars;
+    T visit(Struct theStruct);
 
-    public MultiVarExtractor(Object goal) {
-        Set<Var> var = TermApi.allVars(goal).keySet();
-        this.vars = var.toArray(new Var[var.size()]);
-    }
-
-
-    @Override
-    public Map<Var, Object> extractSolution(UnifyContext currentVars) {
-        final Map<Var, Object> result = new HashMap<Var, Object>();
-        for (Var v : vars) {
-            final Object value;
-            value = currentVars.reify(v);
-            result.put(v, value);
-        }
-        return result;
-    }
 }

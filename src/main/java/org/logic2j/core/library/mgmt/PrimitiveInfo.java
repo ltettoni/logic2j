@@ -18,7 +18,7 @@
 package org.logic2j.core.library.mgmt;
 
 import org.logic2j.core.api.PLibrary;
-import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
 import org.logic2j.core.api.model.term.Struct;

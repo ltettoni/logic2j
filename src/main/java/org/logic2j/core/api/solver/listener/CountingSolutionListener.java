@@ -17,8 +17,7 @@
  */
 package org.logic2j.core.api.solver.listener;
 
-import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**

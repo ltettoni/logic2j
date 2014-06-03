@@ -18,9 +18,9 @@
 package org.logic2j.contrib.library.pojo;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;

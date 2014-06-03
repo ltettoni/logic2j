@@ -25,9 +25,9 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.ColumnOperatorParameterCriterion
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
@@ -47,7 +47,7 @@ import java.util.*;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(org.logic2j.core.api.SolutionListener, org.logic2j.core.api.unify.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO the {@link #select(org.logic2j.core.api.solver.listener.SolutionListener, org.logic2j.core.api.unify.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);

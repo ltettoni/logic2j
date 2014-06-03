@@ -17,8 +17,7 @@
  */
 package org.logic2j.core.api.solver.listener;
 
-import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -26,7 +25,7 @@ import org.logic2j.core.api.unify.UnifyContext;
 import java.util.List;
 
 /**
- * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
+ * A {@link SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class RangeSolutionListener<T> implements SolutionListener {
@@ -42,7 +41,7 @@ public class RangeSolutionListener<T> implements SolutionListener {
     protected long counter;
 
     /**
-     * Create a {@link org.logic2j.core.api.SolutionListener} that will enumerate
+     * Create a {@link SolutionListener} that will enumerate
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */

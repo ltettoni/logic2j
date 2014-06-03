@@ -1,6 +1,6 @@
 package org.logic2j.core;
 
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;

@@ -15,24 +15,33 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api;
+package org.logic2j.core.api.solver.extractor;
 
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 
-/**
- * The lowest-level API through which the inference engine provides solutions. For easier programming, consider using
- * {@link Prolog#solve(CharSequence)} and the {@link org.logic2j.core.api.solver.holder.SolutionHolder} API.
- */
-public interface SolutionListener {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-    /**
-     * The inference engine notifies the caller code that a solution was proven; the real content to the solution must be retrieved from the
-     * goal's variables.
-     * 
-     * @return The caller must return {@link Continuation#CONTINUE} for the inference engine to continue searching for other solutions, or
-     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation).
-     */
-    Continuation onSolution(UnifyContext currentVars);
+public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
 
+    private final Var[] vars;
+
+    public MultiVarExtractor(Object goal) {
+        final Set<Var> vars = TermApi.allVars(goal).keySet();
+        this.vars = vars.toArray(new Var[vars.size()]);
+    }
+
+
+    @Override
+    public Map<Var, Object> extractSolution(UnifyContext currentVars) {
+        final Map<Var, Object> result = new HashMap<Var, Object>();
+        for (Var var : vars) {
+            final Object value = currentVars.reify(var);
+            result.put(var, value);
+        }
+        return result;
+    }
 }

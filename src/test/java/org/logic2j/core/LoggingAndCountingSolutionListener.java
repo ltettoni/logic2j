@@ -1,6 +1,6 @@
 package org.logic2j.core;
 
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.slf4j.Logger;

@@ -17,14 +17,15 @@
  */
 package org.logic2j.core.api;
 
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**
  * Interface to access the inference engine algorithm, in order to solve goals.
- * Uses the low-level {@link SolutionListener} callback mechanism to notify solutions.
+ * Uses the low-level {@link org.logic2j.core.api.solver.listener.SolutionListener} callback mechanism to notify solutions.
  */
 public interface Solver {
 
@@ -33,7 +34,7 @@ public interface Solver {
      *
      * @param goal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param theSolutionListener Where solutions should be called back.
-     * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.model.Continuation#CONTINUE} for a successful
+     * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.solver.Continuation#CONTINUE} for a successful
      *         complete result, or if the solving has been cut or aborted by user callback.
      */
     Continuation solveGoal(Object goal, SolutionListener theSolutionListener);
@@ -43,7 +44,7 @@ public interface Solver {
      *
      * @param goal Defines the {@link Term} and the {@link Var} values we are trying to solve.
      * @param theSolutionListener Where solutions should be called back.
-     * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.model.Continuation#CONTINUE} for a successful
+     * @return Indicate how the solving has completed, either {@value org.logic2j.core.api.solver.Continuation#CONTINUE} for a successful
      *         complete result, or if the solving has been cut or aborted by user callback.
      */
     Continuation solveGoal(Object goal, UnifyContext currentVars, SolutionListener theSolutionListener);

@@ -36,7 +36,7 @@ public interface Prolog {
 
     /**
      * The top-level method for solving a goal (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API,
-     * internally it uses the low-level {@link SolutionListener}).
+     * internally it uses the low-level {@link org.logic2j.core.api.solver.listener.SolutionListener}).
      * This does NOT YET start solving.
      * If you already have a parsed term, use {@link #solve(Object)} instead.
      *
@@ -47,7 +47,7 @@ public interface Prolog {
 
     /**
      * Solves a goal expressed as a {@link Term} (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API, internally it usess the low-level
-     * {@link SolutionListener}).
+     * {@link org.logic2j.core.api.solver.listener.SolutionListener}).
      *
      * @param theGoal The {@link Term} to solve, usually a {@link Struct}
      * @return A {@link org.logic2j.core.api.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).

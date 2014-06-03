@@ -1,6 +1,9 @@
 package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.solver.extractor.MultiVarExtractor;
+import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
+import org.logic2j.core.api.solver.extractor.SolutionExtractor;
 import org.logic2j.core.api.solver.listener.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

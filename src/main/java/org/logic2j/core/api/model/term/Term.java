@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

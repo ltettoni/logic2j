@@ -23,8 +23,8 @@ import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.core.impl.util.ReportUtils;
-import org.logic2j.core.library.impl.core.CoreLibrary;
-import org.logic2j.core.library.impl.io.IOLibrary;
+import org.logic2j.core.library.impl.CoreLibrary;
+import org.logic2j.core.library.impl.IOLibrary;
 import org.logic2j.core.library.mgmt.DefaultLibraryManager;
 
 /**
@@ -44,12 +44,12 @@ public class PrologReferenceImplementation implements PrologImplementation {
          */
         L0_BARE,
         /**
-         * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.core.CoreLibrary}, containing (among others), core predicates such as
+         * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.CoreLibrary}, containing (among others), core predicates such as
          * true/1, fail/1, !/1 (cut), =/2, call/1, not/1, etc.
          */
         L1_CORE_LIBRARY,
         /**
-         * Higher level libraries loaded, such as {@link org.logic2j.core.library.impl.io.IOLibrary}.
+         * Higher level libraries loaded, such as {@link org.logic2j.core.library.impl.IOLibrary}.
          */
         L2_BASE_LIBRARIES,
     }
@@ -73,7 +73,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     private Solver solver = new DefaultSolver(this);
 
     /**
-     * Default constructor will only provide an engine with the {@link org.logic2j.core.library.impl.core.CoreLibrary} loaded.
+     * Default constructor will only provide an engine with the {@link org.logic2j.core.library.impl.CoreLibrary} loaded.
      */
     public PrologReferenceImplementation() {
         this(InitLevel.L1_CORE_LIBRARY);

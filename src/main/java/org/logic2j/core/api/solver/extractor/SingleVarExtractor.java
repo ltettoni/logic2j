@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.solver.listener;
+package org.logic2j.core.api.solver.extractor;
 
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.term.TermApi;
@@ -23,7 +23,7 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**
- * A {@link org.logic2j.core.api.SolutionListener} that will count and limit
+ * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class SingleVarExtractor<T> implements SolutionExtractor<T> {
@@ -32,7 +32,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
     private final Var var;
 
     /**
-     * Create a {@link org.logic2j.core.api.SolutionListener} that will enumerate
+     * Create a {@link org.logic2j.core.api.solver.listener.SolutionListener} that will enumerate
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */

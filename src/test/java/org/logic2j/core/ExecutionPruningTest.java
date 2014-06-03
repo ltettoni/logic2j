@@ -18,8 +18,8 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.listener.SolutionListener;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
@@ -188,7 +188,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     /**
-     * A {@link org.logic2j.core.api.SolutionListener} that will request user cancellation after the first solution was found.
+     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after the first solution was found.
      */
     private static class Max1Listener implements SolutionListener {
         int counter = 0;
@@ -205,7 +205,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     /**
-     * A {@link org.logic2j.core.api.SolutionListener} that will request user cancellation after 5 solutions were found.
+     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after 5 solutions were found.
      */
     private static class Max5Listener implements SolutionListener {
         int counter = 0;
@@ -223,7 +223,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     /**
-     * A {@link org.logic2j.core.api.SolutionListener} that counts solutions - won't request user cancellation.
+     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that counts solutions - won't request user cancellation.
      */
     private static class CountingListener implements SolutionListener {
         int counter = 0;

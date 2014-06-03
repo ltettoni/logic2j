@@ -19,12 +19,13 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.unify.UnifyStateByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
@@ -69,7 +70,7 @@ public class DefaultSolver implements Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.unify.UnifyContext, org.logic2j.core.api.SolutionListener)} method. The goal to solve
+     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.unify.UnifyContext, org.logic2j.core.api.solver.listener.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      */
     @Override

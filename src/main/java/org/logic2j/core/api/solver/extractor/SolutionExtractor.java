@@ -1,4 +1,4 @@
-package org.logic2j.core.api.solver.listener;
+package org.logic2j.core.api.solver.extractor;
 
 import org.logic2j.core.api.unify.UnifyContext;
 

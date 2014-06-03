@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
-import org.logic2j.core.library.impl.io.IOLibrary;
+import org.logic2j.core.library.impl.IOLibrary;
 import static org.junit.Assert.*;
 import java.io.IOException;
 

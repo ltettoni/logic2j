@@ -15,14 +15,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.library.impl.io;
+package org.logic2j.core.library.impl;
 
-import org.logic2j.core.api.SolutionListener;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.listener.SolutionListener;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.core.library.mgmt.Primitive;
 
 import java.io.PrintStream;

@@ -1,4 +1,4 @@
-package org.logic2j.core.library.impl.core;
+package org.logic2j.core.library.impl;
 
 import org.junit.Ignore;
 import org.junit.Test;

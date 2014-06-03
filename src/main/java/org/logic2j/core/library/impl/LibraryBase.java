@@ -18,9 +18,9 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.PLibrary;
-import org.logic2j.core.api.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.model.Continuation;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;

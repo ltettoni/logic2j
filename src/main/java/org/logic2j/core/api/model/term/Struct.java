@@ -18,7 +18,6 @@
 package org.logic2j.core.api.model.term;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.ReflectUtils;
