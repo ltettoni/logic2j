@@ -37,7 +37,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cutAndOr() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(1, "!; true");
         nSolutions(2, "true; !");
         nSolutions(2, "true; !; true");
@@ -47,7 +47,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void withoutCut() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(3, "a(X)");
         nSolutions(9, "a(X), b(Y)");
         nSolutions(27, "a(X), b(Y), c(Z)");
@@ -55,7 +55,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cutAtEnd() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(1, "a(X), !");
         nSolutions(1, "a(X), b(Y), !");
         nSolutions(1, "a(X), b(Y), c(Z), !");
@@ -63,7 +63,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cutInMiddle() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(3, "a(X), !, b(Y)");
         nSolutions(3, "a(X), !, !, b(Y)");
         nSolutions(3, "a(X), b(Y), !, c(Z)");
@@ -71,13 +71,13 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cutAtBeginning() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(27, "!, a(X), b(Y), c(Z)");
     }
 
     @Test
     public void cutOtherCases() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(1, "!");
         nSolutions(1, "!, !");
         //
@@ -87,25 +87,25 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cut1() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(1, "cut1(X)");
     }
 
     @Test
     public void cut2() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(2, "cut2(X)");
     }
 
     @Test
     public void cut4b() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(4, "cut4b");
     }
 
     @Test
     public void max_green_cut() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         uniqueSolution("max(2,3,3)");
         uniqueSolution("max(3,2,3)");
@@ -121,7 +121,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void sign() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         assertEquals(term("positive"), uniqueSolution("sign(5,X)").var("X").unique());
         assertEquals(term("negative"), uniqueSolution("sign(-5,X)").var("X").unique());
@@ -130,7 +130,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void sign2() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         assertEquals(term("zero"), uniqueSolution("sign2(0,X)").var("X").unique());
         //
@@ -144,7 +144,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void sign3() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         assertEquals(term("zero"), uniqueSolution("sign3(0,X)").var("X").unique());
         //
@@ -158,7 +158,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void sign4() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         assertEquals(term("zero"), uniqueSolution("sign4(0,X)").var("X").unique());
         //
@@ -176,7 +176,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void cut() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(0, "pc(X)");
         nSolutions(3, "p(X), X>1");
         nSolutions(1, "a(X), !, cut1(Y)");

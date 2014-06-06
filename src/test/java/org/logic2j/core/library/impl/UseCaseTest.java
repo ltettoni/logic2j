@@ -37,9 +37,8 @@ public class UseCaseTest {
 
     @Test
     public void loadTheoryAndSolve() throws Exception {
-        final File th1 = new File("src/test/resources/queens.pl");
-        final File th2 = new File("src/test/resources/hanoi.pl");
-        ;
+        final File th1 = new File("src/test/resources/queens.pro");
+        final File th2 = new File("src/test/resources/hanoi.pro");
         final Prolog prolog = new PrologBuilder().withTheory(th1, th2).createInstance();
         assertEquals(2, prolog.solve("queens(4, _)").count());
     }
@@ -48,9 +47,9 @@ public class UseCaseTest {
     @Test
     public void solve() throws Exception {
         final Prolog prolog = new PrologBuilder()
-        .withTheory(new File("src/test/resources/queens.pl"))
+        .withTheory(new File("src/test/resources/queens.pro"))
         .createInstance();
         final List<Object> objectList = prolog.solve("queens(4, Q)").var("Q").list();
-        assertEquals(2, objectList);
+        fail("test something here!");
     }
 }

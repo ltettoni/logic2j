@@ -17,15 +17,9 @@
  */
 package org.logic2j.core;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.util.CollectionUtils;
-import org.logic2j.core.impl.util.ProfilingInfo;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,7 +36,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void rules() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(3, "a(X)");
         countNSolutions(5, "f(Q)");
         countNSolutions(9, "a(X), b(Y)", "true, a(X), b(Y)", "a(X), b(Y), true", "a(X), true, b(Y)");
@@ -64,7 +58,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void sumial() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         assertEquals(term(0), uniqueSolution("sumial(0, X)").longValue("X"));
         assertEquals(term(1), uniqueSolution("sumial(1, X)").longValue("X"));
         assertEquals(term(3), uniqueSolution("sumial(2, X)").longValue("X"));
@@ -75,7 +69,7 @@ public class FunctionalTest extends PrologTestBase {
 
     @Test
     public void unify() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         uniqueSolution("unifyterms(X,X)");
         assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").longValue("X"));
         assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").longValue("X"));
@@ -90,7 +84,7 @@ public class FunctionalTest extends PrologTestBase {
 //     */
 //    @Test
 //    public void relink_vars() {
-//        loadTheoryFromTestResourcesDir("test-functional.pl");
+//        loadTheoryFromTestResourcesDir("test-functional.pro");
 //        // Below, Y must be equal to g(123,X), but does not solve to X!
 //        assertEquals(term("g(123,X)"), assertOneSolution("unifyterms3(f(123,X), Y)").var("Y").unique());
 //
@@ -100,7 +94,7 @@ public class FunctionalTest extends PrologTestBase {
 //
 //    @Test
 //    public void binding_single_var_1() {
-//        loadTheoryFromTestResourcesDir("test-functional.pl");
+//        loadTheoryFromTestResourcesDir("test-functional.pro");
 //        final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ab(X,Y)");
 //        assertEquals("[{X=1, Y=11}, {X=2, Y=12}, {X=3, Y=13}, {X=4, Y=14}, {X=5, Y=15}, {X=6, Y=16}]", assertNSolutions.vars().list().toString());
 //        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.var("X").list().toString());
@@ -109,7 +103,7 @@ public class FunctionalTest extends PrologTestBase {
 //
 //    @Test
 //    public void binding_single_var_2() {
-//        loadTheoryFromTestResourcesDir("test-functional.pl");
+//        loadTheoryFromTestResourcesDir("test-functional.pro");
 //        final MultipleSolutionsHolder assertNSolutions = assertNSolutions(6, "ac(X,Y)");
 //        assertEquals("[{X=1, Y=11}, {X=2, Y=twelve}, {X=3, Y=13}, {X=4, Y=fourteen}, {X=5, Y=15}, {X=6, Y=sixteen}]", assertNSolutions.vars().list().toString());
 //        assertEquals("[1, 2, 3, 4, 5, 6]", assertNSolutions.var("X").list().toString());
@@ -118,7 +112,7 @@ public class FunctionalTest extends PrologTestBase {
 //
     @Test
     public void findall() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
 
         assertEquals("[]", uniqueSolution("findall(1, fail, L)").toString("L"));
         assertEquals("[1]", uniqueSolution("findall(1, true, L)").toString("L"));

@@ -3,9 +3,6 @@ package org.logic2j.core.library.impl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.term.Var;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -44,7 +41,7 @@ public class CoreLibraryTest extends PrologTestBase {
         assertGoalMustFail("X=true, X");
         assertGoalMustFail("call(X)");
 
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         String arg = "X";
         int n = 3;
         countNSolutions(n, "call_check(" + arg + ")");
@@ -167,7 +164,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void clause() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
 
         assertGoalMustFail("clause(X,_)", "clause(_,_)", "clause(1,_)");
         countNoSolution("clause(a)", "clause(a,b,c)");
@@ -188,7 +185,7 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void unify_2() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
 
         countNSolutions(5, "bool_3t_2f(X)");
         countNSolutions(3, "bool_3t_2f(X), X=true");

@@ -88,7 +88,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     private URL locationOfAssociatedTheory(PLibrary theLibrary) {
         final Class<? extends PLibrary> libraryClass = theLibrary.getClass();
-        final String name = libraryClass.getSimpleName() + ".prolog";
+        final String name = libraryClass.getSimpleName() + ".pro";
         final URL contentUrl = libraryClass.getResource(name);
         return contentUrl;
     }

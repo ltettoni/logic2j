@@ -45,13 +45,13 @@ public class BenchmarkTest extends PrologTestBase {
      */
     @Test
     public void hanoi() {
-        loadTheoryFromTestResourcesDir("hanoi.pl");
+        loadTheoryFromTestResourcesDir("hanoi.pro");
         uniqueSolution("move(7,left,right,center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
     }
 
     @Test
     public void thousandLoops() {
-        loadTheoryFromTestResourcesDir("test-data.pl");
+        loadTheoryFromTestResourcesDir("test-data.pro");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
         nSolutions(1000, "int10(_),int10(_),int10(_)");
@@ -66,7 +66,7 @@ public class BenchmarkTest extends PrologTestBase {
 
     @Test
     public void profileThousandsLoops() {
-        loadTheoryFromTestResourcesDir("test-data.pl");
+        loadTheoryFromTestResourcesDir("test-data.pro");
         final long t1 = System.currentTimeMillis();
         nSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
         final long t2 = System.currentTimeMillis();
@@ -78,7 +78,7 @@ public class BenchmarkTest extends PrologTestBase {
      */
     @Test
     public void millionLoops() {
-        loadTheoryFromTestResourcesDir("test-data.pl");
+        loadTheoryFromTestResourcesDir("test-data.pro");
         // Using regular binary operator ","
         long t1 = System.currentTimeMillis();
         nSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
@@ -93,7 +93,7 @@ public class BenchmarkTest extends PrologTestBase {
 
     @Test
     public void queensForReferenceTiming() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
         final String goal = "queens(9, Q)";
         // Numbers
         final GoalHolder holder = getProlog().solve(goal);
@@ -107,7 +107,7 @@ public class BenchmarkTest extends PrologTestBase {
     @Ignore("Use this in conjunction with jvisualvm to profile")
     @Test
     public void queensForJVisualVMInteractive() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
@@ -127,7 +127,7 @@ public class BenchmarkTest extends PrologTestBase {
     @Ignore("Use this in conjunction with jvisualvm to profile")
     @Test
     public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         Thread.sleep(15000);

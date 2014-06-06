@@ -1,8 +1,28 @@
-Requirements for the API on Terms
----------------------------------
+Requirements and wishlist for logic2j's API
+-------------------------------------------
+
+Easy to use
+Compatible with CDI (Spring)
+
+
+
+Instantiation:
+--------------
+Do not like:
+  config files/resources (that's really old fashioned)
+  direct instantation of an implementation
+Does like:
+  Builder pattern
+  Fluent API
+  CDI injection of properties
+
+
+
+
+
 
 Parsing of terms:
-
+-----------------
 Features for converting things into Terms hierarchies:
 1. Type conversion      (eg. BigDecimal to Long, StringBuilder to Struct, Java Collection to Prolog list)
 2. Interpretation       (eg. "x" is an atom, "X" is a variable)

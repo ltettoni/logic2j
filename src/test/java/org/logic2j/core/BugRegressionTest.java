@@ -29,7 +29,7 @@ public class BugRegressionTest extends PrologTestBase {
      */
     @Test
     public void int5() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(5, "int5(X)");
         nSolutions(5, "int5_rule(X)");
         //

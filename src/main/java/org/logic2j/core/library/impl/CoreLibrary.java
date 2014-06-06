@@ -38,7 +38,7 @@ import java.util.ArrayList;
 /**
  * Provide the core primitives of the Prolog language.
  * Most is implemented in Java, but there is an associated Prolog theory at:
- * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.prolog
+ * /src/main/prolog/org/logic2j/core/library/impl/core/CoreLibrary.pro
  */
 @SuppressWarnings("StringEquality")
 public class CoreLibrary extends LibraryBase {

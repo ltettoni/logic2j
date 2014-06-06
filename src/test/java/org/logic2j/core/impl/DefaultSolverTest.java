@@ -98,7 +98,7 @@ public class DefaultSolverTest extends PrologTestBase {
      */
     @Test
     public void nonBinaryAnd() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         final String[] SINGLE_SOLUTION_GOALS = new String[] { //
         "','(true)", //
         "','(true, true)", //
@@ -110,7 +110,7 @@ public class DefaultSolverTest extends PrologTestBase {
 
     @Test
     public void or() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(2, "';'(true, true)");
         countNSolutions(2, "true; true");
         //
@@ -127,7 +127,7 @@ public class DefaultSolverTest extends PrologTestBase {
      */
     @Test
     public void nonBinaryOr() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(1, "';'(true)");
         countNSolutions(2, "';'(true, true)");
         countNSolutions(3, "';'(true, true, true)");
@@ -145,7 +145,7 @@ public class DefaultSolverTest extends PrologTestBase {
 
     @Test
     public void orWithClause() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         GoalHolder solutions;
         solutions = this.prolog.solve("or3(X)");
         assertEquals("[a, b, c]", solutions.var("X").list().toString());

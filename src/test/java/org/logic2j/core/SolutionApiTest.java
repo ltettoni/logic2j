@@ -24,12 +24,10 @@ import org.logic2j.core.api.model.exception.TooManySolutionsException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +44,7 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Before
     public void loadTheory() {
-        loadTheoryFromTestResourcesDir("hex-chars.pl");
+        loadTheoryFromTestResourcesDir("hex-chars.pro");
     }
 
     @Test

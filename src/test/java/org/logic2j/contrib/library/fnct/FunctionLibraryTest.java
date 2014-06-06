@@ -19,14 +19,9 @@
 package org.logic2j.contrib.library.fnct;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
-
-import static org.junit.Assert.*;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
@@ -39,7 +34,7 @@ public class FunctionLibraryTest extends PrologTestBase {
     public void loadFunctionLibrary() {
         this.functionLibrary = new FunctionLibrary(this.prolog);
         loadLibrary(this.functionLibrary);
-        loadTheoryFromTestResourcesDir("mapping.pl");
+        loadTheoryFromTestResourcesDir("mapping.pro");
     }
     
     protected InitLevel initLevel() {

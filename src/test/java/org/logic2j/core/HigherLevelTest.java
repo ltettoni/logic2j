@@ -50,7 +50,7 @@ public class HigherLevelTest extends PrologTestBase {
      */
     @Test
     public void hanoi() {
-        loadTheoryFromTestResourcesDir("hanoi.pl");
+        loadTheoryFromTestResourcesDir("hanoi.pro");
         uniqueSolution("move(5, left, right, center)"); // Watch out 7 is the limit with Java's ridiculous default stack size
     }
 
@@ -62,7 +62,7 @@ public class HigherLevelTest extends PrologTestBase {
     public void changeForOneDollar() {
         final IOLibrary library = new IOLibrary(this.prolog);
         loadLibrary(library);
-        loadTheoryFromTestResourcesDir("dollar.pl");
+        loadTheoryFromTestResourcesDir("dollar.pro");
         nSolutions(292, "change([H,Q,D,N,P])");
     }
 
@@ -72,7 +72,7 @@ public class HigherLevelTest extends PrologTestBase {
      */
     @Test
     public void queensLighter() {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
 
         assertEquals("[1]", uniqueSolution("queens(1, Positions)").var("Positions").unique().toString());
         GoalHolder solutions;
@@ -104,7 +104,7 @@ public class HigherLevelTest extends PrologTestBase {
     @Ignore("Very CPU intensive - enable on demand")
     @Test
     public void queensHeavierForThePatient() {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
         nSolutions(724, "queens(10, _)");
         nSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
     }
@@ -112,7 +112,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void queensWithFindall() throws IOException {
-        loadTheoryFromTestResourcesDir("queens.pl");
+        loadTheoryFromTestResourcesDir("queens.pro");
         final String goal = "findall(X, queens(5, X), List)";
         // Numbers
         final Struct plist = getProlog().solve(goal).var("List", Struct.class).unique();
@@ -122,7 +122,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void takeout() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         nSolutions(0, "takeout(a, [], X)");
@@ -152,7 +152,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void permutations() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("perm([], X)");
@@ -173,7 +173,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void naive_sort() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("naive_sort([6,3,9,1], X)");
@@ -185,7 +185,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void insert_sort() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("insert_sort([6,3,9,1], X)");
@@ -197,7 +197,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void bubble_sort() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("bubble_sort([6,3,9,1], X)");
@@ -209,7 +209,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void merge_sort() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("merge_sort([6,3,9,1], X)");
@@ -221,7 +221,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void quick_sort() {
-        loadTheoryFromTestResourcesDir("sorting.pl");
+        loadTheoryFromTestResourcesDir("sorting.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("quick_sort([6,3,9,1], X)");
@@ -233,7 +233,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void fibonacci() {
-        loadTheoryFromTestResourcesDir("fibonacci.pl");
+        loadTheoryFromTestResourcesDir("fibonacci.pro");
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("fib(2, X)");
@@ -254,7 +254,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void mappingTransformer() {
-        loadTheoryFromTestResourcesDir("transformations.pl");
+        loadTheoryFromTestResourcesDir("transformations.pro");
         assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
         assertEquals("[{Z=eav(13, classification, LEVEL_MAIN)}]", this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString());
         assertEquals("[{ID=ID, Z=eav(ID, class, Committee)}]", this.prolog.solve("transformForContext(committee(ID), Z)").vars().list().toString());

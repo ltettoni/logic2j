@@ -52,7 +52,7 @@ public class AdapterTest extends PrologTestBase {
 
     @Test
     public void plainDouble() {
-        loadTheoryFromTestResourcesDir("test-functional.pl");
+        loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         final List<Object> binding = this.prolog.solve("dbl(X)").var("X").list();
         assertEquals("[1.1, 1.2, 1.3]", binding.toString());
