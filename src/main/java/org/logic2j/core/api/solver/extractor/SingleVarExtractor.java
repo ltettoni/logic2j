@@ -17,41 +17,67 @@
  */
 package org.logic2j.core.api.solver.extractor;
 
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
+import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
 public class SingleVarExtractor<T> implements SolutionExtractor<T> {
+    private static final Logger logger = LoggerFactory.getLogger(SingleVarExtractor.class);
+
     private final Object goal;
 
     private final Var var;
+
+    private TermAdapter termAdapter;
+
+    private Class<? extends T> targetClass;
 
     /**
      * Create a {@link org.logic2j.core.api.solver.listener.SolutionListener} that will enumerate
      * solutions up to theMaxCount before aborting by "user request". We will usually
      * supply 1 or 2, see derived classes.
      */
-    public SingleVarExtractor(Object goal, String varName) {
+    public SingleVarExtractor(Object goal, String varName, Class<? extends T> desiredTypeOfResult) {
         this.goal = goal;
         final Var found = TermApi.findVar(goal, varName);
         if (found == null) {
             throw new MissingSolutionException("No var named \"" + varName + "\" in term " + goal);
         }
         this.var = found;
+        this.targetClass = desiredTypeOfResult;
     }
 
+    public void setTermAdapter(TermAdapter termAdapter) {
+        this.termAdapter = termAdapter;
+    }
+
+    public TermAdapter getTermAdapter() {
+        return termAdapter;
+    }
 
     @Override
     public T extractSolution(UnifyContext currentVars) {
+        Object reifiedValue;
         if (var == Var.WHOLE_SOLUTION_VAR) {
-            return (T)currentVars.reify(goal);
+            reifiedValue = currentVars.reify(goal);
+            // No need to convert values it will be Struct
         } else {
-            return (T)currentVars.reify(var);
+            reifiedValue = currentVars.reify(var);
+            if (reifiedValue instanceof Term && ! targetClass.isAssignableFrom(reifiedValue.getClass())) {
+                logger.warn("Need type conversion from {} to {}", reifiedValue.getClass(), this.targetClass );
+            }
+            reifiedValue = this.termAdapter.object(reifiedValue, this.targetClass);
         }
+        return (T)reifiedValue;
     }
+
 }

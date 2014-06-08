@@ -49,7 +49,9 @@ public class UseCaseTest {
         final Prolog prolog = new PrologBuilder()
         .withTheory(new File("src/test/resources/queens.pro"))
         .createInstance();
-        final List<Object> objectList = prolog.solve("queens(4, Q)").var("Q").list();
-        fail("test something here!");
+        final List<List> objectList = prolog.solve("queens(4, Q)").var("Q", List.class).list();
+        assertEquals(2, objectList.size());
+        assertEquals("[3, 1, 4, 2]", objectList.get(0).toString());
+        assertEquals("[2, 4, 1, 3]", objectList.get(1).toString());
     }
 }

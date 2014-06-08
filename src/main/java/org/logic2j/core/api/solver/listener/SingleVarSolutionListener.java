@@ -46,7 +46,8 @@ public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
 
     @Override
     public Continuation onSolution(UnifyContext currentVars) {
-        results.add(extractor.extractSolution(currentVars));
+        final T solution = extractor.extractSolution(currentVars);
+        results.add(solution);
         return super.onSolution(currentVars);
     }
 

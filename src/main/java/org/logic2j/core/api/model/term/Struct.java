@@ -486,6 +486,7 @@ public final class Struct extends Term {
 
 
     /**
+     * Make sure a Term is a Prolog List.
      * @param thePList
      * @throws PrologNonSpecificError If this is not a list.
      */

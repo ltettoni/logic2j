@@ -19,26 +19,27 @@ public class SolutionHolder<T> implements Iterable<T> {
 
     private final GoalHolder goalHolder;
 
-    private final SingleVarExtractor<T> singleVarExtractor;
-
-    private final MultiVarExtractor multiVarExtractor;
-
-    private final RangeSolutionListener rangeListener;
+    private RangeSolutionListener rangeListener;
 
     private long minNbr = 0;
 
     private long maxNbr = Long.MAX_VALUE - 1; // Keep possibility to add one because the RangeSolutionListener "fetch" property
 
+    // I think this could be clarified a little - those are impl of the same interface, but one is generic the other not
+    private final SingleVarExtractor<T> singleVarExtractor;
+
+    private final MultiVarExtractor multiVarExtractor;
+
     /**
      * Extract one particular variable or the solution to the goal.
-     *
-     * @param goalHolder
+     *  @param goalHolder
      * @param varName
+     * @param desiredTypeOfResult
      */
-    public SolutionHolder(GoalHolder goalHolder, String varName) {
+    public SolutionHolder(GoalHolder goalHolder, String varName, Class<? extends T> desiredTypeOfResult) {
         this.goalHolder = goalHolder;
-        this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.goal, varName);
-        this.rangeListener = new SingleVarSolutionListener(this.singleVarExtractor);
+        this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.goal, varName, desiredTypeOfResult);
+        this.singleVarExtractor.setTermAdapter(goalHolder.prolog.getTermAdapter());
         this.multiVarExtractor = null;
     }
 
@@ -51,13 +52,34 @@ public class SolutionHolder<T> implements Iterable<T> {
         this.goalHolder = goalHolder;
         this.singleVarExtractor = null;
         this.multiVarExtractor = new MultiVarExtractor(goalHolder.goal);
-        rangeListener = new MultiVarSolutionListener(this.multiVarExtractor);
+    }
+
+    /**
+     * For cloning.
+     * @param goalHolder
+     * @param rangeListener
+     * @param singleVarExtractor
+     * @param multiVarExtractor
+     */
+    private SolutionHolder(GoalHolder goalHolder, RangeSolutionListener rangeListener, SingleVarExtractor<T> singleVarExtractor, MultiVarExtractor multiVarExtractor) {
+        this.goalHolder = goalHolder;
+        this.rangeListener = rangeListener;
+        this.singleVarExtractor = singleVarExtractor;
+        this.multiVarExtractor = multiVarExtractor;
+    }
+
+    /**
+     * Copy constructor
+     *
+     * @param original
+     */
+    public <Tgt> SolutionHolder(SolutionHolder<T> original, Class<Tgt> targetClass) {
+        this(original.goalHolder, original.rangeListener, original.singleVarExtractor, original.multiVarExtractor);
     }
 
     // ---------------------------------------------------------------------------
     // Scalar extractors (zero or one solution)
     // ---------------------------------------------------------------------------
-
 
     /**
      * @return The only solution or null if none, but will throw an Exception if more than one.
@@ -90,18 +112,22 @@ public class SolutionHolder<T> implements Iterable<T> {
     }
 
     // ---------------------------------------------------------------------------
-    // Vectorial extractors (collections, arrays, iterables)
+    // Type conversion
     // ---------------------------------------------------------------------------
 
 
+    // ---------------------------------------------------------------------------
+    // Vectorial extractors (collections, arrays, iterables)
+    // ---------------------------------------------------------------------------
+
     public List<T> list() {
-        initListenerRangesAndSolve(this.minNbr, this.maxNbr, this.maxNbr+1);
+        initListenerRangesAndSolve(this.minNbr, this.maxNbr, this.maxNbr + 1);
         return (List<T>) rangeListener.getResults();
     }
 
 
-    public <AT> AT[] array(AT[] ts) {
-        return list().toArray(ts);
+    public <ArrayType> ArrayType[] array(ArrayType[] destinationArray) {
+        return list().toArray(destinationArray);
     }
 
 
@@ -110,6 +136,7 @@ public class SolutionHolder<T> implements Iterable<T> {
      * from this {@link java.util.Iterator} at its own pace.
      * This uses the {@link org.logic2j.core.api.solver.listener.IterableSolutionListener}.
      * Note: there is no bounds checking when using iterator()
+     *
      * @return An iterator for all solutions.
      */
     public Iterator<T> iterator() {
@@ -182,9 +209,10 @@ public class SolutionHolder<T> implements Iterable<T> {
     /**
      * Specify that the number of solutions to be extracted by this SolutionHolder
      * must be exactly as specified
-     * @note Does not apply to #iterator().
+     *
      * @param expectedNumberOfSolutions
      * @return
+     * @note Does not apply to #iterator().
      */
     public SolutionHolder<T> exactly(int expectedNumberOfSolutions) {
         return atLeast(expectedNumberOfSolutions).atMost(expectedNumberOfSolutions);
@@ -194,9 +222,10 @@ public class SolutionHolder<T> implements Iterable<T> {
     /**
      * Specify that the number of solutions to be extracted by this SolutionHolder
      * must at be at least minimalNumberOfSolutions.
-     * @note Does not apply to #iterator().
+     *
      * @param minimalNumberOfSolutions
      * @return this instance
+     * @note Does not apply to #iterator().
      */
     public SolutionHolder<T> atLeast(int minimalNumberOfSolutions) {
         this.minNbr = minimalNumberOfSolutions;
@@ -206,9 +235,10 @@ public class SolutionHolder<T> implements Iterable<T> {
     /**
      * Specify that the number of solutions to be extracted by this SolutionHolder
      * must at be at most minimalNumberOfSolutions.
-     * @note Does not apply to #iterator().
+     *
      * @param maximalNumberOfSolutions
      * @return this instance
+     * @note Does not apply to #iterator().
      */
     public SolutionHolder<T> atMost(int maximalNumberOfSolutions) {
         this.maxNbr = maximalNumberOfSolutions;
@@ -220,6 +250,12 @@ public class SolutionHolder<T> implements Iterable<T> {
     // ---------------------------------------------------------------------------
 
     private void initListenerRangesAndSolve(long minCount, long maxCount, long maxFetch) {
+        if (this.singleVarExtractor!=null) {
+            this.rangeListener = new SingleVarSolutionListener(this.singleVarExtractor);
+        } else {
+            assert this.multiVarExtractor != null : "neither single nor multiple var extractor";
+            this.rangeListener = new MultiVarSolutionListener(this.multiVarExtractor);
+        }
         this.rangeListener.setMinCount(minCount);
         this.rangeListener.setMaxCount(maxCount);
         this.rangeListener.setMaxFetch(maxFetch);

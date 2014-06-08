@@ -47,6 +47,10 @@ public class SolutionApiTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("hex-chars.pro");
     }
 
+    // ---------------------------------------------------------------------------
+    // Check existence of solution
+    // ---------------------------------------------------------------------------
+
     @Test
     public void existsFalse() throws Exception {
         assertFalse(getProlog().solve("fail").exists());
@@ -61,6 +65,10 @@ public class SolutionApiTest extends PrologTestBase {
     public void existsTrue2() throws Exception {
         assertTrue(getProlog().solve("true;true").exists());
     }
+
+    // ---------------------------------------------------------------------------
+    // Number of solutions
+    // ---------------------------------------------------------------------------
 
     @Test
     public void count0() throws Exception {
@@ -85,7 +93,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     // ---------------------------------------------------------------------------
-    // Access whole-term solutions
+    // Access whole-term solutions (the query term with all its variables resolved)
     // ---------------------------------------------------------------------------
 
     @Test
@@ -131,7 +139,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     // ---------------------------------------------------------------------------
-    // Access to bindings of vars
+    // Access to values of a particular variable
     // ---------------------------------------------------------------------------
 
     @Test(expected = MissingSolutionException.class)
@@ -156,6 +164,12 @@ public class SolutionApiTest extends PrologTestBase {
         assertEquals("Q", getProlog().solve("Q=Z").var("Q").unique().toString());
     }
 
+
+    @Test
+    public void varUniqueConverted() throws Exception {
+        final String unique = getProlog().solve("Q=12").var("Q", String.class).unique();
+        assertEquals("12", unique);
+    }
 
     // ---------------------------------------------------------------------------
     // Access to bindings of all vars

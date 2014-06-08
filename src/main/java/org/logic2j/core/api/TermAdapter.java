@@ -109,5 +109,5 @@ public interface TermAdapter {
      * @param theTargetClass
      * @return Not yet implemented
      */
-    <T> T object(Term t, Class<T> theTargetClass);
+    <T> T object(Object theTerm, Class<T> theTargetClass);
 }

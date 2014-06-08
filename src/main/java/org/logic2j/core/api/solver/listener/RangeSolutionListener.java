@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.api.solver.listener;
 
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.MissingSolutionException;
 import org.logic2j.core.api.model.exception.TooManySolutionsException;
@@ -121,14 +122,13 @@ public class RangeSolutionListener<T> implements SolutionListener {
         return this.counter;
     }
 
-
     public List<T> getResults() {
         throw new UnsupportedOperationException("Feature not yet implemented");
     }
-
 
     @Override
     public String toString() {
         return this.getClass().getSimpleName() + '[' + this.minCount + ".." + this.maxCount + ']';
     }
+
 }

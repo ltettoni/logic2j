@@ -24,10 +24,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -117,8 +114,27 @@ public class DefaultTermAdapter implements TermAdapter {
     }
 
     @Override
-    public <T> T object(Term t, Class<T> theTargetClass) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public <T> T object(Object theTerm, Class<T> theTargetClass) {
+        if (theTerm==null) {
+            // Pass-through for nulls
+            return null;
+        }
+        final Class<?> clazz = theTerm.getClass();
+        if (theTargetClass.isAssignableFrom(theTerm.getClass())) {
+            // Valid
+            return (T)theTerm;
+        }
+        if (theTargetClass==String.class) {
+            return (T)String.valueOf(theTerm);
+        }
+        if (theTargetClass==CharSequence.class) {
+            return (T)String.valueOf(theTerm);
+        }
+        if (theTerm instanceof Struct && theTargetClass==List.class) {
+            final Collection<?> collection = ((Struct) theTerm).javaListFromPList(null, Object.class);
+            return (T)collection;
+        }
+        throw new UnsupportedOperationException("Cannot convert term of " + clazz + " to " + theTargetClass);
     }
 
     /**

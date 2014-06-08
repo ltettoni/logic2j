@@ -35,11 +35,12 @@ public class GoalHolder {
     }
 
     public SolutionHolder<Object> solution() {
-        return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME);
+        return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME, Object.class);
     }
 
     public <T> SolutionHolder<T> var(String varName, Class<? extends T> desiredTypeOfResult) {
-        return new SolutionHolder<T>(this, varName);
+        final SolutionHolder<T> solutionHolder = new SolutionHolder<T>(this, varName, desiredTypeOfResult);
+        return solutionHolder;
     }
 
     public SolutionHolder<Object> var(String varName) {
