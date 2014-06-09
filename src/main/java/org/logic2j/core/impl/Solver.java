@@ -61,7 +61,7 @@ public class Solver {
             // "Functional" exception thrown during solving will just be forwarded
             throw e;
         }  catch (RuntimeException e) {
-            // Anything else will be encapsulated
+            // Anything not a PrologException will be encapsulated
             throw new PrologNonSpecificError("Solver failed with " + e, e);
         }
 

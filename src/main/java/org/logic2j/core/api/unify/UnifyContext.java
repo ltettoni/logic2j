@@ -37,7 +37,7 @@ public class UnifyContext {
 
     final int currentTransaction;
 
-    // FIXME Make private - only Clause is using it yet
+    // FIXME Make private - only Clause and Solver are using it yet
     public int topVarIndex;
 
     private final UnifyStateByLookup impl;
@@ -234,32 +234,5 @@ public class UnifyContext {
     public String toString() {
         return "vars#" + this.currentTransaction + impl.toString();
     }
-
-
-    // ---------------------------------------------------------------------------
-    // Oldies: ThreadLocal
-    // ---------------------------------------------------------------------------
-
-
-    // We will use a separate class to implement a ThreadLocal if needed - maybe not
-//    private static final ThreadLocal<UnifyContext> currentInThread = new ThreadLocal<UnifyContext>() {
-//        @Override
-//        protected UnifyContext initialValue() {
-//            return new UnifyStateByLookup().emptyContext();
-////            return new UnifyStateByLookup().emptyContext();
-//        }
-//    };
-
-
-//    /**
-//     * Make current
-//     */
-//    public void activate() {
-//        currentInThread.set(this);
-//    }
-//
-//    public static UnifyContext current() {
-//        return currentInThread.get();
-//    }
 
 }
