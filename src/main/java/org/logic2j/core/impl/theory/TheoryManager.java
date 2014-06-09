@@ -19,7 +19,6 @@ package org.logic2j.core.impl.theory;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
-import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
 
 import java.io.File;
@@ -28,7 +27,7 @@ import java.net.URL;
 
 /**
  * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text. The {@link TheoryManager} also implements
- * {@link ClauseProvider} since it provides sequences of {@link Clause}s to the {@link Solver} inference engine.
+ * {@link ClauseProvider} since it provides sequences of {@link Clause}s to the {@link DefaultSolver} inference engine.
  * Provides methods for:
  * <ul>
  * <li>Loading theory files or resources</li>

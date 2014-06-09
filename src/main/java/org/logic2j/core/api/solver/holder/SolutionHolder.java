@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Laurent on 26.05.2014.
+ * TODO Document me!
  */
 public class SolutionHolder<T> implements Iterable<T> {
     private static final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);

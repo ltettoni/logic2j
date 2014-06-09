@@ -1,14 +1,13 @@
-Package api.model.symbol contains a very simplified hierarchy of Term sub-classes,
+Package api.model.term contains a very simplified hierarchy of Term sub-classes,
 plus the TermApi helper class that has priviledged access through package scope.
 
 The Term hierarchy is an API to the syntactic aspect of the Prolog formalism.
-In logic2j, graphs of terms can contain any type of Java objects, including JavaBeans or your application pojos.
+In logic2j, graphs of terms can contain any type of Java objects, including JavaBeans or your application POJOs.
 
-In a structure like f(a,X,2,3.14), there are only two pure Terms: the Struct with functor "f", and the Var "X".
-The structure also contains one Java String ("a"), one Integer, and one Double.
+In a structure like f(a,X,2,3.14), there are only two pure Terms: the Struct with functor "f", plus the Var "X".
+The structure also contains a Java String ("a"), a Long, and a Double.
 
-In logic2j, Term graphs are immutable and never duplicated during inference. Free variables are never bound to
-their effective values in a shared data structure, nor copies of structures are returned.
+In logic2j, Term graphs are immutable and never duplicated during inference nor during unification.
+Free variables are never bound to their effective values nor copies of structures are cloned.
 Instead, logic2j instantiate monads that describe the state of all variables at any moment in time.
-Monads are responsible of lazy-resolving variable values on demand.
-
+Monads are responsible of lazy-resolving variable values on request.

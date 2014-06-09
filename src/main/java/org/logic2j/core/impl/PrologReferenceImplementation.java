@@ -18,6 +18,7 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
+import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
@@ -70,7 +71,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     private OperatorManager operatorManager = new DefaultOperatorManager();
 
-    private Solver solver = new DefaultSolver(this);
+    private Solver solver = new Solver(this);
 
     /**
      * Default constructor will only provide an engine with the {@link org.logic2j.core.library.impl.CoreLibrary} loaded.

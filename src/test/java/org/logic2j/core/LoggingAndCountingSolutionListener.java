@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by Laurent on 25.05.2014.
+ * TODO Document me!
  */
 public class LoggingAndCountingSolutionListener extends CountingSolutionListener {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAndCountingSolutionListener.class);

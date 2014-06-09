@@ -19,7 +19,6 @@ package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -27,11 +26,10 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.DefaultSolver;
+import org.logic2j.core.impl.Solver;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.ReflectUtils;
-import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.library.mgmt.Primitive;
+import org.logic2j.core.api.library.Primitive;
 
 import java.util.ArrayList;
 
@@ -258,7 +256,7 @@ public class CoreLibrary extends LibraryBase {
     }
 
     /**
-     * Note: this implmentation is valid, yet may be bypassed by a "native" implementation in {@link DefaultSolver}.
+     * Note: this implmentation is valid, yet may be bypassed by a "native" implementation in {@link org.logic2j.core.impl.Solver}.
      *
      * @param theListener
      * @param currentVars

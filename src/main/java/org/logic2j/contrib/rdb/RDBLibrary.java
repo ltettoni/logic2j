@@ -39,7 +39,7 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.library.mgmt.Primitive;
+import org.logic2j.core.api.library.Primitive;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;

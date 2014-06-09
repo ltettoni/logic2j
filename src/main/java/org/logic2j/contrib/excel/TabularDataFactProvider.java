@@ -22,6 +22,7 @@ import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class TabularDataFactProvider implements DataFactProvider {
     }
 
     @Override
-    public Iterable<DataFact> listMatchingDataFacts(Object theGoal) {
+    public Iterable<DataFact> listMatchingDataFacts(Object theGoal, UnifyContext currentVars) {
         return this.dataFacts;
     }
 }

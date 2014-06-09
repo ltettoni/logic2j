@@ -24,8 +24,8 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.util.ReflectUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
-import org.logic2j.core.library.mgmt.LibraryContent;
-import org.logic2j.core.library.mgmt.PrimitiveInfo;
+import org.logic2j.core.api.library.LibraryContent;
+import org.logic2j.core.api.library.PrimitiveInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;

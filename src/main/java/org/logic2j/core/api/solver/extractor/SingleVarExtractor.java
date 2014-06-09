@@ -27,19 +27,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will count and limit
- * the number of solutions generated, and possibly handle underflow or overflow.
+ * A {@link org.logic2j.core.api.solver.extractor.SolutionExtractor} that will extract the individual
+ * values of a single Var or of a single "goal" Term, and possibly convert them to a desired class.
  */
 public class SingleVarExtractor<T> implements SolutionExtractor<T> {
     private static final Logger logger = LoggerFactory.getLogger(SingleVarExtractor.class);
 
     private final Object goal;
 
+    /**
+     * The variable whose value is to extract.
+     */
     private final Var var;
 
+    /**
+     * The target class, or Object if no conversion is asked.
+     */
+    private Class<? extends T> targetClass;
+
+    /**
+     * Will be used to convert the type.
+     */
     private TermAdapter termAdapter;
 
-    private Class<? extends T> targetClass;
 
     /**
      * Create a {@link org.logic2j.core.api.solver.listener.SolutionListener} that will enumerate

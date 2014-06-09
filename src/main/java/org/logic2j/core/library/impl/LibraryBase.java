@@ -17,7 +17,7 @@
  */
 package org.logic2j.core.library.impl;
 
-import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.solver.Continuation;

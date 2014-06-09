@@ -15,9 +15,8 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.library.mgmt;
+package org.logic2j.core.api.library;
 
-import org.logic2j.core.api.PLibrary;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
@@ -31,9 +30,9 @@ import java.util.HashSet;
 /**
  * Describe a {@link Primitive}, which is either a:
  * <ul>
- * <li>Directive</li>
- * <li>Predicate</li>
- * <li>Functor</li>
+ * <li>Directive - not yet supported</li>
+ * <li>Predicate - a "function" in Prolog, will produce solutions</li>
+ * <li>Functor - evaluates to a result, for example the addition of two numbers</li>
  * </ul>
  * 
  * @note Strangely, this class has ivoke() features so it's not only a description!
@@ -50,7 +49,7 @@ public class PrimitiveInfo {
          */
         DIRECTIVE,
         /**
-         * A predicate implemented as a Java method, will produce solution(s) or not via the {@link SolutionListener} interface.
+         * A predicate implemented as a Java method, will produce solution(s) through a {@link SolutionListener} interface.
          */
         PREDICATE,
         /**

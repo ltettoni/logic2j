@@ -1,7 +1,15 @@
-<p>
-Package api.solver.holder to be documented.
-</p>
-<p>
-This is a higher level API for obtaining solutions. You may also consider using the lower-level SolutionListener API to
-obtain solutions from the engine.
-</p>
+Package org.logic2j.core.api.solver.holder is part of the solver's fluent API to hold intermediate state
+before a "terminal" method triggers the exection of the Solver.
+
+GoalHolder is returned by the main solver's solve() method. It allows to decide what need to be solved:
+        - existence or not of a solution
+        - number of solutions
+        - extraction of the solutions(s) to the specified goal
+        - extraction of a single variable from the specified goal
+        - extraction of all variables
+
+SolutionHolder further allows all cases of extraction above to specifiy the
+        - cardinality (single-value or multi-valued)
+        - obligation (optional, mandatory result, at-least or at-most values)
+        - modality (iterable or all-in-memory)
+        - storage (List or array)

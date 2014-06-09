@@ -18,7 +18,7 @@
 package org.logic2j.core;
 
 import org.junit.Before;
-import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -30,7 +30,7 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.api.library.LibraryContent;
 
 import java.io.File;
 import java.io.FilenameFilter;

@@ -30,13 +30,13 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.unify.UnifyStateByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
 import org.logic2j.core.impl.util.ReportUtils;
-import org.logic2j.core.library.mgmt.PrimitiveInfo;
+import org.logic2j.core.api.library.PrimitiveInfo;
 
 /**
  * Solve goals - that's the core of the engine.
  */
-public class DefaultSolver implements Solver {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolver.class);
+public class Solver {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);
 
     private static final boolean isDebug = logger.isDebugEnabled();
 
@@ -44,11 +44,10 @@ public class DefaultSolver implements Solver {
 
     private boolean hasDataFactProviders;
 
-    public DefaultSolver(PrologImplementation theProlog) {
+    public Solver(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 
-    @Override
     public Continuation solveGoal(Object goal, SolutionListener theSolutionListener) {
         this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         final UnifyContext initialContext = initialContext();
@@ -73,7 +72,6 @@ public class DefaultSolver implements Solver {
      * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.unify.UnifyContext, org.logic2j.core.api.solver.listener.SolutionListener)} method. The goal to solve
      * is in the theGoalBindings's referrer.
      */
-    @Override
     public Continuation solveGoal(Object goal, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Check if we will have to deal with DataFacts in this session of solving.
         // This slightly improves performance - we can bypass calling the method that deals with that
@@ -81,7 +79,6 @@ public class DefaultSolver implements Solver {
         return solveGoalRecursive(goal, currentVars, theSolutionListener);
     }
 
-    @Override
     public UnifyContext initialContext() {
         final UnifyContext initialContext = new UnifyStateByLookup().emptyContext();
         return initialContext;
@@ -326,11 +323,9 @@ public class DefaultSolver implements Solver {
         Continuation result = Continuation.CONTINUE;
         // Now fetch data
         final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
-        for (final DataFactProvider dataProvider : dataProviders) {
-            final Iterable<DataFact> matchingDataFacts = dataProvider.listMatchingDataFacts(goalTerm);
+        for (final DataFactProvider dataFactProvider : dataProviders) {
+            final Iterable<DataFact> matchingDataFacts = dataFactProvider.listMatchingDataFacts(goalTerm, currentVars);
             for (final DataFact dataFact : matchingDataFacts) {
-                // We should probably try/finally between unification and deunification. However since we unify with data
-                // and need efficiency, and we won't call any user code, we can assume not to.
                 final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
                 final boolean unified = varsAfterHeadUnified != null;
                 if (unified) {
@@ -341,7 +336,7 @@ public class DefaultSolver implements Solver {
                 }
             }
             if (logger.isInfoEnabled()) {
-                logger.info("Last DataFact of {} iterated", dataProvider);
+                logger.info("Last DataFact of {} iterated", dataFactProvider);
             }
         }
         return result;

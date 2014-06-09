@@ -22,7 +22,7 @@ import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.mgmt.Primitive;
+import org.logic2j.core.api.library.Primitive;
 
 import java.io.PrintStream;
 

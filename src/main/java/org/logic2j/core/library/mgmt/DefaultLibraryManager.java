@@ -18,8 +18,11 @@
 package org.logic2j.core.library.mgmt;
 
 import org.logic2j.core.api.LibraryManager;
-import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.library.LibraryContent;
+import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -29,7 +32,7 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.core.library.mgmt.PrimitiveInfo.PrimitiveType;
+import org.logic2j.core.api.library.PrimitiveInfo.PrimitiveType;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -114,7 +117,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Introspect annotations within the {@link PLibrary} and return a description of it.
-     * Look for {@link Primitive} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
+     * Look for {@link org.logic2j.core.api.library.Primitive} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
      * \=)
      * 
      * @param theLibrary

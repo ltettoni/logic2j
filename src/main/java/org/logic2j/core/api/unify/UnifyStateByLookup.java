@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
- * Created by Laurent on 07.05.2014.
+ * TODO Document me!
  */
 public class UnifyStateByLookup {
     private static final Logger logger = LoggerFactory.getLogger(UnifyStateByLookup.class);

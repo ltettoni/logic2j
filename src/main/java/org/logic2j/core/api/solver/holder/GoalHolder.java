@@ -25,7 +25,7 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import java.util.Map;
 
 /**
- * Created by Laurent on 26.05.2014.
+ * TODO Document me!
  */
 public class GoalHolder {
     final PrologReferenceImplementation prolog;

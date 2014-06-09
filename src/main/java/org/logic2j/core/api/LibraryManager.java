@@ -17,15 +17,16 @@
  */
 package org.logic2j.core.api;
 
-import org.logic2j.core.library.mgmt.LibraryContent;
+import org.logic2j.core.api.library.PLibrary;
+import org.logic2j.core.api.library.LibraryContent;
 
 /**
- * An API to manage {@link PLibrary}es implementing Prolog features in Java.
+ * An API to manage {@link org.logic2j.core.api.library.PLibrary}es implementing Prolog primitives in Java.
  */
 public interface LibraryManager {
 
     /**
-     * Load a {@link PLibrary}
+     * Load a {@link org.logic2j.core.api.library.PLibrary}
      * 
      * @param theLibrary
      * @return The content of the library

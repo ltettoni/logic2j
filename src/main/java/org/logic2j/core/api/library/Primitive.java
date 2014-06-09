@@ -15,9 +15,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.library.mgmt;
+package org.logic2j.core.api.library;
 
-import org.logic2j.core.api.PLibrary;
+import org.logic2j.core.api.library.PLibrary;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,7 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to a method that implements a Prolog primitive in a {@link PLibrary}.
+ * Annotation for methods of a {@link PLibrary} that implement a Prolog primitive in Java.
+ * The signature of the method will determine if the primitive is a directive, a predicate or a functor.
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

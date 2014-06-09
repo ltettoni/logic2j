@@ -19,7 +19,6 @@ package org.logic2j.core.impl.theory;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
-import org.logic2j.core.api.Solver;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;

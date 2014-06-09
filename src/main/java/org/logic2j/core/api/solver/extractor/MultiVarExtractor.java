@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A {@link org.logic2j.core.api.solver.extractor.SolutionExtractor} that will extract values of
+ * a set of variables, return as a Map. Typically used to find all bindings of a multi-var goal.
+ */
 public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
 
     private final Var[] vars;

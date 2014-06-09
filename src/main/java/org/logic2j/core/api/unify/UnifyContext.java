@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Laurent on 07.05.2014.
+ * TODO Document me!
  */
 public class UnifyContext {
     private static final Logger logger = LoggerFactory.getLogger(UnifyContext.class);

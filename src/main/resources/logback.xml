@@ -20,7 +20,7 @@
 
    <logger name="org.logic2j" level="info" />
    <logger name="org.logic2j.core.api.solver.listener" level="info" />
-   <logger name="org.logic2j.core.impl.DefaultSolver" level="info" />
+   <logger name="org.logic2j.core.impl.Solver" level="info" />
    <logger name="TabularDataClauseProvider" level="info" />
    <logger name="FunctionLibrary" level="info" />
    <!-- Verbosity of toString in particular for Term hierarchies -->

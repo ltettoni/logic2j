@@ -1,0 +1,7 @@
+Package org.logic2j.core.api.solver.unify is the heart of the immutable, monadic unification engine of logic2j.
+
+Class "UnifyContext" describes the current state of all variables during solving. All Var and Struct have to be
+"reified" through an instance of UnifyContext to get their real values.
+
+Any modification to variables such as binding a free Var or unifying two Terms is done through an instance
+of UnifyContext and

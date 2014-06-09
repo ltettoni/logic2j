@@ -15,21 +15,30 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api;
+package org.logic2j.core.api.library;
 
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**
- * A library of Prolog primitives implemented in Java, as methods of a single class. Usually {@link PLibrary}es come together with an
- * associated theory of Prolog rules and facts, associated as a classloadable resource. Low-level predicates are implemented in Java and
- * high-level or facade predicates are expressed as Prolog rules.
+ * A library of Prolog primitives implemented in Java, each as a method of the class.
+ * Sometimes {@link PLibrary}es combine Java and a theory of Prolog rules and facts, associated
+ * as a classloadable resource. Low-level predicates are implemented in Java and
+ * high-level or facade predicates are implemented in Prolog.
  */
 public interface PLibrary {
 
     static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
 
+    /**
+     * The dispatcher allow direct invocation of the primitives, without the need for reflection.
+     * @param theMethodName
+     * @param theGoalStruct
+     * @param currentVars
+     * @param theListener
+     * @return
+     */
     Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener);
 
 }

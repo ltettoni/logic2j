@@ -4,7 +4,7 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.impl.util.ProfilingInfo;
 
 /**
- * Created by Laurent on 07.05.2014.
+ * TODO Document me!
  */
 @Deprecated // basic implementation - for comparison - no efficient
 public class UnifyStateByStack {

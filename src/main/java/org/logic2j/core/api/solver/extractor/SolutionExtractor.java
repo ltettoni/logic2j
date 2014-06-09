@@ -20,7 +20,10 @@ package org.logic2j.core.api.solver.extractor;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**
- * Created by Laurent on 29.05.2014.
+ * Extract content from a solution, this is called during solving from one of our SolutionListeners,
+ * at a moment when we need to "reify" what we want to remember from the solution.
+ * The unique method receives the monad with all the current state of variables, whereas the implementers of
+ * this interface will remember what Term or Var needs to be extracted.
  */
 public interface SolutionExtractor<T> {
 

@@ -12,8 +12,8 @@ import static org.junit.Assert.assertTrue;
  * Lowest-level tests of the Solver: check core primitives: true, fail, cut, and, or. Check basic unification.
  * See other test classes for testing the solver against theories.
  */
-public class DefaultSolverTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultSolverTest.class);
+public class SolverTest extends PrologTestBase {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolverTest.class);
 
     // ---------------------------------------------------------------------------
     // Simplest primitives and undefined goal

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Created by Laurent on 25.05.2014.
+ * TODO Document me!
  */
 public class ExtractingSolutionListener extends CountingSolutionListener {
     private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
