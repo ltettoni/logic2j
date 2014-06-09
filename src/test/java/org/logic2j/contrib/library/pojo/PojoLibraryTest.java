@@ -25,6 +25,8 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test
     public void bind() {
         loadLibrary(new PojoLibrary(this.prolog));
+        // TODO Dubious definition of bind/2 but that's how it is currently implemented
+        uniqueSolution("bind(name, X)");
         bind("name", "value");
         //
         uniqueSolution("bind(name, X), X=value");

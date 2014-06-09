@@ -130,7 +130,7 @@ public class Clause {
         if (ceilingEntry==null) {
 //            logger.warn("Cloning {}", this);
             // No such entry: create and insert
-            final Clause clonedClause = cloneClauseAndRemapIndexes2(this, currentVars);
+            final Clause clonedClause = cloneClauseAndRemapIndexes(this, currentVars);
             final int initialVarIndex = clonedClause.vars[0].getIndex(); // There MUST be at least one var otherwise we would not be cloning
             this.cache.put(initialVarIndex, clonedClause);
             return clonedClause;
@@ -143,7 +143,7 @@ public class Clause {
 
 
 
-    private Clause cloneClauseAndRemapIndexes2(Clause theClause, UnifyContext currentVars) {
+    private Clause cloneClauseAndRemapIndexes(Clause theClause, UnifyContext currentVars) {
         ProfilingInfo.counter1++;
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
         final Var[] originalVars = theClause.vars;

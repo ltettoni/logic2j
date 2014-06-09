@@ -100,6 +100,14 @@ public class PojoLibrary extends LibraryBase {
         return value;
     }
 
+    /**
+     * TODO: To be refine - currently is named "bind" but actually extracts from the ThreadLocal.
+     * @param theListener
+     * @param currentVars
+     * @param theBindingName The name to use for the binding
+     * @param theTarget Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
+     * @return One solution, either leave theTarget
+     */
     @Primitive
     public Continuation bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
         final Object nameTerm = currentVars.reify(theBindingName);
