@@ -16,6 +16,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+ /*
+  * This is the Prolog part of the CoreLibrary. It defines commonly-used predicates.
+  */
+
 member(E,[E|_]).
 member(E,[_|L]):- member(E,L).
 
@@ -52,7 +56,7 @@ countall(Predicate, NumberOfOccurences) :-
 
 /*
   This is a working version of OR implemented in prolog. 
-  However we prefer the N-arity implementation of OR in Java, see DefaultSolver.
+  However we prefer the more general N-arity implementation of OR in Java, see DefaultSolver.
 
 A ; B :- call(A).
 A ; B :- call(B).
