@@ -28,8 +28,11 @@ import java.util.Map;
 public class LibraryContent {
 
     private final Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
+
     private final Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
+
     private final Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
+
     private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
 
     public void putDirective(String theKey, PrimitiveInfo theDesc) {
@@ -54,26 +57,29 @@ public class LibraryContent {
     }
 
     public void putPrimitive(String theKey, PrimitiveInfo theDesc) {
-        switch (theDesc.getType()) {
-        case DIRECTIVE:
-            putDirective(theKey, theDesc);
-            break;
-        case PREDICATE:
-            putPredicate(theKey, theDesc);
-            break;
-        case FUNCTOR:
-            putFunctor(theKey, theDesc);
-            break;
-        }
         if (this.primitiveMap.containsKey(theKey)) {
             throw new PrologNonSpecificError("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
         }
+        switch (theDesc.getType()) {
+            case DIRECTIVE:
+                putDirective(theKey, theDesc);
+                break;
+            case PREDICATE:
+                putPredicate(theKey, theDesc);
+                break;
+            case FUNCTOR:
+                putFunctor(theKey, theDesc);
+                break;
+            default:
+                assert false : "Unplanned case in switch on PrimitiveType";
+        }
+
         this.primitiveMap.put(theKey, theDesc);
     }
 
     /**
-     * Merge the content of theLoadedContent into this, by adding all directives, primitives, functors adn predicates.
-     * 
+     * Merge the content of theLoadedContent into this, by adding all directives, primitives, functors and predicates.
+     *
      * @param theLoadedContent
      */
     public void addAll(LibraryContent theLoadedContent) {

@@ -28,7 +28,7 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.Solver;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.util.ReflectUtils;
+import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.library.Primitive;
 
 import java.util.ArrayList;
@@ -371,7 +371,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation clause(SolutionListener theListener, UnifyContext currentVars, Object theHead, Object theBody) {
         final Object headValue = currentVars.reify(theHead);
-        final Struct realHead = ReflectUtils.safeCastNotNull("dereferencing argument for clause/2", headValue, Struct.class);
+        final Struct realHead = TypeUtils.safeCastNotNull("dereferencing argument for clause/2", headValue, Struct.class);
         final Object[] clauseHeadAndBody = new Object[2];
         for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(realHead, currentVars)) {

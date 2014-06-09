@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.impl.util.ReflectUtils;
+import org.logic2j.core.impl.util.TypeUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -202,7 +202,7 @@ public class ExcelReader {
             if (value != null) {
                 hasSomeData = true;
             }
-            final T cast = ReflectUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
+            final T cast = TypeUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
             values.add(cast);
         }
         if (!hasSomeData) {

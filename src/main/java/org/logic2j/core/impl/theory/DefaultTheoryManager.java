@@ -26,8 +26,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
-import org.logic2j.core.impl.util.ReflectUtils;
-import org.logic2j.core.impl.util.ReportUtils;
+import org.logic2j.core.impl.util.TypeUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -36,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prolog's most classic way of providing {@link Clause}s to the {@link Solver} inference engine: all clauses are parsed and normalized from
+ * Prolog's most classic way of providing {@link Clause}s to the {@link org.logic2j.core.impl.Solver} inference engine: all clauses are parsed and normalized from
  * one or several theories' textual content managed by this class.
  * TODO Does the name "Manager" make sense here?
  */
@@ -117,7 +116,7 @@ public class DefaultTheoryManager implements TheoryManager {
             }
             InputStream in = null;
             try {
-                in = ReflectUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
+                in = TypeUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
                 // FIXME there will be encoding issues when using InputStream instead of Reader
                 final Reader reader = new InputStreamReader(in);
                 return load(reader);
@@ -218,7 +217,7 @@ public class DefaultTheoryManager implements TheoryManager {
 
     @Override
     public String toString() {
-        return ReportUtils.shortDescription(this);
+        return this.getClass().getSimpleName();
     }
 
 }

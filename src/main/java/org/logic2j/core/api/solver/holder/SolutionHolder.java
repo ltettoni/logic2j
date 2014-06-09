@@ -29,7 +29,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * TODO Document me!
+ * Launch the solver with appropriate SolutionListener o obtain what the user asks:
+ * cardinality (single-value or multi-valued)
+ * obligation (optional, mandatory result, at-least or at-most values)
+ * modality (iterable or all-in-memory)
+ * storage (List or array)
  */
 public class SolutionHolder<T> implements Iterable<T> {
     private static final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);

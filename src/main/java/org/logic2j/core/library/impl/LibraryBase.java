@@ -66,23 +66,6 @@ public class LibraryBase implements PLibrary {
         return continuation;
     }
 
-//    /**
-//     * When unified is true, call {@link #notifySolution(SolutionListener, org.logic2j.core.api.unify.UnifyContext)}. Otherwise nothing is done.
-//     *
-//     * @param unified
-//     * @param theListener
-//     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
-//     */
-//    protected Continuation notifyIfUnified(boolean unified, SolutionListener theListener, UnifyContext currentVars) {
-//        final Continuation continuation;
-//        if (unified) {
-//            continuation = notifySolution(theListener, currentVars);
-//        } else {
-//            continuation = Continuation.CONTINUE;
-//        }
-//        return continuation;
-//    }
-
     /**
      * Make sure term is not a free {@link Var}.
      *
@@ -114,19 +97,6 @@ public class LibraryBase implements PLibrary {
         // Unified
         return notifySolution(theListener, after);
     }
-
-//    /**
-//     * Format a Term with renditions of final vars, and taking operators into account.
-//     *
-//     * @param theTerm
-//     * @param currentVars
-//     * @return The formatted String
-//     */
-//    protected String format(Object theTerm, final UnifyContext currentVars) {
-//        final TermMarshaller niceFormat2 = new DefaultTermMarshaller(currentVars);
-//        final String formatted = niceFormat2.marshall(theTerm).toString();
-//        return formatted;
-//    }
 
     // ---------------------------------------------------------------------------
     // Accessors

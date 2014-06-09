@@ -94,7 +94,6 @@ public class RangeSolutionListener<T> implements SolutionListener {
     // ---------------------------------------------------------------------------
 
     /**
-     *
      * @param minCount
      */
     public void setMinCount(long minCount) {
@@ -102,7 +101,6 @@ public class RangeSolutionListener<T> implements SolutionListener {
     }
 
     /**
-     *
      * @param maxCount The maximal number of solutions to ask the inference engine; specify 1 to only look for the first, irrelevant
      *            whether there might be others; specify 2 to if you want the first and make sure there are no others (the inference engine
      *            will try to continue after the first).

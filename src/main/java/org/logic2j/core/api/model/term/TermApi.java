@@ -21,7 +21,7 @@ import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.util.ReflectUtils;
+import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
@@ -385,13 +385,13 @@ public final class TermApi {
     @SuppressWarnings("unchecked")
     public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
         if (theTPathExpression.isEmpty()) {
-            return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
+            return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
         }
         if (theTerm instanceof String) {
             if (!theTerm.equals(theTPathExpression)) {
                 throw new InvalidTermException("Term \"" + theTerm + "\" cannot match expression \"" + theTPathExpression + '"');
             }
-            return ReflectUtils.safeCastNotNull("selecting term", theTerm, theClass);
+            return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
         }
 
         final Struct s = (Struct) theTerm;

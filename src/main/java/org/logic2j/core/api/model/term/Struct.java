@@ -20,7 +20,7 @@ package org.logic2j.core.api.model.term;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.impl.util.ReflectUtils;
+import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 
@@ -190,22 +190,6 @@ public final class Struct extends Term {
         this.index = original.index;
         this.args = newArguments;
     }
-
-//    /**
-//     * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-//     * by {@link TermApi#valueOf(Object, FactoryMode)}.
-//     *
-//     * @note This method is a static factory, not a constructor, to emphasize that arguments
-//     *       are not of the type needed by this class, but need transformation.
-//     */
-//    public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
-//        final Struct newInstance = new Struct(theFunctor, argList.length);
-//        int i = 0;
-//        for (final Object element : argList) {
-//            newInstance.args[i++] = TermApi.valueOf(element, FactoryMode.ANY_TERM);
-//        }
-//        return newInstance;
-//    }
 
     /**
      * Obtain an atom from the catalog if it pre-existed, or create one an register in the catalog.
@@ -592,7 +576,7 @@ public final class Struct extends Term {
         }
         // In case not a list, we just return a Java list with one element
         if (!this.isList()) {
-            result.add(ReflectUtils.safeCastNotNull("casting single value", this, theElementClassOrNull));
+            result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementClassOrNull));
             return result;
         }
 
@@ -600,7 +584,7 @@ public final class Struct extends Term {
         int idx = 0;
         while (!runningElement.isEmptyList()) {
             assertPList(runningElement);
-            final Q term = ReflectUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, runningElement.getLHS(), theElementClassOrNull);
+            final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, runningElement.getLHS(), theElementClassOrNull);
             result.add(term);
             runningElement = (Struct) runningElement.getRHS();
             idx++;

@@ -59,10 +59,6 @@ public abstract class Term implements Serializable {
      */
     public static final int ANON_INDEX = -2;
 
-    // Use the following line instead to really isDebug the display of terms:
-    // private static final Formatter defaultMarshaller = new
-    // org.logic2j.core.optional.io.format.DetailedFormatter();
-
 
     // ---------------------------------------------------------------------------
     // Accessors
@@ -99,9 +95,5 @@ public abstract class Term implements Serializable {
         return null;
     }
 
-
-    // ---------------------------------------------------------------------------
-    // Methods of java.lang.Object
-    // ---------------------------------------------------------------------------
 
 }

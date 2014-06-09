@@ -18,7 +18,7 @@
 package org.logic2j.core.api;
 
 /**
- * A Single Abstract Method defintion to transform Terms, used mostly for normalizing them.
+ * A Single Abstract Method definition to transform Terms, used mostly for normalizing them.
  */
 public interface TermMapper {
 

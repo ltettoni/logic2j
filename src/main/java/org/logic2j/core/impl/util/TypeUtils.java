@@ -22,11 +22,10 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
  * micro-helper to java.lang.reflect.
- * TODO Rename this class this has nothing to do with the Java Reflection API (any longer)
- * 
+ *
  * @version $Revision: 1.24 $
  */
-public abstract class ReflectUtils {
+public abstract class TypeUtils {
 
     /**
      * Dynamic runtime checking of an instance against a class or interface; tolerates null values.
@@ -64,7 +63,7 @@ public abstract class ReflectUtils {
      */
     public static <T> T safeCastNotNull(String context, Object instance, Class<? extends T> desiredClassOrInterface) throws ClassCastException {
         if (instance == null) {
-            throw new ClassCastException("null value not allowed, expected an instance of " + desiredClassOrInterface + ", while " + context);
+            throw new PrologNonSpecificError("null value not allowed, expected an instance of " + desiredClassOrInterface + ", while " + context);
         }
         final String effectiveContext = (context != null) ? context : "casting undescribed object";
         return safeCastOrNull(effectiveContext, instance, desiredClassOrInterface);

@@ -29,7 +29,6 @@ import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.unify.UnifyStateByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
-import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.api.library.PrimitiveInfo;
 
 /**
@@ -344,7 +343,7 @@ public class Solver {
 
     @Override
     public String toString() {
-        return ReportUtils.shortDescription(this);
+        return this.getClass().getSimpleName();
     }
 
 }

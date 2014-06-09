@@ -25,7 +25,11 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import java.util.Map;
 
 /**
- * TODO Document me!
+ * An intermediate class in the fluent API to extract solutions; a GoalHolder holds the state of what the user
+ * wishes to calculate, being either the existence of, the number of solutions, or individual or multiple values
+ * of one particular variable or of all vars.
+ * This object will launch the solver only for methods exists() or count(). For other
+ * methods it just returns instances of SolutionHolder which further delay the execution.
  */
 public class GoalHolder {
     final PrologReferenceImplementation prolog;

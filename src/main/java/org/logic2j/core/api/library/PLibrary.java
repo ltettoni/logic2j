@@ -32,7 +32,9 @@ public interface PLibrary {
     static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
 
     /**
-     * The dispatcher allow direct invocation of the primitives, without the need for reflection.
+     * The dispatcher allow direct invocation of the primitives, without the need for reflection,
+     * for performance reasons.
+     *
      * @param theMethodName
      * @param theGoalStruct
      * @param currentVars

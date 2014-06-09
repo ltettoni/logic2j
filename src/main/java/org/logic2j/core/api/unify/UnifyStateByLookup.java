@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
- * TODO Document me!
+ * This is the central implementation to process and provide UnifyContext monads.
  */
 public class UnifyStateByLookup {
     private static final Logger logger = LoggerFactory.getLogger(UnifyStateByLookup.class);

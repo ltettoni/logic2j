@@ -138,16 +138,6 @@ public final class Var extends Term {
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
 
-//    Var findVar(String theVariableName) {
-//        if (ANONYMOUS_VAR_NAME.equals(theVariableName)) {
-//            throw new PrologInternalError("Cannot find the anonymous variable");
-//        }
-//        if (theVariableName.equals(getName())) {
-//            return this;
-//        }
-//        return null;
-//    }
-
     /**
      * Just add this to theCollectedTerms and set {@link Term#index} to {@link Term#NO_INDEX}.
      *
@@ -236,6 +226,5 @@ public final class Var extends Term {
         }
         return this.name;
     }
-
 
 }

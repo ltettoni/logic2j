@@ -28,7 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO Document me!
+ * A monad-like object that allows dereferencing variables to their effective current values,
+ * or to modify variables (and return a new UnifyContext).
  */
 public class UnifyContext {
     private static final Logger logger = LoggerFactory.getLogger(UnifyContext.class);

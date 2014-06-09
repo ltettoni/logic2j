@@ -23,10 +23,9 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.core.impl.util.ReportUtils;
 import org.logic2j.core.library.impl.CoreLibrary;
 import org.logic2j.core.library.impl.IOLibrary;
-import org.logic2j.core.library.mgmt.DefaultLibraryManager;
+import org.logic2j.core.library.DefaultLibraryManager;
 
 /**
  * Reference implementation of logic2j's {@link PrologImplementation} API.
@@ -192,7 +191,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
     @Override
     public String toString() {
-        return ReportUtils.shortDescription(this);
+        return this.getClass().getSimpleName();
     }
 
 
