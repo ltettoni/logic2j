@@ -18,15 +18,18 @@
 
 package org.logic2j.contrib.library.fnct;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
+import static org.junit.Assert.*;
 
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
 
-    private static final String MAPPING_PREDICATE = "map";
+    private static final String MAPPING_PREDICATE = "remap";
 
     private FunctionLibrary functionLibrary;
 
@@ -36,11 +39,11 @@ public class FunctionLibraryTest extends PrologTestBase {
         loadLibrary(this.functionLibrary);
         loadTheoryFromTestResourcesDir("mapping.pro");
     }
-    
+
     protected InitLevel initLevel() {
         return InitLevel.L2_BASE_LIBRARIES;
     }
-    
+
     @Test
     public void placeholder() {
         //
@@ -48,19 +51,19 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     // To be reworked completely - now that we don't have Bindings any longer
 
-//    @Test
-//    public void anonymousAndFreeVarsAreNotTransformed() {
-//        assertNotTransformed("_", false, false, false);
-//        assertNotTransformed("X", false, false, false); // Free var
-//    }
-//
-//    @Test
-//    public void atomicNotTransformed() {
-//        assertNotTransformed("atom", false, false, false);
-//        assertNotTransformed("123", false, false, false);
-//        assertNotTransformed("123.456", false, false, false);
-//    }
-//
+    @Test
+    public void anonymousAndFreeVarsAreNotTransformed() {
+        assertNotTransformed("Q", "_", false, false, false);
+        assertNotTransformed("Q", "X", false, false, false); // Free var
+    }
+
+    @Test
+    public void atomicNotTransformed() {
+        assertNotTransformed("atom", "atom", false, false, false);
+        assertNotTransformed("123", "123", false, false, false);
+        assertNotTransformed("123.456", "123.456", false, false, false);
+    }
+
 //    @Test
 //    public void atomicTransformed() {
 //        assertTransformed("t4", "t3", false, false, false);
@@ -73,13 +76,13 @@ public class FunctionLibraryTest extends PrologTestBase {
 //        assertNotTransformed("[1,2]", false, false, false);
 //    }
 //
-//    @Test
-//    public void structTransformed() {
-//        assertTransformed("transformed(a)", "original(a)", false, false, false);
-//        assertTransformed("transformed(X)", "original(X)", false, false, false);
+    @Test
+    public void structTransformed() {
+        assertTransformed("transformed(a)", "original(a)", false, false, false);
+        assertTransformed("transformed(G)", "original(G)", false, false, false);
 //        assertTransformed("transformed(X)", "original(_)", false, false, false); // Dubious
 //        assertNotTransformed("transformed(X, Y)", false, false, false);
-//    }
+    }
 //
 //    @Test
 //    public void mapNonIterative() {
@@ -110,23 +113,37 @@ public class FunctionLibraryTest extends PrologTestBase {
 //        assertTransformed("[ten,one]", "11", false, true, true);
 //    }
 
-//    /**
-//     * @param termToParse
-//     * @param childrenBefore True for recursive pre-transformation (bottom-up)
-//     * @param childrenAfter True for recursive post-transformation (top-down)
-//     */
-//    private void assertNotTransformed(String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
-//        final Object originalTerm = unmarshall(termToParse);
-//        final TermBindings originalBindings = new TermBindings(originalTerm);
-//        logger.info("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
-//        final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-//        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
-//                MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter);
-//        assertFalse(transform);
-//        assertSame(termAndBindings[0], originalTerm);
-//        assertSame(termAndBindings[1], originalBindings);
-//    }
-//
+    /**
+     * @param termToTransform
+     * @param childrenBefore  True for recursive pre-transformation (bottom-up)
+     * @param childrenAfter   True for recursive post-transformation (top-down)
+     */
+    private void assertNotTransformed(String theExpectedToString, String termToTransform, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
+        final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q)";
+        final Object goal = unmarshall(goalText);
+        logger.info("Instantiated term to transform: {}", goal);
+        final GoalHolder holder = this.prolog.solve(goal);
+        assertEquals(1, holder.count());
+        final Object unique = holder.var("Q").unique();
+        assertEquals(theExpectedToString, unique.toString());
+    }
+
+    /**
+     * @param termToTransform
+     * @param childrenBefore  True for recursive pre-transformation (bottom-up)
+     * @param childrenAfter   True for recursive post-transformation (top-down)
+     */
+    private void assertTransformed(String theExpectedToString, String termToTransform, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
+        final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q)";
+        final Object goal = unmarshall(goalText);
+        logger.info("Instantiated term to transform: {}", goal);
+        final GoalHolder holder = this.prolog.solve(goal);
+        assertEquals(1, holder.count());
+        final Object unique = holder.var("Q").unique();
+        assertEquals(theExpectedToString, unique.toString());
+    }
+
+
 //    /**
 //     * @param toStringExpected
 //     * @param termToParse

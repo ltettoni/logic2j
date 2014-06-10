@@ -18,6 +18,11 @@
 
 package org.logic2j.contrib.library.fnct;
 
+import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -51,8 +56,7 @@ public class FunctionLibrary extends LibraryBase {
             final Object arg1 = theGoalStruct.getArg(1);
             final Object arg2 = theGoalStruct.getArg(2);
             if (theMethodName == "map") {
-//                result = map(theListener, currentVars, arg0, arg1, arg2);
-                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+                result = map(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -62,31 +66,53 @@ public class FunctionLibrary extends LibraryBase {
         return result;
     }
 
-    // To be reworked completely - now that we don't have Bindings any longer
-    
-//    @Primitive
-//    public Continuation map(SolutionListener theListener, final UnifyContext currentVars, final Object thePredicate, final Object theInput, final Object theOutput) {
-//        if (!(thePredicate instanceof String)) {
-//            throw new InvalidTermException("Predicate for map/3 must be a String, was " + thePredicate);
-//        }
-//        final Object theInputBindings = currentVars.reify(theInput);
-//        if (theInputBindings == null) {
-//            // Anonymous var. No need to try to unify it will succeed. Notify one solution.
-//            notifySolution(theListener, currentVars);
-//        } else {
-//            final Object theOutputBindings = currentVars.reify(theOutput);
-//
-//            final Object[] termAndBindings = new Object[] { theInputBindings, theInputBindings };
-//
-////            transformOnce((String) thePredicate, termAndBindings, true, true);
+
+    @Primitive
+    public Continuation map(SolutionListener theListener, final UnifyContext currentVars, final Object thePredicate, final Object theInput, final Object theOutput) {
+        if (!(thePredicate instanceof String)) {
+            throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + thePredicate);
+        }
+        final Object effectiveInput = currentVars.reify(theInput);
+        if (effectiveInput instanceof Var) {
+            // Anonymous var. No need to try to unify it will succeed. Notify one solution.
+            notifySolution(theListener, currentVars);
+        } else {
+            final Object effectiveOutput = currentVars.reify(theOutput);
+            logger.info("Mapping from {} to {}", effectiveInput, effectiveOutput);
+
+            final Object result[] = new Object[1];
+            final SolutionListener listenerForSubGoal = new SolutionListener() {
+
+                @Override
+                public Continuation onSolution(UnifyContext currentVars) {
+                    final Object reify = currentVars.reify(effectiveOutput);
+                    result[0] = reify;
+                    logger.info("Subgoal results in effectiveOutput={}", reify);
+                    return Continuation.USER_ABORT;
+                }
+            };
+            // Now solve the target sub goal
+            Struct transformationGoal = new Struct((String) thePredicate, effectiveInput, effectiveOutput);
+            transformationGoal = TermApi.normalize(transformationGoal, getProlog().getLibraryManager().wholeContent());
+            getProlog().getSolver().solveGoal(transformationGoal, currentVars, listenerForSubGoal);
+
+            if (result[0]==null) {
+                // No solution was hit
+                // Will unify output with input, ie no transformation
+                return unifyInternal(theListener, currentVars, theInput, theOutput);
+            }
+
+            return unifyInternal(theListener, currentVars, theOutput, result[0]);
+
+            // transformOnce((String) thePredicate, termAndBindings, true, true);
 //            transformAll((String) thePredicate, termAndBindings, true, true);
 //
-//            final boolean unified = unify(termAndBindings[0], (TermBindings) termAndBindings[1], theOutputBindings.getReferrer(), theOutputBindings);
+//            final boolean unified = unify(termAndBindings[0], (TermBindings) termAndBindings[1], effectiveOutput.getReferrer(), effectiveOutput);
 //            notifyIfUnified(unified, theListener);
-//        }
-//        return Continuation.CONTINUE;
-//    }
-//
+        }
+        return Continuation.CONTINUE;
+    }
+
 //    /**
 //     * Repeat transformation(s) until nothing changes.
 //     *
@@ -103,18 +129,18 @@ public class FunctionLibrary extends LibraryBase {
 //        } while (transformed && iterationLimiter > 0);
 //        return anyTransformed;
 //    }
-//
-//    /**
-//     *
-//     * @param theTransformationPredicate
-//     * @param termAndBindings
-//     * @param transformArgsBefore
-//     * @param transformArgsAfter
-//     * @return true when a transformation occured
-//     */
-//    boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
-//        boolean anyTransform = false;
-//        boolean needTransformAfter = false;
+
+    /**
+     *
+     * @param theTransformationPredicate
+     * @param termAndBindings
+     * @param transformArgsBefore
+     * @param transformArgsAfter
+     * @return true when a transformation occured
+     */
+    boolean transformOnce(final String theTransformationPredicate, final Object[] termAndBindings, boolean transformArgsBefore, boolean transformArgsAfter) {
+        boolean anyTransform = false;
+        boolean needTransformAfter = false;
 //        logger.debug("> Enter transform with {}, {}", termAndBindings[0], termAndBindings[1]);
 //        if (termAndBindings[0] instanceof Struct && ((Struct) (termAndBindings[0])).getArity() > 0) {
 //            Struct struct = (Struct) termAndBindings[0];
@@ -197,7 +223,8 @@ public class FunctionLibrary extends LibraryBase {
 //        }
 //        logger.debug("<  Exit transform with {}, {}: " + anyTransform, termAndBindings[0], termAndBindings[1]);
 //        return anyTransform;
-//    }
+        return false;
+    }
 //
 //    /**
 //     * Transform exactly one term, without recursing on children (in case of Struct), and without
