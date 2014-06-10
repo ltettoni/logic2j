@@ -133,9 +133,9 @@ public final class TermApi {
      * @param theTerm
      * @return The factorized term, may be same as argument theTerm in case nothing was needed, or a new object.
      */
-    public static Object factorize(Object theTerm) {
+    public static <T> T factorize(T theTerm) {
         final Collection<Object> collection = collectTerms(theTerm);
-        return factorize(theTerm, collection);
+        return (T)factorize(theTerm, collection);
     }
 
     /**
@@ -288,8 +288,8 @@ public final class TermApi {
     }
 
 
-    public static Object normalize(Object theTerm, LibraryContent theLibraryContent) {
-        final Object factorized = factorize(theTerm);
+    public static <T> T normalize(T theTerm, LibraryContent theLibraryContent) {
+        final T factorized = factorize(theTerm);
         assignIndexes(factorized, 0);
         if (theLibraryContent != null && factorized instanceof Struct) {
             ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
