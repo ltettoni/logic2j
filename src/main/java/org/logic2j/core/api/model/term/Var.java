@@ -181,7 +181,8 @@ public final class Var extends Term {
      */
     int assignIndexes(int theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
-            // Already assigned, do nothing
+            // assert false : "We are re-indexing an indexed Var but return a wrong value";
+            // Already assigned, avoid changing the index! Do nothing
             return theIndexOfNextNonIndexedVar; // return same index since we did nothing
         }
         if (isAnonymous()) {

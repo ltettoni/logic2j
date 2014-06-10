@@ -55,7 +55,7 @@ public class Clause {
     private TreeMap<Integer, Clause> cache;
 
     /**
-     * Make a Term (must be a Struct) read for inference, this requires to normalize it.
+     * Make a Term (must be a Struct) read for inference, it will normalize it.
      *
      * @param theProlog Required to normalize theClauseTerm according to the current libraries.
      * @param theClauseTerm
