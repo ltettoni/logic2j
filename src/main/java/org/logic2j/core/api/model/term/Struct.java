@@ -647,12 +647,12 @@ public final class Struct extends Term {
             return theIndexOfNextNonIndexedVar;
         }
         // Recursive assignment
-        int runningCounter = theIndexOfNextNonIndexedVar;
+        int runningIndex = theIndexOfNextNonIndexedVar;
         for (int i = 0; i < this.arity; i++) {
-            runningCounter = TermApi.assignIndexes(this.args[i], runningCounter);
+            runningIndex = TermApi.assignIndexes(this.args[i], runningIndex);
         }
-        this.index = (short) runningCounter;
-        return runningCounter;
+        this.index = (short) runningIndex;
+        return runningIndex;
     }
 
     public void avoidCycle(List<Term> visited) {
