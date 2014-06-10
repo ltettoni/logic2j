@@ -18,7 +18,6 @@
 
 package org.logic2j.contrib.library.fnct;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
@@ -53,90 +52,76 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertNotTransformed("Q", "_", false, false, false);
-        assertNotTransformed("Q", "X", false, false, false); // Free var
+        assertMapping("Q", "_");
+        assertMapping("Q", "X"); // Free var
     }
 
     @Test
     public void atomicNotTransformed() {
-        assertNotTransformed("atom", "atom", false, false, false);
-        assertNotTransformed("123", "123", false, false, false);
-        assertNotTransformed("123.456", "123.456", false, false, false);
+        assertMapping("atom", "atom");
+        assertMapping("123", "123");
+        assertMapping("123.456", "123.456");
+    }
+
+    @Test
+    public void atomicTransformed() {
+        assertMapping("t2", "t1");
+        assertMapping("t3", "t2");
+        assertMapping("one", "1");
+        assertMapping("ten", "10");
+    }
+
+    @Test
+    public void structNotTransformed() {
+        assertMapping("f(a, b, c)", "f(a,b,c)");
+        assertMapping("[1,2]", "[1,2]");
+    }
+
+    @Test
+    public void structTransformed() {
+        assertMapping("transformed(a)", "original(a)");
+        assertMapping("transformed(G)", "original(G)");
+        assertMapping("transformed(X)", "original(_)"); // Dubious
+        assertMapping("transformed(X, Y)", "transformed(X, Y)");
     }
 
 //    @Test
-//    public void atomicTransformed() {
-//        assertTransformed("t4", "t3", false, false, false);
-//        assertTransformed("one", "1", false, false, false);
-//    }
-//
-//    @Test
-//    public void structNotTransformed() {
-//        assertNotTransformed("f(a,b,c)", false, false, false);
-//        assertNotTransformed("[1,2]", false, false, false);
-//    }
-//
-    @Test
-    public void structTransformed() {
-        assertTransformed("transformed(a)", "original(a)", false, false, false);
-        assertTransformed("transformed(G)", "original(G)", false, false, false);
-//        assertTransformed("transformed(X)", "original(_)", false, false, false); // Dubious
-//        assertNotTransformed("transformed(X, Y)", false, false, false);
-    }
-//
-//    @Test
 //    public void mapNonIterative() {
 //        assertNotTransformed("t4", false, false, false);
-//        assertTransformed("t4", "t3", false, false, false);
-//        assertTransformed("t3", "t2", false, false, false);
-//        assertTransformed("t2", "t1", false, false, false);
+//        assertMapping("t4", "t3", false, false, false);
+//        assertMapping("t3", "t2", false, false, false);
+//        assertMapping("t2", "t1", false, false, false);
 //    }
 //
 //    @Test
 //    public void mapIterative() {
 //        assertNotTransformed("t4", true, false, false);
-//        assertTransformed("t4", "t3", true, false, false);
-//        assertTransformed("t4", "t2", true, false, false);
-//        assertTransformed("t4", "t1", true, false, false);
+//        assertMapping("t4", "t3", true, false, false);
+//        assertMapping("t4", "t2", true, false, false);
+//        assertMapping("t4", "t1", true, false, false);
 //    }
 //
 //    @Test
 //    public void structTransformedRecursiveBefore() {
-//        assertTransformed("[one,ten]", "[1,10]", false, true, false);
-//        assertTransformed("f(one, 2)", "f(1,2)", false, true, false);
-//        assertTransformed("g(one, f(one, 2))", "g(1, f(1,2))", false, true, false);
+//        assertMapping("[one,ten]", "[1,10]", false, true, false);
+//        assertMapping("f(one, 2)", "f(1,2)", false, true, false);
+//        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", false, true, false);
 //    }
 //
 //    @Test
 //    public void structTransformedRecursiveAfter() {
-//        assertTransformed("h([ten,one])", "h(11)", false, true, true);
-//        assertTransformed("[ten,one]", "11", false, true, true);
+//        assertMapping("h([ten,one])", "h(11)", false, true, true);
+//        assertMapping("[ten,one]", "11", false, true, true);
 //    }
 
     /**
      * @param termToTransform
-     * @param childrenBefore  True for recursive pre-transformation (bottom-up)
-     * @param childrenAfter   True for recursive post-transformation (top-down)
+     *
      */
-    private void assertNotTransformed(String theExpectedToString, String termToTransform, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
+    private void assertMapping(String theExpectedToString, String termToTransform) {
         final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q)";
         final Object goal = unmarshall(goalText);
-        logger.info("Instantiated term to transform: {}", goal);
-        final GoalHolder holder = this.prolog.solve(goal);
-        assertEquals(1, holder.count());
-        final Object unique = holder.var("Q").unique();
-        assertEquals(theExpectedToString, unique.toString());
-    }
-
-    /**
-     * @param termToTransform
-     * @param childrenBefore  True for recursive pre-transformation (bottom-up)
-     * @param childrenAfter   True for recursive post-transformation (top-down)
-     */
-    private void assertTransformed(String theExpectedToString, String termToTransform, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
-        final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q)";
-        final Object goal = unmarshall(goalText);
-        logger.info("Instantiated term to transform: {}", goal);
+        logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
         assertEquals(1, holder.count());
         final Object unique = holder.var("Q").unique();
@@ -144,27 +129,6 @@ public class FunctionLibraryTest extends PrologTestBase {
     }
 
 
-//    /**
-//     * @param toStringExpected
-//     * @param termToParse
-//     * @param childrenBefore True for recursive pre-transformation (bottom-up)
-//     * @param childrenAfter True for recursive post-transformation (top-down)
-//     * @return A Object[2] with the term and its binding
-//     * TODO Should we use a literal Binding instead?
-//     */
-//    private Object[] assertTransformed(String toStringExpected, String termToParse, boolean iterative, boolean childrenBefore, boolean childrenAfter) {
-//        final Object originalTerm = unmarshall(termToParse);
-//        final TermBindings originalBindings = new TermBindings(originalTerm);
-//        logger.debug("Instantiated term to transform: term={} , bindings={}", originalTerm, originalBindings);
-//        final Object[] termAndBindings = new Object[] { originalTerm, originalBindings };
-//        final boolean transform = iterative ? this.functionLibrary.transformAll(MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter) : this.functionLibrary.transformOnce(
-//                MAPPING_PREDICATE, termAndBindings, childrenBefore, childrenAfter);
-//        assertTrue(transform);
-//        final String substituted = TermApi.substitute(termAndBindings[0], (TermBindings) termAndBindings[1]).toString();
-//        assertEquals(toStringExpected, substituted);
-//        return termAndBindings;
-//    }
-//
 //    @Test
 //    public void map() {
 //        assertEquals("transformed(a)", uniqueSolution("map(map, original(a), X)").var("X").unique().toString());

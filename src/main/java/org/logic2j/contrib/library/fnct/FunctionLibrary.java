@@ -78,7 +78,7 @@ public class FunctionLibrary extends LibraryBase {
             notifySolution(theListener, currentVars);
         } else {
             final Object effectiveOutput = currentVars.reify(theOutput);
-            logger.info("Mapping from {} to {}", effectiveInput, effectiveOutput);
+            // logger.info("Mapping from {} to {}", effectiveInput, effectiveOutput);
 
             final Object result[] = new Object[1];
             final SolutionListener listenerForSubGoal = new SolutionListener() {
@@ -87,7 +87,7 @@ public class FunctionLibrary extends LibraryBase {
                 public Continuation onSolution(UnifyContext currentVars) {
                     final Object reify = currentVars.reify(effectiveOutput);
                     result[0] = reify;
-                    logger.info("Subgoal results in effectiveOutput={}", reify);
+                    // logger.info("Subgoal results in effectiveOutput={}", reify);
                     return Continuation.USER_ABORT;
                 }
             };
