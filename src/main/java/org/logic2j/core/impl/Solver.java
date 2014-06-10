@@ -19,6 +19,7 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.model.Clause;
+import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -74,7 +75,11 @@ public class Solver {
     public Continuation solveGoal(Object goal, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Check if we will have to deal with DataFacts in this session of solving.
         // This slightly improves performance - we can bypass calling the method that deals with that
-
+        if (goal instanceof Struct) {
+            if (((Struct)goal).getIndex()== Term.NO_INDEX) {
+                throw new InvalidTermException("Struct must be normalized before it can be solved: " + goal);
+            }
+        }
         return solveGoalRecursive(goal, currentVars, theSolutionListener);
     }
 
