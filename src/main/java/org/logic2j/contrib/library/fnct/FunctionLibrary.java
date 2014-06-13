@@ -18,8 +18,10 @@
 
 package org.logic2j.contrib.library.fnct;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
@@ -28,6 +30,9 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
+
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 /**
  * Functional features (mapping, etc).
@@ -49,14 +54,19 @@ public class FunctionLibrary extends LibraryBase {
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
-        // Argument methodName is {@link String#intern()}alized so OK to check by reference
+        final Object[] args = theGoalStruct.getArgs();
         final int arity = theGoalStruct.getArity();
         if (arity == 3) {
-            final Object arg0 = theGoalStruct.getArg(0);
-            final Object arg1 = theGoalStruct.getArg(1);
-            final Object arg2 = theGoalStruct.getArg(2);
+            // Argument methodName is {@link String#intern()}alized so OK to check by reference
             if (theMethodName == "map") {
-                result = map(theListener, currentVars, arg0, arg1, arg2);
+                result = map(theListener, currentVars, args[0], args[1], args[2]);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else if (arity == 4) {
+            // Argument methodName is {@link String#intern()}alized so OK to check by reference
+            if (theMethodName == "map") {
+                result = map(theListener, currentVars, args[0], args[1], args[2], args[3]);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -68,49 +78,108 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Primitive
-    public Continuation map(SolutionListener theListener, final UnifyContext currentVars, final Object thePredicate, final Object theInput, final Object theOutput) {
+    public Continuation map(SolutionListener theListener, final UnifyContext currentVars,
+                            final Object thePredicate, final Object theInput, final Object theOutput) {
+        return map(theListener, currentVars, thePredicate, theInput, theOutput, "one");
+    }
+
+    @Primitive
+    public Continuation map(SolutionListener theListener, final UnifyContext currentVars,
+                            final Object thePredicate, final Object theInput, final Object theOutput, final Object options) {
         if (!(thePredicate instanceof String)) {
             throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + thePredicate);
         }
-        final Object effectiveInput = currentVars.reify(theInput);
-        if (effectiveInput instanceof Var) {
-            // Anonymous var. No need to try to unify it will succeed. Notify one solution.
-            notifySolution(theListener, currentVars);
-        } else {
-            final Object effectiveOutput = currentVars.reify(theOutput);
-            // logger.info("Mapping from {} to {}", effectiveInput, effectiveOutput);
+        // All options, concatenated, enclosed in commas
+        final String optionsCsv = "," + options.toString().trim().toLowerCase().replace(" ", "") + ",";
+        final boolean iterative = optionsCsv.contains(",iter,");
 
-            final Object result[] = new Object[1];
+        final Object[] returnValues = new Object[1];
+        if (iterative) {
+            final UnifyContext afterUnification = mapIter((String) thePredicate, currentVars, theInput, theOutput, returnValues);
+            if (afterUnification!=null) {
+                return notifySolution(theListener, afterUnification);
+            }
+        } else {
+            final UnifyContext afterUnification = mapOne((String) thePredicate, currentVars, theInput, theOutput, returnValues);
+            if (afterUnification!=null) {
+                return notifySolution(theListener, afterUnification);
+            }
+        }
+        return Continuation.USER_ABORT;
+    }
+
+    public UnifyContext mapIter(final String mappingPredicate, final UnifyContext currentVars, final Object input, final Object output, final Object[] results) {
+        Object runningSource = input;
+        UnifyContext runningMonad = currentVars;
+        boolean anyTransformation = false;
+        for (int iter=0; iter<100; iter++) {
+            final Var tmpVar = runningMonad.createVar("MapTmp" + iter);
+            final Object[] returnValues = new Object[1];
+            runningMonad = mapOne(mappingPredicate, runningMonad, runningSource, tmpVar, returnValues);
+            if (runningMonad==null) {
+                return null;
+            }
+            boolean transformed = (Boolean) returnValues[0];
+            anyTransformation |= transformed;
+            if (!transformed) {
+                results[0] = anyTransformation;
+                runningMonad = runningMonad.unify(tmpVar, output);
+                return runningMonad;
+            }
+            runningSource = tmpVar;
+        }
+        return runningMonad;
+    }
+
+
+    public UnifyContext mapOne(final String mappingPredicate, final UnifyContext currentVars, final Object input, final Object output, final Object[] results) {
+        final Object effectiveInput = currentVars.reify(input);
+        final Object effectiveOutput = currentVars.reify(output);
+        if (effectiveInput instanceof Var) {
+            // Free var - return untransformed
+            final UnifyContext unified = currentVars.unify(effectiveOutput, effectiveInput);
+            // Should always unify...
+            assert unified != null : "A free var must always unify to anything";
+            results[0] = Boolean.FALSE; // Nothing transformed
+        } else {
+            final Object transformationResult[] = new Object[1];
             final SolutionListener listenerForSubGoal = new SolutionListener() {
 
                 @Override
                 public Continuation onSolution(UnifyContext currentVars) {
-                    final Object reify = currentVars.reify(effectiveOutput);
-                    result[0] = reify;
-                    // logger.info("Subgoal results in effectiveOutput={}", reify);
+                    final Object reified = currentVars.reify(effectiveOutput);
+                    transformationResult[0] = reified;
+                    // logger.info("Subgoal results in effectiveOutput={}", reified);
+                    // We only seek for the first solution - not going farther
                     return Continuation.USER_ABORT;
                 }
             };
             // Now solve the target sub goal
-            Struct transformationGoal = new Struct((String) thePredicate, effectiveInput, effectiveOutput);
-            transformationGoal = TermApi.normalize(transformationGoal, getProlog().getLibraryManager().wholeContent());
+            Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
+            int highestVarIndex = Term.NO_INDEX;
+            final Set<Var> vars = TermApi.allVars(transformationGoal).keySet();
+            for (Var var : vars) {
+                if (var.getIndex() > highestVarIndex) {
+                    highestVarIndex = var.getIndex();
+                }
+            }
+            transformationGoal.index = highestVarIndex+1;
+//            transformationGoal = TermApi.normalize(transformationGoal, getProlog().getLibraryManager().wholeContent());
+
             getProlog().getSolver().solveGoal(transformationGoal, currentVars, listenerForSubGoal);
 
-            if (result[0]==null) {
+            if (transformationResult[0] == null) {
+                final UnifyContext after = currentVars.unify(effectiveInput, effectiveOutput);
                 // No solution was hit
-                // Will unify output with input, ie no transformation
-                return unifyInternal(theListener, currentVars, theInput, theOutput);
+                results[0] = Boolean.FALSE; // Nothing transformed
+                return after;
+            } else {
+                final UnifyContext after = currentVars.unify(transformationResult[0], effectiveOutput);
+                results[0] = Boolean.TRUE; // Something transformed
+                return after;
             }
-
-            return unifyInternal(theListener, currentVars, theOutput, result[0]);
-
-            // transformOnce((String) thePredicate, termAndBindings, true, true);
-//            transformAll((String) thePredicate, termAndBindings, true, true);
-//
-//            final boolean unified = unify(termAndBindings[0], (TermBindings) termAndBindings[1], effectiveOutput.getReferrer(), effectiveOutput);
-//            notifyIfUnified(unified, theListener);
         }
-        return Continuation.CONTINUE;
+        return currentVars;
     }
 
 //    /**
@@ -131,7 +200,6 @@ public class FunctionLibrary extends LibraryBase {
 //    }
 
     /**
-     *
      * @param theTransformationPredicate
      * @param termAndBindings
      * @param transformArgsBefore

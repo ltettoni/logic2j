@@ -43,6 +43,9 @@ public class FunctionLibraryTest extends PrologTestBase {
         return InitLevel.L2_BASE_LIBRARIES;
     }
 
+    private final String OPTION_ONE = "one";
+    private final String OPTION_ITER = "iter";
+
     @Test
     public void placeholder() {
         //
@@ -52,55 +55,60 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertMapping("Q", "_");
-        assertMapping("Q", "X"); // Free var
+        assertMapping("Q", "_", OPTION_ONE);
+        assertMapping("Q", "X", OPTION_ONE); // Free var
     }
 
     @Test
     public void atomicNotTransformed() {
-        assertMapping("atom", "atom");
-        assertMapping("123", "123");
-        assertMapping("123.456", "123.456");
+        assertMapping("atom", "atom", OPTION_ONE);
+        assertMapping("123", "123", OPTION_ONE);
+        assertMapping("123.456", "123.456", OPTION_ONE);
+    }
+
+    @Test
+    public void atomicWrong() {
+        assertWrongMapping("a", "b", OPTION_ONE);
     }
 
     @Test
     public void atomicTransformed() {
-        assertMapping("t2", "t1");
-        assertMapping("t3", "t2");
-        assertMapping("one", "1");
-        assertMapping("ten", "10");
+        assertMapping("t2", "t1", OPTION_ONE);
+        assertMapping("t3", "t2", OPTION_ONE);
+        assertMapping("one", "1", OPTION_ONE);
+        assertMapping("ten", "10", OPTION_ONE);
     }
 
     @Test
     public void structNotTransformed() {
-        assertMapping("f(a, b, c)", "f(a,b,c)");
-        assertMapping("[1,2]", "[1,2]");
+        assertMapping("f(a, b, c)", "f(a,b,c)", OPTION_ONE);
+        assertMapping("[1,2]", "[1,2]", OPTION_ONE);
     }
 
     @Test
     public void structTransformed() {
-        assertMapping("transformed(a)", "original(a)");
-        assertMapping("transformed(G)", "original(G)");
-        assertMapping("transformed(X)", "original(_)"); // Dubious
-        assertMapping("transformed(X, Y)", "transformed(X, Y)");
+        assertMapping("transformed(a)", "original(a)", OPTION_ONE);
+        assertMapping("transformed(G)", "original(G)", OPTION_ONE);
+        assertMapping("transformed(X)", "original(_)", OPTION_ONE); // Dubious
+        assertMapping("transformed(X, Y)", "transformed(X, Y)", OPTION_ONE);
     }
 
-//    @Test
-//    public void mapNonIterative() {
-//        assertNotTransformed("t4", false, false, false);
-//        assertMapping("t4", "t3", false, false, false);
-//        assertMapping("t3", "t2", false, false, false);
-//        assertMapping("t2", "t1", false, false, false);
-//    }
-//
-//    @Test
-//    public void mapIterative() {
-//        assertNotTransformed("t4", true, false, false);
-//        assertMapping("t4", "t3", true, false, false);
-//        assertMapping("t4", "t2", true, false, false);
-//        assertMapping("t4", "t1", true, false, false);
-//    }
-//
+    @Test
+    public void mapNonIterative() {
+        assertMapping("t4", "t4", OPTION_ONE);
+        assertMapping("t4", "t3", OPTION_ONE);
+        assertMapping("t3", "t2", OPTION_ONE);
+        assertMapping("t2", "t1", OPTION_ONE);
+    }
+
+    @Test
+    public void mapIterative() {
+        assertMapping("t4", "t4", OPTION_ITER);
+        assertMapping("t4", "t3", OPTION_ITER);
+        assertMapping("t4", "t2", OPTION_ITER);
+        assertMapping("t4", "t1", OPTION_ITER);
+    }
+
 //    @Test
 //    public void structTransformedRecursiveBefore() {
 //        assertMapping("[one,ten]", "[1,10]", false, true, false);
@@ -116,10 +124,10 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     /**
      * @param termToTransform
-     *
      */
-    private void assertMapping(String theExpectedToString, String termToTransform) {
-        final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q)";
+    private void assertMapping(String theExpectedToString, String termToTransform, String options) {
+//                final String options = "one";
+        final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q, " + options + ")";
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
@@ -128,6 +136,14 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals(theExpectedToString, unique.toString());
     }
 
+
+    private void assertWrongMapping(String t1, String t2, String options) {
+        final String goalText = "map(" + MAPPING_PREDICATE + ", " + t1 + ", " + t2 + ", " + options + ")";
+        final Object goal = unmarshall(goalText);
+        logger.info("Transformation goal: \"{}\"", goal);
+        final GoalHolder holder = this.prolog.solve(goal);
+        assertEquals(0, holder.count());
+    }
 
 //    @Test
 //    public void map() {
