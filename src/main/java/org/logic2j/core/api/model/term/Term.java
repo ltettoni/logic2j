@@ -52,7 +52,7 @@ public abstract class Term implements Serializable {
      * The default value is NO_INDEX.
      * FIXME Field must not be public !!!
      */
-    public short index = NO_INDEX;
+    public int index = NO_INDEX;
 
     /**
      * A value of index=={@value} (ANON_INDEX) means this is the anonymous variable.
@@ -64,7 +64,7 @@ public abstract class Term implements Serializable {
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public short getIndex() {
+    public int getIndex() {
         return this.index;
     }
 

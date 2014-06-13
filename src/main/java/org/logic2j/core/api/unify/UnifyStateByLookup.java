@@ -89,7 +89,7 @@ public class UnifyStateByLookup {
                 return currentVars; // So no change
             }
             final Var finalVar = (Var) finalRef;
-            final short finalVarIndex = finalVar.getIndex();
+            final int finalVarIndex = finalVar.getIndex();
             var[finalVarIndex] = finalVar;
             literal[slot] = null; // Not a literal!
             boundVarIndex[slot] = finalVarIndex;
