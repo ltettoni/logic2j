@@ -45,7 +45,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
         final Map<String, Object> solutionVars = new HashMap<String, Object>();
         solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution
         for (Var var : vars) {
-            final Object varValue = currentVars.finalValue(var);
+            final Object varValue = currentVars.reify(var);
             solutionVars.put(var.getName(), varValue);
         }
         this.solutions.add(solutionVars);

@@ -67,7 +67,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         // logger.info("Visiting: {}", theVar);
         final Object finalValue;
         if (this.currentVars != null) {
-            finalValue = this.currentVars.finalValue(theVar);
+            finalValue = this.currentVars.reify(theVar);
         } else {
             finalValue = theVar;
         }
