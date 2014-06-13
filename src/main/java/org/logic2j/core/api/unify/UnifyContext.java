@@ -38,7 +38,7 @@ public class UnifyContext {
     final int currentTransaction;
 
     // FIXME Make private - only Clause and Solver are using it yet
-    public int topVarIndex;
+    public int topVarIndex;  // "top" value is one above the current max
 
     private final UnifyStateByLookup impl;
 
@@ -54,6 +54,17 @@ public class UnifyContext {
 //        audit.info("    this={}", this);
     }
 
+
+    /**
+     * Instantiate a new Var and assign a unique index
+     * @param theName
+     * @return A new Var uniquely indexed
+     */
+    public Var createVar(String theName) {
+        final Var var = new Var(theName);
+        var.index = topVarIndex++;
+        return var;
+    }
 
     public UnifyContext bind(Var var, Object ref) {
         if (var == ref) {
@@ -71,7 +82,7 @@ public class UnifyContext {
      * @param theVar
      * @return
      */
-    public Object finalValue(Var theVar) {
+    private Object finalValue(Var theVar) {
         final Object dereference = this.impl.dereference(theVar, this.currentTransaction);
         return dereference;
     }
