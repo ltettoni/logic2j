@@ -110,6 +110,11 @@ public class Clause {
         this.body = body;
     }
 
+    /**
+     *
+     * @param currentVars
+     * @param clauseHeadAndBody Function return values in this Object[2] :-(
+     */
     public void headAndBodyForSubgoal(UnifyContext currentVars, Object[] clauseHeadAndBody) {
         final Clause clonedClause;
         if (needCloning()) {
@@ -181,7 +186,7 @@ public class Clause {
                 final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
                 clonedArgs[i] = recursedClonedElement;
             } else if (arg instanceof Var && arg != Var.ANONYMOUS_VAR) {
-                final short originalVarIndex = ((Var) arg).getIndex();
+                final int originalVarIndex = ((Var) arg).getIndex();
                 clonedArgs[i] = clonedVars[originalVarIndex];
             } else {
                 clonedArgs[i] = arg;
