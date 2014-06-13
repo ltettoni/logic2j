@@ -114,8 +114,8 @@ public class FunctionLibraryTest extends PrologTestBase {
     @Test
     public void structTransformedRecursiveBefore() {
         assertMapping("[one,ten]", "[1,10]", OPTION_BEFORE);
-//        assertMapping("f(one, 2)", "f(1,2)", OPTION_ONE);
-//        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", OPTION_ONE);
+        assertMapping("f(one, 2)", "f(1,2)", OPTION_BEFORE);
+        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", OPTION_BEFORE);
     }
 //
 //    @Test

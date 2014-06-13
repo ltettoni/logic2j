@@ -111,10 +111,10 @@ public class FunctionLibrary extends LibraryBase {
                 }
 
                 for (int i=0; i<preArgs.length; i++) {
-                    logger.info("'before' should transform {}", preArgs[i]);
+                    logger.debug("'before' should transform {}", preArgs[i]);
                     final Object[] returnValues = new Object[1];
-                    runningMonad = mapOne(thePredicate, runningMonad, preArgs[i], postArgs[i], returnValues);
-                    logger.info("'                     got {}", runningMonad.reify(postArgs[i]));
+                    runningMonad = mapGeneric(thePredicate, runningMonad, preArgs[i], postArgs[i], optionsCsv);
+                    logger.debug("'                     got {}", runningMonad.reify(postArgs[i]));
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
                 int highestVarIndex = Term.NO_INDEX;
@@ -125,7 +125,7 @@ public class FunctionLibrary extends LibraryBase {
                     }
                 }
                 transformedStruct.index = highestVarIndex+1;
-                logger.info("'before' has transformed  {}", runningMonad.reify(transformedStruct));
+                logger.debug("'before' has transformed  {}", runningMonad.reify(transformedStruct));
                 theInput = transformedStruct;
             }
         }
