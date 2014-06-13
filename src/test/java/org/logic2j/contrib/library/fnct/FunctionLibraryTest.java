@@ -19,6 +19,7 @@
 package org.logic2j.contrib.library.fnct;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.solver.holder.GoalHolder;
@@ -32,6 +33,10 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     private FunctionLibrary functionLibrary;
 
+    private final String OPTION_ONE = "one";
+    private final String OPTION_ITER = "iter";
+    private final String OPTION_BEFORE = "before";
+
     @Before
     public void loadFunctionLibrary() {
         this.functionLibrary = new FunctionLibrary(this.prolog);
@@ -42,9 +47,6 @@ public class FunctionLibraryTest extends PrologTestBase {
     protected InitLevel initLevel() {
         return InitLevel.L2_BASE_LIBRARIES;
     }
-
-    private final String OPTION_ONE = "one";
-    private final String OPTION_ITER = "iter";
 
     @Test
     public void placeholder() {
@@ -109,12 +111,12 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertMapping("t4", "t1", OPTION_ITER);
     }
 
-//    @Test
-//    public void structTransformedRecursiveBefore() {
-//        assertMapping("[one,ten]", "[1,10]", false, true, false);
-//        assertMapping("f(one, 2)", "f(1,2)", false, true, false);
-//        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", false, true, false);
-//    }
+    @Test
+    public void structTransformedRecursiveBefore() {
+        assertMapping("[one,ten]", "[1,10]", OPTION_BEFORE);
+//        assertMapping("f(one, 2)", "f(1,2)", OPTION_ONE);
+//        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", OPTION_ONE);
+    }
 //
 //    @Test
 //    public void structTransformedRecursiveAfter() {

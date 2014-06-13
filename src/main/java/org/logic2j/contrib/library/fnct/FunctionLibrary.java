@@ -18,7 +18,6 @@
 
 package org.logic2j.contrib.library.fnct;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Term;
@@ -31,7 +30,6 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
-import java.util.IdentityHashMap;
 import java.util.Set;
 
 /**
@@ -91,21 +89,56 @@ public class FunctionLibrary extends LibraryBase {
         }
         // All options, concatenated, enclosed in commas
         final String optionsCsv = "," + options.toString().trim().toLowerCase().replace(" ", "") + ",";
-        final boolean iterative = optionsCsv.contains(",iter,");
 
-        final Object[] returnValues = new Object[1];
-        if (iterative) {
-            final UnifyContext afterUnification = mapIter((String) thePredicate, currentVars, theInput, theOutput, returnValues);
-            if (afterUnification!=null) {
-                return notifySolution(theListener, afterUnification);
-            }
-        } else {
-            final UnifyContext afterUnification = mapOne((String) thePredicate, currentVars, theInput, theOutput, returnValues);
-            if (afterUnification!=null) {
-                return notifySolution(theListener, afterUnification);
-            }
+        final UnifyContext afterUnification = mapGeneric((String) thePredicate, currentVars, theInput, theOutput, optionsCsv);
+        if (afterUnification!=null) {
+            return notifySolution(theListener, afterUnification);
         }
         return Continuation.USER_ABORT;
+    }
+
+    protected UnifyContext mapGeneric(String thePredicate, UnifyContext currentVars, Object theInput, Object theOutput, String optionsCsv) {
+        final boolean isBefore = optionsCsv.contains(",before,");
+        UnifyContext runningMonad = currentVars;
+        if (isBefore) {
+            final Object effectiveInput = currentVars.reify(theInput);
+            if (effectiveInput instanceof Struct) {
+                final Struct struct = (Struct)effectiveInput;
+                final Object[] preArgs = struct.getArgs();
+                final Object[] postArgs = new Object[preArgs.length];
+                for (int i=0; i<postArgs.length; i++) {
+                    postArgs[i] = runningMonad.createVar("beforeOut" + i);
+                }
+
+                for (int i=0; i<preArgs.length; i++) {
+                    logger.info("'before' should transform {}", preArgs[i]);
+                    final Object[] returnValues = new Object[1];
+                    runningMonad = mapOne(thePredicate, runningMonad, preArgs[i], postArgs[i], returnValues);
+                    logger.info("'                     got {}", runningMonad.reify(postArgs[i]));
+                }
+                final Struct transformedStruct = new Struct(struct.getName(), postArgs);
+                int highestVarIndex = Term.NO_INDEX;
+                final Set<Var> vars = TermApi.allVars(transformedStruct).keySet();
+                for (Var var : vars) {
+                    if (var.getIndex() > highestVarIndex) {
+                        highestVarIndex = var.getIndex();
+                    }
+                }
+                transformedStruct.index = highestVarIndex+1;
+                logger.info("'before' has transformed  {}", runningMonad.reify(transformedStruct));
+                theInput = transformedStruct;
+            }
+        }
+
+        final Object[] returnValues = new Object[1];
+        final UnifyContext afterUnification;
+        final boolean isIterative = optionsCsv.contains(",iter,");
+        if (isIterative) {
+            runningMonad = mapIter((String) thePredicate, runningMonad, theInput, theOutput, returnValues);
+        } else {
+            runningMonad = mapOne((String) thePredicate, runningMonad, theInput, theOutput, returnValues);
+        }
+        return runningMonad;
     }
 
     public UnifyContext mapIter(final String mappingPredicate, final UnifyContext currentVars, final Object input, final Object output, final Object[] results) {
@@ -114,6 +147,7 @@ public class FunctionLibrary extends LibraryBase {
         boolean anyTransformation = false;
         for (int iter=0; iter<100; iter++) {
             final Var tmpVar = runningMonad.createVar("MapTmp" + iter);
+            logger.info("mapIter created temp var {}", tmpVar);
             final Object[] returnValues = new Object[1];
             runningMonad = mapOne(mappingPredicate, runningMonad, runningSource, tmpVar, returnValues);
             if (runningMonad==null) {
@@ -155,7 +189,7 @@ public class FunctionLibrary extends LibraryBase {
                 }
             };
             // Now solve the target sub goal
-            Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
+            final Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
             int highestVarIndex = Term.NO_INDEX;
             final Set<Var> vars = TermApi.allVars(transformationGoal).keySet();
             for (Var var : vars) {
