@@ -98,10 +98,13 @@ public class FunctionLibrary extends LibraryBase {
     }
 
     protected UnifyContext mapGeneric(String thePredicate, UnifyContext currentVars, Object theInput, Object theOutput, String optionsCsv) {
-        final boolean isBefore = optionsCsv.contains(",before,");
+        final Object[] returnValues = new Object[1];
         UnifyContext runningMonad = currentVars;
+
+        // Transform children BEFORE the main input
+        final boolean isBefore = optionsCsv.contains(",before,");
         if (isBefore) {
-            final Object effectiveInput = currentVars.reify(theInput);
+            final Object effectiveInput = runningMonad.reify(theInput);
             if (effectiveInput instanceof Struct) {
                 final Struct struct = (Struct)effectiveInput;
                 final Object[] preArgs = struct.getArgs();
@@ -112,7 +115,6 @@ public class FunctionLibrary extends LibraryBase {
 
                 for (int i=0; i<preArgs.length; i++) {
                     logger.debug("'before' should transform {}", preArgs[i]);
-                    final Object[] returnValues = new Object[1];
                     runningMonad = mapGeneric(thePredicate, runningMonad, preArgs[i], postArgs[i], optionsCsv);
                     logger.debug("'                     got {}", runningMonad.reify(postArgs[i]));
                 }
@@ -130,14 +132,57 @@ public class FunctionLibrary extends LibraryBase {
             }
         }
 
-        final Object[] returnValues = new Object[1];
+        final boolean isAfter = optionsCsv.contains(",after,");
+
+        // What the core of the mapping will affect depends if we have post-processing or not
+        // In case of post-processing we have to use a temporary var
+        final Object target;
+        if (isAfter) {
+            target = runningMonad.createVar("tempOutput");
+        } else {
+            target = theOutput;
+        }
+        // Transform the main input
         final UnifyContext afterUnification;
         final boolean isIterative = optionsCsv.contains(",iter,");
         if (isIterative) {
-            runningMonad = mapIter((String) thePredicate, runningMonad, theInput, theOutput, returnValues);
+            runningMonad = mapIter((String) thePredicate, runningMonad, theInput, target, returnValues);
         } else {
-            runningMonad = mapOne((String) thePredicate, runningMonad, theInput, theOutput, returnValues);
+            runningMonad = mapOne((String) thePredicate, runningMonad, theInput, target, returnValues);
         }
+
+
+        if (isAfter) {
+            final Object effectiveOutput = runningMonad.reify(target);
+            if (effectiveOutput instanceof Struct) {
+                final Struct struct = (Struct)effectiveOutput;
+                final Object[] preArgs = struct.getArgs();
+                final Object[] postArgs = new Object[preArgs.length];
+                for (int i=0; i<postArgs.length; i++) {
+                    postArgs[i] = runningMonad.createVar("afterOut" + i);
+                }
+
+                for (int i=0; i<preArgs.length; i++) {
+                    logger.info("'after' should transform {}", preArgs[i]);
+                    runningMonad = mapGeneric(thePredicate, runningMonad, preArgs[i], postArgs[i], optionsCsv);
+                    logger.info("'                    got {}", runningMonad.reify(postArgs[i]));
+                }
+                final Struct transformedStruct = new Struct(struct.getName(), postArgs);
+                int highestVarIndex = Term.NO_INDEX;
+                final Set<Var> vars = TermApi.allVars(transformedStruct).keySet();
+                for (Var var : vars) {
+                    if (var.getIndex() > highestVarIndex) {
+                        highestVarIndex = var.getIndex();
+                    }
+                }
+                transformedStruct.index = highestVarIndex+1;
+                logger.info("'after' has transformed  {}", runningMonad.reify(transformedStruct));
+                runningMonad = runningMonad.unify(transformedStruct, theOutput);
+            } else {
+                runningMonad = runningMonad.unify(target, theOutput);
+            }
+        }
+
         return runningMonad;
     }
 

@@ -12,6 +12,8 @@ remap(t1, t2).
 remap(t2, t3).
 remap(t3, t4).
 
+remap(f1, f(1)).
+
 remap(11, [10,1]).
 
 remap(original(X), transformed(X)).
