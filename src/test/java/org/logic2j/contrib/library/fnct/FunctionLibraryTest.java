@@ -19,11 +19,11 @@
 package org.logic2j.contrib.library.fnct;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
+
 import static org.junit.Assert.*;
 
 public class FunctionLibraryTest extends PrologTestBase {
@@ -49,82 +49,81 @@ public class FunctionLibraryTest extends PrologTestBase {
         //
     }
 
-    // To be reworked completely - now that we don't have Bindings any longer
-
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertMapping("Q", "_", FunctionLibrary.OPTION_ONE);
-        assertMapping("Q", "X", FunctionLibrary.OPTION_ONE); // Free var
+        assertTransformation("_", "Q", FunctionLibrary.OPTION_ONE);
+        assertTransformation("Q", "Q", FunctionLibrary.OPTION_ONE); // Free var
     }
 
     @Test
     public void atomicNotTransformed() {
-        assertMapping("atom", "atom", FunctionLibrary.OPTION_ONE);
-        assertMapping("123", "123", FunctionLibrary.OPTION_ONE);
-        assertMapping("123.456", "123.456", FunctionLibrary.OPTION_ONE);
+        assertTransformation("atom", "atom", FunctionLibrary.OPTION_ONE);
+        assertTransformation("123", "123", FunctionLibrary.OPTION_ONE);
+        assertTransformation("123.456", "123.456", FunctionLibrary.OPTION_ONE);
     }
 
-    @Test
-    public void atomicWrong() {
-        assertWrongMapping("a", "b", FunctionLibrary.OPTION_ONE);
-    }
 
     @Test
     public void atomicTransformed() {
-        assertMapping("t2", "t1", FunctionLibrary.OPTION_ONE);
-        assertMapping("t3", "t2", FunctionLibrary.OPTION_ONE);
-        assertMapping("one", "1", FunctionLibrary.OPTION_ONE);
-        assertMapping("ten", "10", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t1", "t2", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t2", "t3", FunctionLibrary.OPTION_ONE);
+        assertTransformation("1", "one", FunctionLibrary.OPTION_ONE);
+        assertTransformation("10", "ten", FunctionLibrary.OPTION_ONE);
+    }
+
+    @Test
+    public void atomicNotTransformable() {
+        assertWrongMapping("1", "should-be-one", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void structNotTransformed() {
-        assertMapping("f(a, b, c)", "f(a,b,c)", FunctionLibrary.OPTION_ONE);
-        assertMapping("[1,2]", "[1,2]", FunctionLibrary.OPTION_ONE);
+        assertTransformation("f(a,b,c)", "f(a, b, c)", FunctionLibrary.OPTION_ONE);
+        assertTransformation("[1,2]", "[1,2]", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void structTransformed() {
-        assertMapping("transformed(a)", "original(a)", FunctionLibrary.OPTION_ONE);
-        assertMapping("transformed(G)", "original(G)", FunctionLibrary.OPTION_ONE);
-        assertMapping("transformed(X)", "original(_)", FunctionLibrary.OPTION_ONE); // Dubious
-        assertMapping("transformed(X, Y)", "transformed(X, Y)", FunctionLibrary.OPTION_ONE);
+        assertTransformation("original(a)", "transformed(a)", FunctionLibrary.OPTION_ONE);
+        assertTransformation("original(G)", "transformed(G)", FunctionLibrary.OPTION_ONE);
+        assertTransformation("original(_)", "transformed(X)", FunctionLibrary.OPTION_ONE); // Dubious
+        assertTransformation("transformed(X, Y)", "transformed(X, Y)", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void mapNonIterative() {
-        assertMapping("t4", "t4", FunctionLibrary.OPTION_ONE);
-        assertMapping("t4", "t3", FunctionLibrary.OPTION_ONE);
-        assertMapping("t3", "t2", FunctionLibrary.OPTION_ONE);
-        assertMapping("t2", "t1", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t4", "t4", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t3", "t4", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t2", "t3", FunctionLibrary.OPTION_ONE);
+        assertTransformation("t1", "t2", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void mapIterative() {
-        assertMapping("t4", "t4", FunctionLibrary.OPTION_ITER);
-        assertMapping("t4", "t3", FunctionLibrary.OPTION_ITER);
-        assertMapping("t4", "t2", FunctionLibrary.OPTION_ITER);
-        assertMapping("t4", "t1", FunctionLibrary.OPTION_ITER);
+        assertTransformation("t4", "t4", FunctionLibrary.OPTION_ITER);
+        assertTransformation("t3", "t4", FunctionLibrary.OPTION_ITER);
+        assertTransformation("t2", "t4", FunctionLibrary.OPTION_ITER);
+        assertTransformation("t1", "t4", FunctionLibrary.OPTION_ITER);
     }
 
     @Test
     public void structTransformedRecursiveBefore() {
-        assertMapping("[one,ten]", "[1,10]", FunctionLibrary.OPTION_BEFORE);
-        assertMapping("f(one, 2)", "f(1,2)", FunctionLibrary.OPTION_BEFORE);
-        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", FunctionLibrary.OPTION_BEFORE);
+        assertTransformation("[1,10]", "[one,ten]", FunctionLibrary.OPTION_BEFORE);
+        assertTransformation("f(1,2)", "f(one, 2)", FunctionLibrary.OPTION_BEFORE);
+        assertTransformation("g(1, f(1,2))", "g(one, f(one, 2))", FunctionLibrary.OPTION_BEFORE);
     }
 
     @Test
     public void structTransformedRecursiveAfter() {
-        assertMapping("f(one)", "f1", FunctionLibrary.OPTION_AFTER);
-        assertMapping("[ten,one]", "11", FunctionLibrary.OPTION_AFTER);
-        assertMapping("h([ten,one])", "h(11)", FunctionLibrary.OPTION_AFTER);
+        assertTransformation("f1", "f(one)", FunctionLibrary.OPTION_AFTER);
+        assertTransformation("11", "[ten,one]", FunctionLibrary.OPTION_AFTER);
+        assertTransformation("h(11)", "h([ten,one])", FunctionLibrary.OPTION_AFTER);
     }
 
     /**
      * @param termToTransform
      */
-    private void assertMapping(String theExpectedToString, String termToTransform, String options) {
+    private void assertTransformation(String termToTransform, String theExpectedToString, String options) {
         final String goalText = "map(" + MAPPING_PREDICATE + ", " + termToTransform + ", Q, " + options + ")";
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
@@ -143,41 +142,13 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals(0, holder.count());
     }
 
-//    @Test
-//    public void map() {
-//        assertEquals("transformed(a)", uniqueSolution("map(map, original(a), X)").var("X").unique().toString());
-//
-//        assertEquals("transformed([ten,one])", uniqueSolution("map(map, original(11), X)").var("X").unique().toString());
-//
-//        //
-//        // Free vars and anonymous should not be mapped
-//        uniqueSolution("map(map, _, anything)");
-//        uniqueSolution("map(map, Free, Free)");
-//        uniqueSolution("map(map, Free, X), X=Free");
-//
-//        //
-//        // Mapped atoms
-//        uniqueSolution("map(map, 1, one)");
-//        noSolutions("map(map, 1, other)");
-//        assertEquals("one", uniqueSolution("IN=1, map(map, IN, X)").var("X").unique().toString());
-//
-//        //
-//        // Unmapped atoms
-//        uniqueSolution("map(map, 2, 2)");
-//        noSolutions("map(map, 2, other)");
-//        assertEquals(2L, uniqueSolution("IN=2, map(map, IN, X)").var("X").unique().toString());
-//
-//        // Free var
-//        uniqueSolution("map(map, X, X)");
-//        assertEquals("f(X)", uniqueSolution("map(map, f(X), Result)").var("Result").unique().toString());
-//    }
-//
-//    @Ignore("FIXME not yet functional")
-//    @Test
-//    public void mapGoesToInfiniteLoop() {
+    @Test
+    public void moreComplicated() {
+//        GoalHolder sol = uniqueSolution("gd3(tcNumber(a, b))");
 //        GoalHolder sol = uniqueSolution("gd3((tcNumber(a, b), c))");
-////        UniqueSolutionHolder sol = uniqueSolution("map(dbBinding, (tcNumber(a, b), c), Z)");
-//        logger.info("Solution: {}", sol.var("Z").unique().toString());
-//    }
+        GoalHolder sol = uniqueSolution("gd3((tcNumber(A, B), tcNumber(A, C)), Q)");
+        final Object q = sol.var("Q").unique();
+        logger.info("Solution: {}", q.toString());
+    }
 
 }

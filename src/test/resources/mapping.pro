@@ -21,12 +21,16 @@ remap(original(X), transformed(X)).
 remap(main(X), eav_any(X, classifications, 'LEVEL_MAIN_COMMITTEE')).
 
 
+dbBinding(committee(ID),  col(committee, id)=ID).
 
 dbBinding(tcNumber(X, N),   [col(committee, id)=X, col(committee, tcNum)=N]).
 
-gd3(Predicate) :- 
+
+gd3(Predicate, DbBindings) :-
         info(entry, Predicate),
-        map(alias, Predicate, Simplified),
+        map(alias, Predicate, Simplified, 'before'),
         info(after_alias, Simplified),
-        map(dbBinding, Simplified, DbBindings),
+        map(dbBinding, Simplified, DbBindings, 'before'),
         info(after_db_bindings, DbBindings).
+
+gd3(Predicate) :- gd3(Predicate, _).

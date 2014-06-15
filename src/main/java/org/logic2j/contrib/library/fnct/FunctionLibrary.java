@@ -21,12 +21,12 @@ package org.logic2j.contrib.library.fnct;
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -45,9 +45,27 @@ public class FunctionLibrary extends LibraryBase {
      */
     private static final int MAX_TRANFORM_ITERATIONS = 100;
 
+    /**
+     * Transform only the "flat" term, ie not its children in case of a Struct, and only once.
+     */
     public static final String OPTION_ONE = "one";
+
+    /**
+     * Transform only the "flat" term, ie not its children in case of a Struct, but possibly several times
+     * until no more transformation happens.
+     */
     public static final String OPTION_ITER = "iter";
+
+    /**
+     * In case of a Struct, request to transform all children before transforming the struct.
+     * This may be used in conjunction with OPTION_AFTER.
+     */
     public static final String OPTION_BEFORE = "before";
+
+    /**
+     * In case of a Struct, request to re-transform all children after the main struct was transformed.
+     * This may be used in conjunction with OPTION_BEFORE.
+     */
     public static final String OPTION_AFTER = "after";
 
     public FunctionLibrary(PrologImplementation theProlog) {
@@ -56,21 +74,21 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
+    public Object dispatch(String methodName, Struct goal, UnifyContext currentVars, SolutionListener listener) {
         final Object result;
-        final Object[] args = theGoalStruct.getArgs();
-        final int arity = theGoalStruct.getArity();
+        final Object[] args = goal.getArgs();
+        final int arity = goal.getArity();
         if (arity == 3) {
             // Argument methodName is {@link String#intern()}alized so OK to check by reference
-            if (theMethodName == "map") {
-                result = map(theListener, currentVars, args[0], args[1], args[2]);
+            if (methodName == "map") {
+                result = map(listener, currentVars, args[0], args[1], args[2]);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 4) {
             // Argument methodName is {@link String#intern()}alized so OK to check by reference
-            if (theMethodName == "map") {
-                result = map(theListener, currentVars, args[0], args[1], args[2], args[3]);
+            if (methodName == "map") {
+                result = map(listener, currentVars, args[0], args[1], args[2], args[3]);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -91,23 +109,23 @@ public class FunctionLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation map(SolutionListener theListener, final UnifyContext currentVars,
-                            final Object thePredicate, final Object theInput, final Object theOutput) {
-        return map(theListener, currentVars, thePredicate, theInput, theOutput, OPTION_ONE);
+    public Continuation map(SolutionListener listener, final UnifyContext currentVars,
+                            final Object predicate, final Object inputTerm, final Object outputTerm) {
+        return map(listener, currentVars, predicate, inputTerm, outputTerm, OPTION_ONE);
     }
 
     @Primitive
-    public Continuation map(SolutionListener theListener, final UnifyContext currentVars,
-                            final Object thePredicate, final Object theInput, final Object theOutput, final Object options) {
-        if (!(thePredicate instanceof String)) {
-            throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + thePredicate);
+    public Continuation map(SolutionListener listener, final UnifyContext currentVars,
+                            final Object predicate, final Object inputTerm, final Object outputTerm, final Object options) {
+        if (!(predicate instanceof String)) {
+            throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + predicate);
         }
         // All options, concatenated, enclosed in commas
         final String optionsCsv = "," + options.toString().trim().toLowerCase().replace(" ", "") + ",";
 
-        final UnifyContext afterUnification = mapGeneric((String) thePredicate, currentVars, theInput, theOutput, optionsCsv, MAX_TRANFORM_ITERATIONS);
+        final UnifyContext afterUnification = mapGeneric((String) predicate, currentVars, inputTerm, outputTerm, optionsCsv, MAX_TRANFORM_ITERATIONS);
         if (afterUnification!=null) {
-            return notifySolution(theListener, afterUnification);
+            return notifySolution(listener, afterUnification);
         }
         return Continuation.USER_ABORT;
     }
@@ -120,33 +138,33 @@ public class FunctionLibrary extends LibraryBase {
      *   then
      *   may map the children of the transformed structure
      *
-     * @param thePredicate
+     * @param predicate
      * @param currentVars
-     * @param theInput
-     * @param theOutput
+     * @param inputTerm
+     * @param outputTerm
      * @param optionsCsv
      * @param recursionLimit
      * @return
      */
-    protected UnifyContext mapGeneric(String thePredicate, UnifyContext currentVars, Object theInput, Object theOutput,
+    protected UnifyContext mapGeneric(String predicate, UnifyContext currentVars, Object inputTerm, Object outputTerm,
                                       String optionsCsv, int recursionLimit) {
         UnifyContext runningMonad = currentVars;
 
         // Transform children BEFORE the main input
         final boolean isBefore = matchOption(optionsCsv, OPTION_BEFORE);
         if (isBefore) {
-            final Object effectiveInput = runningMonad.reify(theInput);
+            final Object effectiveInput = runningMonad.reify(inputTerm);
             if (effectiveInput instanceof Struct) {
                 final Struct struct = (Struct)effectiveInput;
                 final Object[] preArgs = struct.getArgs();
                 final Object[] postArgs = new Object[preArgs.length];
                 for (int i=0; i<postArgs.length; i++) {
-                    postArgs[i] = runningMonad.createVar("beforeOut" + i);
+                    postArgs[i] = runningMonad.createVar("_map_before_" + i);
                 }
 
                 for (int i=0; i<preArgs.length; i++) {
                     logger.debug("'before' should transform {}", preArgs[i]);
-                    runningMonad = mapGeneric(thePredicate, runningMonad, preArgs[i], postArgs[i], optionsCsv, --recursionLimit);
+                    runningMonad = mapGeneric(predicate, runningMonad, preArgs[i], postArgs[i], optionsCsv, --recursionLimit);
                     logger.debug("'                     got {}", runningMonad.reify(postArgs[i]));
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
@@ -159,7 +177,7 @@ public class FunctionLibrary extends LibraryBase {
                 }
                 transformedStruct.index = highestVarIndex+1;
                 logger.debug("'before' has transformed  {}", runningMonad.reify(transformedStruct));
-                theInput = transformedStruct;
+                inputTerm = transformedStruct;
             }
         }
 
@@ -167,14 +185,9 @@ public class FunctionLibrary extends LibraryBase {
 
         // What the core of the mapping will affect depends if we have post-processing or not
         // In case of post-processing we have to use a temporary var
-        final Object target;
-        if (isAfter) {
-            target = runningMonad.createVar("tempOutput");
-        } else {
-            target = theOutput;
-        }
+        final Object target = isAfter ? runningMonad.createVar("_map_tgt") : outputTerm;
 
-        runningMonad = mapFirstLevel(thePredicate, runningMonad, theInput, target, optionsCsv, --recursionLimit);
+        runningMonad = mapFirstLevel(predicate, runningMonad, inputTerm, target, optionsCsv, --recursionLimit);
 
         if (isAfter) {
             final Object effectiveOutput = runningMonad.reify(target);
@@ -183,12 +196,12 @@ public class FunctionLibrary extends LibraryBase {
                 final Object[] preArgs = struct.getArgs();
                 final Object[] postArgs = new Object[preArgs.length];
                 for (int i=0; i<postArgs.length; i++) {
-                    postArgs[i] = runningMonad.createVar("afterOut" + i);
+                    postArgs[i] = runningMonad.createVar("_map_after_" + i);
                 }
 
                 for (int i=0; i<preArgs.length; i++) {
                     logger.debug("'after' should transform {}", preArgs[i]);
-                    runningMonad = mapGeneric(thePredicate, runningMonad, preArgs[i], postArgs[i], optionsCsv, --recursionLimit);
+                    runningMonad = mapGeneric(predicate, runningMonad, preArgs[i], postArgs[i], optionsCsv, --recursionLimit);
                     logger.debug("'                    got {}", runningMonad.reify(postArgs[i]));
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
@@ -201,26 +214,26 @@ public class FunctionLibrary extends LibraryBase {
                 }
                 transformedStruct.index = highestVarIndex+1;
                 logger.debug("'after' has transformed  {}", runningMonad.reify(transformedStruct));
-                runningMonad = runningMonad.unify(transformedStruct, theOutput);
+                runningMonad = runningMonad.unify(transformedStruct, outputTerm);
             } else {
-                runningMonad = runningMonad.unify(target, theOutput);
+                runningMonad = runningMonad.unify(target, outputTerm);
             }
         }
 
         return runningMonad;
     }
 
-    private UnifyContext mapFirstLevel(String thePredicate, UnifyContext runningMonad, Object theInput, Object theOutput, String optionsCsv, int recursionLimit) {
-        UnifyContext result;
-        // Transform the main input
+    private UnifyContext mapFirstLevel(String predicate, UnifyContext currentVars, Object inputTerm, Object outputTerm, String optionsCsv, int recursionLimit) {
+        UnifyContext runningMonad = currentVars;
+        // Transform the main inputTerm
         final boolean isIterative = matchOption(optionsCsv, OPTION_ITER);
         if (isIterative) {
-            result = mapRepeating((String) thePredicate, runningMonad, theInput, theOutput, --recursionLimit);
+            runningMonad = mapRepeating((String) predicate, runningMonad, inputTerm, outputTerm, --recursionLimit);
         } else {
             final Object[] returnValues = new Object[1];
-            result = mapOne((String) thePredicate, runningMonad, theInput, theOutput, returnValues, --recursionLimit);
+            runningMonad = mapOne((String) predicate, runningMonad, inputTerm, outputTerm, returnValues, --recursionLimit);
         }
-        return result;
+        return runningMonad;
     }
 
     /**
@@ -228,20 +241,21 @@ public class FunctionLibrary extends LibraryBase {
      * repeat transforming until nothing changes.
      * @param mappingPredicate
      * @param currentVars
-     * @param input
-     * @param output
+     * @param inputTerm
+     * @param outputTerm
      * @param recursionLimit
      * @return
      */
-    public UnifyContext mapRepeating(final String mappingPredicate, final UnifyContext currentVars, final Object input, final Object output,
+    public UnifyContext mapRepeating(final String mappingPredicate, final UnifyContext currentVars,
+                                     final Object inputTerm, final Object outputTerm,
                                      int recursionLimit) {
-        Object runningInput = input;
+        Object runningInput = inputTerm;
         UnifyContext runningMonad = currentVars;
-        boolean anyTransformation = false;
+        boolean anyTransformationYet = false;
         // Repeat until no more transformation (return within loop) or recursion limit hit
         final Object[] returnValues = new Object[1];
         for (int iter=0; ; iter++) {
-            final Var tmpVar = runningMonad.createVar("MapIter" + iter);
+            final Var tmpVar = runningMonad.createVar("_map_main_" + iter);
             logger.debug("mapRepeating created temp var {}", tmpVar);
             runningMonad = mapOne(mappingPredicate, runningMonad, runningInput, tmpVar, returnValues, --recursionLimit);
             if (runningMonad==null) {
@@ -249,9 +263,9 @@ public class FunctionLibrary extends LibraryBase {
                 return null;
             }
             final boolean lastMapOneDidTransform = (Boolean) returnValues[0];
-            anyTransformation |= lastMapOneDidTransform;
+            anyTransformationYet |= lastMapOneDidTransform;
             if (!lastMapOneDidTransform) {
-                runningMonad = runningMonad.unify(tmpVar, output);
+                runningMonad = runningMonad.unify(tmpVar, outputTerm);
                 return runningMonad;
             }
             runningInput = tmpVar;
@@ -263,37 +277,39 @@ public class FunctionLibrary extends LibraryBase {
      * Transform only the root predicate, does not impact any of its children.
      * @param mappingPredicate
      * @param currentVars
-     * @param input
-     * @param output
+     * @param inputTerm
+     * @param outputTerm
      * @param results
      * @param recursionLimit
      * @return
      */
-    public UnifyContext mapOne(final String mappingPredicate, final UnifyContext currentVars, final Object input, final Object output,
+    public UnifyContext mapOne(final String mappingPredicate, final UnifyContext currentVars,
+                               final Object inputTerm, final Object outputTerm,
                                final Object[] results, int recursionLimit) {
         checkRecursionLimit(recursionLimit, mappingPredicate);
-        final Object effectiveInput = currentVars.reify(input);
-        final Object effectiveOutput = currentVars.reify(output);
+        UnifyContext runningMonad = currentVars;
+        final Object effectiveInput = runningMonad.reify(inputTerm);
+        final Object effectiveOutput = runningMonad.reify(outputTerm);
         if (effectiveInput instanceof Var) {
             // Free var - return untransformed
-            final UnifyContext unified = currentVars.unify(effectiveOutput, effectiveInput);
+            runningMonad = runningMonad.unify(inputTerm, outputTerm);
             // Should always unify...
-            assert unified != null : "A free var must always unify to anything";
-            results[0] = Boolean.FALSE; // Nothing transformed
+            assert runningMonad != null : "A free var must always unify to anything";
+            results[0] = Boolean.FALSE; // Nothing was transformed
         } else {
+            // Pattern of using an immutable array to store the mutable result of a callback...
             final Object transformationResult[] = new Object[1];
             final SolutionListener listenerForSubGoal = new SolutionListener() {
 
                 @Override
                 public Continuation onSolution(UnifyContext currentVars) {
-                    final Object reified = currentVars.reify(effectiveOutput);
-                    transformationResult[0] = reified;
-                    // logger.info("Subgoal results in effectiveOutput={}", reified);
-                    // We only seek for the first solution - not going farther
+                    final Object result = currentVars.reify(effectiveOutput);
+                    transformationResult[0] = result;
+                    // We only seek for the first solution - not proceeding further
                     return Continuation.USER_ABORT;
                 }
             };
-            // Now solve the target sub goal
+            // Create the transformation goal
             final Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
             int highestVarIndex = Term.NO_INDEX;
             final Set<Var> vars = TermApi.allVars(transformationGoal).keySet();
@@ -303,21 +319,22 @@ public class FunctionLibrary extends LibraryBase {
                 }
             }
             transformationGoal.index = highestVarIndex+1;
+            // Now solve the target sub goal
+            getProlog().getSolver().solveGoal(transformationGoal, runningMonad, listenerForSubGoal);
 
-            getProlog().getSolver().solveGoal(transformationGoal, currentVars, listenerForSubGoal);
-
-            if (transformationResult[0] == null) {
-                final UnifyContext after = currentVars.unify(effectiveInput, effectiveOutput);
+            final Object result = transformationResult[0];
+            if (result == null) {
+                // There was no result - we will return the outputTerm as the inputTerm unchanged
+                runningMonad = runningMonad.unify(effectiveInput, effectiveOutput); // Unsure if we should not unify with inputTerm and outputTerm
                 // No solution was hit
-                results[0] = Boolean.FALSE; // Nothing transformed
-                return after;
+                results[0] = Boolean.FALSE; // Nothing was transformed
             } else {
-                final UnifyContext after = currentVars.unify(transformationResult[0], effectiveOutput);
-                results[0] = Boolean.TRUE; // Something transformed
-                return after;
+                // We got a result
+                runningMonad = runningMonad.unify(result, effectiveOutput); // Unsure if we should not unify with outputTerm
+                results[0] = Boolean.TRUE; // Something was transformed
             }
         }
-        return currentVars;
+        return runningMonad;
     }
 
     private void checkRecursionLimit(int recursionLimit, String mappingPredicate) {
