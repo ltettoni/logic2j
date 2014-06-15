@@ -33,11 +33,6 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     private FunctionLibrary functionLibrary;
 
-    private final String OPTION_ONE = "one";
-    private final String OPTION_ITER = "iter";
-    private final String OPTION_BEFORE = "before";
-    private final String OPTION_AFTER = "after";
-
     @Before
     public void loadFunctionLibrary() {
         this.functionLibrary = new FunctionLibrary(this.prolog);
@@ -58,72 +53,72 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertMapping("Q", "_", OPTION_ONE);
-        assertMapping("Q", "X", OPTION_ONE); // Free var
+        assertMapping("Q", "_", FunctionLibrary.OPTION_ONE);
+        assertMapping("Q", "X", FunctionLibrary.OPTION_ONE); // Free var
     }
 
     @Test
     public void atomicNotTransformed() {
-        assertMapping("atom", "atom", OPTION_ONE);
-        assertMapping("123", "123", OPTION_ONE);
-        assertMapping("123.456", "123.456", OPTION_ONE);
+        assertMapping("atom", "atom", FunctionLibrary.OPTION_ONE);
+        assertMapping("123", "123", FunctionLibrary.OPTION_ONE);
+        assertMapping("123.456", "123.456", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void atomicWrong() {
-        assertWrongMapping("a", "b", OPTION_ONE);
+        assertWrongMapping("a", "b", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void atomicTransformed() {
-        assertMapping("t2", "t1", OPTION_ONE);
-        assertMapping("t3", "t2", OPTION_ONE);
-        assertMapping("one", "1", OPTION_ONE);
-        assertMapping("ten", "10", OPTION_ONE);
+        assertMapping("t2", "t1", FunctionLibrary.OPTION_ONE);
+        assertMapping("t3", "t2", FunctionLibrary.OPTION_ONE);
+        assertMapping("one", "1", FunctionLibrary.OPTION_ONE);
+        assertMapping("ten", "10", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void structNotTransformed() {
-        assertMapping("f(a, b, c)", "f(a,b,c)", OPTION_ONE);
-        assertMapping("[1,2]", "[1,2]", OPTION_ONE);
+        assertMapping("f(a, b, c)", "f(a,b,c)", FunctionLibrary.OPTION_ONE);
+        assertMapping("[1,2]", "[1,2]", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void structTransformed() {
-        assertMapping("transformed(a)", "original(a)", OPTION_ONE);
-        assertMapping("transformed(G)", "original(G)", OPTION_ONE);
-        assertMapping("transformed(X)", "original(_)", OPTION_ONE); // Dubious
-        assertMapping("transformed(X, Y)", "transformed(X, Y)", OPTION_ONE);
+        assertMapping("transformed(a)", "original(a)", FunctionLibrary.OPTION_ONE);
+        assertMapping("transformed(G)", "original(G)", FunctionLibrary.OPTION_ONE);
+        assertMapping("transformed(X)", "original(_)", FunctionLibrary.OPTION_ONE); // Dubious
+        assertMapping("transformed(X, Y)", "transformed(X, Y)", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void mapNonIterative() {
-        assertMapping("t4", "t4", OPTION_ONE);
-        assertMapping("t4", "t3", OPTION_ONE);
-        assertMapping("t3", "t2", OPTION_ONE);
-        assertMapping("t2", "t1", OPTION_ONE);
+        assertMapping("t4", "t4", FunctionLibrary.OPTION_ONE);
+        assertMapping("t4", "t3", FunctionLibrary.OPTION_ONE);
+        assertMapping("t3", "t2", FunctionLibrary.OPTION_ONE);
+        assertMapping("t2", "t1", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
     public void mapIterative() {
-        assertMapping("t4", "t4", OPTION_ITER);
-        assertMapping("t4", "t3", OPTION_ITER);
-        assertMapping("t4", "t2", OPTION_ITER);
-        assertMapping("t4", "t1", OPTION_ITER);
+        assertMapping("t4", "t4", FunctionLibrary.OPTION_ITER);
+        assertMapping("t4", "t3", FunctionLibrary.OPTION_ITER);
+        assertMapping("t4", "t2", FunctionLibrary.OPTION_ITER);
+        assertMapping("t4", "t1", FunctionLibrary.OPTION_ITER);
     }
 
     @Test
     public void structTransformedRecursiveBefore() {
-        assertMapping("[one,ten]", "[1,10]", OPTION_BEFORE);
-        assertMapping("f(one, 2)", "f(1,2)", OPTION_BEFORE);
-        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", OPTION_BEFORE);
+        assertMapping("[one,ten]", "[1,10]", FunctionLibrary.OPTION_BEFORE);
+        assertMapping("f(one, 2)", "f(1,2)", FunctionLibrary.OPTION_BEFORE);
+        assertMapping("g(one, f(one, 2))", "g(1, f(1,2))", FunctionLibrary.OPTION_BEFORE);
     }
 
     @Test
     public void structTransformedRecursiveAfter() {
-        assertMapping("f(one)", "f1", OPTION_AFTER);
-        assertMapping("[ten,one]", "11", OPTION_AFTER);
-        assertMapping("h([ten,one])", "h(11)", OPTION_AFTER);
+        assertMapping("f(one)", "f1", FunctionLibrary.OPTION_AFTER);
+        assertMapping("[ten,one]", "11", FunctionLibrary.OPTION_AFTER);
+        assertMapping("h([ten,one])", "h(11)", FunctionLibrary.OPTION_AFTER);
     }
 
     /**
@@ -134,7 +129,7 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
-//        assertEquals(1, holder.count());
+        assertEquals(1, holder.count());
         final Object unique = holder.var("Q").unique();
         assertEquals(theExpectedToString, unique.toString());
     }
