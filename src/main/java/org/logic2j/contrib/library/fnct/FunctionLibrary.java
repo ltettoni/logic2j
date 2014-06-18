@@ -43,7 +43,7 @@ public class FunctionLibrary extends LibraryBase {
      * Maximal number of iterations when transforming all (until nothing changes). This prevents infinit
      * recursion in case of a cycle in the transformation mappings.
      */
-    private static final int MAX_TRANFORM_ITERATIONS = 100;
+    private static final int MAX_TRANSFORM_ITERATIONS = 100;
 
     /**
      * Transform only the "flat" term, ie not its children in case of a Struct, and only once.
@@ -98,16 +98,6 @@ public class FunctionLibrary extends LibraryBase {
         return result;
     }
 
-    /**
-     * Check an option within a set of options - conventionally encoded as ",opt1,opt2,...optn,"
-     *
-     * @param optionsCsv
-     * @param option
-     * @return True if option in found in optionsCsv
-     */
-    private boolean matchOption(String optionsCsv, String option) {
-        return optionsCsv.contains("," + option + ",");
-    }
 
     @Primitive
     public Continuation map(SolutionListener listener, final UnifyContext currentVars,
@@ -117,15 +107,16 @@ public class FunctionLibrary extends LibraryBase {
 
     @Primitive
     public Continuation map(SolutionListener listener, final UnifyContext currentVars,
-                            final Object predicate, final Object inputTerm, final Object outputTerm, final Object options) {
+                            final Object predicate,
+                            final Object inputTerm, final Object outputTerm, final Object options) {
         if (!(predicate instanceof String)) {
             throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + predicate);
         }
         // All options, concatenated, enclosed in commas
         final String optionsCsv = "," + options.toString().trim().toLowerCase().replace(" ", "") + ",";
 
-        final TransformationInfo returnValues = new TransformationInfo();
-        final UnifyContext afterUnification = mapGeneric((String) predicate, currentVars, inputTerm, outputTerm, returnValues, optionsCsv, MAX_TRANFORM_ITERATIONS);
+        final TransformationInfo returnValues = new TransformationInfo(optionsCsv);
+        final UnifyContext afterUnification = mapCompletely((String) predicate, currentVars, inputTerm, outputTerm, returnValues, optionsCsv);
         if (afterUnification != null) {
             return notifySolution(listener, afterUnification);
         }
@@ -145,17 +136,19 @@ public class FunctionLibrary extends LibraryBase {
      * @param inputTerm
      * @param outputTerm
      * @param optionsCsv
-     * @param recursionLimit
      * @return
      */
-    protected UnifyContext mapGeneric(String predicate, UnifyContext currentVars,
-                                      Object inputTerm, Object outputTerm,
-                                      final TransformationInfo results, String optionsCsv, int recursionLimit) {
+    protected UnifyContext mapCompletely(String predicate, UnifyContext currentVars,
+                                         Object inputTerm, Object outputTerm,
+                                         final TransformationInfo results, String optionsCsv) {
         UnifyContext runningMonad = currentVars;
-        final TransformationInfo returnValues = new TransformationInfo();
+
+        results.recursionCounter++;
+        final TransformationInfo returnValues = results.copy();
+
         // Transform children BEFORE the main input
-        final boolean isBefore = matchOption(optionsCsv, OPTION_BEFORE);
-        if (isBefore) {
+
+        if (results.isBefore) {
             final Object effectiveInput = runningMonad.reify(inputTerm);
             if (effectiveInput instanceof Struct) {
                 final Struct struct = (Struct) effectiveInput;
@@ -167,7 +160,7 @@ public class FunctionLibrary extends LibraryBase {
 
                 for (int i = 0; i < preArgs.length; i++) {
                     logger.debug("'before' should transform {}", preArgs[i]);
-                    runningMonad = mapGeneric(predicate, runningMonad, preArgs[i], postArgs[i], returnValues, optionsCsv, --recursionLimit);
+                    runningMonad = mapCompletely(predicate, runningMonad, preArgs[i], postArgs[i], returnValues, optionsCsv);
                     if (returnValues.hasTransformed) {
                         results.hasTransformed = true;
                     }
@@ -187,18 +180,17 @@ public class FunctionLibrary extends LibraryBase {
             }
         }
 
-        final boolean isAfter = matchOption(optionsCsv, OPTION_AFTER);
 
         // What the core of the mapping will affect depends if we have post-processing or not
         // In case of post-processing we have to use a temporary var
-        final Object target = isAfter ? runningMonad.createVar("_map_tgt") : outputTerm;
+        final Object target = results.isAfter ? runningMonad.createVar("_map_tgt") : outputTerm;
 
-        runningMonad = mapOneLevel(predicate, runningMonad, inputTerm, target, returnValues, optionsCsv, --recursionLimit);
+        runningMonad = mapOneLevel(predicate, runningMonad, inputTerm, target, returnValues, optionsCsv);
         if (returnValues.hasTransformed) {
             results.hasTransformed = true;
         }
 
-        if (isAfter) {
+        if (results.isAfter) {
             final Object effectiveOutput = runningMonad.reify(target);
             if (effectiveOutput instanceof Struct) {
                 final Struct struct = (Struct) effectiveOutput;
@@ -210,7 +202,7 @@ public class FunctionLibrary extends LibraryBase {
 
                 for (int i = 0; i < preArgs.length; i++) {
                     logger.debug("'after' should transform {}", preArgs[i]);
-                    runningMonad = mapGeneric(predicate, runningMonad, preArgs[i], postArgs[i], returnValues, optionsCsv, --recursionLimit);
+                    runningMonad = mapCompletely(predicate, runningMonad, preArgs[i], postArgs[i], returnValues, optionsCsv);
                     if (returnValues.hasTransformed) {
                         results.hasTransformed = true;
                     }
@@ -236,19 +228,19 @@ public class FunctionLibrary extends LibraryBase {
 
     private UnifyContext mapOneLevel(String predicate, UnifyContext currentVars,
                                      Object inputTerm, Object outputTerm,
-                                     final TransformationInfo results, String optionsCsv, int recursionLimit) {
+                                     final TransformationInfo results, String optionsCsv) {
+        results.recursionCounter++;
         UnifyContext runningMonad = currentVars;
         // Transform the main inputTerm
-        final boolean isIterative = matchOption(optionsCsv, OPTION_ITER);
-        if (isIterative) {
+        if (results.isIterative) {
 
-            final Var tmpVar = runningMonad.createVar("_map_one_inter" + recursionLimit);
+            final Var tmpVar = runningMonad.createVar("_map_one_inter" + results.recursionCounter);
             logger.debug("mapRepeating created temp var {}", tmpVar);
 
-            final TransformationInfo returnValues = new TransformationInfo();
-            runningMonad = mapOne(predicate, runningMonad, inputTerm, tmpVar, returnValues, --recursionLimit);
+            final TransformationInfo returnValues = results.copy();
+            runningMonad = mapOne(predicate, runningMonad, inputTerm, tmpVar, returnValues);
             if (returnValues.hasTransformed) {
-                runningMonad = mapGeneric(predicate, runningMonad, tmpVar, outputTerm, results, optionsCsv, --recursionLimit);
+                runningMonad = mapCompletely(predicate, runningMonad, tmpVar, outputTerm, results, optionsCsv);
             } else {
                 // Nothing transformed the second time, it would have been nicer if we had done the first transformation
                 // towards output Term instead of a temporary var (but at the time, we did not know that!)
@@ -256,7 +248,7 @@ public class FunctionLibrary extends LibraryBase {
                 runningMonad = runningMonad.unify(tmpVar, outputTerm);
             }
         } else {
-            runningMonad = mapOne((String) predicate, runningMonad, inputTerm, outputTerm, results, --recursionLimit);
+            runningMonad = mapOne((String) predicate, runningMonad, inputTerm, outputTerm, results);
         }
         return runningMonad;
     }
@@ -270,13 +262,14 @@ public class FunctionLibrary extends LibraryBase {
      * @param inputTerm
      * @param outputTerm
      * @param results
-     * @param recursionLimit
      * @return
      */
     public UnifyContext mapOne(final String mappingPredicate, final UnifyContext currentVars,
                                final Object inputTerm, final Object outputTerm,
-                               final TransformationInfo results, int recursionLimit) {
-        checkRecursionLimit(recursionLimit, mappingPredicate);
+                               final TransformationInfo results) {
+        results.recursionCounter++;
+        checkRecursionLimit(results, mappingPredicate);
+
         UnifyContext runningMonad = currentVars;
         final Object effectiveInput = runningMonad.reify(inputTerm);
         final Object effectiveOutput = runningMonad.reify(outputTerm);
@@ -327,14 +320,51 @@ public class FunctionLibrary extends LibraryBase {
         return runningMonad;
     }
 
-    private void checkRecursionLimit(int recursionLimit, String mappingPredicate) {
-        if (recursionLimit < 0) {
+    private void checkRecursionLimit(TransformationInfo info, String mappingPredicate) {
+        if (info.recursionCounter > MAX_TRANSFORM_ITERATIONS) {
             throw new RecursionException("Too many recursive calls while attempting to map/3 with predicate \"" + mappingPredicate + '"');
         }
     }
 
     private static class TransformationInfo {
-        boolean hasTransformed = false;
+        private boolean hasTransformed;
+        private int recursionCounter;
+        boolean isBefore;
+        boolean isIterative;
+        boolean isAfter;
+
+        private TransformationInfo() {
+            recursionCounter = 0;
+            hasTransformed = false;
+        }
+
+        private TransformationInfo(String optionsCsv) {
+            this();
+            isBefore = matchOption(optionsCsv, OPTION_BEFORE);
+            isIterative = matchOption(optionsCsv, OPTION_ITER);
+            isAfter = matchOption(optionsCsv, OPTION_AFTER);
+        }
+
+        private TransformationInfo copy() {
+            TransformationInfo copy = new TransformationInfo();
+            copy.recursionCounter = this.recursionCounter;
+            copy.isBefore = this.isBefore;
+            copy.isIterative = this.isIterative;
+            copy.isAfter = this.isAfter;
+            return copy;
+        }
+
+        /**
+         * Check an option within a set of options - conventionally encoded as ",opt1,opt2,...optn,"
+         *
+         * @param optionsCsv
+         * @param option
+         * @return True if option in found in optionsCsv
+         */
+        private boolean matchOption(String optionsCsv, String option) {
+            return optionsCsv.contains("," + option + ",");
+        }
+
     }
 
 }
