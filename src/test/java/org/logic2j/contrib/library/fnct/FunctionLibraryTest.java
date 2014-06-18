@@ -19,6 +19,7 @@
 package org.logic2j.contrib.library.fnct;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.solver.holder.GoalHolder;
@@ -46,7 +47,8 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-        //
+        // Stack overflow
+//        GoalHolder sol = uniqueSolution("gd3(owner(Q, 68), Q)");
     }
 
     @Test
@@ -61,7 +63,6 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertTransformation("123", "123", FunctionLibrary.OPTION_ONE);
         assertTransformation("123.456", "123.456", FunctionLibrary.OPTION_ONE);
     }
-
 
     @Test
     public void atomicTransformed() {
@@ -133,7 +134,6 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals(theExpectedToString, unique.toString());
     }
 
-
     private void assertWrongMapping(String t1, String t2, String options) {
         final String goalText = "map(" + MAPPING_PREDICATE + ", " + t1 + ", " + t2 + ", " + options + ")";
         final Object goal = unmarshall(goalText);
@@ -143,12 +143,35 @@ public class FunctionLibraryTest extends PrologTestBase {
     }
 
     @Test
-    public void moreComplicated() {
-//        GoalHolder sol = uniqueSolution("gd3(tcNumber(a, b))");
-//        GoalHolder sol = uniqueSolution("gd3((tcNumber(a, b), c))");
+    public void moreComplicated1() {
+        GoalHolder sol = uniqueSolution("gd3(tcNumber(a, b), Q)");
+        final Object q = sol.var("Q").unique();
+        logger.info("Solution: {}", q.toString());
+        assertEquals("['='(col(committee, id), a),'='(col(committee, tcNum), b)]", q.toString());
+    }
+
+    @Test
+    public void moreComplicated2() {
         GoalHolder sol = uniqueSolution("gd3((tcNumber(A, B), tcNumber(A, C)), Q)");
         final Object q = sol.var("Q").unique();
         logger.info("Solution: {}", q.toString());
+        assertEquals("','(['='(col(committee, id), A),'='(col(committee, tcNum), B)], ['='(col(committee, id), A),'='(col(committee, tcNum), C)])", q.toString());
+    }
+
+    @Test
+    public void moreComplicated3() {
+        GoalHolder sol = uniqueSolution("gd3(organization(iso_id), Q)");
+        final Object q = sol.var("Q").unique();
+        logger.info("Solution: {}", q.toString());
+        assertEquals("'='(col(organization, id), 68)", q.toString());
+    }
+
+    @Test
+    public void moreComplicated4() {
+        GoalHolder sol = uniqueSolution("gd3(toto, Q)");
+        final Object q = sol.var("Q").unique();
+        logger.info("Solution: {}", q.toString());
+        assertEquals("'='(col(organization, id), 68)", q.toString());
     }
 
 }
