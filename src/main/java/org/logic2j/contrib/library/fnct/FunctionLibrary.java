@@ -140,9 +140,9 @@ public class FunctionLibrary extends LibraryBase {
     protected UnifyContext mapCompletely(String mappingPredicate, UnifyContext currentVars,
                                          Object inputTerm, Object outputTerm,
                                          final TransformationInfo returnInfo) {
+        returnInfo.recursionCounter++;
         UnifyContext runningMonad = currentVars;
 
-        returnInfo.recursionCounter++;
         final TransformationInfo callingInfo = returnInfo.copy();
 
         // Transform children BEFORE the main input
@@ -326,9 +326,13 @@ public class FunctionLibrary extends LibraryBase {
 
     private static class TransformationInfo {
         private boolean hasTransformed;
+
         private int recursionCounter;
+
         boolean isBefore;
+
         boolean isIterative;
+
         boolean isAfter;
 
         private TransformationInfo() {
@@ -336,6 +340,11 @@ public class FunctionLibrary extends LibraryBase {
             hasTransformed = false;
         }
 
+        /**
+         * Set the flags based on the options.
+         *
+         * @param optionsCsv
+         */
         private TransformationInfo(String optionsCsv) {
             this();
             isBefore = matchOption(optionsCsv, OPTION_BEFORE);
@@ -343,6 +352,11 @@ public class FunctionLibrary extends LibraryBase {
             isAfter = matchOption(optionsCsv, OPTION_AFTER);
         }
 
+        /**
+         * Clone this except for the hasTransformed that is reset to false.
+         *
+         * @return A copy.
+         */
         private TransformationInfo copy() {
             TransformationInfo copy = new TransformationInfo();
             copy.recursionCounter = this.recursionCounter;
@@ -352,22 +366,23 @@ public class FunctionLibrary extends LibraryBase {
             return copy;
         }
 
-        /**
-         * Check an option within a set of options - conventionally encoded as ",opt1,opt2,...optn,"
-         *
-         * @param optionsCsv
-         * @param option
-         * @return True if option in found in optionsCsv
-         */
-        private boolean matchOption(String optionsCsv, String option) {
-            return optionsCsv.contains("," + option + ",");
-        }
-
         public void raiseHasTransformedFrom(TransformationInfo other) {
             if (other.hasTransformed) {
                 this.hasTransformed = true;
             }
         }
+
+        /**
+         * Check for option within a set of options - conventionally encoded as ",opt1,opt2,...optn,"
+         *
+         * @param optionsCsv
+         * @param option
+         * @return True if option in found in optionsCsv
+         */
+        private static boolean matchOption(String optionsCsv, String option) {
+            return optionsCsv.contains("," + option + ",");
+        }
+
     }
 
 }

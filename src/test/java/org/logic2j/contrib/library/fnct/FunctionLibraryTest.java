@@ -62,6 +62,7 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertTransformation("atom", "atom", FunctionLibrary.OPTION_ONE);
         assertTransformation("123", "123", FunctionLibrary.OPTION_ONE);
         assertTransformation("123.456", "123.456", FunctionLibrary.OPTION_ONE);
+        assertTransformation("9", "9", FunctionLibrary.OPTION_ONE);
     }
 
     @Test
@@ -168,10 +169,10 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void moreComplicated4() {
-        GoalHolder sol = uniqueSolution("gd3(toto, Q)");
+        GoalHolder sol = uniqueSolution("gd3(commIso(A), Q)");
         final Object q = sol.var("Q").unique();
         logger.info("Solution: {}", q.toString());
-        assertEquals("'='(col(organization, id), 68)", q.toString());
+        assertEquals("','('='(col(committee, id), A), ['='(col(pred_owner, id), A),'='(pred_owner(pred_owner, owner), 68)])", q.toString());
     }
 
 }
