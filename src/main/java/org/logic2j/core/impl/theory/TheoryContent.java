@@ -28,8 +28,10 @@ import java.util.*;
 public class TheoryContent {
 
     /**
-     * The data structure to hold our clauses: lists of {@link Clause}s by predicate key. Key: unique key for all clauses whose predicate
-     * head is a family, see {@link Clause#getPredicateKey()}. Value: ordered list of very very very immutable {@link Clause}s.
+     * The data structure to hold our clauses: lists of {@link Clause}s by predicate key.
+     * Key: unique key for all clauses whose predicate
+     * head makes a family, see {@link Clause#getPredicateKey()}.
+     * Value: ordered list of very very very immutable {@link Clause}s.
      */
     private final HashMap<String, List<Clause>> content = new HashMap<String, List<Clause>>();
 
@@ -38,7 +40,7 @@ public class TheoryContent {
      * 
      * @param theClause
      */
-    public void add(Clause theClause) {
+    public synchronized void add(Clause theClause) {
         final String clauseFamilyKey = theClause.getPredicateKey();
         List<Clause> family = this.content.get(clauseFamilyKey);
         if (family == null) {
@@ -55,15 +57,17 @@ public class TheoryContent {
      * 
      * @param theExtraContent
      */
-    public void addAll(TheoryContent theExtraContent) {
+    public synchronized void addAll(TheoryContent theExtraContent) {
         for (final Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
             final String clauseFamilyKey = extraEntry.getKey();
-            final List<Clause> clausesToAdd = extraEntry.getValue();
-            if (this.content.containsKey(clauseFamilyKey)) {
-                this.content.get(clauseFamilyKey).addAll(clausesToAdd);
-            } else {
-                this.content.put(clauseFamilyKey, clausesToAdd);
+            List<Clause> family = this.content.get(clauseFamilyKey);
+            if (family == null) {
+                // No Clause yet defined in this family, create one
+                family = new ArrayList<Clause>();
+                this.content.put(clauseFamilyKey, family);
             }
+            final List<Clause> clausesToAdd = extraEntry.getValue();
+            family.addAll(clausesToAdd);
         }
     }
 
@@ -74,13 +78,13 @@ public class TheoryContent {
      * @return An iterable for a foreach() loop.
      */
     public Iterable<Clause> find(Object theGoalTerm) {
-        final String key = TermApi.getPredicateSignature(theGoalTerm);
-        final List<Clause> list = this.content.get(key);
-        if (list == null) {
+        final String clauseFamilyKey = TermApi.getPredicateSignature(theGoalTerm);
+        final List<Clause> family = this.content.get(clauseFamilyKey);
+        if (family == null) {
             // Predicate not registered in this theory content, return empty, it's not a failure condition
             return Collections.emptyList();
         }
-        return list;
+        return family;
     }
 
     @Override
