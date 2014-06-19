@@ -52,13 +52,14 @@ public class TheoryContent {
     }
 
     /**
-     * Add all {@link Clause}s contained in theExtraContent. Watch out, references are added, Clauses are NOT copied, because of their
+     * Add all {@link Clause}s contained in theContentToAddToThis.
+     * Watch out, references to Clauses are added, NOT copied, because of their
      * immutable nature, they can be shared.
      * 
-     * @param theExtraContent
+     * @param theContentToAddToThis
      */
-    public synchronized void addAll(TheoryContent theExtraContent) {
-        for (final Map.Entry<String, List<Clause>> extraEntry : theExtraContent.content.entrySet()) {
+    public synchronized void addAll(TheoryContent theContentToAddToThis) {
+        for (final Map.Entry<String, List<Clause>> extraEntry : theContentToAddToThis.content.entrySet()) {
             final String clauseFamilyKey = extraEntry.getKey();
             List<Clause> family = this.content.get(clauseFamilyKey);
             if (family == null) {

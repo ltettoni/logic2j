@@ -26,12 +26,14 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text. The {@link TheoryManager} also implements
- * {@link ClauseProvider} since it provides sequences of {@link Clause}s to the {@link DefaultSolver} inference engine.
+ * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text.
+ * The {@link TheoryManager} also implements
+ * {@link ClauseProvider} since it provides sequences of {@link Clause}s to
+ * the {@link DefaultSolver} inference engine.
  * Provides methods for:
  * <ul>
- * <li>Loading theory files or resources</li>
- * <li>(future)Assert and retracting {@link Clause}s</li>
+ * <li>Loading theory files, classloadable resources or URLs</li>
+ * <li>(future)Asserting and retracting {@link Clause}s</li>
  * </ul>
  */
 public interface TheoryManager extends ClauseProvider {
@@ -41,21 +43,28 @@ public interface TheoryManager extends ClauseProvider {
     // ---------------------------------------------------------------------------
 
     /**
-     * Convenience method to load the {@link TheoryContent} from a File defining a theory; this only loads and return the content, use
-     * {@link #addTheory(TheoryContent)} to make it available to the {@link org.logic2j.core.impl.PrologImplementation}.
+     * Load the {@link TheoryContent} from a File defining a theory;
+     * this only loads and return the content, use {@link #addTheory(TheoryContent)} to make it
+     * available to the {@link org.logic2j.core.impl.PrologImplementation}.
      *
      * @param theFile
-     * @return The content of the theory from theFile.
+     * @return The content of the theory
      * @throws java.io.IOException
      */
     TheoryContent load(File theFile) throws IOException;
 
     /**
+     * Load from a URL.
      * @param theTheory
      * @return The content of the theory
      */
     TheoryContent load(URL theTheory);
 
+    /**
+     * Load from a classloadable resource.
+     * @param theClassloadableResourceOrUrl
+     * @return The content of the theory
+     */
     TheoryContent load(String theClassloadableResourceOrUrl);
 
     /**

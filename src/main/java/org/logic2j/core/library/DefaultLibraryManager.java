@@ -76,7 +76,7 @@ public class DefaultLibraryManager implements LibraryManager {
         final LibraryContent extraContent = loadLibraryInternal(theLibrary);
         mergeExtraContent(extraContent);
 
-        // Load the theory text associated to the library, if any
+        // Load the theory text associated to the library, if any exists
         final URL associatedTheory = locationOfAssociatedTheory(theLibrary);
         if (associatedTheory != null) {
             final TheoryManager theoryManager = this.prolog.getTheoryManager();
