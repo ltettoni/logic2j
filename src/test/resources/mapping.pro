@@ -21,6 +21,8 @@ remap(11, [10,1]).
 remap(original(X), transformed(X)).
 
 
+
+
 %
 % More real-life transformations
 %

@@ -24,8 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Execute SQL statements in an IoC manner, guaranteeing proper error handling and resource cleaning. Highly inspired by Jakarta Commons
- * "dbutils".
+ * Execute SQL statements in an IoC manner, guaranteeing proper error handling and resource cleaning.
+ * Highly inspired by Jakarta Commons "dbutils".
  * 
  * @version $Id$
  */

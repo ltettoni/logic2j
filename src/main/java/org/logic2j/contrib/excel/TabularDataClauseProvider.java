@@ -32,7 +32,7 @@ import java.util.List;
 
 public class TabularDataClauseProvider implements ClauseProvider {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataClauseProvider.class);
-    private static final String EAVT = "eavt";
+    static final String EAVT = "eavt";
     private static final String EAVT_4 = EAVT + "/4";
 
     private final PrologImplementation prolog;

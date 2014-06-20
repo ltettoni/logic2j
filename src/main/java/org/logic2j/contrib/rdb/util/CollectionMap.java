@@ -25,8 +25,7 @@ import java.util.LinkedHashMap;
  * A {@link java.util.LinkedHashMap} whose values are {@link java.util.Collection}s of TypeValue.
  */
 public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Collection<TypeValue>> {
-
-    private static final long serialVersionUID = -2612104820556647913L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Add a value to the collection addressed by theKey. If nothing was registered a new collection is instantiated by
@@ -44,42 +43,13 @@ public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Co
         collection.add(theElement);
     }
 
-  /**
-   * @param theKey
-   * @return The collection associated to theKey, or a just created empty one
-   * (see {@link #instantiateCollection()}, will never return null.
-   */
-    public Collection<TypeValue> getOrCreate(TypeKey theKey) {
-        if (this.containsKey(theKey)) {
-            return get(theKey);
-        }
-        final Collection<TypeValue> value = instantiateCollection();
-        this.put(theKey, value);
-        return value;
-    }
-
-  /**
-   * Override this to provide your preferred implementation of Collection.
-   * @return An empty {@link java.util.ArrayList}.
-   */
+    /**
+     * Override this to provide your preferred implementation of Collection.
+     *
+     * @return An empty {@link java.util.ArrayList}.
+     */
     protected Collection<TypeValue> instantiateCollection() {
         return new ArrayList<TypeValue>();
-    }
-
-    /**
-     * @param theValue
-   * @return true if theValue is contained either in keys or collections of values (ie anywhere).
-     */
-    public boolean containsInKeysOrValues(TypeValue theValue) {
-        if (this.keySet().contains(theValue)) {
-            return true;
-        }
-        for (final Collection<TypeValue> values : this.values()) {
-            if (values.contains(theValue)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

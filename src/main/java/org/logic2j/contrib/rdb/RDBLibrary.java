@@ -348,7 +348,7 @@ public class RDBLibrary extends LibraryBase {
   /**
    * @param theBinding
    * @param currentVars
-   *@param desiredClassOrInterface  @return The object bound to a Term by its name
+   * @param desiredClassOrInterface  @return The object bound to a Term by its name
    */
   private <T> T bound(Object theBinding, UnifyContext currentVars, Class<T> desiredClassOrInterface) {
       final Object value = currentVars.reify(theBinding);

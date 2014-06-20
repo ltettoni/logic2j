@@ -27,9 +27,15 @@ import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 import static org.junit.Assert.*;
 
+/**
+ * Test the FunctionLibrary's mapping predicates.
+ */
 public class FunctionLibraryTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibraryTest.class);
 
+    /**
+     * See "mapping.pro" for test predicates
+     */
     private static final String MAPPING_PREDICATE = "remap";
 
     private FunctionLibrary functionLibrary;

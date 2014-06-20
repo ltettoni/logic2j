@@ -31,7 +31,7 @@ import java.util.List;
  * A {@link org.logic2j.core.api.TermAdapter} capable of handling {@link TabularData}.
  */
 public class TabularDataTermAdapter extends DefaultTermAdapter {
-    private static final String EAVT = "eavt";
+    private static final String EAVT = TabularDataClauseProvider.EAVT;
 
     private final TermAdapter baseTermAdapter;
 
