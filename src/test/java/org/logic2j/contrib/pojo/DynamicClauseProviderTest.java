@@ -45,6 +45,10 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     @After
     public void retractAll() {
         this.dynamic.retractAll();
+        // Make sure the next assertion would return an index of zero
+        final int index = this.dynamic.assertFact("one");
+        assertEquals(0, index);
+        this.dynamic.retractAll();
     }
 
     @Test
@@ -54,10 +58,10 @@ public class DynamicClauseProviderTest extends PrologTestBase {
         final Object theFact = "aYetUnknownFact";
         final int index = this.dynamic.assertFact(theFact); // Note: we use another string!
         assertEquals(0, index);
-        uniqueSolution("" + "aYetUnknownFact");
+        uniqueSolution("" + "aYetUnknownFact"); // Add empty string to make another reference
         noSolutions("aStillUnknownFact");
         // Retract
-        this.dynamic.retractFactAt(index); // Note: we use another string!
+        this.dynamic.retractFactAt(index); // Note: each time we use another string!
         noSolutions("" + "aYetUnknownFact");
         noSolutions("aStillUnknownFact");
     }
@@ -66,18 +70,18 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     public void assertStructFact() {
         noSolutions("zz(X)");
         // Assert
-        final Struct fact1 = new Struct("zz", 1);
+        final Struct fact1 = new Struct("zz", 11);
         final int index1 = this.dynamic.assertFact(fact1);
         assertEquals(0, index1);
-        assertEquals(1, uniqueSolution("zz(X)").var("X").unique());
+        assertEquals(11, uniqueSolution("zz(Q)").var("Q").unique());
         // Assert
-        final Struct fact2 = new Struct("zz", 2);
+        final Struct fact2 = new Struct("zz", 22);
         final int index2 = this.dynamic.assertFact(fact2);
         assertEquals(1, index2);
-        assertEquals(Arrays.asList(new Integer[] { 1, 2 }), nSolutions(2, "zz(X)").var("X").list());
+        assertEquals(Arrays.asList(new Integer[] { 11, 22 }), nSolutions(2, "zz(Q)").var("Q").list());
         // Retract
         this.dynamic.retractFactAt(index1);
-        assertEquals(2, uniqueSolution("zz(X)").var("X").unique());
+        assertEquals(22, uniqueSolution("zz(Q)").var("Q").unique());
         this.dynamic.retractFactAt(index2);
         noSolutions("zz(X)");
     }
@@ -107,5 +111,29 @@ public class DynamicClauseProviderTest extends PrologTestBase {
         assertEquals(3.0, uniqueSolution("eav(_,_,R), property(R, width, W)").var("W").unique());
         uniqueSolution("eav(_,_,R), property(R, height, 4.0)");
         noSolutions("eav(_,_,R), property(R, height, 3.0)");
+    }
+
+    @Test
+    public void retractToIndex() throws Exception {
+        noSolutions("iter");
+        // Assert first range
+        for (int i=0; i<50; i++) {
+            this.dynamic.assertFact("iter");
+        }
+        nSolutions(50, "iter");
+        final int middleIndex = this.dynamic.assertFact("iter");
+        nSolutions(51, "iter");
+        // Assert second range
+        for (int i=0; i<50; i++) {
+            this.dynamic.assertFact("iter");
+        }
+        nSolutions(101, "iter");
+        // Retract to middle
+        this.dynamic.retractToBeforeIndex(middleIndex);
+        nSolutions(50, "iter");
+        this.dynamic.retractToBeforeIndex(5);
+        nSolutions(5, "iter");
+        this.dynamic.retractToBeforeIndex(0);
+        noSolutions("iter");
     }
 }

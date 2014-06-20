@@ -24,31 +24,39 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Allow dynamic assertion / retraction of facts or rules.
- * This {@link org.logic2j.core.api.ClauseProvider} is designed for solving goals against different data contexts, hence allowing to easily
- * add or retract information made available to the {@link org.logic2j.core.api.Solver}, in a more dynamic manner than using the {@link org.logic2j.core.impl.theory.TheoryManager}.
+ * This {@link org.logic2j.core.api.ClauseProvider} is designed for solving goals against different data contexts,
+ * hence allowing to easily add or retract information made available to the {@link org.logic2j.core.impl.Solver},
+ * in a more dynamic manner than using the {@link org.logic2j.core.impl.theory.TheoryManager}.
  */
 public class DynamicClauseProvider implements ClauseProvider {
 
     private final PrologImplementation prolog;
-    private final List<Clause> clauses = new ArrayList<Clause>();
+    private List<Clause> clauses = Collections.synchronizedList(new ArrayList<Clause>());
 
     public DynamicClauseProvider(PrologImplementation theProlog) {
         this.prolog = theProlog;
     }
 
+    /**
+     * Watch out will return all clauses not only those potentially matching.
+     * @param theGoal
+     * @param currentVars
+     * @return This implementation will also return clauses whose head don't match theGoal.
+     */
     @Override
     public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
-        final List<Clause> nonNull = new ArrayList<Clause>(this.clauses.size());
+        final List<Clause> clauses = new ArrayList<Clause>(this.clauses.size());
         for (final Clause cl : this.clauses) {
             if (cl != null) {
-                nonNull.add(cl);
+                clauses.add(cl);
             }
         }
-        return nonNull;
+        return clauses;
     }
 
     /**
@@ -70,5 +78,9 @@ public class DynamicClauseProvider implements ClauseProvider {
      */
     public void retractAll() {
         this.clauses.clear();
+    }
+
+    public void retractToBeforeIndex(int indexToRetractTo) {
+        clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
     }
 }
