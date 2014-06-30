@@ -18,6 +18,7 @@
 package org.logic2j.core;
 
 import org.junit.Test;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -190,8 +191,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     /**
      * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after the first solution was found.
      */
-    private static class Max1Listener implements SolutionListener {
-        int counter = 0;
+    private static class Max1Listener extends CountingSolutionListener {
 
         public Max1Listener() {
             // Nothing - just create public constructor for accessibility
@@ -199,7 +199,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
         @Override
         public Continuation onSolution(UnifyContext currentVars) {
-            this.counter++;
+            super.onSolution(currentVars);
             return Continuation.USER_ABORT;
         }
     }
@@ -207,8 +207,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     /**
      * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after 5 solutions were found.
      */
-    private static class Max5Listener implements SolutionListener {
-        int counter = 0;
+    private static class Max5Listener extends CountingSolutionListener {
 
         public Max5Listener() {
             // Nothing - just create public constructor for accessibility
@@ -216,43 +215,26 @@ public class ExecutionPruningTest extends PrologTestBase {
 
         @Override
         public Continuation onSolution(UnifyContext currentVars) {
-            this.counter++;
-            final boolean requestContinue = this.counter < 5;
+            super.onSolution(currentVars);
+            final boolean requestContinue = getCounter() < 5;
             return requestContinue ? Continuation.CONTINUE : Continuation.USER_ABORT;
-        }
-    }
-
-    /**
-     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that counts solutions - won't request user cancellation.
-     */
-    private static class CountingListener implements SolutionListener {
-        int counter = 0;
-
-        public CountingListener() {
-            // Nothing - just create public constructor for accessibility
-        }
-
-        @Override
-        public Continuation onSolution(UnifyContext currentVars) {
-            this.counter++;
-            return Continuation.CONTINUE;
         }
     }
 
     @Test
     public void userCancel() {
         final Object term = unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
-        final CountingListener listenerAll = new CountingListener();
+        final CountingSolutionListener listenerAll = new CountingSolutionListener();
         this.prolog.getSolver().solveGoal(term, listenerAll);
-        assertEquals(10, listenerAll.counter);
+        assertEquals(10, listenerAll.getCounter());
         // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
         this.prolog.getSolver().solveGoal(term, maxOneSolution);
-        assertEquals(1, maxOneSolution.counter);
+        assertEquals(1, maxOneSolution.getCounter());
         // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
         this.prolog.getSolver().solveGoal(term, maxFiveSolutions);
-        assertEquals(5, maxFiveSolutions.counter);
+        assertEquals(5, maxFiveSolutions.getCounter());
     }
 
 }

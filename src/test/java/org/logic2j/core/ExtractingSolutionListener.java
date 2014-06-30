@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * TODO Document me!
+ * Used in test cases to extract number of solutions and solutions to a goal.
  */
 public class ExtractingSolutionListener extends CountingSolutionListener {
     private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);

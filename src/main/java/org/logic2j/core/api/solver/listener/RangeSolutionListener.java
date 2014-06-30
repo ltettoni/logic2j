@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class RangeSolutionListener<T> implements SolutionListener {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RangeSolutionListener.class);
+    private static final boolean isDebug = logger.isDebugEnabled();
+
 
     private long minCount; // Minimal number of solutions allowed
     private long maxCount; // Maximal number of solutions allowed
@@ -61,7 +63,9 @@ public class RangeSolutionListener<T> implements SolutionListener {
             // OOps, we already had solutions? This is not desired
             onSuperfluousSolution();
         }
-        logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
+        if (isDebug) {
+            logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
+        }
         final Continuation continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
         return continuation;
     }

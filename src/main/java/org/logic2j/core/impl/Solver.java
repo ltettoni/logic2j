@@ -154,7 +154,8 @@ public class Solver {
             * but the simplicity of the code below and its efficiency are preferred.
             */
             for (int i = 0; i < arity; i++) {
-                // Solve all the left and right-and-sides, sequentially
+                // Solve all the elements of the "OR", in sequence.
+                // For a binary OR, this means solving the left-hand-side and then the right-hand-side
                 result = solveGoalRecursive(goalStruct.getArg(i), currentVars, theSolutionListener);
                 if (result == Continuation.CUT) {
                     break;

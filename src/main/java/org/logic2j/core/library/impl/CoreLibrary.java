@@ -26,6 +26,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.NotListener;
 import org.logic2j.core.impl.Solver;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.TypeUtils;
@@ -298,23 +299,13 @@ public class CoreLibrary extends LibraryBase {
     @Primitive(synonyms = "\\+")
     // Surprisingly enough the operator \+ means "not provable".
     public Continuation not(final SolutionListener theListener, UnifyContext currentVars, Object theGoal) {
-        // final Term target = resolveNonVar(theGoal, currentVars, "not");
-        final class NegationListener implements SolutionListener {
-            boolean found = false;
 
-            @Override
-            public Continuation onSolution(UnifyContext currentVars) {
-                // Do NOT relay the solution further, just remember there was one
-                this.found = true;
-                return Continuation.USER_ABORT; // No need to seek for further solutions
-            }
-        }
-        final NegationListener callListener = new NegationListener();
+        final NotListener callListener = new NotListener();
 
         Solver solver = getProlog().getSolver();
         solver.solveGoal(theGoal, currentVars, callListener);
         final Continuation continuation;
-        if (callListener.found) {
+        if (callListener.hasSolution()) {
             continuation = Continuation.CONTINUE;
         } else {
             // Not found - notify a solution (that's the purpose of not/1 !)

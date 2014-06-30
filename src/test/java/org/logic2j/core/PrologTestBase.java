@@ -286,13 +286,6 @@ public abstract class PrologTestBase {
         return listOfSortedMaps.toString();
     }
 
-    protected long solveWithLoggingAndCountingListener(Object goal) {
-        final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
-        getProlog().getSolver().solveGoal(goal, listener);
-        listener.report();
-        return listener.getCounter();
-    }
-
 
     protected ExtractingSolutionListener solveWithExtractingListener(Object goal) {
         final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
