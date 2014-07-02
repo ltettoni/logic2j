@@ -35,4 +35,11 @@ public interface SolutionListener {
      */
     Continuation onSolution(UnifyContext currentVars);
 
+    /**
+     * Experimental: multiple solutions passing between predicates.
+     * @param multi
+     * @return The caller must return {@link Continuation#CONTINUE} for the inference engine to continue searching for other solutions, or
+     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation).
+     */
+    Continuation onSolutions(MultiResult multi);
 }

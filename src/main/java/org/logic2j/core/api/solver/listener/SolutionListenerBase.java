@@ -16,7 +16,22 @@ package org.logic2j.core.api.solver.listener;/*
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.unify.UnifyContext;
+
 public abstract class SolutionListenerBase implements SolutionListener {
+
+    @Override
+    public Continuation onSolutions(MultiResult multi) {
+        final Iterable<UnifyContext> allSolutions = multi;
+        for (UnifyContext oneSolution : allSolutions) {
+            final Continuation continuation = this.onSolution(oneSolution);
+            if (continuation != Continuation.CONTINUE) {
+                return continuation;
+            }
+        }
+        return Continuation.CONTINUE;
+    }
 
     @Override
     public String toString() {

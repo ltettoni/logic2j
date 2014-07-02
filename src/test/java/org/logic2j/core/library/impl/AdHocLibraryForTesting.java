@@ -19,9 +19,14 @@ package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.listener.MultiResult;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * A small ad-hoc implementation of a {@link org.logic2j.core.api.library.PLibrary} just for testing.
@@ -51,5 +56,54 @@ public class AdHocLibraryForTesting extends LibraryBase {
             }
         }
         return Continuation.CONTINUE;
+    }
+
+
+
+    @Primitive
+    public Continuation int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theLowerBound, final Object theIterable, Object theUpperBound) {
+        final Object lowerBound = currentVars.reify(theLowerBound);
+        final Object upperBound = currentVars.reify(theUpperBound);
+
+        ensureBindingIsNotAFreeVar(lowerBound, "int_range_classic/3");
+        ensureBindingIsNotAFreeVar(upperBound, "int_range_classic/3");
+
+        final long lower = ((Number) lowerBound).longValue();
+        final long upper = ((Number) upperBound).longValue();
+
+
+        final Collection<Long> values = new ArrayList<Long>();
+        for (long iter = lower; iter < upper; iter++) {
+            values.add(Long.valueOf(iter));
+        }
+
+
+        final MultiResult multi = new MultiResult() {
+            final Iterator<Long> valuesIterator = values.iterator();
+            @Override
+            public Iterator<UnifyContext> iterator() {
+                return new Iterator<UnifyContext>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return valuesIterator.hasNext();
+                    }
+
+                    @Override
+                    public UnifyContext next() {
+                        final Long next = valuesIterator.next();
+                        final UnifyContext after = currentVars.unify(theIterable, next);
+                        return after;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("Feature not yet implemented");
+                    }
+                };
+            }
+        };
+
+        return theListener.onSolutions(multi);
     }
 }
