@@ -88,10 +88,19 @@ public class LibraryBase implements PLibrary {
     }
 
 
+    /**
+     * Unify terms t1 and t2, and if they could be unified, call theListener with the solution of the newly
+     * unified variables; return the result from notifying. If not, return CONTINUE.
+     * @param theListener
+     * @param currentVars
+     * @param t1
+     * @param t2
+     * @return
+     */
     protected Continuation unifyInternal(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         final UnifyContext after = currentVars.unify(t1, t2);
         if (after == null) {
-            // Not unified
+            // Not unified: do not notify a solution and inform to continue solving
             return Continuation.CONTINUE;
         }
         // Unified
