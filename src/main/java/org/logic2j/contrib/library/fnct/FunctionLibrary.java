@@ -27,6 +27,7 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
@@ -275,7 +276,7 @@ public class FunctionLibrary extends LibraryBase {
         } else {
             // Pattern of using an immutable array to store the mutable result of a callback...
             final Object transformationResult[] = new Object[1];
-            final SolutionListener listenerForSubGoal = new SolutionListener() {
+            final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
                 @Override
                 public Continuation onSolution(UnifyContext currentVars) {

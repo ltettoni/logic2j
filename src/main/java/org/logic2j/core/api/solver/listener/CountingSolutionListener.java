@@ -26,7 +26,7 @@ import org.logic2j.core.api.unify.UnifyContext;
  * infinite generation). Derive from this class to ease the programming of
  * {@link SolutionListener}s in application code.
  */
-public class CountingSolutionListener implements SolutionListener {
+public class CountingSolutionListener extends SolutionListenerBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CountingSolutionListener.class);
     private static final boolean DEBUG_ENABLED = logger.isDebugEnabled();
 

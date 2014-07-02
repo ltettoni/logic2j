@@ -29,7 +29,7 @@ import java.util.List;
  * A {@link SolutionListener} that will count and limit
  * the number of solutions generated, and possibly handle underflow or overflow.
  */
-public class RangeSolutionListener<T> implements SolutionListener {
+public class RangeSolutionListener<T> extends SolutionListenerBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RangeSolutionListener.class);
     private static final boolean isDebug = logger.isDebugEnabled();
 

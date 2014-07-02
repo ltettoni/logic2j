@@ -1,4 +1,4 @@
-package org.logic2j.core.impl;/*
+package org.logic2j.core.api.solver.listener;/*
  * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
  *
  * This library is free software; you can redistribute it and/or
@@ -16,25 +16,10 @@ package org.logic2j.core.impl;/*
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
-import org.logic2j.core.api.unify.UnifyContext;
-
-/**
- * A SolutionListener that implements the logical not.
- */
-public class NotListener extends SolutionListenerBase {
-    boolean found = false;
+public abstract class SolutionListenerBase implements SolutionListener {
 
     @Override
-    public Continuation onSolution(UnifyContext currentVars) {
-        // Do NOT relay the solution further, just remember there was one
-        this.found = true;
-        return Continuation.USER_ABORT; // No need to seek for further solutions
-    }
-
-    public boolean hasSolution() {
-        return found;
+    public String toString() {
+        return this.getClass().getSimpleName();
     }
 }

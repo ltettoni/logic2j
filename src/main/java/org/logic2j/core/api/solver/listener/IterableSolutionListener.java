@@ -27,7 +27,7 @@ import org.logic2j.core.api.unify.UnifyContext;
  * This uses synchronization between two threads, the Prolog engine being the producer thread that calls back this implementation of
  * {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}, which in turn notifies the consumer thread (the caller) of a solution.
  */
-public class IterableSolutionListener<T> implements SolutionListener {
+public class IterableSolutionListener<T> extends SolutionListenerBase {
     private final SolutionExtractor<T> extractor;
 
     public IterableSolutionListener(SolutionExtractor<T> extractor) {

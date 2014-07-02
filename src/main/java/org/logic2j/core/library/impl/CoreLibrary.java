@@ -25,6 +25,7 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.NotListener;
 import org.logic2j.core.impl.Solver;
@@ -317,7 +318,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation findall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
         final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
-        final SolutionListener listenerForSubGoal = new SolutionListener() {
+        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
             @Override
             public Continuation onSolution(UnifyContext currentVars) {
