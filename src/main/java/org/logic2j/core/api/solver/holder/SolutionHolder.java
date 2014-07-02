@@ -103,6 +103,7 @@ public class SolutionHolder<T> implements Iterable<T> {
     // ---------------------------------------------------------------------------
 
     /**
+     * Launches the solver.
      * @return The only solution or null if none, but will throw an Exception if more than one.
      */
     public T single() {
@@ -114,6 +115,7 @@ public class SolutionHolder<T> implements Iterable<T> {
     }
 
     /**
+     * Launches the solver.
      * @return The first solution, or null if none. Will not generate any further - there may be or not - you won't notice.
      */
     public T first() {
@@ -125,6 +127,7 @@ public class SolutionHolder<T> implements Iterable<T> {
     }
 
     /**
+     * Launches the solver.
      * @return Single and only solution. Will throw an Exception if zero or more than one.
      */
     public T unique() {
@@ -141,6 +144,10 @@ public class SolutionHolder<T> implements Iterable<T> {
     // Vectorial extractors (collections, arrays, iterables)
     // ---------------------------------------------------------------------------
 
+    /**
+     * Launches the solver.
+     * @return
+     */
     public List<T> list() {
         initListenerRangesAndSolve(this.minNbr, this.maxNbr, this.maxNbr + 1);
         return (List<T>) rangeListener.getResults();
