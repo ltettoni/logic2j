@@ -153,6 +153,7 @@ public abstract class PrologTestBase {
     }
 
     /**
+     * Solves once to calculate result size.
      * @param theNumber
      * @param theGoals
      * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
