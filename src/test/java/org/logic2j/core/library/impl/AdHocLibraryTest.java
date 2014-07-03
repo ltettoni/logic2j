@@ -44,19 +44,20 @@ public class AdHocLibraryTest extends PrologTestBase {
 
     @Test(expected = InvalidTermException.class)
     public void int_range_classic_minNotBound() {
-        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
         noSolutions("int_range_classic(Min, Q, 10)");
     }
 
     @Test(expected = InvalidTermException.class)
     public void int_range_classic_maxNotBound() {
-        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
         noSolutions("int_range_classic(5, Q, Max)");
     }
 
+    // ---------------------------------------------------------------------------
+    // Multiple solutions
+    // ---------------------------------------------------------------------------
+
     @Test
     public void int_range_multi() {
-        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
         assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_multi(12, Q, 15)").var("Q").list());
     }
 

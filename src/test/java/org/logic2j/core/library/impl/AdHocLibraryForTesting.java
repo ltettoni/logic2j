@@ -38,6 +38,16 @@ public class AdHocLibraryForTesting extends LibraryBase {
         super(theProlog);
     }
 
+    /**
+     * Classic production of several solutions.
+     *
+     * @param theListener
+     * @param currentVars
+     * @param theLowerBound
+     * @param theIterable
+     * @param theUpperBound
+     * @return
+     */
     @Primitive
     public Continuation int_range_classic(SolutionListener theListener, UnifyContext currentVars, Object theLowerBound, Object theIterable, Object theUpperBound) {
         final Object lowerBound = currentVars.reify(theLowerBound);
@@ -51,7 +61,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
         for (long iter = lower; iter < upper; iter++) {
             final Continuation continuation = unifyInternal(theListener, currentVars, theIterable, Long.valueOf(iter));
-            if (continuation!=Continuation.CONTINUE) {
+            if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }
         }
@@ -59,39 +69,42 @@ public class AdHocLibraryForTesting extends LibraryBase {
     }
 
 
-
+    /**
+     * Special production of several solutions in one go.
+     *
+     * @param theListener
+     * @param currentVars
+     * @param theMinBound
+     * @param theIterable
+     * @param theMaxBound Upper bound + 1 (ie theIterable will go up to theMaxBound-1)
+     * @return
+     */
     @Primitive
-    public Continuation int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theLowerBound, final Object theIterable, Object theUpperBound) {
-        final Object lowerBound = currentVars.reify(theLowerBound);
-        final Object upperBound = currentVars.reify(theUpperBound);
+    public Continuation int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theMinBound, final Object theIterable, Object theMaxBound) {
+        final Object minBound = currentVars.reify(theMinBound);
+        final Object maxBound = currentVars.reify(theMaxBound);
 
-        ensureBindingIsNotAFreeVar(lowerBound, "int_range_classic/3");
-        ensureBindingIsNotAFreeVar(upperBound, "int_range_classic/3");
+        ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3");
+        ensureBindingIsNotAFreeVar(maxBound, "int_range_classic/3");
 
-        final long lower = ((Number) lowerBound).longValue();
-        final long upper = ((Number) upperBound).longValue();
-
-
-        final Collection<Long> values = new ArrayList<Long>();
-        for (long iter = lower; iter < upper; iter++) {
-            values.add(Long.valueOf(iter));
-        }
-
+        final long min = ((Number) minBound).longValue();
+        final long max = ((Number) maxBound).longValue();
 
         final MultiResult multi = new MultiResult() {
-            final Iterator<Long> valuesIterator = values.iterator();
+            long currentValue = min;
+
             @Override
             public Iterator<UnifyContext> iterator() {
                 return new Iterator<UnifyContext>() {
 
                     @Override
                     public boolean hasNext() {
-                        return valuesIterator.hasNext();
+                        return currentValue < max;
                     }
 
                     @Override
                     public UnifyContext next() {
-                        final Long next = valuesIterator.next();
+                        final Long next = currentValue++;
                         final UnifyContext after = currentVars.unify(theIterable, next);
                         return after;
                     }
