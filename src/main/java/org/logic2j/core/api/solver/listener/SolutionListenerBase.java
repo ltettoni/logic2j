@@ -19,13 +19,16 @@ package org.logic2j.core.api.solver.listener;/*
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.unify.UnifyContext;
 
+import java.util.Iterator;
+
 public abstract class SolutionListenerBase implements SolutionListener {
 
     @Override
     public Continuation onSolutions(MultiResult multi) {
-        final Iterable<UnifyContext> allSolutions = multi;
-        for (UnifyContext oneSolution : allSolutions) {
-            final Continuation continuation = this.onSolution(oneSolution);
+        final Iterator<UnifyContext> allSolutions = multi;
+        while (allSolutions.hasNext()) {
+            final UnifyContext next = allSolutions.next();
+            final Continuation continuation = this.onSolution(next);
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }

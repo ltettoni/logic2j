@@ -18,5 +18,8 @@ package org.logic2j.core.api.solver.listener;/*
 
 import org.logic2j.core.api.unify.UnifyContext;
 
-public interface MultiResult extends Iterable<UnifyContext> {
+import java.util.Iterator;
+
+public interface MultiResult extends Iterator<UnifyContext> {
+    // Yet empty
 }

@@ -94,26 +94,20 @@ public class AdHocLibraryForTesting extends LibraryBase {
             long currentValue = min;
 
             @Override
-            public Iterator<UnifyContext> iterator() {
-                return new Iterator<UnifyContext>() {
+            public boolean hasNext() {
+                return currentValue < max;
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return currentValue < max;
-                    }
+            @Override
+            public UnifyContext next() {
+                final Long next = currentValue++;
+                final UnifyContext after = currentVars.unify(theIterable, next);
+                return after;
+            }
 
-                    @Override
-                    public UnifyContext next() {
-                        final Long next = currentValue++;
-                        final UnifyContext after = currentVars.unify(theIterable, next);
-                        return after;
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("Feature not yet implemented");
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Cannot remove item from this iterator");
             }
         };
 
