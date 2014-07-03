@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.library.impl;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
@@ -25,24 +26,38 @@ import static org.junit.Assert.assertEquals;
 
 public class AdHocLibraryTest extends PrologTestBase {
 
-    @Test
-    public void int_range_classic() {
+    @Before
+    public void registerLibrary() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_classic(12, X, 15)").var("X").list());
+    }
+
+    @Test
+    public void int_range_classic_1() {
+        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_classic(12, Q, 15)").var("Q").list());
         noSolutions("int_range_classic(12, X, 10)");
+    }
+
+    @Test
+    public void int_range_classic_2() {
+        noSolutions("int_range_classic(10, X, 10)");
     }
 
     @Test(expected = InvalidTermException.class)
     public void int_range_classic_minNotBound() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-        noSolutions("int_range_classic(A, X, 10)");
+        noSolutions("int_range_classic(Min, Q, 10)");
     }
 
+    @Test(expected = InvalidTermException.class)
+    public void int_range_classic_maxNotBound() {
+        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
+        noSolutions("int_range_classic(5, Q, Max)");
+    }
 
     @Test
     public void int_range_multi() {
         this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_multi(12, X, 15)").var("X").list());
+        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_multi(12, Q, 15)").var("Q").list());
     }
 
 
