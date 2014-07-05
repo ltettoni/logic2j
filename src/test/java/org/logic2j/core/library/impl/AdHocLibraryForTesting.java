@@ -18,15 +18,16 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.MultiResult;
+import org.logic2j.core.api.solver.listener.multi.ListMultiResult;
+import org.logic2j.core.api.solver.listener.multi.MultiResult;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * A small ad-hoc implementation of a {@link org.logic2j.core.api.library.PLibrary} just for testing.
@@ -60,7 +61,8 @@ public class AdHocLibraryForTesting extends LibraryBase {
         final long upper = ((Number) upperBound).longValue();
 
         for (long iter = lower; iter < upper; iter++) {
-            final Continuation continuation = unifyInternal(theListener, currentVars, theIterable, Long.valueOf(iter));
+            logger.info("{} is going to unify an notify one solution: {}", this, iter);
+            final Continuation continuation = unifyAndNotify(theListener, currentVars, theIterable, Long.valueOf(iter));
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }
@@ -82,6 +84,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
     @Primitive
     public Continuation int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theMinBound, final Object theIterable, Object theMaxBound) {
         final Object minBound = currentVars.reify(theMinBound);
+        final Object iterating = currentVars.reify(theIterable);
         final Object maxBound = currentVars.reify(theMaxBound);
 
         ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3");
@@ -90,27 +93,24 @@ public class AdHocLibraryForTesting extends LibraryBase {
         final long min = ((Number) minBound).longValue();
         final long max = ((Number) maxBound).longValue();
 
-        final MultiResult multi = new MultiResult() {
-            long currentValue = min;
-
-            @Override
-            public boolean hasNext() {
-                return currentValue < max;
+        if (iterating instanceof Var) {
+            final List<Long> values = new ArrayList<Long>();
+            for (long val = min; val < max; val++) {
+                values.add(val);
             }
 
-            @Override
-            public UnifyContext next() {
-                final Long next = currentValue++;
-                final UnifyContext after = currentVars.unify(theIterable, next);
-                return after;
+            final MultiResult multi = new ListMultiResult(currentVars, theIterable, values);
+            logger.info("{} is going to notify multi solutions: {}", this, multi);
+            return theListener.onSolutions(multi);
+        } else {
+            // Check
+            final long iter = ((Number) iterating).longValue();
+            if (min <= iter && iter < max) {
+                return notifySolution(theListener, currentVars);
+            } else {
+                return Continuation.CONTINUE;
             }
 
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Cannot remove item from this iterator");
-            }
-        };
-
-        return theListener.onSolutions(multi);
+        }
     }
 }

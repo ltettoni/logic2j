@@ -21,10 +21,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
+import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
+import org.logic2j.core.api.solver.listener.multi.MultiResult;
+import org.logic2j.core.api.unify.UnifyContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class AdHocLibraryTest extends PrologTestBase {
+   private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
 
     @Before
     public void registerLibrary() {
@@ -53,13 +64,43 @@ public class AdHocLibraryTest extends PrologTestBase {
     }
 
     // ---------------------------------------------------------------------------
-    // Multiple solutions
+    // Multiple solutions with a normal listener
     // ---------------------------------------------------------------------------
 
     @Test
     public void int_range_multi() {
-        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_multi(12, Q, 15)").var("Q").list());
+        final String goalText;
+        goalText = "int_range_multi(10, Q, 15) ; int_range_multi(20, Q, 25)";
+        assertEquals(termList("10","11","12","13","14","20","21","22","23","24"), nSolutions(10, goalText).var("Q").list());
     }
 
 
+    // ---------------------------------------------------------------------------
+    // Multiple solutions with special listener
+    // ---------------------------------------------------------------------------
+
+
+    @Test
+    public void int_range_multi_with_listener() throws Exception {
+        final String goalText;
+        goalText = "int_range_multi(10, Q, 20) , int_range_multi(15, Q, 25)";
+        Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
+        final Var q = TermApi.findVar(goal, "Q");
+        final SolutionListenerBase listener = new SolutionListenerBase() {
+
+            @Override
+            public Continuation onSolution(UnifyContext currentVars) {
+                logger.info("App listener got one solution: {}", currentVars.reify(q));
+                return Continuation.CONTINUE;
+            }
+
+            @Override
+            public Continuation onSolutions(MultiResult multi) {
+                logger.info("App listener got multi solutions: {}", multi);
+                return Continuation.CONTINUE;
+            }
+        };
+        getProlog().getSolver().solveGoal(goal, listener);
+
+    }
 }
