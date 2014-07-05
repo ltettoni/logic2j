@@ -115,10 +115,10 @@ public class Solver {
         // Check if goal is a system predicate or a simple one to match against the theory
         if (Struct.FUNCTOR_COMMA == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             // Logical AND. Typically the arity=2 since "," is a binary predicate. But in logic2j we allow more.
-            final SolutionListener[] listeners = new SolutionListener[arity];
-            // The last listener is the one that called us (usually callbacks into the application)
-            listeners[arity - 1] = theSolutionListener;
-            // Allocates N-1 listeners, usually this means one.
+            final SolutionListener[] andingListeners = new SolutionListener[arity];
+            // The last listener is the one that called us (typically the one of the application, if this is the outmost "AND")
+            andingListeners[arity - 1] = theSolutionListener;
+            // Allocates N-1 andingListeners, usually this means one.
             // On solution, each will trigger solving of the next term
             if (isDebug) {
                 logger.debug("Handling AND, arity={}", arity);
@@ -127,22 +127,22 @@ public class Solver {
             final Object lhs = goalStructArgs[0];
             for (int i = 0; i < arity - 1; i++) {
                 final int index = i;
-                listeners[index] = new SolutionListenerBase() {
+                andingListeners[index] = new SolutionListenerBase() {
 
                     @Override
                     public Continuation onSolution(UnifyContext currentVars) {
                         if (isDebug) {
-                            logger.debug("AND's internal solution listener called for {}", lhs);
+                            logger.debug("ANDing internal solution listener called for {}", lhs);
                         }
                         final int nextIndex = index + 1;
                         final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
-                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, listeners[nextIndex]);
+                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex]);
                         return continuationFromSubGoal;
                     }
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
-            result = solveGoalRecursive(lhs, currentVars, listeners[0]);
+            result = solveGoalRecursive(lhs, currentVars, andingListeners[0]);
         } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             if (isDebug) {
                 logger.debug("Handling OR, arity={}", arity);
