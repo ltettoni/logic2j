@@ -18,6 +18,7 @@
 package org.logic2j.core.api.solver.listener;
 
 import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.listener.multi.MultiResult;
 import org.logic2j.core.api.unify.UnifyContext;
 
 /**

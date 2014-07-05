@@ -1,4 +1,4 @@
-package org.logic2j.core.api.solver.listener;/*
+package org.logic2j.core.api.solver.listener.multi;/*
  * logic2j - "Bring Logic to your Java" - Copyright (C) 2011 Laurent.Tettoni@gmail.com
  *
  * This library is free software; you can redistribute it and/or
