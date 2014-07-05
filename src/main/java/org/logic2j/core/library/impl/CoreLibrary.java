@@ -274,7 +274,7 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = "=")
     public Continuation unify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-        return unifyInternal(theListener, currentVars, t1, t2);
+        return unifyAndNotify(theListener, currentVars, t1, t2);
     }
 
     @Primitive(name = "\\=")

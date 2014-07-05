@@ -116,7 +116,7 @@ public class PojoLibrary extends LibraryBase {
         final String name = nameTerm.toString();
         final Object instance = extract(name);
         final Object instanceTerm = createConstantTerm(instance);
-        return unifyInternal(theListener, currentVars, instanceTerm, theTarget);
+        return unifyAndNotify(theListener, currentVars, instanceTerm, theTarget);
     }
 
     @Primitive
@@ -137,7 +137,7 @@ public class PojoLibrary extends LibraryBase {
             // Convert collection to a Prolog list
             javaValue = getProlog().getTermAdapter().term(javaValue, FactoryMode.ATOM);
         }
-        return unifyInternal(theListener, currentVars, javaValue, theValue);
+        return unifyAndNotify(theListener, currentVars, javaValue, theValue);
     }
 
     /**
