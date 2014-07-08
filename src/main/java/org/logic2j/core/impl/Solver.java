@@ -28,6 +28,8 @@ import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
+import org.logic2j.core.api.solver.listener.multi.ListMultiResult;
+import org.logic2j.core.api.solver.listener.multi.MultiResult;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.unify.UnifyStateByLookup;
 import org.logic2j.core.impl.util.ProfilingInfo;
@@ -137,6 +139,28 @@ public class Solver {
                         final int nextIndex = index + 1;
                         final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
                         final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex]);
+                        return continuationFromSubGoal;
+                    }
+
+                    @Override
+                    public Continuation onSolutions(final MultiResult multiLHS) {
+                        final int nextIndex = index + 1;
+                        final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
+                        final SolutionListener subListener = new SolutionListenerBase() {
+                            @Override
+                            public Continuation onSolution(UnifyContext currentVars) {
+                                throw new UnsupportedOperationException("Should not be here");
+                            }
+
+                            @Override
+                            public Continuation onSolutions(MultiResult multiRHS) {
+                                logger.info("AND sub-listener got multiLHS={} and multiRHS={}", multiLHS, multiRHS);
+                                final ListMultiResult combined = new ListMultiResult(currentVars, multiLHS, multiRHS);
+                                return andingListeners[nextIndex].onSolutions(combined);
+                            }
+
+                        };
+                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, subListener);
                         return continuationFromSubGoal;
                     }
                 };

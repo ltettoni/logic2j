@@ -99,7 +99,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
                 values.add(val);
             }
 
-            final MultiResult multi = new ListMultiResult(currentVars, theIterable, values);
+            final MultiResult multi = new ListMultiResult(currentVars, (Var)theIterable, values);
             logger.info("{} is going to notify multi solutions: {}", this, multi);
             return theListener.onSolutions(multi);
         } else {

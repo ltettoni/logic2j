@@ -25,20 +25,41 @@ import java.util.List;
 
 public class ListMultiResult implements MultiResult {
 
+    final Var var;
+
     final List<Long> values;
 
     final UnifyContext currentVars;
 
-    final Object theVar;
-
     final Iterator<Long> iter;
 
-    public ListMultiResult(UnifyContext currentVars, Object theVar, List<Long> values) {
+    public ListMultiResult(UnifyContext currentVars, Var theVar, List<Long> values) {
+        this.var = theVar;
         this.values = values;
         this.currentVars = currentVars;
-        this.theVar = theVar;
         this.iter = this.values.iterator();
     }
+
+
+    public ListMultiResult(UnifyContext currentVars, MultiResult multiLHS, MultiResult multiRHS) {
+        if (! (multiLHS instanceof ListMultiResult)) {
+            throw new UnsupportedOperationException("Left argument must be instanceof ListMultiResult");
+        }
+        if (! (multiRHS instanceof ListMultiResult)) {
+            throw new UnsupportedOperationException("Right argument must be instanceof ListMultiResult");
+        }
+        final ListMultiResult left = (ListMultiResult)multiLHS;
+        final ListMultiResult right = (ListMultiResult)multiRHS;
+        if (left.var != right.var) {
+            throw new UnsupportedOperationException("Must have same var to combine");
+        }
+        this.var = left.var;
+        this.values = new ArrayList<Long>(left.values);
+        this.values.retainAll(right.values);
+        this.currentVars = currentVars;
+        this.iter = this.values.iterator();
+    }
+
 
     @Override
     public boolean hasNext() {
@@ -48,7 +69,7 @@ public class ListMultiResult implements MultiResult {
     @Override
     public UnifyContext next() {
         final Long next = iter.next();
-        final UnifyContext after = currentVars.unify(theVar, next);
+        final UnifyContext after = currentVars.unify(var, next);
         return after;
     }
 
@@ -61,4 +82,5 @@ public class ListMultiResult implements MultiResult {
     public String toString() {
         return this.getClass().getSimpleName() + this.values;
     }
+
 }

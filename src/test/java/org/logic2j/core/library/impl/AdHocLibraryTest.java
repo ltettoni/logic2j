@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertEquals;
 
 public class AdHocLibraryTest extends PrologTestBase {
-   private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
 
     @Before
     public void registerLibrary() {
@@ -70,20 +70,32 @@ public class AdHocLibraryTest extends PrologTestBase {
     @Test
     public void int_range_multi() {
         final String goalText;
-        goalText = "int_range_multi(10, Q, 15) ; int_range_multi(20, Q, 25)";
-        assertEquals(termList("10","11","12","13","14","20","21","22","23","24"), nSolutions(10, goalText).var("Q").list());
+        goalText = "int_range_multi(10, Q, 15)";
+        assertEquals(termList("10", "11", "12", "13", "14"), nSolutions(5, goalText).var("Q").list());
     }
 
+    @Test
+    public void int_range_multi_OR() {
+        final String goalText;
+        goalText = "int_range_multi(10, Q, 15) ; int_range_multi(12, Q, 18)";
+        assertEquals(termList("10", "11", "12", "13", "14", "12", "13", "14", "15", "16", "17"), nSolutions(11, goalText).var("Q").list());
+    }
+
+    @Test
+    public void int_range_multi_AND() {
+        final String goalText;
+        goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
+        assertEquals(termList("12", "13", "14"), nSolutions(3, goalText).var("Q").list());
+    }
 
     // ---------------------------------------------------------------------------
     // Multiple solutions with special listener
     // ---------------------------------------------------------------------------
 
-
     @Test
     public void int_range_multi_with_listener() throws Exception {
         final String goalText;
-        goalText = "int_range_multi(10, Q, 20) , int_range_multi(15, Q, 25)";
+        goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
         Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
         final Var q = TermApi.findVar(goal, "Q");
         final SolutionListenerBase listener = new SolutionListenerBase() {
