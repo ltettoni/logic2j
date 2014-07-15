@@ -35,7 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prolog's most classic way of providing {@link Clause}s to the {@link org.logic2j.core.impl.Solver} inference engine: all clauses are parsed and normalized from
+ * Prolog's most classic way of providing {@link Clause}s to the {@link org.logic2j.core.impl.Solver}
+ * inference engine: all clauses are parsed and normalized from
  * one or several theories' textual content managed by this class.
  * TODO Does the name "Manager" make sense here?
  */
@@ -47,11 +48,6 @@ public class DefaultTheoryManager implements TheoryManager {
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
     private List<DataFactProvider> dataFactProviders = new ArrayList<DataFactProvider>();
 
-    /**
-     * Constructor
-     * 
-     * @param theProlog
-     */
     public DefaultTheoryManager(PrologImplementation theProlog) {
         this.prolog = theProlog;
         this.clauseProviders.add(this);
