@@ -61,10 +61,11 @@ public class DynamicClauseProvider implements ClauseProvider {
 
     /**
      * @note The name "assert" has to do with Prolog's assert, not Java's!
-     * @param theFact There's not parsing, just a plain Object
+     * @param theClauseStruct There's no parsing, just a plain Object; if this has to be a Prolog fact it's likely
+     *                that you have to pass a Struct.
      */
-    public int assertFact(Object theFact) {
-        final Clause clause = new Clause(this.prolog, theFact);
+    public int assertClause(Object theClauseStruct) {
+        final Clause clause = new Clause(this.prolog, theClauseStruct);
         this.clauses.add(clause);
         return this.clauses.size() - 1;
     }
