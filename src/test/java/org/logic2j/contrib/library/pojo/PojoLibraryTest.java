@@ -20,6 +20,7 @@ package org.logic2j.contrib.library.pojo;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 
+
 public class PojoLibraryTest extends PrologTestBase {
 
     @Test
@@ -45,5 +46,8 @@ public class PojoLibraryTest extends PrologTestBase {
     protected void bind(String theKey, Object theValue) {
         PojoLibrary.bind(theKey, theValue);
     }
+
+    // Testing of the "property" predicate is done where we can assert objects into the theory,
+    // this is in DynamicClauseProviderTest
 
 }
