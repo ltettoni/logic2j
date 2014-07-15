@@ -1,4 +1,6 @@
 
+% FIXME OLD: only used by mappingTransformer(): remove
+
 % Test mappings and transformations
 
 contextBinding(1, one).
