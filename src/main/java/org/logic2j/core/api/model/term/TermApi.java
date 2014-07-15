@@ -369,7 +369,9 @@ public final class TermApi {
             // Enums are just valid terms
             result = theObject;
         } else {
-            throw new InvalidTermException("Cannot (yet) create a Term from '" + theObject + "' of " + theObject.getClass());
+            // POJOs are also valid terms now
+            result = theObject;
+            // throw new InvalidTermException("Cannot (yet) create a Term from '" + theObject + "' of " + theObject.getClass());
         }
         return result;
     }
