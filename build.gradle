@@ -33,7 +33,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.6', 'commons-beanutils:commons-beanutils:1.+', 'org.apache.poi:poi:3.+'
     // Need very specific Derby version since the test resource host
     // a zipped DB version in binary format. Require 10.8.1.2.
-    testCompile 'junit:junit:4.+', 'org.apache.derby:derby:10.8.1.2'
+    testCompile 'junit:junit:4.+', 'org.apache.derby:derby:10.10.2.0'
     runtime 'ch.qos.logback:logback-classic:1.+'
 }
 
@@ -48,7 +48,7 @@ task downloadTestResources(type: MyDownload) {
 task unzipTestDb {
     // Not yet needed - will be !
     copy{
-        from(zipTree("src/test/db/zipcodes1/derby-v10.8.2.1.zip"))
+        from(zipTree("src/test/db/zipcodes1/derby-v10.10.2.0.zip"))
         into("src/test/db/zipcodes1")
     }
 }
