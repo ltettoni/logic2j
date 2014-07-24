@@ -48,8 +48,8 @@ task downloadTestResources(type: MyDownload) {
 task unzipTestDb {
     // Not yet needed - will be !
     copy{
-        from(zipTree("src/test/db/zipcodes1/derby-v10.10.2.0.zip"))
-        into("src/test/db/zipcodes1")
+        from(zipTree("src/test/resources/db/zipcodes1/derby-v10.10.2.0.zip"))
+        into("src/test/resources/db/zipcodes1")
     }
 }
 
