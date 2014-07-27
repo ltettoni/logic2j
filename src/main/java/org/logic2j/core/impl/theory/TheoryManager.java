@@ -29,7 +29,7 @@ import java.net.URL;
  * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text.
  * The {@link TheoryManager} also implements
  * {@link ClauseProvider} since it provides sequences of {@link Clause}s to
- * the {@link DefaultSolver} inference engine.
+ * the {@link org.logic2j.core.impl.Solver} inference engine.
  * Provides methods for:
  * <ul>
  * <li>Loading theory files, classloadable resources or URLs</li>

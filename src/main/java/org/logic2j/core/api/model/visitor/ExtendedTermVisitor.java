@@ -17,10 +17,8 @@
  */
 package org.logic2j.core.api.model.visitor;
 
-import org.logic2j.core.api.model.term.TermVisitor;
-
 /**
- * Extension of the {@link org.logic2j.core.api.model.term.TermVisitor} for type of classes that are NOT
+ * Extension of the {@link TermVisitor} for type of classes that are NOT
  * subclasses of {@link org.logic2j.core.api.model.term.Term}.
  * This requires calling {@link org.logic2j.core.api.model.term.TermApi#accept(ExtendedTermVisitor, Object theTerm)}
  */

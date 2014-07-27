@@ -23,9 +23,7 @@ import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
 /**
- * Interface for using Prolog from an application perspective.
- * TODO (issue) See if we can minimize the interface (only add if absolutely required, otherwise add to the PrologImplementation), see
- * https://github.com/ltettoni/logic2j/issues/8
+ * Interface for using Prolog from an application's perspective.
  */
 public interface Prolog {
 
