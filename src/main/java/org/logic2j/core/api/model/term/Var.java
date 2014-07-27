@@ -18,6 +18,7 @@
 package org.logic2j.core.api.model.term;
 
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.visitor.TermVisitor;
 
 import java.util.Collection;
 import java.util.Comparator;
