@@ -29,59 +29,69 @@ import java.util.List;
 
 /**
  * Allow dynamic assertion / retraction of facts or rules.
- * This {@link org.logic2j.core.api.ClauseProvider} is designed for solving goals against different data contexts,
- * hence allowing to easily add or retract information made available to the {@link org.logic2j.core.impl.Solver},
- * in a more dynamic manner than using the {@link org.logic2j.core.impl.theory.TheoryManager}.
+ * This {@link org.logic2j.core.api.ClauseProvider} will help you solving goals against data contexts that evolve over time.
+ * You can easily add or retract facts or rules made available to the {@link org.logic2j.core.impl.Solver}.
  */
 public class DynamicClauseProvider implements ClauseProvider {
 
-    private final PrologImplementation prolog;
-    private List<Clause> clauses = Collections.synchronizedList(new ArrayList<Clause>());
+  private final PrologImplementation prolog;
+  private List<Clause> clauses = Collections.synchronizedList(new ArrayList<Clause>());
 
-    public DynamicClauseProvider(PrologImplementation theProlog) {
-        this.prolog = theProlog;
-    }
+  public DynamicClauseProvider(PrologImplementation theProlog) {
+    this.prolog = theProlog;
+  }
 
-    /**
-     * Watch out will return all clauses not only those potentially matching.
-     * @param theGoal
-     * @param currentVars
-     * @return This implementation will also return clauses whose head don't match theGoal.
-     */
-    @Override
-    public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
-        final List<Clause> clauses = new ArrayList<Clause>(this.clauses.size());
-        for (final Clause cl : this.clauses) {
-            if (cl != null) {
-                clauses.add(cl);
-            }
-        }
-        return clauses;
+  /**
+   * Watch out will return all clauses not only those potentially matching.
+   * @param theGoal
+   * @param currentVars
+   * @return This implementation will also return clauses whose head don't match theGoal.
+   */
+  @Override
+  public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
+    final List<Clause> clauses = new ArrayList<Clause>(this.clauses.size());
+    for (final Clause cl : this.clauses) {
+      if (cl != null) {
+        clauses.add(cl);
+      }
     }
+    return clauses;
+  }
 
-    /**
-     * @note The name "assert" has to do with Prolog's assert, not Java's!
-     * @param theClauseStruct There's no parsing, just a plain Object; if this has to be a Prolog fact it's likely
-     *                that you have to pass a Struct.
-     */
-    public int assertClause(Object theClauseStruct) {
-        final Clause clause = new Clause(this.prolog, theClauseStruct);
-        this.clauses.add(clause);
-        return this.clauses.size() - 1;
-    }
+  /**
+   * Add a fact or a rule at the end of this ClauseProvider.
+   * @note The name "assert" has to do with Prolog's assert, not Java's!
+   * @param theClauseStruct There's no parsing, just a plain Object; if this has to be a Prolog fact it's likely
+   *                that you have to pass a Struct.
+   * @return An index corresponding to the sequence number in which the fact or rule was asserted, that you may
+   * use for retracting to before this assertion.
+   */
+  public int assertClause(Object theClauseStruct) {
+    final Clause clause = new Clause(this.prolog, theClauseStruct);
+    this.clauses.add(clause);
+    return this.clauses.size() - 1;
+  }
 
-    public void retractFactAt(int theIndex) {
-        this.clauses.set(theIndex, null);
-    }
+  /**
+   * Retract only the assertion that returned theIndex
+   * @param theIndex
+   */
+  public void retractFactAt(int theIndex) {
+    this.clauses.set(theIndex, null);
+  }
 
-    /**
-     * Retract all facts
-     */
-    public void retractAll() {
-        this.clauses.clear();
-    }
+  /**
+   * Retract all clauses.
+   */
+  public void retractAll() {
+    this.clauses.clear();
+  }
 
-    public void retractToBeforeIndex(int indexToRetractTo) {
-        clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
-    }
+  /**
+   * Retract to before the assertion that returned theIndex
+   * @param theIndex
+   */
+  public void retractToBeforeIndex(int indexToRetractTo) {
+    clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
+  }
 }
