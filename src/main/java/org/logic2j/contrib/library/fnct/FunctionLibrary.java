@@ -32,8 +32,6 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
-import java.util.Set;
-
 /**
  * Functional features (mapping, etc).
  */
@@ -165,13 +163,7 @@ public class FunctionLibrary extends LibraryBase {
                     returnInfo.raiseHasTransformedFrom(callingInfo);
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
-                int highestVarIndex = Term.NO_INDEX;
-                final Var[] distinctVars = TermApi.allVars(transformedStruct);
-                for (Var var : distinctVars) {
-                    if (var.getIndex() > highestVarIndex) {
-                        highestVarIndex = var.getIndex();
-                    }
-                }
+                int highestVarIndex = highestVarIndex(transformedStruct);
                 transformedStruct.index = highestVarIndex + 1;
                 logger.debug("'before' has transformed  {}", runningMonad.reify(transformedStruct));
                 inputTerm = transformedStruct;
@@ -203,13 +195,7 @@ public class FunctionLibrary extends LibraryBase {
                     returnInfo.raiseHasTransformedFrom(callingInfo);
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
-                int highestVarIndex = Term.NO_INDEX;
-                final Var[] distinctVars = TermApi.allVars(transformedStruct);
-                for (Var var : distinctVars) {
-                    if (var.getIndex() > highestVarIndex) {
-                        highestVarIndex = var.getIndex();
-                    }
-                }
+                int highestVarIndex = highestVarIndex(transformedStruct);
                 transformedStruct.index = highestVarIndex + 1;
                 logger.debug("'after' has transformed  {}", runningMonad.reify(transformedStruct));
                 runningMonad = runningMonad.unify(transformedStruct, outputTerm);
@@ -218,6 +204,17 @@ public class FunctionLibrary extends LibraryBase {
             }
         }
         return runningMonad;
+    }
+
+    private int highestVarIndex(Struct transformedStruct) {
+        int highestVarIndex = Term.NO_INDEX;
+        final Var[] distinctVars = TermApi.distinctVars(transformedStruct);
+        for (Var var : distinctVars) {
+            if (var.getIndex() > highestVarIndex) {
+                highestVarIndex = var.getIndex();
+            }
+        }
+        return highestVarIndex;
     }
 
     private UnifyContext mapOneLevel(String mappingPredicate, UnifyContext currentVars,
@@ -288,13 +285,7 @@ public class FunctionLibrary extends LibraryBase {
             };
             // Create the transformation goal
             final Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
-            int highestVarIndex = Term.NO_INDEX;
-            final Var[] distinctVars = TermApi.allVars(transformationGoal);
-            for (Var var : distinctVars) {
-                if (var.getIndex() > highestVarIndex) {
-                    highestVarIndex = var.getIndex();
-                }
-            }
+            int highestVarIndex = highestVarIndex(transformationGoal);
             transformationGoal.index = highestVarIndex + 1;
             // Now solve the target sub goal
             getProlog().getSolver().solveGoal(transformationGoal, runningMonad, listenerForSubGoal);
