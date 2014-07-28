@@ -22,16 +22,14 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.visitor.TermVisitor;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.util.ProfilingInfo;
 import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.lang.Math.max;
@@ -41,7 +39,7 @@ import static java.lang.Math.min;
  * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
  * subclasses, so they can invoke its package-scoped methods. See important notes re. Term factorization ({@link #factorize(Object)}) and
  * normalization ({@link #normalize(Object, LibraryContent)} .
- * 
+ *
  * @note This class knows about the subclasses of {@link Term}, it breaks the OO design pattern a little but avoid defining many methods
  *       there. I find it acceptable since subclasses of {@link Term} don't sprout every day and are not for end-user extension.
  * @note Avoid static methods, prefer instantiating this class where needed.
@@ -68,7 +66,7 @@ public final class TermApi {
         if (theTerm instanceof Var) {
             return theVisitor.visit((Var) theTerm);
         }
-        // Other possible cases require instanceof since any Object can be 
+        // Other possible cases require instanceof since any Object can be
         if (theTerm instanceof String) {
             return theVisitor.visit((String) theTerm);
         }
@@ -208,7 +206,7 @@ public final class TermApi {
 
     /**
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
-     * 
+     *
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment. First caller
      * must pass 0.
@@ -226,7 +224,7 @@ public final class TermApi {
 
     /**
      * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
-     * 
+     *
      * @return The predicate's name + '/' + arity for normal {@link Struct}, or just the toString() of any other Object
      */
     public static String getPredicateSignature(Object thePredicate) {
@@ -379,7 +377,7 @@ public final class TermApi {
 
     /**
      * Extract one {@link Term} from within another ({@link Struct}) using a rudimentary XPath-like expression language.
-     * 
+     *
      * @param theTerm To select from
      * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
      * @param theClass The {@link Term} class or one of its subclass that the desired returned object should be.
@@ -459,19 +457,33 @@ public final class TermApi {
     }
 
     /**
-     *
+     * All distinct (unique) Vars in the specified term.
      * @param term
-     * @return {Var -> Name}
+     * @return Array of unique Vars
      */
-    public static IdentityHashMap<Var, String> allVars(Object term) {
+    public static Var[] allVars(Object term) {
         // TODO Does it make sense to use a Map for a few 1-5 vars?
-        final IdentityHashMap<Var, String> map = new IdentityHashMap<Var, String>();
+       final Var[] tempArray = new Var[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
+       final int[] nbVars = new int[] {0};
 
         final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
             @Override
             public Void visit(Var theVar) {
                 if (theVar != Var.ANONYMOUS_VAR) {
-                    map.put(theVar, theVar.getName());
+                  // Insert into array (even if may duplicate) - this will act as a sentinel
+                  final int highest = nbVars[0];
+                  tempArray[highest] = theVar;
+                  // Search if we already have this var in the array - due to the sentinel we will always find it!
+                  int foundIndex = 0;
+                  while (tempArray[foundIndex] != theVar) {
+                    foundIndex++;
+                  }
+                  // Did we hit the sentinel?
+                  if (foundIndex == highest) {
+                    // Was not present already - let's use the sentinel as a real value - increment size of found vars
+                    nbVars[0]++;
+                  } // Else: already present - leave the sentinel there we don't care but don't consider it as a new value
+                  ProfilingInfo.counter1++;
                 }
                 return null;
             }
@@ -479,9 +491,8 @@ public final class TermApi {
             @Override
             public Void visit(Struct theStruct) {
                 // Recurse through children
-                final Object[] args = theStruct.getArgs();
-                for (int i = 0; i < args.length; i++) {
-                    final Object arg = args[i];
+              final Object[] args = theStruct.getArgs();
+              for (Object arg: args) {
                     if (arg instanceof Term) {
                         ((Term) arg).accept(this);
                     }
@@ -492,7 +503,9 @@ public final class TermApi {
         if (term instanceof Term) {
             ((Term) term).accept(findVarsVisitor);
         }
-        return map;
+        // Now copy the values found as the tempArray
+        final Var[] result = Arrays.copyOf(tempArray, nbVars[0]);
+        return result;
     }
 
 

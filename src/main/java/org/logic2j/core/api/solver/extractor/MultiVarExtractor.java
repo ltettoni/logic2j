@@ -21,6 +21,7 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -34,8 +35,10 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
     private final Var[] vars;
 
     public MultiVarExtractor(Object goal) {
-        final Set<Var> vars = TermApi.allVars(goal).keySet();
-        this.vars = vars.toArray(new Var[vars.size()]);
+        final Var[] distinctVars = TermApi.allVars(goal);
+        // TODO not sure we need to clone
+        // this.vars = Arrays.copyOf(distinctVars, distinctVars.length);
+        this.vars = distinctVars;
     }
 
 

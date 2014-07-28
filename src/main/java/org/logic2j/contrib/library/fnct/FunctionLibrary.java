@@ -166,8 +166,8 @@ public class FunctionLibrary extends LibraryBase {
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
                 int highestVarIndex = Term.NO_INDEX;
-                final Set<Var> vars = TermApi.allVars(transformedStruct).keySet();
-                for (Var var : vars) {
+                final Var[] distinctVars = TermApi.allVars(transformedStruct);
+                for (Var var : distinctVars) {
                     if (var.getIndex() > highestVarIndex) {
                         highestVarIndex = var.getIndex();
                     }
@@ -204,8 +204,8 @@ public class FunctionLibrary extends LibraryBase {
                 }
                 final Struct transformedStruct = new Struct(struct.getName(), postArgs);
                 int highestVarIndex = Term.NO_INDEX;
-                final Set<Var> vars = TermApi.allVars(transformedStruct).keySet();
-                for (Var var : vars) {
+                final Var[] distinctVars = TermApi.allVars(transformedStruct);
+                for (Var var : distinctVars) {
                     if (var.getIndex() > highestVarIndex) {
                         highestVarIndex = var.getIndex();
                     }
@@ -289,8 +289,8 @@ public class FunctionLibrary extends LibraryBase {
             // Create the transformation goal
             final Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
             int highestVarIndex = Term.NO_INDEX;
-            final Set<Var> vars = TermApi.allVars(transformationGoal).keySet();
-            for (Var var : vars) {
+            final Var[] distinctVars = TermApi.allVars(transformationGoal);
+            for (Var var : distinctVars) {
                 if (var.getIndex() > highestVarIndex) {
                     highestVarIndex = var.getIndex();
                 }

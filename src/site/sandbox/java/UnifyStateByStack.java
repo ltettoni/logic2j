@@ -33,7 +33,6 @@ public class UnifyStateByStack {
             for (int scan = begin; scan >= 0; scan--) {
                 // TODO We could use a sentinel scan for efficiency
                 if (res != vars[scan]) {
-                    ProfilingInfo.counter1++;
                     continue;
                 }
                 if (scan < 0) {

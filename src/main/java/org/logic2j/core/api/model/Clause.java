@@ -22,7 +22,6 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.util.ProfilingInfo;
 
 import java.util.*;
 
@@ -42,9 +41,10 @@ public class Clause {
     private final Object content; // Immutable, not null
 
     /**
-     * TBD
+     * All Vars in the clause in an array, indexed by each Var's index (ie Var with getIndex()=N will be located
+     * in array element N).
      */
-    private final Var[] vars;
+    private final Var[] indexedVars;
 
     private Object head;
     private Object body;
@@ -66,11 +66,11 @@ public class Clause {
         // }
         // Any Clause must be normalized otherwise we won't be able to infer on it!
         this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
-        // Store vars into an array, indexed by the var's index
-        final Set<Var> varSet = TermApi.allVars(content).keySet();
-        this.vars = new Var[varSet.size()];
-        for (Var var : varSet) {
-            this.vars[var.getIndex()] = var;
+        // Store indexedVars into an array, indexed by the var's index
+        final Var[] distinctVars = TermApi.allVars(content);
+        this.indexedVars = new Var[distinctVars.length];
+        for (Var distinctVar : distinctVars) {
+            this.indexedVars[distinctVar.getIndex()] = distinctVar;
         }
         initDenormalizedFields();
     }
@@ -78,7 +78,7 @@ public class Clause {
 
     private Clause(Clause original, Struct cloned, Var[] clonedVars) {
         this.content = cloned;
-        this.vars = clonedVars;
+        this.indexedVars = clonedVars;
         this.cache = null; // That one should never be modified - we are on a clone
         initDenormalizedFields();
     }
@@ -136,12 +136,12 @@ public class Clause {
 //            logger.warn("Cloning {}", this);
             // No such entry: create and insert
             final Clause clonedClause = cloneClauseAndRemapIndexes(this, currentVars);
-            final int initialVarIndex = clonedClause.vars[0].getIndex(); // There MUST be at least one var otherwise we would not be cloning
+            final int initialVarIndex = clonedClause.indexedVars[0].getIndex(); // There MUST be at least one var otherwise we would not be cloning
             this.cache.put(initialVarIndex, clonedClause);
             return clonedClause;
         }
         final Clause reused = ceilingEntry.getValue();
-        currentVars.topVarIndex = reused.vars[reused.vars.length-1].getIndex() + 1;
+        currentVars.topVarIndex = reused.indexedVars[reused.indexedVars.length-1].getIndex() + 1;
 //        logger.warn("Reusing cloned clause {}", reused);
         return reused;
     }
@@ -149,11 +149,10 @@ public class Clause {
 
 
     private Clause cloneClauseAndRemapIndexes(Clause theClause, UnifyContext currentVars) {
-        ProfilingInfo.counter1++;
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
-        final Var[] originalVars = theClause.vars;
+        final Var[] originalVars = theClause.indexedVars;
         final int nbVars = originalVars.length;
-        // Allocate the new vars by cloning the original ones. Index is preserved meaning that
+        // Allocate the new indexedVars by cloning the original ones. Index is preserved meaning that
         // when we traverse the original structure and find a Var of index N, we can replace it
         // in the cloned structure by the clonedVar[N]
         final Var[] clonedVars = new Var[nbVars];
@@ -162,16 +161,16 @@ public class Clause {
         }
         assert theClause.content instanceof Struct;
         final Struct cloned = cloneStruct((Struct)theClause.content, clonedVars);
-        // Now reindex the cloned vars
+        // Now reindex the cloned indexedVars
         for (int i = 0; i < nbVars; i++) {
             clonedVars[i].index += currentVars.topVarIndex;
         }
         // And increment the highest Var index accordingly
         currentVars.topVarIndex += nbVars;
 
-        if (currentVars.topVarIndex > ProfilingInfo.max1) {
-            ProfilingInfo.max1 = currentVars.topVarIndex;
-        }
+//        if (currentVars.topVarIndex > ProfilingInfo.max1) {
+//            ProfilingInfo.max1 = currentVars.topVarIndex;
+//        }
 //    audit.info("Cloned {}  (base={})", cloned, this.topVarIndex);
         return new Clause(theClause, cloned, clonedVars);
     }

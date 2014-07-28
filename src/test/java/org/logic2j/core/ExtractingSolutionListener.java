@@ -17,22 +17,21 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
 
     private final Object goal;
-    private final Set<Var> vars;
+    private final Var[] vars;
     private final Set<String> varNames;
     private final List<Map<String, Object>> solutions;
 
     public ExtractingSolutionListener(Object theGoal) {
         this.goal = theGoal;
-        vars = TermApi.allVars(this.goal).keySet();
+        this.vars = TermApi.allVars(this.goal);
         // Here we use an expensive TreeSet but this is only for test cases - it will get the solutions ordered and will help assertions
-        varNames = new TreeSet<String>();
+        this.varNames = new TreeSet<String>();
         for (Var var : vars) {
-            varNames.add(var.getName());
+            this.varNames.add(var.getName());
         }
-        varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
+        this.varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
 
-
-        solutions = new ArrayList<Map<String, Object>>();
+        this.solutions = new ArrayList<Map<String, Object>>();
 
         logger.info("Init listener for \"{}\"", theGoal);
     }
@@ -68,7 +67,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     }
 
     public Collection<Var> getVariables() {
-        return this.vars;
+        return Arrays.asList(this.vars);
     }
 
     public List<Map<String, Object>> getSolutions() {
