@@ -502,13 +502,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the tail of this structure, which is supposed to be a list.
-     * <p/>
-     * <p>
-     * Gets the tail of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
-     * <code>UnsupportedOperationException</code>
-     * </p>
-     *
-     * @throws PrologNonSpecificError If this is not a list.
+     * @throws PrologNonSpecificError if this is not a prolog list.
      */
     public Struct listTail() {
         assertPList(this);
@@ -517,12 +511,7 @@ public final class Struct extends Term {
 
     /**
      * Gets the number of elements of this structure, which is supposed to be a list.
-     * <p/>
-     * <p>
-     * Gets the number of elements of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
-     * <code>UnsupportedOperationException</code>
-     * </p>
-     * PrologNonSpecificError If this is not a list.
+     * @throws PrologNonSpecificError if this is not a prolog list.
      */
     public int listSize() {
         assertPList(this);
@@ -538,8 +527,7 @@ public final class Struct extends Term {
     /**
      * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
      * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
-     * <p/>
-     * If this structure is not a list, null object is returned
+     * @throws PrologNonSpecificError if this is not a prolog list.
      */
     // FIXME (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
     public Struct predicateFromPList() {
@@ -567,6 +555,15 @@ public final class Struct extends Term {
         return new Struct(fnct, elements.toArray(new Object[elements.size()]));
     }
 
+    /**
+     *
+     * @param theCollectionToFillOrNull
+     * @param theElementClassOrNull
+     * @param <Q>
+     * @param <T>
+     * @return
+     * @throws PrologNonSpecificError if this is not a prolog list.
+     */
     @SuppressWarnings("unchecked")
     public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementClassOrNull) {
         final T result;
@@ -595,6 +592,7 @@ public final class Struct extends Term {
 
     /**
      * Appends an element to this structure (supposed to be a list)
+     * @throws PrologNonSpecificError if this is not a prolog list.
      */
     public void append(Term t) {
         assertPList(this);
@@ -612,6 +610,7 @@ public final class Struct extends Term {
 
     /**
      * Inserts (at the head) an element to this structure (supposed to be a list)
+     * @throws PrologNonSpecificError if this is not a prolog list.
      */
     void insert(Term t) {
         assertPList(this);
