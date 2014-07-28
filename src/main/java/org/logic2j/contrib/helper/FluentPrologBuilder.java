@@ -1,4 +1,4 @@
-package org.logic2j.core.library.impl;
+package org.logic2j.contrib.helper;
 
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -24,7 +24,7 @@ import java.util.Collection;
  * See http://stackoverflow.com/questions/2901166/how-to-make-spring-accept-fluent-non-void-setters
  * regarding how to have both a Spring compatible Java Bean and a fluent API...
  */
-public class PrologBuilder {
+public class FluentPrologBuilder implements PrologBuilder {
 
     private boolean noLibraries = false;
 
@@ -33,6 +33,7 @@ public class PrologBuilder {
     private Collection<File> theoryFiles = new ArrayList<File>();
     private Collection<String> theoryResources = new ArrayList<String>();
 
+  @Override
     public Prolog createInstance() {
         final PrologReferenceImplementation.InitLevel initLevel;
         if (isNoLibraries()) {
@@ -69,25 +70,25 @@ public class PrologBuilder {
     // Fluent API
     // ---------------------------------------------------------------------------
 
-    public PrologBuilder withoutLibraries(boolean noLibraries) {
+    public FluentPrologBuilder withoutLibraries(boolean noLibraries) {
         this.noLibraries = noLibraries;
         return this;
     }
 
-    public PrologBuilder withCoreLibraries(boolean coreLibraries) {
+    public FluentPrologBuilder withCoreLibraries(boolean coreLibraries) {
         this.coreLibraries = coreLibraries;
         return this;
     }
 
 
-    public PrologBuilder withTheory(File... files) {
+    public FluentPrologBuilder withTheory(File... files) {
         for (File file : files) {
             theoryFiles.add(file);
         }
         return this;
     }
 
-    public PrologBuilder withTheory(String... resources) {
+    public FluentPrologBuilder withTheory(String... resources) {
         for (String resource : resources) {
             theoryResources.add(resource);
         }
