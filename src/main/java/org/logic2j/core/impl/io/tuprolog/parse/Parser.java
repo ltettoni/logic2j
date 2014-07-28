@@ -264,8 +264,7 @@ public class Parser {
                     continue;
                 }
                 haveAttemptedXFX = true;
-                logger.warn("Is this normal to pass here in the Parser?");
-                throw new IllegalStateException("Probably not OK to be here in the Parser");
+                assert true : "Probably not OK to be here in the Parser (handling XFX)";
             }
             // XFY
             if (xfy >= xf && xfy >= left.priority) { // XFY has priority, or XFX has failed
@@ -275,7 +274,7 @@ public class Parser {
                     left = new IdentifiedTerm(xfy, xfyStruct);
                     continue;
                 }
-                throw new IllegalStateException("Should we really get to here in the Parser?");
+                assert true : "Probably not OK to be here in the Parser (handling XFY)";
             }
             // XF
             if (xf >= left.priority) {
@@ -290,7 +289,7 @@ public class Parser {
                     left = new IdentifiedTerm(xfx, xfxStruct);
                     continue;
                 }
-                throw new IllegalStateException("Should we really get to here in the Parser?");
+                assert true : "Probably not OK to be here in the Parser (handling other cases)";
             }
             break;
         }

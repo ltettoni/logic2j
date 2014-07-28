@@ -221,7 +221,8 @@ public class Solver {
                     if (isDebug) {
                         logger.debug("Result of Functor {}: {}", goalStruct, resultOfPrimitive);
                     }
-                    logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
+                    // logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
+                    assert true : "We should not pass here with functors!? Directive " + goalStruct + " ignored";
                     break;
                 case DIRECTIVE:
                     logger.warn("Result of Directive {} not yet used", goalStruct);
