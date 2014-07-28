@@ -117,19 +117,21 @@ public class UnifyContext {
         return term;
     }
 
-
+/*
     public Map<String, Object> bindings(Object term) {
         final Map<String, Object> result = new HashMap<String, Object>();
         for (Map.Entry<Var, String> entry : TermApi.allVars(term).entrySet()) {
             final Object finalValue = this.reify(entry.getKey());
-            if (!(finalValue instanceof Var)) {
-                result.put(entry.getValue(), finalValue);
+          final String entryValue = entry.getValue();
+          if (!(finalValue instanceof Var)) {
+                result.put(entryValue, finalValue);
             } else {
-                result.put(entry.getValue(), null);
+                result.put(entryValue, null);
             }
         }
         return result;
     }
+*/
 
     public UnifyContext unify(Object term1, Object term2) {
 //        audit.info("Unify  {}  ~  {}", term1, term2);
