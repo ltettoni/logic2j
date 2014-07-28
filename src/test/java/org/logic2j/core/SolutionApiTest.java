@@ -331,7 +331,7 @@ public class SolutionApiTest extends PrologTestBase {
         while (iter.hasNext()) {
             final Struct next = iter.next();
             if (counter < 10) {
-                logger.info("Value via iterator: {}", next);
+                logger.debug("Value via iterator: {}", next);
             }
             counter++;
         }
@@ -347,11 +347,11 @@ public class SolutionApiTest extends PrologTestBase {
         int counter = 0;
         for (Struct next : holder.var("Q", Struct.class)) {
             if (counter < 10) {
-                logger.info("Value via iterable: {}", next);
+                logger.debug("Value via iterable: {}", next);
             }
             counter++;
         }
-        ProfilingInfo.reportAll("iterator()");
+        ProfilingInfo.reportAll("iterable()");
         assertEquals(40320, counter);
     }
 
@@ -377,7 +377,7 @@ public class SolutionApiTest extends PrologTestBase {
         while (iter.hasNext()) {
             final Map<Var, Object> next = iter.next();
             if (counter < 10) {
-                logger.info("Vars via iterator: {}", next);
+                logger.debug("Vars via iterator: {}", next);
             }
             counter++;
         }
