@@ -461,7 +461,7 @@ public final class TermApi {
      * @param term
      * @return Array of unique Vars
      */
-    public static Var[] allVars(Object term) {
+    public static Var[] distinctVars(Object term) {
         // TODO Does it make sense to use a Map for a few 1-5 vars?
        final Var[] tempArray = new Var[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
        final int[] nbVars = new int[] {0};

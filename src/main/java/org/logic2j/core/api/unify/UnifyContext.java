@@ -120,7 +120,7 @@ public class UnifyContext {
 /*
     public Map<String, Object> bindings(Object term) {
         final Map<String, Object> result = new HashMap<String, Object>();
-        for (Map.Entry<Var, String> entry : TermApi.allVars(term).entrySet()) {
+        for (Map.Entry<Var, String> entry : TermApi.distinctVars(term).entrySet()) {
             final Object finalValue = this.reify(entry.getKey());
           final String entryValue = entry.getValue();
           if (!(finalValue instanceof Var)) {

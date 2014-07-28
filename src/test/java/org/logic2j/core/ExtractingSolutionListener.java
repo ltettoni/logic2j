@@ -23,7 +23,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
 
     public ExtractingSolutionListener(Object theGoal) {
         this.goal = theGoal;
-        this.vars = TermApi.allVars(this.goal);
+        this.vars = TermApi.distinctVars(this.goal);
         // Here we use an expensive TreeSet but this is only for test cases - it will get the solutions ordered and will help assertions
         this.varNames = new TreeSet<String>();
         for (Var var : vars) {

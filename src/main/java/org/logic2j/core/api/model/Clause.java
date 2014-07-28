@@ -67,7 +67,7 @@ public class Clause {
         // Any Clause must be normalized otherwise we won't be able to infer on it!
         this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
         // Store indexedVars into an array, indexed by the var's index
-        final Var[] distinctVars = TermApi.allVars(content);
+        final Var[] distinctVars = TermApi.distinctVars(content);
         this.indexedVars = new Var[distinctVars.length];
         for (Var distinctVar : distinctVars) {
             this.indexedVars[distinctVar.getIndex()] = distinctVar;

@@ -21,10 +21,8 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A {@link org.logic2j.core.api.solver.extractor.SolutionExtractor} that will extract values of
@@ -35,7 +33,7 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
     private final Var[] vars;
 
     public MultiVarExtractor(Object goal) {
-        final Var[] distinctVars = TermApi.allVars(goal);
+        final Var[] distinctVars = TermApi.distinctVars(goal);
         // Actually we don't need to clone:  this.vars = Arrays.copyOf(distinctVars, distinctVars.length);
         this.vars = distinctVars;
     }
