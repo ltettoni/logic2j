@@ -36,8 +36,7 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
 
     public MultiVarExtractor(Object goal) {
         final Var[] distinctVars = TermApi.allVars(goal);
-        // TODO not sure we need to clone
-        // this.vars = Arrays.copyOf(distinctVars, distinctVars.length);
+        // Actually we don't need to clone:  this.vars = Arrays.copyOf(distinctVars, distinctVars.length);
         this.vars = distinctVars;
     }
 
