@@ -139,7 +139,7 @@ public class DefaultTermAdapter implements TermAdapter {
 
     /**
      * Allow changing default behaviour of {@link #termFrom(Object, org.logic2j.core.api.TermAdapter.FactoryMode)} when FactoryMode is ATOM,
-     * and the first agrument exactly matches one of the keys of the map: will return the value
+     * and the first argument exactly matches one of the keys of the map: will return the value
      * as the atom.
      * 
      * @param theAtoms
