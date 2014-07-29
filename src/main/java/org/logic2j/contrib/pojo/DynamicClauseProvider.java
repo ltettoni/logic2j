@@ -89,9 +89,11 @@ public class DynamicClauseProvider implements ClauseProvider {
 
   /**
    * Retract to before the assertion that returned theIndex
-   * @param theIndex
+   * @param indexToRetractTo
    */
   public void retractToBeforeIndex(int indexToRetractTo) {
-    clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
+      if (indexToRetractTo<clauses.size()) {
+          clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
+      }
   }
 }
