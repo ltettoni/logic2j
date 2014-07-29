@@ -23,7 +23,7 @@ package org.logic2j.core.api;
 public interface TermMapper {
 
     /**
-     * Transform a Term.
+     * Transform a Term into another.
      * 
      * @param theTerm
      * @return The transformed version of theTerm
