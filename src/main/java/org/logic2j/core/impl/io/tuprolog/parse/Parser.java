@@ -172,17 +172,17 @@ public class Parser {
         Token oper = this.tokenizer.readToken();
         for (; oper.isOperator(commaIsEndMarker); oper = this.tokenizer.readToken()) {
 
-            int yfx = this.operatorManager.opPrio(oper.text, Operator.YFX);
+            int yfx = this.operatorManager.precedence(oper.text, Operator.YFX);
             if (yfx < leftSide.priority || yfx > maxPriority) {
                 yfx = -1;
             }
 
-            int yf = this.operatorManager.opPrio(oper.text, Operator.YF);
+            int yf = this.operatorManager.precedence(oper.text, Operator.YF);
             if (yf < leftSide.priority || yf > maxPriority) {
                 yf = -1;
             }
 
-            int yfy = this.operatorManager.opPrio(oper.text, Operator.YFY);
+            int yfy = this.operatorManager.precedence(oper.text, Operator.YFY);
             if (yfy < leftSide.priority || yfy > maxPriority) {
                 yfy = -1;
             }
@@ -201,7 +201,7 @@ public class Parser {
                         this.tokenizer.unreadToken(oper);
                         break;
                     }
-                    yfy = this.operatorManager.opPrio(oper.text, Operator.YFY);
+                    yfy = this.operatorManager.precedence(oper.text, Operator.YFY);
                     if (yfy < leftSide.priority || yfy > maxPriority) {
                         yfy = -1;
                     }
@@ -238,9 +238,9 @@ public class Parser {
         // 2.left is followed by either xfx, xfy or xf operators, parse these
         Token oper = this.tokenizer.readToken();
         for (; oper.isOperator(commaIsEndMarker); oper = this.tokenizer.readToken()) {
-            int xfx = this.operatorManager.opPrio(oper.text, Operator.XFX);
-            int xfy = this.operatorManager.opPrio(oper.text, Operator.XFY);
-            int xf = this.operatorManager.opPrio(oper.text, Operator.XF);
+            int xfx = this.operatorManager.precedence(oper.text, Operator.XFX);
+            int xfy = this.operatorManager.precedence(oper.text, Operator.XFY);
+            int xf = this.operatorManager.precedence(oper.text, Operator.XF);
 
             // check that no operator has a priority higher than permitted
             // or a lower priority than the left side expression
@@ -310,8 +310,8 @@ public class Parser {
         // 1. prefix expression
         final Token oper = this.tokenizer.readToken();
         if (oper.isOperator(commaIsEndMarker)) {
-            int fx = this.operatorManager.opPrio(oper.text, Operator.FX);
-            int fy = this.operatorManager.opPrio(oper.text, Operator.FY);
+            int fx = this.operatorManager.precedence(oper.text, Operator.FX);
+            int fy = this.operatorManager.precedence(oper.text, Operator.FY);
 
             if (oper.text.equals("-")) {
                 final Token t = this.tokenizer.readToken();

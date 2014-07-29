@@ -32,9 +32,23 @@ import java.util.Map.Entry;
  */
 public class DefaultTermAdapter implements TermAdapter {
 
+    private final TermMapper NOOP_MAPPER = new TermMapper() {
+
+        /**
+         * Identity - return its argument.
+         * @param theTerm
+         * @return theTerm
+         */
+        @Override
+        public Object apply(Object theTerm) {
+            return theTerm;
+        }
+    };
+
+
     private IdentityHashMap<String, Object> predefinedAtoms = null;
 
-    private TermMapper normalizer = new NoopTermMapper();
+    private TermMapper normalizer = NOOP_MAPPER;
 
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override

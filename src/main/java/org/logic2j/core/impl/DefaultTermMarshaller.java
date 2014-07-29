@@ -196,15 +196,15 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     /**
      * Gets the string representation of this term as an X argument of an operator, considering the associative property.
      */
-    private CharSequence toStringAsArgX(Object theTerm, int prio) {
-        return toStringAsArg(theTerm, prio, true);
+    private CharSequence toStringAsArgX(Object theTerm, int precedence) {
+        return toStringAsArg(theTerm, precedence, true);
     }
 
     /**
      * Gets the string representation of this term as an Y argument of an operator, considering the associative property.
      */
-    private CharSequence toStringAsArgY(Object theTerm, int prio) {
-        return toStringAsArg(theTerm, prio, false);
+    private CharSequence toStringAsArgY(Object theTerm, int precedence) {
+        return toStringAsArg(theTerm, precedence, false);
     }
 
     private CharSequence toStringAsList(Struct theStruct) {
@@ -228,7 +228,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         return sb;
     }
 
-    private CharSequence toStringAsArg(Object theTerm, int prio, boolean x) {
+    private CharSequence toStringAsArg(Object theTerm, int precedence, boolean x) {
         if (theTerm instanceof CharSequence) {
             return possiblyQuote((CharSequence) theTerm);
         }
@@ -253,34 +253,34 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
 
         if (arity == 2) {
-            if ((p = operatorManager.opPrio(name, Operator.XFX)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+            if ((p = operatorManager.precedence(name, Operator.XFX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")"
                 : ""));
             }
-            if ((p = operatorManager.opPrio(name, Operator.YFX)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+            if ((p = operatorManager.precedence(name, Operator.YFX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")"
                 : ""));
             }
-            if ((p = operatorManager.opPrio(name, Operator.XFY)) >= Operator.OP_LOWEST) {
+            if ((p = operatorManager.precedence(name, Operator.XFY)) >= Operator.OP_LOWEST) {
                 if (!name.equals(Struct.ARG_SEPARATOR)) {
-                    return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+                    return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")"
                     : ""));
                 }
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + Struct.ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")"
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + Struct.ARG_SEPARATOR + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")"
                 : ""));
             }
         } else if (arity == 1) {
-            if ((p = operatorManager.opPrio(name, Operator.FX)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgX(theStruct.getLHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = operatorManager.precedence(name, Operator.FX)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + name + " " + toStringAsArgX(theStruct.getLHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
             }
-            if ((p = operatorManager.opPrio(name, Operator.FY)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + name + " " + toStringAsArgY(theStruct.getLHS(), p) + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = operatorManager.precedence(name, Operator.FY)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + name + " " + toStringAsArgY(theStruct.getLHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
             }
-            if ((p = operatorManager.opPrio(name, Operator.XF)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = operatorManager.precedence(name, Operator.XF)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
             }
-            if ((p = operatorManager.opPrio(name, Operator.YF)) >= Operator.OP_LOWEST) {
-                return ((((x && p >= prio) || (!x && p > prio)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= prio) || (!x && p > prio)) ? ")" : ""));
+            if ((p = operatorManager.precedence(name, Operator.YF)) >= Operator.OP_LOWEST) {
+                return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
             }
         }
         final StringBuilder sb = new StringBuilder(TermApi.isAtom(name) ? name : "'" + name + "'");

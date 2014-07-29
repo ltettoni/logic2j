@@ -39,9 +39,9 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
      * @throws PrologNonSpecificError
      */
     @Override
-    public void addOperator(String theName, String theAssociativityType, int thePriority) {
-        final Operator op = new Operator(theName, theAssociativityType, thePriority);
-        if (thePriority >= Operator.OP_LOWEST && thePriority <= Operator.OP_HIGHEST) {
+    public void addOperator(String operatorText, String associativity, int precedence) {
+        final Operator op = new Operator(operatorText, associativity, precedence);
+        if (precedence >= Operator.OP_LOWEST && precedence <= Operator.OP_HIGHEST) {
             this.operatorList.addOperator(op);
         } else {
             throw new PrologNonSpecificError("Operator priority not in valid range for " + op);
@@ -49,12 +49,14 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
     }
 
     /**
-     * Returns the priority of an operator (0 if the operator is not defined).
+     * @param operatorText Text representation of the operator
+     * @param associativity
+     * @return the precedence (priority) of an operator (0 if the operator is not defined).
      */
     @Override
-    public int opPrio(String name, String type) {
-        final Operator operator = this.operatorList.getOperator(name, type);
-        return (operator == null) ? 0 : operator.getPrio();
+    public int precedence(String operatorText, String associativity) {
+        final Operator operator = this.operatorList.findOperator(operatorText, associativity);
+        return (operator == null) ? 0 : operator.getPrecedence();
     }
 
     /**
@@ -74,17 +76,22 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
         private final LinkedHashSet<Operator> operators = new LinkedHashSet<Operator>();
 
         public boolean addOperator(Operator op) {
-            final String nameTypeKey = op.getName() + op.getType();
-            final Operator matchingOp = this.nameTypeToKey.get(nameTypeKey);
+            final String key = mapKey(op.getText(), op.getAssociativity());
+            final Operator matchingOp = this.nameTypeToKey.get(key);
             if (matchingOp != null) {
                 this.operators.remove(matchingOp); // removes found match from the main list
             }
-            this.nameTypeToKey.put(nameTypeKey, op); // writes over found match in nameTypeToKey map
+            this.nameTypeToKey.put(key, op); // writes over found match in nameTypeToKey map
             return this.operators.add(op); // adds new operator to the main list
         }
 
-        public Operator getOperator(String name, String type) {
-            return this.nameTypeToKey.get(name + type);
+        public Operator findOperator(String operatorText, String associativity) {
+            final String key = mapKey(operatorText, associativity);
+            return this.nameTypeToKey.get(key);
+        }
+
+        private String mapKey(String operatorText, String associativity) {
+            return operatorText + associativity;
         }
     }
 

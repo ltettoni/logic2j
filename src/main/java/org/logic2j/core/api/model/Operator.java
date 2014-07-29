@@ -20,8 +20,8 @@ package org.logic2j.core.api.model;
 import java.io.Serializable;
 
 /**
- * Copied from tuProlog sources.
- * This class defines a tuProlog operator, in terms of a name, a type, and a priority.
+ * Copied from tuProlog sources, then refactored a little.
+ * This class defines a tuProlog operator, in terms of a text, a associativity, and a priority.
  */
 public final class Operator implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -36,24 +36,24 @@ public final class Operator implements Serializable {
     public static final String YFX = "yfx"; // infix left-associative +, -, *
     public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
 
-    /** highest operator priority */
+    /** highest operator precedence */
     public static final int OP_HIGHEST = 1200;
-    /** lowest operator priority */
+    /** lowest operator precedence */
     public static final int OP_LOWEST = 1;
 
-    /** operator name */
-    private final String name;
+    /** operator text representation */
+    private final String text;
 
-    /** priority */
-    private final int prio;
+    /** precedence */
+    private final int precedence;
 
     /** xf, yf, fx, fy, xfx, xfy, yfx, (yfy) */
-    private final String type;
+    private final String associativity;
 
-    public Operator(String theName, String theType, int thePrio) {
-        this.name = theName;
-        this.type = theType;
-        this.prio = thePrio;
+    public Operator(String theText, String theAssociativity, int thePrecedence) {
+        this.text = theText;
+        this.associativity = theAssociativity;
+        this.precedence = thePrecedence;
     }
 
     // ---------------------------------------------------------------------------
@@ -61,15 +61,15 @@ public final class Operator implements Serializable {
     // ---------------------------------------------------------------------------
 
 
-    public String getName() {
-        return name;
+    public String getText() {
+        return text;
     }
 
-    public int getPrio() {
-        return prio;
+    public int getPrecedence() {
+        return precedence;
     }
 
-    public String getType() {
-        return type;
+    public String getAssociativity() {
+        return associativity;
     }
 }
