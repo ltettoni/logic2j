@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Convert from Java objects to {@link Term}s, and vice-versa from {@link Term}s to Java objects.
+ * Do not confuse with TermMarshaller and TermUnmarshaller that deal with string conversion (formatting and parsing).
  */
 public interface TermAdapter {
 
