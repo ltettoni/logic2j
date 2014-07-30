@@ -28,7 +28,7 @@ import java.util.Comparator;
  * ('_') name.
  * Note: This class MUST be immutable.
  */
-public final class Var extends Term {
+public final class Var<T> extends Term {
     private static final long serialVersionUID = 1L;
 
     public static final String WHOLE_SOLUTION_VAR_NAME = ".".intern();
@@ -42,16 +42,16 @@ public final class Var extends Term {
     /**
      * Singleton anonymous variable. You can safely compare them with ==.
      */
-    public static final Var ANONYMOUS_VAR = new Var();
+    public static final Var<Void> ANONYMOUS_VAR = new Var<Void>();
 
     /**
      * Singleton "special" var that holds the value of a whole goal.
      */
-    public static final Var WHOLE_SOLUTION_VAR = new Var(WHOLE_SOLUTION_VAR_NAME);
+    public static final Var<?> WHOLE_SOLUTION_VAR = new Var<Object>(WHOLE_SOLUTION_VAR_NAME);
 
-    public static final Comparator<Var> COMPARATOR_BY_NAME = new Comparator<Var>() {
+    public static final Comparator<Var<?>> COMPARATOR_BY_NAME = new Comparator<Var<?>>() {
         @Override
-        public int compare(Var left, Var right) {
+        public int compare(Var<?> left, Var<?> right) {
             return left.getName().compareTo(right.getName());
         }
     };
@@ -101,7 +101,7 @@ public final class Var extends Term {
      *
      * @param original
      */
-    public Var(Var original) {
+    public Var(Var<?> original) {
         if (original.name == Var.ANONYMOUS_VAR_NAME) {
             throw new InvalidTermException("Cannot clone the anonymous variable via a copy constructor!");
         }
@@ -159,7 +159,7 @@ public final class Var extends Term {
         // TODO I'm not actually sure why we do this - we should probably log and identify why this case
         for (final Object term : theCollectedTerms) {
             if (term instanceof Var) {
-                final Var var = (Var) term;
+                final Var<?> var = (Var) term;
                 if (this.getName().equals(var.getName())) {
                     return var;
                 }
@@ -217,7 +217,7 @@ public final class Var extends Term {
         if (!(other instanceof Var)) {
             return false;
         }
-        final Var that = (Var) other;
+        final Var<?> that = (Var) other;
         return this.name == that.name && this.index == that.index; // Names are {@link String#intern()}alized so OK to check by reference
     }
 

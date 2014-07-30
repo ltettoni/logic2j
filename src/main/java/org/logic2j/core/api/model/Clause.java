@@ -44,7 +44,7 @@ public class Clause {
      * All Vars in the clause in an array, indexed by each Var's index (ie Var with getIndex()=N will be located
      * in array element N).
      */
-    private final Var[] indexedVars;
+    private final Var<?>[] indexedVars;
 
     private Object head;
     private Object body;
@@ -67,16 +67,16 @@ public class Clause {
         // Any Clause must be normalized otherwise we won't be able to infer on it!
         this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
         // Store indexedVars into an array, indexed by the var's index
-        final Var[] distinctVars = TermApi.distinctVars(content);
-        this.indexedVars = new Var[distinctVars.length];
-        for (Var distinctVar : distinctVars) {
+        final Var<?>[] distinctVars = TermApi.distinctVars(content);
+        this.indexedVars = new Var<?>[distinctVars.length];
+        for (Var<?> distinctVar : distinctVars) {
             this.indexedVars[distinctVar.getIndex()] = distinctVar;
         }
         initDenormalizedFields();
     }
 
 
-    private Clause(Clause original, Struct cloned, Var[] clonedVars) {
+    private Clause(Clause original, Struct cloned, Var<?>[] clonedVars) {
         this.content = cloned;
         this.indexedVars = clonedVars;
         this.cache = null; // That one should never be modified - we are on a clone
@@ -150,14 +150,14 @@ public class Clause {
 
     private Clause cloneClauseAndRemapIndexes(Clause theClause, UnifyContext currentVars) {
 //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
-        final Var[] originalVars = theClause.indexedVars;
+        final Var<?>[] originalVars = theClause.indexedVars;
         final int nbVars = originalVars.length;
         // Allocate the new indexedVars by cloning the original ones. Index is preserved meaning that
         // when we traverse the original structure and find a Var of index N, we can replace it
         // in the cloned structure by the clonedVar[N]
-        final Var[] clonedVars = new Var[nbVars];
+        final Var<?>[] clonedVars = new Var<?>[nbVars];
         for (int i = 0; i < nbVars; i++) {
-            clonedVars[i] = new Var(originalVars[i]);
+            clonedVars[i] = new Var<Object>(originalVars[i]);
         }
         assert theClause.content instanceof Struct;
         final Struct cloned = cloneStruct((Struct)theClause.content, clonedVars);
@@ -175,7 +175,7 @@ public class Clause {
         return new Clause(theClause, cloned, clonedVars);
     }
 
-    private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
+    private Struct cloneStruct(Struct theStruct, Var<?>[] clonedVars) {
         final Object[] args = theStruct.getArgs();
         final int arity = args.length;
         final Object[] clonedArgs = new Object[arity];
@@ -184,8 +184,8 @@ public class Clause {
             if (arg instanceof Struct) {
                 final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
                 clonedArgs[i] = recursedClonedElement;
-            } else if (arg instanceof Var && arg != Var.ANONYMOUS_VAR) {
-                final int originalVarIndex = ((Var) arg).getIndex();
+            } else if (arg instanceof Var<?> && arg != Var.ANONYMOUS_VAR) {
+                final int originalVarIndex = ((Var<?>) arg).getIndex();
                 clonedArgs[i] = clonedVars[originalVarIndex];
             } else {
                 clonedArgs[i] = arg;

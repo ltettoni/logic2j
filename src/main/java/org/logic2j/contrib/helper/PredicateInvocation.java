@@ -18,6 +18,11 @@
 package org.logic2j.contrib.helper;
 
 
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.impl.PrologImplementation;
+
 import java.util.Arrays;
 
 /**
@@ -26,79 +31,110 @@ import java.util.Arrays;
  *
  * @version $Id$
  */
-public class PredicateInvocation {
+public class PredicateInvocation<T> {
 
-  private final String predicateName;
-  private final String projectionVariable; // What we want to project. Normally one of the arguments.
-  private final Object[] arguments;
+    private Class<? extends T> desiredType;
+    private final String predicateName;
+    private final String projectionVariable; // What we want to project. Normally one of the arguments.
+    private final Object[] arguments;
 
-  /**
-   * Private constructor, application code should use static factories.
-   * @param theProjectionVariable
-   * @param thePredicateName
-   * @param theArguments
-   */
-  private PredicateInvocation(String theProjectionVariable, String thePredicateName, Object... theArguments) {
-    super();
-    this.projectionVariable = theProjectionVariable;
-    this.predicateName = thePredicateName;
-    this.arguments = theArguments;
-  }
-
-
-  
-  
-  /**
-   * Create a PredicateInvocation for checking a goal without obtaining results.
-   * @param thePredicateName
-   * @param theArguments Any objects, the configured TermAdapter will be used.
-   * @return A PredicateInvocation that is not projecting a variable.
-   */
-  public static PredicateInvocation invocation(String thePredicateName, Object... theArguments) {
-    final PredicateInvocation invocation = new PredicateInvocation(null, thePredicateName, theArguments);
-    return invocation;
-  }
-
-  
-  /**
-   * Create a PredicateInvocation for projecting a single variable. This means: give me all X such that predicate(...., X, ...) yields true.
-   * @param theProjectionVariable
-   * @param thePredicateName
-   * @param theArguments May be Object, toString() will be used
-   * @return A PredicateInvocation that is projecting a variable.
-   */
-  public static PredicateInvocation projection(String theProjectionVariable, String thePredicateName, Object... theArguments) {
-    final PredicateInvocation invocation = new PredicateInvocation(theProjectionVariable, thePredicateName, theArguments);
-    // Normally we should (at least) warn if theProjectionVariable does not appear within arguments...
-    return invocation;
-  }
-
-  /**
-   * @return the name of the projectionVariable
-   */
-  public String getProjectionVariable() {
-    return this.projectionVariable;
-  }
-
-  public String getPredicateName() {
-    return predicateName;
-  }
-
-  public Object[] getArguments() {
-    return arguments;
-  }
-
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
-    sb.append('{');
-    if (this.getProjectionVariable()!=null) {
-      sb.append(getProjectionVariable());
-      sb.append('|');
+    /**
+     * Private constructor, application code should use static factories.
+     *
+     * @param theProjectionVariable
+     * @param thePredicateName
+     * @param theArguments
+     */
+    private PredicateInvocation(Class<? extends T> type, String theProjectionVariable, String thePredicateName, Object... theArguments) {
+        super();
+        this.desiredType = type;
+        this.projectionVariable = theProjectionVariable;
+        this.predicateName = thePredicateName;
+        this.arguments = theArguments;
     }
-    sb.append(getPredicateName());
-    sb.append(Arrays.asList(getArguments()));
-    sb.append('}');
-    return sb.toString();
-  }
+
+
+    /**
+     * Create a PredicateInvocation for checking a goal without obtaining results.
+     *
+     * @param thePredicateName
+     * @param theArguments     Any objects, the configured TermAdapter will be used.
+     * @return A PredicateInvocation that is not projecting a variable.
+     */
+    public static <T> PredicateInvocation<T> invocation(Class<? extends T> type, String thePredicateName, Object... theArguments) {
+        final PredicateInvocation invocation = new PredicateInvocation(type, null, thePredicateName, theArguments);
+        return invocation;
+    }
+
+
+    /**
+     * Create a PredicateInvocation for projecting a single variable. This means: give me all X such that predicate(...., X, ...) yields true.
+     *
+     * @param theProjectionVariable
+     * @param thePredicateName
+     * @param theArguments          May be Object, toString() will be used
+     * @return A PredicateInvocation that is projecting a variable.
+     */
+    public static <T> PredicateInvocation<T> projection(Class<? extends T> type, String theProjectionVariable, String thePredicateName, Object... theArguments) {
+        final PredicateInvocation invocation = new PredicateInvocation(type, theProjectionVariable, thePredicateName, theArguments);
+        // Normally we should (at least) warn if theProjectionVariable does not appear within arguments...
+        return invocation;
+    }
+
+    /**
+     * @return the name of the projectionVariable
+     */
+    public String getProjectionVariable() {
+        return this.projectionVariable;
+    }
+
+    public String getPredicateName() {
+        return predicateName;
+    }
+
+    public Object[] getArguments() {
+        return arguments;
+    }
+
+    public Class<? extends T> getDesiredType() {
+        return desiredType;
+    }
+
+    /**
+     * Convert to a term
+     *
+     * @return A single String atom or more likely a Struct
+     */
+    public Object toTerm(PrologImplementation prolog) {
+        final Object[] original = getArguments();
+        if (original.length == 0) {
+            return getPredicateName();
+        }
+        final Object[] parsed = new Object[original.length];
+        for (int i = 0; i < original.length; i++) {
+            if (original[i] instanceof CharSequence) {
+                parsed[i] = prolog.getTermUnmarshaller().unmarshall((CharSequence) original[i]);
+            } else {
+                parsed[i] = prolog.getTermAdapter().term(original[i], TermAdapter.FactoryMode.ANY_TERM);
+            }
+        }
+        final Struct struct = new Struct(getPredicateName(), parsed);
+        return TermApi.normalize(struct);
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
+        sb.append('{');
+        if (this.getProjectionVariable() != null) {
+            sb.append(getProjectionVariable());
+            sb.append('|');
+        }
+        sb.append(getPredicateName());
+        sb.append(Arrays.asList(getArguments()));
+        sb.append('}');
+        return sb.toString();
+    }
+
 }

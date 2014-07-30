@@ -38,7 +38,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
     /**
      * The variable whose value is to extract.
      */
-    private final Var var;
+    private final Var<?> var;
 
     /**
      * The target class, or Object if no conversion is asked.
@@ -58,7 +58,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
      */
     public SingleVarExtractor(Object goal, String varName, Class<? extends T> desiredTypeOfResult) {
         this.goal = goal;
-        final Var found = TermApi.findVar(goal, varName);
+        final Var<?> found = TermApi.findVar(goal, varName);
         if (found == null) {
             throw new MissingSolutionException("No var named \"" + varName + "\" in term " + goal);
         }

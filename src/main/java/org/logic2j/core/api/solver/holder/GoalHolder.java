@@ -55,6 +55,9 @@ public class GoalHolder {
         return listener.getCounter();
     }
 
+    /**
+     * @return Solution to the whole goal. If the goal was a(X), will return a(1), a(2), etc.
+     */
     public SolutionHolder<Object> solution() {
         return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME, Object.class);
     }
@@ -68,8 +71,8 @@ public class GoalHolder {
         return var(varName, Object.class);
     }
 
-    public SolutionHolder<Map<Var, Object>> vars() {
-        return new SolutionHolder<Map<Var, Object>>(this);
+    public SolutionHolder<Map<Var<?>, Object>> vars() {
+        return new SolutionHolder<Map<Var<?>, Object>>(this);
     }
 
     // ---------------------------------------------------------------------------

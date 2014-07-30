@@ -376,7 +376,7 @@ public class Parser {
             if (Var.ANONYMOUS_VAR_NAME.equals(t1.text)) {
                 return Var.ANONYMOUS_VAR;
             }
-            return new Var(t1.text);
+            return new Var<Object>(t1.text);
         }
 
         if (t1.isType(ATOM) || t1.isType(SQ_SEQUENCE) || t1.isType(DQ_SEQUENCE)) {

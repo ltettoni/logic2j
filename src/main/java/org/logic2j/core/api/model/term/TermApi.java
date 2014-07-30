@@ -180,13 +180,13 @@ public final class TermApi {
      * @param theVariableName
      * @return A {@link Var} with the specified name, or null when not found.
      */
-    public static Var findVar(Object theTerm, String theVariableName) {
+    public static Var<?> findVar(Object theTerm, String theVariableName) {
         if (theVariableName==Var.WHOLE_SOLUTION_VAR_NAME) {
             return Var.WHOLE_SOLUTION_VAR;
         }
         if (theTerm instanceof Struct) {
             return ((Struct) theTerm).findVar(theVariableName);
-        } else if (theTerm instanceof Var && ((Var)theTerm).getName()==theVariableName) {
+        } else if (theTerm instanceof Var<?> && ((Var)theTerm).getName()==theVariableName) {
             return (Var) theTerm;
         } else {
             // Not a Term but a plain Java object - no var
@@ -346,7 +346,7 @@ public final class TermApi {
                     result = new Struct("");
                 } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
                     // Use Prolog's convention re variables starting with uppercase or underscore
-                    result = new Var(chars);
+                    result = new Var<Object>(chars);
                 } else {
                     // Otherwise it's an atom
                     // result = new Struct(chars);
@@ -461,14 +461,14 @@ public final class TermApi {
      * @param term
      * @return Array of unique Vars
      */
-    public static Var[] distinctVars(Object term) {
+    public static Var<?>[] distinctVars(Object term) {
         // TODO Does it make sense to use a Map for a few 1-5 vars?
-       final Var[] tempArray = new Var[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
+       final Var<?>[] tempArray = new Var<?>[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
        final int[] nbVars = new int[] {0};
 
         final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
             @Override
-            public Void visit(Var theVar) {
+            public Void visit(Var<?> theVar) {
                 if (theVar != Var.ANONYMOUS_VAR) {
                   // Insert into array (even if may duplicate) - this will act as a sentinel
                   final int highest = nbVars[0];
@@ -504,7 +504,7 @@ public final class TermApi {
             ((Term) term).accept(findVarsVisitor);
         }
         // Now copy the values found as the tempArray
-        final Var[] result = Arrays.copyOf(tempArray, nbVars[0]);
+        final Var<?>[] result = Arrays.copyOf(tempArray, nbVars[0]);
         return result;
     }
 

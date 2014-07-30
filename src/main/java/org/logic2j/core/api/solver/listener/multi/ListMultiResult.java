@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ListMultiResult implements MultiResult {
 
-    final Var var;
+    final Var<?> var;
 
     final List<Long> values;
 
@@ -33,7 +33,7 @@ public class ListMultiResult implements MultiResult {
 
     final Iterator<Long> iter;
 
-    public ListMultiResult(UnifyContext currentVars, Var theVar, List<Long> values) {
+    public ListMultiResult(UnifyContext currentVars, Var<?> theVar, List<Long> values) {
         this.var = theVar;
         this.values = values;
         this.currentVars = currentVars;

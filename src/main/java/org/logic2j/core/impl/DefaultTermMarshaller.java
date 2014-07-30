@@ -63,7 +63,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     // ---------------------------------------------------------------------------
 
     @Override
-    public CharSequence visit(Var theVar) {
+    public CharSequence visit(Var<?> theVar) {
         // logger.info("Visiting: {}", theVar);
         final Object finalValue;
         if (this.currentVars != null) {

@@ -39,9 +39,9 @@ public class TermApiTest {
     @Test
     public void structurallyEquals() {
         // Vars are never structurally equal ...
-        assertFalse(new Var("X").structurallyEquals(new Var("Y")));
-        final Var x1 = new Var("X");
-        final Var x2 = new Var("X");
+        assertFalse(new Var<Object>("X").structurallyEquals(new Var<Object>("Y")));
+        final Var<?> x1 = new Var<Object>("X");
+        final Var<?> x2 = new Var<Object>("X");
         // ... even when they have the same name
         assertFalse(x1.structurallyEquals(x2));
         final Struct s = new Struct("s", x1, x2);
@@ -81,7 +81,7 @@ public class TermApiTest {
         int nbVars;
         nbVars = TermApi.assignIndexes(new Struct("f"), 0);
         assertEquals(0, nbVars);
-        nbVars = TermApi.assignIndexes(new Var("X"), 0);
+        nbVars = TermApi.assignIndexes(new Var<Object>("X"), 0);
         assertEquals(1, nbVars);
         nbVars = TermApi.assignIndexes(Var.ANONYMOUS_VAR, 0);
         assertEquals(0, nbVars);
