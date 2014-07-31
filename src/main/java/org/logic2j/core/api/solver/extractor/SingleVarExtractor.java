@@ -82,14 +82,14 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
             // No need to convert values it will be Struct
         } else {
             reifiedValue = currentVars.reify(var);
-            if (reifiedValue instanceof Term && ! targetClass.isAssignableFrom(reifiedValue.getClass())) {
-                logger.warn("Need type conversion from {} to {}", reifiedValue.getClass(), this.targetClass );
+            if (logger.isDebugEnabled() && reifiedValue instanceof Term && !targetClass.isAssignableFrom(reifiedValue.getClass())) {
+                logger.debug("Will convert solution from {} to {}", reifiedValue.getClass(), this.targetClass);
             }
             if (this.termAdapter != null) {
                 reifiedValue = this.termAdapter.object(reifiedValue, this.targetClass);
             }
         }
-        return (T)reifiedValue;
+        return (T) reifiedValue;
     }
 
 }
