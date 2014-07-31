@@ -21,7 +21,6 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 
 import java.util.*;
@@ -45,6 +44,8 @@ public class DefaultTermAdapter implements TermAdapter {
         }
     };
 
+    // FIXME use the current prolog's configured TermMarshaller, not the default one
+    public static final DefaultTermMarshaller DEFAULT_TERM_MARSHALLER = new DefaultTermMarshaller();
 
     private IdentityHashMap<String, Object> predefinedAtoms = null;
 
@@ -127,28 +128,82 @@ public class DefaultTermAdapter implements TermAdapter {
         return result;
     }
 
+    /**
+     * Default conversion allows for:
+     * - exact matching
+     * - castable interface or subclass
+     * - String and CharSequence
+     * - Enum  (handles exact value 'VAL' that must match Enum.name(), or any_wrapping_functor('VAL')
+     * @param theTerm
+     * @param theTargetClass
+     * @param <T>
+     * @return
+     */
     @Override
     public <T> T object(Object theTerm, Class<T> theTargetClass) {
         if (theTerm==null) {
             // Pass-through for nulls
             return null;
         }
-        final Class<?> clazz = theTerm.getClass();
-        if (theTargetClass.isAssignableFrom(theTerm.getClass())) {
-            // Valid
+        final Class<?> termClass = theTerm.getClass();
+        if (termClass ==theTargetClass) {
+            // Exact class
             return (T)theTerm;
         }
-        if (theTargetClass==String.class) {
-            return (T)String.valueOf(theTerm);
+        if (theTargetClass.isAssignableFrom(termClass)) {
+            // Allowed cast as per class hierarchy or interface implementation
+            return (T)theTerm;
         }
-        if (theTargetClass==CharSequence.class) {
+        if (theTargetClass==String.class || theTargetClass==CharSequence.class) {
+            if (theTerm instanceof Struct) {
+                return (T) DEFAULT_TERM_MARSHALLER.marshall(theTerm).toString();
+            }
             return (T)String.valueOf(theTerm);
         }
         if (theTerm instanceof Struct && theTargetClass==List.class) {
             final Collection<?> collection = ((Struct) theTerm).javaListFromPList(null, Object.class);
             return (T)collection;
         }
-        throw new UnsupportedOperationException("Cannot convert term of " + clazz + " to " + theTargetClass);
+        // Now these conversions are getting a bit rare. Prepare error message it's likely we end up in error
+        final String termDescription = "term \"" + theTerm + "\" of " + termClass;
+        final String message = "Cannot convert " + termDescription + " to " + theTargetClass;
+
+
+        if (Enum.class.isAssignableFrom(theTargetClass)) {
+            if (theTargetClass == Enum.class) {
+                throw new IllegalArgumentException(message + ": converting to any Enum will require a custom TermAdapter, " + this + " cannot guess your intended Enum class");
+            }
+
+            // For converting to Enum, we expect that theTerm will match the name() of the target Enum.
+            // We will allow theTerm to be either the exact atom (eg 'VAL'), or
+            // a struct/1 with any functor and the value, (eg my_enum_type_ignored('VAL')).
+            // The reason is for consistency with the cases when the Prolog will return an enum value of a class that
+            // Java cannot pre-determine. In that case user has to override this method in a dedicated TermAdapter,
+            // and lookup the effective enum from the specified functor.
+
+            final String effectiveEnumName;
+            if (theTerm instanceof String) {
+                effectiveEnumName = theTerm.toString();
+            } else if (theTerm instanceof Struct) {
+                Struct s = (Struct)theTerm;
+                if (s.getArity()!=1) {
+                    throw new IllegalArgumentException(message + ": if a Struct is passed, arity must be 1, was " + s.getArity());
+                }
+                effectiveEnumName = s.getArg(0).toString();
+            } else {
+                throw new IllegalArgumentException(message + ": converting to an Enum requires either an atom or a struct of arity=1");
+            }
+
+
+            final Enum[] enumConstants = ((Class<Enum>) theTargetClass).getEnumConstants();
+            for (Enum c: enumConstants) {
+                if (c.name().equals(effectiveEnumName)) {
+                    return (T)c;
+                }
+            }
+            throw new IllegalArgumentException(message + ": no such enum value");
+        }
+        throw new UnsupportedOperationException(message);
     }
 
     /**
@@ -167,5 +222,10 @@ public class DefaultTermAdapter implements TermAdapter {
 
     public void setNormalizer(TermMapper normalizer) {
         this.normalizer = normalizer;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
     }
 }
