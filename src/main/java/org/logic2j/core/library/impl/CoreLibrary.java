@@ -513,7 +513,6 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive(name = "+")
     public Object plus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_PLUS);
     }
 
@@ -527,7 +526,6 @@ public class CoreLibrary extends LibraryBase {
     @Primitive(name = "-")
     public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_MINUS);
-
     }
 
     /**
@@ -539,7 +537,6 @@ public class CoreLibrary extends LibraryBase {
     @Primitive(name = "*")
     public Object multiply(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGRATION_TIMES);
-
     }
 
     /**
@@ -551,7 +548,6 @@ public class CoreLibrary extends LibraryBase {
     @Primitive(name = "-")
     public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1) {
         return binaryFunctor(theListener, currentVars, t1, 0L, AGGREGATION_NEGATE);
-
     }
 
 
