@@ -121,7 +121,7 @@ public class Parser {
             }
 
             if (endNeeded && this.tokenizer.readToken().getType() != MaskConstants.END) {
-                throw new InvalidTermException("The term " + term + " is not ended with a period.");
+                throw new InvalidTermException("The term \"" + term + "\" must be terminated with a '.'");
             }
 
             return term;
@@ -131,7 +131,7 @@ public class Parser {
           if (this.reader instanceof LineNumberReader) {
             LineNumberReader lnr = (LineNumberReader)this.reader;
             int lineNumber = lnr.getLineNumber();
-            throw new InvalidTermException("Error on line " + lineNumber + ": " + e.getMessage());
+            throw new InvalidTermException("Error at line " + lineNumber + ": " + e.getMessage());
           }
           throw e;
         }
@@ -452,7 +452,7 @@ public class Parser {
             this.tokenizer.unreadToken(t);
             return Struct.createPList(head, Struct.EMPTY_LIST);
         }
-        throw new InvalidTermException("The expression: \"" + head + "\" is not followed by either a ',' or '|'  or ']'.");
+        throw new InvalidTermException("The expression \"" + head + "\" is not followed by either a ',' or '|'  or ']'.");
     }
 
     private LinkedList<Object> exprA0_arglist() throws InvalidTermException, IOException {
@@ -469,7 +469,7 @@ public class Parser {
             l.add(head);
             return l;
         }
-        throw new InvalidTermException("The argument: \"" + head + "\" is not followed by either a ',' or ')'; at line: " + this.tokenizer.lineno());
+        throw new InvalidTermException("The expression \"" + head + "\" is not followed by either a ',' or ')'");
     }
 
     // commodity methods to parse numbers
