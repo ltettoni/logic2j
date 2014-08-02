@@ -153,7 +153,8 @@ public abstract class PrologTestBase {
     }
 
     /**
-     * Solves once to calculate result size.
+     * Solves once to calculate result size. So watch out this may trigger one extra solution in case you follow this
+     * call by obtaining a particular variable value - the engine will run twice!
      * @param theNumber
      * @param theGoals
      * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
