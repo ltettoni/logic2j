@@ -240,7 +240,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation atomic(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
         final Object value = currentVars.reify(theTerm);
-        ensureBindingIsNotAFreeVar(value, "atomic/1");
+        ensureBindingIsNotAFreeVar(value, "atomic/1", 0);
         if (value instanceof Struct || value instanceof Number) {
             return notifySolution(theListener, currentVars);
         }
@@ -250,7 +250,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation number(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
         final Object value = currentVars.reify(theTerm);
-        ensureBindingIsNotAFreeVar(value, "number/1");
+        ensureBindingIsNotAFreeVar(value, "number/1", 0);
         if (value instanceof Number) {
             return notifySolution(theListener, currentVars);
         }
@@ -291,7 +291,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation atom_length(SolutionListener theListener, UnifyContext currentVars, Object theAtom, Object theLength) {
         final Object value = currentVars.reify(theAtom);
-        ensureBindingIsNotAFreeVar(value, "atom_length/2");
+        ensureBindingIsNotAFreeVar(value, "atom_length/2", 0);
         final String atomText = value.toString();
         final Long atomLength = (long) atomText.length();
         return unify(theListener, currentVars, atomLength, theLength);
@@ -351,7 +351,7 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation length(SolutionListener theListener, UnifyContext currentVars, Object theList, Object theLength) {
         final Object value = currentVars.reify(theList);
-        ensureBindingIsNotAFreeVar(value, "length/2");
+        ensureBindingIsNotAFreeVar(value, "length/2", 0);
         if (!TermApi.isList(value)) {
             throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
         }
@@ -396,7 +396,7 @@ public class CoreLibrary extends LibraryBase {
         if (predicateValue instanceof Var) {
             // thePredicate is still free, going ot match from theList
             final Object listValue = currentVars.reify(theList);
-            ensureBindingIsNotAFreeVar(listValue, "=../2");
+            ensureBindingIsNotAFreeVar(listValue, "=../2", 1);
             final Struct lst2 = (Struct) listValue;
             final Struct flattened = lst2.predicateFromPList();
 
@@ -420,7 +420,7 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive
     public Continuation is(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-        final Object evaluated = evaluate(currentVars, t2);
+        final Object evaluated = TermApi.evaluate(t2, currentVars);
         if (evaluated == null) {
             // No solution
             return Continuation.CONTINUE;
@@ -447,8 +447,8 @@ public class CoreLibrary extends LibraryBase {
      * @return The {@link Continuation} as returned by the solution notified.
      */
     private Continuation binaryComparisonPredicate(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2, ComparisonFunction theEvaluationFunction) {
-        final Object effectiveT1 = evaluate(currentVars, t1);
-        final Object effectiveT2 = evaluate(currentVars, t2);
+        final Object effectiveT1 = TermApi.evaluate(t1, currentVars);
+        final Object effectiveT2 = TermApi.evaluate(t2, currentVars);
         Continuation continuation = Continuation.CONTINUE;
         if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
             final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
@@ -500,8 +500,8 @@ public class CoreLibrary extends LibraryBase {
     }
 
     private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, UnifyContext currentVars, Object theTerm1, Object theTerm2, AggregationFunction theEvaluationFunction) {
-        final Object t1 = evaluate(currentVars, theTerm1);
-        final Object t2 = evaluate(currentVars, theTerm2);
+        final Object t1 = TermApi.evaluate(theTerm1, currentVars);
+        final Object t2 = TermApi.evaluate(theTerm2, currentVars);
         if (t1 instanceof Number && t2 instanceof Number) {
             if (t1 instanceof Long && t2 instanceof Long) {
                 return theEvaluationFunction.apply((Number) t1, (Number) t2).longValue();
@@ -548,12 +548,5 @@ public class CoreLibrary extends LibraryBase {
     @Primitive(name = "-")
     public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1) {
         return binaryFunctor(theListener, currentVars, t1, 0L, AGGREGATION_NEGATE);
-    }
-
-
-    private Object evaluate(UnifyContext currentVars, Object t1) {
-        final Object reify = currentVars.reify(t1);
-        final Object evaluate = TermApi.evaluate(reify, currentVars);
-        return evaluate;
     }
 }

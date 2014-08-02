@@ -54,8 +54,8 @@ public class AdHocLibraryForTesting extends LibraryBase {
         final Object lowerBound = currentVars.reify(theLowerBound);
         final Object upperBound = currentVars.reify(theUpperBound);
 
-        ensureBindingIsNotAFreeVar(lowerBound, "int_range_classic/3");
-        ensureBindingIsNotAFreeVar(upperBound, "int_range_classic/3");
+        ensureBindingIsNotAFreeVar(lowerBound, "int_range_classic/3", 0);
+        ensureBindingIsNotAFreeVar(upperBound, "int_range_classic/3", 2);
 
         final long lower = ((Number) lowerBound).longValue();
         final long upper = ((Number) upperBound).longValue();
@@ -87,8 +87,8 @@ public class AdHocLibraryForTesting extends LibraryBase {
         final Object iterating = currentVars.reify(theIterable);
         final Object maxBound = currentVars.reify(theMaxBound);
 
-        ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3");
-        ensureBindingIsNotAFreeVar(maxBound, "int_range_classic/3");
+        ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3", 0);
+        ensureBindingIsNotAFreeVar(maxBound, "int_range_classic/3", 2);
 
         final long min = ((Number) minBound).longValue();
         final long max = ((Number) maxBound).longValue();

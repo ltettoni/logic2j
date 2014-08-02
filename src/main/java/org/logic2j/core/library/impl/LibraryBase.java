@@ -73,10 +73,11 @@ public class LibraryBase implements PLibrary {
      * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
      * @throws org.logic2j.core.api.model.exception.InvalidTermException
      */
-    protected void ensureBindingIsNotAFreeVar(Object term, String nameOfPrimitive) {
+    protected void ensureBindingIsNotAFreeVar(Object term, String nameOfPrimitive, int indexOfArg) {
         if (term instanceof Var) {
             // TODO Should be a kind of InvalidGoalException instead?
-            throw new InvalidTermException("Cannot call primitive " + nameOfPrimitive + " with a Variable that is free");
+            final int positionOfArgument = indexOfArg + 1;
+            throw new InvalidTermException("Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
         }
     }
 

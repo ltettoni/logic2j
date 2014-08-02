@@ -76,7 +76,7 @@ public class RDBLibrary extends LibraryBase {
     final DataSource ds = bound(theDataSource, currentVars, DataSource.class);
 
       final Object finalExpression = currentVars.reify(theExpression);
-      ensureBindingIsNotAFreeVar(finalExpression, "select/*");
+      ensureBindingIsNotAFreeVar(finalExpression, "select/*", 1);
       final Struct conditions = (Struct) finalExpression;
 
     // Options
@@ -352,7 +352,7 @@ public class RDBLibrary extends LibraryBase {
    */
   private <T> T bound(Object theBinding, UnifyContext currentVars, Class<T> desiredClassOrInterface) {
       final Object value = currentVars.reify(theBinding);
-      ensureBindingIsNotAFreeVar(value, "bound/1");
+      ensureBindingIsNotAFreeVar(value, "bound/1", 0);
       final String bindingName = String.valueOf(value);
 
     final Object instance = PojoLibrary.extract(bindingName);

@@ -111,7 +111,7 @@ public class PojoLibrary extends LibraryBase {
     @Primitive
     public Continuation bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
         final Object nameTerm = currentVars.reify(theBindingName);
-        ensureBindingIsNotAFreeVar(nameTerm, "bind/2");
+        ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
 
         final String name = nameTerm.toString();
         final Object instance = extract(name);
@@ -123,10 +123,10 @@ public class PojoLibrary extends LibraryBase {
     public Continuation property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
         final Object pojo = currentVars.reify(thePojo);
-        ensureBindingIsNotAFreeVar(pojo, "property/3");
+        ensureBindingIsNotAFreeVar(pojo, "property/3", 0);
         // Second argument
         final Object propertyName = currentVars.reify(thePropertyName);
-        ensureBindingIsNotAFreeVar(propertyName, "property/3");
+        ensureBindingIsNotAFreeVar(propertyName, "property/3", 1);
         //
         Object javaValue = introspect(pojo, (String)propertyName);
         if (javaValue == null) {
