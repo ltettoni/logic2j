@@ -239,7 +239,9 @@ public final class TermApi {
     //---------------------------------------------------------------------------
 
     /**
-     * Evaluates an expression. Returns null value if the argument is not an evaluable expression
+     * Evaluates an expression if its reified value is a functor and there's a primitive
+     * defined for it.
+     * @return null if the argument is not an evaluable expression
      */
     public static Object evaluate(Object theTerm, UnifyContext currentVars) {
         if (theTerm == null) {
@@ -247,6 +249,7 @@ public final class TermApi {
         }
         theTerm = currentVars.reify(theTerm);
         if (theTerm instanceof Var) {
+            // Free var
             return null;
         }
 
