@@ -46,14 +46,14 @@ public class IOLibrary extends LibraryBase {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
-        if (theMethodName == "nolog") {
-            result = nolog(theListener, currentVars, args);
-        } else if (theMethodName == "write") {
+        if (theMethodName == "write") {
             result = write(theListener, currentVars, args);
+        } else if (theMethodName == "nolog") {
+            result = nolog(theListener, currentVars, args);
+        } else if (theMethodName == "debug") {
+            result = debug(theListener, currentVars, args);
         } else if (theMethodName == "info") {
             result = info(theListener, currentVars, args);
-        } else if (theMethodName == "isDebug") {
-            result = debug(theListener, currentVars, args);
         } else if (theMethodName == "warn") {
             result = warn(theListener, currentVars, args);
         } else if (theMethodName == "error") {
@@ -121,12 +121,14 @@ public class IOLibrary extends LibraryBase {
 
     private String formatForLog(UnifyContext currentVars, Object... terms) {
         final StringBuilder sb = new StringBuilder("P ");
+        int i=0;
         for (final Object term : terms) {
             Object value = currentVars.reify(term);
-            ensureBindingIsNotAFreeVar(value, "log/*");
+            ensureBindingIsNotAFreeVar(value, "log/*", i);
             final String format = getProlog().getTermMarshaller().marshall(value).toString();
             sb.append(format);
             sb.append(' ');
+            i++;
         }
         final String substring = sb.substring(0, sb.length() - 1);
         return substring;
