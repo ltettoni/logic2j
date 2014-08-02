@@ -132,4 +132,13 @@ public class FunctionalTest extends PrologTestBase {
         assertEquals("[a,B,c]", sol.toString("Res"));
     }
 
+
+    @Test
+    public void deleteList() {
+        loadTheoryFromTestResourcesDir("test-functional.pro");
+        assertEquals("[a,b,c,d,b]", uniqueSolution("deletelist([a,b,c,d,b], [], Res)").toString("Res"));
+        assertEquals("[b,d,b]", uniqueSolution("deletelist([a,b,c,d,b], [a,c], Res)").toString("Res"));
+        assertEquals("[a,d]", uniqueSolution("deletelist([a,b,c,d,b], [b,c], Res)").toString("Res"));
+        assertEquals("[]", uniqueSolution("deletelist([a,b,c,d,b], [z,a,b,c,d,b,f], Res)").toString("Res"));
+    }
 }

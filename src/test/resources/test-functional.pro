@@ -147,3 +147,6 @@ sign4(N, Sign) :-
         N < 0 -> Sign=negative ;
         Sign=zero.
 
+% Delete list elements form a list
+
+deletelist(Xs,Ys,Zs) :- findall(A, ( member(A,Xs), \+(member(A,Ys)) ), Zs).
