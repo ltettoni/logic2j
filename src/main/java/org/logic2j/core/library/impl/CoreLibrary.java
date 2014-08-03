@@ -34,6 +34,8 @@ import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.library.Primitive;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * Provide the core primitives of the Prolog language.
@@ -193,6 +195,8 @@ public class CoreLibrary extends LibraryBase {
             final Object arg2 = goalStructArgs[2];
             if (theMethodName == "findall") {
                 result = findall(theListener, currentVars, arg0, arg1, arg2);
+            } else if (theMethodName == "setof") {
+                result = setof(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -318,6 +322,32 @@ public class CoreLibrary extends LibraryBase {
     @Primitive
     public Continuation findall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
         final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
+        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
+
+            @Override
+            public Continuation onSolution(UnifyContext currentVars) {
+                final Object templateReified = currentVars.reify(theTemplate);
+                javaResults.add(templateReified);
+                return Continuation.CONTINUE;
+            }
+        };
+        // Now solve the target sub goal
+        getProlog().getSolver().solveGoal(theGoal, currentVars, listenerForSubGoal);
+
+        // Convert all results into a prolog list structure
+        // Note on var indexes: all variables present in the projection term will be
+        // copied into the resulting plist, so there's no need to reindex.
+        // However, the root level Struct that makes up the list does contain a bogus
+        // index value but -1.
+        final Struct plist = Struct.createPList(javaResults);
+
+        // And unify with result
+        return unify(theListener, currentVars, theResult, plist);
+    }
+
+    @Primitive
+    public Continuation setof(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
+        final LinkedHashSet<Object> javaResults = new LinkedHashSet<Object>(100); // Our internal collection of results
         final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
             @Override
