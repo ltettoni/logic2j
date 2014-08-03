@@ -339,10 +339,10 @@ public class Solver {
                         // we deal with that here.
                         // Any other solution (much) welcome.
                         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        if (newGoalTerm instanceof Struct) {
-                            final String bodyFunctor = ((Struct) newGoalTerm).getName();
-                            if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
-                                if (continuation == Continuation.CUT) {
+                        if (continuation == Continuation.CUT) {
+                            if (newGoalTerm instanceof Struct) {
+                                final String bodyFunctor = ((Struct) newGoalTerm).getName();
+                                if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
                                     result = Continuation.CUT;
                                 }
                             }
