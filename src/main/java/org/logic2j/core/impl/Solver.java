@@ -105,6 +105,18 @@ public class Solver {
         if (goalTerm instanceof String) {
             // Yet we are not capable of handing String everywhere below - so use a Struct atom still
             goalStruct = new Struct((String) goalTerm);
+        /* Prototype code - does actually not work but could
+        } else if (goalTerm instanceof Var<?>) {
+            // Crazy we, we allow a single Var to be considered as a goal - just assuming it is bound to a Struct
+            final Object goalReified = currentVars.reify(goalTerm);
+            if (goalReified instanceof Var<?>) {
+                throw new UnsupportedOperationException("A free variable cannot be used as a goal in a rule: \"" + goalTerm + '"');
+            }
+            if (! (goalReified instanceof Struct)) {
+                throw new UnsupportedOperationException("Vars used as a goal must always be bound to a Struct, was: \"" + goalReified + '"');
+            }
+            goalStruct = (Struct) goalReified;
+        */
         } else {
             goalStruct = (Struct) goalTerm;
         }
