@@ -39,13 +39,14 @@ public class PrologReferenceImplementation implements PrologImplementation {
      */
     public enum InitLevel {
         /**
-         * A completely bare prolog engine, not functional for running programs (misses base predicates such as true/1, fail/1, !/1 (cut),
-         * =/2, call/1, not/1, etc. But unification and inference of user predicates do work. No libraries loaded at all.
+         * A completely bare prolog engine, not functional for running programs (misses core predicates such as true/1, fail/1, !/1 (cut),
+         * =/2, call/1, not/1, etc. Yet unification and inference of user predicates will work. No libraries loaded at all.
          */
         L0_BARE,
         /**
-         * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.CoreLibrary}, containing (among others), core predicates such as
-         * true/1, fail/1, !/1 (cut), =/2, call/1, not/1, etc.
+         * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.CoreLibrary},
+         * containing (among others), core predicates such as
+         * true/1, fail/1, !/1 (cut), =/2, call/1, not/1, findall/3, etc.
          */
         L1_CORE_LIBRARY,
         /**
