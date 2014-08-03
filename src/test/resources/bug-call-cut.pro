@@ -25,7 +25,7 @@ a(2).
 
 % with tuProlog, yields 4 solutions
 % with logic2j, used to yield only one solution
-exists(P) :- P, !.  % call(P), !.
+exists(P) :- call(P), !.
 
 
 % This was working with both tuProlog and logic2j.
