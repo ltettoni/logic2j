@@ -214,7 +214,7 @@ public class Solver {
             // Functionally, this code may be removed
 
             // Cut IS a valid solution in itself. We just ignore what the application asks (via return value) us to do next.
-            /* Signalling one valid solution, but ignoring return value */ theSolutionListener.onSolution(currentVars);
+            theSolutionListener.onSolution(currentVars);  // Signalling one valid solution, but ignoring return value
 
             // Stopping there for this iteration
             result = Continuation.CUT;
@@ -327,7 +327,7 @@ public class Solver {
                         }
                         if (continuation == Continuation.USER_ABORT) {
                             // TODO should we just "return" from here - yet we are not frequently here
-                            result = Continuation.USER_ABORT;
+                            result = continuation;
                         }
 
                         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -344,12 +344,22 @@ public class Solver {
                             if (newGoalTerm instanceof Struct) {
                                 final String bodyFunctor = ((Struct) newGoalTerm).getName();
                                 if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
-                                    result = Continuation.CUT;
+                                    // We reached a body that is just a CUT
+                                    // Or a body that is a, b, !, c  [structured as ,( ,( ,(a b) !), c) ]
+                                    // In both cases we have to abort this level of solving
+                                    result = continuation;
+                                } else {
+                                    // We are in a situation such as :   main :- sub.
+                                    // and while solving sub, somewhere, we encountered a CUT that has been already properly
+                                    // handled in the solveGoalRecursive() above.
+                                    // Now that cut within the "sub" does NOT mean that we have to abort solving our "main"
+                                    // So we do NOT set the result to count, we will continue with the next clause whose head is "main" (if any)
                                 }
+                            } else {
+                                assert false: "Won't return CUT when asked for - that's strange";
                             }
                         }
-                    }
-
+                    } // else - is a rule
                 }
             }
             if (isDebug) {
