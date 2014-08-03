@@ -18,11 +18,10 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.core.api.solver.listener.CountingSolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
+import org.logic2j.core.api.unify.UnifyContext;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,6 +29,11 @@ import static org.junit.Assert.assertEquals;
  * Test the cut and user abort features.
  */
 public class ExecutionPruningTest extends PrologTestBase {
+
+    //@After
+    //public void reportProfilingInfo() {
+    //    ProfilingInfo.reportAll("After ExecutionPruningTest test case");
+    //}
 
     @Test
     public void placeholderToReproduceError() {
@@ -96,6 +100,12 @@ public class ExecutionPruningTest extends PrologTestBase {
     public void cut2() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         nSolutions(2, "cut2(X)");
+    }
+
+    @Test
+    public void cut4() {
+        loadTheoryFromTestResourcesDir("test-functional.pro");
+        nSolutions(4, "cut4");
     }
 
     @Test
@@ -181,7 +191,6 @@ public class ExecutionPruningTest extends PrologTestBase {
         nSolutions(0, "pc(X)");
         nSolutions(3, "p(X), X>1");
         nSolutions(1, "a(X), !, cut1(Y)");
-        nSolutions(4, "cut4", "cut4b");
     }
 
     // ---------------------------------------------------------------------------
