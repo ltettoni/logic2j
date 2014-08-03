@@ -166,7 +166,12 @@ public class DefaultTermAdapter implements TermAdapter {
         }
         // Now these conversions are getting a bit rare. Prepare error message it's likely we end up in error
         final String termDescription = "term \"" + theTerm + "\" of " + termClass;
-        final String message = "Cannot convert " + termDescription + " to " + theTargetClass;
+        String adapterInstanceName = this.toString();
+        // For anonymous classes we end up with "" !
+        if (adapterInstanceName.isEmpty()) {
+            adapterInstanceName = TermAdapter.class.getSimpleName();
+        }
+        final String message = adapterInstanceName + " cannot convert " + termDescription + " to " + theTargetClass;
 
 
         if (Enum.class.isAssignableFrom(theTargetClass)) {
