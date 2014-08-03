@@ -486,7 +486,6 @@ public final class TermApi {
                     // Was not present already - let's use the sentinel as a real value - increment size of found vars
                     nbVars[0]++;
                   } // Else: already present - leave the sentinel there we don't care but don't consider it as a new value
-                  ProfilingInfo.counter1++;
                 }
                 return null;
             }
