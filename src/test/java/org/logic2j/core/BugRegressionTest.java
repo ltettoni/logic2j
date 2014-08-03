@@ -48,4 +48,13 @@ public class BugRegressionTest extends PrologTestBase {
         uniqueSolution("Free=X, X=Free");
     }
 
+    @Test
+    public void butWithCutAfterCall() {
+        loadTheoryFromTestResourcesDir("bug-call-cut.pro");
+        // Correct behaviour
+        nSolutions(4, "setof(X,a(X), L), member(E, L), existsOk(a(E))");
+        // Used to return only one solution!
+        nSolutions(4, "setof(X,a(X), L), member(E, L), exists(a(E))");
+    }
+
 }
