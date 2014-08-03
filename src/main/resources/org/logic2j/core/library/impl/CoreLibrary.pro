@@ -30,6 +30,10 @@ append([E|T1],L2,[E|T2]):- append(T1,L2,T2).
 takeout(X, [X|R], R).
 takeout(X, [F|R], [F|S]) :- takeout(X,R,S).
 
+% Delete list elements form a list
+deletelist(AllElements,ToRemove,RemainingElements) :- findall(A, ( member(A,AllElements), \+(member(A,ToRemove)) ), RemainingElements).
+
+
 reverse([X|Y],Z,W) :- reverse(Y,[X|Z],W).
 reverse([],X,X).
 
