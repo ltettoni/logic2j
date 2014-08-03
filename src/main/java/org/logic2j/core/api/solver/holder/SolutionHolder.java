@@ -25,8 +25,7 @@ import org.logic2j.core.api.solver.listener.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Launch the solver with appropriate SolutionListener o obtain what the user asks:
@@ -146,12 +145,35 @@ public class SolutionHolder<T> implements Iterable<T> {
 
     /**
      * Launches the solver.
-     * @return
+     * @return an ordered List of solutions.
      */
     public List<T> list() {
         initListenerRangesAndSolve(this.minNbr, this.maxNbr, this.maxNbr + 1);
         return (List<T>) rangeListener.getResults();
     }
+
+
+    /**
+     * Launches the solver and collect solutions into a user-specified collection
+     * @param theTargetToAddTo The target collection (with user-defined semantics) where all solutions should be added to.
+     * @return the argument "theTargetToAddTo"
+     */
+    public <Q extends Collection<T>> Q addTo(Q theTargetToAddTo) {
+        // We could have used "this" (which is an Iterable) instead of list(), but this uses two threads and is less efficient
+        // than storing all in memory
+        theTargetToAddTo.addAll(list());
+        return theTargetToAddTo;
+    }
+
+
+    /**
+     * Launches the solver.
+     * @return a distinct Set of solutions in a HashSet.
+     */
+    public Set<T> set() {
+        return new HashSet<T>(list());
+    }
+
 
 
     public <ArrayType> ArrayType[] array(ArrayType[] destinationArray) {
