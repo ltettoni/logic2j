@@ -210,11 +210,12 @@ public class Solver {
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
-            // Doing it inline might improve performance a little although I did not measure much
+            // Doing it inline might improve performance a little although I did not measure much difference.
             // Functionally, this code may be removed
 
-            // Cut IS a valid solution in itself. We just ignore what the app tells us to do next.
-            theSolutionListener.onSolution(currentVars);
+            // Cut IS a valid solution in itself. We just ignore what the application asks (via return value) us to do next.
+            /* Signalling one valid solution, but ignoring return value */ theSolutionListener.onSolution(currentVars);
+
             // Stopping there for this iteration
             result = Continuation.CUT;
         } else if (prim != null) {
@@ -314,8 +315,8 @@ public class Solver {
                             result = continuation;
                         }
                     } else {
-                        // Not a fact, it's a theorem - it has a body
-                        final Object newGoalTerm = clauseBody;
+                        // Not a fact, it's a theorem - it has a body - the body becomes our new goal
+                        final Object newGoalTerm = clauseBody; // Will mostly be Struct, but may be String
                         if (isDebug) {
                             logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
                         }
@@ -339,7 +340,7 @@ public class Solver {
                         // we deal with that here.
                         // Any other solution (much) welcome.
                         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        if (continuation == Continuation.CUT) {
+                        if (continuation == Continuation.CUT) { // Recursive solving of children got a CUT
                             if (newGoalTerm instanceof Struct) {
                                 final String bodyFunctor = ((Struct) newGoalTerm).getName();
                                 if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {

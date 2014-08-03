@@ -262,7 +262,7 @@ public class CoreLibrary extends LibraryBase {
     }
 
     /**
-     * Note: this implmentation is valid, yet may be bypassed by a "native" implementation in {@link org.logic2j.core.impl.Solver}.
+     * Note: this implementation is valid, yet is bypassed by a "native" implementation in {@link org.logic2j.core.impl.Solver}.
      *
      * @param theListener
      * @param currentVars
@@ -272,7 +272,7 @@ public class CoreLibrary extends LibraryBase {
     public Continuation cut(SolutionListener theListener, UnifyContext currentVars) {
         // This is a complex behaviour - read on DefaultSolver
         // Cut is a "true" solution to a goal, just notify one as such
-        notifySolution(theListener, currentVars);
+        /* Signalling one valid solution, but ignoring return value */ notifySolution(theListener, currentVars);
         return Continuation.CUT;
     }
 
