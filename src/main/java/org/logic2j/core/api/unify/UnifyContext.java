@@ -80,13 +80,18 @@ public class UnifyContext {
      * In principle one must use the recursive form reify()
      *
      * @param theVar
-     * @return
+     * @return The dereferenced content of theVar, or theVar if it was free
      */
     private Object finalValue(Var<?> theVar) {
         final Object dereference = this.impl.dereference(theVar, this.currentTransaction);
         return dereference;
     }
 
+    /**
+     * TBD
+     * @param term
+     * @return The dereferenced content of term, or theVar if it was free
+     */
     public Object reify(Object term) {
         if (term instanceof Var) {
             term = finalValue((Var) term);
