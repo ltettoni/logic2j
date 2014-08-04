@@ -52,9 +52,15 @@ public class BugRegressionTest extends PrologTestBase {
     public void butWithCutAfterCall() {
         loadTheoryFromTestResourcesDir("bug-call-cut.pro");
         // Correct behaviour
-        nSolutions(4, "setof(X,a(X), L), member(E, L), existsOk(a(E))");
+        // nSolutions(4, "setof(X,a(X), L), member(E, L), existsOk(a(E))");
         // Used to return only one solution!
-        nSolutions(4, "setof(X,a(X), L), member(E, L), exists(a(E))");
+        // nSolutions(4, "setof(X,a(X), L), member(E, L), exists(a(E))");
+
+
+        //nSolutions(2, "member(E, [1,2]), existsOk(a(E))");
+        //nSolutions(2, "member(E, [1,2]), existsKo1(a(E))");
+        nSolutions(2, "member(E, [1,2]), existsKo2(a(E))");
+
     }
 
 }
