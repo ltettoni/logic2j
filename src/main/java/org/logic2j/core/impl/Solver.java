@@ -91,9 +91,17 @@ public class Solver {
         return initialContext;
     }
 
+    /**
+     * That's the complex method - the heart of the Solver.
+     * @param goalTerm
+     * @param currentVars
+     * @param theSolutionListener
+     * @return
+     */
     Continuation solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
+        final long inferenceCounter = ProfilingInfo.nbInferences;
         if (isDebug) {
-            logger.debug(">> Entering solveRecursive(\"{}\")", goalTerm);
+            logger.debug("-->> Entering solveRecursive#{}, reifiedGoal = {}", inferenceCounter, currentVars.reify(goalTerm));
         }
         if (PrologReferenceImplementation.PROFILING) {
             ProfilingInfo.nbInferences++;
@@ -126,11 +134,21 @@ public class Solver {
         final String functor = goalStruct.getName();
         final int arity = goalStruct.getArity();
 
-        // Check if goal is a system predicate or a simple one to match against the theory
+        // First we will check the goal against core predicates such as
+        // AND (","), OR (";"), CUT ("!") and CALL
+        // Then we will check if the goal is a Primitive implemented in a Java library
+        // Finally we will handle classic goals matched against Prolog theories
+
         if (Struct.FUNCTOR_COMMA == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            // Logical AND. Typically the arity=2 since "," is a binary predicate. But in logic2j we allow more.
+            // Logical AND. Typically the arity=2 since "," is a binary predicate. But in logic2j we allow more, the same code supports both.
+
+            // Algorithm: for the sequential AND of N goals G1,G2,G3,...,GN, we defined N-1 listeners, and solve G1 against
+            // the first listener: all solutions to G1, will be escalated to that listener that handles G2,G3,...,GN
+            // Then that listener will solve G2 against the listener for (G3,...,GN). Finally GN will solve against the
+            // "normal" listener received as argument (hence propagating the ANDed solution to our caller).
+
             final SolutionListener[] andingListeners = new SolutionListener[arity];
-            // The last listener is the one that called us (typically the one of the application, if this is the outmost "AND")
+            // The last listener is the one that called us (typically the one of the application, if this is the outermost "AND")
             andingListeners[arity - 1] = theSolutionListener;
             // Allocates N-1 andingListeners, usually this means one.
             // On solution, each will trigger solving of the next term
@@ -145,11 +163,11 @@ public class Solver {
 
                     @Override
                     public Continuation onSolution(UnifyContext currentVars) {
-                        if (isDebug) {
-                            logger.debug("ANDing internal solution listener called for {}", lhs);
-                        }
                         final int nextIndex = index + 1;
                         final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
+                        if (isDebug) {
+                            logger.debug(this + ": onSolution() called; will now solve: {}", rhs);
+                        }
                         final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex]);
                         return continuationFromSubGoal;
                     }
@@ -175,6 +193,11 @@ public class Solver {
                         final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, subListener);
                         return continuationFromSubGoal;
                     }
+
+                    @Override
+                    public String toString() {
+                        return "AND sub-listener to " + lhs;
+                    }
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
@@ -199,14 +222,13 @@ public class Solver {
                 }
             }
         } else if (Struct.FUNCTOR_CALL == functor) { // Names are {@link String#intern()}alized so OK to check by reference
-            // TODO call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already
-            // implemented)
+            // TODO call/1 is handled here for efficiency, see if it's really needed we could as well use the Primitive (already implemented)
             if (arity != 1) {
-                throw new InvalidTermException("Primitive 'call' accepts only one argument, got " + arity);
+                throw new InvalidTermException("Primitive \"call\" accepts only one argument, got " + arity);
             }
-            final Object argumentOfCall = goalStruct.getArg(0);
-            final Object argumentOfCall2 = currentVars.reify(argumentOfCall);
-            result = solveGoalRecursive(argumentOfCall2, currentVars, theSolutionListener);
+            final Object callTerm = goalStruct.getArg(0);  // Often a Var
+            final Object realCallTerm = currentVars.reify(callTerm); // The real value of the Var
+            result = solveGoalRecursive(realCallTerm, currentVars, theSolutionListener);
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
@@ -250,7 +272,7 @@ public class Solver {
             }
         }
         if (isDebug) {
-            logger.debug("<< Exit    solveGoalRecursive(\"{}\"), continuation={}", goalTerm, result);
+            logger.debug("<<-- Exiting  solveRecursive#" + inferenceCounter + ", reifiedGoal = {}, continuation={}", currentVars.reify(goalTerm), result);
         }
         return result;
     }
@@ -259,29 +281,30 @@ public class Solver {
     private Continuation solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
 
-
         Continuation result = Continuation.CONTINUE;
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
         final Object[] clauseHeadAndBody = new Object[2];
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
+        // Iterate on providers
+        iterateProviders:
         for (final ClauseProvider provider : providers) {
             final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, currentVars);
             if (matchingClauses == null) {
-                continue;
+                continue iterateProviders;
             }
-            // logger.info("matchingClauses: {}", ((List<?>) matchingClauses).size());
+            // Within one provider, iterate on potentially-matching clauses
             for (final Clause clause : matchingClauses) {
                 if (result == Continuation.CUT) {
                     if (isDebug) {
-                        logger.debug("Current status is {}: stop finding more clauses", result);
+                        logger.debug("Iteration on clauses detected CUT - aborting search for clauses");
                     }
-                    break;
+                    break iterateProviders;
                 }
                 if (result == Continuation.USER_ABORT) {
                     if (isDebug) {
-                        logger.debug("Current status is {}: abort finding more clauses", result);
+                        logger.debug("Iteration on clauses detected USER_ABORT - aborting search for clauses");
                     }
-                    break;
+                    break iterateProviders;
                 }
                 if (isDebug) {
                     logger.debug("Trying clause {}, current status={}", clause, result);
@@ -318,12 +341,12 @@ public class Solver {
                         // Not a fact, it's a theorem - it has a body - the body becomes our new goal
                         final Object newGoalTerm = clauseBody; // Will mostly be Struct, but may be String
                         if (isDebug) {
-                            logger.debug("Clause {} is a theorem whose body is {}", clauseHead, newGoalTerm);
+                            logger.debug("Clause with head={} is a theorem whose body={}", clauseHead, newGoalTerm);
                         }
                         // Solve the body in our current recursion context
                         continuation = solveGoalRecursive(newGoalTerm, varsAfterHeadUnified, theSolutionListener);
                         if (isDebug) {
-                            logger.debug("  back to clause {} with continuation={}", clause, continuation);
+                            logger.debug("  back to having solved theorem's body={} with continuation={}", newGoalTerm, continuation);
                         }
                         if (continuation == Continuation.USER_ABORT) {
                             // TODO should we just "return" from here - yet we are not frequently here
@@ -363,11 +386,11 @@ public class Solver {
                 }
             }
             if (isDebug) {
-                logger.debug("Last Clause of {} iterated", provider);
+                logger.debug("Last Clause of \"{}\" iterated", provider);
             }
         }
         if (isDebug) {
-            logger.debug("Last ClauseProvider iterated");
+            logger.debug("Last ClauseProvider iterated for: {}", goalTerm);
         }
 
         return result;
