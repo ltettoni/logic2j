@@ -529,7 +529,7 @@ public final class Struct extends Term {
      * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
      * @throws PrologNonSpecificError if this is not a prolog list.
      */
-    // FIXME (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
+    // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
     public Struct predicateFromPList() {
         assertPList(this);
         final Object functor = getLHS();

@@ -118,7 +118,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
      * Gets the string representation of this structure
      * <p/>
      * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
-     * FIXME similar if not equal to Struct.formatStruct
+     * TODO Remove if similar if not equal to Struct.formatStruct
      */
     private CharSequence formatStruct(Struct theStruct) {
         // empty list case
@@ -157,7 +157,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         return sb;
     }
 
-    // FIXME similar if not equal to Struct.formatPListRecursive
+    // TODO Remove if similar (if not equal) to Struct.formatPListRecursive
     private CharSequence formatPListRecursive(Struct theStruct) {
         final Object head = theStruct.getLHS();
         final Object tail = theStruct.getRHS();

@@ -1,5 +1,5 @@
 
-% FIXME OLD: only used by mappingTransformer(): remove
+% TODO: only used by mappingTransformer(): remove
 
 % Test mappings and transformations
 

@@ -65,8 +65,7 @@ public class DefaultTheoryManager implements TheoryManager {
 
     @Override
     public TheoryContent load(File theFile) throws IOException {
-        // FIXME Should use a LineNumberReader to improve error reporting further down
-        final FileReader reader = new FileReader(theFile);
+        final FileReader reader = new FileReader(theFile); // Note: the Parser further below will use a LineNumberReader
         try {
             return load(reader);
         } catch (final InvalidTermException e) {

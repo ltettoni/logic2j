@@ -44,7 +44,7 @@ public class DefaultTermAdapter implements TermAdapter {
         }
     };
 
-    // FIXME use the current prolog's configured TermMarshaller, not the default one
+    // FIXME use the current Prolog's configured TermMarshaller, not the default one!
     public static final DefaultTermMarshaller DEFAULT_TERM_MARSHALLER = new DefaultTermMarshaller();
 
     private IdentityHashMap<String, Object> predefinedAtoms = null;
@@ -54,7 +54,7 @@ public class DefaultTermAdapter implements TermAdapter {
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
     public Object term(Object theObject, FactoryMode theMode) {
-        // FIXME TEMPORARY JUST FOR COMPATIBILITY - move this to TermUnmarshaller
+        // TODO Temporary just for compatibility - move this to TermUnmarshaller
         if (theObject instanceof CharSequence) {
             if (theMode == FactoryMode.ATOM) {
                 final String string = theObject.toString();

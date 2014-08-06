@@ -217,7 +217,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
     // TODO This fails with an Exception - check the specification for a proper behaviour should be and fix
-    @Ignore("FIXME This fails with an Exception - check the specification for a proper behaviour should be and fix")
+    @Ignore("TODO This fails with an Exception - check the specification for a proper behaviour should be and fix")
     @Test
     public void atomLengthOnFreeVarWhatShouldItDo() {
         countNoSolution("atom_length(X, 3)");

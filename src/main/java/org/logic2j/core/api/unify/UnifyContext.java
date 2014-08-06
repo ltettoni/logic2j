@@ -37,7 +37,7 @@ public class UnifyContext {
 
     final int currentTransaction;
 
-    // FIXME Make private - only Clause and Solver are using it yet
+    // TODO Make private - only Clause and Solver are using it yet
     public int topVarIndex;  // "top" value is one above the current max
 
     private final UnifyStateByLookup impl;

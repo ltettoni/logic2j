@@ -385,7 +385,7 @@ public final class TermApi {
      * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
      * @param theClass The {@link Term} class or one of its subclass that the desired returned object should be.
      */
-    // FIXME Should this go to TermAdapter instead? - since we return a new Term
+    // TODO Should this go to TermAdapter instead? - since we return a new Term
     @SuppressWarnings("unchecked")
     public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
         if (theTPathExpression.isEmpty()) {

@@ -51,7 +51,7 @@ public abstract class Term implements Serializable {
      * For {@link Var}s: defines the unique index to the variable.
      * For a {@link Struct}: defines the number of distinct variables within all nested substructures.
      * The default value is NO_INDEX.
-     * FIXME Field must not be public !!!
+     * TODO A field must not be public !!!
      */
     public int index = NO_INDEX;
 

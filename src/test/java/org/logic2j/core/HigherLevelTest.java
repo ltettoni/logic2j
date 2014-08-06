@@ -68,7 +68,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     /**
      * N-Queens problem, lighter ones.
-     * See also {@link #queensHeavier()}
+     * See also {@link #queensHeavierForThePatient()}
      */
     @Test
     public void queensLighter() {
@@ -252,7 +252,8 @@ public class HigherLevelTest extends PrologTestBase {
         // assertEquals("[55]", solutions.var("X").list().toString());
     }
 
-    @Ignore // FIXME No longer works after fixing bugs with CUT
+    // FIXME No longer works after fixing bugs with CUT
+    @Ignore("FIXME No longer works after fixing bugs with CUT")
     @Test
     public void mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pro");
