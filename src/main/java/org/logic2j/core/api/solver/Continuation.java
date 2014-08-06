@@ -36,6 +36,17 @@ public enum Continuation {
     /**
      * A cut "!" has been found - this will prune the search tree to the last solution found.
      */
-    CUT
+    CUT;
+
+    public static Continuation valueOf(int cutIntercepted) {
+        if (cutIntercepted == 0) {
+            return CONTINUE;
+        } else if (cutIntercepted < 0) {
+            return USER_ABORT;
+        } else {
+            // Any cut level > 0
+            return CUT;
+        }
+    }
 
 }
