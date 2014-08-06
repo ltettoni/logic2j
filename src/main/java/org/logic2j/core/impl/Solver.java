@@ -72,8 +72,7 @@ public class Solver {
     }
 
     /**
-     * Just calls the recursive {@link #solveGoalRecursive(Object, org.logic2j.core.api.unify.UnifyContext, org.logic2j.core.api.solver.listener.SolutionListener)} method. The goal to solve
-     * is in the theGoalBindings's referrer.
+     * Just calls the recursive internal method.
      */
     public Continuation solveGoal(Object goal, UnifyContext currentVars, final SolutionListener theSolutionListener) {
         // Check if we will have to deal with DataFacts in this session of solving.
@@ -83,7 +82,8 @@ public class Solver {
                 throw new InvalidTermException("Struct must be normalized before it can be solved: " + goal);
             }
         }
-        return solveGoalRecursive(goal, currentVars, theSolutionListener);
+        final int cutIntercepted = solveGoalRecursive(goal, currentVars, theSolutionListener, 10);
+        return Continuation.valueOf(cutIntercepted);
     }
 
     public UnifyContext initialContext() {
@@ -96,17 +96,19 @@ public class Solver {
      * @param goalTerm
      * @param currentVars
      * @param theSolutionListener
+     * @param cutLevel
      * @return
      */
-    Continuation solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
+    int solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
         final long inferenceCounter = ProfilingInfo.nbInferences;
         if (isDebug) {
             logger.debug("-->> Entering solveRecursive#{}, reifiedGoal = {}", inferenceCounter, currentVars.reify(goalTerm));
+            logger.debug("     cutLevel={}", cutLevel);
         }
         if (PrologReferenceImplementation.PROFILING) {
             ProfilingInfo.nbInferences++;
         }
-        Continuation result = Continuation.CONTINUE;
+        int result = 0;
 
         // At the moment we don't properly manage atoms as goals...
         final Struct goalStruct;
@@ -152,9 +154,6 @@ public class Solver {
             andingListeners[arity - 1] = theSolutionListener;
             // Allocates N-1 andingListeners, usually this means one.
             // On solution, each will trigger solving of the next term
-            if (isDebug) {
-                logger.debug("Handling AND, arity={}", arity);
-            }
             final Object[] goalStructArgs = goalStruct.getArgs();
             final Object lhs = goalStructArgs[0];
             for (int i = 0; i < arity - 1; i++) {
@@ -168,8 +167,8 @@ public class Solver {
                         if (isDebug) {
                             logger.debug(this + ": onSolution() called; will now solve: {}", rhs);
                         }
-                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex]);
-                        return continuationFromSubGoal;
+                        final int continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex], cutLevel);
+                        return Continuation.valueOf(continuationFromSubGoal);
                     }
 
                     @Override
@@ -190,8 +189,8 @@ public class Solver {
                             }
 
                         };
-                        final Continuation continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, subListener);
-                        return continuationFromSubGoal;
+                        final int continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, subListener, cutLevel);
+                        return Continuation.valueOf(continuationFromSubGoal);
                     }
 
                     @Override
@@ -201,11 +200,11 @@ public class Solver {
                 };
             }
             // Solve the first goal, redirecting all solutions to the first listener defined above
-            result = solveGoalRecursive(lhs, currentVars, andingListeners[0]);
-        } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             if (isDebug) {
-                logger.debug("Handling OR, arity={}", arity);
+                logger.debug("Handling AND, arity={}, will now solve lhs={}", arity, currentVars.reify(lhs));
             }
+            result = solveGoalRecursive(lhs, currentVars, andingListeners[0], cutLevel);
+        } else if (Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             /*
             * This is the Java implementation of N-arity OR
             * We can also implement a binary OR directly in Prolog using
@@ -216,8 +215,11 @@ public class Solver {
             for (int i = 0; i < arity; i++) {
                 // Solve all the elements of the "OR", in sequence.
                 // For a binary OR, this means solving the left-hand-side and then the right-hand-side
-                result = solveGoalRecursive(goalStruct.getArg(i), currentVars, theSolutionListener);
-                if (result == Continuation.CUT) {
+                if (isDebug) {
+                    logger.debug("Handling OR, element={} of {}", i, goalStruct);
+                }
+                result = solveGoalRecursive(goalStruct.getArg(i), currentVars, theSolutionListener, cutLevel);
+                if (result != 0) {
                     break;
                 }
             }
@@ -228,7 +230,7 @@ public class Solver {
             }
             final Object callTerm = goalStruct.getArg(0);  // Often a Var
             final Object realCallTerm = currentVars.reify(callTerm); // The real value of the Var
-            result = solveGoalRecursive(realCallTerm, currentVars, theSolutionListener);
+            result = solveGoalRecursive(realCallTerm, currentVars, theSolutionListener, cutLevel);
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
@@ -239,7 +241,7 @@ public class Solver {
             theSolutionListener.onSolution(currentVars);  // Signalling one valid solution, but ignoring return value
 
             // Stopping there for this iteration
-            result = Continuation.CUT;
+            result = cutLevel;
         } else if (prim != null) {
             // ---------------------------------------------------------------------------
             // Primitive implemented in Java
@@ -250,7 +252,12 @@ public class Solver {
 
             switch (prim.getType()) {
                 case PREDICATE:
-                    result = (Continuation) resultOfPrimitive;
+                    final Continuation primitiveContinuation = (Continuation) resultOfPrimitive;
+                    switch (primitiveContinuation)  {
+                        case CONTINUE: result = 0; break;
+                        case USER_ABORT: result = -1; break;
+                        case CUT: result = cutLevel; break;
+                    }
                     break;
                 case FUNCTOR:
                     if (isDebug) {
@@ -265,23 +272,30 @@ public class Solver {
             }
 
         } else {
-            result = solveAgainstClauseProviders(goalTerm, currentVars, theSolutionListener);
+            //---------------------------------------------------------------------------
+            // Regular prolog inference: goal :- subGoal
+            //---------------------------------------------------------------------------
 
-            if (this.hasDataFactProviders && !(result == Continuation.USER_ABORT || result == Continuation.CUT)) {
-                solveAgainstDataProviders(goalTerm, currentVars, theSolutionListener);
+            result = solveAgainstClauseProviders(goalTerm, currentVars, theSolutionListener, cutLevel+1);
+
+            if (this.hasDataFactProviders && result==0) {
+                solveAgainstDataProviders(goalTerm, currentVars, theSolutionListener, cutLevel+1);
             }
         }
         if (isDebug) {
-            logger.debug("<<-- Exiting  solveRecursive#" + inferenceCounter + ", reifiedGoal = {}, continuation={}", currentVars.reify(goalTerm), result);
+            logger.debug("<<-- Exiting  solveRecursive#" + inferenceCounter + ", reifiedGoal = {}, result={}", currentVars.reify(goalTerm), result);
         }
         return result;
     }
 
 
-    private Continuation solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener) {
+    private int solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
+        if (isDebug) {
+            logger.debug(" -->> Enter solveAgainstClauseProviders, cutLevel={}", cutLevel);
+        }
 
-        Continuation result = Continuation.CONTINUE;
+        int result = 0;
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
         final Object[] clauseHeadAndBody = new Object[2];
         final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
@@ -294,63 +308,61 @@ public class Solver {
             }
             // Within one provider, iterate on potentially-matching clauses
             for (final Clause clause : matchingClauses) {
-                if (result == Continuation.CUT) {
+                if (result>0 && result <= cutLevel) {
                     if (isDebug) {
-                        logger.debug("Iteration on clauses detected CUT - aborting search for clauses");
+                        logger.debug(" Iteration on clauses detected CUT of level={} - aborting search for clauses", result);
                     }
                     break iterateProviders;
                 }
-                if (result == Continuation.USER_ABORT) {
+                if (result < 0) {
                     if (isDebug) {
-                        logger.debug("Iteration on clauses detected USER_ABORT - aborting search for clauses");
+                        logger.debug(" Iteration on clauses detected USER_ABORT - aborting search for clauses");
                     }
                     break iterateProviders;
                 }
                 if (isDebug) {
-                    logger.debug("Trying clause {}, current status={}", clause, result);
+                    logger.debug(" Attempting clause {}, current status={}", clause, result);
                 }
 
                 clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
                 final Object clauseHead = clauseHeadAndBody[0];
-
+                /*
                 if (isDebug) {
-                    logger.debug(" Unifying goal  : {}", goalTerm);
-                    logger.debug("  to clause head: {}", clauseHead);
+                    logger.debug("  Unifying goal  : {}", goalTerm);
+                    logger.debug("   to clause head: {}", clauseHead);
                 }
-
+                */
                 final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, clauseHead);
                 final boolean headUnified = varsAfterHeadUnified != null;
-                if (isDebug) {
-                    logger.debug(" headUnified={}", headUnified);
-                }
 
                 if (headUnified) {
-                    final Continuation continuation;
                     final Object clauseBody = clauseHeadAndBody[1];
                     final boolean isFact = clauseBody == null;
                     if (isFact) {
                         if (isDebug) {
-                            logger.debug("{} is a fact, callback one solution", clauseHead);
+                            logger.debug(" Head unified. {} is a fact: notifying one solution", clauseHead);
                         }
                         // Notify one solution, and handle result if user wants to continue or not.
-                        continuation = theSolutionListener.onSolution(varsAfterHeadUnified);
-                        if (continuation == Continuation.CUT || continuation == Continuation.USER_ABORT) {
-                            result = continuation;
+                        final Continuation continuation = theSolutionListener.onSolution(varsAfterHeadUnified);
+                        switch (continuation) {
+                            case CONTINUE: result = 0; break;
+                            case USER_ABORT: result = -1; break;
+                            case CUT: result = cutLevel; break;
                         }
                     } else {
                         // Not a fact, it's a theorem - it has a body - the body becomes our new goal
                         final Object newGoalTerm = clauseBody; // Will mostly be Struct, but may be String
                         if (isDebug) {
-                            logger.debug("Clause with head={} is a theorem whose body={}", clauseHead, newGoalTerm);
+                            logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, newGoalTerm);
                         }
                         // Solve the body in our current recursion context
-                        continuation = solveGoalRecursive(newGoalTerm, varsAfterHeadUnified, theSolutionListener);
+                        int theoremResult = solveGoalRecursive(newGoalTerm, varsAfterHeadUnified, theSolutionListener, cutLevel);
                         if (isDebug) {
-                            logger.debug("  back to having solved theorem's body={} with continuation={}", newGoalTerm, continuation);
+                            logger.debug("  back to having solved theorem's body = {} with theoremResult={}", newGoalTerm, theoremResult);
                         }
-                        if (continuation == Continuation.USER_ABORT) {
+                        if (theoremResult < 0) {
                             // TODO should we just "return" from here - yet we are not frequently here
-                            result = continuation;
+                            result = -1;
                         }
 
                         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -363,26 +375,21 @@ public class Solver {
                         // we deal with that here.
                         // Any other solution (much) welcome.
                         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        if (continuation == Continuation.CUT) { // Recursive solving of children got a CUT
-                            if (newGoalTerm instanceof Struct) {
-                                final String bodyFunctor = ((Struct) newGoalTerm).getName();
-                                if (bodyFunctor == Struct.FUNCTOR_CUT || bodyFunctor == Struct.FUNCTOR_COMMA) {
-                                    // We reached a body that is just a CUT
-                                    // Or a body that is a, b, !, c  [structured as ,( ,( ,(a b) !), c) ]
-                                    // In both cases we have to abort this level of solving
-                                    result = continuation;
-                                } else {
-                                    // We are in a situation such as :   main :- sub.
-                                    // and while solving sub, somewhere, we encountered a CUT that has been already properly
-                                    // handled in the solveGoalRecursive() above.
-                                    // Now that cut within the "sub" does NOT mean that we have to abort solving our "main"
-                                    // So we do NOT set the result to count, we will continue with the next clause whose head is "main" (if any)
+
+                        if (theoremResult > 0) { // Recursive solving of children got a CUT
+                            result = theoremResult;
+                            if (theoremResult > cutLevel) {
+                                if (isDebug) {
+                                    logger.debug("Reached parent (calling) predicate with CUT, forgetting it");
                                 }
-                            } else {
-                                assert false: "Won't return CUT when asked for - that's strange";
+                                result = 0;
                             }
                         }
                     } // else - is a rule
+                } else {
+                    if (isDebug) {
+                        logger.debug(" Head not unified - skipping to next clause");
+                    }
                 }
             }
             if (isDebug) {
@@ -392,11 +399,10 @@ public class Solver {
         if (isDebug) {
             logger.debug("Last ClauseProvider iterated for: {}", goalTerm);
         }
-
         return result;
     }
 
-    private Continuation solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener) {
+    private Continuation solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
         Continuation result = Continuation.CONTINUE;
         // Now fetch data
         final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
