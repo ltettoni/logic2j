@@ -94,6 +94,11 @@ public class Parser {
         this.termAdapter = theTermAdapter;
     }
 
+    /**
+     * @param theOperatorManager
+     * @param theTermAdapter
+     * @param theReader This Reader will be wrapped into a LineNumberReader for improve error reporting.
+     */
     public Parser(OperatorManager theOperatorManager, TermAdapter theTermAdapter, Reader theReader) {
         this.reader = new LineNumberReader(new BufferedReader(theReader), 10000);
         this.tokenizer = new Tokenizer(this.reader);
