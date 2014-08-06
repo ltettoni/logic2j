@@ -1,17 +1,21 @@
 /*
    This code has an issue when calling:
 
-     member(E, [1,2]), existsKo1(a(E)).
+     (E=1;E=2), existsKo1(a(E)).
+     (E=1;E=2), existsKo2(a(E)).
 
    whereas this was OK (in both tuProlog and logic2j)
-     member(E, [1,2]), existsOk(a(E)).
+     (E=1;E=2), existsOk(a(E)).
 
-   L will be a list of [1,2,3,4].
-   E will take the four solutions 1,2,3,4 in sequence
+   E will take the two solutions 1,2 sequentially
    But exists() will invoke call(P) whose CUT is processed at the level of the main goal
      (hence yielding only solution 1)
    whereas due to call/1 it should yield one solution PER invocation of exists/1 !
 
+   Actually this was not an issue with call/1 (test case existsKo1/1)
+   but an intrinsic bug with cut (test case existsKo2/1).
+
+   See associated test case in BugRegressionTest
 */
 
 a(1).

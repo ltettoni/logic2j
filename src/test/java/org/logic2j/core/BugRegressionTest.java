@@ -48,9 +48,12 @@ public class BugRegressionTest extends PrologTestBase {
         uniqueSolution("Free=X, X=Free");
     }
 
+    /**
+     * See documentation in resource bug-cut-propagated-too-high.pro
+     */
     @Test
-    public void cutWithCutAfterCall() {
-        loadTheoryFromTestResourcesDir("bug-call-cut.pro");
+    public void bugWithCutPropagatedTooHighIntoCaller() {
+        loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
         // Correct behaviour (used to work)
         nSolutions(2, "setof(X, a(X), L), member(E, L), existsOk(a(E))");
         // Used to return only one solution instead of two!
