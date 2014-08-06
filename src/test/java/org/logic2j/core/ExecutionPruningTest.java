@@ -37,7 +37,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
     @Test
     public void placeholderToReproduceError() {
-        //
+        // Insert problematic test case here
     }
 
     @Test
