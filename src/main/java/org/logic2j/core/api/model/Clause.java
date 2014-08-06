@@ -111,9 +111,9 @@ public class Clause {
     }
 
     /**
-     *
+     * Extract head and body of this clause, into the target array passed as argument.
      * @param currentVars
-     * @param clauseHeadAndBody Function return values in this Object[2] :-(
+     * @param clauseHeadAndBody Function return values in this Object[2], that's not really Java-ish but efficient... :-(
      */
     public void headAndBodyForSubgoal(UnifyContext currentVars, Object[] clauseHeadAndBody) {
         final Clause clonedClause;
