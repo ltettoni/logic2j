@@ -41,6 +41,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         assertNotNull(zipcodesConnection());
     }
 
+    // @Ignore("A little slow")
     @Test
     public void listMatchingClauses() {
         this.provider.saveTableInfo("zip_code", new String[] { "zip_code", "city" });
@@ -54,6 +55,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         org.junit.Assert.assertEquals(79991, counter);
     }
 
+    // @Ignore("A little slow")
     @Test
     public void matchClausesFromProlog() {
         this.provider.saveTableInfo("zip_code", new String[] { "zip_code", "city" });
