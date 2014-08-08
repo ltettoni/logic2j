@@ -18,6 +18,7 @@
 package org.logic2j.core;
 
 import org.junit.Test;
+import org.logic2j.core.library.impl.IOLibrary;
 
 /**
  * Check non-regression on issues that have been found and solved over time.
@@ -76,6 +77,7 @@ public class BugRegressionTest extends PrologTestBase {
      */
     @Test
     public void bugAddingPrimitiveBreaksNormalProcessingOfCut() {
+        loadLibrary(new IOLibrary(getProlog()));
         loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
         nSolutions(2, "(E=1;E=2), existsKo3(a(E))"); // Used to return only one solution instead of two!
     }
