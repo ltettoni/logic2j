@@ -3,6 +3,7 @@ package org.logic2j.core.library.impl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.model.exception.InvalidTermException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -194,7 +195,6 @@ public class CoreLibraryTest extends PrologTestBase {
         countNSolutions(2, "bool_3t_2f(X), X\\=true");
     }
 
-    @Test
     public void atom_length() {
         uniqueSolution("X=abc, atom_length(X, 3)");
         //
@@ -216,9 +216,7 @@ public class CoreLibraryTest extends PrologTestBase {
         countNoSolution("fail->fail");
     }
 
-    // TODO This fails with an Exception - check the specification for a proper behaviour should be and fix
-    @Ignore("TODO This fails with an Exception - check the specification for a proper behaviour should be and fix")
-    @Test
+    @Test(expected = InvalidTermException.class)
     public void atomLengthOnFreeVarWhatShouldItDo() {
         countNoSolution("atom_length(X, 3)");
     }
