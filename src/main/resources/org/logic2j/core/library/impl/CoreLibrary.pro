@@ -50,7 +50,7 @@ C -> T      :- call(C), !, call(T).
 
 
 countall(Predicate, NumberOfOccurences) :- 
-   findall(_, Predicate, ListOfResults),
+   findall(_, call(Predicate), ListOfResults),
    length(ListOfResults, NumberOfOccurences).
 
 
