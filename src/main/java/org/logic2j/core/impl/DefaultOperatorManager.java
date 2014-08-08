@@ -29,10 +29,9 @@ public class DefaultOperatorManager extends OperatorManagerBase {
     public DefaultOperatorManager() {
         addOperator(Struct.FUNCTOR_CLAUSE, Operator.XFX, 1200);
         addOperator("-->", Operator.XFX, 1200);
-        addOperator(Struct.FUNCTOR_CLAUSE, Operator.FX, 1200); // Actually, query not clause // Any reason for this order - is registered in
-                                                               // a LinkedMap...
+        addOperator(Struct.FUNCTOR_CLAUSE, Operator.FX, 1200); // Theorem
         addOperator("?-", Operator.FX, 1200);
-        addOperator(";", Operator.XFY, 1100); // OR
+        addOperator(Struct.FUNCTOR_SEMICOLON, Operator.XFY, 1100); // OR
         addOperator("->", Operator.XFY, 1050);
         addOperator(Struct.FUNCTOR_COMMA, Operator.XFY, 1000); // AND
         // addOperator(Struct.FUNCTOR_COMMA, Operator.YFY, 1000); // To implement direct optimization of ','/n but this is quite
