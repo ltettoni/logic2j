@@ -45,6 +45,10 @@ import java.util.LinkedHashSet;
 @SuppressWarnings("StringEquality")
 public class CoreLibrary extends LibraryBase {
 
+    public CoreLibrary(PrologImplementation theProlog) {
+        super(theProlog);
+    }
+
     private static final ComparisonFunction COMPARE_GT = new ComparisonFunction() {
         @Override
         public boolean apply(Number val1, Number val2) {
@@ -136,9 +140,6 @@ public class CoreLibrary extends LibraryBase {
 
     };
 
-    public CoreLibrary(PrologImplementation theProlog) {
-        super(theProlog);
-    }
 
     @Override
     public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
@@ -186,6 +187,8 @@ public class CoreLibrary extends LibraryBase {
                 result = predicate2PList(theListener, currentVars, arg0, arg1);
             } else if (theMethodName == "atom_length") {
                 result = atom_length(theListener, currentVars, arg0, arg1);
+            } else if (theMethodName == "length") {
+                result = length(theListener, currentVars, arg0, arg1);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
