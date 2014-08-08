@@ -44,24 +44,28 @@ perm(List, [H|Perm]) :- takeout(H, List, Rest), perm(Rest, Perm).
 perm([], []).
   
 
-%- not/1 is now implemented in Java in the CoreLibrary
-%not(P) :- call(P), !, fail.
-%not(P).
-
-% Is this correct?
+% Implication (see note below regarding the implementation of OR (;))
 C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
 C -> T      :- call(C), !, call(T).
-
 
 
 countall(Predicate, NumberOfOccurences) :- 
    findall(_, Predicate, ListOfResults),
    length(ListOfResults, NumberOfOccurences).
 
+
 /*
   This is a working version of OR implemented in prolog. 
-  However we prefer the more general N-arity implementation of OR in Java, see DefaultSolver.
-
+  Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
+  however there is ONE case in which this can't work: the definition of the implication predicate '->' is such that
+  the head is (C->T);B and if we don't rely on head matching but rather implement ";" directly in the Solver, this theorem
+  won't be picked-up and '->' will not work.
+*/
 A ; B :- call(A).
 A ; B :- call(B).
-*/
+
+
+% not/1 is now implemented as a Java Primitive in the CoreLibrary
+% (but the implementation below works as well)
+%not(P) :- call(P), !, fail.
+%not(P).

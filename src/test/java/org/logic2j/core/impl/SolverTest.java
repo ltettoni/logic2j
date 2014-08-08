@@ -128,9 +128,13 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void nonBinaryOr() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
-        countNSolutions(1, "';'(true)");
         countNSolutions(2, "';'(true, true)");
-        countNSolutions(3, "';'(true, true, true)");
+        if (Solver.FAST_OR) {
+            countNSolutions(1, "';'(true)");
+            countNSolutions(3, "';'(true, true, true)");
+        }
+        countNSolutions(1, "true");
+        countNSolutions(3, "true; true; true");
     }
 
 
