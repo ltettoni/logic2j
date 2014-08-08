@@ -23,14 +23,36 @@ a(2).
 a(1).
 a(2).
 a(2).
+a(1).
+a(3).
+a(4).
+a(4).
+a(4).
+a(4).
+
+
+
+% This was working OK with both tuProlog and logic2j.
+existsOk1(Pred2) :- stub1(Pred2), !.
+stub1(Q) :- call(Q).
+
+% This was working OK with both tuProlog and logic2j.
+existsOk2(Pred2) :- stub2(Pred2).
+stub2(Q) :- call(Q), !.
+
+
+
+
+% with tuProlog, yields 4 solutions
+% with logic2j, used to yield only one solution!
+existsKo1(Pred1) :- call(Pred1), !.
+
+
+% with tuProlog, yields 4 solutions
+% with logic2j, used to yield only one solution!
+existsKo2(a(Elem)) :- a(Elem), !.
+
 
 % with tuProlog, yields 4 solutions
 % with logic2j, used to yield only one solution
-existsKo1(Pred1) :- call(Pred1), !.
-
-% This also did not work with logic2j
-existsKo2(a(Elem)) :- a(Elem), !.
-
-% This was working OK with both tuProlog and logic2j.
-existsOk(Pred2) :- stub(Pred2), !.
-stub(Q) :- call(Q).
+existsKo3(a(Elem)) :- nolog(xxx), a(Elem), !.
