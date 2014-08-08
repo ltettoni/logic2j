@@ -54,8 +54,9 @@ binding("X").resolved()
 
 
 
-UC 2: Obtain values from within a java primtive
+UC 2: Obtain values from within a java primitive
 
+OBSOLETE:
 	void atom_length(VarBindings bindings, Term atom) {
 	  bindings.binding(atom).resolved(Struct.class).ensureAtom().getName().length();
 	}
