@@ -68,7 +68,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     /**
      * N-Queens problem, lighter ones.
-     * See also {@link #queensHeavierForThePatient()}
+     * See also {@link #queensHeavierForThePatientOne()}
      */
     @Test
     public void queensLighter() {
@@ -101,9 +101,9 @@ public class HigherLevelTest extends PrologTestBase {
      * N-Queens problem, heavy ones.
      * See {@link #queensLighter()}
      */
-    @Ignore("Very CPU intensive - enable on demand")
+    @Ignore("Very CPU intensive and quite long - enable on demand")
     @Test
-    public void queensHeavierForThePatient() {
+    public void queensHeavierForThePatientOne() {
         loadTheoryFromTestResourcesDir("queens.pro");
         nSolutions(724, "queens(10, _)");
         nSolutions(2680, "queens(11, _)"); // tuProlog (GUI) needs 261s on my machine
