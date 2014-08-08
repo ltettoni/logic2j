@@ -56,7 +56,7 @@ public class UnifyStateByLookup {
         // Current and new sizing algorithm
         final int initialLength = transaction.length;
         final int newLength = initialLength * 2;
-        logger.info("Resizing arrays to {}", newLength);
+        logger.info("Resizing UnifyState arrays to {} elements", newLength);
         // Increase size and copy
         transaction = Arrays.copyOf(transaction, newLength);
         Arrays.fill(transaction, initialLength, newLength, -1); // Need some init (only the extra part)
