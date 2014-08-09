@@ -124,7 +124,9 @@ public class IOLibrary extends LibraryBase {
         int i=0;
         for (final Object term : terms) {
             Object value = currentVars.reify(term);
-            ensureBindingIsNotAFreeVar(value, "log/*", i);
+            // Why should only bound variables be logged???
+            // There's no reason why we should forbid free vars
+            //   ensureBindingIsNotAFreeVar(value, "log/*", i);
             final String format = getProlog().getTermMarshaller().marshall(value).toString();
             sb.append(format);
             sb.append(' ');
