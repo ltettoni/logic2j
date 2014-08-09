@@ -198,8 +198,8 @@ public class CoreLibrary extends LibraryBase {
             final Object arg2 = goalStructArgs[2];
             if (theMethodName == "findall") {
                 result = findall(theListener, currentVars, arg0, arg1, arg2);
-            } else if (theMethodName == "setof") {
-                result = setof(theListener, currentVars, arg0, arg1, arg2);
+            } else if (theMethodName == "distinctall") {
+                result = distinctall(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -335,7 +335,8 @@ public class CoreLibrary extends LibraryBase {
             }
         };
         // Now solve the target sub goal
-        getProlog().getSolver().solveGoal(theGoal, currentVars, listenerForSubGoal);
+        final Object effectiveGoal = currentVars.reify(theGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be
@@ -349,7 +350,7 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation setof(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
+    public Continuation distinctall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
         final LinkedHashSet<Object> javaResults = new LinkedHashSet<Object>(100); // Our internal collection of results
         final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
@@ -361,7 +362,8 @@ public class CoreLibrary extends LibraryBase {
             }
         };
         // Now solve the target sub goal
-        getProlog().getSolver().solveGoal(theGoal, currentVars, listenerForSubGoal);
+        final Object effectiveGoal = currentVars.reify(theGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be

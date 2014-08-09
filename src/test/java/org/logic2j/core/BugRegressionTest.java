@@ -58,11 +58,11 @@ public class BugRegressionTest extends PrologTestBase {
     public void bugWithCutPropagatedTooHighIntoCaller() {
         loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
         // Correct behaviour (used to work)
-        nSolutions(4, "setof(X, a(X), L), member(E, L), existsOk1(a(E))");
-        nSolutions(4, "setof(X, a(X), L), member(E, L), existsOk2(a(E))");
+        nSolutions(4, "distinctall(X, a(X), L), member(E, L), existsOk1(a(E))");
+        nSolutions(4, "distinctall(X, a(X), L), member(E, L), existsOk2(a(E))");
         // Used to return only one solution instead of two!
-        nSolutions(4, "setof(X,a(X), L), member(E, L), existsKo1(a(E))");
-        nSolutions(4, "setof(X,a(X), L), member(E, L), existsKo2(a(E))");
+        nSolutions(4, "distinctall(X,a(X), L), member(E, L), existsKo1(a(E))");
+        nSolutions(4, "distinctall(X,a(X), L), member(E, L), existsKo2(a(E))");
 
         nSolutions(2, "(E=1;E=2), existsOk1(a(E))");
         nSolutions(2, "(E=1;E=2), existsOk2(a(E))");
