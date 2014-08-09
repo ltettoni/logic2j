@@ -255,7 +255,7 @@ public class HigherLevelTest extends PrologTestBase {
     // FIXME No longer works after fixing bugs with CUT
     @Ignore("FIXME No longer works after fixing bugs with CUT")
     @Test
-    public void mappingTransformer() {
+    public void NOW_BOGUS_FIXME_mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pro");
         assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
         assertEquals("[{Z=eav(13, classification, LEVEL_MAIN)}]", this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString());
