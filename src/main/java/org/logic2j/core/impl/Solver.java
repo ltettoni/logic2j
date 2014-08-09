@@ -131,6 +131,7 @@ public class Solver {
             goalStruct = (Struct) goalReified;
         */
         } else {
+            assert goalTerm instanceof Struct : "Calling solveGoalRecursive with a goal that is not a Struct but: " + goalTerm + " of " + goalTerm.getClass();
             goalStruct = (Struct) goalTerm;
         }
 
