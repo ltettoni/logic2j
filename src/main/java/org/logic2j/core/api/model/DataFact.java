@@ -28,13 +28,15 @@ import java.util.Arrays;
 /**
  * Represent one constant data element that can unify to a n-arity flat {@link Struct},
  * for example functor(a, 'B', 12).
+ * This is intended for efficient storage of data instead of using Clauses.
+ * This is an immutable value object.
  */
 public final class DataFact {
 
     /**
      * Elments are actually public - this object id just a data container, not a JavaBean.
      */
-    public Object[] elements;
+    public final Object[] elements;
 
     public DataFact(Object... arguments) {
         if (arguments == null || arguments.length < 2) {

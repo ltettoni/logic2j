@@ -24,6 +24,9 @@ import org.logic2j.core.api.TermAdapter.AssertionMode;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Read Excel as TabularData and register into Prolog as TabularDataFactProvider.
+ */
 public abstract class ExcelClauseProviderTestBase extends PrologTestBase {
 
     protected void setExcelClauseProvider(String filename, AssertionMode theMode) throws IOException {

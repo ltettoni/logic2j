@@ -27,6 +27,9 @@ import org.logic2j.core.api.unify.UnifyContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * An implementation of DataFactProvider for TabularData.
+ */
 public class TabularDataFactProvider implements DataFactProvider {
     private final TabularData tabularData;
     private final AssertionMode assertionMode;

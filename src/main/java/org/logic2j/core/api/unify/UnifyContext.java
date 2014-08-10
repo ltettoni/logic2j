@@ -217,6 +217,12 @@ public class UnifyContext {
     }
 
 
+    /**
+     * Unify against DataFact
+     * @param term1
+     * @param dataFact
+     * @return
+     */
     public UnifyContext unify(Object term1, DataFact dataFact) {
         if (!(term1 instanceof Struct)) {
             // Only Struct could match a DataFact

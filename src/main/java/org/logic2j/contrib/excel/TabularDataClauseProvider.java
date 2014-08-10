@@ -30,6 +30,10 @@ import org.logic2j.core.impl.PrologImplementation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An implementation of ClauseProvider for TabularData.
+ * See also TabularDataFactProvider for an implementation using DataFacts instead of clauses (preferred for large data sets).
+ */
 public class TabularDataClauseProvider implements ClauseProvider {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataClauseProvider.class);
     static final String EAVT = "eavt";

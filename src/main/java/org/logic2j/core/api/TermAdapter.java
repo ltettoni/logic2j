@@ -55,7 +55,8 @@ public interface TermAdapter {
     }
 
     /**
-     * Describe the shape that complex data structures should take as {@link Term}s.
+     * Describe the form that data structures should take when represented as Prolog compounds (Struct).
+     * See TabularData and related classes.
      */
     static enum AssertionMode {
         /**
@@ -64,15 +65,17 @@ public interface TermAdapter {
          */
         EAV_NAMED,
         /**
-         * Data is asserted as "quads". The predicate is always "eavt" (entity, attribute, value, transaction).
+         * Data is asserted as "quads". The predicate is always "eavt(entity, attribute, value, transaction)".
          * The "transaction" identifier is the dataset name. For example:
          * eavt(entityIdentifier, propertyName, propertyValue, myData).
          */
         EAVT,
         /**
-         * Data is asserted as full records with one argument per column. The order matters. This is the least
-         * flexible format since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
-         * myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN).
+         * Data is asserted as full records with one argument per column, such as
+         * "myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN)."
+         * The order matters.
+         * This is the least flexible form since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
+         *
          */
         RECORD
     }

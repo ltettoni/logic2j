@@ -131,6 +131,8 @@ public class PojoLibrary extends LibraryBase {
         Object javaValue = introspect(pojo, (String)propertyName);
         if (javaValue == null) {
             logger.debug("Property {} value is null or does not exist", propertyName);
+            // No solution returned to the application
+            // Yet continue inference
             return Continuation.CONTINUE;
         }
         if (javaValue instanceof Collection<?>) {

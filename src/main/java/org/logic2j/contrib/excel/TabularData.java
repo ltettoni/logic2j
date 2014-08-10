@@ -28,7 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * A tabular data set fully loaded in memory.
+ * A tabular (grid) data set fully loaded in memory. The data has the form of a 2-dimension array
+ * of Serializable elements.
  */
 public class TabularData implements Serializable {
     private static final long serialVersionUID = 1L;

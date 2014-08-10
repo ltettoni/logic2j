@@ -413,6 +413,14 @@ public class Solver {
         return result;
     }
 
+    /**
+     * Match row-data provided as DataFacts.
+     * @param goalTerm
+     * @param currentVars
+     * @param theSolutionListener
+     * @param cutLevel
+     * @return
+     */
     private Continuation solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
         Continuation result = Continuation.CONTINUE;
         // Now fetch data
