@@ -121,16 +121,11 @@ public class IOLibrary extends LibraryBase {
 
     private String formatForLog(UnifyContext currentVars, Object... terms) {
         final StringBuilder sb = new StringBuilder("P ");
-        int i=0;
         for (final Object term : terms) {
             Object value = currentVars.reify(term);
-            // Why should only bound variables be logged???
-            // There's no reason why we should forbid free vars
-            //   ensureBindingIsNotAFreeVar(value, "log/*", i);
             final String format = getProlog().getTermMarshaller().marshall(value).toString();
             sb.append(format);
             sb.append(' ');
-            i++;
         }
         final String substring = sb.substring(0, sb.length() - 1);
         return substring;
