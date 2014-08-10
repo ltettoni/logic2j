@@ -40,9 +40,9 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
     }
 
     @Override
-    public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {
+    public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
         if (!(theObject instanceof TabularData)) {
-            return super.terms(theObject, theAssertionMode);
+            return super.toTerms(theObject, theAssertionMode);
         }
         final TabularData tabularData = (TabularData) theObject;
         final String dataSetName = tabularData.getDataSetName();
@@ -62,7 +62,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
                         if (c != tabularData.getPrimaryKeyColumn()) {
                             final String property = tabularData.getColumnNames()[c];
                             final Serializable value = row[c];
-                            final Struct term = baseTermAdapter.term(dataSetName, FactoryMode.ATOM, identifier, property, value);
+                            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, identifier, property, value);
                             result.add(term);
                         }
                     }
@@ -77,14 +77,14 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
                         if (c != tabularData.getPrimaryKeyColumn()) {
                             final String property = tabularData.getColumnNames()[c];
                             final Serializable value = row[c];
-                            final Struct term = baseTermAdapter.term(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
+                            final Struct term = baseTermAdapter.toStruct(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
                             result.add(term);
                         }
                     }
                     break;
                 }
                 case RECORD: {
-                    final Struct term = baseTermAdapter.term(dataSetName, FactoryMode.ATOM, (Object[]) row);
+                    final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, (Object[]) row);
                     result.add(term);
                     break;
                 }

@@ -37,8 +37,8 @@ public abstract class RDBBase {
         }
 
         @Override
-        public Object term(Object theObject, FactoryMode theMode) {
-            return super.term(theObject, FactoryMode.ATOM);
+        public Object toTerm(Object theObject, FactoryMode theMode) {
+            return super.toTerm(theObject, FactoryMode.ATOM);
         }
 
     }

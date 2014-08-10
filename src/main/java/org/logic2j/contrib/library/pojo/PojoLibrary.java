@@ -137,7 +137,7 @@ public class PojoLibrary extends LibraryBase {
         }
         if (javaValue instanceof Collection<?>) {
             // Convert collection to a Prolog list
-            javaValue = getProlog().getTermAdapter().term(javaValue, FactoryMode.ATOM);
+            javaValue = getProlog().getTermAdapter().toTerm(javaValue, FactoryMode.ATOM);
         }
         return unifyAndNotify(theListener, currentVars, javaValue, theValue);
     }

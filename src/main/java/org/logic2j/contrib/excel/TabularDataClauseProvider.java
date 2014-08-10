@@ -23,7 +23,6 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -54,7 +53,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
 
     private void initClauses() {
         logger.debug("Starting to init clauses");
-        final List<Object> terms = new TabularDataTermAdapter(this.prolog.getTermAdapter()).terms(this.tabularData, this.mode);
+        final List<Object> terms = new TabularDataTermAdapter(this.prolog.getTermAdapter()).toTerms(this.tabularData, this.mode);
         for (final Object term : terms) {
             this.clauses.add(new Clause(this.prolog, term));
         }

@@ -85,7 +85,7 @@ public class LibraryBase implements PLibrary {
         if (anyObject == null) {
             return Var.ANONYMOUS_VAR;
         }
-        return this.prolog.getTermAdapter().term(anyObject, FactoryMode.ATOM);
+        return this.prolog.getTermAdapter().toTerm(anyObject, FactoryMode.ATOM);
     }
 
 

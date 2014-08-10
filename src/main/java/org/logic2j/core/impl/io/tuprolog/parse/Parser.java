@@ -388,7 +388,7 @@ public class Parser {
             final String functor = t1.text.intern();
             if (!t1.isFunctor()) {
                 // We delegate the instantiation of the atom to our TermAdapter
-                final Object term = this.termAdapter.term(functor, TermAdapter.FactoryMode.ATOM);
+                final Object term = this.termAdapter.toTerm(functor, TermAdapter.FactoryMode.ATOM);
                 return term;
             }
 

@@ -115,7 +115,7 @@ public class PredicateInvocation<T> {
             if (original[i] instanceof CharSequence) {
                 parsed[i] = prolog.getTermUnmarshaller().unmarshall((CharSequence) original[i]);
             } else {
-                parsed[i] = prolog.getTermAdapter().term(original[i], TermAdapter.FactoryMode.ANY_TERM);
+                parsed[i] = prolog.getTermAdapter().toTerm(original[i], TermAdapter.FactoryMode.ANY_TERM);
             }
         }
         final Struct struct = new Struct(getPredicateName(), parsed);

@@ -86,7 +86,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
                 logger.debug("Will convert solution from {} to {}", reifiedValue.getClass(), this.targetClass);
             }
             if (this.termAdapter != null) {
-                reifiedValue = this.termAdapter.object(reifiedValue, this.targetClass);
+                reifiedValue = this.termAdapter.fromTerm(reifiedValue, this.targetClass);
             }
         }
         return (T) reifiedValue;

@@ -81,23 +81,26 @@ public interface TermAdapter {
     }
 
     /**
-     * Instantiate a Term from virtually any class of single {@link Object}; this is the highest-level factory
+     * Convert from virtually any possible instance of singular {@link Object} into to a Prolog term
+     * (usually a Struct but any object is valid in logic2j).
+     * This is the highest-level factory for terms.
      * 
      * @param theObject
      * @param theMode
      * @return A factorized and normalized {@link Term}.
      */
-    Object term(Object theObject, FactoryMode theMode);
+    Object toTerm(Object theObject, FactoryMode theMode);
 
     /**
-     * Instantiate a Struct with arguments from virtually any class of {@link Object}; this is the highest-level factory
-     * 
+     * Instantiate a Struct with arguments from virtually any class of {@link Object}
+     * This is the highest-level factory for Struct.
+     *
      * @param thePredicateName The predicate (functor)
      * @param theMode
      * @param theArguments
      * @return A factorized and normalized {@link Term}.
      */
-    Struct term(String thePredicateName, FactoryMode theMode, Object... theArguments);
+    Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments);
 
     /**
      * Instantiate a list of Terms from one (possibly large) {@link Object}.
@@ -105,7 +108,7 @@ public interface TermAdapter {
      * @param theObject
      * @return A List of terms.
      */
-    List<Object> terms(Object theObject, AssertionMode theAssertionMode);
+    List<Object> toTerms(Object theObject, AssertionMode theAssertionMode);
 
     /**
      * Convert a Term into the desired target Class.
@@ -113,5 +116,5 @@ public interface TermAdapter {
      * @param theTargetClass
      * @return Not yet implemented
      */
-    <T> T object(Object theTerm, Class<T> theTargetClass);
+    <T> T fromTerm(Object theTerm, Class<T> theTargetClass);
 }

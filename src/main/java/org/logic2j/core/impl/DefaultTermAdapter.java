@@ -53,7 +53,7 @@ public class DefaultTermAdapter implements TermAdapter {
 
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
-    public Object term(Object theObject, FactoryMode theMode) {
+    public Object toTerm(Object theObject, FactoryMode theMode) {
         // TODO Temporary just for compatibility - move this to TermUnmarshaller
         if (theObject instanceof CharSequence) {
             if (theMode == FactoryMode.ATOM) {
@@ -75,7 +75,7 @@ public class DefaultTermAdapter implements TermAdapter {
 
 
     @Override
-    public Struct term(String thePredicateName, FactoryMode theMode, Object... theArguments) {
+    public Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments) {
         final Object[] convertedArgs = new Object[theArguments.length];
         for (int i = 0; i < theArguments.length; i++) {
             convertedArgs[i] = termFrom(theArguments[i], theMode);
@@ -118,12 +118,12 @@ public class DefaultTermAdapter implements TermAdapter {
     }
 
     /**
-     * @return A List of one single Term from {@link #term(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+     * @return A List of one single Term from {@link #toTerm(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
      */
     @Override
-    public List<Object> terms(Object theObject, AssertionMode theAssertionMode) {
+    public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
         final List<Object> result = new ArrayList<Object>();
-        final Object term = term(theObject, FactoryMode.ATOM);
+        final Object term = toTerm(theObject, FactoryMode.ATOM);
         result.add(term);
         return result;
     }
@@ -140,7 +140,7 @@ public class DefaultTermAdapter implements TermAdapter {
      * @return
      */
     @Override
-    public <T> T object(Object theTerm, Class<T> theTargetClass) {
+    public <T> T fromTerm(Object theTerm, Class<T> theTargetClass) {
         if (theTerm==null) {
             // Pass-through for nulls
             return null;
