@@ -441,7 +441,7 @@ public class Parser {
             throw new InvalidTermException("Missing right braces: {" + arg + " -> here <-");
         }
 
-        throw new InvalidTermException("The following token could not be identified: " + t1.text);
+        throw new InvalidTermException("The following token could not be identified: \"" + t1.text + '"');
     }
 
     private Term exprA0_list() throws InvalidTermException, IOException {
