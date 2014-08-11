@@ -73,7 +73,8 @@ even([H|T],[H|E],O):-odd(T,E,O).
 
 
 
-% Quick sort is one of the fastest sort algorithms. However, its power is often overvalued. The efficiency of quick sort is sensitive to choice of pivot which is used to distribute list into two "halfs".
+% Quick sort is one of the fastest sort algorithms. However, its power is often overvalued.
+% The efficiency of quick sort is sensitive to choice of pivot which is used to distribute list into two "halfs".
 
 quick_sort(List,Sorted):-q_sort(List,[],Sorted).
 q_sort([],Acc,Acc).

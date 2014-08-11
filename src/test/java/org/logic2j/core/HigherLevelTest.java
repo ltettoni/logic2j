@@ -33,7 +33,6 @@ import java.io.IOException;
  * For performance testing see {@link BenchmarkTest}.
  */
 public class HigherLevelTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(HigherLevelTest.class);
 
     @Override
     protected InitLevel initLevel() {
@@ -101,7 +100,7 @@ public class HigherLevelTest extends PrologTestBase {
      * N-Queens problem, heavy ones.
      * See {@link #queensLighter()}
      */
-    @Ignore("Very CPU intensive and quite long - enable on demand")
+    @Ignore("Very CPU intensive and quite long - enable when needed - does not bring much in functional testing")
     @Test
     public void queensHeavierForThePatientOne() {
         loadTheoryFromTestResourcesDir("queens.pro");
