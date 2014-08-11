@@ -68,7 +68,7 @@ public class DefaultTermAdapter implements TermAdapter {
             }
             throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermUnmarshaller instead");
         }
-        final Object created = termFrom(theObject, theMode);
+        final Object created = toTermInternal(theObject, theMode);
         final Object normalized = normalizer.apply(created);
         return normalized;
     }
@@ -78,11 +78,22 @@ public class DefaultTermAdapter implements TermAdapter {
     public Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments) {
         final Object[] convertedArgs = new Object[theArguments.length];
         for (int i = 0; i < theArguments.length; i++) {
-            convertedArgs[i] = termFrom(theArguments[i], theMode);
+            convertedArgs[i] = toTermInternal(theArguments[i], theMode);
         }
         final Struct created = new Struct(thePredicateName, convertedArgs);
         final Struct normalized = (Struct) normalizer.apply(created);
         return normalized;
+    }
+
+    /**
+     * @return A List of one single Term from {@link #toTerm(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+     */
+    @Override
+    public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
+        final List<Object> result = new ArrayList<Object>();
+        final Object term = toTerm(theObject, FactoryMode.ATOM);
+        result.add(term);
+        return result;
     }
 
     /**
@@ -92,7 +103,7 @@ public class DefaultTermAdapter implements TermAdapter {
      * @param theMode
      * @return An instance of Term
      */
-    protected Object termFrom(Object theObject, FactoryMode theMode) {
+    private Object toTermInternal(Object theObject, FactoryMode theMode) {
         Object result = null;
         if (theObject == null) {
             if (theMode == FactoryMode.ATOM) {
@@ -114,17 +125,6 @@ public class DefaultTermAdapter implements TermAdapter {
         if (result == null) {
             result = TermApi.valueOf(theObject, theMode);
         }
-        return result;
-    }
-
-    /**
-     * @return A List of one single Term from {@link #toTerm(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
-     */
-    @Override
-    public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
-        final List<Object> result = new ArrayList<Object>();
-        final Object term = toTerm(theObject, FactoryMode.ATOM);
-        result.add(term);
         return result;
     }
 
@@ -164,7 +164,8 @@ public class DefaultTermAdapter implements TermAdapter {
             final Collection<?> collection = ((Struct) theTerm).javaListFromPList(null, Object.class);
             return (T)collection;
         }
-        // Now these conversions are getting a bit rare. Prepare error message it's likely we end up in error
+
+        // Now these conversions are getting a bit rare. Prepare error message because it is likely we end up in error
         final String termDescription = "term \"" + theTerm + "\" of " + termClass;
         String adapterInstanceName = this.toString();
         // For anonymous classes we end up with "" !
@@ -173,46 +174,57 @@ public class DefaultTermAdapter implements TermAdapter {
         }
         final String message = adapterInstanceName + " cannot convert " + termDescription + " to " + theTargetClass;
 
-
         if (Enum.class.isAssignableFrom(theTargetClass)) {
-            if (theTargetClass == Enum.class) {
-                throw new IllegalArgumentException(message + ": converting to any Enum will require a custom TermAdapter, " + this + " cannot guess your intended Enum class");
-            }
-
-            // For converting to Enum, we expect that theTerm will match the name() of the target Enum.
-            // We will allow theTerm to be either the exact atom (eg 'VAL'), or
-            // a struct/1 with any functor and the value, (eg my_enum_type_ignored('VAL')).
-            // The reason is for consistency with the cases when the Prolog will return an enum value of a class that
-            // Java cannot pre-determine. In that case user has to override this method in a dedicated TermAdapter,
-            // and lookup the effective enum from the specified functor.
-
-            final String effectiveEnumName;
-            if (theTerm instanceof String) {
-                effectiveEnumName = theTerm.toString();
-            } else if (theTerm instanceof Struct) {
-                Struct s = (Struct)theTerm;
-                if (s.getArity()!=1) {
-                    throw new IllegalArgumentException(message + ": if a Struct is passed, arity must be 1, was " + s.getArity());
-                }
-                effectiveEnumName = s.getArg(0).toString();
-            } else {
-                throw new IllegalArgumentException(message + ": converting to an Enum requires either an atom or a struct of arity=1");
-            }
-
-
-            final Enum[] enumConstants = ((Class<Enum>) theTargetClass).getEnumConstants();
-            for (Enum c: enumConstants) {
-                if (c.name().equals(effectiveEnumName)) {
-                    return (T)c;
-                }
-            }
-            throw new IllegalArgumentException(message + ": no such enum value");
+            return (T) fromEnum(theTerm, (Class<Enum>) theTargetClass, message);
         }
         throw new UnsupportedOperationException(message);
     }
 
     /**
-     * Allow changing default behaviour of {@link #termFrom(Object, org.logic2j.core.api.TermAdapter.FactoryMode)} when FactoryMode is ATOM,
+     * Specific conversion of enums
+     * @param theTerm The Prolog term
+     * @param theTargetClass The target Java class
+     * @param message
+     * @param <T>
+     * @return
+     */
+    protected <T extends Enum> T fromEnum(Object theTerm, Class<T> theTargetClass, String message) {
+        if (theTargetClass == Enum.class) {
+            throw new IllegalArgumentException(message + ": converting to any Enum will require a custom TermAdapter, " + this + " cannot guess your intended Enum class");
+        }
+
+        // For converting to Enum, we expect that theTerm will match the name() of the target Enum.
+        // We will allow theTerm to be either the exact atom (eg 'VAL'), or
+        // a struct/1 with any functor and the value, (eg my_enum_type_ignored('VAL')).
+        // The reason is for consistency with the cases when the Prolog will return an enum value of a class that
+        // Java cannot pre-determine. In that case user has to override this method in a dedicated TermAdapter,
+        // and lookup the effective enum from the specified functor.
+
+        final String effectiveEnumName;
+        if (theTerm instanceof String) {
+            effectiveEnumName = theTerm.toString();
+        } else if (theTerm instanceof Struct) {
+            Struct s = (Struct)theTerm;
+            if (s.getArity()!=1) {
+                throw new IllegalArgumentException(message + ": if a Struct is passed, arity must be 1, was " + s.getArity());
+            }
+            effectiveEnumName = s.getArg(0).toString();
+        } else {
+            throw new IllegalArgumentException(message + ": converting to an Enum requires either an atom or a struct of arity=1");
+        }
+
+
+        final Enum[] enumConstants = theTargetClass.getEnumConstants();
+        for (Enum c: enumConstants) {
+            if (c.name().equals(effectiveEnumName)) {
+                return (T)c;
+            }
+        }
+        throw new IllegalArgumentException(message + ": no such enum value");
+    }
+
+    /**
+     * Allow changing default behaviour of {@link #toTermInternal(Object, org.logic2j.core.api.TermAdapter.FactoryMode)} when FactoryMode is ATOM,
      * and the first argument exactly matches one of the keys of the map: will return the value
      * as the atom.
      * 
