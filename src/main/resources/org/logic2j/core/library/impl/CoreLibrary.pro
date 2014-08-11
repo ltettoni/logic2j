@@ -20,6 +20,25 @@
   * This is the Prolog part of the CoreLibrary. It defines commonly-used predicates.
   */
 
+
+/*
+  This is a working version of OR implemented in prolog.
+  Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
+  however there is ONE case in which this can't work: the definition of the implication predicate '->' is such that
+  the head is (C->T);B and if we don't rely on head matching but rather implement ";" directly in the Solver, this theorem
+  won't be picked-up and '->' will not work.
+*/
+A ; B :- call(A).
+A ; B :- call(B).
+
+
+% not/1 is now implemented as a Java Primitive in the CoreLibrary
+% (but the implementation below works as well)
+%not(P) :- call(P), !, fail.
+%not(P).
+
+
+
 member(E,[E|_]).
 member(E,[_|L]):- member(E,L).
 
@@ -52,20 +71,3 @@ C -> T      :- call(C), !, call(T).
 countall(Predicate, NumberOfOccurences) :- 
    findall(_, call(Predicate), ListOfResults),
    length(ListOfResults, NumberOfOccurences).
-
-
-/*
-  This is a working version of OR implemented in prolog. 
-  Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
-  however there is ONE case in which this can't work: the definition of the implication predicate '->' is such that
-  the head is (C->T);B and if we don't rely on head matching but rather implement ";" directly in the Solver, this theorem
-  won't be picked-up and '->' will not work.
-*/
-A ; B :- call(A).
-A ; B :- call(B).
-
-
-% not/1 is now implemented as a Java Primitive in the CoreLibrary
-% (but the implementation below works as well)
-%not(P) :- call(P), !, fail.
-%not(P).
