@@ -151,6 +151,10 @@ public class CoreLibrary extends LibraryBase {
             final Object arg0 = goalStructArgs[0];
             if (theMethodName == "not") {
                 result = not(theListener, currentVars, arg0);
+            } else if (theMethodName == "atom") {
+                result = atom(theListener, currentVars, arg0);
+            } else if (theMethodName == "atomic") {
+                result = atomic(theListener, currentVars, arg0);
             } else if (theMethodName == "var") {
                 result = var(theListener, currentVars, arg0);
             } else {
@@ -245,10 +249,18 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive
+    public Continuation atom(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
+        final Object value = currentVars.reify(theTerm);
+        if (TermApi.isAtom(value)) {
+            return notifySolution(theListener, currentVars);
+        }
+        return Continuation.CONTINUE;
+    }
+
+    @Primitive
     public Continuation atomic(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
         final Object value = currentVars.reify(theTerm);
-        ensureBindingIsNotAFreeVar(value, "atomic/1", 0);
-        if (value instanceof Struct || value instanceof Number) {
+        if (TermApi.isAtomic(value)) {
             return notifySolution(theListener, currentVars);
         }
         return Continuation.CONTINUE;
