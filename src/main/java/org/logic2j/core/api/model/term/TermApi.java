@@ -82,10 +82,17 @@ public final class TermApi {
             final Struct s = (Struct) theTerm;
             return s.getArity() == 0 || s.isEmptyList();
         }
-        // In the future
-        // if (theTerm instanceof String) {
-        // return true;
-        // }
+        return false;
+    }
+
+    public static boolean isAtomic(Object theTerm) {
+        if (isAtom(theTerm)) {
+            return true;
+        }
+        if (theTerm instanceof Number) {
+            // Now plain Strings are atoms!
+            return true;
+        }
         return false;
     }
 
