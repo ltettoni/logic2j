@@ -81,6 +81,7 @@ public interface TermAdapter {
     }
 
     /**
+     * Convert: From regular Java Object to Prolog internal Term.
      * Convert from virtually any possible instance of singular {@link Object} into to a Prolog term
      * (usually a Struct but any object is valid in logic2j).
      * This is the highest-level factory for terms.
@@ -111,10 +112,10 @@ public interface TermAdapter {
     List<Object> toTerms(Object theObject, AssertionMode theAssertionMode);
 
     /**
-     * Convert a Term into the desired target Class.
-     * 
-     * @param theTargetClass
-     * @return Not yet implemented
+     * Convert: From Prolog internal Term to regular Java Object.
+     *
+     * @param theTargetClass Either very specific or quite general like Enum, or even Object
+     * @return The converted instance
      */
     <T> T fromTerm(Object theTerm, Class<T> theTargetClass);
 }
