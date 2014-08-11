@@ -18,14 +18,14 @@
 package org.logic2j.contrib.library.pojo;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.api.library.Primitive;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -78,7 +78,7 @@ public class PojoLibrary extends LibraryBase {
 
     /**
      * Override this method with whatever introspection framework you want.
-     * 
+     *
      * @param theInstance
      * @param theExpression
      * @return The value introspected
@@ -102,10 +102,11 @@ public class PojoLibrary extends LibraryBase {
 
     /**
      * TODO: To be refine - currently is named "bind" but actually extracts from the ThreadLocal.
+     *
      * @param theListener
      * @param currentVars
      * @param theBindingName The name to use for the binding
-     * @param theTarget Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
+     * @param theTarget      Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
      * @return One solution, either leave theTarget
      */
     @Primitive
@@ -128,23 +129,42 @@ public class PojoLibrary extends LibraryBase {
         final Object propertyName = currentVars.reify(thePropertyName);
         ensureBindingIsNotAFreeVar(propertyName, "property/3", 1);
         //
-        Object javaValue = introspect(pojo, (String)propertyName);
+        Object javaValue = introspect(pojo, (String) propertyName);
         if (javaValue == null) {
             logger.debug("Property {} value is null or does not exist", propertyName);
             // No solution returned to the application
             // Yet continue inference
             return Continuation.CONTINUE;
         }
-        if (javaValue instanceof Collection<?>) {
-            // Convert collection to a Prolog list
-            javaValue = getProlog().getTermAdapter().toTerm(javaValue, FactoryMode.ATOM);
+        // Collections will send individual solutions
+        if (javaValue instanceof Collection) {
+            for (Object javaElem : (Collection) javaValue) {
+                final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
+                final Continuation result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+                if (result != Continuation.CONTINUE) {
+                    return result;
+                }
+            }
+            return Continuation.CONTINUE;
         }
-        return unifyAndNotify(theListener, currentVars, javaValue, theValue);
+        if (javaValue instanceof Object[]) {
+            for (Object javaElem : (Object[]) javaValue) {
+                final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
+                final Continuation result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+                if (result != Continuation.CONTINUE) {
+                    return result;
+                }
+            }
+            return Continuation.CONTINUE;
+        }
+        // Convert java objects to Prolog terms
+        final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaValue, FactoryMode.ATOM);
+        return unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
     }
 
     /**
      * A utility method to emulate calling the bind/2 predicate from Java.
-     * 
+     *
      * @param theKey
      * @param theValue
      */
