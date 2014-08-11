@@ -54,6 +54,10 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() > val2.doubleValue();
         }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) > 0;
+        }
     };
 
     private static final ComparisonFunction COMPARISON_LT = new ComparisonFunction() {
@@ -61,6 +65,10 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() < val2.doubleValue();
+        }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) < 0;
         }
     };
 
@@ -70,6 +78,10 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() >= val2.doubleValue();
         }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) >= 0;
+        }
     };
 
     private static final ComparisonFunction COMPARISON_LE = new ComparisonFunction() {
@@ -77,6 +89,10 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() <= val2.doubleValue();
+        }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) <= 0;
         }
     };
 
@@ -86,6 +102,10 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() == val2.doubleValue();
         }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) == 0;
+        }
     };
 
     private static final ComparisonFunction COMPARISON_NE = new ComparisonFunction() {
@@ -93,6 +113,10 @@ public class CoreLibrary extends LibraryBase {
         @Override
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() != val2.doubleValue();
+        }
+        @Override
+        public boolean apply(CharSequence val1, CharSequence val2) {
+            return val1.toString().compareTo(val2.toString()) != 0;
         }
     };
 
@@ -481,6 +505,8 @@ public class CoreLibrary extends LibraryBase {
 
     private static interface ComparisonFunction {
         boolean apply(Number val1, Number val2);
+
+        boolean apply(CharSequence str1, CharSequence str2);
     }
 
     /**
@@ -499,6 +525,13 @@ public class CoreLibrary extends LibraryBase {
         Continuation continuation = Continuation.CONTINUE;
         if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
             final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
+            if (condition) {
+                continuation = notifySolution(theListener, currentVars);
+            }
+            return continuation;
+        }
+        if (effectiveT1 instanceof CharSequence && effectiveT2 instanceof CharSequence) {
+            final boolean condition = theEvaluationFunction.apply((CharSequence) effectiveT1, (CharSequence) effectiveT2);
             if (condition) {
                 continuation = notifySolution(theListener, currentVars);
             }
