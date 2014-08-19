@@ -16,7 +16,7 @@
           <pattern>%-5level %msg%n</pattern>
        </encoder>
     </appender>
-       -->
+    -->
 
     <logger name="org.logic2j" level="info"/>
     <logger name="org.logic2j.core.impl.Solver" level="info"/>
@@ -27,9 +27,13 @@
     <!-- Verbosity of toString in particular for Term hierarchies -->
     <logger name="org.logic2j.core.impl.DefaultTermMarshaller" level="info"/>
 
+    <!-- Other projects - just ignore -->
+    <logger name="org.logic2j.rules" level="debug"/>
+
     <root level="warn">
         <appender-ref ref="console"/>
         <!--
+        <appender-ref ref="nonregression"/>
         -->
     </root>
 
