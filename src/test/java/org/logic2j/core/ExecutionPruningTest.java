@@ -22,6 +22,7 @@ import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.PrologReferenceImplementation;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,6 +35,12 @@ public class ExecutionPruningTest extends PrologTestBase {
     //public void reportProfilingInfo() {
     //    ProfilingInfo.reportAll("After ExecutionPruningTest test case");
     //}
+
+    @Override
+    protected PrologReferenceImplementation.InitLevel initLevel() {
+        // In case we use logging predicates we need the IO Library
+        return PrologReferenceImplementation.InitLevel.L2_BASE_LIBRARIES;
+    }
 
     @Test
     public void placeholderToReproduceError() {
@@ -246,4 +253,11 @@ public class ExecutionPruningTest extends PrologTestBase {
         assertEquals(5, maxFiveSolutions.getCounter());
     }
 
+
+    @Test
+    public void level() throws Exception {
+        final PrologReferenceImplementation.InitLevel initLevel = initLevel();
+        System.out.println("Level=" + initLevel);
+
+    }
 }
