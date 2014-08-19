@@ -86,13 +86,17 @@ public class PrologReferenceImplementation implements PrologImplementation {
      * @param theLevel
      */
     public PrologReferenceImplementation(InitLevel theLevel) {
-        // Here we load libs in order
-        if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
-            final PLibrary lib = new CoreLibrary(this);
-            this.libraryManager.loadLibrary(lib);
-        }
+        // Here we load libs, watch out for the order
+
+        // First we load libraries that define primitives, and only after libraries that define theories
+        // This is because at the time a theory is parsed, it will initialize PrimitiveInfo only to those
+        // primitive that have already been loaded
         if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
             final PLibrary lib = new IOLibrary(this);
+            this.libraryManager.loadLibrary(lib);
+        }
+        if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
+            final PLibrary lib = new CoreLibrary(this);
             this.libraryManager.loadLibrary(lib);
         }
         final TermMapper normalizer = new TermMapper() {
