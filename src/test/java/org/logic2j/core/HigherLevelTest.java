@@ -20,11 +20,16 @@ package org.logic2j.core;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.IOLibrary;
-import static org.junit.Assert.*;
+
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Run higher-level tests such as whole programs.
@@ -42,6 +47,10 @@ public class HigherLevelTest extends PrologTestBase {
     @Test
     public void placeholderToReproduceError() {
         //
+        loadTheoryFromTestResourcesDir("transformations.pro");
+
+        final List<Map<Var<?>, Object>> list = this.prolog.solve("transformForContext(tc(ID), Z)").vars().list();
+        assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", list.toString());
     }
 
     /**
@@ -252,12 +261,11 @@ public class HigherLevelTest extends PrologTestBase {
     }
 
     // FIXME No longer works after fixing bugs with CUT
-    @Ignore("FIXME No longer works after fixing bugs with CUT")
     @Test
     public void NOW_BOGUS_FIXME_mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pro");
-        assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
         assertEquals("[{Z=eav(13, classification, LEVEL_MAIN)}]", this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString());
+        assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
         assertEquals("[{ID=ID, Z=eav(ID, class, Committee)}]", this.prolog.solve("transformForContext(committee(ID), Z)").vars().list().toString());
         //
         assertEquals("[{Z=','(one, ten)}]", this.prolog.solve("transformForContext(11, Z)").vars().list().toString());

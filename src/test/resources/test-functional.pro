@@ -71,6 +71,12 @@ cut4.               % And one
 cut4b :- cut2(_).
 cut4b :- cut2(_).
 
+% Recursive transformation
+transform(complex, Z) :- transform(simple, Z), !.
+transform(simple, verySimple) :- !.
+transform(X, X).   % catch all
+
+
 
 p(X)  :- int5(X), X>1.
 pc(X) :- int5(X), !, X>1.

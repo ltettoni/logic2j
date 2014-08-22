@@ -18,11 +18,15 @@
 package org.logic2j.core;
 
 import org.junit.Test;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologReferenceImplementation;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -186,6 +190,14 @@ public class ExecutionPruningTest extends PrologTestBase {
         //
         solutions = this.prolog.solve("sign4(5,X)");
         assertEquals("positive", solutions.var("X").unique().toString());
+    }
+
+    @Test
+    public void transformWithCutAndCatchAll() {
+        //
+        loadTheoryFromTestResourcesDir("test-functional.pro");
+        final List<Map<Var<?>, Object>> list = this.prolog.solve("transform(complex, Z)").vars().list();
+        assertEquals("[{Z=verySimple}]", list.toString());
     }
 
     // ---------------------------------------------------------------------------
