@@ -172,7 +172,7 @@ public class Solver {
                         final int nextIndex = index + 1;
                         final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
                         if (isDebug) {
-                            logger.debug(this + ": onSolution() called; will now solve: {}", rhs);
+                            logger.debug(this + ": onSolution() called; will now solve rhs={}", rhs);
                         }
                         final int continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex], cutLevel);
                         return Continuation.valueOf(continuationFromSubGoal);
@@ -301,10 +301,13 @@ public class Solver {
 
     private int solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
+        final long inferenceCounter = ProfilingInfo.nbInferences;
         if (isDebug) {
-            logger.debug(" -->> Enter solveAgainstClauseProviders, cutLevel={}", cutLevel);
+            logger.debug(" +>> Entering solveAgainstClauseProviders#{}, cutLevel={}", inferenceCounter, cutLevel);
         }
-
+        if (PrologReferenceImplementation.PROFILING) {
+            ProfilingInfo.nbInferences++;
+        }
         int result = 0;
 
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
@@ -384,11 +387,11 @@ public class Solver {
                             }
                             if (result <= cutLevel) {
                                 if (isDebug) {
-                                    logger.debug("Breaking iterations for {}", goalTerm);
+                                    logger.debug("Cutting solve#{} for {}", inferenceCounter, goalTerm);
                                 }
                                 if (result == cutLevel) {
                                     if (isDebug) {
-                                        logger.debug("Reached parent 1 (calling) predicate with CUT, stop propagating CUT, continue instead");
+                                        logger.debug("Reached parent predicate with CUT, stop escalating CUT, continue instead");
                                     }
                                     result = 0;
                                 }
@@ -408,7 +411,7 @@ public class Solver {
             }
         }
         if (isDebug) {
-            logger.debug("Last ClauseProvider iterated for: {}", goalTerm);
+            logger.debug(" +<< Exiting  solveAgainstClauseProviders#{}: last ClauseProvider iterated for: {}, result=" + result, inferenceCounter, goalTerm);
         }
         return result;
     }
