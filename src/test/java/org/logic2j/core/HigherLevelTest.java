@@ -46,11 +46,7 @@ public class HigherLevelTest extends PrologTestBase {
 
     @Test
     public void placeholderToReproduceError() {
-        //
-        loadTheoryFromTestResourcesDir("transformations.pro");
-
-        final List<Map<Var<?>, Object>> list = this.prolog.solve("transformForContext(tc(ID), Z)").vars().list();
-        assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", list.toString());
+        // Insert problematic test case here
     }
 
     /**
@@ -260,9 +256,8 @@ public class HigherLevelTest extends PrologTestBase {
         // assertEquals("[55]", solutions.var("X").list().toString());
     }
 
-    // FIXME No longer works after fixing bugs with CUT
     @Test
-    public void NOW_BOGUS_FIXME_mappingTransformer() {
+    public void mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pro");
         assertEquals("[{Z=eav(13, classification, LEVEL_MAIN)}]", this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString());
         assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
