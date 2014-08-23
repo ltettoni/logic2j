@@ -25,11 +25,11 @@ import java.util.Iterator;
 public abstract class SolutionListenerBase implements SolutionListener {
 
     @Override
-    public Continuation onSolutions(MultiResult multi) {
+    public Integer onSolutions(MultiResult multi) {
         final Iterator<UnifyContext> allSolutions = multi;
         while (allSolutions.hasNext()) {
             final UnifyContext next = allSolutions.next();
-            final Continuation continuation = this.onSolution(next);
+            final Integer continuation = this.onSolution(next);
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }

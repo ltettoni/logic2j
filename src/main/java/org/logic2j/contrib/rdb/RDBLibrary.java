@@ -70,7 +70,7 @@ public class RDBLibrary extends LibraryBase {
   }
 
   @Primitive
-  public Continuation select(SolutionListener theListener, UnifyContext currentVars, Object... theArguments) throws SQLException {
+  public Integer select(SolutionListener theListener, UnifyContext currentVars, Object... theArguments) throws SQLException {
     final Object theDataSource = theArguments[0];
     final Object theExpression = theArguments[1];
     final DataSource ds = bound(theDataSource, currentVars, DataSource.class);

@@ -135,7 +135,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 final Class<?>[] paramTypes = method.getParameterTypes();
                 final Class<?> returnType = method.getReturnType();
                 final PrimitiveType type;
-                if (Continuation.class.equals(returnType)) {
+                if (Integer.class.equals(returnType)) {
                     type = PrimitiveType.PREDICATE;
                 } else if (Void.TYPE.equals(returnType)) {
                     type = PrimitiveType.DIRECTIVE;
@@ -144,7 +144,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 } else if (Object.class.equals(returnType)) {
                     type = PrimitiveType.FUNCTOR;
                 } else {
-                    throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + annotation);
+                    throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + method);
                 }
 
                 final int nbMethodParams = paramTypes.length;

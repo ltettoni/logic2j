@@ -28,7 +28,7 @@ public class NotListener extends SolutionListenerBase {
     boolean found = false;
 
     @Override
-    public Continuation onSolution(UnifyContext currentVars) {
+    public Integer onSolution(UnifyContext currentVars) {
         // Do NOT relay the solution further, just remember there was one
         this.found = true;
         return Continuation.USER_ABORT; // No need to seek for further solutions

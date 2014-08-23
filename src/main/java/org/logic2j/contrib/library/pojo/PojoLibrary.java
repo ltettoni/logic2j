@@ -110,7 +110,7 @@ public class PojoLibrary extends LibraryBase {
      * @return One solution, either leave theTarget
      */
     @Primitive
-    public Continuation bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
+    public Integer bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
         final Object nameTerm = currentVars.reify(theBindingName);
         ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
 
@@ -121,7 +121,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
+    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
         final Object pojo = currentVars.reify(thePojo);
         ensureBindingIsNotAFreeVar(pojo, "property/3", 0);
@@ -140,7 +140,7 @@ public class PojoLibrary extends LibraryBase {
         if (javaValue instanceof Collection) {
             for (Object javaElem : (Collection) javaValue) {
                 final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-                final Continuation result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+                final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
                 if (result != Continuation.CONTINUE) {
                     return result;
                 }
@@ -150,7 +150,7 @@ public class PojoLibrary extends LibraryBase {
         if (javaValue instanceof Object[]) {
             for (Object javaElem : (Object[]) javaValue) {
                 final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-                final Continuation result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+                final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
                 if (result != Continuation.CONTINUE) {
                     return result;
                 }

@@ -99,13 +99,13 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Primitive
-    public Continuation map(SolutionListener listener, final UnifyContext currentVars,
+    public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
         return map(listener, currentVars, mappingPredicate, inputTerm, outputTerm, OPTION_ONE);
     }
 
     @Primitive
-    public Continuation map(SolutionListener listener, final UnifyContext currentVars,
+    public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate,
                             final Object inputTerm, final Object outputTerm, final Object options) {
         if (!(mappingPredicate instanceof String)) {
@@ -276,7 +276,7 @@ public class FunctionLibrary extends LibraryBase {
             final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
                 @Override
-                public Continuation onSolution(UnifyContext currentVars) {
+                public Integer onSolution(UnifyContext currentVars) {
                     final Object result = currentVars.reify(effectiveOutput);
                     transformationResult[0] = result;
                     // We only seek for the first solution - not proceeding further

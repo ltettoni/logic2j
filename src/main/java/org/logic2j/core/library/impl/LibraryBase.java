@@ -61,8 +61,8 @@ public class LibraryBase implements PLibrary {
      * @param theSolutionListener
      * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
      */
-    protected Continuation notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
-        final Continuation continuation = theSolutionListener.onSolution(currentVars);
+    protected Integer notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
+        final Integer continuation = theSolutionListener.onSolution(currentVars);
         return continuation;
     }
 
@@ -98,7 +98,7 @@ public class LibraryBase implements PLibrary {
      * @param t2
      * @return
      */
-    protected Continuation unifyAndNotify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
+    protected Integer unifyAndNotify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         final UnifyContext after = currentVars.unify(t1, t2);
         if (after == null) {
             // Not unified: do not notify a solution and inform to continue solving

@@ -65,7 +65,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         for (final Object term : terms) {
             final Object value = currentVars.reify(term);
 
@@ -78,13 +78,13 @@ public class IOLibrary extends LibraryBase {
 
     @SuppressWarnings("unused")
     @Primitive
-    public Continuation nl(SolutionListener theListener, UnifyContext currentVars) {
+    public Integer nl(SolutionListener theListener, UnifyContext currentVars) {
         this.writer.print('\n');
         return notifySolution(theListener, currentVars);
     }
 
     @Primitive
-    public Continuation debug(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer debug(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isDebugEnabled()) {
             final String substring = formatForLog(currentVars, terms);
             logger.debug(substring);
@@ -93,7 +93,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation info(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer info(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isInfoEnabled()) {
             final String substring = formatForLog(currentVars, terms);
             logger.info(substring);
@@ -102,7 +102,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation warn(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer warn(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isWarnEnabled()) {
             final String substring = formatForLog(currentVars, terms);
             logger.warn(substring);
@@ -111,7 +111,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Primitive
-    public Continuation error(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer error(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isErrorEnabled()) {
             final String substring = formatForLog(currentVars, terms);
             logger.error(substring);
@@ -140,7 +140,7 @@ public class IOLibrary extends LibraryBase {
      * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
      */
     @Primitive
-    public Continuation nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+    public Integer nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         // Do nothing, but succeeds!
         return notifySolution(theListener, currentVars);
     }

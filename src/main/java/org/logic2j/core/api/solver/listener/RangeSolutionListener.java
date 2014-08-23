@@ -57,7 +57,7 @@ public class RangeSolutionListener<T> extends SolutionListenerBase {
 
 
     @Override
-    public Continuation onSolution(UnifyContext currentVars) {
+    public Integer onSolution(UnifyContext currentVars) {
         this.counter++;
         if (this.counter > this.maxCount) {
             // OOps, we already had solutions? This is not desired
@@ -66,7 +66,7 @@ public class RangeSolutionListener<T> extends SolutionListenerBase {
         if (isDebug) {
             logger.debug(" >>>>>>>>> onSolution() #{}", this.counter);
         }
-        final Continuation continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
+        final Integer continuation = this.counter < this.maxFetch ? Continuation.CONTINUE : Continuation.USER_ABORT;
         return continuation;
     }
 

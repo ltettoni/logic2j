@@ -50,7 +50,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
      * @return
      */
     @Primitive
-    public Continuation int_range_classic(SolutionListener theListener, UnifyContext currentVars, Object theLowerBound, Object theIterable, Object theUpperBound) {
+    public Integer int_range_classic(SolutionListener theListener, UnifyContext currentVars, Object theLowerBound, Object theIterable, Object theUpperBound) {
         final Object lowerBound = currentVars.reify(theLowerBound);
         final Object upperBound = currentVars.reify(theUpperBound);
 
@@ -62,7 +62,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
         for (long iter = lower; iter < upper; iter++) {
             logger.info("{} is going to unify an notify one solution: {}", this, iter);
-            final Continuation continuation = unifyAndNotify(theListener, currentVars, theIterable, Long.valueOf(iter));
+            final Integer continuation = unifyAndNotify(theListener, currentVars, theIterable, Long.valueOf(iter));
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }
@@ -82,7 +82,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
      * @return
      */
     @Primitive
-    public Continuation int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theMinBound, final Object theIterable, Object theMaxBound) {
+    public Integer int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theMinBound, final Object theIterable, Object theMaxBound) {
         final Object minBound = currentVars.reify(theMinBound);
         final Object iterating = currentVars.reify(theIterable);
         final Object maxBound = currentVars.reify(theMaxBound);

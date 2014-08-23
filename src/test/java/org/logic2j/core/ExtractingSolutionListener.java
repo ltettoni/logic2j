@@ -37,7 +37,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     }
 
     @Override
-    public Continuation onSolution(UnifyContext currentVars) {
+    public Integer onSolution(UnifyContext currentVars) {
         final Object solution = currentVars.reify(goal);
         logger.info(" solution: {}", solution);
 

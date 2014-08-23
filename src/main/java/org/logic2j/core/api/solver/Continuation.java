@@ -19,34 +19,24 @@
 package org.logic2j.core.api.solver;
 
 /**
- * Allows the application or library code to specify to the behaviour that the inference engine should take after
- * a solution was found, via {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}.
+ * Codes that the application or library returns to specify the behaviour that the inference engine should take after
+ * a solution was found, via
+ * {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}.
+ *
+ * NOTE: Only those two possible values should be returned, see documentation of SolutionListener.
  *
  * @author tettoni
  */
-public enum Continuation {
+public interface Continuation {
     /**
-     * Value that {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)} must return for the inference engine to continue solving (search for alternate solutions).
+     * Value that {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
+     * must return for the inference engine to continue solving (search for alternate solutions).
      */
-    CONTINUE,
+    public static Integer CONTINUE  = Integer.valueOf(0);
     /**
-     * Value that {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)} must return for the inference engine to stop solving (ie. means caller requests abort).
+     * Value that {@link org.logic2j.core.api.solver.listener.SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
+     * must return for the inference engine to stop solving (ie. means caller requests abort).
      */
-    USER_ABORT,
-    /**
-     * A cut "!" has been found - this will prune the search tree to the last solution found.
-     */
-    CUT;
-
-    public static Continuation valueOf(int cutIntercepted) {
-        if (cutIntercepted == 0) {
-            return CONTINUE;
-        } else if (cutIntercepted < 0) {
-            return USER_ABORT;
-        } else {
-            // Any cut level > 0
-            return CUT;
-        }
-    }
+    public static Integer USER_ABORT = Integer.valueOf(-1);
 
 }

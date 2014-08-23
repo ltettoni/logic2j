@@ -24,6 +24,8 @@ import org.logic2j.core.api.unify.UnifyContext;
 /**
  * The lowest-level API through which the inference engine provides solutions. For easier programming, consider using
  * {@link org.logic2j.core.api.Prolog#solve(CharSequence)} and the {@link org.logic2j.core.api.solver.holder.SolutionHolder} API.
+ * The return values of the two methods are defined in interface Continuation.
+ * Never return a positive value this is used internally to manage the CUT predicate.
  */
 public interface SolutionListener {
 
@@ -32,15 +34,15 @@ public interface SolutionListener {
      * goal's variables.
      * 
      * @return The caller must return {@link Continuation#CONTINUE} for the inference engine to continue searching for other solutions, or
-     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation).
+     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation). Never return a positive number.
      */
-    Continuation onSolution(UnifyContext currentVars);
+    Integer onSolution(UnifyContext currentVars);
 
     /**
      * Experimental: multiple solutions passing between predicates.
      * @param multi
      * @return The caller must return {@link Continuation#CONTINUE} for the inference engine to continue searching for other solutions, or
-     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation).
+     *         {@link Continuation#USER_ABORT} to break the search for other solutions (ie. user cancellation). Never return a positive number.
      */
-    Continuation onSolutions(MultiResult multi);
+    Integer onSolutions(MultiResult multi);
 }

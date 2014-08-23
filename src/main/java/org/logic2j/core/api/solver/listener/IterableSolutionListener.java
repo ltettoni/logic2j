@@ -47,7 +47,7 @@ public class IterableSolutionListener<T> extends SolutionListenerBase {
 
 
     @Override
-    public Continuation onSolution(UnifyContext currentVars) {
+    public Integer onSolution(UnifyContext currentVars) {
         // We've got one solution already!
         final T solution = extractor.extractSolution(currentVars);
         // Ask our client to stop requesting more and wait!
