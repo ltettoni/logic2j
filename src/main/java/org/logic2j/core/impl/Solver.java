@@ -244,7 +244,7 @@ public class Solver {
             // Cut IS a valid solution in itself. We just ignore what the application asks (via return value) us to do next.
             final Integer continuationFromCaller = theSolutionListener.onSolution(currentVars);// Signalling one valid solution, but ignoring return value
 
-            if (continuationFromCaller.intValue()>0) {
+            if (continuationFromCaller != Continuation.CONTINUE && continuationFromCaller.intValue() > 0) {
                 result = continuationFromCaller;
             } else {
                 // Stopping there for this iteration
@@ -358,23 +358,24 @@ public class Solver {
 
                     // If not asking for a regular "CONTINUE", handle result from notification of a fact, or solution to a theorem
                     if (result != Continuation.CONTINUE) {
-                        if (result.intValue() < 0) {
+                        final int intResult = result.intValue();
+                        if (intResult < 0) {
                             // User abort
                             if (isDebug) {
                                 logger.debug(" Iteration on clauses detected USER_ABORT - aborting search for clauses");
                             }
                             break loopOnProviders;
                         }
-                        if (result.intValue() > 0) {
+                        if (intResult > 0) {
                             // Cut somewhere down the processing, or returned from notified solution
                             if (isDebug) {
                                 logger.debug("Got a CUT of resultLevel={}, at currentLevel={}", result, cutLevel);
                             }
-                            if (result.intValue() <= cutLevel) {
+                            if (intResult <= cutLevel) {
                                 if (isDebug) {
                                     logger.debug("Cutting solve#{} for {}", inferenceCounter, goalTerm);
                                 }
-                                if (result.intValue() == cutLevel) {
+                                if (intResult == cutLevel) {
                                     if (isDebug) {
                                         logger.debug("Reached parent predicate with CUT, stop escalating CUT, continue instead");
                                     }
