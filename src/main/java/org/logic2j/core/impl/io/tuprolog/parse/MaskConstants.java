@@ -27,8 +27,8 @@ class MaskConstants {
     // Type values
     static final int LPAR = 0x0001;
     static final int RPAR = 0x0002;
-    static final int LBRA = 0x0003;
-    static final int RBRA = 0x0004;
+    static final int LBRA = 0x0003; // Bracket
+    static final int RBRA = 0x0004; // Bracket
     static final int BAR = 0x0005;
     static final int INTEGER = 0x0006;
     static final int FLOAT = 0x0007;
@@ -37,8 +37,8 @@ class MaskConstants {
     static final int SQ_SEQUENCE = 0x000A;
     static final int DQ_SEQUENCE = 0x000B;
     static final int END = 0x000D;
-    static final int LBRA2 = 0x000E;
-    static final int RBRA2 = 0x000F;
+    static final int LBRA2 = 0x000E; // Brace '{'
+    static final int RBRA2 = 0x000F; // Brace '{'
 
     // Attribute values
     static final int FUNCTOR = 0x0100;
