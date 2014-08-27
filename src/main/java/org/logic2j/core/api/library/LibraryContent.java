@@ -97,4 +97,7 @@ public class LibraryContent {
         return this.primitiveMap.get(thePredicateSignature);
     }
 
+    public boolean hasPrimitive(String thePredicateSignature) {
+        return this.primitiveMap.containsKey(thePredicateSignature);
+    }
 }
