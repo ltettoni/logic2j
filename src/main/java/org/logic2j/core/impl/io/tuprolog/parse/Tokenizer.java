@@ -163,7 +163,7 @@ class Tokenizer extends StreamTokenizer {
             pushBack();
         }
 
-        // syntactic charachters
+        // syntactic characters
         if (typea == TT_EOF) {
             return new Token("", EOF);
         }
