@@ -48,6 +48,8 @@ public class IOLibrary extends LibraryBase {
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         if (theMethodName == "write") {
             result = write(theListener, currentVars, args);
+        } else if (theMethodName == "nl") {
+            result = nl(theListener, currentVars);
         } else if (theMethodName == "nolog") {
             result = nolog(theListener, currentVars, args);
         } else if (theMethodName == "debug") {
@@ -68,18 +70,16 @@ public class IOLibrary extends LibraryBase {
     public Integer write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         for (final Object term : terms) {
             final Object value = currentVars.reify(term);
-
-            String format = getProlog().getTermMarshaller().marshall(value).toString();
-            format = IOLibrary.unquote(format);
-            this.writer.print(format);
+            final String formatted = getProlog().getTermMarshaller().marshall(value).toString();
+            final String unquoted = IOLibrary.unquote(formatted);
+            this.writer.print(unquoted);
         }
         return notifySolution(theListener, currentVars);
     }
 
-    @SuppressWarnings("unused")
     @Primitive
     public Integer nl(SolutionListener theListener, UnifyContext currentVars) {
-        this.writer.print('\n');
+        this.writer.println();
         return notifySolution(theListener, currentVars);
     }
 
