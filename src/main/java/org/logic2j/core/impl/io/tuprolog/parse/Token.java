@@ -69,4 +69,9 @@ class Token implements Serializable {
     boolean isType(int theType) {
         return getType() == theType;
     }
+
+    @Override
+    public String toString() {
+        return "Token('" + text + '\'' + ", type=" + type + '}';
+    }
 }
