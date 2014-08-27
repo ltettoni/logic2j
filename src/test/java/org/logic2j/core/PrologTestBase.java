@@ -241,6 +241,7 @@ public abstract class PrologTestBase {
         final TheoryManager manager = this.prolog.getTheoryManager();
         final TheoryContent load = manager.load(theFile);
         manager.addTheory(load);
+
         logger.debug("Loaded theory from: {}", theFile);
     }
 
@@ -254,7 +255,7 @@ public abstract class PrologTestBase {
         try {
             loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
         } catch (final IOException e) {
-            // Avoid bothernig with checked IOException in our TestCases (since this is a helper method, let's help)
+            // Avoid bothering with checked IOException in our TestCases (since this is a helper method, let's help)
             throw new PrologNonSpecificError("Could not load Theory from " + theTheoryFile + ": " + e);
         }
     }
