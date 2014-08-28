@@ -29,6 +29,7 @@ import org.logic2j.core.library.impl.LibraryBase;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -39,7 +40,7 @@ public class PojoLibrary extends LibraryBase {
 
         @Override
         protected Map<String, Object> initialValue() {
-            return new TreeMap<String, Object>();
+            return new HashMap<String, Object>();
         }
 
     };
@@ -78,13 +79,14 @@ public class PojoLibrary extends LibraryBase {
 
     /**
      * Override this method with whatever introspection framework you want.
+     * Here we use BeanUtils.
      *
      * @param theInstance
      * @param theExpression
      * @return The value introspected
      */
     protected Object introspect(Object theInstance, String theExpression) {
-        Object value;
+        final Object value;
         try {
             value = PropertyUtils.getProperty(theInstance, theExpression);
         } catch (IllegalAccessException e) {
