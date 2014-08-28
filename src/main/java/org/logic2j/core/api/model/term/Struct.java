@@ -269,7 +269,15 @@ public final class Struct extends Term {
             this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
         }
         for (int i = 0; i < this.arity; i++) {
-            final Object child = this.args[i];
+            Object child = this.args[i];
+            if (child instanceof String) {
+                if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
+                    // Convert to Struct so that we can assign a primitive
+                    child = new Struct((String)child);
+                    child = TermApi.normalize(child, theContent);
+                    this.args[i] = child; // Not 100% sure it's good to mutate
+                }
+            }
             if (child instanceof Struct) {
                 ((Struct) child).assignPrimitiveInfo(theContent);
             }
