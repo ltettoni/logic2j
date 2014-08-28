@@ -24,26 +24,15 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.EnvManager;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class PojoLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PojoLibrary.class);
-
-    private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
-
-        @Override
-        protected Map<String, Object> initialValue() {
-            return new HashMap<String, Object>();
-        }
-
-    };
 
     public PojoLibrary(PrologImplementation theProlog) {
         super(theProlog);
@@ -170,12 +159,14 @@ public class PojoLibrary extends LibraryBase {
      * @param theKey
      * @param theValue
      */
-    public static void bind(String theKey, Object theValue) {
-        threadLocalBindings.get().put(theKey, theValue);
+    public void bind(String theKey, Object theValue) {
+        final String effectiveKey = EnvManager.VAR_PREFIX_THREAD + theKey;
+        this.getProlog().getTermAdapter().setVariable(effectiveKey, theValue);
     }
 
-    public static Object extract(String theKey) {
-        return threadLocalBindings.get().get(theKey);
+    public Object extract(String theKey) {
+        final String effectiveKey = EnvManager.VAR_PREFIX_THREAD + theKey;
+        return this.getProlog().getTermAdapter().getVariable(effectiveKey);
     }
 
 }

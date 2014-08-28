@@ -40,6 +40,7 @@ public class DirectivesTest extends PrologTestBase {
     @Test
     public void load() {
         loadTheoryFromTestResourcesDir("directives.pro");
+//        countOneSolution("myInit");
     }
 
 }

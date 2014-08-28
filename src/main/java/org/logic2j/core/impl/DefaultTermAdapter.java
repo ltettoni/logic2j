@@ -17,12 +17,16 @@
  */
 package org.logic2j.core.impl;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -30,7 +34,7 @@ import java.util.Map.Entry;
  * Default and reference implementation of {@link TermAdapter}.
  */
 public class DefaultTermAdapter implements TermAdapter {
-
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTermAdapter.class);
     private final TermMapper NOOP_MAPPER = new TermMapper() {
 
         /**
@@ -51,6 +55,10 @@ public class DefaultTermAdapter implements TermAdapter {
 
     private TermMapper normalizer = NOOP_MAPPER;
 
+
+    private final EnvManager envManager = new EnvManager();
+
+
     // TODO be smarter to handle Arrays and Collections, and Iterables
     @Override
     public Object toTerm(Object theObject, FactoryMode theMode) {
@@ -65,6 +73,10 @@ public class DefaultTermAdapter implements TermAdapter {
                     }
                 }
                 return Struct.atom(string);
+            } else if (theMode == FactoryMode.SUBSTITUTE) {
+                logger.debug("{} is substituting {}", theObject);
+                final Object value = getVariable(theObject.toString());
+                return value;
             }
             throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermUnmarshaller instead");
         }
@@ -72,7 +84,6 @@ public class DefaultTermAdapter implements TermAdapter {
         final Object normalized = normalizer.apply(created);
         return normalized;
     }
-
 
     @Override
     public Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments) {
@@ -239,6 +250,19 @@ public class DefaultTermAdapter implements TermAdapter {
 
     public void setNormalizer(TermMapper normalizer) {
         this.normalizer = normalizer;
+    }
+
+
+
+    @Override
+    public Object getVariable(String theExpression) {
+        return this.envManager.getVariable(theExpression);
+    }
+
+    @Override
+    public TermAdapter setVariable(String theExpression, Object theValue) {
+        this.envManager.setVariable(theExpression, theValue);
+        return this;
     }
 
     @Override

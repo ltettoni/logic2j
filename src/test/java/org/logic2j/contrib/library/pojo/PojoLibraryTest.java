@@ -19,6 +19,7 @@ package org.logic2j.contrib.library.pojo;
 
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.impl.EnvManager;
 
 
 public class PojoLibraryTest extends PrologTestBase {
@@ -39,12 +40,12 @@ public class PojoLibraryTest extends PrologTestBase {
 
     /**
      * Helper method for PojoLibrary-related test cases: bind a Java object by name.
-     * 
+     *
      * @param theKey
      * @param theValue
      */
     protected void bind(String theKey, Object theValue) {
-        PojoLibrary.bind(theKey, theValue);
+        EnvManager.setThreadVariable(theKey, theValue);
     }
 
     // Testing of the "property" predicate is done where we can assert objects into the theory,

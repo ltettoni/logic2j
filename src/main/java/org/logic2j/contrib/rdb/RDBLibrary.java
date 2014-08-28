@@ -35,6 +35,7 @@ import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.EnvManager;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.TypeUtils;
@@ -355,7 +356,7 @@ public class RDBLibrary extends LibraryBase {
       ensureBindingIsNotAFreeVar(value, "bound/1", 0);
       final String bindingName = String.valueOf(value);
 
-    final Object instance = PojoLibrary.extract(bindingName);
+    final Object instance = EnvManager.getThreadVariable(bindingName);
     return TypeUtils.safeCastNotNull("unwrapping binding \"" + instance + '"', instance, desiredClassOrInterface);
   }
 

@@ -25,7 +25,8 @@ import org.logic2j.core.api.model.term.Var;
 import java.util.List;
 
 /**
- * Convert from Java objects to {@link Term}s, and vice-versa from {@link Term}s to Java objects.
+ * Interaction between the environment (host, programs, variables, streams/files) and the Prolog engine, in both directions.
+ * In particular, convert from Java objects to {@link Term}s, and vice-versa from {@link Term}s to Java objects.
  * Do not confuse with TermMarshaller and TermUnmarshaller that deal with string conversion (formatting and parsing).
  */
 public interface TermAdapter {
@@ -47,6 +48,12 @@ public interface TermAdapter {
          * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
          */
         ANY_TERM,
+
+        /**
+         * The specified argument is an expression, typically the name of a variable (or an EL expression) that
+         * will be substituted into the effective value.
+         */
+        SUBSTITUTE,
 
         /**
          * Result can be any term plus compound structures.
@@ -118,4 +125,9 @@ public interface TermAdapter {
      * @return The converted instance
      */
     <T> T fromTerm(Object theTerm, Class<T> theTargetClass);
+
+
+    Object getVariable(String theExpression);
+
+    TermAdapter setVariable(String theExpression, Object theValue);
 }

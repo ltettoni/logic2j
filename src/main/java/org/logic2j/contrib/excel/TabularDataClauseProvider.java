@@ -62,7 +62,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
 
     @Override
     public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
-        final String predicateSignature = TermApi.getPredicateSignature(theGoal);
+        final String predicateSignature = TermApi.predicateSignature(theGoal);
         switch (this.mode) {
         case EAV_NAMED:
             if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {

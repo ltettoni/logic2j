@@ -219,7 +219,7 @@ public class Clause {
      * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.
      */
     public String getPredicateKey() {
-        return TermApi.getPredicateSignature(this.head);
+        return TermApi.predicateSignature(this.head);
     }
 
     // ---------------------------------------------------------------------------

@@ -19,13 +19,16 @@ package org.logic2j.core.impl.theory;
 
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.term.TermApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 /**
- * Storage of the content of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.
+ * Storage of the clauses of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.
  */
 public class TheoryContent {
+    private static final Logger logger = LoggerFactory.getLogger(TheoryContent.class);
 
     /**
      * The data structure to hold our clauses: lists of {@link Clause}s by predicate key.
@@ -33,7 +36,9 @@ public class TheoryContent {
      * head makes a family, see {@link Clause#getPredicateKey()}.
      * Value: ordered list of very very very immutable {@link Clause}s.
      */
-    private final HashMap<String, List<Clause>> content = new HashMap<String, List<Clause>>();
+    private final HashMap<String, List<Clause>> clauses = new HashMap<String, List<Clause>>();
+
+    private Object initializationGoal = null;
 
     /**
      * Add one {@link Clause}.
@@ -42,11 +47,11 @@ public class TheoryContent {
      */
     public synchronized void add(Clause theClause) {
         final String clauseFamilyKey = theClause.getPredicateKey();
-        List<Clause> family = this.content.get(clauseFamilyKey);
+        List<Clause> family = this.clauses.get(clauseFamilyKey);
         if (family == null) {
             // No Clause yet defined in this family, create one
             family = new ArrayList<Clause>();
-            this.content.put(clauseFamilyKey, family);
+            this.clauses.put(clauseFamilyKey, family);
         }
         family.add(theClause);
     }
@@ -59,16 +64,22 @@ public class TheoryContent {
      * @param theContentToAddToThis
      */
     public synchronized void addAll(TheoryContent theContentToAddToThis) {
-        for (final Map.Entry<String, List<Clause>> extraEntry : theContentToAddToThis.content.entrySet()) {
+        for (final Map.Entry<String, List<Clause>> extraEntry : theContentToAddToThis.clauses.entrySet()) {
             final String clauseFamilyKey = extraEntry.getKey();
-            List<Clause> family = this.content.get(clauseFamilyKey);
+            List<Clause> family = this.clauses.get(clauseFamilyKey);
             if (family == null) {
                 // No Clause yet defined in this family, create one
                 family = new ArrayList<Clause>();
-                this.content.put(clauseFamilyKey, family);
+                this.clauses.put(clauseFamilyKey, family);
             }
             final List<Clause> clausesToAdd = extraEntry.getValue();
             family.addAll(clausesToAdd);
+        }
+        if (theContentToAddToThis.getInitializationGoal()!=null) {
+            if (this.getInitializationGoal()!=null) {
+                logger.warn("Overwriting initialization goal \"{}\" with \"{}\"", this.getInitializationGoal(), theContentToAddToThis.getInitializationGoal());
+            }
+            this.setInitializationGoal(theContentToAddToThis.getInitializationGoal());
         }
     }
 
@@ -76,20 +87,28 @@ public class TheoryContent {
      * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
      * 
      * @param theGoalTerm
-     * @return An iterable for a foreach() loop.
+     * @return An Iterable for a foreach() loop.
      */
     public Iterable<Clause> find(Object theGoalTerm) {
-        final String clauseFamilyKey = TermApi.getPredicateSignature(theGoalTerm);
-        final List<Clause> family = this.content.get(clauseFamilyKey);
+        final String clauseFamilyKey = TermApi.predicateSignature(theGoalTerm);
+        final List<Clause> family = this.clauses.get(clauseFamilyKey);
         if (family == null) {
-            // Predicate not registered in this theory content, return empty, it's not a failure condition
+            // Predicate not registered in this theory clauses, return empty, it's not a failure condition
             return Collections.emptyList();
         }
         return family;
     }
 
+    public Object getInitializationGoal() {
+        return initializationGoal;
+    }
+
+    public void setInitializationGoal(Object initializationGoal) {
+        this.initializationGoal = initializationGoal;
+    }
+
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + '(' + this.content + ')';
+        return this.getClass().getSimpleName() + '(' + this.clauses + ')';
     }
 }

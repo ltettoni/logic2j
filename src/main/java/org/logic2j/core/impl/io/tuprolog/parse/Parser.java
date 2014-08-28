@@ -38,7 +38,7 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
 
 /**
  * This class defines a parser of Prolog terms and sentences.
- * 
+ * <p/>
  * <pre>
  * term ::= exprA(1200)
  * exprA(n) ::= exprB(n) { op(yfx,n) exprA(n-1) |
@@ -60,7 +60,7 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
  *              '[' [ exprA(1200) { ',' exprA(1200) }* [ '|' exprA(1200) ] ] ']' |
  *              '(' { exprA(1200) }* ')'
  *              '{' { exprA(1200) }* '}'
- * 
+ *
  * op(type,n) ::= ATOM_PATTERN | { symbol }+
  * </pre>
  */
@@ -71,6 +71,7 @@ public class Parser {
 
     private static class IdentifiedTerm {
         final int priority;
+
         final Object result;
 
         public IdentifiedTerm(int thePriority, Object theResult) {
@@ -80,13 +81,16 @@ public class Parser {
     }
 
     private final Reader reader;
+
     private final Tokenizer tokenizer;
+
     private final OperatorManager operatorManager;
+
     private final TermAdapter termAdapter;
 
     public Parser(OperatorManager theOperatorManager, TermAdapter theTermAdapter, CharSequence theoryText) {
         this.reader = null;
-        if (theoryText==null) {
+        if (theoryText == null) {
             throw new InvalidTermException("null Term cannot be parsed");
         }
         this.tokenizer = new Tokenizer(theoryText.toString());
@@ -97,7 +101,7 @@ public class Parser {
     /**
      * @param theOperatorManager
      * @param theTermAdapter
-     * @param theReader This Reader will be wrapped into a LineNumberReader for improve error reporting.
+     * @param theReader          This Reader will be wrapped into a LineNumberReader for improve error reporting.
      */
     public Parser(OperatorManager theOperatorManager, TermAdapter theTermAdapter, Reader theReader) {
         this.reader = new LineNumberReader(new BufferedReader(theReader), 10000);
@@ -108,7 +112,7 @@ public class Parser {
 
     /**
      * Parses next term from the stream built on string.
-     * 
+     *
      * @param endNeeded <tt>true</tt> if it is required to parse the end token (a period), <tt>false</tt> otherwise.
      * @throws org.logic2j.core.api.model.exception.InvalidTermException if a syntax error is found.
      */
@@ -133,12 +137,12 @@ public class Parser {
         } catch (final IOException ex) {
             throw new InvalidTermException("An I/O error occured.");
         } catch (InvalidTermException e) {
-          if (this.reader instanceof LineNumberReader) {
-            LineNumberReader lnr = (LineNumberReader)this.reader;
-            int lineNumber = lnr.getLineNumber();
-            throw new InvalidTermException("Error at line " + lineNumber + ": " + e.getMessage());
-          }
-          throw e;
+            if (this.reader instanceof LineNumberReader) {
+                LineNumberReader lnr = (LineNumberReader) this.reader;
+                int lineNumber = lnr.getLineNumber();
+                throw new InvalidTermException("Error at line " + lineNumber + ": " + e.getMessage());
+            }
+            throw e;
         }
     }
 
@@ -307,7 +311,7 @@ public class Parser {
      * lower priority than itself. If the left side does not have a prefix it must be an expr0.
      *
      * @param commaIsEndMarker used when the leftside is part of an argument list of expressions
-     * @param maxPriority operators with a higher priority than this will effectivly end the expression
+     * @param maxPriority      operators with a higher priority than this will effectivly end the expression
      * @return a wrapper of: 1. term correctly structured and 2. the priority of its root operator
      * @throws org.logic2j.core.api.model.exception.InvalidTermException
      */
@@ -439,6 +443,23 @@ public class Parser {
                 return new Struct("{}", arg);
             }
             throw new InvalidTermException("Missing right braces: {" + arg + " -> here <-");
+        }
+
+        // Handle placeholder for variables ${path.to.var}
+        if ("$".equals(t1.text)) {
+            Token nextToken = this.tokenizer.readToken();
+            if (!nextToken.isType(LBRA2)) {
+                throw new InvalidTermException("Placeholder for variable should be ${name}; missing opening brace");
+            }
+            nextToken = this.tokenizer.readToken();
+            final StringBuilder varPathExpression = new StringBuilder();
+            while (!nextToken.isType(RBRA2)) {
+                varPathExpression.append(nextToken.text);
+                nextToken = this.tokenizer.readToken();
+            }
+            // We delegate the instantiation of the atom to our TermAdapter
+            final Object term = this.termAdapter.toTerm(varPathExpression.toString(), TermAdapter.FactoryMode.SUBSTITUTE);
+            return term;
         }
 
         throw new InvalidTermException("The following token could not be identified: \"" + t1.text + '"');

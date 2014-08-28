@@ -234,7 +234,7 @@ public final class TermApi {
      *
      * @return The predicate's name + '/' + arity for normal {@link Struct}, or just the toString() of any other Object
      */
-    public static String getPredicateSignature(Object thePredicate) {
+    public static String predicateSignature(Object thePredicate) {
         if (thePredicate instanceof Struct) {
             return ((Struct) thePredicate).getPredicateSignature();
         }
@@ -298,10 +298,17 @@ public final class TermApi {
 
 
     public static <T> T normalize(T theTerm, LibraryContent theLibraryContent) {
-        final T factorized = factorize(theTerm);
+        T factorized = factorize(theTerm);
         assignIndexes(factorized, 0);
-        if (theLibraryContent != null && factorized instanceof Struct) {
-            ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
+        if (theLibraryContent != null) {
+            if (factorized instanceof String) {
+                if (theLibraryContent.hasPrimitive(predicateSignature(factorized))) {
+                    return normalize((T)new Struct((String)factorized), theLibraryContent);
+                }
+            }
+            if (factorized instanceof Struct) {
+                ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
+            }
         }
         return factorized;
     }

@@ -23,6 +23,8 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
@@ -43,9 +45,14 @@ import java.util.List;
 public class DefaultTheoryManager implements TheoryManager {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManager.class);
 
+    public static final String INITIALIZATION_PREDICATE = "initialization";
+
     private final PrologImplementation prolog;
+
     private final TheoryContent wholeContent = new TheoryContent();
+
     private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
+
     private List<DataFactProvider> dataFactProviders = new ArrayList<DataFactProvider>();
 
     public DefaultTheoryManager(PrologImplementation theProlog) {
@@ -127,47 +134,6 @@ public class DefaultTheoryManager implements TheoryManager {
         }
     }
 
-    private TheoryContent loadAllClauses(Parser theParser) {
-        final TheoryContent content = new TheoryContent();
-        Object clauseTerm = theParser.nextTerm(true);
-        while (clauseTerm != null) {
-            logger.debug("Parsed clause: {}", clauseTerm);
-            if (clauseTerm instanceof CharSequence) {
-                // Very rare case of facts being just a string (see "cut4" in our tests)
-                clauseTerm = Struct.valueOf(clauseTerm.toString());
-            }
-            if (! (clauseTerm instanceof Struct)) {
-                throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
-            }
-            final Clause cl = new Clause(this.prolog, clauseTerm);
-            content.add(cl);
-              clauseTerm = theParser.nextTerm(true);
-        }
-        return content;
-    }
-
-    /**
-     * @param theContent to add
-     */
-    @Override
-    public void addTheory(TheoryContent theContent) {
-        this.wholeContent.addAll(theContent);
-    }
-
-    @Override
-    public void addClauseProvider(ClauseProvider theNewProvider) {
-        this.clauseProviders.add(theNewProvider);
-    }
-
-    @Override
-    public void addDataFactProvider(DataFactProvider theNewProvider) {
-        this.dataFactProviders.add(theNewProvider);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
     // TODO is it reasonable to return a mutable list so that callers can add() to it???
     @Override
     public List<ClauseProvider> getClauseProviders() {
@@ -188,8 +154,78 @@ public class DefaultTheoryManager implements TheoryManager {
         return this.dataFactProviders;
     }
 
+    @Override
+    public void addClauseProvider(ClauseProvider theNewProvider) {
+        this.clauseProviders.add(theNewProvider);
+    }
+
+    @Override
+    public void addDataFactProvider(DataFactProvider theNewProvider) {
+        this.dataFactProviders.add(theNewProvider);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
+
+    /**
+     * @param theContent to add
+     */
+    @Override
+    public void addTheory(TheoryContent theContent) {
+        this.wholeContent.addAll(theContent);
+        final Object initializationGoal = this.wholeContent.getInitializationGoal();
+        if (initializationGoal != null) {
+            executeDirective(initializationGoal);
+        }
+    }
+
     public void setDataFactProviders(List<DataFactProvider> theDataFactProviders) {
         this.dataFactProviders = theDataFactProviders;
+    }
+
+    private TheoryContent loadAllClauses(Parser theParser) {
+        final TheoryContent content = new TheoryContent();
+        // Need to split parsing into terms and loading Clauses into Content separately, because of import/1
+        for (Object clauseTerm = theParser.nextTerm(true); clauseTerm != null; clauseTerm = theParser.nextTerm(true)) {
+            logger.debug("Parsed clause: {}", clauseTerm);
+            if (clauseTerm instanceof CharSequence) {
+                // Very rare case of facts being just a string (see "cut4" in our tests)
+                clauseTerm = Struct.valueOf(clauseTerm.toString());
+            }
+            if (!(clauseTerm instanceof Struct)) {
+                throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
+            }
+            final Struct clauseStruct = (Struct) clauseTerm;
+            if (isDirective(clauseStruct)) {
+                // Identify directive
+                final Object directiveGoal = clauseStruct.getArg(0);
+                if (directiveGoal instanceof Struct && ((Struct) directiveGoal).getName() == INITIALIZATION_PREDICATE && ((Struct) directiveGoal).getArity() == 1) {
+                    final Object goal = ((Struct) directiveGoal).getArg(0);
+                    content.setInitializationGoal(goal);
+                } else {
+                    executeDirective(directiveGoal);
+                }
+            } else {
+                final Clause cl = new Clause(this.prolog, clauseTerm);
+                content.add(cl);
+            }
+
+        }
+        // End of loading
+        return content;
+    }
+
+    private void executeDirective(Object directiveGoal) {
+        directiveGoal = TermApi.normalize(directiveGoal, this.prolog.getLibraryManager().wholeContent());
+        // Execute right now
+        final CountingSolutionListener countingListener = new CountingSolutionListener();
+        this.prolog.getSolver().solveGoal(directiveGoal, countingListener);
+        logger.info("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.getCounter());
+    }
+
+    private boolean isDirective(Struct clauseStruct) {
+        return clauseStruct.getName() == Struct.FUNCTOR_CLAUSE && clauseStruct.getArity() == 1;
     }
 
     // ---------------------------------------------------------------------------
