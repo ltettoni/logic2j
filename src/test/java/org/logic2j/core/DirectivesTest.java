@@ -18,7 +18,8 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.core.api.model.Operator;
+import org.logic2j.contrib.library.pojo.PojoLibrary;
+import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 import static org.junit.Assert.assertEquals;
@@ -39,8 +40,11 @@ public class DirectivesTest extends PrologTestBase {
 
     @Test
     public void load() {
-        loadTheoryFromTestResourcesDir("directives.pro");
-//        countOneSolution("myInit");
+        getProlog().getLibraryManager().loadLibrary(new PojoLibrary(getProlog()));
+
+        countNoSolution("directiveFileLoaded");
+        loadTheoryFromTestResourcesDir("directives-set-vars.pro");
+        countOneSolution("directiveFileLoaded");
     }
 
 }

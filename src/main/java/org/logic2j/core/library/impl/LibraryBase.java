@@ -71,6 +71,7 @@ public class LibraryBase implements PLibrary {
      *
      * @param term
      * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
+     * @param indexOfArg zero-based index of argument causing error
      * @throws org.logic2j.core.api.model.exception.InvalidTermException
      */
     protected void ensureBindingIsNotAFreeVar(Object term, String nameOfPrimitive, int indexOfArg) {
@@ -80,14 +81,6 @@ public class LibraryBase implements PLibrary {
             throw new InvalidTermException("Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
         }
     }
-
-    protected Object createConstantTerm(Object anyObject) {
-        if (anyObject == null) {
-            return Var.ANONYMOUS_VAR;
-        }
-        return this.prolog.getTermAdapter().toTerm(anyObject, FactoryMode.ATOM);
-    }
-
 
     /**
      * Unify terms t1 and t2, and if they could be unified, call theListener with the solution of the newly

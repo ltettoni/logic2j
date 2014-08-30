@@ -177,6 +177,7 @@ public class DefaultTheoryManager implements TheoryManager {
         final Object initializationGoal = this.wholeContent.getInitializationGoal();
         if (initializationGoal != null) {
             executeDirective(initializationGoal);
+            this.wholeContent.setInitializationGoal(null); // Next file loaded should not re-use same!
         }
     }
 
@@ -221,7 +222,7 @@ public class DefaultTheoryManager implements TheoryManager {
         // Execute right now
         final CountingSolutionListener countingListener = new CountingSolutionListener();
         this.prolog.getSolver().solveGoal(directiveGoal, countingListener);
-        logger.info("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.getCounter());
+        logger.debug("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.getCounter());
     }
 
     private boolean isDirective(Struct clauseStruct) {

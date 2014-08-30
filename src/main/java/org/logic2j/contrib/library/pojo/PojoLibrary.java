@@ -21,6 +21,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -91,25 +92,6 @@ public class PojoLibrary extends LibraryBase {
         return value;
     }
 
-    /**
-     * TODO: To be refine - currently is named "bind" but actually extracts from the ThreadLocal.
-     *
-     * @param theListener
-     * @param currentVars
-     * @param theBindingName The name to use for the binding
-     * @param theTarget      Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
-     * @return One solution, either leave theTarget
-     */
-    @Primitive
-    public Integer bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
-        final Object nameTerm = currentVars.reify(theBindingName);
-        ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
-
-        final String name = nameTerm.toString();
-        final Object instance = extract(name);
-        final Object instanceTerm = createConstantTerm(instance);
-        return unifyAndNotify(theListener, currentVars, instanceTerm, theTarget);
-    }
 
     @Primitive
     public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
@@ -154,19 +136,64 @@ public class PojoLibrary extends LibraryBase {
     }
 
     /**
-     * A utility method to emulate calling the bind/2 predicate from Java.
+     * Get, set or check a variable.
+     * If theTarget is a free Var
+     *   If the binding has a value, unify it to the free Var (this means, gets the value)
+     *   If the binding has no value, do nothing (but yields a successful solution)
+     * If theTarget is a bound Var
+     *   If the binding has no value, set the bound Var's value into the binding
+     *   If the binding has a value unifiable to theVar, succeed without other effect
+     *   If the binding has a value that cannot be unified, fails
      *
-     * @param theKey
-     * @param theValue
+     * @param theListener
+     * @param currentVars
+     * @param theBindingName The name to use for the binding
+     * @param theTarget      Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
+     * @return One solution, either theTarget is unified to a real value, or is left unchanged (unified to the anonymous var)
      */
-    public void bind(String theKey, Object theValue) {
-        final String effectiveKey = EnvManager.VAR_PREFIX_THREAD + theKey;
-        this.getProlog().getTermAdapter().setVariable(effectiveKey, theValue);
+    @Primitive
+    public Integer bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
+        final Object nameTerm = currentVars.reify(theBindingName);
+        ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
+
+        final String name = nameTerm.toString();
+        final Object bindingValue = this.getProlog().getTermAdapter().getVariable(name);
+        final boolean bindingIsDefined = bindingValue != null;
+
+        final Object targetTerm = currentVars.reify(theTarget);
+        final boolean targetIsFree = targetTerm instanceof Var;
+
+        // Implement the logic as per the spec defined in comment above
+        final Integer result;
+        if (targetIsFree) {
+            if (bindingIsDefined) {
+                // Getting value
+                result = unifyAndNotify(theListener, currentVars, bindingValue, theTarget);
+            } else {
+                // Nothing to unify but escalate a solution
+                result = notifySolution(theListener, currentVars);
+            }
+        } else {
+            if (bindingIsDefined) {
+                // Try to unify, will succeed or not
+                result = unifyAndNotify(theListener, currentVars, bindingValue, theTarget);
+            } else {
+                // Set the value (and return successful solution)
+                this.getProlog().getTermAdapter().setVariable(name, targetTerm);
+                result = notifySolution(theListener, currentVars);
+            }
+        }
+        return result;
     }
 
-    public Object extract(String theKey) {
-        final String effectiveKey = EnvManager.VAR_PREFIX_THREAD + theKey;
-        return this.getProlog().getTermAdapter().getVariable(effectiveKey);
+    /**
+     * A utility method to emulate calling the bind/2 predicate from Java.
+     *
+     * @param theVariableName
+     * @param theValue
+     */
+    public void bind(String theVariableName, Object theValue) {
+        this.getProlog().getTermAdapter().setVariable(theVariableName, theValue);
     }
 
 }

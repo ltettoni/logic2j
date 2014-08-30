@@ -17,12 +17,16 @@ package org.logic2j.core.impl;/*
  */
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EnvManager {
+    private static final Logger logger = LoggerFactory.getLogger(EnvManager.class);
+
     /**
      * Thread variables will be prefixed with this name.
      */
@@ -39,15 +43,6 @@ public class EnvManager {
     public static final String VAR_PREFIX_ENV = "env.";
 
     private final Map<String, Object> environment = new HashMap<String, Object>();
-
-    private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
-
-        @Override
-        protected Map<String, Object> initialValue() {
-            return new HashMap<String, Object>();
-        }
-
-    };
 
 
     public EnvManager() {
@@ -79,10 +74,12 @@ public class EnvManager {
             // No solution
             return null;
         }
+        logger.info("Getting variable \"{}\",  value={}", theExpression, value);
         return value;
     }
 
     public void setVariable(String theExpression, Object theValue) {
+        logger.info("Setting variable \"{}\", value={}", theExpression, theValue);
         if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
             final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
             setThreadVariable(rest, theValue);
@@ -90,6 +87,18 @@ public class EnvManager {
             this.environment.put(theExpression, theValue);
         }
     }
+
+
+
+
+    private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
+
+        @Override
+        protected Map<String, Object> initialValue() {
+            return new HashMap<String, Object>();
+        }
+
+    };
 
     public static Object getThreadVariable(String theVariableName) {
         return threadLocalBindings.get().get(theVariableName);

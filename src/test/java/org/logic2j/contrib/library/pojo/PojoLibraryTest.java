@@ -27,15 +27,14 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test
     public void bind() {
         loadLibrary(new PojoLibrary(this.prolog));
-        // TODO Dubious definition of bind/2 but that's how it is currently implemented
-        uniqueSolution("bind(name, X)");
+        uniqueSolution("bind('thread.name', X)");
         bind("name", "value");
         //
-        uniqueSolution("bind(name, X), X=value");
-        noSolutions("bind(name, X), X=some_other");
-        noSolutions("bind(name, a)");
-        noSolutions("bind(name, name)");
-        uniqueSolution("bind(name, value)");
+        uniqueSolution("bind('thread.name', X), X=value");
+        noSolutions("bind('thread.name', X), X=some_other");
+        noSolutions("bind('thread.name', a)");
+        noSolutions("bind('thread.name', name)");
+        uniqueSolution("bind('thread.name', value)");
     }
 
     /**
