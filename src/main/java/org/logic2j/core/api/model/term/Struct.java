@@ -26,6 +26,7 @@ import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -146,7 +147,7 @@ public final class Struct extends Term {
         int i = 0;
         for (final Object element : argList) {
             if (element == null) {
-                throw new InvalidTermException("Cannot create a Struct with any null argument");
+                throw new InvalidTermException("Cannot create Struct \"" + theFunctor + Arrays.asList(argList) + "\", found null argument at index " + i);
             }
             this.args[i++] = element;
         }
