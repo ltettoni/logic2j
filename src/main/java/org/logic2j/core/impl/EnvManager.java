@@ -74,12 +74,12 @@ public class EnvManager {
             // No solution
             return null;
         }
-        logger.info("Getting variable \"{}\",  value={}", theExpression, value);
+        logger.debug("Getting variable \"{}\",  value={}", theExpression, value);
         return value;
     }
 
     public void setVariable(String theExpression, Object theValue) {
-        logger.info("Setting variable \"{}\", value={}", theExpression, theValue);
+        logger.debug("Setting variable \"{}\", value={}", theExpression, theValue);
         if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
             final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
             setThreadVariable(rest, theValue);
