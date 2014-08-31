@@ -50,12 +50,6 @@ public interface TermAdapter {
         ANY_TERM,
 
         /**
-         * The specified argument is an expression, typically the name of a variable (or an EL expression) that
-         * will be substituted into the effective value.
-         */
-        SUBSTITUTE,
-
-        /**
          * Result can be any term plus compound structures.
          */
         COMPOUND
