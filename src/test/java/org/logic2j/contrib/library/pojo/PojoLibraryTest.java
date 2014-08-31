@@ -17,8 +17,10 @@
  */
 package org.logic2j.contrib.library.pojo;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.impl.EnvManager;
 
 
@@ -50,4 +52,11 @@ public class PojoLibraryTest extends PrologTestBase {
     // Testing of the "property" predicate is done where we can assert objects into the theory,
     // this is in DynamicClauseProviderTest
 
+
+    @Test
+    public void javaNew() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").single();
+        Assert.assertSame(TermAdapter.FactoryMode.ANY_TERM, x);
+    }
 }

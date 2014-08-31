@@ -20,6 +20,8 @@ package org.logic2j.contrib.library.pojo;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
@@ -43,24 +45,30 @@ public class PojoLibrary extends LibraryBase {
     public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
+        final Object[] args = theGoalStruct.getArgs();
         final int arity = theGoalStruct.getArity();
-        if (arity == 2) {
-            final Object arg0 = theGoalStruct.getArg(0);
-            final Object arg1 = theGoalStruct.getArg(1);
+        if (arity == 1) {
+            final Object arg0 = args[0];
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+        } else if (arity == 2) {
+            final Object arg0 = args[0];
+            final Object arg1 = args[1];
             if (theMethodName == "bind") {
                 result = bind(theListener, currentVars, arg0, arg1);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
         } else if (arity == 3) {
-            final Object arg0 = theGoalStruct.getArg(0);
-            final Object arg1 = theGoalStruct.getArg(1);
-            final Object arg2 = theGoalStruct.getArg(2);
+            final Object arg0 = args[0];
+            final Object arg1 = args[1];
+            final Object arg2 = args[2];
             if (theMethodName == "property") {
                 result = property(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
+        } else if (theMethodName == "javaNew") {
+            result = javaNew(theListener, currentVars, args);
         } else {
             result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }
@@ -93,6 +101,16 @@ public class PojoLibrary extends LibraryBase {
     }
 
 
+    /**
+     * Extraction of values from POJO from reflection.
+     * NOTE: Implementation far from complete: read-only, and requires property name to be specified (cannot extract all by backtracking a free var).
+     * @param theListener
+     * @param currentVars
+     * @param thePojo
+     * @param thePropertyName
+     * @param theValue
+     * @return
+     */
     @Primitive
     public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
         // First argument
@@ -187,13 +205,44 @@ public class PojoLibrary extends LibraryBase {
     }
 
     /**
+     * @param theListener
+     * @param currentVars
+     * @param args
+     * @return Java invocation of constructor
+     */
+    @Primitive
+    public Object javaNew(SolutionListener theListener, UnifyContext currentVars, Object... args) {
+        // More generic instantiation than the TermFactory
+        final Object className = currentVars.reify(args[0]);
+        ensureBindingIsNotAFreeVar(className, "javaNew", 0);
+        try {
+            final Class<?> aClass = Class.forName(className.toString());
+            if (Enum.class.isAssignableFrom(aClass)) {
+                final String enumName = currentVars.reify(args[1]).toString();
+
+                final Enum[] enumConstants = ((Class<Enum<?>>)aClass).getEnumConstants();
+                for (Enum c: enumConstants) {
+                    if (c.name().equals(enumName)) {
+                        return c;
+                    }
+                }
+                throw new IllegalArgumentException("Enum class " + aClass + ": no such enum value " + enumName);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new InvalidTermException("Cannot instantiate term of class \"" + className + "\": " + e);
+        }
+        throw new InvalidTermException("Cannot instantiate term of class \"" + className);
+    }
+
+
+    /**
      * A utility method to emulate calling the bind/2 predicate from Java.
      *
-     * @param theVariableName
-     * @param theValue
-     */
+     * @param theVariableName Name of var, may be prefixed such as "env." or "thread."
+     * @param theValue Value to set
+
     public void bind(String theVariableName, Object theValue) {
         this.getProlog().getTermAdapter().setVariable(theVariableName, theValue);
     }
-
+     */
 }
