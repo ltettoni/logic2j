@@ -73,10 +73,6 @@ public class DefaultTermAdapter implements TermAdapter {
                     }
                 }
                 return Struct.atom(string);
-            } else if (theMode == FactoryMode.SUBSTITUTE) {
-                logger.debug("{} is substituting {}", theObject);
-                final Object value = getVariable(theObject.toString());
-                return value;
             }
             throw new UnsupportedOperationException("TermAdapter cannot parse complex CharSequences, use TermUnmarshaller instead");
         }
