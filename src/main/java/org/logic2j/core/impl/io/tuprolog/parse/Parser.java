@@ -458,7 +458,7 @@ public class Parser {
                 nextToken = this.tokenizer.readToken();
             }
             // We delegate the instantiation of the atom to our TermAdapter
-            Object term = this.termAdapter.toTerm(varPathExpression.toString(), TermAdapter.FactoryMode.SUBSTITUTE);
+            Object term = this.termAdapter.getVariable(varPathExpression.toString());
             if (term==null) {
                 logger.warn("Variable \"{}\" is undefined or null - substituting with empty string since nulls are not allowed in a theory", varPathExpression);
                 term = "";
