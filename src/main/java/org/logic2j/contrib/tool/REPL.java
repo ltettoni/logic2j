@@ -18,10 +18,14 @@ package org.logic2j.contrib.tool;/*
 
 import org.logic2j.contrib.helper.FluentPrologBuilder;
 import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListenerBase;
+import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,15 +40,14 @@ import java.util.Arrays;
  */
 public class REPL {
 
-    public static void main(String args[]) throws IOException {
-        new REPL().run(args);
-    }
-
+    private PrologImplementation prolog;
 
     public void run(String args[]) throws IOException {
         System.out.println("logic2j REPL");
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        prolog = new FluentPrologBuilder().createInstance();
 
+
+        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             System.out.print("?- ");
             String goal = br.readLine();
@@ -62,27 +65,38 @@ public class REPL {
     }
 
 
-    protected void runOne(String goal) {
+    protected void runOne(String goalText) {
         try {
             // Parse and extract vars
-            final Object parsed = getProlog().getTermUnmarshaller().unmarshall(goal);
-            final Var<?>[] vars = TermApi.distinctVars(parsed);
+            final TermMarshaller termMarshaller = prolog.getTermMarshaller();
+            final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
+            final Var<?>[] vars = TermApi.distinctVars(goal);
             // Solve
-            final CountingSolutionListener listener = new CountingSolutionListener();
+            final SolutionListener listener = new CountingSolutionListener() {
+                @Override
+                public Integer onSolution(UnifyContext currentVars) {
+                    super.onSolution(currentVars);
+                    final Object solution = currentVars.reify(goal);
+                    System.out.println("Solution " + getCounter() + ": " + termMarshaller.marshall(solution));
+                    for (Var v : vars) {
+                        final Object varValue = currentVars.reify(v);
+                        System.out.println(" " + v + "=" + termMarshaller.marshall(varValue));
+                    }
+                    return Continuation.CONTINUE;
+                }
+            };
             final long startTime = System.currentTimeMillis();
-            getProlog().getSolver().solveGoal(parsed, listener);
+            this.prolog.getSolver().solveGoal(goal, listener);
             final long endTime = System.currentTimeMillis();
             // Report
-            final long count = listener.getCounter();
-            System.out.println("Solutions: " + count);
+            // System.out.println("Solutions: " + count);
         } catch (Exception e) {
             System.out.println("Exception caught: " + e);
             e.printStackTrace();
         }
     }
 
-    public PrologImplementation getProlog() {
-        final PrologImplementation prolog = new FluentPrologBuilder().createInstance();
-        return prolog;
+    public static void main(String args[]) throws IOException {
+        new REPL().run(args);
     }
 }
