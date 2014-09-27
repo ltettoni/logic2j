@@ -2,6 +2,7 @@ package org.logic2j.contrib.helper;
 
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
@@ -34,7 +35,7 @@ public class FluentPrologBuilder implements PrologBuilder {
     private Collection<String> theoryResources = new ArrayList<String>();
 
   @Override
-    public Prolog createInstance() {
+    public PrologImplementation createInstance() {
         final PrologReferenceImplementation.InitLevel initLevel;
         if (isNoLibraries()) {
             initLevel = PrologReferenceImplementation.InitLevel.L0_BARE;
