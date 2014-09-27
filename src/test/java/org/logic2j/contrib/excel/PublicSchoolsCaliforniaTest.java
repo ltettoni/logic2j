@@ -34,7 +34,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         setExcelClauseProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
     }
 
-    // @Ignore("A little slow")
+    // @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
     @Test
     public void withClauseProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
@@ -43,7 +43,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         assertEquals(15, number);
     }
 
-    // @Ignore("A little slow")
+    // @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
     @Test
     public void withDataProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();

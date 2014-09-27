@@ -104,7 +104,7 @@ public class BenchmarkTest extends PrologTestBase {
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
     }
 
-    @Ignore("Use this in conjunction with jvisualvm to profile")
+    @Ignore("Use this in conjunction with jvisualvm to profile - this will typically never end unless user input")
     @Test
     public void queensForJVisualVMInteractive() throws IOException {
         loadTheoryFromTestResourcesDir("queens.pro");
@@ -124,7 +124,7 @@ public class BenchmarkTest extends PrologTestBase {
     }
 
 
-    @Ignore("Use this in conjunction with jvisualvm to profile")
+    @Ignore("Use this in conjunction with jvisualvm to profile - sleeps for ages")
     @Test
     public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
         loadTheoryFromTestResourcesDir("queens.pro");
