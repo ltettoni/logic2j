@@ -157,8 +157,9 @@ public class Parser {
             if (term == null) {
                 throw new InvalidTermException("Term is null");
             }
-            if (!this.tokenizer.readToken().isEOF()) {
-                throw new InvalidTermException("The entire term could not be parsed, parsing failed before the end, stopped after \"" + term + '"');
+            final Token token = this.tokenizer.readToken();
+            if (!token.isEOF()) {
+                throw new InvalidTermException("Expecting end of stream after parsing \"" + term + "\", but found extra token \"" + token.text + '"');
             }
             return term;
         } catch (final IOException ex) {
