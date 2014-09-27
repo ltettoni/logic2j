@@ -17,23 +17,21 @@ package org.logic2j.contrib.tool;/*
  */
 
 import org.logic2j.contrib.helper.FluentPrologBuilder;
-import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Read, Eval, Print, Loop.
@@ -44,8 +42,13 @@ public class REPL {
 
     public void run(String args[]) throws IOException {
         System.out.println("logic2j REPL");
-        prolog = new FluentPrologBuilder().createInstance();
 
+        final List<File> theories = new ArrayList<File>();
+        for (String arg : args) {
+            theories.add(new File(arg));
+        }
+
+        prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[]{})).createInstance();
 
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
@@ -92,7 +95,7 @@ public class REPL {
             // System.out.println("Solutions: " + count);
         } catch (Exception e) {
             System.out.println("Exception caught: " + e);
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
