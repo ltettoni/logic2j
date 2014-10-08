@@ -1,0 +1,10 @@
+settings.gradle
+gradlew*
+.gradle
+gradle
+*.iml
+.idea
+build
+derby.log
+src/test/resources/cde.ca.gov
+src/test/resources/db/zipcodes1/derby-v10.10.2.0
