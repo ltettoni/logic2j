@@ -1,6 +1,8 @@
 Why logic2j?
 ------------
 
+The Context
+
 I was seeking for a solution to implement business rules within an enterprise IT software architecture.
 Following a detailed study and evaluation of the market, including Drools, ILOG JRules, and other approaches,
 I came up with limited number of use cases. Unfortunately they would defeat the classic memory objects + DSL approach 
@@ -15,38 +17,46 @@ I sought for an open-source inference engine in Java, with strong ties to the JD
 to invoke predicate logic from Java, and (ii) allow Java-implemented predicates to be called back by the engine.
 Quite expectantly I found several implementations of Prolog, since it is both a language and a programming platform / environment.
 
-tuProlog was clearly fitting my requirements and the adoption was fast.
+tuProlog was clearly fitting my requirements and the adoption was fast. It is successfully used in production since 2012.
+
+
+The Driver
 
 Over time however, a number of limitations appeared, which weren't trivial to workaround. Among them:
 - memory footprint and copying of data structures make it difficult to handle large data sets
-- non-shared memory approach does not allow easy extension of the Term API (copying happens very often and is difficult to track)
+- non-shared memory approach does not allow easy extension of the Term API (copying happens very often, at many places)
 - API to retrieve or manipulate solutions is cumbersome
 - although open sourced, codebase is lacking best patterns and java generics, makes it difficult to understand and extend
 
+
 Logic2j started as a challenge and proof-of-concept for a more state-of-the-art implementation of a 
 Prolog inference engine, and never aimed to become a full Prolog programming environment. 
-The striking differences over tuProlog are:
+The key differences over tuProlog are:
 
-- an Inversion-of-Control approach to escalate solutions to the application: removes the need to keep state for backtracking
-- a shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable - no copies)
-- a monadic approach to binding variables also makes variables immutable; the inference engine never needs to "unbind" previous solutions
-- the performance is overall improved, and large solution sets can be generated without footprint since they are enumerated
-- a much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns
-- the API to retrieve or manipulate solutions is more flexible, type-strong, and fluent
+- Inversion-of-Control (notify/listen) allows the inference engine to "send" solutions to the application code.
+  No more heap-based management of backtracking - plain recursive search is sufficient
+- A shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable)
+- Plain old Java objects can be used anywhere in place of atoms and compounds. No more complex transformations. Infer with POJOs!
+- A monadic approach to binding variables also makes variables immutable; the inference engine never needs to "unbind" previous solutions
+- The performance is overall improved, and large solution sets can be generated without footprint (since they are enumerated)
+- A much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns.
+- The API to retrieve or manipulate solutions is more flexible, type-strong, and fluent
+
+The core of Logic2j is ca. 70 Java types (classes, enums and interfaces), it performs typically 10x faster (see BENCHMARK.txt).
 
 
+Implementation features
 
-Features in more details:
-- Custom Java predicates (primitives) can generate an indefinite number of solutions. 
+- Custom Java predicates (primitives) can generate an infinite number of solutions via enumeration through a notify/listen IoC pattern.
   This does not need complex backtracking, content from any collection or iterator can be "pushed" to the inference engine easily.
 
 - The codebase aims at or uses state-of-the-art programming patterns such as:
   Inversion of Control
   Factory / Interface / Implementation
-  Hooks and derivation points to extend functionality
   Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
-  Easier API to manage Term structures (Visitor design pattern, expression-based selection � la XPath)
-  Ease of use integration DI frameworks (eg Spring)
+  Easier API to manage Term structures (Visitor design pattern, expression-based selectors like XPath)
+  Builder pattern to instantiate inference engine, more compatible with CDI frameworks like Spring
+  Massively immutable and re-entrant code
   SLF4j logging
 
 - Java 1.5+ language and JRE features fully leveraged
@@ -54,7 +64,6 @@ Features in more details:
   Varargs (also in Java-implemented primitives, correspond to variable-arity predicates)
   Foreach and Iterable
   Static imports
-  (closures still very expected to come...)
+  (no Java 8 closures yet)
 
-- Some more "bleeding edge" features that I am prototyping on (CDI, ?)
-   A builder pattern to instantiate and configure the Prolog engine
+- Gradle build
