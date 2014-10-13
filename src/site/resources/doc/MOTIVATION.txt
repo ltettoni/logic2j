@@ -33,14 +33,14 @@ Logic2j started as a challenge and proof-of-concept for a more state-of-the-art 
 Prolog inference engine, and never aimed to become a full Prolog programming environment. 
 The key differences over tuProlog are:
 
+- Convenient, fluent and type-strong API to retrieve solutions.
+- Plain old Java objects can be used anywhere in place of atoms and compounds. No more complex transformations. Infer with POJOs!
+- Performance is overall improved, and large solution sets can be generated without footprint (since they are enumerated)
 - Inversion-of-Control (notify/listen) allows the inference engine to "send" solutions to the application code.
   No more heap-based management of backtracking - plain recursive search is sufficient
 - A shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable)
-- Plain old Java objects can be used anywhere in place of atoms and compounds. No more complex transformations. Infer with POJOs!
 - A monadic approach to binding variables also makes variables immutable; the inference engine never needs to "unbind" previous solutions
-- The performance is overall improved, and large solution sets can be generated without footprint (since they are enumerated)
 - A much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns.
-- The API to retrieve or manipulate solutions is more flexible, type-strong, and fluent
 
 The core of Logic2j is ca. 70 Java types (classes, enums and interfaces), it performs typically 10x faster (see BENCHMARK.txt).
 
@@ -48,7 +48,7 @@ The core of Logic2j is ca. 70 Java types (classes, enums and interfaces), it per
 Implementation features
 
 - Custom Java predicates (primitives) can generate an infinite number of solutions via enumeration through a notify/listen IoC pattern.
-  This does not need complex backtracking, content from any collection or iterator can be "pushed" to the inference engine easily.
+  You code off the concerns of backtracking: content from any collection or iterator can be "pushed" to the inference engine easily.
 
 - The codebase aims at or uses state-of-the-art programming patterns such as:
   Inversion of Control
