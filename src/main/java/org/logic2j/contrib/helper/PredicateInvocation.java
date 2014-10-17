@@ -19,6 +19,7 @@ package org.logic2j.contrib.helper;
 
 
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.impl.PrologImplementation;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 public class PredicateInvocation<T> {
 
     private Class<? extends T> desiredType;
+    private final String goal; // When null, using old form predicateName + args
     private final String predicateName;
     private final String projectionVariable; // What we want to project. Normally one of the arguments.
     private final Object[] arguments;
@@ -47,18 +49,33 @@ public class PredicateInvocation<T> {
      */
     private PredicateInvocation(Class<? extends T> type, String theProjectionVariable, String thePredicateName, Object... theArguments) {
         super();
+        this.goal = null;
         this.desiredType = type;
         this.projectionVariable = theProjectionVariable;
         this.predicateName = thePredicateName;
         this.arguments = theArguments;
     }
 
+    /**
+     * Build for a goal (many predicates)
+     * @param type
+     * @param theProjectionVariable
+     * @param theGoalAsString
+     */
+    private PredicateInvocation(Class<? extends T> type, String theProjectionVariable, String theGoalAsString) {
+        super();
+        this.goal = theGoalAsString;
+        this.desiredType = type;
+        this.projectionVariable = theProjectionVariable;
+        this.predicateName = null;
+        this.arguments = null;
+    }
 
     /**
      * Create a PredicateInvocation for checking a goal without obtaining results.
      *
      * @param thePredicateName
-     * @param theArguments     Any objects, the configured TermAdapter will be used.
+     * @param theArguments Any objects, the configured TermAdapter will be used to convert them into terms.
      * @return A PredicateInvocation that is not projecting a variable.
      */
     public static <T> PredicateInvocation<T> invocation(Class<? extends T> type, String thePredicateName, Object... theArguments) {
@@ -77,6 +94,12 @@ public class PredicateInvocation<T> {
      */
     public static <T> PredicateInvocation<T> projection(Class<? extends T> type, String theProjectionVariable, String thePredicateName, Object... theArguments) {
         final PredicateInvocation invocation = new PredicateInvocation(type, theProjectionVariable, thePredicateName, theArguments);
+        // Normally we should (at least) warn if theProjectionVariable does not appear within arguments...
+        return invocation;
+    }
+
+    public static <T> PredicateInvocation<T> projectionFromGoal(Class<? extends T> type, String theProjectionVariable, String theGoalString) {
+        final PredicateInvocation invocation = new PredicateInvocation(type, theProjectionVariable, theGoalString);
         // Normally we should (at least) warn if theProjectionVariable does not appear within arguments...
         return invocation;
     }
@@ -106,20 +129,29 @@ public class PredicateInvocation<T> {
      * @return A single String atom or more likely a Struct
      */
     public Object toTerm(PrologImplementation prolog) {
-        final Object[] original = getArguments();
-        if (original.length == 0) {
-            return getPredicateName();
-        }
-        final Object[] parsed = new Object[original.length];
-        for (int i = 0; i < original.length; i++) {
-            if (original[i] instanceof CharSequence) {
-                parsed[i] = prolog.getTermUnmarshaller().unmarshall((CharSequence) original[i]);
-            } else {
-                parsed[i] = prolog.getTermAdapter().toTerm(original[i], TermAdapter.FactoryMode.ANY_TERM);
+        if (this.goal!=null) {
+            final Object term = prolog.getTermUnmarshaller().unmarshall(this.goal);
+            if (! (term instanceof Struct)) {
+                throw new InvalidTermException("Expecting a Struct term, got " + this.goal);
             }
+            final Struct struct = (Struct) term;
+            return TermApi.normalize(struct);
+        } else {
+            final Object[] original = getArguments();
+            if (original.length == 0) {
+                return getPredicateName();
+            }
+            final Object[] parsed = new Object[original.length];
+            for (int i = 0; i < original.length; i++) {
+                if (original[i] instanceof CharSequence) {
+                    parsed[i] = prolog.getTermUnmarshaller().unmarshall((CharSequence) original[i]);
+                } else {
+                    parsed[i] = prolog.getTermAdapter().toTerm(original[i], TermAdapter.FactoryMode.ANY_TERM);
+                }
+            }
+            final Struct struct = new Struct(getPredicateName(), parsed);
+            return TermApi.normalize(struct);
         }
-        final Struct struct = new Struct(getPredicateName(), parsed);
-        return TermApi.normalize(struct);
     }
 
 
@@ -131,8 +163,12 @@ public class PredicateInvocation<T> {
             sb.append(getProjectionVariable());
             sb.append('|');
         }
-        sb.append(getPredicateName());
-        sb.append(Arrays.asList(getArguments()));
+        if (this.goal!=null) {
+            sb.append(this.goal);
+        } else {
+            sb.append(getPredicateName());
+            sb.append(Arrays.asList(getArguments()));
+        }
         sb.append('}');
         return sb.toString();
     }
