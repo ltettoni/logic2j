@@ -182,6 +182,8 @@ public class CoreLibrary extends LibraryBase {
                 result = atomic(theListener, currentVars, arg0);
             } else if (theMethodName == "var") {
                 result = var(theListener, currentVars, arg0);
+            } else if (theMethodName == "exists") {
+                result = exists(theListener, currentVars, arg0);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -344,6 +346,29 @@ public class CoreLibrary extends LibraryBase {
             continuation = theListener.onSolution(currentVars);
         }
         return continuation;
+    }
+
+    @Primitive
+    public Integer exists(SolutionListener theListener, final UnifyContext currentVars, final Object theGoal) {
+        final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener() {
+            @Override
+            public Integer onSolution(UnifyContext currentVars) {
+                super.onSolution(currentVars);
+                // Upon the first solution found, notify the engine to stop generating
+                return Continuation.USER_ABORT;
+            }
+        };
+        // Now solve the target sub goal
+        final Object effectiveGoal = currentVars.reify(theGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+
+        // And unify with result
+        final Long counted = listenerForSubGoal.getCounter();
+        // Note: won't ever be greater than one due to our listener that stops generation
+        if (counted>0) {
+            return notifySolution(theListener, currentVars);
+        }
+        return Continuation.CONTINUE;
     }
 
     @Primitive

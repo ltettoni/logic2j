@@ -4,10 +4,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class CoreLibraryTest extends PrologTestBase {
 
@@ -79,7 +81,7 @@ public class CoreLibraryTest extends PrologTestBase {
     @Test
     public void not() {
         // Surprisingly enough, the operator \+ means "not provable".
-        uniqueSolution("not(fail)" , "\\+(fail)");
+        uniqueSolution("not(fail)", "\\+(fail)");
         countNoSolution("not(true)", "\\+(true)");
     }
 
@@ -106,7 +108,7 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
 
-//    // TODO Some uncertainties re. the desired behaviour of no-op binding of free bindings. To be clarified.
+    //    // TODO Some uncertainties re. the desired behaviour of no-op binding of free bindings. To be clarified.
 //    @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
 //    @Test
 //    public void solvePrimitivePredicates_representation_FREE() {
@@ -161,7 +163,6 @@ public class CoreLibraryTest extends PrologTestBase {
     public void perm() {
         assertEquals(720, this.prolog.solve("perm([a,b,c,d,e,f], L)").count());
     }
-
 
 
     @Test
@@ -228,6 +229,16 @@ public class CoreLibraryTest extends PrologTestBase {
         countNSolutions(10, "int10(_)");
         uniqueSolution("count(int10(_), 10)");
         countNoSolution("count(int10(_), 11)");
+    }
+
+
+    @Test
+    public void exists() {
+        loadTheoryFromTestResourcesDir("test-data.pro");
+        final GoalHolder holder = uniqueSolution("exists(int10(X))");
+        // Contrary to once/1, exists/1 does NOT bind variables
+        assertTrue(holder.var("X").single() instanceof Var);  // FIXME should use isFree()
+        countNoSolution("exists(int10(56))");
     }
 
 
