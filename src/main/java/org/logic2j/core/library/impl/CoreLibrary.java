@@ -348,6 +348,15 @@ public class CoreLibrary extends LibraryBase {
         return continuation;
     }
 
+    /**
+     * Check existence of subGoal. Without binding its variables, and stopping any solving after the first solution
+     * of subGoal is proven. This is a most efficient implementation but may have dubious effects - maybe to study
+     * a little in details...
+     * @param theListener
+     * @param currentVars
+     * @param theGoal
+     * @return
+     */
     @Primitive
     public Integer exists(SolutionListener theListener, final UnifyContext currentVars, final Object theGoal) {
         final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener() {
