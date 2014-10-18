@@ -220,4 +220,14 @@ public class CoreLibraryTest extends PrologTestBase {
     public void atomLengthOnFreeVarWhatShouldItDo() {
         countNoSolution("atom_length(X, 3)");
     }
+
+    @Test
+    public void count() {
+        loadTheoryFromTestResourcesDir("test-data.pro");
+        countNSolutions(10, "int10(_)");
+        uniqueSolution("count(int10(_), 10)");
+        countNoSolution("count(int10(_), 11)");
+    }
+
+
 }
