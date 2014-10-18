@@ -50,11 +50,6 @@ perm([], []).
 C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
 C -> T      :- call(C), !, call(T).
 
-countall(Predicate, NumberOfOccurences) :- 
-   findall(_, call(Predicate), ListOfResults),
-   length(ListOfResults, NumberOfOccurences).
-
-
 
 
 

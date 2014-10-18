@@ -18,6 +18,7 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.solver.Continuation;
@@ -217,6 +218,8 @@ public class CoreLibrary extends LibraryBase {
                 result = atom_length(theListener, currentVars, arg0, arg1);
             } else if (theMethodName == "length") {
                 result = length(theListener, currentVars, arg0, arg1);
+            } else if (theMethodName == "count") {
+                result = count(theListener, currentVars, arg0, arg1);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -344,6 +347,18 @@ public class CoreLibrary extends LibraryBase {
     }
 
     @Primitive
+    public Integer count(SolutionListener theListener, final UnifyContext currentVars, final Object theGoal, final Object theNumber) {
+        final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener();
+        // Now solve the target sub goal
+        final Object effectiveGoal = currentVars.reify(theGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+
+        // And unify with result
+        final Long counted = listenerForSubGoal.getCounter();
+        return unify(theListener, currentVars, theNumber, counted);
+    }
+
+    @Primitive
     public Integer findall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
         final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
         final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
@@ -369,6 +384,9 @@ public class CoreLibrary extends LibraryBase {
         // And unify with result
         return unify(theListener, currentVars, theResult, plist);
     }
+
+
+
 
     @Primitive
     public Integer distinctall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
