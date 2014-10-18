@@ -10,7 +10,7 @@
    E will take the two solutions 1,2 sequentially
    But exists() will invoke call(P) whose CUT is processed at the level of the main goal
      (hence yielding only solution 1)
-   whereas due to call/1 it should yield one solution PER invocation of exists/1 !
+   whereas due to call/1 it should yield one solution PER invocation of existsOk/1 !
 
    Actually this was not an issue with call/1 (test case existsKo1/1)
    but an intrinsic bug with cut (test case existsKo2/1).
