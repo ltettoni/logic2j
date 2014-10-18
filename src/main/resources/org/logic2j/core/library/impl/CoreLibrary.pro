@@ -20,7 +20,7 @@
   * This is the Prolog part of the CoreLibrary. It defines commonly-used predicates.
   */
 
-
+once(Predicate) :- call((Predicate, !)).
 
 member(E,[E|_]).
 member(E,[_|L]):- member(E,L).

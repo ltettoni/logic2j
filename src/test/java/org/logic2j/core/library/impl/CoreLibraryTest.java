@@ -4,6 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -230,4 +231,10 @@ public class CoreLibraryTest extends PrologTestBase {
     }
 
 
+    @Test
+    public void once() {
+        loadTheoryFromTestResourcesDir("test-data.pro");
+        final GoalHolder holder = uniqueSolution("once(int10(X))");
+        assertEquals(1L, holder.var("X").unique());
+    }
 }
