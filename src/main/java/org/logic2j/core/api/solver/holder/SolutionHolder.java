@@ -18,10 +18,14 @@
 package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.extractor.MultiVarExtractor;
 import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
 import org.logic2j.core.api.solver.extractor.SolutionExtractor;
-import org.logic2j.core.api.solver.listener.*;
+import org.logic2j.core.api.solver.listener.IterableSolutionListener;
+import org.logic2j.core.api.solver.listener.MultiVarSolutionListener;
+import org.logic2j.core.api.solver.listener.RangeSolutionListener;
+import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +136,14 @@ public class SolutionHolder<T> implements Iterable<T> {
     public T unique() {
         initListenerRangesAndSolve(1, 1, 2);
         return (T) rangeListener.getResults().get(0);
+    }
+
+    /**
+     * There is one single solution but it is the free Variable (unbound).
+     * @return true if solution is not bound to a literal term.
+     */
+    public boolean isFree() {
+        return unique() instanceof Var<?>;
     }
 
     // ---------------------------------------------------------------------------

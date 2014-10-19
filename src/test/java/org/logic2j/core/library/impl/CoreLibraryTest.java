@@ -231,16 +231,14 @@ public class CoreLibraryTest extends PrologTestBase {
         countNoSolution("count(int10(_), 11)");
     }
 
-
     @Test
     public void exists() {
         loadTheoryFromTestResourcesDir("test-data.pro");
         final GoalHolder holder = uniqueSolution("exists(int10(X))");
         // Contrary to once/1, exists/1 does NOT bind variables
-        assertTrue(holder.var("X").single() instanceof Var);  // FIXME should use isFree()
+        assertTrue(holder.var("X").isFree());
         countNoSolution("exists(int10(56))");
     }
-
 
     @Test
     public void once() {
