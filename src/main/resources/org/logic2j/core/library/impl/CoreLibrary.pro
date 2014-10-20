@@ -22,6 +22,10 @@
 
 once(Predicate) :- call((Predicate, !)).
 
+% Non-efficient implementation - could be done in Java we have the same in TermApi
+list([]).
+list([_|L]) :- list(L).
+
 member(E,[E|_]).
 member(E,[_|L]):- member(E,L).
 
