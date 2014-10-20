@@ -35,6 +35,7 @@ import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.library.Primitive;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 
 /**
@@ -54,6 +55,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() > val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) > 0;
@@ -66,6 +68,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() < val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) < 0;
@@ -78,6 +81,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() >= val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) >= 0;
@@ -90,6 +94,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() <= val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) <= 0;
@@ -102,6 +107,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() == val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) == 0;
@@ -114,6 +120,7 @@ public class CoreLibrary extends LibraryBase {
         public boolean apply(Number val1, Number val2) {
             return val1.doubleValue() != val2.doubleValue();
         }
+
         @Override
         public boolean apply(CharSequence val1, CharSequence val2) {
             return val1.toString().compareTo(val2.toString()) != 0;
@@ -351,6 +358,7 @@ public class CoreLibrary extends LibraryBase {
      * Check existence of subGoal. Without binding its variables, and stopping any solving after the first solution
      * of subGoal is proven. This is a most efficient implementation but may have dubious effects - maybe to study
      * a little in details...
+     *
      * @param theListener
      * @param currentVars
      * @param theGoal
@@ -373,11 +381,27 @@ public class CoreLibrary extends LibraryBase {
         // And unify with result
         final Long counted = listenerForSubGoal.getCounter();
         // Note: won't ever be greater than one due to our listener that stops generation
-        if (counted>0) {
+        if (counted > 0) {
             return notifySolution(theListener, currentVars);
         }
         return Continuation.CONTINUE;
     }
+
+    private void collectReifiedResults(UnifyContext currentVars, final Object theTemplate, Object theGoal, final Collection<Object> javaResults) {
+        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
+
+            @Override
+            public Integer onSolution(UnifyContext currentVars) {
+                final Object templateReified = currentVars.reify(theTemplate);
+                javaResults.add(templateReified);
+                return Continuation.CONTINUE;
+            }
+        };
+        // Now solve the target sub goal
+        final Object effectiveGoal = currentVars.reify(theGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+    }
+
 
     @Primitive
     public Integer count(SolutionListener theListener, final UnifyContext currentVars, final Object theGoal, final Object theNumber) {
@@ -393,56 +417,31 @@ public class CoreLibrary extends LibraryBase {
 
     @Primitive
     public Integer findall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
-        final ArrayList<Object> javaResults = new ArrayList<Object>(100); // Our internal collection of results
-        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
-
-            @Override
-            public Integer onSolution(UnifyContext currentVars) {
-                final Object templateReified = currentVars.reify(theTemplate);
-                javaResults.add(templateReified);
-                return Continuation.CONTINUE;
-            }
-        };
-        // Now solve the target sub goal
-        final Object effectiveGoal = currentVars.reify(theGoal);
-        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+        final ArrayList<Object> allReifiedResults = new ArrayList<Object>(100); // Our internal collection of results
+        collectReifiedResults(currentVars, theTemplate, theGoal, allReifiedResults);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be
         // copied into the resulting plist, so there's no need to reindex.
         // However, the root level Struct that makes up the list does contain a bogus
         // index value but -1.
-        final Struct plist = Struct.createPList(javaResults);
+        final Struct plist = Struct.createPList(allReifiedResults);
 
         // And unify with result
         return unify(theListener, currentVars, theResult, plist);
     }
 
-
-
-
     @Primitive
     public Integer distinct(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
-        final LinkedHashSet<Object> javaResults = new LinkedHashSet<Object>(100); // Our internal collection of results
-        final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
-
-            @Override
-            public Integer onSolution(UnifyContext currentVars) {
-                final Object templateReified = currentVars.reify(theTemplate);
-                javaResults.add(templateReified);
-                return Continuation.CONTINUE;
-            }
-        };
-        // Now solve the target sub goal
-        final Object effectiveGoal = currentVars.reify(theGoal);
-        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+        final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<Object>(100); // Our internal collection of results
+        collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
 
         // Convert all results into a prolog list structure
         // Note on var indexes: all variables present in the projection term will be
         // copied into the resulting plist, so there's no need to reindex.
         // However, the root level Struct that makes up the list does contain a bogus
         // index value but -1.
-        final Struct plist = Struct.createPList(javaResults);
+        final Struct plist = Struct.createPList(distinctReifiedResults);
 
         // And unify with result
         return unify(theListener, currentVars, theResult, plist);
