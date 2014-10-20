@@ -33,26 +33,27 @@ Logic2j started as a challenge and proof-of-concept for a more state-of-the-art 
 Prolog inference engine, and never aimed to become a full Prolog programming environment. 
 The key differences over tuProlog are:
 
-- Convenient, fluent and type-strong API to retrieve solutions.
-- Plain old Java objects can be used anywhere in place of atoms and compounds. No more complex transformations. Infer with POJOs!
-- Performance is overall improved, and large solution sets can be generated without footprint (since they are enumerated)
+- Convenient, fluent and type-strong API to invoke the engine and retrieve solutions.
+- Plain old Java objects can be used anywhere in place of Prolog atoms and compounds. No more complex transformations. Infer with POJOs!
 - Inversion-of-Control (notify/listen) allows the inference engine to "send" solutions to the application code.
-  No more heap-based management of backtracking - plain recursive search is sufficient
-- A shared-memory approach guarantees full extensibility and eases debugging (any structure is original and immutable)
-- A monadic approach to binding variables also makes variables immutable; the inference engine never needs to "unbind" previous solutions
-- A much reduced codebase, fully generic and Java1.6 syntax, more modern coding patterns.
+  No more heap-based management of backtracking - plain recursive depth-first search is simple and bug-free.
+- Performance was a design driver. CPU efficiently used and large solution sets can be generated without footprint (since they are enumerated).
+- A shared-memory approach allows custom extensions and eases debugging (any structure is final and immutable, duplicates nothing).
+- A monadic approach to binding variables greatly simplifies the code: the inference engine never needs to "unbind" previous solutions.
+- A much reduced codebase, fully generic and Java1.5+ syntax, more modern coding patterns.
 
-The core of Logic2j is ca. 70 Java types (classes, enums and interfaces), it performs typically 10x faster (see BENCHMARK.txt).
+The core of Logic2j is ca. 70 Java types (classes, enums & interfaces), it performs typically 10x faster than tuProlog (see BENCHMARK.txt).
 
 
 Implementation features
 
-- Custom Java predicates (primitives) can generate an infinite number of solutions via enumeration through a notify/listen IoC pattern.
+- Custom Java predicates (primitives) can generate infinite number of solutions via enumeration through a notify/listen IoC pattern.
   You code off the concerns of backtracking: content from any collection or iterator can be "pushed" to the inference engine easily.
+  Similarly, you can easily listen to solutions and collect them into memory or process them on the fly.
 
-- The codebase aims at or uses state-of-the-art programming patterns such as:
+- The codebase aims at or uses state-of-the-art coding patterns such as:
   Inversion of Control
-  Factory / Interface / Implementation
+  Interface / Implementation / Factory
   Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
   Easier API to manage Term structures (Visitor design pattern, expression-based selectors like XPath)
   Builder pattern to instantiate inference engine, more compatible with CDI frameworks like Spring
