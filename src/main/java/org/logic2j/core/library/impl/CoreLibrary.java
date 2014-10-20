@@ -35,7 +35,6 @@ import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.library.Primitive;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 /**
@@ -231,8 +230,8 @@ public class CoreLibrary extends LibraryBase {
             final Object arg2 = goalStructArgs[2];
             if (theMethodName == "findall") {
                 result = findall(theListener, currentVars, arg0, arg1, arg2);
-            } else if (theMethodName == "distinctall") {
-                result = distinctall(theListener, currentVars, arg0, arg1, arg2);
+            } else if (theMethodName == "distinct") {
+                result = distinct(theListener, currentVars, arg0, arg1, arg2);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -423,7 +422,7 @@ public class CoreLibrary extends LibraryBase {
 
 
     @Primitive
-    public Integer distinctall(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
+    public Integer distinct(SolutionListener theListener, final UnifyContext currentVars, final Object theTemplate, final Object theGoal, final Object theResult) {
         final LinkedHashSet<Object> javaResults = new LinkedHashSet<Object>(100); // Our internal collection of results
         final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
 
