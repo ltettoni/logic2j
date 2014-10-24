@@ -22,6 +22,7 @@ import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.Primitive;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
@@ -227,11 +228,37 @@ public class PojoLibrary extends LibraryBase {
                     }
                 }
                 throw new IllegalArgumentException("Enum class " + aClass + ": no such enum value " + enumName);
+            } else {
+                // Regular Pojo
+                try {
+                    final int nbArgs = args.length - 1;
+                    if (nbArgs == 0) {
+                        return aClass.newInstance();
+                    } else {
+                        // Collect arguments and their types
+                        final Object constructorArgs[] = new Object[nbArgs];
+                        final Class<?> constructorClasses[] = new  Class<?>[nbArgs];
+                        for (int i=1; i<= nbArgs; i++) {
+                            constructorArgs[i-1] = currentVars.reify(args[i]);
+                            constructorClasses[i-1] = constructorArgs[i-1].getClass();
+                        }
+                        // Instantiation - this is very far from being robust !
+                        return aClass.getConstructor(constructorClasses).newInstance(constructorArgs);
+                    }
+                } catch (InstantiationException e) {
+                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                } catch (IllegalAccessException e) {
+                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                } catch (NoSuchMethodException e) {
+                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                } catch (InvocationTargetException e) {
+                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
+                }
             }
         } catch (ClassNotFoundException e) {
             throw new InvalidTermException("Cannot instantiate term of class \"" + className + "\": " + e);
         }
-        throw new InvalidTermException("Cannot instantiate term of class \"" + className);
+        // throw new InvalidTermException("Cannot instantiate term of class \"" + className);
     }
 
 

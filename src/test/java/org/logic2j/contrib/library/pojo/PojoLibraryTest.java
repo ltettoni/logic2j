@@ -23,6 +23,8 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.impl.EnvManager;
 
+import java.util.ArrayList;
+
 
 public class PojoLibraryTest extends PrologTestBase {
 
@@ -54,9 +56,24 @@ public class PojoLibraryTest extends PrologTestBase {
 
 
     @Test
-    public void javaNew() throws Exception {
+    public void javaNewForEnum() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").single();
         Assert.assertSame(TermAdapter.FactoryMode.ANY_TERM, x);
+    }
+
+    @Test
+    public void javaNewWithDefaultConstructor() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").single();
+        Assert.assertTrue(x instanceof ArrayList<?>);
+    }
+
+
+    @Test
+    public void javaNewWithConstructorAndArgs() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg')").var("X").single();
+        Assert.assertEquals("arg", x);
     }
 }
