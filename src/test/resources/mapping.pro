@@ -45,3 +45,15 @@ gd3(Predicate, DbBindings) :-
         info(after_db_bindings, DbBindings).
 
 gd3(Predicate) :- gd3(Predicate, _).
+
+
+
+%
+% Convert associative structures of AND and OR into flattened lists
+%
+dessoc( (A, op(and, List)), op(and, [A|List])) :- !.
+dessoc( (A, B) , op(and, [A,B])).
+
+dessoc( (A; op(or, List)), op(or, [A|List])) :- !.
+dessoc( (A; B) , op(or, [A,B])).
+
