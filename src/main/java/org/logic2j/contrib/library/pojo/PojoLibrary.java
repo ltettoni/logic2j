@@ -48,9 +48,11 @@ public class PojoLibrary extends LibraryBase {
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final Object[] args = theGoalStruct.getArgs();
         final int arity = theGoalStruct.getArity();
-        if (arity == 1) {
+        if (theMethodName == "javaNew") {
+            result = javaNew(theListener, currentVars, args);
+        } else if (arity == 1) {
             final Object arg0 = args[0];
-                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         } else if (arity == 2) {
             final Object arg0 = args[0];
             final Object arg1 = args[1];
@@ -68,8 +70,16 @@ public class PojoLibrary extends LibraryBase {
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
-        } else if (theMethodName == "javaNew") {
-            result = javaNew(theListener, currentVars, args);
+        } else if (arity == 4) {
+            final Object arg0 = args[0];
+            final Object arg1 = args[1];
+            final Object arg2 = args[2];
+            final Object arg3 = args[3];
+            if (theMethodName == "property") {
+                result = property(theListener, currentVars, arg0, arg1, arg2, arg3);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
         } else {
             result = NO_DIRECT_INVOCATION_USE_REFLECTION;
         }
@@ -89,22 +99,39 @@ public class PojoLibrary extends LibraryBase {
         try {
             value = PropertyUtils.getProperty(theInstance, theExpression);
         } catch (IllegalAccessException e) {
-            // No solution
-            return null;
-        } catch (InvocationTargetException e) {
-            // No solution
-            return null;
+            throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
         } catch (NoSuchMethodException e) {
-            // No solution
             return null;
+            // throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
+        } catch (InvocationTargetException e) {
+            throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e.getTargetException());
         }
         return value;
+    }
+
+
+    private void inject(Object pojo, String theExpression, Object newValue) {
+        try {
+            PropertyUtils.setProperty(pojo, theExpression, newValue);
+        } catch (IllegalAccessException e) {
+            throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
+        } catch (NoSuchMethodException e) {
+            throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
+        } catch (InvocationTargetException e) {
+            throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e.getTargetException());
+        }
+    }
+
+    @Primitive
+    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
+        return property(theListener, currentVars, thePojo, thePropertyName, theValue, null);
     }
 
 
     /**
      * Extraction of values from POJO from reflection.
      * NOTE: Implementation far from complete: read-only, and requires property name to be specified (cannot extract all by backtracking a free var).
+     *
      * @param theListener
      * @param currentVars
      * @param thePojo
@@ -113,24 +140,35 @@ public class PojoLibrary extends LibraryBase {
      * @return
      */
     @Primitive
-    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
+    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue, Object theMode) {
         // First argument
         final Object pojo = currentVars.reify(thePojo);
         ensureBindingIsNotAFreeVar(pojo, "property/3", 0);
         // Second argument
         final Object propertyName = currentVars.reify(thePropertyName);
         ensureBindingIsNotAFreeVar(propertyName, "property/3", 1);
-        //
-        Object javaValue = introspect(pojo, (String) propertyName);
-        if (javaValue == null) {
-            logger.debug("Property {} value is null or does not exist", propertyName);
-            // No solution returned to the application
-            // Yet continue inference
-            return Continuation.CONTINUE;
+        // Invocation mode
+        String mode = "read";
+        if (theMode != null) {
+            mode = String.valueOf(currentVars.reify(theMode));
         }
-        // Collections will send individual solutions
-        if (javaValue instanceof Collection) {
-            for (Object javaElem : (Collection) javaValue) {
+
+        //
+        Object currentValue = introspect(pojo, (String) propertyName);
+        if (currentValue == null) {
+            if ("read".equals(mode)) {
+                // Null value means no solution (property does "not exist")
+                return Continuation.CONTINUE;
+            }
+            // If value passed as argument is defined, will set
+            final Object newValue = currentVars.reify(theValue);
+            inject(pojo, (String)propertyName, newValue);
+
+            return notifySolution(theListener, currentVars);
+        }
+        // Collections will send multiple individual solutions
+        if (currentValue instanceof Collection) {
+            for (Object javaElem : (Collection) currentValue) {
                 final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
                 final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
                 if (result != Continuation.CONTINUE) {
@@ -139,8 +177,8 @@ public class PojoLibrary extends LibraryBase {
             }
             return Continuation.CONTINUE;
         }
-        if (javaValue instanceof Object[]) {
-            for (Object javaElem : (Object[]) javaValue) {
+        if (currentValue instanceof Object[]) {
+            for (Object javaElem : (Object[]) currentValue) {
                 final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
                 final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
                 if (result != Continuation.CONTINUE) {
@@ -150,19 +188,20 @@ public class PojoLibrary extends LibraryBase {
             return Continuation.CONTINUE;
         }
         // Convert java objects to Prolog terms
-        final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaValue, FactoryMode.ATOM);
+        final Object prologRepresentation = getProlog().getTermAdapter().toTerm(currentValue, FactoryMode.ATOM);
         return unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
     }
+
 
     /**
      * Get, set or check a variable.
      * If theTarget is a free Var
-     *   If the binding has a value, unify it to the free Var (this means, gets the value)
-     *   If the binding has no value, do nothing (but yields a successful solution)
+     * If the binding has a value, unify it to the free Var (this means, gets the value)
+     * If the binding has no value, do nothing (but yields a successful solution)
      * If theTarget is a bound Var
-     *   If the binding has no value, set the bound Var's value into the binding
-     *   If the binding has a value unifiable to theVar, succeed without other effect
-     *   If the binding has a value that cannot be unified, fails
+     * If the binding has no value, set the bound Var's value into the binding
+     * If the binding has a value unifiable to theVar, succeed without other effect
+     * If the binding has a value that cannot be unified, fails
      *
      * @param theListener
      * @param currentVars
@@ -221,8 +260,8 @@ public class PojoLibrary extends LibraryBase {
             if (Enum.class.isAssignableFrom(aClass)) {
                 final String enumName = currentVars.reify(args[1]).toString();
 
-                final Enum[] enumConstants = ((Class<Enum<?>>)aClass).getEnumConstants();
-                for (Enum c: enumConstants) {
+                final Enum[] enumConstants = ((Class<Enum<?>>) aClass).getEnumConstants();
+                for (Enum c : enumConstants) {
                     if (c.name().equals(enumName)) {
                         return c;
                     }
@@ -237,39 +276,27 @@ public class PojoLibrary extends LibraryBase {
                     } else {
                         // Collect arguments and their types
                         final Object constructorArgs[] = new Object[nbArgs];
-                        final Class<?> constructorClasses[] = new  Class<?>[nbArgs];
-                        for (int i=1; i<= nbArgs; i++) {
-                            constructorArgs[i-1] = currentVars.reify(args[i]);
-                            constructorClasses[i-1] = constructorArgs[i-1].getClass();
+                        final Class<?> constructorClasses[] = new Class<?>[nbArgs];
+                        for (int i = 1; i <= nbArgs; i++) {
+                            constructorArgs[i - 1] = currentVars.reify(args[i]);
+                            constructorClasses[i - 1] = constructorArgs[i - 1].getClass();
                         }
                         // Instantiation - this is very far from being robust !
                         return aClass.getConstructor(constructorClasses).newInstance(constructorArgs);
                     }
                 } catch (InstantiationException e) {
-                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
                 } catch (IllegalAccessException e) {
-                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
                 } catch (NoSuchMethodException e) {
-                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
                 } catch (InvocationTargetException e) {
-                    return new PrologNonSpecificError(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
                 }
             }
         } catch (ClassNotFoundException e) {
             throw new InvalidTermException("Cannot instantiate term of class \"" + className + "\": " + e);
         }
-        // throw new InvalidTermException("Cannot instantiate term of class \"" + className);
     }
 
-
-    /**
-     * A utility method to emulate calling the bind/2 predicate from Java.
-     *
-     * @param theVariableName Name of var, may be prefixed such as "env." or "thread."
-     * @param theValue Value to set
-
-    public void bind(String theVariableName, Object theValue) {
-        this.getProlog().getTermAdapter().setVariable(theVariableName, theValue);
-    }
-     */
 }

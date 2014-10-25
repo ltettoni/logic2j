@@ -21,9 +21,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.EnvManager;
 
 import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class PojoLibraryTest extends PrologTestBase {
@@ -74,6 +77,81 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaNewWithConstructorAndArgs() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg')").var("X").single();
-        Assert.assertEquals("arg", x);
+        assertEquals("arg", x);
     }
+
+
+    @Test(expected = PrologNonSpecificError.class)
+    public void javaNewWithConstructorAndArgsFails() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").single();
+    }
+
+    @Test
+    public void javaInstantiateWithConstructorArgs() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").single();
+        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+        assertEquals("toto", pojo.getStr());
+        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Double(2.3), pojo.getaDouble());
+
+    }
+
+    @Test
+    public void javaInstantiateWithEmptyConstructorAndInjectProperties() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
+        "property(X, 'str', 'toto', 'update'), property(X, 'aLong', 1, 'update'), property(X, 'aDouble', 2.3, 'update')").var("X").single();
+        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+        assertEquals("toto", pojo.getStr());
+        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Double(2.3), pojo.getaDouble());
+    }
+
+    // ---------------------------------------------------------------------------
+    // A sample Pojo to be injected from Prolog
+    // ---------------------------------------------------------------------------
+
+    public static class PrologInstantiatedPojo {
+        private String str;
+        private Long aLong;
+        private Double aDouble;
+
+        public PrologInstantiatedPojo() {
+        }
+
+        public PrologInstantiatedPojo(String str, Long aLong, Double aDouble) {
+            this.str = str;
+            this.aLong = aLong;
+            this.aDouble = aDouble;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        public void setStr(String str) {
+            this.str = str;
+        }
+
+        public Long getaLong() {
+            return aLong;
+        }
+
+        public void setaLong(Long aLong) {
+            this.aLong = aLong;
+        }
+
+        public Double getaDouble() {
+            return aDouble;
+        }
+
+        public void setaDouble(Double aDouble) {
+            this.aDouble = aDouble;
+        }
+    }
+
 }
