@@ -21,6 +21,7 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.solver.listener.SolutionListener;
@@ -129,10 +130,29 @@ public class DefaultLibraryManager implements LibraryManager {
 
         // Load all annotated methods
         for (final Method method : libraryClass.getMethods()) {
-            final Predicate annotation = method.getAnnotation(Predicate.class);
-            if (annotation != null) {
+            final Predicate predicateAnnotation = method.getAnnotation(Predicate.class);
+            final Functor functorAnnotation = method.getAnnotation(Functor.class);
+            if (predicateAnnotation != null || functorAnnotation != null) {
                 final Class<?>[] paramTypes = method.getParameterTypes();
                 final Class<?> returnType = method.getReturnType();
+                final PrimitiveType type;
+                String primitiveName;
+                final String[] synonyms;
+                if (predicateAnnotation!=null) {
+                    if (returnType != Integer.class) {
+                        throw new PrologNonSpecificError("Unexpected return type, require Integer for predicate " + method);
+                    }
+                    type = PrimitiveType.PREDICATE;
+                    primitiveName = predicateAnnotation.name();
+                    synonyms = predicateAnnotation.synonyms();
+                } else if (functorAnnotation!=null) {
+                    type = PrimitiveType.FUNCTOR;
+                    primitiveName = functorAnnotation.name();
+                    synonyms = functorAnnotation.synonyms();
+                } else {
+                    throw new PrologNonSpecificError("Should not be here, annotation handling error");
+                }
+                /*
                 final PrimitiveType type;
                 if (Integer.class.equals(returnType)) {
                     type = PrimitiveType.PREDICATE;
@@ -145,7 +165,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 } else {
                     throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + method);
                 }
-
+                */
                 final int nbMethodParams = paramTypes.length;
                 int i = 0;
                 if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
@@ -170,7 +190,7 @@ public class DefaultLibraryManager implements LibraryManager {
                     }
                 }
                 // Main name (default = method's name) for the primitive
-                String primitiveName = annotation.name();
+
                 if (primitiveName == null || primitiveName.isEmpty()) {
                     primitiveName = method.getName();
                 }
@@ -180,7 +200,7 @@ public class DefaultLibraryManager implements LibraryManager {
                 content.putPrimitive(key1, desc);
 
                 // All other accepted synonyms for this primitive
-                for (final String synonym : annotation.synonyms()) {
+                for (final String synonym : synonyms) {
                     final String key2 = synonym + '/' + aritySignature;
                     final PrimitiveInfo desc2 = new PrimitiveInfo(type, theLibrary, primitiveName, method, varargs);
                     content.putPrimitive(key2, desc2);

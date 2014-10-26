@@ -19,6 +19,7 @@ package org.logic2j.contrib.library.pojo;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
+import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
@@ -248,7 +249,7 @@ public class PojoLibrary extends LibraryBase {
      * @param args
      * @return Java invocation of constructor
      */
-    @Predicate
+    @Functor
     public Object javaNew(SolutionListener theListener, UnifyContext currentVars, Object... args) {
         // More generic instantiation than the TermFactory
         final Object className = currentVars.reify(args[0]);

@@ -18,6 +18,7 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.ClauseProvider;
+import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
@@ -632,7 +633,7 @@ public class CoreLibrary extends LibraryBase {
         throw new InvalidTermException("Could not add because 2 terms are not Numbers: " + t1 + " and " + t2);
     }
 
-    @Predicate(name = "+")
+    @Functor(name = "+")
     public Object plus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_PLUS);
     }
@@ -644,7 +645,7 @@ public class CoreLibrary extends LibraryBase {
      * @param t2
      * @return Binary minus (subtract)
      */
-    @Predicate(name = "-")
+    @Functor(name = "-")
     public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_MINUS);
     }
@@ -655,7 +656,7 @@ public class CoreLibrary extends LibraryBase {
      * @param t2
      * @return Binary multiply
      */
-    @Predicate(name = "*")
+    @Functor(name = "*")
     public Object multiply(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
         return binaryFunctor(theListener, currentVars, t1, t2, AGGREGRATION_TIMES);
     }
@@ -666,7 +667,7 @@ public class CoreLibrary extends LibraryBase {
      * @param t1
      * @return Unary minus (negate)
      */
-    @Predicate(name = "-")
+    @Functor(name = "-")
     public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1) {
         return binaryFunctor(theListener, currentVars, t1, 0L, AGGREGATION_NEGATE);
     }
