@@ -84,22 +84,24 @@ public class SolutionHolder<T> implements Iterable<T> {
      * @param rangeListener
      * @param singleVarExtractor
      * @param multiVarExtractor
-     */
+
     private SolutionHolder(GoalHolder goalHolder, RangeSolutionListener rangeListener, SingleVarExtractor<T> singleVarExtractor, MultiVarExtractor multiVarExtractor) {
         this.goalHolder = goalHolder;
         this.rangeListener = rangeListener;
         this.singleVarExtractor = singleVarExtractor;
         this.multiVarExtractor = multiVarExtractor;
     }
+     */
 
     /**
      * Copy constructor
      *
      * @param original
-     */
+
     public <Tgt> SolutionHolder(SolutionHolder<T> original, Class<Tgt> targetClass) {
         this(original.goalHolder, original.rangeListener, original.singleVarExtractor, original.multiVarExtractor);
     }
+     */
 
     // ---------------------------------------------------------------------------
     // Scalar extractors (zero or one solution)

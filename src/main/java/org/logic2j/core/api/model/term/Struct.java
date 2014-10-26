@@ -602,7 +602,7 @@ public final class Struct extends Term {
     /**
      * Appends an element to this structure (supposed to be a list)
      * @throws PrologNonSpecificError if this is not a prolog list.
-     */
+
     public void append(Term t) {
         assertPList(this);
         if (isEmptyList()) {
@@ -616,11 +616,12 @@ public final class Struct extends Term {
             this.args[1] = t;
         }
     }
+    */
 
     /**
      * Inserts (at the head) an element to this structure (supposed to be a list)
      * @throws PrologNonSpecificError if this is not a prolog list.
-     */
+
     void insert(Term t) {
         assertPList(this);
         final Struct co = Struct.EMPTY_LIST;
@@ -629,7 +630,7 @@ public final class Struct extends Term {
         this.args[0] = t;
         this.args[1] = co;
     }
-
+     */
 
     // ---------------------------------------------------------------------------
     // TermVisitor
