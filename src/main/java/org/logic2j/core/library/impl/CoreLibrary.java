@@ -178,7 +178,13 @@ public class CoreLibrary extends LibraryBase {
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final Object[] goalStructArgs = theGoalStruct.getArgs();
         final int arity = goalStructArgs.length;
-        if (arity == 1) {
+        if (arity == 0) {
+            if (theMethodName == "fail") {
+                result = fail(theListener, currentVars);
+            } else {
+                result = NO_DIRECT_INVOCATION_USE_REFLECTION;
+            }
+        } else if (arity == 1) {
             final Object arg0 = goalStructArgs[0];
             if (theMethodName == "not") {
                 result = not(theListener, currentVars, arg0);
