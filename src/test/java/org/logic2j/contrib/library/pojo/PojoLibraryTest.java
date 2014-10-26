@@ -96,7 +96,6 @@ public class PojoLibraryTest extends PrologTestBase {
         assertEquals("toto", pojo.getStr());
         assertEquals(new Long(1), pojo.getaLong());
         assertEquals(new Double(2.3), pojo.getaDouble());
-
     }
 
     @Test
@@ -110,6 +109,20 @@ public class PojoLibraryTest extends PrologTestBase {
         assertEquals(new Long(1), pojo.getaLong());
         assertEquals(new Double(2.3), pojo.getaDouble());
     }
+
+
+    @Test
+    public void javaInstantiateWithJavaUnify() throws Exception {
+        loadLibrary(new PojoLibrary(this.prolog));
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
+        "javaUnify(X, [str=toto, aLong=1, aDouble=2.3])").var("X").single();
+        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+        assertEquals("toto", pojo.getStr());
+        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Double(2.3), pojo.getaDouble());
+    }
+
 
     // ---------------------------------------------------------------------------
     // A sample Pojo to be injected from Prolog
