@@ -17,12 +17,12 @@
  */
 package org.logic2j.core.library.impl;
 
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.api.library.Primitive;
 
 import java.io.PrintStream;
 
@@ -66,7 +66,7 @@ public class IOLibrary extends LibraryBase {
         return result;
     }
 
-    @Primitive
+    @Predicate
     public Integer write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         for (final Object term : terms) {
             final Object value = currentVars.reify(term);
@@ -77,13 +77,13 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener, currentVars);
     }
 
-    @Primitive
+    @Predicate
     public Integer nl(SolutionListener theListener, UnifyContext currentVars) {
         this.writer.println();
         return notifySolution(theListener, currentVars);
     }
 
-    @Primitive
+    @Predicate
     public Integer debug(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isDebugEnabled()) {
             final String substring = formatForLog(currentVars, terms);
@@ -92,7 +92,7 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener, currentVars);
     }
 
-    @Primitive
+    @Predicate
     public Integer info(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isInfoEnabled()) {
             final String substring = formatForLog(currentVars, terms);
@@ -101,7 +101,7 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener, currentVars);
     }
 
-    @Primitive
+    @Predicate
     public Integer warn(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isWarnEnabled()) {
             final String substring = formatForLog(currentVars, terms);
@@ -110,7 +110,7 @@ public class IOLibrary extends LibraryBase {
         return notifySolution(theListener, currentVars);
     }
 
-    @Primitive
+    @Predicate
     public Integer error(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         if (logger.isErrorEnabled()) {
             final String substring = formatForLog(currentVars, terms);
@@ -139,7 +139,7 @@ public class IOLibrary extends LibraryBase {
      * @param terms
      * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
      */
-    @Primitive
+    @Predicate
     public Integer nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
         // Do nothing, but succeeds!
         return notifySolution(theListener, currentVars);

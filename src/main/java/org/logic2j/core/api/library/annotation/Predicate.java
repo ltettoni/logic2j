@@ -15,7 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.logic2j.core.api.library;
+package org.logic2j.core.api.library.annotation;
 
 import org.logic2j.core.api.library.PLibrary;
 
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Primitive {
+public abstract @interface Predicate {
 
     /**
      * When "name" is defined, then the annotated method's name won't be used to register the primitive. Very useful when the primitive name

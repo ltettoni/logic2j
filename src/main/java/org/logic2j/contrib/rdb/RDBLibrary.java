@@ -17,7 +17,6 @@
  */
 package org.logic2j.contrib.rdb;
 
-import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.contrib.rdb.util.CollectionMap;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
@@ -25,6 +24,7 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.ColumnOperatorParameterCriterion
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.solver.Continuation;
@@ -40,7 +40,6 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.util.CollectionUtils;
 import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.library.impl.LibraryBase;
-import org.logic2j.core.api.library.Primitive;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -70,7 +69,7 @@ public class RDBLibrary extends LibraryBase {
     this.termAdapter = new RDBBase.AllStringsAsAtoms();
   }
 
-  @Primitive
+  @Predicate
   public Integer select(SolutionListener theListener, UnifyContext currentVars, Object... theArguments) throws SQLException {
     final Object theDataSource = theArguments[0];
     final Object theExpression = theArguments[1];

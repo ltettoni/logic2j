@@ -21,10 +21,9 @@ import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.Prolog;
-import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
@@ -117,7 +116,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
     /**
      * Introspect annotations within the {@link PLibrary} and return a description of it.
-     * Look for {@link org.logic2j.core.api.library.Primitive} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
+     * Look for {@link org.logic2j.core.api.library.annotation.Predicate} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
      * \=)
      * 
      * @param theLibrary
@@ -130,7 +129,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
         // Load all annotated methods
         for (final Method method : libraryClass.getMethods()) {
-            final Primitive annotation = method.getAnnotation(Primitive.class);
+            final Predicate annotation = method.getAnnotation(Predicate.class);
             if (annotation != null) {
                 final Class<?>[] paramTypes = method.getParameterTypes();
                 final Class<?> returnType = method.getReturnType();

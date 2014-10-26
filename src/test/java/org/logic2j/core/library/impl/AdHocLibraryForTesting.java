@@ -17,7 +17,7 @@
  */
 package org.logic2j.core.library.impl;
 
-import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.multi.ListMultiResult;
@@ -49,7 +49,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
      * @param theUpperBound
      * @return
      */
-    @Primitive
+    @Predicate
     public Integer int_range_classic(SolutionListener theListener, UnifyContext currentVars, Object theLowerBound, Object theIterable, Object theUpperBound) {
         final Object lowerBound = currentVars.reify(theLowerBound);
         final Object upperBound = currentVars.reify(theUpperBound);
@@ -81,7 +81,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
      * @param theMaxBound Upper bound + 1 (ie theIterable will go up to theMaxBound-1)
      * @return
      */
-    @Primitive
+    @Predicate
     public Integer int_range_multi(SolutionListener theListener, final UnifyContext currentVars, Object theMinBound, final Object theIterable, Object theMaxBound) {
         final Object minBound = currentVars.reify(theMinBound);
         final Object iterating = currentVars.reify(theIterable);

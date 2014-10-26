@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 
 /**
- * Describe a {@link Primitive}, which is either a:
+ * Describe a {@link org.logic2j.core.api.library.annotation.Predicate}, which is either a:
  * <ul>
  * <li>Directive - not yet supported</li>
  * <li>Predicate - a "function" in Prolog, will produce solutions</li>

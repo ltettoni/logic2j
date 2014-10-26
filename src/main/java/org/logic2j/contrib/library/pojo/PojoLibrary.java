@@ -19,16 +19,14 @@ package org.logic2j.contrib.library.pojo;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.EnvManager;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
@@ -122,7 +120,7 @@ public class PojoLibrary extends LibraryBase {
         }
     }
 
-    @Primitive
+    @Predicate
     public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
         return property(theListener, currentVars, thePojo, thePropertyName, theValue, null);
     }
@@ -139,7 +137,7 @@ public class PojoLibrary extends LibraryBase {
      * @param theValue
      * @return
      */
-    @Primitive
+    @Predicate
     public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue, Object theMode) {
         // First argument
         final Object pojo = currentVars.reify(thePojo);
@@ -209,7 +207,7 @@ public class PojoLibrary extends LibraryBase {
      * @param theTarget      Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
      * @return One solution, either theTarget is unified to a real value, or is left unchanged (unified to the anonymous var)
      */
-    @Primitive
+    @Predicate
     public Integer bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
         final Object nameTerm = currentVars.reify(theBindingName);
         ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
@@ -250,7 +248,7 @@ public class PojoLibrary extends LibraryBase {
      * @param args
      * @return Java invocation of constructor
      */
-    @Primitive
+    @Predicate
     public Object javaNew(SolutionListener theListener, UnifyContext currentVars, Object... args) {
         // More generic instantiation than the TermFactory
         final Object className = currentVars.reify(args[0]);

@@ -18,7 +18,7 @@
 
 package org.logic2j.contrib.library.fnct;
 
-import org.logic2j.core.api.library.Primitive;
+import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
 import org.logic2j.core.api.model.term.Struct;
@@ -98,13 +98,13 @@ public class FunctionLibrary extends LibraryBase {
     }
 
 
-    @Primitive
+    @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
         return map(listener, currentVars, mappingPredicate, inputTerm, outputTerm, OPTION_ONE);
     }
 
-    @Primitive
+    @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate,
                             final Object inputTerm, final Object outputTerm, final Object options) {
