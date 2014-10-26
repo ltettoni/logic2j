@@ -16,7 +16,7 @@ public class UseCaseTest {
 
     @Test
     public void instantiateViaFactory() throws Exception {
-        final Prolog prolog = new FluentPrologBuilder().createInstance();
+        final Prolog prolog = new FluentPrologBuilder().build();
         assertNotNull(prolog);
     }
 
@@ -31,7 +31,7 @@ public class UseCaseTest {
 
     @Test
     public void obtainDefaultPrologAndSolve() throws Exception {
-        final Prolog prolog = new FluentPrologBuilder().createInstance();
+        final Prolog prolog = new FluentPrologBuilder().build();
         assertEquals(4, prolog.solve("member(X, [a,b,c,d])").count());
     }
 
@@ -40,7 +40,7 @@ public class UseCaseTest {
     public void loadTheoryAndSolve() throws Exception {
         final File th1 = new File("src/test/resources/queens.pro");
         final File th2 = new File("src/test/resources/hanoi.pro");
-        final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).createInstance();
+        final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).build();
         assertEquals(2, prolog.solve("queens(4, _)").count());
     }
 
@@ -49,7 +49,7 @@ public class UseCaseTest {
     public void solve() throws Exception {
         final Prolog prolog = new FluentPrologBuilder()
         .withTheory(new File("src/test/resources/queens.pro"))
-        .createInstance();
+        .build();
         final List<List> objectList = prolog.solve("queens(4, Q)").var("Q", List.class).list();
         assertEquals(2, objectList.size());
         assertEquals("[3, 1, 4, 2]", objectList.get(0).toString());

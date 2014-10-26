@@ -7,6 +7,6 @@ import org.logic2j.core.api.Prolog;
  */
 public interface PrologBuilder {
 
-  public Prolog createInstance();
+  public Prolog build();
 
 }

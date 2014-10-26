@@ -35,7 +35,7 @@ public class FluentPrologBuilder implements PrologBuilder {
     private Collection<String> theoryResources = new ArrayList<String>();
 
   @Override
-    public PrologImplementation createInstance() {
+    public PrologImplementation build() {
         final PrologReferenceImplementation.InitLevel initLevel;
         if (isNoLibraries()) {
             initLevel = PrologReferenceImplementation.InitLevel.L0_BARE;

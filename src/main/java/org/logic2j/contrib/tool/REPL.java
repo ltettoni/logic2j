@@ -48,7 +48,7 @@ public class REPL {
             theories.add(new File(arg));
         }
 
-        prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[]{})).createInstance();
+        prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[]{})).build();
 
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
