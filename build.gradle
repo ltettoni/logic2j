@@ -1,3 +1,6 @@
+
+
+
 apply plugin: 'java'
 
 sourceCompatibility = 1.6
@@ -74,4 +77,33 @@ class MyDownload extends DefaultTask {
             ant.get(src: sourceUrl, dest: target)
         }
     }
+}
+
+
+
+/*
+    Documentation using asciidoctor
+    Reads source asciidoc files from: src/site/doc/asciidoc
+    Writes onto src/site/doc/html
+
+ */
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0'
+    }
+}
+apply plugin: 'org.asciidoctor.gradle.asciidoctor'
+
+
+asciidoctor {
+    sourceDir = new File("src/site/doc/asciidoc")
+    outputDir = new File("src/site/doc/html")
+    backends = ["html5"]
+    logDocuments = true
+    options = [
+            doctype: 'book'
+    ]
 }
