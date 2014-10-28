@@ -87,6 +87,7 @@ class MyDownload extends DefaultTask {
     Writes onto src/site/doc/html
 
  */
+// Install plugin
 buildscript {
     repositories {
         jcenter()
@@ -97,7 +98,7 @@ buildscript {
 }
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 
-
+// Configure target "asciidoctor" (defined in plugin)
 asciidoctor {
     sourceDir = new File("src/site/doc/asciidoc")
     outputDir = new File("src/site/doc/html")
