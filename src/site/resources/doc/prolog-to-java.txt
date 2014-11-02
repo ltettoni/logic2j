@@ -1,6 +1,0 @@
-Converting Prolog terms to Java
-
-1) PojoLibrary: javaNew
-
-2) TermAdapter
-
