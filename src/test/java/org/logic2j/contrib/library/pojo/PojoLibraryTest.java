@@ -102,7 +102,7 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithEmptyConstructorAndInjectProperties() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "property(X, 'str', 'toto', 'update'), property(X, 'aLong', 1, 'update'), property(X, 'aDouble', 2.3, 'update')").var("X").single();
+        "property(X, 'str', 'toto', 'w'), property(X, 'aLong', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").single();
         Assert.assertTrue(x instanceof PrologInstantiatedPojo);
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertEquals("toto", pojo.getStr());

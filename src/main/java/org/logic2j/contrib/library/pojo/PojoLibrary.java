@@ -18,6 +18,7 @@
 package org.logic2j.contrib.library.pojo;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.logic2j.contrib.library.OptionsString;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
@@ -136,10 +137,11 @@ public class PojoLibrary extends LibraryBase {
      * @param thePojo
      * @param thePropertyName
      * @param theValue
+     * @param theOptions Comma-separated list of "r" for read, "w" for write.
      * @return
      */
     @Predicate
-    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue, Object theMode) {
+    public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue, Object theOptions) {
         // First argument
         final Object pojo = currentVars.reify(thePojo);
         ensureBindingIsNotAFreeVar(pojo, "property/3", 0);
@@ -147,23 +149,23 @@ public class PojoLibrary extends LibraryBase {
         final Object propertyName = currentVars.reify(thePropertyName);
         ensureBindingIsNotAFreeVar(propertyName, "property/3", 1);
         // Invocation mode
-        String mode = "read";
-        if (theMode != null) {
-            mode = String.valueOf(currentVars.reify(theMode));
-        }
+        OptionsString mode = new OptionsString(currentVars, theOptions, "r");
 
         //
         Object currentValue = introspect(pojo, (String) propertyName);
         if (currentValue == null) {
-            if ("read".equals(mode)) {
+            if (mode.hasOption("r")) {
                 // Null value means no solution (property does "not exist")
                 return Continuation.CONTINUE;
             }
-            // If value passed as argument is defined, will set
-            final Object newValue = currentVars.reify(theValue);
-            inject(pojo, (String)propertyName, newValue);
+            if (mode.hasOption("w")) {
+                // If value passed as argument is defined, will set
+                final Object newValue = currentVars.reify(theValue);
+                inject(pojo, (String) propertyName, newValue);
 
-            return notifySolution(theListener, currentVars);
+                return notifySolution(theListener, currentVars);
+            }
+            throw new PrologNonSpecificError("Option \"" +  mode + "\" is not allowed");
         }
         // Collections will send multiple individual solutions
         if (currentValue instanceof Collection) {

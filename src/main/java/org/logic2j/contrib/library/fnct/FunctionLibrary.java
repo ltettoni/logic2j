@@ -18,6 +18,7 @@
 
 package org.logic2j.contrib.library.fnct;
 
+import org.logic2j.contrib.library.OptionsString;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.RecursionException;
@@ -107,14 +108,14 @@ public class FunctionLibrary extends LibraryBase {
     @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate,
-                            final Object inputTerm, final Object outputTerm, final Object options) {
+                            final Object inputTerm, final Object outputTerm, final Object theOptions) {
         if (!(mappingPredicate instanceof String)) {
             throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + mappingPredicate);
         }
         // All options, concatenated, enclosed in commas
-        final String optionsCsv = "," + options.toString().trim().toLowerCase().replace(" ", "") + ",";
+        final OptionsString options = new OptionsString(currentVars, theOptions);
 
-        final TransformationInfo callingInfo = new TransformationInfo(optionsCsv);
+        final TransformationInfo callingInfo = new TransformationInfo(options);
         final UnifyContext afterUnification = mapCompletely((String) mappingPredicate, currentVars, inputTerm, outputTerm, callingInfo);
         if (afterUnification != null) {
             return notifySolution(listener, afterUnification);
@@ -335,13 +336,13 @@ public class FunctionLibrary extends LibraryBase {
         /**
          * Set the flags based on the options.
          *
-         * @param optionsCsv
+         * @param options
          */
-        private TransformationInfo(String optionsCsv) {
+        private TransformationInfo(OptionsString options) {
             this();
-            isBefore = matchOption(optionsCsv, OPTION_BEFORE);
-            isIterative = matchOption(optionsCsv, OPTION_ITER);
-            isAfter = matchOption(optionsCsv, OPTION_AFTER);
+            isBefore = options.hasOption(OPTION_BEFORE);
+            isIterative = options.hasOption(OPTION_ITER);
+            isAfter = options.hasOption(OPTION_AFTER);
         }
 
         /**
@@ -364,16 +365,6 @@ public class FunctionLibrary extends LibraryBase {
             }
         }
 
-        /**
-         * Check for option within a set of options - conventionally encoded as ",opt1,opt2,...optn,"
-         *
-         * @param optionsCsv
-         * @param option
-         * @return True if option in found in optionsCsv
-         */
-        private static boolean matchOption(String optionsCsv, String option) {
-            return optionsCsv.contains("," + option + ",");
-        }
 
     }
 

@@ -7,7 +7,7 @@
 */
 javaUnify(Pojo, ListOfAssignments) :-
     member(Property=Value, ListOfAssignments),
-    property(Pojo, Property, Value, update),
+    property(Pojo, Property, Value, w),
     fail.
 javaUnify(_, _).
 
