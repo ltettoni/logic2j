@@ -90,7 +90,7 @@ public class UnifyContext {
     /**
      * TBD
      * @param term
-     * @return The dereferenced content of term, or theVar if it was free
+     * @return The dereferenced content of term, or theVar if it was free, or null if term is null
      */
     public Object reify(Object term) {
         if (term instanceof Var) {
