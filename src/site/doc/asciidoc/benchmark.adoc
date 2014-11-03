@@ -1,0 +1,87 @@
+logic2j Benchmarking results
+============================
+:toc:
+:toclevels: 4
+
+
+    I'm developing on an Intel Core2 Duo CPU, E6750, 2.66 GHz.
+    OS: 32bit, 4 GB RAM
+    Windows performance index: 3.4
+
+
+Inferring Prolog Facts: 800'000 facts for 15 solutions in 145 ms
+Inferring DataFacts: 800'000 facts for 15 solutions in 92 ms
+
+Solving "queens(11, X)" takes 
+        261 s on tuProlog v2.7.2
+        7.8 s on logic2j v0.5.0
+
+
+== Reworking towards a monadic approach of variable assignments
+
+Comparison of performance for COUNTING solutions on queens()
+
+    T: tuProlog 2.6.0
+    A: logic2j classic
+    B: monadic version - POC using sequential search for vars by reference (address)
+    B+: like B with more efficient cloning before matching a clause
+    C: monadic with variable indexing and direct lookup
+    D: Pure monadic approach - no more Bindings
+    D2: Optimized cloning of clauses (pre-stored array of Vars)
+    D3: Clause caching to avoid cloning
+
+    algo     #sol   T     A       B       B+      C       D     D2      D3
+    -----------------------------------------------------------------------
+    queens7  40           43      300
+    queens9  352    5K   320     6000    3000    900     820    580     380
+    queens10 724    25K 1440    30000                                   1920
+    queens11 2680  136K 7600    170000          23000                   10K
+
+
+Getting the bound variable value:
+
+    algo     #sol   T     A       B       B+      C       D       D2
+    -----------------------------------------------------------------------
+    queens9  352    5K                                          590
+
+
+
+
+
+== Taking the reference of queens9 (6000 ms baseline) for optimizations.
+
+Optimizations in "dereference()" and "bind()"
+. remove "instanceof Var" check and store an array of boolean that tell, at bind(), if the referred object is a var or not
+  -> 5900 ms - not worth keeping
+
+. during bind(), follow the object bound until its final reference
+  -> 6060 ms - maybe not worth keeping - not really sure of
+
+. By lookup on var indexes
+  -> 900 ms
+
+ 6360 INFO  [main] Profile report for: Number of solutions to queens(9, X) is 352
+ 6366 INFO  [main]   counter1     = 269195763   -- 300M number of searches
+ 6366 INFO  [main]   max1         = 241
+ 6366 INFO  [main]   nbInferences = 740000
+ 6366 INFO  [main]   nbFollowVar  = 2801248     -- 2.8M nubmer of searches for var
+ 6367 INFO  [main]   timer1       = 6070
+ 6367 INFO  [main] Profile report for: after test method
+
+. By replacing the cloning and assignment of vars (old TermApi.clone()) by new CloningTermVisitor:
+
+ 3361 INFO  [main] Profile report for: Number of solutions to queens(9, X) is 352
+ 3368 INFO  [main]   counter1     = 269195763
+ 3368 INFO  [main]   max1         = 241
+ 3369 INFO  [main]   nbInferences = 740000
+ 3369 INFO  [main]   nbFollowVar  = 2801248
+ 3371 INFO  [main]   timer1       = 3081
+ 3371 INFO  [main] Profile report for: after test method
+
+. Using the indexing monad:
+
+ 1187 INFO  [main] Profile report for: Number of solutions to queens(9, Q) is 352
+ 1192 INFO  [main]   max1         = 354
+ 1192 INFO  [main]   nbInferences = 740000
+ 1193 INFO  [main]   timer1       = 906
+ 1193 INFO  [main] Profile report for: after test method

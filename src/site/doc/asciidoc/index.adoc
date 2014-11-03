@@ -3,7 +3,7 @@ logic2j - Bring Logic to your Java
 Laurent Tettoni <laurent.tettoni@gmail.com>
 v1.0.0, November 2014:
 :toc:
-
+:toclevels: 4
 
 == Introduction
 
@@ -58,59 +58,63 @@ It is successfully used in production since 2012.
 
 Over time however, a number of limitations appeared, which weren't trivial to workaround. Among them:
 
-- memory footprint and copying of data structures make it difficult to handle large data sets
-- non-shared memory approach does not allow easy extension of the Term API (copying happens very often, at many places)
-- API to retrieve or manipulate solutions is cumbersome
-- although open sourced, codebase is lacking best patterns and java generics, makes it difficult to understand and extend
+* memory footprint and copying of data structures make it difficult to handle large data sets
+* non-shared memory approach does not allow easy extension of the Term API (copying happens very often, at many places)
+* API to retrieve or manipulate solutions is cumbersome
+* the codebase is lacking best patterns and java generics, makes it difficult to understand and extend
 
 Logic2j started as a challenge and proof-of-concept for a more state-of-the-art implementation of a
 Prolog inference engine, and never aimed to become a full Prolog programming environment.
 The key differences over tuProlog are:
 
-- Convenient, fluent and type-strong API to invoke the engine and retrieve solutions.
-- Plain old Java objects can be used anywhere in place of Prolog atoms and compounds. No more complex transformations. Infer with POJOs!
-- Inversion-of-Control (notify/listen) allows the inference engine to "send" solutions to the application code.
+* Convenient, fluent and type-strong API to invoke the engine and retrieve solutions.
+* Plain old Java objects can be used anywhere in place of Prolog atoms and compounds. No more complex transformations. Infer with POJOs!
+* Inversion-of-Control (notify/listen) allows the inference engine to "send" solutions to the application code.
   No more heap-based management of backtracking - plain recursive depth-first search is simple and bug-free.
-- Performance was a design driver. CPU efficiently used and large solution sets can be generated without footprint (since they are enumerated).
-- A shared-memory approach allows custom extensions and eases debugging (any structure is final and immutable, duplicates nothing).
-- A monadic approach to binding variables greatly simplifies the code: the inference engine never needs to "unbind" previous solutions.
-- A much reduced codebase, fully generic and Java1.5+ syntax, more modern coding patterns.
+* Performance was a design driver. CPU efficiently used and large solution sets can be generated without footprint (since they are enumerated).
+* A shared-memory approach allows custom extensions and eases debugging (any structure is final and immutable, duplicates nothing).
+* A monadic approach to binding variables greatly simplifies the code: the inference engine never needs to "unbind" previous solutions.
+* A much reduced codebase, fully generic and Java1.5+ syntax, more modern coding patterns.
 
 == Implementation features
 
 The core of Logic2j is ca. 70 Java types (classes, enums & interfaces), it performs typically 10x faster than tuProlog.
 
-- Custom Java predicates (primitives) can generate infinite number of solutions via enumeration through a notify/listen IoC pattern.
+* Custom Java predicates (primitives) can generate infinite number of solutions via enumeration through a notify/listen IoC pattern.
   You code off the concerns of backtracking: content from any collection or iterator can be "pushed" to the inference engine easily.
   Similarly, you can easily listen to solutions and collect them into memory or process them on the fly.
 
-- The codebase aims at or uses state-of-the-art coding patterns such as:
-  Inversion of Control
-  Interface / Implementation / Factory
-  Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
-  Easier API to manage Term structures (Visitor design pattern, expression-based selectors like XPath)
-  Builder pattern to instantiate inference engine, more compatible with CDI frameworks like Spring
-  Massively immutable and re-entrant code
-  SLF4j logging
+* The codebase aims at or uses state-of-the-art coding patterns such as:
+** Inversion of Control
+** Interface / Implementation / Factory
+** Separation of concerns (unification, inference, parsing, formatting, term hierarchy)
+**  Easier API to manage Term structures (Visitor design pattern, expression-based selectors like XPath)
+**  Builder pattern to instantiate inference engine, more compatible with CDI frameworks like Spring
+**  Massively immutable and re-entrant code
+**  SLF4j logging
 
-- Java 1.5+ language and JRE features fully leveraged
-  Generics
-  Varargs (also in Java-implemented primitives, correspond to variable-arity predicates)
-  Foreach and Iterable
-  Static imports
-  (no Java 8 closures yet)
+* Java 1.5+ language and JRE features fully leveraged
+**  Generics
+**  Varargs (also in Java-implemented primitives, correspond to variable-arity predicates)
+**  Foreach and Iterable
+**  Static imports
+**  (no Java 8 closures yet)
 
-- Gradle build
+* Gradle build
+
+== Programming with logic2j
+
+=== Invoke Prolog from Java
+
+==== Data conversion (Prolog terms from Java objects)
 
 
-== Java from Prolog (Doc in progress)
 
-=== Data conversion (Terms to Objects)
+=== Invoke Java from Prolog
 
+==== Data conversion (Java objects from Prolog terms)
 . PojoLibrary: javaNew
-
 . TermAdapter
 
-
-
+==== Libraries of Prolog Primitives in Java
 

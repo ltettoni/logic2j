@@ -16,6 +16,6 @@ small footprint, high performance, and state-of-the-art coding patterns.
 Although very close to Prolog, logic2j is NOT a complete Prolog programming environment, is not
 intended to be compatible with Prolog specification, this is just the core engine...
 
-Read further documentation at src/site/resources/doc.
+Read further documentation at src/site/doc.
 
 You must have received a LICENSE.txt file with this software package.
