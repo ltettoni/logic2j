@@ -19,6 +19,7 @@
 package org.logic2j.contrib.excel;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PublicSchoolsCaliforniaTest.class);
 
@@ -34,7 +36,6 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         setExcelClauseProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
     }
 
-    // @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
     @Test
     public void withClauseProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
@@ -43,7 +44,6 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         assertEquals(15, number);
     }
 
-    // @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
     @Test
     public void withDataProvider() throws IOException {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();

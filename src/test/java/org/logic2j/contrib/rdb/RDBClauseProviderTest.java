@@ -18,6 +18,7 @@
 package org.logic2j.contrib.rdb;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     private RDBClauseProvider provider;
 
