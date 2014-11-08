@@ -27,6 +27,9 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * This test requires test data, see build.gradle, target "downloadTestResources".
+ */
 @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PublicSchoolsCaliforniaTest.class);
