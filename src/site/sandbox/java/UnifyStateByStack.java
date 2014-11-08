@@ -22,7 +22,7 @@ public class UnifyStateByStack {
 
 
     Object dereference(Var<?> theVar, int startTop) {
-        if (theVar == Var.ANONYMOUS_VAR) {
+        if (theVar.isAnonymous()) {
             return theVar;
         }
         final int begin = startTop - 1;

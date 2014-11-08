@@ -486,7 +486,7 @@ public final class TermApi {
         final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
             @Override
             public Void visit(Var<?> theVar) {
-                if (theVar != Var.ANONYMOUS_VAR) {
+                if (! theVar.isAnonymous()) {
                   // Insert into array (even if may duplicate) - this will act as a sentinel
                   final int highest = nbVars[0];
                   tempArray[highest] = theVar;
