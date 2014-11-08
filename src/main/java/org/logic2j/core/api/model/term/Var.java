@@ -56,6 +56,8 @@ public final class Var<T> extends Term {
         }
     };
 
+    private Class<?> type = Object.class;
+
     /**
      * The immutable name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
      * by {@link #Var(CharSequence)} it can actually be anything (although it may not be the smartest idea).<br/>
@@ -122,7 +124,7 @@ public final class Var<T> extends Term {
      * Tests if this variable is anonymous.
      */
     public boolean isAnonymous() {
-        return this.name == ANONYMOUS_VAR_NAME; // Names are {@link String#intern()}alized so OK to check by reference
+        return this == ANONYMOUS_VAR || this.name == ANONYMOUS_VAR_NAME; // Names are {@link String#intern()}alized so OK to check by reference
     }
 
 
