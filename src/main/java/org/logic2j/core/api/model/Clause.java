@@ -157,7 +157,7 @@ public class Clause {
         // in the cloned structure by the clonedVar[N]
         final Var<?>[] clonedVars = new Var<?>[nbVars];
         for (int i = 0; i < nbVars; i++) {
-            clonedVars[i] = new Var<Object>(originalVars[i]);
+            clonedVars[i] = Var.copy(originalVars[i]);
         }
         assert theClause.content instanceof Struct;
         final Struct cloned = cloneStruct((Struct)theClause.content, clonedVars);

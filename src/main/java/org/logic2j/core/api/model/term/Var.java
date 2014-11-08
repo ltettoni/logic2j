@@ -47,7 +47,7 @@ public final class Var<T> extends Term {
     /**
      * Singleton "special" var that holds the value of a whole goal.
      */
-    public static final Var<?> WHOLE_SOLUTION_VAR = new Var<Object>(WHOLE_SOLUTION_VAR_NAME);
+    public static final Var<Object> WHOLE_SOLUTION_VAR = new Var<Object>(WHOLE_SOLUTION_VAR_NAME);
 
     public static final Comparator<Var<?>> COMPARATOR_BY_NAME = new Comparator<Var<?>>() {
         @Override
@@ -56,7 +56,7 @@ public final class Var<T> extends Term {
         }
     };
 
-    private Class<?> type = Object.class;
+    private final Class<T> type;
 
     /**
      * The immutable name of the variable, usually starting with uppercase when this Var was instantiated by the default parser, but when instantiated
@@ -71,6 +71,7 @@ public final class Var<T> extends Term {
      */
     private Var() {
         this.name = ANONYMOUS_VAR_NAME;
+        this.type = /* FIXME */ null;
         this.index = NO_INDEX;  // Actually the default value but let's enforce that here
     }
 
@@ -83,7 +84,7 @@ public final class Var<T> extends Term {
      * @throws InvalidTermException if n is not a valid Prolog variable name
      * @note Internally the {@link #name} is {@link String#intern()}alized so it's OK to compare by reference.
      */
-    public Var(CharSequence theName) {
+    public Var(Class<T> theType, CharSequence theName) {
         if (theName == Var.ANONYMOUS_VAR_NAME) {
             throw new InvalidTermException("Must not instantiate the anonymous variable (which is a singleton)!");
         }
@@ -95,21 +96,34 @@ public final class Var<T> extends Term {
             throw new InvalidTermException("Name of a variable may not be the empty String");
         }
         this.name = str.intern();
+        this.type = theType;
+    }
+
+    public Var(CharSequence theName) {
+        this(/* FIXME */ null, theName);
     }
 
     /**
-     * Copy constructor. OOPs - we must not copy the anonymous!
+     * Copy constructor
      * Clones the name and the index.
      *
+     * @throws org.logic2j.core.api.model.exception.InvalidTermException If you try to clone the anonymous variable!
      * @param original
      */
-    public Var(Var<?> original) {
+    public static <Q> Var<Q> copy(Var<Q> original) {
         if (original.name == Var.ANONYMOUS_VAR_NAME) {
             throw new InvalidTermException("Cannot clone the anonymous variable via a copy constructor!");
         }
-        this.name = original.name;
-        this.index = original.getIndex();
+        final Var<Q> cloned = new Var<Q>(original.type, original.name);
+        cloned.index = original.getIndex();
+        return cloned;
     }
+
+
+
+    // ---------------------------------------------------------------------------
+    // Accessors
+    // ---------------------------------------------------------------------------
 
     /**
      * Gets the name of the variable.
@@ -118,6 +132,10 @@ public final class Var<T> extends Term {
      */
     public String getName() {
         return this.name;
+    }
+
+    public Class<?> getType() {
+        return type;
     }
 
     /**

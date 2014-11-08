@@ -65,7 +65,7 @@ public class VarTest {
 
     @Test(expected = InvalidTermException.class)
     public void cannotCloneAnonymous() throws Exception {
-        new Var<Object>(Var.ANONYMOUS_VAR);
+        Var.copy(Var.ANONYMOUS_VAR);
     }
 
     @Test
