@@ -60,7 +60,7 @@ public class SingleVarExtractor<T> implements SolutionExtractor<T> {
         this.goal = goal;
         final Var<?> found = TermApi.findVar(goal, varName);
         if (found == null) {
-            throw new MissingSolutionException("No var named \"" + varName + "\" in term " + goal);
+            throw new MissingSolutionException("No var named \"" + varName + "\" in term \"" + goal + '"');
         }
         this.var = found;
         this.targetClass = desiredTypeOfResult;
