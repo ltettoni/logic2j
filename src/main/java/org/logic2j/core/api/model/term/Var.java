@@ -103,6 +103,22 @@ public final class Var<T> extends Term {
         this(/* FIXME */ null, theName);
     }
 
+    // ---------------------------------------------------------------------------
+    // Static factories
+    // ---------------------------------------------------------------------------
+
+    public static Var<String> strVar(String theName) {
+        return new Var<String>(String.class, theName);
+    }
+
+    public static Var<Integer> intVar(String theName) {
+        return new Var<Integer>(Integer.class, theName);
+    }
+
+    public static Var<Long> longVar(String theName) {
+        return new Var<Long>(Long.class, theName);
+    }
+
     /**
      * Copy constructor
      * Clones the name and the index.
