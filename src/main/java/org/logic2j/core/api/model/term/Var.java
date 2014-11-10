@@ -243,7 +243,7 @@ public final class Var<T> extends Term {
     }
 
     /**
-     * Equality is done by name - but does that make any sense?
+     * Equality is done by name and index - but does that make any sense?
      */
     @Override
     public boolean equals(Object other) {
