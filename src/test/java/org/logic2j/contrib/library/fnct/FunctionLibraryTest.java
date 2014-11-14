@@ -52,8 +52,7 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void placeholder() {
-        // Stack overflow
-//        GoalHolder sol = uniqueSolution("gd3(owner(Q, 68), Q)");
+        //
     }
 
     @Test
@@ -147,38 +146,6 @@ public class FunctionLibraryTest extends PrologTestBase {
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
         assertEquals(0, holder.count());
-    }
-
-    @Test
-    public void moreComplicated1() {
-        GoalHolder sol = uniqueSolution("gd3(tcNumber(a, b), Q)");
-        final Object q = sol.var("Q").unique();
-        logger.info("Solution: {}", q.toString());
-        assertEquals("['='(col(committee, id), a),'='(col(committee, tcNum), b)]", q.toString());
-    }
-
-    @Test
-    public void moreComplicated2() {
-        GoalHolder sol = uniqueSolution("gd3((tcNumber(A, B), tcNumber(A, C)), Q)");
-        final Object q = sol.var("Q").unique();
-        logger.info("Solution: {}", q.toString());
-        assertEquals("','(['='(col(committee, id), A),'='(col(committee, tcNum), B)], ['='(col(committee, id), A),'='(col(committee, tcNum), C)])", q.toString());
-    }
-
-    @Test
-    public void moreComplicated3() {
-        GoalHolder sol = uniqueSolution("gd3(organization(iso_id), Q)");
-        final Object q = sol.var("Q").unique();
-        logger.info("Solution: {}", q.toString());
-        assertEquals("'='(col(organization, id), 68)", q.toString());
-    }
-
-    @Test
-    public void moreComplicated4() {
-        GoalHolder sol = uniqueSolution("gd3(commIso(A), Q)");
-        final Object q = sol.var("Q").unique();
-        logger.info("Solution: {}", q.toString());
-        assertEquals("','('='(col(committee, id), A), ['='(col(pred_owner, id), A),'='(pred_owner(pred_owner, owner), 68)])", q.toString());
     }
 
 
