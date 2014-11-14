@@ -27,6 +27,7 @@ import org.logic2j.core.api.model.term.Term;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -83,6 +84,8 @@ public class FunctionLibrary extends LibraryBase {
             // Argument methodName is {@link String#intern()}alized so OK to check by reference
             if (methodName == "map") {
                 result = map(listener, currentVars, args[0], args[1], args[2]);
+            } else if (methodName == "mapOne") {
+                result = mapOneProto(listener, currentVars, args[0], args[1], args[2]);
             } else {
                 result = NO_DIRECT_INVOCATION_USE_REFLECTION;
             }
@@ -101,6 +104,7 @@ public class FunctionLibrary extends LibraryBase {
 
     /**
      * Basic transformation, will only transform the flat term, see OPTION_ONE.
+     *
      * @param listener
      * @param currentVars
      * @param mappingPredicate
@@ -110,12 +114,13 @@ public class FunctionLibrary extends LibraryBase {
      */
     @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
-                            final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
+                       final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
         return map(listener, currentVars, mappingPredicate, inputTerm, outputTerm, OPTION_ONE);
     }
 
     /**
      * Map with (comma-separated) options.
+     *
      * @param listener
      * @param currentVars
      * @param mappingPredicate
@@ -126,8 +131,8 @@ public class FunctionLibrary extends LibraryBase {
      */
     @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
-                            final Object mappingPredicate,
-                            final Object inputTerm, final Object outputTerm, final Object theOptions) {
+                       final Object mappingPredicate,
+                       final Object inputTerm, final Object outputTerm, final Object theOptions) {
         if (!(mappingPredicate instanceof String)) {
             throw new InvalidTermException("Predicate (argument 1) for map/3 must be a String, was " + mappingPredicate);
         }
@@ -333,7 +338,63 @@ public class FunctionLibrary extends LibraryBase {
 
 
     // ---------------------------------------------------------------------------
-    // Support class to provide and extract information between these recursive methods
+    // WORK IN PROGRESS - toward multi-solution transformation
+    // ---------------------------------------------------------------------------
+
+
+    /**
+     * Transform only the root predicate, does not impact any of its children.
+     *
+     * @param mappingPredicate
+     * @param currentVars
+     * @param inputTerm
+     * @param outputTerm
+     * @return
+     */
+    @Predicate(name="mapOne")
+    public Integer mapOneProto(final SolutionListener listener, final UnifyContext currentVars,
+                               final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
+        UnifyContext runningMonad = currentVars;
+        final Object effectiveInput = runningMonad.reify(inputTerm);
+        final Object effectiveOutput = runningMonad.reify(outputTerm);
+        if (effectiveInput instanceof Var) {
+            // Free var - return untransformed
+            runningMonad = runningMonad.unify(inputTerm, outputTerm);
+            // Should always unify...
+            assert runningMonad != null : "A free var must always unify to anything";
+        } else {
+            // Pattern of using an immutable array to store the mutable result of a callback...
+            final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener() {
+
+                @Override
+                public Integer onSolution(UnifyContext currentVars) {
+                    super.onSolution(currentVars);
+                    // final Object result = currentVars.reify(effectiveOutput);
+                    final Integer continuation = listener.onSolution(currentVars);
+                    return continuation;
+                }
+            };
+            // Create the transformation goal
+            final Struct transformationGoal = new Struct((String)mappingPredicate, effectiveInput, effectiveOutput);
+            int highestVarIndex = highestVarIndex(transformationGoal);
+            transformationGoal.index = highestVarIndex + 1;
+            // Now solve the target sub goal
+            getProlog().getSolver().solveGoal(transformationGoal, runningMonad, listenerForSubGoal);
+            if (listenerForSubGoal.hadNoSolution()) {
+                // No transformation found - relay untransformed value
+                final UnifyContext newVars = runningMonad.unify(effectiveInput, effectiveOutput);
+                if (newVars != currentVars) {
+                    final Integer continuation = listener.onSolution(newVars);
+                    return continuation;
+                }
+            }
+        }
+        return Continuation.CONTINUE;
+    }
+
+
+    // ---------------------------------------------------------------------------
+    // Support class to provide and extract data across these many recursive calls
     // ---------------------------------------------------------------------------
 
     private static class TransformationInfo {

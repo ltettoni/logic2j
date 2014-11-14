@@ -132,13 +132,21 @@ public class FunctionLibraryTest extends PrologTestBase {
     @Test
     public void multipleSolutionsTransform() {
         // See FIXME in class header - we currently find only the first transformed solution.
-        assertTransformations(MAPPING_PREDICATE, "3", new String[] {"three" }, FunctionLibrary.OPTION_AFTER);
+        assertMapOneTransformations(MAPPING_PREDICATE, "3", new String[]{"three", "trois", "drei"}, FunctionLibrary.OPTION_ONE);
+        assertMapOneTransformations(MAPPING_PREDICATE, "4", new String[]{"4"}, FunctionLibrary.OPTION_ONE);
     }
 
-    /**
-     * @param transformationPredicate
-     * @param termToTransform
-     */
+    private void assertMapOneTransformations(String transformationPredicate, String termToTransform, String[] theExpectedToString, String options) {
+        final String goalText = "mapOne(" + transformationPredicate + ", " + termToTransform + ", Q)";
+        final Object goal = unmarshall(goalText);
+        logger.info("Transformation goal: \"{}\"", goal);
+        final GoalHolder holder = this.prolog.solve(goal);
+        assertEquals(theExpectedToString.length, holder.count());
+        final List<Object> unique = holder.var("Q").list();
+        assertEquals(Arrays.asList(theExpectedToString).toString(), unique.toString());
+    }
+
+
     private void assertTransformation(String transformationPredicate, String termToTransform, String theExpectedToString, String options) {
         final String goalText = "map(" + transformationPredicate + ", " + termToTransform + ", Q, " + options + ")";
         final Object goal = unmarshall(goalText);
