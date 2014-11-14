@@ -24,7 +24,7 @@ import org.logic2j.core.api.unify.UnifyContext;
  * A base implementation of {@link SolutionListener} that holds a counter of the number of solutions reached.
  * The {@link #onSolution(org.logic2j.core.api.unify.UnifyContext)} method always returns Continuation.CONTINUE (dangerously allowing for potential
  * infinite generation). Derive from this class to ease the programming of
- * {@link SolutionListener}s in application code.
+ * {@link SolutionListener}s in application code, and DO NOT FORGET to call super.onSolution() so that it will count!
  */
 public class CountingSolutionListener extends SolutionListenerBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CountingSolutionListener.class);
@@ -51,6 +51,14 @@ public class CountingSolutionListener extends SolutionListenerBase {
 
     public long getCounter() {
         return this.counter;
+    }
+
+    public boolean hadSolution() {
+        return this.counter > 0;
+    }
+
+    public boolean hadNoSolution() {
+        return this.counter == 0;
     }
 
 }
