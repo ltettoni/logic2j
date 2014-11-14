@@ -132,7 +132,7 @@ public class FunctionLibraryTest extends PrologTestBase {
     @Test
     public void multipleSolutionsTransform() {
         // See FIXME in class header - we currently find only the first transformed solution.
-        assertTransformations(MAPPING_PREDICATE, "2", new String[] {"two" }, FunctionLibrary.OPTION_AFTER);
+        assertTransformations(MAPPING_PREDICATE, "3", new String[] {"three" }, FunctionLibrary.OPTION_AFTER);
     }
 
     /**

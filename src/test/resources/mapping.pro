@@ -21,9 +21,9 @@ remap(11, [10,1]).
 remap(original(X), transformed(X)).
 
 % Checking multi-solution remappings
-remap(2, two).
-remap(2, deux).
-remap(2, zwei).
+remap(3, three).
+remap(3, trois).
+remap(3, drei).
 
 
 %
