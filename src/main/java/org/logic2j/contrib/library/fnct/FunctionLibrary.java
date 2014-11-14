@@ -35,6 +35,7 @@ import org.logic2j.core.library.impl.LibraryBase;
 
 /**
  * Functional features (mapping, etc).
+ * TODO Currently transformations using map/2 or map/3 only find the first solution, not all.
  */
 public class FunctionLibrary extends LibraryBase {
     static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionLibrary.class);
@@ -98,13 +99,31 @@ public class FunctionLibrary extends LibraryBase {
         return result;
     }
 
-
+    /**
+     * Basic transformation, will only transform the flat term, see OPTION_ONE.
+     * @param listener
+     * @param currentVars
+     * @param mappingPredicate
+     * @param inputTerm
+     * @param outputTerm
+     * @return
+     */
     @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate, final Object inputTerm, final Object outputTerm) {
         return map(listener, currentVars, mappingPredicate, inputTerm, outputTerm, OPTION_ONE);
     }
 
+    /**
+     * Map with (comma-separated) options.
+     * @param listener
+     * @param currentVars
+     * @param mappingPredicate
+     * @param inputTerm
+     * @param outputTerm
+     * @param theOptions
+     * @return
+     */
     @Predicate
     public Integer map(SolutionListener listener, final UnifyContext currentVars,
                             final Object mappingPredicate,

@@ -24,6 +24,9 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -126,6 +129,12 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertTransformation(MAPPING_PREDICATE, "h(11)", "h([ten,one])", FunctionLibrary.OPTION_AFTER);
     }
 
+    @Test
+    public void multipleSolutionsTransform() {
+        // See FIXME in class header - we currently find only the first transformed solution.
+        assertTransformations(MAPPING_PREDICATE, "2", new String[] {"two" }, FunctionLibrary.OPTION_AFTER);
+    }
+
     /**
      * @param transformationPredicate
      * @param termToTransform
@@ -138,6 +147,17 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertEquals(1, holder.count());
         final Object unique = holder.var("Q").unique();
         assertEquals(theExpectedToString, unique.toString());
+    }
+
+
+    private void assertTransformations(String transformationPredicate, String termToTransform, String[] theExpectedToString, String options) {
+        final String goalText = "map(" + transformationPredicate + ", " + termToTransform + ", Q, " + options + ")";
+        final Object goal = unmarshall(goalText);
+        logger.info("Transformation goal: \"{}\"", goal);
+        final GoalHolder holder = this.prolog.solve(goal);
+        assertEquals(1, holder.count());
+        final List<Object> unique = holder.var("Q").list();
+        assertEquals(Arrays.asList(theExpectedToString).toString(), unique.toString());
     }
 
     private void assertWrongMapping(String t1, String t2, String options) {
