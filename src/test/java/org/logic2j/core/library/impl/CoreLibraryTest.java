@@ -107,24 +107,23 @@ public class CoreLibraryTest extends PrologTestBase {
         countNoSolution(NO_SOLUTION_GOALS);
     }
 
+    // TODO Some uncertainties re. the desired behaviour of no-op binding of free bindings. To be clarified.
+    @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
+    @Test
+    public void solvePrimitivePredicates_representation_FREE() {
+        assertEquals(term("X"), uniqueSolution("X=X").var("X").unique());
+        assertEquals(term("Y"), uniqueSolution("X=Y").var("X").unique());
+        assertEquals(term("Y"), uniqueSolution("X=Y").var("Y").unique());
+        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
+        //
+        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique());
+        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("X").unique());
+        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("Y").unique());
+        //
+        uniqueSolution("2>1");
+        uniqueSolution("A=1, 2>A");
+    }
 
-    //    // TODO Some uncertainties re. the desired behaviour of no-op binding of free bindings. To be clarified.
-//    @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
-//    @Test
-//    public void solvePrimitivePredicates_representation_FREE() {
-//        assertEquals(term("X"), uniqueSolution("X=X").var("X").unique());
-//        assertEquals(term("Y"), uniqueSolution("X=Y").var("X").unique());
-//        assertEquals(term("Y"), uniqueSolution("X=Y").var("Y").unique());
-//        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
-//        //
-//        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique());
-//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("X").unique());
-//        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("Y").unique());
-//        //
-//        uniqueSolution("2>1");
-//        uniqueSolution("A=1, 2>A");
-//    }
-//
     @Test
     public void solvePrimitivePredicates_representation_NULL() {
         assertEquals("X", uniqueSolution("X=X").var("X").unique().toString());
