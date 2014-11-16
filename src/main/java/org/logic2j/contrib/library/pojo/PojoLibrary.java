@@ -25,6 +25,7 @@ import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
@@ -33,7 +34,9 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class PojoLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PojoLibrary.class);
@@ -137,7 +140,7 @@ public class PojoLibrary extends LibraryBase {
      * @param thePojo
      * @param thePropertyName
      * @param theValue
-     * @param theOptions Comma-separated list of "r" for read, "w" for write.
+     * @param theOptions      Comma-separated list of "r" for read, "w" for write.
      * @return
      */
     @Predicate
@@ -165,7 +168,7 @@ public class PojoLibrary extends LibraryBase {
 
                 return notifySolution(theListener, currentVars);
             }
-            throw new PrologNonSpecificError("Option \"" +  mode + "\" is not allowed");
+            throw new PrologNonSpecificError("Option \"" + mode + "\" is not allowed");
         }
         // Collections will send multiple individual solutions
         if (currentValue instanceof Collection) {
@@ -297,6 +300,29 @@ public class PojoLibrary extends LibraryBase {
             }
         } catch (ClassNotFoundException e) {
             throw new InvalidTermException("Cannot instantiate term of class \"" + className + "\": " + e);
+        }
+    }
+
+    @Predicate
+    public Integer javaList(SolutionListener theListener, UnifyContext currentVars, Object prologList, Object javaList) {
+        final Object pList = currentVars.reify(prologList);
+        final Object jList = currentVars.reify(javaList);
+        if (javaList instanceof Var<?>) {
+            // Prolog to Java
+            if (!TermApi.isList(pList)) {
+                // No solution
+                return Continuation.CONTINUE;
+            }
+            final List<Object> elements = new ArrayList<Object>();
+            ((Struct) pList).javaListFromPList(elements, Object.class);
+            return unifyAndNotify(theListener, currentVars, elements, jList);
+        } else {
+            if (!(jList instanceof List<?>)) {
+                // No solution
+                return Continuation.CONTINUE;
+            }
+            final Struct elements = Struct.createPList((List) jList);
+            return unifyAndNotify(theListener, currentVars, elements, pList);
         }
     }
 
