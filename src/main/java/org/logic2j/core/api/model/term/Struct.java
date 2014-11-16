@@ -567,14 +567,14 @@ public final class Struct extends Term {
     /**
      *
      * @param theCollectionToFillOrNull
-     * @param theElementClassOrNull
+     * @param theElementRequiredClass
      * @param <Q>
      * @param <T>
      * @return
      * @throws PrologNonSpecificError if this is not a prolog list.
      */
     @SuppressWarnings("unchecked")
-    public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementClassOrNull) {
+    public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
         final T result;
         if (theCollectionToFillOrNull == null) {
             result = (T) new ArrayList<Q>();
@@ -583,7 +583,7 @@ public final class Struct extends Term {
         }
         // In case not a list, we just return a Java list with one element
         if (!this.isList()) {
-            result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementClassOrNull));
+            result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementRequiredClass));
             return result;
         }
 
@@ -591,7 +591,7 @@ public final class Struct extends Term {
         int idx = 0;
         while (!runningElement.isEmptyList()) {
             assertPList(runningElement);
-            final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, runningElement.getLHS(), theElementClassOrNull);
+            final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, runningElement.getLHS(), theElementRequiredClass);
             result.add(term);
             runningElement = (Struct) runningElement.getRHS();
             idx++;
