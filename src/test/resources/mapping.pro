@@ -29,9 +29,8 @@ remap(3, drei).
 %
 % Convert associative structures of AND and OR into flattened lists
 %
-dessoc( (A, op(and, List)), op(and, [A|List])) :- !.
+dessoc( (A, op(and, List)), op(and, [A|List])).
 dessoc( (A, B) , op(and, [A,B])).
 
-dessoc( (A; op(or, List)), op(or, [A|List])) :- !.
+dessoc( (A; op(or, List)), op(or, [A|List])).
 dessoc( (A; B) , op(or, [A,B])).
-
