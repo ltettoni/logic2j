@@ -300,9 +300,6 @@ public class Solver {
         if (isDebug) {
             logger.debug(" +>> Entering solveAgainstClauseProviders#{}, cutLevel={}", inferenceCounter, cutLevel);
         }
-        if (PrologReferenceImplementation.PROFILING) {
-            ProfilingInfo.nbInferences++;
-        }
         Integer result = Continuation.CONTINUE;
 
         // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
