@@ -59,22 +59,22 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void sumial() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
-        assertEquals(term(0), uniqueSolution("sumial(0, X)").longValue("X"));
-        assertEquals(term(1), uniqueSolution("sumial(1, X)").longValue("X"));
-        assertEquals(term(3), uniqueSolution("sumial(2, X)").longValue("X"));
-        assertEquals(term(15), uniqueSolution("sumial(5, X)").longValue("X"));
-        assertEquals(term(55), uniqueSolution("sumial(10, X)").longValue("X"));
-        assertEquals(term(5050), uniqueSolution("sumial(100, X)").longValue("X"));
+        assertEquals(term(0), uniqueSolution("sumial(0, X)").intValue("X"));
+        assertEquals(term(1), uniqueSolution("sumial(1, X)").intValue("X"));
+        assertEquals(term(3), uniqueSolution("sumial(2, X)").intValue("X"));
+        assertEquals(term(15), uniqueSolution("sumial(5, X)").intValue("X"));
+        assertEquals(term(55), uniqueSolution("sumial(10, X)").intValue("X"));
+        assertEquals(term(5050), uniqueSolution("sumial(100, X)").intValue("X"));
     }
 
     @Test
     public void unify() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         uniqueSolution("unifyterms(X,X)");
-        assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").longValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").longValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(X,123)").longValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(123, X)").longValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").intValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").intValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms22(X,123)").intValue("X"));
+        assertEquals(term(123), uniqueSolution("unifyterms22(123, X)").intValue("X"));
     }
 
 

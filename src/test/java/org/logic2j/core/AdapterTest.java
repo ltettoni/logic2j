@@ -28,7 +28,7 @@ import static org.junit.Assert.assertSame;
 
 /**
  * Testing the TermAdapter: how Java objects can invoke and be returned
- * from logic2j's {@link org.logic2j.core.api.Prolog} and {@link org.logic2j.core.api.Solver}.
+ * from logic2j's {@link org.logic2j.core.api.Prolog} and {@link org.logic2j.core.impl.Solver}.
  */
 public class AdapterTest extends PrologTestBase {
     // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);
@@ -47,7 +47,7 @@ public class AdapterTest extends PrologTestBase {
 
     @Test
     public void retrieveJavaObjects() {
-        assertEquals(new Long(5), this.prolog.solve("X is 2+3").var("X", Long.class).unique());
+        assertEquals(5, this.prolog.solve("X is 2+3").var("X", Integer.class).unique().intValue());
     }
 
     @Test

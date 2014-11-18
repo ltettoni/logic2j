@@ -375,7 +375,7 @@ public class Parser {
         final Token t1 = this.tokenizer.readToken();
 
         if (t1.isType(INTEGER)) {
-            return Long.valueOf(t1.text);
+            return Integer.valueOf(t1.text);
         }
 
         if (t1.isType(FLOAT)) {
@@ -508,7 +508,7 @@ public class Parser {
 
     Object createNumber(String s) {
         try {
-            return Long.valueOf(s);
+            return Integer.valueOf(s);
         } catch (final Exception e) {
             return Double.valueOf(s);
         }

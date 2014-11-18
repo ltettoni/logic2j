@@ -4,7 +4,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
@@ -31,11 +30,11 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void is() {
-        assertEquals(term(6), uniqueSolution("X is 2+4").longValue("X"));
-        assertEquals(term(-5), uniqueSolution("X is 5-10").longValue("X"));
-        assertEquals(term(-12), uniqueSolution("X is -12").longValue("X"));
-        assertEquals(term(1), uniqueSolution("X is 6 - (2+3)").longValue("X"));
-        assertEquals(term(9), uniqueSolution("N=10, M is N-1").longValue("M"));
+        assertEquals(term(6), uniqueSolution("X is 2+4").intValue("X"));
+        assertEquals(term(-5), uniqueSolution("X is 5-10").intValue("X"));
+        assertEquals(term(-12), uniqueSolution("X is -12").intValue("X"));
+        assertEquals(term(1), uniqueSolution("X is 6 - (2+3)").intValue("X"));
+        assertEquals(term(9), uniqueSolution("N=10, M is N-1").intValue("M"));
     }
 
     @Test
@@ -243,6 +242,6 @@ public class CoreLibraryTest extends PrologTestBase {
     public void once() {
         loadTheoryFromTestResourcesDir("test-data.pro");
         final GoalHolder holder = uniqueSolution("once(int10(X))");
-        assertEquals(1L, holder.var("X").unique());
+        assertEquals(1, holder.var("X").unique());
     }
 }

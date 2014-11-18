@@ -27,13 +27,13 @@ public class ListMultiResult implements MultiResult {
 
     final Var<?> var;
 
-    final List<Long> values;
+    final List<Integer> values;
 
     final UnifyContext currentVars;
 
-    final Iterator<Long> iter;
+    final Iterator<Integer> iter;
 
-    public ListMultiResult(UnifyContext currentVars, Var<?> theVar, List<Long> values) {
+    public ListMultiResult(UnifyContext currentVars, Var<?> theVar, List<Integer> values) {
         this.var = theVar;
         this.values = values;
         this.currentVars = currentVars;
@@ -54,7 +54,7 @@ public class ListMultiResult implements MultiResult {
             throw new UnsupportedOperationException("Must have same var to combine");
         }
         this.var = left.var;
-        this.values = new ArrayList<Long>(left.values);
+        this.values = new ArrayList<Integer>(left.values);
         this.values.retainAll(right.values);
         this.currentVars = currentVars;
         this.iter = this.values.iterator();
@@ -68,7 +68,7 @@ public class ListMultiResult implements MultiResult {
 
     @Override
     public UnifyContext next() {
-        final Long next = iter.next();
+        final Integer next = iter.next();
         final UnifyContext after = currentVars.unify(var, next);
         return after;
     }

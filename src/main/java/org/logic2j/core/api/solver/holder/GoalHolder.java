@@ -80,8 +80,8 @@ public class GoalHolder {
     // ---------------------------------------------------------------------------
 
 
-    public Object longValue(String varName) {
-        return var(varName, Long.class).unique();
+    public Object intValue(String varName) {
+        return var(varName, Integer.class).unique();
     }
 
     public String toString(String varName) {

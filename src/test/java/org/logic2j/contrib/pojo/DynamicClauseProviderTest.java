@@ -107,10 +107,10 @@ public class DynamicClauseProviderTest extends PrologTestBase {
         final Object awtRectangle = new Rectangle(1, 2, 3, 4);
         final Struct fact1 = new Struct("eav", "context", "shape", awtRectangle);
         this.dynamic.assertClause(fact1);
-        assertEquals(new Rectangle(1, 2, 3, 4), uniqueSolution("eav(_,_,R)").var("R").unique());
-        assertEquals(3.0, uniqueSolution("eav(_,_,R), property(R, width, W)").var("W").unique());
-        uniqueSolution("eav(_,_,R), property(R, height, 4.0)");
-        noSolutions("eav(_,_,R), property(R, height, 3.0)");
+        assertEquals(new Rectangle(1, 2, 3, 4), uniqueSolution("eav(_,_,Rect)").var("Rect").unique());
+        assertEquals(3.0, uniqueSolution("eav(_,_,Rect), property(Rect, width, W)").var("W").unique());
+        uniqueSolution("eav(_,_,Rect), property(Rect, height, 4.0)");
+        noSolutions("eav(_,_,Rect), property(Rect, height, 3.0)");
     }
 
     @Test

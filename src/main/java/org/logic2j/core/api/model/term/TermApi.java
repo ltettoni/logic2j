@@ -337,13 +337,13 @@ public final class TermApi {
             // Idempotence
             result = theObject;
         } else if (theObject instanceof Integer) {
-            result = ((Integer) theObject).longValue();
+            result = theObject;
         } else if (theObject instanceof Long) {
-            result = theObject;
-        } else if (theObject instanceof Double) {
-            result = theObject;
+            result = ((Long)theObject).intValue();
         } else if (theObject instanceof Float) {
             result = ((Float) theObject).doubleValue();
+        } else if (theObject instanceof Double) {
+            result = theObject;
         } else if (theObject instanceof Boolean) {
             result = (Boolean) theObject ? Struct.ATOM_TRUE : Struct.ATOM_FALSE;
         } else if (theObject instanceof CharSequence || theObject instanceof Character) {

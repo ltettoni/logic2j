@@ -131,10 +131,10 @@ public class CoreLibrary extends LibraryBase {
     private static final AggregationFunction AGGREGATION_PLUS = new AggregationFunction() {
         @Override
         public Number apply(Number val1, Number val2) {
-            if (val1 instanceof Long && val2 instanceof Long) {
-                return val1.longValue() + val2.longValue();
+            if (val1 instanceof Integer && val2 instanceof Integer) {
+                return val1.intValue() + val2.intValue();
             }
-            return (double) (val1.longValue() + val2.longValue());
+            return (double) (val1.intValue() + val2.intValue());
         }
 
     };
@@ -142,10 +142,10 @@ public class CoreLibrary extends LibraryBase {
     private static final AggregationFunction AGGREGATION_MINUS = new AggregationFunction() {
         @Override
         public Number apply(Number val1, Number val2) {
-            if (val1 instanceof Long && val2 instanceof Long) {
-                return val1.longValue() - val2.longValue();
+            if (val1 instanceof Integer && val2 instanceof Integer) {
+                return val1.intValue() - val2.intValue();
             }
-            return (double) (val1.longValue() - val2.longValue());
+            return (double) (val1.intValue() - val2.intValue());
         }
 
     };
@@ -153,10 +153,10 @@ public class CoreLibrary extends LibraryBase {
     private static final AggregationFunction AGGREGRATION_TIMES = new AggregationFunction() {
         @Override
         public Number apply(Number val1, Number val2) {
-            if (val1 instanceof Long && val2 instanceof Long) {
-                return val1.longValue() * val2.longValue();
+            if (val1 instanceof Integer && val2 instanceof Integer) {
+                return val1.intValue() * val2.intValue();
             }
-            return (double) (val1.longValue() * val2.longValue());
+            return (double) (val1.intValue() * val2.intValue());
         }
 
     };
@@ -164,10 +164,10 @@ public class CoreLibrary extends LibraryBase {
     private static final AggregationFunction AGGREGATION_NEGATE = new AggregationFunction() {
         @Override
         public Number apply(Number val1, Number val2) {
-            if (val1 instanceof Long && val2 instanceof Long) {
-                return -val1.longValue();
+            if (val1 instanceof Integer && val2 instanceof Integer) {
+                return -val1.intValue();
             }
-            return (double) -val1.longValue();
+            return (double) -val1.intValue();
         }
 
     };
@@ -418,7 +418,7 @@ public class CoreLibrary extends LibraryBase {
         getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
 
         // And unify with result
-        final Long counted = listenerForSubGoal.getCounter();
+        final Integer counted = (int)listenerForSubGoal.getCounter();
         return unify(theListener, currentVars, theNumber, counted);
     }
 
@@ -625,8 +625,8 @@ public class CoreLibrary extends LibraryBase {
         final Object t1 = TermApi.evaluate(theTerm1, currentVars);
         final Object t2 = TermApi.evaluate(theTerm2, currentVars);
         if (t1 instanceof Number && t2 instanceof Number) {
-            if (t1 instanceof Long && t2 instanceof Long) {
-                return theEvaluationFunction.apply((Number) t1, (Number) t2).longValue();
+            if (t1 instanceof Integer && t2 instanceof Integer) {
+                return theEvaluationFunction.apply((Number) t1, (Number) t2).intValue();
             }
             return theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue();
         }

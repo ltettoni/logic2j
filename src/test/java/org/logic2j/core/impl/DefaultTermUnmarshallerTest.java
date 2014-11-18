@@ -20,8 +20,8 @@ private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarsha
 
     @Test
     public void basicTerms() throws Exception {
-        assertEquals(new Long(1), UNMARSHALLER.unmarshall("1"));
-        assertEquals(new Double(3.14), UNMARSHALLER.unmarshall("3.14"));
+        assertEquals(1, UNMARSHALLER.unmarshall("1"));
+        assertEquals(3.14, UNMARSHALLER.unmarshall("3.14"));
         assertSame("a", UNMARSHALLER.unmarshall("a"));
         assertTrue(UNMARSHALLER.unmarshall("X") instanceof Var);
         assertSame(Var.ANONYMOUS_VAR, UNMARSHALLER.unmarshall("_"));

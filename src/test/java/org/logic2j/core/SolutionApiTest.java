@@ -150,7 +150,7 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void varUnique() throws Exception {
-        assertEquals(new Long(12), getProlog().solve("Q=12").var("Q", Long.class).unique());
+        assertEquals(12, getProlog().solve("Q=12").var("Q", Integer.class).unique().intValue());
     }
 
 

@@ -94,7 +94,7 @@ public class PojoLibraryTest extends PrologTestBase {
         Assert.assertTrue(x instanceof PrologInstantiatedPojo);
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertEquals("toto", pojo.getStr());
-        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Integer(1), pojo.getAnInt());
         assertEquals(new Double(2.3), pojo.getaDouble());
     }
 
@@ -102,11 +102,11 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithEmptyConstructorAndInjectProperties() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "property(X, 'str', 'toto', 'w'), property(X, 'aLong', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").single();
+        "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").single();
         Assert.assertTrue(x instanceof PrologInstantiatedPojo);
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertEquals("toto", pojo.getStr());
-        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Integer(1), pojo.getAnInt());
         assertEquals(new Double(2.3), pojo.getaDouble());
     }
 
@@ -115,11 +115,11 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithJavaUnify() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "javaUnify(X, [str=toto, aLong=1, aDouble=2.3])").var("X").single();
+        "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").single();
         Assert.assertTrue(x instanceof PrologInstantiatedPojo);
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertEquals("toto", pojo.getStr());
-        assertEquals(new Long(1), pojo.getaLong());
+        assertEquals(new Integer(1), pojo.getAnInt());
         assertEquals(new Double(2.3), pojo.getaDouble());
     }
 
@@ -130,15 +130,15 @@ public class PojoLibraryTest extends PrologTestBase {
 
     public static class PrologInstantiatedPojo {
         private String str;
-        private Long aLong;
+        private Integer anInt;
         private Double aDouble;
 
         public PrologInstantiatedPojo() {
         }
 
-        public PrologInstantiatedPojo(String str, Long aLong, Double aDouble) {
+        public PrologInstantiatedPojo(String str, Integer anInt, Double aDouble) {
             this.str = str;
-            this.aLong = aLong;
+            this.anInt = anInt;
             this.aDouble = aDouble;
         }
 
@@ -150,12 +150,12 @@ public class PojoLibraryTest extends PrologTestBase {
             this.str = str;
         }
 
-        public Long getaLong() {
-            return aLong;
+        public Integer getAnInt() {
+            return anInt;
         }
 
-        public void setaLong(Long aLong) {
-            this.aLong = aLong;
+        public void setAnInt(Integer anInt) {
+            this.anInt = anInt;
         }
 
         public Double getaDouble() {

@@ -57,12 +57,12 @@ public class AdHocLibraryForTesting extends LibraryBase {
         ensureBindingIsNotAFreeVar(lowerBound, "int_range_classic/3", 0);
         ensureBindingIsNotAFreeVar(upperBound, "int_range_classic/3", 2);
 
-        final long lower = ((Number) lowerBound).longValue();
-        final long upper = ((Number) upperBound).longValue();
+        final int lower = ((Number) lowerBound).intValue();
+        final int upper = ((Number) upperBound).intValue();
 
-        for (long iter = lower; iter < upper; iter++) {
+        for (int iter = lower; iter < upper; iter++) {
             logger.info("{} is going to unify an notify one solution: {}", this, iter);
-            final Integer continuation = unifyAndNotify(theListener, currentVars, theIterable, Long.valueOf(iter));
+            final Integer continuation = unifyAndNotify(theListener, currentVars, theIterable, iter);
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }
@@ -90,12 +90,12 @@ public class AdHocLibraryForTesting extends LibraryBase {
         ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3", 0);
         ensureBindingIsNotAFreeVar(maxBound, "int_range_classic/3", 2);
 
-        final long min = ((Number) minBound).longValue();
-        final long max = ((Number) maxBound).longValue();
+        final int min = ((Number) minBound).intValue();
+        final int max = ((Number) maxBound).intValue();
 
         if (iterating instanceof Var) {
-            final List<Long> values = new ArrayList<Long>();
-            for (long val = min; val < max; val++) {
+            final List<Integer> values = new ArrayList<Integer>();
+            for (int val = min; val < max; val++) {
                 values.add(val);
             }
 
@@ -104,7 +104,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
             return theListener.onSolutions(multi);
         } else {
             // Check
-            final long iter = ((Number) iterating).longValue();
+            final int iter = ((Number) iterating).intValue();
             if (min <= iter && iter < max) {
                 return notifySolution(theListener, currentVars);
             } else {
