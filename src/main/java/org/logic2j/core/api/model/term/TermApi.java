@@ -64,7 +64,7 @@ public final class TermApi {
             return theVisitor.visit((Struct) theTerm);
         }
         if (theTerm instanceof Var) {
-            return theVisitor.visit((Var) theTerm);
+            return (T) theVisitor.visit((Var) theTerm);
         }
         // Other possible cases require instanceof since any Object can be
         if (theTerm instanceof String) {
