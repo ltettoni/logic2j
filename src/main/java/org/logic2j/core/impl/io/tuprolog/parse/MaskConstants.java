@@ -38,7 +38,7 @@ class MaskConstants {
     static final int DQ_SEQUENCE = 0x000B;
     static final int END = 0x000D;
     static final int LBRA2 = 0x000E; // Brace '{'
-    static final int RBRA2 = 0x000F; // Brace '{'
+    static final int RBRA2 = 0x000F; // Brace '}'
 
     // Attribute values
     static final int FUNCTOR = 0x0100;
