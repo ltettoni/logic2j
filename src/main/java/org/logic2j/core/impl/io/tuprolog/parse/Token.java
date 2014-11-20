@@ -29,7 +29,7 @@ class Token implements Serializable {
     // token textual representation
     final String text;
     // token type and attribute
-    final int type;
+    private final int type;
 
     public Token(String seq_, int type_) {
         this.text = seq_;
@@ -59,7 +59,7 @@ class Token implements Serializable {
     }
 
     public boolean isNumber() {
-        return this.type == INTEGER || this.type == FLOAT;
+        return this.type == INTEGER || this.type == LONG || this.type == FLOAT || this.type == DOUBLE;
     }
 
     boolean isEOF() {

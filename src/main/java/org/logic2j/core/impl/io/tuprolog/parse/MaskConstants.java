@@ -31,7 +31,9 @@ class MaskConstants {
     static final int RBRA = 0x0004; // Bracket
     static final int BAR = 0x0005;
     static final int INTEGER = 0x0006;
-    static final int FLOAT = 0x0007;
+    static final int LONG = 0x0016; // New in logic2j not original tuprolog
+    static final int FLOAT = 0x0017; // New in logic2j not original tuprolog
+    static final int DOUBLE = 0x0007;
     static final int ATOM = 0x0008;
     static final int VARIABLE = 0x0009;
     static final int SQ_SEQUENCE = 0x000A;

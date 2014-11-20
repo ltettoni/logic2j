@@ -342,7 +342,13 @@ class Tokenizer extends StreamTokenizer {
                 // 1.b ordinary integers
                 if (typeb != '.' && typeb != '\'') { // i.e. not float or character constant
                     pushBack(); // lookahead 0
-                    return new Token("" + Long.parseLong(svala), INTEGER);
+
+                    if (svala.toUpperCase().endsWith("L")) {
+                        svala = svala.substring(0, svala.length()-1);
+                        return new Token("" + Long.parseLong(svala), LONG);
+                    } else {
+                        return new Token("" + Integer.parseInt(svala), INTEGER);
+                    }
                 }
 
                 // 1.c character code constant
@@ -374,7 +380,12 @@ class Tokenizer extends StreamTokenizer {
                 if (typec != TT_WORD) { // if its not, the period is an End period
                     pushBack(); // pushback 1 the token after period
                     this.pushBack2 = new PushBack(typeb, svalb); // pushback 2 the period token
-                    return new Token(svala, INTEGER); // return what must be an int
+                    if (svala.toUpperCase().endsWith("L")) {
+                        svala = svala.substring(0, svala.length()-1);
+                        return new Token("" + Long.parseLong(svala), LONG);
+                    } else {
+                        return new Token("" + Integer.parseInt(svala), INTEGER);
+                    }
                 }
 
                 // 2.d checking for exponent
@@ -393,15 +404,30 @@ class Tokenizer extends StreamTokenizer {
                                 // verify the remaining parts of the float and return
                                 Long.parseLong(svalc.substring(0, exponent));
                                 Integer.parseInt(svalc2);
-                                return new Token(svala + "." + svalc + (char) typeb2 + svalc2, FLOAT);
+
+                                String nbtext = svala + "." + svalc + (char) typeb2 + svalc2;
+                                if (nbtext.toUpperCase().endsWith("F")) {
+                                    nbtext = nbtext.substring(0, nbtext.length()-1);
+                                    Double.parseDouble(nbtext);
+                                    return new Token(nbtext, FLOAT);
+                                } else {
+                                    Double.parseDouble(nbtext);
+                                    return new Token(nbtext, DOUBLE);
+                                }
                             }
                         }
                     }
                 }
                 // 2.e verify lastly that ordinary floats and unsigned exponent floats are Java legal and return them
-                Double.parseDouble(svala + "." + svalc);
-                return new Token(svala + "." + svalc, FLOAT);
-
+                String nbtext = svala + "." + svalc;
+                if (nbtext.toUpperCase().endsWith("F")) {
+                    nbtext = nbtext.substring(0, nbtext.length()-1);
+                    Double.parseDouble(nbtext);
+                    return new Token(nbtext, FLOAT);
+                } else {
+                    Double.parseDouble(nbtext);
+                    return new Token(nbtext, DOUBLE);
+                }
             } catch (final NumberFormatException e) {
                 // return more info on what was wrong with the number given ?
                 throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number at line: " + lineno());

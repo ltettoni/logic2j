@@ -378,8 +378,16 @@ public class Parser {
             return Integer.valueOf(t1.text);
         }
 
-        if (t1.isType(FLOAT)) {
+        if (t1.isType(LONG)) {
+            return Long.valueOf(t1.text);
+        }
+
+        if (t1.isType(DOUBLE)) {
             return Double.valueOf(t1.text);
+        }
+
+        if (t1.isType(FLOAT)) {
+            return Float.valueOf(t1.text);
         }
 
         if (t1.isType(VARIABLE)) {

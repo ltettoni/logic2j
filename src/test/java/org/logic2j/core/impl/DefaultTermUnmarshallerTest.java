@@ -14,14 +14,24 @@ import static org.junit.Assert.*;
  * Test both the DefaultTermUnmarshaller and DefaultTermMarshaller
  */
 public class DefaultTermUnmarshallerTest {
-private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
+
     public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
+
     public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
+
+
+    @Test
+    public void numbers() throws Exception {
+        assertEquals(new Integer(2323), UNMARSHALLER.unmarshall("2323"));
+        assertEquals(new Double(3.14), UNMARSHALLER.unmarshall("3.14"));
+        assertEquals(new Long(2323), UNMARSHALLER.unmarshall("2323L"));
+        assertEquals(new Float(3.14), UNMARSHALLER.unmarshall("3.14f"));
+    }
+
 
     @Test
     public void basicTerms() throws Exception {
-        assertEquals(1, UNMARSHALLER.unmarshall("1"));
-        assertEquals(3.14, UNMARSHALLER.unmarshall("3.14"));
         assertSame("a", UNMARSHALLER.unmarshall("a"));
         assertTrue(UNMARSHALLER.unmarshall("X") instanceof Var);
         assertSame(Var.ANONYMOUS_VAR, UNMARSHALLER.unmarshall("_"));
