@@ -581,7 +581,7 @@ public final class Struct extends Term {
         } else {
             result = theCollectionToFillOrNull;
         }
-        // In case not a list, we just return a Java list with one element
+        // In case not a list, we just return a singleton Java list (with one element)
         if (!this.isList()) {
             result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementRequiredClass));
             return result;
