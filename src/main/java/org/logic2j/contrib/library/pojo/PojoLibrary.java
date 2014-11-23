@@ -35,6 +35,7 @@ import org.logic2j.core.library.impl.LibraryBase;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -289,11 +290,11 @@ public class PojoLibrary extends LibraryBase {
                         return aClass.getConstructor(constructorClasses).newInstance(constructorArgs);
                     }
                 } catch (InstantiationException e) {
-                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
                 } catch (IllegalAccessException e) {
-                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
                 } catch (NoSuchMethodException e) {
-                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ": " + e);
+                    throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
                 } catch (InvocationTargetException e) {
                     throw new PrologNonSpecificError(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
                 }
@@ -303,6 +304,14 @@ public class PojoLibrary extends LibraryBase {
         }
     }
 
+    /**
+     * Unify Prolog list to Java list.
+     * @param theListener
+     * @param currentVars
+     * @param prologList
+     * @param javaList
+     * @return
+     */
     @Predicate
     public Integer javaList(SolutionListener theListener, UnifyContext currentVars, Object prologList, Object javaList) {
         final Object pList = currentVars.reify(prologList);
