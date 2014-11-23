@@ -22,7 +22,7 @@
 
 once(Predicate) :- call((Predicate, !)).
 
-% Non-efficient implementation - could be done in Java we have the same in TermApi
+% Non-efficient implementation - could be done in Java we have the method in TermApi
 list([]).
 list([_|L]) :- list(L).
 
