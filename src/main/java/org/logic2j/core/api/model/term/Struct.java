@@ -565,7 +565,7 @@ public final class Struct extends Term {
     }
 
     /**
-     *
+     * Traverse Prolog List adding all elements (in right order) into a target collection.
      * @param theCollectionToFillOrNull
      * @param theElementRequiredClass
      * @param <Q>
@@ -575,13 +575,28 @@ public final class Struct extends Term {
      */
     @SuppressWarnings("unchecked")
     public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
+        return javaListFromPList(theCollectionToFillOrNull, theElementRequiredClass, false);
+    }
+
+    /**
+     * Traverse Prolog List adding all elements (in right order) into a target collection, possibly recursing if elements are
+     * Prolog lists too.
+     * @param theCollectionToFillOrNull
+     * @param theElementRequiredClass
+     * @param <Q>
+     * @param <T>
+     * @return
+     * @throws PrologNonSpecificError if this is not a prolog list.
+     */
+    @SuppressWarnings("unchecked")
+    public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass, boolean recursive) {
         final T result;
         if (theCollectionToFillOrNull == null) {
             result = (T) new ArrayList<Q>();
         } else {
             result = theCollectionToFillOrNull;
         }
-        // In case not a list, we just return a singleton Java list (with one element)
+        // In case not a list, we just add a single element to the collection to fill
         if (!this.isList()) {
             result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementRequiredClass));
             return result;
@@ -591,8 +606,13 @@ public final class Struct extends Term {
         int idx = 0;
         while (!runningElement.isEmptyList()) {
             assertPList(runningElement);
-            final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, runningElement.getLHS(), theElementRequiredClass);
-            result.add(term);
+            final Object lhs = runningElement.getLHS();
+            if (recursive && TermApi.isList(lhs)) {
+                ((Struct)lhs).javaListFromPList(theCollectionToFillOrNull, theElementRequiredClass, recursive);
+            } else {
+                final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, lhs, theElementRequiredClass);
+                result.add(term);
+            }
             runningElement = (Struct) runningElement.getRHS();
             idx++;
         }
