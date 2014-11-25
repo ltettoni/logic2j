@@ -28,7 +28,7 @@ import java.util.Comparator;
  * ('_') name.
  * Note: This class MUST be immutable.
  */
-public final class Var<T> extends Term {
+public final class Var<T> extends Term implements Comparable<Var<T>> {
     private static final long serialVersionUID = 1L;
 
     public static final String WHOLE_SOLUTION_VAR_NAME = ".".intern();
@@ -265,4 +265,13 @@ public final class Var<T> extends Term {
         return this.name;
     }
 
+    /**
+     * Just to allow odering of Var, by their name
+     * @param that
+     * @return Comparison based on #getName()
+     */
+    @Override
+    public int compareTo(Var<T> that) {
+        return this.getName().compareTo(that.getName());
+    }
 }
