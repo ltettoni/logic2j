@@ -66,6 +66,12 @@ public class UnifyContext {
         return var;
     }
 
+    /**
+     * Bind var to ref (var will be altered in the returned UnifyContext); ref is untouched.
+     * @param var
+     * @param ref
+     * @return
+     */
     public UnifyContext bind(Var<?> var, Object ref) {
         if (var == ref) {
             logger.debug("Not mapping {} onto itself", var);

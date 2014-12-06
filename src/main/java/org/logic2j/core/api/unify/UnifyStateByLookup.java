@@ -70,6 +70,14 @@ public class UnifyStateByLookup {
         return new UnifyContext(this);
     }
 
+    /**
+     * Binding theVar to theRef; theVar will further appear "modified" in
+     * the resulting UnifyContext; theRef is not altered.
+     * @param currentVars
+     * @param theVar
+     * @param theRef
+     * @return
+     */
     public UnifyContext bind(UnifyContext currentVars, Var<?> theVar, Object theRef) {
         logger.debug(" bind {}->{}", theVar, theRef);
         final int transactionNumber = currentVars.currentTransaction;
