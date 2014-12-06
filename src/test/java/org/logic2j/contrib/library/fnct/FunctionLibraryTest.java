@@ -60,7 +60,7 @@ public class FunctionLibraryTest extends PrologTestBase {
 
     @Test
     public void anonymousAndFreeVarsAreNotTransformed() {
-        assertTransformation(MAPPING_PREDICATE, "_", "Q", FunctionLibrary.OPTION_ONE);
+        assertTransformation(MAPPING_PREDICATE, "_", "_", FunctionLibrary.OPTION_ONE);
         assertTransformation(MAPPING_PREDICATE, "Q", "Q", FunctionLibrary.OPTION_ONE); // Free var
     }
 
@@ -95,7 +95,6 @@ public class FunctionLibraryTest extends PrologTestBase {
     public void structTransformed() {
         assertTransformation(MAPPING_PREDICATE, "original(a)", "transformed(a)", FunctionLibrary.OPTION_ONE);
         assertTransformation(MAPPING_PREDICATE, "original(G)", "transformed(G)", FunctionLibrary.OPTION_ONE);
-        assertTransformation(MAPPING_PREDICATE, "original(_)", "transformed(X)", FunctionLibrary.OPTION_ONE); // Dubious
         assertTransformation(MAPPING_PREDICATE, "transformed(X, Y)", "transformed(X, Y)", FunctionLibrary.OPTION_ONE);
     }
 
@@ -128,6 +127,31 @@ public class FunctionLibraryTest extends PrologTestBase {
         assertTransformation(MAPPING_PREDICATE, "11", "[ten,one]", FunctionLibrary.OPTION_AFTER);
         assertTransformation(MAPPING_PREDICATE, "h(11)", "h([ten,one])", FunctionLibrary.OPTION_AFTER);
     }
+
+    @Test
+    public void vars() {
+        assertTransformation(MAPPING_PREDICATE, "anon(1)", "anon2(1)", FunctionLibrary.OPTION_ONE);
+        assertTransformation(MAPPING_PREDICATE, "anon(Z)", "anon2(Z)", FunctionLibrary.OPTION_ONE);
+        assertTransformation(MAPPING_PREDICATE, "anon(_Y)", "anon2(_Y)", FunctionLibrary.OPTION_ONE);
+    }
+
+
+    @Test
+    public void anonymous() {
+        // TODO This is dubious, see comment below
+        /**
+         * The theory reads:
+         * remap(anon(X), anon2(X)).
+         *
+         * calling "remap(anon(_), Q).
+         * yields:
+         *   Query "anon(_)" matches theory "anon(X)" (but X is not bound to "_")
+         * then:
+         *   Query "Q" matches theory "anon2(X)".
+         */
+        assertTransformation(MAPPING_PREDICATE, "anon(_)", "anon2(_)", FunctionLibrary.OPTION_ONE);
+    }
+
 
     @Test
     public void multipleSolutionsTransform() {

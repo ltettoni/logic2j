@@ -25,6 +25,9 @@ remap(3, three).
 remap(3, trois).
 remap(3, drei).
 
+% Checking with variables (in particular, anonymous)
+remap(anon(X), anon2(X)).
+
 
 %
 % Convert associative structures of AND and OR into flattened lists
