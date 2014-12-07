@@ -168,22 +168,11 @@ public class UnifyContext {
             }
             // Ended up with final1 being a free Var, so term1 was a free var
             var1 = (Var) final1;
-            if (var1 == Var.ANONYMOUS_VAR) {
-                // Anonymous cannot be bound
-                // Unified successfully, yet without side-effect
-                return this;
-            }
             // free Var var1 need to be bound
             if (term2 instanceof Var) {
                 // Binding two vars
                 final Var<?> var2 = (Var) term2;
-                final Object final2 = finalValue(var2);
                 // Link one to two (should we link to the final or the initial value???)
-                if (final2 == Var.ANONYMOUS_VAR) {
-                    // term2 was the anonymous Var, cannot be bound
-                    // Unified successfully, yet without side-effect
-                    return this; // Unified without effect
-                }
                 // Now do the binding of two vars
                 return bind(var1, var2);
             } else {

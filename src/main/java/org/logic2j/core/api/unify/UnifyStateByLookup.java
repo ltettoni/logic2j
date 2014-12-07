@@ -81,6 +81,17 @@ public class UnifyStateByLookup {
     public UnifyContext bind(UnifyContext currentVars, Var<?> theVar, Object theRef) {
         logger.debug(" bind {}->{}", theVar, theRef);
         final int transactionNumber = currentVars.currentTransaction;
+        if (theVar == Var.ANONYMOUS_VAR) {
+            // assert theRef != Var.ANONYMOUS_VAR: "must not bind an anonymous var to another anonymous var";
+            final Object finalRef = (theRef instanceof Var) ? dereference((Var) theRef, transactionNumber) : theRef;
+            if (finalRef == Var.ANONYMOUS_VAR) {
+                return currentVars; // Nothing done
+            } else if (finalRef instanceof Var) {
+                return bind(currentVars, (Var)theRef, theVar);
+            } else {
+                return currentVars;
+            }
+        }
         cleanupTo(transactionNumber);
         final int slot = theVar.getIndex();
         // Handle array sizing overflow
@@ -91,7 +102,7 @@ public class UnifyStateByLookup {
         var[slot] = theVar;
 
         final Object finalRef = (theRef instanceof Var) ? dereference((Var) theRef, transactionNumber) : theRef;
-        if (finalRef instanceof Var) {
+        if (finalRef instanceof Var && finalRef != Var.ANONYMOUS_VAR) {
             if (finalRef==theVar) {
                 // OOps, trying to bound Var to same Var (after its the ref was dereferenced)
                 return currentVars; // So no change
