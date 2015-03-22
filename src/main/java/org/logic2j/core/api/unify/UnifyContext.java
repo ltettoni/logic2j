@@ -68,11 +68,13 @@ public class UnifyContext {
 
     /**
      * Bind var to ref (var will be altered in the returned UnifyContext); ref is untouched.
+     *
+     * (private except that used from test case)
      * @param var
      * @param ref
      * @return
      */
-    public UnifyContext bind(Var<?> var, Object ref) {
+    UnifyContext bind(Var<?> var, Object ref) {
         if (var == ref) {
             logger.debug("Not mapping {} onto itself", var);
             return this;
@@ -94,7 +96,8 @@ public class UnifyContext {
     }
 
     /**
-     * TBD
+     * Resolve variables to their values.
+     *
      * @param term
      * @return The dereferenced content of term, or theVar if it was free, or null if term is null
      */
@@ -128,21 +131,6 @@ public class UnifyContext {
         return term;
     }
 
-/*
-    public Map<String, Object> bindings(Object term) {
-        final Map<String, Object> result = new HashMap<String, Object>();
-        for (Map.Entry<Var, String> entry : TermApi.distinctVars(term).entrySet()) {
-            final Object finalValue = this.reify(entry.getKey());
-          final String entryValue = entry.getValue();
-          if (!(finalValue instanceof Var)) {
-                result.put(entryValue, finalValue);
-            } else {
-                result.put(entryValue, null);
-            }
-        }
-        return result;
-    }
-*/
 
     public UnifyContext unify(Object term1, Object term2) {
 //        audit.info("Unify  {}  ~  {}", term1, term2);
