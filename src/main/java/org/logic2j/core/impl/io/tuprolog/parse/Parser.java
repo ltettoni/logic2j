@@ -135,7 +135,7 @@ public class Parser {
 
             return term;
         } catch (final IOException ex) {
-            throw new InvalidTermException("An I/O error occured.");
+            throw new InvalidTermException("An I/O error occurred.");
         } catch (InvalidTermException e) {
             if (this.reader instanceof LineNumberReader) {
                 LineNumberReader lnr = (LineNumberReader) this.reader;
@@ -149,6 +149,9 @@ public class Parser {
     public Object parseSingleTerm() throws InvalidTermException {
         try {
             final Token t = this.tokenizer.readToken();
+            // Shortcut to get a really clear message if there is no single token to be read
+            // Otherwise we would receive later (in the middle of the parsing) a
+            //   'The following token could not be identified: ""'
             if (t.isEOF()) {
                 throw new InvalidTermException("Empty Term");
             }
@@ -163,7 +166,7 @@ public class Parser {
             }
             return term;
         } catch (final IOException ex) {
-            throw new InvalidTermException("An I/O error occured");
+            throw new InvalidTermException("An I/O error occurred");
         }
     }
 

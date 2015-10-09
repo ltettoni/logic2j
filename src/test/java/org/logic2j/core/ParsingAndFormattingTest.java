@@ -51,6 +51,7 @@ public class ParsingAndFormattingTest extends PrologTestBase {
         assertEquals("oo(a, b, c, d)", marshall(t));
     }
 
+
     @Test
     public void formatting() {
         Object t;
@@ -61,6 +62,18 @@ public class ParsingAndFormattingTest extends PrologTestBase {
         t = unmarshall("t('A', b, 'C')");
         logger.info("Formatted: {}", t);
         assertEquals("t('A', b, 'C')", marshall(t));
+    }
+
+
+
+    @Test
+    public void parsingEmpty() throws Exception {
+      unmarshall("");
+    }
+
+    @Test
+    public void parsingPartial() throws Exception {
+      unmarshall("a, ");
     }
 
 }
