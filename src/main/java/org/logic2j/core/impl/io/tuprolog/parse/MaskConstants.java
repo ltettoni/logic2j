@@ -25,10 +25,10 @@ class MaskConstants {
     static final int ATTRMASK = 0xFF00;
 
     // Type values
-    static final int LPAR = 0x0001;
-    static final int RPAR = 0x0002;
-    static final int LBRA = 0x0003; // Bracket
-    static final int RBRA = 0x0004; // Bracket
+    static final int LPAR = 0x0001; // Left parenthesis
+    static final int RPAR = 0x0002; // Right parenthesis
+    static final int LBRA = 0x0003; // Left bracket
+    static final int RBRA = 0x0004; // Left bracket
     static final int BAR = 0x0005;
     static final int INTEGER = 0x0006;
     static final int LONG = 0x0016; // New in logic2j not original tuprolog
@@ -36,11 +36,11 @@ class MaskConstants {
     static final int DOUBLE = 0x0007;
     static final int ATOM = 0x0008;
     static final int VARIABLE = 0x0009;
-    static final int SQ_SEQUENCE = 0x000A;
-    static final int DQ_SEQUENCE = 0x000B;
+    static final int SQ_SEQUENCE = 0x000A; // Single quote (apos)
+    static final int DQ_SEQUENCE = 0x000B; // Double quote (quot)
     static final int END = 0x000D;
-    static final int LBRA2 = 0x000E; // Brace '{'
-    static final int RBRA2 = 0x000F; // Brace '}'
+    static final int LBRA2 = 0x000E; // Left brace '{'
+    static final int RBRA2 = 0x000F; // Right brace '}'
 
     // Attribute values
     static final int FUNCTOR = 0x0100;
