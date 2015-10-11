@@ -19,6 +19,7 @@ package org.logic2j.core.impl.theory;
 
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.core.api.model.term.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,14 @@ public class TheoryContent {
      * @return An Iterable for a foreach() loop.
      */
     public Iterable<Clause> find(Object theGoalTerm) {
+        if (theGoalTerm instanceof Var<?>) {
+            final ArrayList<Clause> result = new ArrayList<>();
+            for (List<Clause> cl: this.clauses.values()) {
+                result.addAll(cl);
+            }
+            return result;
+        }
+
         final String clauseFamilyKey = TermApi.predicateSignature(theGoalTerm);
         final List<Clause> family = this.clauses.get(clauseFamilyKey);
         if (family == null) {

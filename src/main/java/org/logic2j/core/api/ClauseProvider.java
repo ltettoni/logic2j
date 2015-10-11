@@ -39,9 +39,9 @@ public interface ClauseProvider {
      * All clauses that could (but may eventually not) match theGoal must be returned by this method. This implies that the match may be
      * broader than actually needed, the {@link org.logic2j.core.impl.Solver} will determine by unification if {@link Clause}s
      * returned by this method will be eligible for inference.
-     * 
+     *
      * @param theGoal
-     * @param currentVars
+     * @param currentVars TODO Remove this argument it is used only once for a contrib (
      * @return An ordered {@link java.lang.Iterable} of {@link Clause}s that are candidates for unifying with theGoal.
      * Implementers may return {@link Clause}s whose head would eventually not unify hence not be used by the
      *         {@link org.logic2j.core.impl.Solver}, however for performance reasons theGoal is provided and you better

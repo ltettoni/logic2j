@@ -7,7 +7,6 @@ import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class CoreLibraryTest extends PrologTestBase {
@@ -183,6 +182,14 @@ public class CoreLibraryTest extends PrologTestBase {
         countNSolutions(5, "clause(f(_), true)");
         assertEquals(term("2"), uniqueSolution("clause(cut2(X), !)").var("X").unique());
     }
+
+
+    @Test
+    public void clauseCanMatchVarForHead() {
+        loadTheoryFromTestResourcesDir("test-functional.pro");
+        countNSolutions(105, "clause(CLAUSE, BODY)");
+    }
+
 
     @Test
     public void unify_2() {

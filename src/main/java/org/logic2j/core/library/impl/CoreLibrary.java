@@ -20,20 +20,19 @@ package org.logic2j.core.library.impl;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.core.api.solver.listener.CountingSolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
+import org.logic2j.core.api.solver.Continuation;
+import org.logic2j.core.api.solver.listener.CountingSolutionListener;
+import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.NotListener;
-import org.logic2j.core.impl.Solver;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.util.TypeUtils;
+import org.logic2j.core.impl.Solver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -472,18 +471,16 @@ public class CoreLibrary extends LibraryBase {
         final Long listLength = (long) javalist.size();
         return unify(theListener, currentVars, listLength, theLength);
     }
-
     @Predicate
     public Integer clause(SolutionListener theListener, UnifyContext currentVars, Object theHead, Object theBody) {
         final Object headValue = currentVars.reify(theHead);
-        final Struct realHead = TypeUtils.safeCastNotNull("dereferencing argument for clause/2", headValue, Struct.class);
         final Object[] clauseHeadAndBody = new Object[2];
         for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
-            for (final Clause clause : cp.listMatchingClauses(realHead, currentVars)) {
+            for (final Clause clause : cp.listMatchingClauses(headValue, currentVars)) {
                 // Clone the clause so that we can unify against its bindings
                 clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
                 final Object clauseHead = clauseHeadAndBody[0];
-                final UnifyContext varsAfterHeadUnified = currentVars.unify(realHead, clauseHead);
+                final UnifyContext varsAfterHeadUnified = currentVars.unify(headValue, clauseHead);
                 final boolean headUnified = varsAfterHeadUnified != null;
                 if (headUnified) {
                     // Determine body
