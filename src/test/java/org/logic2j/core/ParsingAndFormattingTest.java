@@ -64,16 +64,4 @@ public class ParsingAndFormattingTest extends PrologTestBase {
         assertEquals("t('A', b, 'C')", marshall(t));
     }
 
-
-
-    @Test
-    public void parsingEmpty() throws Exception {
-      unmarshall("");
-    }
-
-    @Test
-    public void parsingPartial() throws Exception {
-      unmarshall("a, ");
-    }
-
 }
