@@ -17,19 +17,21 @@
  */
 package org.logic2j.core.api.model.term;
 
-import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.visitor.TermVisitor;
-import org.logic2j.core.api.unify.UnifyContext;
-import org.logic2j.core.impl.util.ProfilingInfo;
-import org.logic2j.core.impl.util.TypeUtils;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
+import org.logic2j.core.api.model.exception.InvalidTermException;
+import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.core.api.model.visitor.ExtendedTermVisitor;
+import org.logic2j.core.api.model.visitor.TermVisitor;
+import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.core.impl.util.TypeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static java.lang.Math.max;
@@ -240,6 +242,25 @@ public final class TermApi {
         }
         return String.valueOf(thePredicate) + "/0";
     }
+
+
+    public static String functorFromSignature(String signature) {
+        int pos = signature.lastIndexOf("/");
+        if (pos<=0) {
+            throw new InvalidTermException("Cannot find character '/' in predicate signature \"" + signature + "\" (supposed to be functor/arity)");
+        }
+        return signature.substring(0, pos);
+    }
+
+
+    public static int arityFromSignature(String signature) {
+        int pos = signature.lastIndexOf("/");
+        if (pos<=0) {
+            throw new InvalidTermException("Cannot find character '/' in predicate signature \"" + signature + "\" (supposed to be functor/arity)");
+        }
+        return Integer.parseInt(signature.substring(pos+1));
+    }
+
 
     //---------------------------------------------------------------------------
     // Access and extract data from Terms

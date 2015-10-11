@@ -142,4 +142,27 @@ public class TermApiTest {
         assertSame("c2", TermApi.selectTerm(term, "a/b[2]", String.class));
     }
 
+
+    @Test(expected=InvalidTermException.class)
+    public void functorFromSignatureFails() throws Exception {
+        TermApi.functorFromSignature("toto4");
+    }
+
+
+    @Test
+    public void functorFromSignature1() throws Exception {
+        assertEquals("toto", TermApi.functorFromSignature("toto/4"));
+    }
+
+
+
+    @Test(expected=InvalidTermException.class)
+    public void arityFromSignatureFails() throws Exception {
+        TermApi.arityFromSignature("toto4");
+    }
+
+    @Test
+    public void arityFromSignature1() throws Exception {
+        assertEquals(4, TermApi.arityFromSignature("toto/4"));
+    }
 }
