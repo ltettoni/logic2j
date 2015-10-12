@@ -4,13 +4,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -33,19 +29,8 @@ public class CompleterTest extends PrologTestBase {
 
 
     private CompletionData complete(CharSequence partialInput) {
-        final String strippedInput = Completer.strip(partialInput.toString()).stripped;
-        Completer completer = new Completer(getProlog());
-        Set<String> sigs = new TreeSet<>();
-        for (String signature : completer.allSignatures(strippedInput)) {
-            final String functor = TermApi.functorFromSignature(signature);
-            final String fragment = functor + '(';
-            if (fragment.startsWith(strippedInput)) {
-                sigs.add(fragment);
-            }
-        }
-        CompletionData completionData = new CompletionData();
-        completionData.setCompletions(sigs);
-        return completionData;
+        final Completer completer = new Completer(getProlog());
+        return completer.complete(partialInput);
     }
 
 
@@ -60,8 +45,8 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void member_lpar() {
         CompletionData data = complete("member(");
-        assertThat(data.getCompletions(), hasItem("member(X, "));
-        assertThat(data.getCompletions(), hasItem("member(_, "));
+        assertThat(data.getCompletions(), hasItem("X, "));
+        assertThat(data.getCompletions(), hasItem("_, "));
     }
 
 
@@ -71,7 +56,6 @@ public class CompleterTest extends PrologTestBase {
         assertThat(data.getCompletions().size(), is(1));
         assertThat(data.getCompletions(), contains("member("));
     }
-
 
 
     @Test
@@ -140,7 +124,6 @@ public class CompleterTest extends PrologTestBase {
     }
 
 
-
     @Test
     public void strip1() {
         assertThat(Completer.strip("").stripped, is(""));
@@ -153,9 +136,10 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void strip2() {
         assertThat(Completer.strip("a").functor, nullValue());
-        assertThat(Completer.strip(" f( ab").partialPredicate, is("f("));
+        assertThat(Completer.strip(" f( ab").partialPredicate, is("f( "));
         assertThat(Completer.strip(" f( ab").functor, is("f"));
-        assertThat(Completer.strip(" f( ab, cd, ef").partialPredicate, is("f( ab, cd,"));
+        assertThat(Completer.strip(" f(").partialPredicate, is("f("));
+        assertThat(Completer.strip(" f( ab, cd, ef").partialPredicate, is("f( ab, cd, "));
         assertThat(Completer.strip(" f( ab, cd, ef").functor, is("f"));
     }
 }
