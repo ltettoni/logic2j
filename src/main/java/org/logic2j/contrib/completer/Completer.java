@@ -79,7 +79,7 @@ public class Completer {
     }
 
     Set<String> allSignatures(CharSequence partialInput) {
-        final Set<String> signatures = new TreeSet<>();
+        final Set<String> signatures = new TreeSet<String>();
         // From all loaded clause providers
         for (final ClauseProvider cp : this.prolog.getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(new Var<Object>("unused"), null)) {
@@ -99,7 +99,7 @@ public class Completer {
 
     public CompletionData complete(CharSequence partialInput) {
         final CompletionData completionData = strip(partialInput.toString());
-        final Set<String> completions = new TreeSet<>();
+        final Set<String> completions = new TreeSet<String>();
         if (completionData.functor!=null) {
             // Find arity
             final Set<String> signatures = allSignatures(completionData.functor);

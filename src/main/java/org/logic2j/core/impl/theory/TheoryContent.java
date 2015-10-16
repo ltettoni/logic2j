@@ -92,7 +92,7 @@ public class TheoryContent {
      */
     public Iterable<Clause> find(Object theGoalTerm) {
         if (theGoalTerm instanceof Var<?>) {
-            final ArrayList<Clause> result = new ArrayList<>();
+            final ArrayList<Clause> result = new ArrayList<Clause>();
             for (List<Clause> cl: this.clauses.values()) {
                 result.addAll(cl);
             }
