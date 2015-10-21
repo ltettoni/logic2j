@@ -45,8 +45,8 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void member_lpar() {
         CompletionData data = complete("member(");
-        assertThat(data.getCompletions(), hasItem("X, "));
-        assertThat(data.getCompletions(), hasItem("_, "));
+        assertThat(data.getCompletions(), hasItem("member(X, "));
+        assertThat(data.getCompletions(), hasItem("member(_, "));
     }
 
 
@@ -99,9 +99,9 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void a_comma_b_lpar() {
         CompletionData data = complete("a, b(");
-        assertThat(data.getCompletions(), hasItem("1)"));
-        assertThat(data.getCompletions(), hasItem("2)"));
-        assertThat(data.getCompletions(), hasItem("3)"));
+        assertThat(data.getCompletions(), hasItem("a, b(1)"));
+        assertThat(data.getCompletions(), hasItem("a, b(2)"));
+        assertThat(data.getCompletions(), hasItem("a, b(3)"));
     }
 
     /**
@@ -111,6 +111,20 @@ public class CompleterTest extends PrologTestBase {
     public void a_comma_undef_lpar() {
         CompletionData data = complete("a, undef(");
         assertThat(data.getCompletions().size(), is(0));
+    }
+
+
+    @Test
+    public void a_lpar_value_rpar() throws Exception {
+        CompletionData data = complete("a(1)");
+        assertThat(data.getCompletions().size(), is(0));
+    }
+
+
+    @Test
+    public void a_lpar_value_rpar_comma() throws Exception {
+        CompletionData data = complete("a(1),");
+        assertAllPredicatesAreCompleted(data);
     }
 
 
@@ -141,5 +155,16 @@ public class CompleterTest extends PrologTestBase {
         assertThat(Completer.strip(" f(").partialPredicate, is("f("));
         assertThat(Completer.strip(" f( ab, cd, ef").partialPredicate, is("f( ab, cd, "));
         assertThat(Completer.strip(" f( ab, cd, ef").functor, is("f"));
+    }
+
+
+    @Test
+    public void strip3() {
+        assertThat(Completer.strip("a(1)").stripped, is(""));
+        assertThat(Completer.strip("a(1)").functor, nullValue());
+        assertThat(Completer.strip("a(1) ").stripped, is(""));
+        assertThat(Completer.strip("a(1) ").functor, nullValue());
+        assertThat(Completer.strip("a(1) , ").stripped, is(""));
+        assertThat(Completer.strip("a(1) , ").functor, nullValue());
     }
 }

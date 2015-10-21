@@ -41,7 +41,7 @@ public class Completer {
         result.partialPredicate = null;
         result.functor = null;
         if (str.length() > 0) {
-            char c = 'a';
+            char c;
             int pos = str.length() - 1;
             for (pos = str.length() - 1; pos >= 0; pos--) {
                 c = str.charAt(pos);
@@ -55,8 +55,7 @@ public class Completer {
                         c = str.charAt(pos);
                         if (c==',') {
                             argNo++;
-                        }
-                        if (c == '(') {
+                        } else if (c == '(') {
                             int parenth = pos;
                             for (pos--; pos >= 0; pos--) {
                                 c = str.charAt(pos);
@@ -68,6 +67,9 @@ public class Completer {
                             result.functor = str.substring(pos+1, parenth);
                             result.argNo = argNo;
                             return result;
+                        } else if (c== ')') {
+                            result.functor = null;
+                            break;
                         }
                     }
                     return result;
@@ -100,7 +102,9 @@ public class Completer {
     public CompletionData complete(CharSequence partialInput) {
         final CompletionData completionData = strip(partialInput.toString());
         final Set<String> completions = new TreeSet<String>();
-        if (completionData.functor!=null) {
+        if (partialInput.toString().endsWith(")")) {
+            // Nothing
+        } else if (completionData.functor!=null) {
             // Find arity
             final Set<String> signatures = allSignatures(completionData.functor);
             if (signatures.isEmpty()) {
@@ -129,12 +133,12 @@ public class Completer {
                             hasVar = true;
                         } else {
                             compl = String.valueOf(sol);
-                            completions.add(compl + termination);
+                            completions.add(partialInput + compl + termination);
                         }
                     }
                     if (hasVar) {
-                        completions.add("X" + termination);
-                        completions.add("_" + termination);
+                        completions.add(partialInput + "X" + termination);
+                        completions.add(partialInput + "_" + termination);
                     }
                 }
             }
