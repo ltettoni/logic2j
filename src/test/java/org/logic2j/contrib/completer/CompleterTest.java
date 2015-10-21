@@ -24,7 +24,7 @@ public class CompleterTest extends PrologTestBase {
 
     @Before
     public void loadTheory() {
-        loadTheoryFromTestResourcesDir("test-functional.pro");
+        loadTheoryFromTestResourcesDir("test-completer.pro");
     }
 
 
@@ -99,9 +99,9 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void a_comma_b_lpar() {
         CompletionData data = complete("a, b(");
-        assertThat(data.getCompletions(), hasItem("a, b(1)"));
-        assertThat(data.getCompletions(), hasItem("a, b(2)"));
-        assertThat(data.getCompletions(), hasItem("a, b(3)"));
+        assertThat(data.getCompletions(), hasItem("a, b(are)"));
+        assertThat(data.getCompletions(), hasItem("a, b('These')"));
+        assertThat(data.getCompletions(), hasItem("a, b('special''s')"));
     }
 
     /**
@@ -129,10 +129,12 @@ public class CompleterTest extends PrologTestBase {
 
 
     private void assertAllPredicatesAreCompleted(CompletionData data) {
-        assertThat(data.getCompletions().size(), greaterThan(20));
-        assertThat(data.getCompletions().size(), lessThan(50));
+        assertThat(data.getCompletions().size(), greaterThanOrEqualTo(10));
+        assertThat(data.getCompletions().size(), lessThan(20));
         assertThat(data.getCompletions(), hasItem("a("));
+        assertThat(data.getCompletions(), hasItem("ab("));
         assertThat(data.getCompletions(), hasItem("ac("));
+        assertThat(data.getCompletions(), hasItem("b("));
         assertThat(data.getCompletions(), hasItem("member("));
         assertThat(data.getCompletions(), hasItem("takeout("));
     }

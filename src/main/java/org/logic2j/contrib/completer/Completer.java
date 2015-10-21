@@ -133,6 +133,7 @@ public class Completer {
                             hasVar = true;
                         } else {
                             compl = String.valueOf(sol);
+                            compl = TermApi.quoteIfNeeded(compl).toString();
                             completions.add(partialInput + compl + termination);
                         }
                     }

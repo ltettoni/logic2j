@@ -298,6 +298,41 @@ public final class TermApi {
         return theTerm;
     }
 
+    /**
+     * Quote atoms if needed.
+     *
+     * @param theText
+     * @return theText, quoted if necessary (typically "X" will become "'X'" whereas "x" will remain unchanged.
+     * Null will return null. The empty string will become "''". If not quoted, the same reference (theText) is returned.
+     */
+    public static CharSequence quoteIfNeeded(CharSequence theText) {
+        if (theText == null) {
+            return null;
+        }
+        if (theText.length() == 0) {
+            // Probably that the empty string is not allowed in regular Prolog
+            return "''";
+        }
+        final String textAsString = theText.toString();
+        final boolean needQuote =
+                /* Fast check */ !Character.isLowerCase(theText.charAt(0)) ||
+                /* For numbers */ textAsString.indexOf('.') >= 0 ||
+                /* Much slower */ !ATOM_PATTERN.matcher(textAsString).matches();
+        if (needQuote) {
+            final StringBuilder sb = new StringBuilder(theText.length() + 2);
+            sb.append(Struct.QUOTE); // Opening quote
+            for (char c: textAsString.toCharArray()) {
+                sb.append(c);
+                if (c==Struct.QUOTE) {
+                    sb.append(c); // Quotes are doubled
+                }
+            }
+            sb.append(Struct.QUOTE); // Closing quote
+            return sb;
+        }
+        return theText;
+    }
+
 
     // TODO Currently unused - but probably we should detect cycles!
     void avoidCycle(Struct theClause) {
@@ -497,7 +532,7 @@ public final class TermApi {
     /**
      * All distinct (unique) Vars in the specified term.
      * @param term
-     * @return Array of unique Vars
+     * @return Array of unique Vars, in the order found by depth-first traversal.
      */
     public static Var<?>[] distinctVars(Object term) {
         // TODO Does it make sense to use a Map for a few 1-5 vars?
@@ -544,15 +579,5 @@ public final class TermApi {
         final Var<?>[] result = Arrays.copyOf(tempArray, nbVars[0]);
         return result;
     }
-
-
-
-    /**
-     * @return true if the String could be a prolog ATOM_PATTERN
-     */
-    public static boolean isAtom(String s) {
-        return ATOM_PATTERN.matcher(s).matches();
-    }
-
 
 }

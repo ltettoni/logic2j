@@ -165,4 +165,16 @@ public class TermApiTest {
     public void arityFromSignature1() throws Exception {
         assertEquals(4, TermApi.arityFromSignature("toto/4"));
     }
+
+    @Test
+    public void quoteIfNeeded() throws Exception {
+        assertNull(TermApi.quoteIfNeeded(null));
+        assertEquals("''", TermApi.quoteIfNeeded("").toString());
+        assertEquals("' '", TermApi.quoteIfNeeded(" ").toString());
+        assertEquals("ab", TermApi.quoteIfNeeded("ab").toString());
+        assertEquals("'Ab'", TermApi.quoteIfNeeded("Ab").toString());
+        assertEquals("'it''s'", TermApi.quoteIfNeeded("it's").toString());
+        assertEquals("'a''''b'", TermApi.quoteIfNeeded("a''b").toString());
+        assertEquals("'''that'''", TermApi.quoteIfNeeded("'that'").toString());
+    }
 }

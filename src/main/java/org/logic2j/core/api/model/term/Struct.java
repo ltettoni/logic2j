@@ -802,13 +802,7 @@ public final class Struct extends Term {
             sb.append(LIST_CLOSE);
             return sb.toString();
         }
-        if (TermApi.isAtom(name)) {
-            sb.append(name);
-        } else {
-            sb.append(QUOTE);
-            sb.append(name);
-            sb.append(QUOTE);
-        }
+        sb.append(TermApi.quoteIfNeeded(name));
         if (arity > 0) {
             sb.append(PAR_OPEN);
             for (int c = 0; c < arity; c++) {

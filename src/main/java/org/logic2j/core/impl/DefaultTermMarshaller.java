@@ -92,7 +92,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
     @Override
     public CharSequence visit(String theAtomString) {
-        return possiblyQuote(theAtomString);
+        return TermApi.quoteIfNeeded(theAtomString);
     }
 
     @Override
@@ -135,13 +135,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             sb.append(Struct.LIST_CLOSE);
             return sb;
         }
-        if (TermApi.isAtom(name)) {
-            sb.append(name);
-        } else {
-            sb.append(Struct.QUOTE);
-            sb.append(name);
-            sb.append(Struct.QUOTE);
-        }
+        sb.append(TermApi.quoteIfNeeded(name));
         if (arity > 0) {
             sb.append(Struct.PAR_OPEN);
             for (int c = 0; c < arity; c++) {
@@ -230,7 +224,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
     private CharSequence toStringAsArg(Object theTerm, int precedence, boolean x) {
         if (theTerm instanceof CharSequence) {
-            return possiblyQuote((CharSequence) theTerm);
+            return TermApi.quoteIfNeeded((CharSequence) theTerm);
         }
         if (!(theTerm instanceof Struct)) {
             return accept(theTerm);
@@ -283,7 +277,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
                 return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " " + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
             }
         }
-        final StringBuilder sb = new StringBuilder(TermApi.isAtom(name) ? name : "'" + name + "'");
+        final StringBuilder sb = new StringBuilder(TermApi.quoteIfNeeded(name));
         if (arity == 0) {
             return sb.toString();
         }
@@ -295,32 +289,6 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         sb.append(toStringAsArgY(theStruct.getArg(arity - 1), 0));
         sb.append(Struct.PAR_CLOSE);
         return sb.toString();
-    }
-
-    /**
-     * Quote atoms if needed.
-     *
-     * @param theText
-     * @return theText, quoted if necessary (typically "X" will become "'X'" whereas "x" will remain unchanged.
-     * Null will return null. The empty string will become "''". If not quoted, the same reference (theText) is returned.
-     */
-    private static CharSequence possiblyQuote(CharSequence theText) {
-        if (theText == null) {
-            return null;
-        }
-        if (theText.length() == 0) {
-            // Probably that the empty string is not allowed in regular Prolog
-            return "''";
-        }
-        final boolean needQuote = !Character.isLowerCase(theText.charAt(0)) || theText.toString().indexOf('.') >= 0;
-        if (needQuote) {
-            final StringBuilder sb = new StringBuilder(theText.length() + 2);
-            sb.append(Struct.QUOTE);
-            sb.append(theText);
-            sb.append(Struct.QUOTE);
-            return sb;
-        }
-        return theText;
     }
 
 }
