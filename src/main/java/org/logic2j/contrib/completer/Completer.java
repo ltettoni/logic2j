@@ -38,6 +38,7 @@ public class Completer {
         final CompletionData result = new CompletionData();
         result.original = str;
         result.stripped = str;
+        result.originalBeforeStripped = "";
         result.partialPredicate = null;
         result.functor = null;
         if (str.length() > 0) {
@@ -47,7 +48,9 @@ public class Completer {
                 c = str.charAt(pos);
                 final boolean cont = Character.isJavaIdentifierPart(c) || Character.isJavaIdentifierStart(c) || Character.isDigit(c) || c == '\'';
                 if (!cont) {
+                    // stripped is only the last part we are completing on
                     result.stripped = str.substring(pos + 1);
+                    result.originalBeforeStripped = str.substring(0, pos+1);
 
                     int end = pos+1;
                     int argNo = 0;
@@ -80,6 +83,11 @@ public class Completer {
         return result;
     }
 
+    /**
+     *
+     * @param partialInput
+     * @return Ordered set of predicates signatures (a/1, append/3, )
+     */
     Set<String> allSignatures(CharSequence partialInput) {
         final Set<String> signatures = new TreeSet<String>();
         // From all loaded clause providers
@@ -129,12 +137,22 @@ public class Completer {
                     final String termination = (arity > commaCount+1) ? ", " : ")";
                     for (Object sol : listener.getResults()) {
                         String compl;
+                        String envisagedCompletion;
                         if (sol instanceof Var<?>) {
                             hasVar = true;
+                            envisagedCompletion = null;
+                        } else if (sol instanceof Number) {
+                            envisagedCompletion = sol.toString();
                         } else {
                             compl = String.valueOf(sol);
                             compl = TermApi.quoteIfNeeded(compl).toString();
-                            completions.add(partialInput + compl + termination);
+                            envisagedCompletion = compl;
+                        }
+                        // FIXME: watch out - instead of using all the solutions, we must first make sure
+                        // the solution matches the beginning of the text specified!
+
+                        if (envisagedCompletion != null && envisagedCompletion.startsWith(completionData.stripped)) {
+                            completions.add(completionData.originalBeforeStripped + envisagedCompletion + termination);
                         }
                     }
                     if (hasVar) {
@@ -145,12 +163,13 @@ public class Completer {
             }
 
         } else {
-
+            // Find all predicate's signatures starting with the stripped fragment
             for (String signature : allSignatures(completionData.stripped)) {
+                // Generate fragment from signature:  "append/3" -> "append("
                 final String functor = TermApi.functorFromSignature(signature);
                 final String fragment = functor + '(';
                 if (fragment.startsWith(completionData.stripped)) {
-                    completions.add(fragment);
+                    completions.add(completionData.originalBeforeStripped + fragment);
                 }
             }
         }

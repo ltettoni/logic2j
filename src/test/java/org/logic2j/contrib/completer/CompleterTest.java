@@ -77,20 +77,20 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void empty() {
         CompletionData data = complete("");
-        assertAllPredicatesAreCompleted(data);
+        assertAllPredicatesAreCompleted("", data);
     }
 
     @Test
     public void a_comma() {
         CompletionData data = complete("a, ");
-        assertAllPredicatesAreCompleted(data);
+        assertAllPredicatesAreCompleted("a, ", data);
     }
 
     @Test
     public void a_comma_ta() {
         CompletionData data = complete("a, ta");
         assertThat(data.getCompletions().size(), is(1));
-        assertThat(data.getCompletions(), contains("takeout("));
+        assertThat(data.getCompletions(), contains("a, takeout("));
     }
 
     /**
@@ -124,19 +124,40 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void a_lpar_value_rpar_comma() throws Exception {
         CompletionData data = complete("a(1),");
-        assertAllPredicatesAreCompleted(data);
+        assertAllPredicatesAreCompleted("a(1),", data);
     }
 
 
-    private void assertAllPredicatesAreCompleted(CompletionData data) {
+    private void assertAllPredicatesAreCompleted(String prefix, CompletionData data) {
         assertThat(data.getCompletions().size(), greaterThanOrEqualTo(10));
         assertThat(data.getCompletions().size(), lessThan(20));
-        assertThat(data.getCompletions(), hasItem("a("));
-        assertThat(data.getCompletions(), hasItem("ab("));
-        assertThat(data.getCompletions(), hasItem("ac("));
-        assertThat(data.getCompletions(), hasItem("b("));
-        assertThat(data.getCompletions(), hasItem("member("));
-        assertThat(data.getCompletions(), hasItem("takeout("));
+        assertThat(data.getCompletions(), hasItem(prefix + "a("));
+        assertThat(data.getCompletions(), hasItem(prefix + "ab("));
+        assertThat(data.getCompletions(), hasItem(prefix + "ac("));
+        assertThat(data.getCompletions(), hasItem(prefix + "b("));
+        assertThat(data.getCompletions(), hasItem(prefix + "member("));
+        assertThat(data.getCompletions(), hasItem(prefix + "takeout("));
+    }
+
+
+    @Test
+    public void a_lpar_value_rpar_comma_ab() throws Exception {
+        CompletionData data = complete("a(1), ab");
+        assertThat(data.getCompletions().size(), is(1));
+        assertThat(data.getCompletions(), hasItem("a(1), ab("));
+    }
+
+
+    @Test
+    public void a_lpar_value_rpar_comma_ab_lpar() throws Exception {
+        CompletionData data = complete("a(1), ab(");
+        assertThat(data.getCompletions().size(), is(6));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(1, "));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(2, "));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(3, "));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(4, "));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(5, "));
+        assertThat(data.getCompletions(), hasItem("a(1), ab(6, "));
     }
 
 
@@ -169,4 +190,41 @@ public class CompleterTest extends PrologTestBase {
         assertThat(Completer.strip("a(1) , ").stripped, is(""));
         assertThat(Completer.strip("a(1) , ").functor, nullValue());
     }
+
+
+
+    @Test
+    public void txt_lpar() {
+        CompletionData data = complete("txt(");
+        assertThat(data.getCompletions().size(), is(3));
+        assertThat(data.getCompletions(), hasItem("txt('One')"));
+        assertThat(data.getCompletions(), hasItem("txt('Once')"));
+        assertThat(data.getCompletions(), hasItem("txt('Two')"));
+    }
+
+    @Test
+    public void txt_lpar_quote() {
+        CompletionData data = complete("txt('");
+        assertThat(data.getCompletions().size(), is(3));
+        assertThat(data.getCompletions(), hasItem("txt('One')"));
+        assertThat(data.getCompletions(), hasItem("txt('Once')"));
+        assertThat(data.getCompletions(), hasItem("txt('Two')"));
+    }
+
+    @Test
+    public void txt_lpar_quote_O() {
+        CompletionData data = complete("txt('O");
+        assertThat(data.getCompletions().size(), is(2));
+        assertThat(data.getCompletions(), hasItem("txt('One')"));
+        assertThat(data.getCompletions(), hasItem("txt('Once')"));
+    }
+
+
+    @Test
+    public void txt_lpar_quote_Z() {
+        CompletionData data = complete("txt('Z");
+        assertThat(data.getCompletions().size(), is(0));
+    }
+
+
 }

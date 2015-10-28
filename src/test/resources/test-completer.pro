@@ -28,3 +28,7 @@ ac(3,13).
 ac(4,fourteen).
 ac(5,15).
 ac(6,sixteen).
+
+txt('One').
+txt('Once').
+txt('Two').
