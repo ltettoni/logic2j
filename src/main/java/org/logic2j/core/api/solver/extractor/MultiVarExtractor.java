@@ -39,6 +39,10 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
     }
 
 
+    /**
+     * @param currentVars
+     * @return Actually a HashMap, meaning there is no particular order in the Var keys.
+     */
     @Override
     public Map<Var, Object> extractSolution(UnifyContext currentVars) {
         final Map<Var, Object> result = new HashMap<Var, Object>();

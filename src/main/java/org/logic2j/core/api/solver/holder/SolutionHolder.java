@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Launch the solver with appropriate SolutionListener o obtain what the user asks:
+ * Launch the solver with appropriate SolutionListener to obtain what the user asks:
  * cardinality (single-value or multi-valued)
  * obligation (optional, mandatory result, at-least or at-most values)
  * modality (iterable or all-in-memory)
