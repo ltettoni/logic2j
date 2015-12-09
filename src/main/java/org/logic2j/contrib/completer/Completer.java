@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class Completer {
     private static final Logger logger = LoggerFactory.getLogger(Completer.class);
     private static final String COMPLETION_VAR = "CompleterVar";
-    private static final int MAX_FETCH = 100;
+    private static final int MAX_FETCH = 10000; // Number of completion results to seek
 
     private final PrologImplementation prolog;
 
