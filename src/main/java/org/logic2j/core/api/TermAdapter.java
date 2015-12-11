@@ -74,9 +74,9 @@ public interface TermAdapter {
         /**
          * Data is asserted as full records with one argument per column, such as
          * "myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN)."
-         * The order matters.
+         * The order of columns obviously matters.
+         * If your data is already triples, use this mode.
          * This is the least flexible form since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
-         *
          */
         RECORD
     }
