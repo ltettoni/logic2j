@@ -88,7 +88,7 @@ public class TheoryContent {
      * Retrieve clauses matching theGoalTerm (by predicate's head name and arity).
      * 
      * @param theGoalTerm
-     * @return An Iterable for a foreach() loop.
+     * @return An Iterable for a foreach() loop, never null.
      */
     public Iterable<Clause> find(Object theGoalTerm) {
         if (theGoalTerm instanceof Var<?>) {

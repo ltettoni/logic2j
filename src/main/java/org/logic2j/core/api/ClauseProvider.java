@@ -43,6 +43,7 @@ public interface ClauseProvider {
      * @param theGoal
      * @param currentVars TODO Remove this argument it is used only once for a contrib (
      * @return An ordered {@link java.lang.Iterable} of {@link Clause}s that are candidates for unifying with theGoal.
+     * Must never return null - emnpty instead.
      * Implementers may return {@link Clause}s whose head would eventually not unify hence not be used by the
      *         {@link org.logic2j.core.impl.Solver}, however for performance reasons theGoal is provided and you better
      *         return only potentially matching clauses.
