@@ -27,6 +27,7 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,17 +67,17 @@ public class TabularDataClauseProvider implements ClauseProvider {
         switch (this.mode) {
         case EAV_NAMED:
             if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {
-                return null;
+                return Collections.emptyList();
             }
             return this.clauses;
         case EAVT:
             if (!predicateSignature.equals(EAVT_4)) {
-                return null;
+                return Collections.emptyList();
             }
             return this.clauses;
         case RECORD:
             if (!predicateSignature.equals(this.tabularData.getDataSetName() + '/' + this.tabularData.getNbColumns())) {
-                return null;
+                return Collections.emptyList();
             }
             return this.clauses;
         default:
