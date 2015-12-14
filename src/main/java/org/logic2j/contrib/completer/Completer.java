@@ -151,7 +151,12 @@ public class Completer {
                     SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<Object>(stringSingleVarExtractor);
                     listener.setMaxFetch(MAX_FETCH);
 
-                    this.prolog.getSolver().solveGoal(goalObj, listener);
+                    try {
+                        this.prolog.getSolver().solveGoal(goalObj, listener);
+                    } catch (StackOverflowError e) {
+                        // Typical completion for "member(" will try to solve "member(CompletionVar, _)" which has infinite solutions.
+                        return completionData;
+                    }
                     boolean hasVar = false;
                     final String termination = (arity > commaCount+1) ? ", " : ")";
                     for (Object sol : listener.getResults()) {

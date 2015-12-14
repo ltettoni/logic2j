@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -47,8 +48,7 @@ public class CompleterTest extends PrologTestBase {
     @Test
     public void member_lpar() {
         CompletionData data = complete("member(");
-        assertThat(data.getCompletions(), hasItem("member(X, "));
-        assertThat(data.getCompletions(), hasItem("member(_, "));
+        assertThat(data.getCompletions(), emptyCollectionOf(String.class));
     }
 
 
