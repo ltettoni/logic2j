@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  */
@@ -226,5 +228,13 @@ public class CompleterTest extends PrologTestBase {
         assertThat(data.getCompletions().size(), is(0));
     }
 
+
+    @Test
+    public void acceptPredicateKey() {
+        assertTrue(Completer.acceptPredicateKey("pred/3"));
+        assertFalse(Completer.acceptPredicateKey("pred_/3"));
+        assertFalse(Completer.acceptPredicateKey("pred_1/3"));
+        assertFalse(Completer.acceptPredicateKey("pred_22/3"));
+    }
 
 }

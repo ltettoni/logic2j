@@ -33,6 +33,11 @@ public class Completer {
      */
     private static final Pattern ACCEPTABLE = Pattern.compile("[\\w']+/\\d+");
 
+    /**
+     * To avoid technical predicates such as pred_, pred_1, pred_2)
+     */
+    private static final Pattern TECH_PREDICATE = Pattern.compile("[\\w']+_\\d*/\\d+");
+
 
     static CompletionData strip(String str) {
         final CompletionData result = new CompletionData();
@@ -94,7 +99,7 @@ public class Completer {
         for (final ClauseProvider cp : this.prolog.getTheoryManager().getClauseProviders()) {
             for (final Clause clause : cp.listMatchingClauses(new Var<Object>("unused"), null)) {
                 final String predicateKey = clause.getPredicateKey();
-                if (ACCEPTABLE.matcher(predicateKey).matches() && predicateKey.startsWith(partialInput.toString())) {
+                if (acceptPredicateKey(predicateKey) && predicateKey.startsWith(partialInput.toString())) {
                     signatures.add(predicateKey);
                 } else {
                     logger.debug("Signature not retained for completion: {}", predicateKey);
@@ -107,6 +112,20 @@ public class Completer {
         return signatures;
     }
 
+    static boolean acceptPredicateKey(String predicateKey) {
+        // Check if this is a technical predicate,
+        if (TECH_PREDICATE.matcher(predicateKey).matches()) {
+            return false;
+        }
+        return ACCEPTABLE.matcher(predicateKey).matches();
+    }
+
+
+    /**
+     * Entry point
+     * @param partialInput
+     * @return The result of completing the partialInput
+     */
     public CompletionData complete(CharSequence partialInput) {
         final CompletionData completionData = strip(partialInput.toString());
         final Set<String> completions = new TreeSet<String>();
