@@ -266,7 +266,7 @@ public abstract class PrologTestBase {
             @Override
             public boolean accept(File dir, String name) {
                 final File file = new File(dir, name);
-                return file.canRead() && file.isFile();
+                return file.canRead() && file.isFile() && file.getName().endsWith(".pro");
             }
         };
         return TEST_RESOURCES_DIR.listFiles(filesOnly);
