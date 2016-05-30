@@ -36,7 +36,7 @@ import java.util.*;
  * cardinality (single-value or multi-valued)
  * obligation (optional, mandatory result, at-least or at-most values)
  * modality (iterable or all-in-memory)
- * storage (List or array)
+ * structure (List or Array)
  */
 public class SolutionHolder<T> implements Iterable<T> {
     private static final Logger logger = LoggerFactory.getLogger(SolutionHolder.class);
@@ -168,8 +168,8 @@ public class SolutionHolder<T> implements Iterable<T> {
 
 
     /**
-     * Launches the solver and collect solutions into a user-specified collection
-     * @param theTargetToAddTo The target collection (with user-defined semantics) where all solutions should be added to.
+     * Launches the solver and collect solutions into a user-specified Collection
+     * @param theTargetToAddTo The target collection (with user-chosen semantics) where all solutions should be added to.
      * @return the argument "theTargetToAddTo"
      */
     public <Q extends Collection<T>> Q addTo(Q theTargetToAddTo) {

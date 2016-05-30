@@ -62,11 +62,23 @@ public class GoalHolder {
         return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME, Object.class);
     }
 
+     /**
+     * Seek solutions for only one variable of the goal, of the desired type. Does not yet execute the goal.
+     * @param varName The name of the variable to solve for.
+     * @param desiredTypeOfResult
+     * @param <T>
+     * @return A SolutionHolder for only the specified variable.
+     */
     public <T> SolutionHolder<T> var(String varName, Class<? extends T> desiredTypeOfResult) {
         final SolutionHolder<T> solutionHolder = new SolutionHolder<T>(this, varName, desiredTypeOfResult);
         return solutionHolder;
     }
 
+    /**
+     * Seek solutions for onle one variable of the goal, of any type.
+     * @param varName The name of the variable to solve for.
+     * @return A SolutionHolder for only the specified variable.
+     */
     public SolutionHolder<Object> var(String varName) {
         return var(varName, Object.class);
     }
