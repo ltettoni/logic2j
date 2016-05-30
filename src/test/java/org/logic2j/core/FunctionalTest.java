@@ -18,8 +18,11 @@
 package org.logic2j.core;
 
 import org.junit.Test;
+import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.util.CollectionUtils;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -54,6 +57,26 @@ public class FunctionalTest extends PrologTestBase {
         final GoalHolder all = nSolutions(3, "append(X,Y,[1,2])");
         assertEquals(termList("[]", "[1]", "[1,2]"), all.var("X").list());
         assertEquals(termList("[1,2]", "[2]", "[]"), all.var("Y").list());
+    }
+
+
+    @Test
+    public void appendWithArraySolutions() {
+        final List<Object[]> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsArray().list();
+        logger.info(CollectionUtils.format("All bindings as varsArray(): ", list, 0));
+        assertEquals(5, list.size());
+        final Object[] rec0 = list.get(0);
+        assertEquals(2, rec0.length);
+        assertEquals(2, list.get(1).length);
+        assertEquals(2, list.get(2).length);
+        assertEquals(2, list.get(3).length);
+        assertEquals(2, list.get(4).length);
+        final Object rec00 = rec0[0];
+        assertEquals(Struct.class, rec00.getClass());
+        assertEquals("[]", rec00.toString());
+        final Object rec01 = rec0[1];
+        assertEquals(Struct.class, rec01.getClass());
+        assertEquals("[a,b,c,d]", rec01.toString());
     }
 
     @Test

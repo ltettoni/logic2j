@@ -19,7 +19,8 @@ package org.logic2j.core.api.solver.holder;
 
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.extractor.MultiVarExtractor;
+import org.logic2j.core.api.solver.extractor.ArrayExtractor;
+import org.logic2j.core.api.solver.extractor.MapExtractor;
 import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
 import org.logic2j.core.api.solver.extractor.SolutionExtractor;
 import org.logic2j.core.api.solver.listener.IterableSolutionListener;
@@ -29,7 +30,12 @@ import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Launch the solver with appropriate SolutionListener to obtain what the user asks:
@@ -52,11 +58,11 @@ public class SolutionHolder<T> implements Iterable<T> {
     // I think this could be clarified a little - those are impl of the same interface, but one is generic the other not
     private final SingleVarExtractor<T> singleVarExtractor;
 
-    private final MultiVarExtractor multiVarExtractor;
+    private final SolutionExtractor multiVarExtractor;
 
     /**
      * Extract one particular variable or the solution to the goal.
-     *  @param goalHolder
+     * @param goalHolder
      * @param varName
      * @param desiredTypeOfResult
      */
@@ -67,15 +73,31 @@ public class SolutionHolder<T> implements Iterable<T> {
         this.multiVarExtractor = null;
     }
 
-    /**
-     * Extract all variables.
-     *
-     * @param goalHolder
-     */
-    public SolutionHolder(GoalHolder goalHolder) {
+    private SolutionHolder(GoalHolder goalHolder, SolutionExtractor extractor) {
         this.goalHolder = goalHolder;
         this.singleVarExtractor = null;
-        this.multiVarExtractor = new MultiVarExtractor(goalHolder.goal);
+        this.multiVarExtractor = extractor;
+    }
+
+    /**
+     * Factory: extract all variables in Maps (the not-so-efficient way)
+     *
+     * @param goalHolder
+     * @return Holds solutions as a List of Maps
+     */
+    public static SolutionHolder<Map<Var<?>, Object>> extractingMaps(GoalHolder goalHolder) {
+        final SolutionHolder withMaps = new SolutionHolder(goalHolder, new MapExtractor(goalHolder.goal));
+        return withMaps;
+    }
+
+    /**
+     * Factory: extract all variables in Arrays (the efficient way)
+     * @param goalHolder
+     * @return Holds solutions as a List of Arrays
+     */
+    public static SolutionHolder<Object[]> extractingArrays(GoalHolder goalHolder) {
+        final SolutionHolder withArrays = new SolutionHolder(goalHolder, new ArrayExtractor(goalHolder.goal));
+        return withArrays;
     }
 
     /**
@@ -85,7 +107,7 @@ public class SolutionHolder<T> implements Iterable<T> {
      * @param singleVarExtractor
      * @param multiVarExtractor
 
-    private SolutionHolder(GoalHolder goalHolder, RangeSolutionListener rangeListener, SingleVarExtractor<T> singleVarExtractor, MultiVarExtractor multiVarExtractor) {
+    private SolutionHolder(GoalHolder goalHolder, RangeSolutionListener rangeListener, SingleVarExtractor<T> singleVarExtractor, MapExtractor multiVarExtractor) {
         this.goalHolder = goalHolder;
         this.rangeListener = rangeListener;
         this.singleVarExtractor = singleVarExtractor;

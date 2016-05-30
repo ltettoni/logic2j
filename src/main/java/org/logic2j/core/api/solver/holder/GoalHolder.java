@@ -84,7 +84,12 @@ public class GoalHolder {
     }
 
     public SolutionHolder<Map<Var<?>, Object>> vars() {
-        return new SolutionHolder<Map<Var<?>, Object>>(this);
+        return SolutionHolder.extractingMaps(this);
+    }
+
+
+    public SolutionHolder<Object[]> varsArray() {
+        return SolutionHolder.extractingArrays(this);
     }
 
     // ---------------------------------------------------------------------------
@@ -99,4 +104,5 @@ public class GoalHolder {
     public String toString(String varName) {
         return var(varName).unique().toString();
     }
+
 }

@@ -21,21 +21,23 @@ import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * A {@link org.logic2j.core.api.solver.extractor.SolutionExtractor} that will extract values of
- * a set of variables, return as a Map. Typically used to find all bindings of a multi-var goal.
+ * A {@link SolutionExtractor} that will extract values of
+ * a set of variables, returned as an Array, indiced by every Var's index.
+ * Typically used to find all bindings of a multi-variable goal, in a very efficient way.
  */
-public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
+public class ArrayExtractor implements SolutionExtractor<Object[]> {
 
     private final Var<?>[] vars;
+    private final int highestIndex;
 
-    public MultiVarExtractor(Object goal) {
-        final Var<?>[] distinctVars = TermApi.distinctVars(goal);
-        // Actually we don't need to clone:  this.vars = Arrays.copyOf(distinctVars, distinctVars.length);
-        this.vars = distinctVars;
+    public ArrayExtractor(Object goal) {
+        int high = 0;
+        this.vars = TermApi.distinctVars(goal);
+        for (Var<?> var: this.vars) {
+            high = Math.max(high, var.getIndex());
+        };
+        this.highestIndex = high;
     }
 
 
@@ -44,11 +46,11 @@ public class MultiVarExtractor implements SolutionExtractor<Map<Var, Object>> {
      * @return Actually a HashMap, meaning there is no particular order in the Var keys.
      */
     @Override
-    public Map<Var, Object> extractSolution(UnifyContext currentVars) {
-        final Map<Var, Object> result = new HashMap<Var, Object>();
-        for (Var<?> var : vars) {
+    public Object[] extractSolution(UnifyContext currentVars) {
+        final Object[] result = new Object[this.highestIndex+1];
+        for (Var<?> var : this.vars) {
             final Object value = currentVars.reify(var);
-            result.put(var, value);
+            result[var.getIndex()] = value;
         }
         return result;
     }
