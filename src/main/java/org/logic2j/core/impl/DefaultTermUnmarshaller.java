@@ -34,11 +34,14 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
 
     private OperatorManager operatorManager = new DefaultOperatorManager();
 
-    private TermMapper normalizer = new TermMapper() {
+  /**
+   * A default TermMapper that will not handle primitives or operators defined in libraries.
+   */
+  private TermMapper normalizer = new TermMapper() {
 
         @Override
         public Object apply(Object theTerm) {
-            return TermApi.normalize(theTerm);
+            return TermApi.normalize(theTerm); // Uh, will ignore any existing primitives, etc?
         }
     };
 
