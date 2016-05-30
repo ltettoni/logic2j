@@ -17,7 +17,6 @@
  */
 package org.logic2j.core.api.solver.listener;
 
-import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.extractor.SolutionExtractor;
 import org.logic2j.core.api.unify.UnifyContext;
 
@@ -31,6 +30,9 @@ import java.util.List;
 public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
     private final SolutionExtractor<T> extractor;
 
+    // Implementation note: there is an opportunity to improve the extraction of distinct Sets.
+    // TODO In this implementation, "results" is a List and we do the set operation later on after all results
+    // have been extracted. This is quite inefficient.
     private final List<T> results;
 
     /**
@@ -47,6 +49,9 @@ public class SingleVarSolutionListener<T> extends RangeSolutionListener<T> {
     @Override
     public Integer onSolution(UnifyContext currentVars) {
         final T solution = extractor.extractSolution(currentVars);
+        // Implementation note: there is an opportunity to improve the extraction of distinct Sets.
+        // TODO In this implementation, "results" is a List and we do the set operation later on after all results
+        // have been extracted. This is quite inefficient.
         results.add(solution);
         return super.onSolution(currentVars);
     }

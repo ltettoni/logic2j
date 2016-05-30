@@ -205,6 +205,9 @@ public class SolutionHolder<T> implements Iterable<T> {
     /**
      * Launches the solver.
      * @return a distinct Set of solutions in a HashSet.
+     * @note This is an inefficient implementation: all solutions are gathered first using List(), and then added individually
+     * into a HashSet. A much better approach would be to calculate the "distinct" feature where
+     * SolutionExtractor.extractSolution() is called, ie in one of the various
      */
     public Set<T> set() {
         return new HashSet<T>(list());
