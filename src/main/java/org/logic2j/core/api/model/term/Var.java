@@ -220,7 +220,7 @@ public final class Var<T> extends Term implements Comparable<Var<T>> {
         if (this.index != NO_INDEX) {
             // assert false : "We are re-indexing an indexed Var but return a wrong value";
             // Already assigned, avoid changing the index! Do nothing
-            return theIndexOfNextNonIndexedVar; // return same index since we did nothing
+            return theIndexOfNextNonIndexedVar; // return the argument, since we did not assign anything new
         }
         if (isAnonymous()) {
             // Anonymous variable is not a var, don't count it, but assign an

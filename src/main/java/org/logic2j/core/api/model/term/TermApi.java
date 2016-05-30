@@ -215,6 +215,7 @@ public final class TermApi {
 
     /**
      * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
+     * Will recurse through Struct.
      *
      * @param theIndexOfNextNonIndexedVar
      * @return The next value for theIndexOfNextNonIndexedVar, allow successive calls to increment. First caller
@@ -341,7 +342,8 @@ public final class TermApi {
     }
 
     /**
-     * Normalize a {@link Term} using the specified definitions of operators, primitives.
+     * Normalize a term, NOT taking into account existing operators and primitives.
+     * In principle this method should not be used. Side-effect (execution) of primitives is not guaranteed to occur.
      *
      * @param theTerm To be normalized
      * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
@@ -353,6 +355,13 @@ public final class TermApi {
     }
 
 
+    /**
+     * Normalize any term and refer to the primitives and operators defined in LibaryContent.
+     *
+     * @param theTerm To be normalized
+     * @param theLibraryContent where primitives are to be found and assigned
+     * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
+     */
     public static <T> T normalize(T theTerm, LibraryContent theLibraryContent) {
         T factorized = factorize(theTerm);
         assignIndexes(factorized, 0);

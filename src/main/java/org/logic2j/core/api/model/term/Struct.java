@@ -260,7 +260,9 @@ public final class Struct extends Term {
     }
 
     /**
-     * @param theContent
+     * Will set the "primitiveInfo" field to directly relate a token to an existing primitive
+     * defined in theContent
+     * @param theContent Primitives in a Library
      */
     public void assignPrimitiveInfo(LibraryContent theContent) {
         // Find by exact arity match
@@ -668,12 +670,15 @@ public final class Struct extends Term {
 
     /**
      * For {@link Struct}s, the {@link Term#index} will be the maximal index of any variables that can be found, recursively, under all
-     * arguments.
+     * children arguments.
+     * @note Assigning indexes, for example with a base index of 0, will proceed sequentially by depth-first
+     * traversal. The first Vars encountered in sequence will receive indexes 0, 1, 2. Therefore a term such as
+     * goal(A, Z, Y) will guarantee that indexes are: A=0, Z=1, Y=2.
      */
     int assignIndexes(int theIndexOfNextNonIndexedVar) {
         if (this.index != NO_INDEX) {
-            // Already assigned, do nothing and return same index since we did
-            // not assigned a new var
+            // Already assigned, do nothing and return the argument since we did
+            // not assigned anything new
             return theIndexOfNextNonIndexedVar;
         }
         // Recursive assignment
