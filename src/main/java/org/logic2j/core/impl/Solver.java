@@ -81,7 +81,7 @@ public class Solver {
         // This slightly improves performance - we can bypass calling the method that deals with that
         if (goal instanceof Struct) {
             if (((Struct) goal).getIndex() == Term.NO_INDEX) {
-                throw new InvalidTermException("Struct must be normalized before it can be solved: " + goal);
+                throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
             }
         }
         final Integer cutIntercepted = solveGoalRecursive(goal, currentVars, theSolutionListener, 10);
@@ -131,7 +131,8 @@ public class Solver {
             goalStruct = (Struct) goalReified;
         */
         } else {
-            assert goalTerm instanceof Struct : "Calling solveGoalRecursive with a goal that is not a Struct but: " + goalTerm + " of " + goalTerm.getClass();
+            assert goalTerm instanceof Struct : "Calling solveGoalRecursive with a goal that is not a Struct but: \"" + goalTerm + "\" of " +
+                goalTerm.getClass();
             goalStruct = (Struct) goalTerm;
         }
 
