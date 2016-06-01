@@ -22,6 +22,7 @@ import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 import org.logic2j.core.impl.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -77,6 +78,21 @@ public class FunctionalTest extends PrologTestBase {
         final Object rec01 = rec0[1];
         assertEquals(Struct.class, rec01.getClass());
         assertEquals("[a,b,c,d]", rec01.toString());
+    }
+
+    @Test
+    public void appendWithFactorySolutions() {
+        final ObjectFactory<Integer> justLog = new ObjectFactory<Integer>() {
+            int counter = 0;
+            @Override
+            public Integer valueOf(Object[] values) {
+                logger.info("ObjectFactory called with values: {}", Arrays.asList(values));
+                return counter++;
+            }
+        };
+        final List<Integer> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsToFactory(justLog).list();
+        assertEquals(5, list.size());
+        assertEquals("[0, 1, 2, 3, 4]", list.toString());
     }
 
     @Test

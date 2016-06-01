@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.api.solver.holder;
 
+import org.logic2j.core.ObjectFactory;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.listener.CountingSolutionListener;
 import org.logic2j.core.api.solver.listener.RangeSolutionListener;
@@ -87,10 +88,23 @@ public class GoalHolder {
         return SolutionHolder.extractingMaps(this);
     }
 
-
+    /**
+     * @return A SolutionHolder that returns solutions as array of Objects
+     */
     public SolutionHolder<Object[]> varsArray() {
-        return SolutionHolder.extractingArrays(this);
+      return SolutionHolder.extractingArrays(this);
     }
+
+    /**
+     * Instantiate objects directly.
+     * @param factory
+     * @param <T> Type of objects to create
+     * @return A SolutionHolder for objects created by the factory
+     */
+    public <T> SolutionHolder<T> varsToFactory(ObjectFactory<T> factory) {
+      return SolutionHolder.extractingFactory(this, factory);
+    }
+
 
     // ---------------------------------------------------------------------------
     // Syntactic sugars

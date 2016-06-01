@@ -17,9 +17,11 @@
  */
 package org.logic2j.core.api.solver.holder;
 
+import org.logic2j.core.ObjectFactory;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.extractor.ArrayExtractor;
+import org.logic2j.core.api.solver.extractor.FactoryExtractor;
 import org.logic2j.core.api.solver.extractor.MapExtractor;
 import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
 import org.logic2j.core.api.solver.extractor.SolutionExtractor;
@@ -98,6 +100,11 @@ public class SolutionHolder<T> implements Iterable<T> {
     public static SolutionHolder<Object[]> extractingArrays(GoalHolder goalHolder) {
         final SolutionHolder withArrays = new SolutionHolder(goalHolder, new ArrayExtractor(goalHolder.goal));
         return withArrays;
+    }
+
+    public static <T> SolutionHolder<T> extractingFactory(GoalHolder goalHolder, ObjectFactory<T> factory) {
+        final SolutionHolder withFactory = new SolutionHolder(goalHolder, new FactoryExtractor<T>(goalHolder.goal, factory));
+        return withFactory;
     }
 
     /**
