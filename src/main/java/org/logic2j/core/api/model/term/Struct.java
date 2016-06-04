@@ -441,22 +441,26 @@ public final class Struct extends Term {
 
 
     /**
-     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0. It is assumed that the term MUST have
+     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0.
+     * It is assumed that the term MUST have
      * an arity of exactly 2, because when there's a LHS, there's also a RHS!
      */
     public Object getLHS() {
         if (this.arity != 2) {
-            throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
+            throw new PrologNonSpecificError("Can't get the left-hand-side argument of \"" + this +
+                "\" (predicate arity is: " + getPredicateSignature() + ")");
         }
         return this.args[0];
     }
 
     /**
-     * @return Right-hand-side term, this is, {@link #getArg(int)} at index 1. It is assumed that the term MUST have an arity of 2
+     * @return Right-hand-side term, this is, {@link #getArg(int)} at index 1.
+     * It is assumed that the term MUST have an arity of 2.
      */
     public Object getRHS() {
         if (this.arity != 2) {
-            throw new PrologNonSpecificError("Can't get the left-hand-side argument of " + this + " (not a binary predicate)");
+            throw new PrologNonSpecificError("Can't get the right-hand-side argument of \"" + this +
+                "\" (predicate arity is: " + getPredicateSignature() + ")");
         }
         return this.args[1];
     }
