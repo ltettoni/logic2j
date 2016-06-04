@@ -27,6 +27,7 @@ import org.logic2j.core.api.model.exception.PrologException;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.api.model.term.Struct;
 import org.logic2j.core.api.model.term.Term;
+import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
@@ -54,6 +55,9 @@ public class Solver {
     }
 
     public Integer solveGoal(Object goal, SolutionListener theSolutionListener) {
+        if (goal instanceof Var<?>) {
+            throw new InvalidTermException("Cannot solve the goal \""+ goal + "\", the variable is not bound to a value");
+        }
         this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
         final UnifyContext initialContext = initialContext();
         if (goal instanceof Struct) {
