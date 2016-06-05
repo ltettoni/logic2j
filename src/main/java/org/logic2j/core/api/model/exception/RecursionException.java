@@ -25,6 +25,11 @@ public class RecursionException extends PrologException {
 
     private static final long serialVersionUID = -4416801118548866803L;
 
+    @Override
+    public boolean isStacktraceUsefulOnClient() {
+        return false;
+    }
+
     public RecursionException(String theString) {
         super(theString);
     }

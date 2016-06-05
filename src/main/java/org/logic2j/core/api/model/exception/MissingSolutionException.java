@@ -26,6 +26,11 @@ package org.logic2j.core.api.model.exception;
 public class MissingSolutionException extends PrologException {
     private static final long serialVersionUID = 1L;
 
+    @Override
+    public boolean isStacktraceUsefulOnClient() {
+        return false;
+    }
+
     public MissingSolutionException(CharSequence theMessage) {
         super(theMessage.toString());
     }

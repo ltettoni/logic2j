@@ -23,6 +23,11 @@ package org.logic2j.core.api.model.exception;
 public class IllegalSolutionException extends PrologException {
     private static final long serialVersionUID = 1L;
 
+    @Override
+    public boolean isStacktraceUsefulOnClient() {
+        return false;
+    }
+
     public IllegalSolutionException(CharSequence theMessage) {
         super(theMessage.toString());
     }

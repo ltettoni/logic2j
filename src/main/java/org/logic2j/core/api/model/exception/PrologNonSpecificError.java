@@ -24,6 +24,11 @@ public class PrologNonSpecificError extends PrologException {
 
     private static final long serialVersionUID = 1;
 
+    @Override
+    public boolean isStacktraceUsefulOnClient() {
+        return true;
+    }
+
     public PrologNonSpecificError(String theString) {
         super(theString);
     }

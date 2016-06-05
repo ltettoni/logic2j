@@ -24,6 +24,11 @@ public class InvalidTermException extends PrologException {
 
     private static final long serialVersionUID = -4416801118548866803L;
 
+    @Override
+    public boolean isStacktraceUsefulOnClient() {
+        return false;
+    }
+
     public InvalidTermException(String theString) {
         super(theString);
     }
