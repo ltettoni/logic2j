@@ -20,7 +20,7 @@
             <configuration>
                <source>1.6</source>
                <target>1.6</target>
-               <encoding>Cp1252</encoding>
+               <encoding>UTF-8</encoding>
             </configuration>
          </plugin>
 
@@ -33,7 +33,7 @@
                   <phase>process-test-resources</phase>
                   <configuration>
                      <tasks>
-                        <unzip src="src/test/db/zipcodes1/derby-v10.8.2.1.zip" dest="src/test/db/zipcodes1" />
+                        <unzip src="src/test/db/zipcodes1/derby-v10.13.1.1.zip" dest="src/test/db/zipcodes1" />
                      </tasks>
                   </configuration>
                   <goals>
@@ -78,30 +78,30 @@
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>4.11</version>
+         <version>4.12</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.apache.derby</groupId>
          <artifactId>derby</artifactId>
-         <version>10.8.1.2</version>
+         <version>10.13.1.1</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>ch.qos.logback</groupId>
          <artifactId>logback-classic</artifactId>
-         <version>1.1.2</version>
+         <version>1.1.8</version>
       </dependency>
       <dependency>
          <groupId>org.apache.poi</groupId>
          <artifactId>poi</artifactId>
-         <version>3.9</version>
+         <version>3.15</version>
       </dependency>
       <!-- Optional - for PojoLibrary -->
       <dependency>
          <groupId>commons-beanutils</groupId>
          <artifactId>commons-beanutils</artifactId>
-         <version>1.9.1</version>
+         <version>1.9.3</version>
       </dependency>
    </dependencies>
    <url>https://github.com/ltettoni/logic2j</url>
