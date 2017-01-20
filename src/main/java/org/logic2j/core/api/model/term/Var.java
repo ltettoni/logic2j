@@ -19,6 +19,8 @@ package org.logic2j.core.api.model.term;
 
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.visitor.TermVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -27,8 +29,11 @@ import java.util.Comparator;
  * This class represents a variable term. Variables are identified by a name (which must starts with an upper case letter) or the anonymous
  * ('_') name.
  * Note: This class MUST be immutable.
+ * Switch logging for this class to DEBUG level in order to have the details of variables, such as the variable index.
  */
 public final class Var<T> extends Term implements Comparable<Var<T>> {
+    private static final Logger logger = LoggerFactory.getLogger(Var.class);
+    
     private static final long serialVersionUID = 1L;
 
     public static final String WHOLE_SOLUTION_VAR_NAME = ".".intern();
@@ -123,8 +128,8 @@ public final class Var<T> extends Term implements Comparable<Var<T>> {
      * Copy constructor
      * Clones the name and the index.
      *
-     * @throws org.logic2j.core.api.model.exception.InvalidTermException If you try to clone the anonymous variable!
      * @param original
+     * @throws InvalidTermException If you try to clone the anonymous variable!
      */
     public static <Q> Var<Q> copy(Var<Q> original) {
         if (original.name == Var.ANONYMOUS_VAR_NAME) {
@@ -267,6 +272,7 @@ public final class Var<T> extends Term implements Comparable<Var<T>> {
 
     /**
      * Just to allow odering of Var, by their name
+     *
      * @param that
      * @return Comparison based on #getName()
      */

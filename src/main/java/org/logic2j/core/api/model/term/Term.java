@@ -18,8 +18,6 @@
 package org.logic2j.core.api.model.term;
 
 import org.logic2j.core.api.model.visitor.TermVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -39,7 +37,6 @@ import java.util.Collection;
  * @see Var
  */
 public abstract class Term implements Serializable {
-    static final Logger logger = LoggerFactory.getLogger(Term.class);
     private static final long serialVersionUID = 1L;
 
     /**
