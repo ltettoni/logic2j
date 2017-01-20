@@ -25,7 +25,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 /**
- * Low-level tests of the {@link org.logic2j.core.api.model.term.TermApi} facade.
+ * Low-level tests of the {@link TermApi} facade.
  */
 public class TermApiTest {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TermApiTest.class);

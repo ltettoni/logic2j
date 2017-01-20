@@ -55,7 +55,7 @@ public final class TermApi {
     }
 
     /**
-     * Apply a {@link org.logic2j.core.api.model.visitor.ExtendedTermVisitor} to visit theTerm.
+     * Apply a {@link ExtendedTermVisitor} to visit theTerm.
      * @param theVisitor
      * @param theTerm
      * @return The transformed result as per theVisitor's logic
