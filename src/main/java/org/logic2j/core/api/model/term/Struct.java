@@ -561,6 +561,26 @@ public final class Struct extends Term {
         return result;
     }
 
+    private String formatPListRecursive() {
+        final Object head = getLHS();
+        final Object tail = getRHS();
+        if (TermApi.isList(tail)) {
+            final Struct tailStruct = (Struct) tail;
+            // .(h, []) will be displayed as h
+            if (tailStruct.isEmptyList()) {
+                return head.toString();
+            }
+            return head.toString() + LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
+        }
+        final StringBuilder sb = new StringBuilder();
+        // Head
+        sb.append(head);
+        sb.append(HEAD_TAIL_SEPARATOR);
+        // Tail
+        sb.append(tail.toString());
+        return sb.toString();
+    }
+
     // --------------------------------------------------------------------------
     // Accessors
     // --------------------------------------------------------------------------
@@ -743,26 +763,6 @@ public final class Struct extends Term {
 
     public String toString() {
         return formatStruct();
-    }
-
-    private String formatPListRecursive() {
-        final Object head = getLHS();
-        final Object tail = getRHS();
-        if (TermApi.isList(tail)) {
-            final Struct tailStruct = (Struct) tail;
-            // .(h, []) will be displayed as h
-            if (tailStruct.isEmptyList()) {
-                return head.toString();
-            }
-            return head.toString() + LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
-        }
-        final StringBuilder sb = new StringBuilder();
-        // Head
-        sb.append(head);
-        sb.append(HEAD_TAIL_SEPARATOR);
-        // Tail
-        sb.append(tail.toString());
-        return sb.toString();
     }
 
     private String formatStruct() {
