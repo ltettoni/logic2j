@@ -39,14 +39,31 @@ public final class Struct extends Term {
     private static final long serialVersionUID = 1L;
 
     // ---------------------------------------------------------------------------
-    // Names of functors
+    // Constants defining Prolog lists
     // ---------------------------------------------------------------------------
 
-    public static final char HEAD_TAIL_SEPARATOR = '|';
+    public static final String FUNCTOR_LIST_NODE = ".".intern();
+
+    public static final String FUNCTOR_EMPTY_LIST = "[]".intern(); // The list end marker
+
+    public static final String LIST_ELEM_SEPARATOR = ",".intern(); // In notations [a,b,c]
 
     public static final char LIST_CLOSE = ']';
 
     public static final char LIST_OPEN = '[';
+
+    public static final char HEAD_TAIL_SEPARATOR = '|';
+
+    /**
+     * The empty list complete Struct.
+     */
+    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
+
+    // ---------------------------------------------------------------------------
+    // Names of functors
+    // ---------------------------------------------------------------------------
+
+    public static final String LIST_SEPARATOR = ",".intern(); // In notations pred(a, b, c)
 
     public static final char PAR_CLOSE = ')';
 
@@ -64,15 +81,6 @@ public final class Struct extends Term {
 
     public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
 
-    public static final String FUNCTOR_EMPTY_LIST = "[]".intern(); // The list end marker
-
-    /**
-     * The empty list.
-     */
-    public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
-
-    public static final String FUNCTOR_LIST_NODE = ".".intern();
-
     // ---------------------------------------------------------------------------
     // Some key atoms as singletons
     // ---------------------------------------------------------------------------
@@ -87,8 +95,6 @@ public final class Struct extends Term {
 
     public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
 
-    public static final String LIST_SEPARATOR = ",".intern(); // In notations [a,b,c]
-
     /**
      * Indicate the arity of a variable arguments predicate, such as write/N.
      * This is an extension to classic Prolog where only fixed arity is supported.
@@ -102,8 +108,6 @@ public final class Struct extends Term {
 
     // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
     public static final String ARG_SEPARATOR = ", ".intern();
-
-    public static final String LIST_ELEM_SEPARATOR = ",".intern();
 
     public static final char QUOTE = '\'';
 
@@ -228,79 +232,6 @@ public final class Struct extends Term {
         return newInstance;
     }
 
-    /**
-     * Create a Prolog list from head and tail.
-     *
-     * @param head
-     * @param tail
-     * @return A prolog list provided head and tail
-     */
-    public static Struct createPList(Object head, Object tail) {
-        final Struct result = new Struct(FUNCTOR_LIST_NODE, 2);
-        result.args[0] = head;
-        result.args[1] = tail;
-        return result;
-    }
-
-    /**
-     * Create a Prolog list from a Java collection.
-     *
-     * @param theJavaCollection We use a collection not an Iterable because we need to know its size at first.
-     * @return A Prolog List structure from a Java {@link java.util.Collection}.
-     */
-    public static Struct createPList(Collection<?> theJavaCollection) {
-        final int size = theJavaCollection.size();
-        // Unroll elements into an array (we need this since we don't have an index-addressable collection)
-        final Object[] array = new Object[size];
-        int index = 0;
-        for (final Object element : theJavaCollection) {
-            array[index++] = element;
-        }
-        return createPList(array);
-    }
-
-    /**
-     * Will set the "primitiveInfo" field to directly relate a token to an existing primitive
-     * defined in theContent
-     * @param theContent Primitives in a Library
-     */
-    public void assignPrimitiveInfo(LibraryContent theContent) {
-        // Find by exact arity match
-        this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
-        if (this.primitiveInfo == null) {
-            // Alternate find by wildcard (varargs signature)
-            this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
-        }
-        for (int i = 0; i < this.arity; i++) {
-            Object child = this.args[i];
-            if (child instanceof String) {
-                if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
-                    // Convert to Struct so that we can assign a primitive
-                    child = new Struct((String)child);
-                    child = TermApi.normalize(child, theContent);
-                    this.args[i] = child; // Not 100% sure it's good to mutate
-                }
-            }
-            if (child instanceof Struct) {
-                ((Struct) child).assignPrimitiveInfo(theContent);
-            }
-        }
-    }
-
-    /**
-     * @param array
-     * @return A Prolog List structure from a Java array.
-     */
-    public static Struct createPList(final Object[] array) {
-        // Assemble the prolog list (head|tail) nodes from the last to the first element
-        Struct tail = Struct.EMPTY_LIST;
-        for (int i = array.length - 1; i >= 0; i--) {
-            final Object head = array[i];
-            tail = Struct.createPList(head, tail);
-        }
-        return tail;
-    }
-
     // ---------------------------------------------------------------------------
     // Template methods defined in abstract class Term
     // ---------------------------------------------------------------------------
@@ -399,75 +330,84 @@ public final class Struct extends Term {
         this.signature = (this.name + '/' + this.arity).intern();
     }
 
+    /**
+     * Will set the "primitiveInfo" field to directly relate a token to an existing primitive
+     * defined in theContent
+     * @param theContent Primitives in a Library
+     */
+    public void assignPrimitiveInfo(LibraryContent theContent) {
+        // Find by exact arity match
+        this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
+        if (this.primitiveInfo == null) {
+            // Alternate find by wildcard (varargs signature)
+            this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
+        }
+        for (int i = 0; i < this.arity; i++) {
+            Object child = this.args[i];
+            if (child instanceof String) {
+                if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
+                    // Convert to Struct so that we can assign a primitive
+                    child = new Struct((String)child);
+                    child = TermApi.normalize(child, theContent);
+                    this.args[i] = child; // Not 100% sure it's good to mutate
+                }
+            }
+            if (child instanceof Struct) {
+                ((Struct) child).assignPrimitiveInfo(theContent);
+            }
+        }
+    }
+
+
     // ---------------------------------------------------------------------------
     // Methods for Prolog list structures (named "PList" hereafter)
     // ---------------------------------------------------------------------------
 
-    /**
-     * @return A cloned array of all arguments (cloned to avoid any possibility to mutate)
-     */
-    public Object[] getArgs() {
-        if (this.args == null) {
-            return EMPTY_ARGS_ARRAY;
-        }
-        return this.args;
-    }
 
     /**
-     * Gets the i-th element of this structure
-     * <p/>
-     * No bound check is done
-     */
-    public Object getArg(int theIndex) {
-        return this.args[theIndex];
-    }
-
-    /**
-     * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
+     * Create a Prolog list from head and tail.
      *
-     * @return The predicate's name + '/' + arity
+     * @param head
+     * @param tail
+     * @return A prolog list provided head and tail
      */
-    public String getPredicateSignature() {
-        return this.signature;
-    }
-
-    public String getVarargsPredicateSignature() {
-        return this.name + VARARG_PREDICATE_TRAILER;
-    }
-
-    // ---------------------------------------------------------------------------
-    // Helpers for binary predicates: defined LHS (left-hand side) and RHS (right-hand side)
-    // ---------------------------------------------------------------------------
-
-
-    /**
-     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0.
-     * It is assumed that the term MUST have
-     * an arity of exactly 2, because when there's a LHS, there's also a RHS!
-     */
-    public Object getLHS() {
-        if (this.arity != 2) {
-            throw new PrologNonSpecificError("Can't get the left-hand-side argument of \"" + this +
-                "\" (predicate arity is: " + getPredicateSignature() + ")");
-        }
-        return this.args[0];
+    public static Struct createPList(Object head, Object tail) {
+        final Struct result = new Struct(FUNCTOR_LIST_NODE, 2);
+        result.args[0] = head;
+        result.args[1] = tail;
+        return result;
     }
 
     /**
-     * @return Right-hand-side term, this is, {@link #getArg(int)} at index 1.
-     * It is assumed that the term MUST have an arity of 2.
+     * Create a Prolog list from a Java collection.
+     *
+     * @param theJavaCollection We use a collection not an Iterable because we need to know its size at first.
+     * @return A Prolog List structure from a Java {@link java.util.Collection}.
      */
-    public Object getRHS() {
-        if (this.arity != 2) {
-            throw new PrologNonSpecificError("Can't get the right-hand-side argument of \"" + this +
-                "\" (predicate arity is: " + getPredicateSignature() + ")");
+    public static Struct createPList(Collection<?> theJavaCollection) {
+        final int size = theJavaCollection.size();
+        // Unroll elements into an array (we need this since we don't have an index-addressable collection)
+        final Object[] array = new Object[size];
+        int index = 0;
+        for (final Object element : theJavaCollection) {
+            array[index++] = element;
         }
-        return this.args[1];
+        return createPList(array);
     }
 
-    // ---------------------------------------------------------------------------
-    // Helpers for Prolog lists
-    // ---------------------------------------------------------------------------
+    /**
+     * @param array
+     * @return A Prolog List structure from a Java array.
+     */
+    public static Struct createPList(final Object[] array) {
+        // Assemble the prolog list (head|tail) nodes from the last to the first element
+        Struct tail = Struct.EMPTY_LIST;
+        for (int i = array.length - 1; i >= 0; i--) {
+            final Object head = array[i];
+            tail = Struct.createPList(head, tail);
+        }
+        return tail;
+    }
 
 
     /**
@@ -495,10 +435,6 @@ public final class Struct extends Term {
             throw new PrologNonSpecificError("The structure \"" + thePList + "\" is not a Prolog list.");
         }
     }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
 
     /**
      * Gets the head of this structure, which is assumed to be a list.
@@ -625,38 +561,70 @@ public final class Struct extends Term {
         return result;
     }
 
-    /**
-     * Appends an element to this structure (supposed to be a list)
-     * @throws PrologNonSpecificError if this is not a prolog list.
-
-    public void append(Term t) {
-        assertPList(this);
-        if (isEmptyList()) {
-            setNameAndArity(FUNCTOR_LIST_NODE, 2);
-            this.args = new Object[this.arity];
-            this.args[0] = t;
-            this.args[1] = Struct.EMPTY_LIST;
-        } else if (TermApi.isList(this.args[1])) {
-            ((Struct) this.args[1]).append(t);
-        } else {
-            this.args[1] = t;
-        }
-    }
-    */
+    // --------------------------------------------------------------------------
+    // Accessors
+    // --------------------------------------------------------------------------
 
     /**
-     * Inserts (at the head) an element to this structure (supposed to be a list)
-     * @throws PrologNonSpecificError if this is not a prolog list.
-
-    void insert(Term t) {
-        assertPList(this);
-        final Struct co = Struct.EMPTY_LIST;
-        co.args[0] = getLHS();
-        co.args[1] = getRHS();
-        this.args[0] = t;
-        this.args[1] = co;
-    }
+     * @return A cloned array of all arguments (cloned to avoid any possibility to mutate)
      */
+    public Object[] getArgs() {
+        if (this.args == null) {
+            return EMPTY_ARGS_ARRAY;
+        }
+        return this.args;
+    }
+
+    /**
+     * Gets the i-th element of this structure
+     * <p/>
+     * No bound check is done
+     */
+    public Object getArg(int theIndex) {
+        return this.args[theIndex];
+    }
+
+    /**
+     * A unique identifier that determines the family of the predicate represented by this {@link Struct}.
+     *
+     * @return The predicate's name + '/' + arity
+     */
+    public String getPredicateSignature() {
+        return this.signature;
+    }
+
+    public String getVarargsPredicateSignature() {
+        return this.name + VARARG_PREDICATE_TRAILER;
+    }
+
+    // ---------------------------------------------------------------------------
+    // Helpers for binary predicates: defined LHS (left-hand side) and RHS (right-hand side)
+    // ---------------------------------------------------------------------------
+
+    /**
+     * @return Left-hand-side term, this is, {@link #getArg(int)} at index 0.
+     * It is assumed that the term MUST have
+     * an arity of exactly 2, because when there's a LHS, there's also a RHS!
+     */
+    public Object getLHS() {
+        if (this.arity != 2) {
+            throw new PrologNonSpecificError("Can't get the left-hand-side argument of \"" + this +
+                "\" (predicate arity is: " + getPredicateSignature() + ")");
+        }
+        return this.args[0];
+    }
+
+    /**
+     * @return Right-hand-side term, this is, {@link #getArg(int)} at index 1.
+     * It is assumed that the term MUST have an arity of 2.
+     */
+    public Object getRHS() {
+        if (this.arity != 2) {
+            throw new PrologNonSpecificError("Can't get the right-hand-side argument of \"" + this +
+                "\" (predicate arity is: " + getPredicateSignature() + ")");
+        }
+        return this.args[1];
+    }
 
     // ---------------------------------------------------------------------------
     // TermVisitor
