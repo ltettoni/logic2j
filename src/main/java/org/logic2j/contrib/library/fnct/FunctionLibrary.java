@@ -76,7 +76,7 @@ public class FunctionLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String methodName, Struct goal, UnifyContext currentVars, SolutionListener listener) {
+    public Object dispatch(String methodName, Struct goal, SolutionListener listener, UnifyContext currentVars) {
         final Object result;
         final Object[] args = goal.getArgs();
         final int arity = goal.getArity();
@@ -313,7 +313,7 @@ public class FunctionLibrary extends LibraryBase {
             int highestVarIndex = highestVarIndex(transformationGoal);
             transformationGoal.index = highestVarIndex + 1;
             // Now solve the target sub goal
-            getProlog().getSolver().solveGoal(transformationGoal, runningMonad, listenerForSubGoal);
+            getProlog().getSolver().solveGoal(transformationGoal, listenerForSubGoal, runningMonad);
 
             final Object result = transformationResult[0];
             if (result == null) {
@@ -379,7 +379,7 @@ public class FunctionLibrary extends LibraryBase {
             int highestVarIndex = highestVarIndex(transformationGoal);
             transformationGoal.index = highestVarIndex + 1;
             // Now solve the target sub goal
-            getProlog().getSolver().solveGoal(transformationGoal, runningMonad, listenerForSubGoal);
+            getProlog().getSolver().solveGoal(transformationGoal, listenerForSubGoal, runningMonad);
             if (listenerForSubGoal.hadNoSolution()) {
                 // No transformation found - relay untransformed value
                 final UnifyContext newVars = runningMonad.unify(effectiveInput, effectiveOutput);

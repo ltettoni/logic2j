@@ -47,7 +47,7 @@ public class PojoLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final Object[] args = theGoalStruct.getArgs();

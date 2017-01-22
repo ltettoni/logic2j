@@ -42,7 +42,7 @@ public class IOLibrary extends LibraryBase {
     }
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
         final Object result;
         final Object[] args = theGoalStruct.getArgs();
         // Argument methodName is {@link String#intern()}alized so OK to check by reference

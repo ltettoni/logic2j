@@ -66,7 +66,7 @@ public class Solver {
             initialContext.topVarIndex += ((Struct) goal).getIndex();
         }
         try {
-            return solveGoal(goal, initialContext, theSolutionListener);
+            return solveGoal(goal, theSolutionListener, initialContext);
         } catch (PrologException e) {
             // "Functional" exception thrown during solving will just be forwarded
             throw e;
@@ -77,10 +77,15 @@ public class Solver {
 
     }
 
+    public UnifyContext initialContext() {
+        final UnifyContext initialContext = new UnifyStateByLookup().emptyContext();
+        return initialContext;
+    }
+
     /**
      * Just calls the recursive internal method.
      */
-    public Integer solveGoal(Object goal, UnifyContext currentVars, final SolutionListener theSolutionListener) {
+    public Integer solveGoal(Object goal, final SolutionListener theSolutionListener, UnifyContext currentVars) {
         // Check if we will have to deal with DataFacts in this session of solving.
         // This slightly improves performance - we can bypass calling the method that deals with that
         if (goal instanceof Struct) {
@@ -88,25 +93,21 @@ public class Solver {
                 throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
             }
         }
-        final Integer cutIntercepted = solveGoalRecursive(goal, currentVars, theSolutionListener, 10);
+        final Integer cutIntercepted = solveGoalRecursive(goal, theSolutionListener, currentVars, 10);
         return cutIntercepted;
-    }
-
-    public UnifyContext initialContext() {
-        final UnifyContext initialContext = new UnifyStateByLookup().emptyContext();
-        return initialContext;
     }
 
     /**
      * That's the complex method - the heart of the Solver.
      *
      * @param goalTerm
-     * @param currentVars
      * @param theSolutionListener
+     * @param currentVars
      * @param cutLevel
      * @return
      */
-    Integer solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
+    private Integer solveGoalRecursive(final Object goalTerm, final SolutionListener theSolutionListener, final UnifyContext currentVars, final int
+        cutLevel) {
         final long inferenceCounter = ProfilingInfo.nbInferences;
         if (isDebug) {
             logger.debug("-->> Entering solveRecursive#{}, reifiedGoal = {}", inferenceCounter, currentVars.reify(goalTerm));
@@ -179,7 +180,7 @@ public class Solver {
                         if (isDebug) {
                             logger.debug(this + ": onSolution() called; will now solve rhs={}", rhs);
                         }
-                        final Integer continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, andingListeners[nextIndex], cutLevel);
+                        final Integer continuationFromSubGoal = solveGoalRecursive(rhs, andingListeners[nextIndex], currentVars, cutLevel);
                         return continuationFromSubGoal;
                     }
 
@@ -201,7 +202,7 @@ public class Solver {
                             }
 
                         };
-                        final Integer continuationFromSubGoal = solveGoalRecursive(rhs, currentVars, subListener, cutLevel);
+                        final Integer continuationFromSubGoal = solveGoalRecursive(rhs, subListener, currentVars, cutLevel);
                         return continuationFromSubGoal;
                     }
 
@@ -215,7 +216,7 @@ public class Solver {
             if (isDebug) {
                 logger.debug("Handling AND, arity={}, will now solve lhs={}", arity, currentVars.reify(lhs));
             }
-            result = solveGoalRecursive(lhs, currentVars, andingListeners[0], cutLevel);
+            result = solveGoalRecursive(lhs, andingListeners[0], currentVars, cutLevel);
         } else if (FAST_OR && Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
             /*
             * This is the Java implementation of N-arity OR
@@ -227,7 +228,7 @@ public class Solver {
                 if (isDebug) {
                     logger.debug("Handling OR, element={} of {}", i, goalStruct);
                 }
-                result = solveGoalRecursive(goalStruct.getArg(i), currentVars, theSolutionListener, cutLevel);
+                result = solveGoalRecursive(goalStruct.getArg(i), theSolutionListener, currentVars, cutLevel);
                 if (result != Continuation.CONTINUE) {
                     break;
                 }
@@ -239,7 +240,7 @@ public class Solver {
             }
             final Object callTerm = goalStruct.getArg(0);  // Often a Var
             final Object realCallTerm = currentVars.reify(callTerm); // The real value of the Var
-            result = solveGoalRecursive(realCallTerm, currentVars, theSolutionListener, cutLevel);
+            result = solveGoalRecursive(realCallTerm, theSolutionListener, currentVars, cutLevel);
 
         } else if (Struct.FUNCTOR_CUT == functor) {
             // This is a "native" implementation of CUT, which works as good as using the primitive in CoreLibrary
@@ -260,7 +261,7 @@ public class Solver {
             // Primitive implemented in Java
             // ---------------------------------------------------------------------------
 
-            final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars, theSolutionListener);
+            final Object resultOfPrimitive = prim.invoke(goalStruct, theSolutionListener, currentVars);
             // Extract necessary objects from our current state
 
             switch (prim.getType()) {
@@ -286,10 +287,10 @@ public class Solver {
             // Regular prolog inference: goal :- subGoal
             //---------------------------------------------------------------------------
 
-            result = solveAgainstClauseProviders(goalTerm, currentVars, theSolutionListener, cutLevel + 1);
+            result = solveAgainstClauseProviders(goalTerm, theSolutionListener, currentVars, cutLevel + 1);
 
             if (this.hasDataFactProviders && result == Continuation.CONTINUE) {
-                solveAgainstDataProviders(goalTerm, currentVars, theSolutionListener, cutLevel + 1);
+                solveAgainstDataProviders(goalTerm, theSolutionListener, currentVars, cutLevel + 1);
             }
         }
         if (isDebug) {
@@ -299,7 +300,7 @@ public class Solver {
     }
 
 
-    private Integer solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
+    private Integer solveAgainstClauseProviders(final Object goalTerm, final SolutionListener theSolutionListener, UnifyContext currentVars, final int cutLevel) {
         // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
         final long inferenceCounter = ProfilingInfo.nbInferences;
         if (isDebug) {
@@ -351,7 +352,7 @@ public class Solver {
                             logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, clauseBody);
                         }
                         // Solve the body in our current recursion context
-                        final Integer theoremResult = solveGoalRecursive(clauseBody, contextAfterHeadUnified, theSolutionListener, cutLevel);
+                        final Integer theoremResult = solveGoalRecursive(clauseBody, theSolutionListener, contextAfterHeadUnified, cutLevel);
                         if (isDebug) {
                             logger.debug("  back to having solved theorem's body = {} with theoremResult={}", clauseBody, theoremResult);
                         }
@@ -407,12 +408,12 @@ public class Solver {
     /**
      * Match row-data provided as DataFacts.
      * @param goalTerm
-     * @param currentVars
      * @param theSolutionListener
+     * @param currentVars
      * @param cutLevel
      * @return
      */
-    private Integer solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final SolutionListener theSolutionListener, final int cutLevel) {
+    private Integer solveAgainstDataProviders(final Object goalTerm, final SolutionListener theSolutionListener, final UnifyContext currentVars, final int cutLevel) {
         Integer result = Continuation.CONTINUE;
         // Now fetch data
         final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();

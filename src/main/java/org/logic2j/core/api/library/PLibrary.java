@@ -37,10 +37,10 @@ public interface PLibrary {
      *
      * @param theMethodName
      * @param theGoalStruct
-     * @param currentVars
      * @param theListener
+     * @param currentVars
      * @return
      */
-    Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener);
+    Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars);
 
 }

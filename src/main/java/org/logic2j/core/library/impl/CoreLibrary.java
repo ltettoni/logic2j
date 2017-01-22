@@ -173,7 +173,7 @@ public class CoreLibrary extends LibraryBase {
 
 
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
         final Object result;
         // Argument methodName is {@link String#intern()}alized so OK to check by reference
         final Object[] goalStructArgs = theGoalStruct.getArgs();
@@ -333,23 +333,14 @@ public class CoreLibrary extends LibraryBase {
         return Continuation.CONTINUE;
     }
 
-    @Predicate
-    public Integer atom_length(SolutionListener theListener, UnifyContext currentVars, Object theAtom, Object theLength) {
-        final Object value = currentVars.reify(theAtom);
-        ensureBindingIsNotAFreeVar(value, "atom_length/2", 0);
-        final String atomText = value.toString();
-        final Long atomLength = (long) atomText.length();
-        return unify(theListener, currentVars, atomLength, theLength);
-    }
-
-    @Predicate(synonyms = "\\+")
     // Surprisingly enough the operator \+ means "not provable".
+    @Predicate(synonyms = "\\+")
     public Integer not(final SolutionListener theListener, UnifyContext currentVars, Object theGoal) {
 
         final NotListener callListener = new NotListener();
 
         Solver solver = getProlog().getSolver();
-        solver.solveGoal(theGoal, currentVars, callListener);
+        solver.solveGoal(theGoal, callListener, currentVars);
         final Integer continuation;
         if (callListener.hasSolution()) {
             continuation = Continuation.CONTINUE;
@@ -358,6 +349,15 @@ public class CoreLibrary extends LibraryBase {
             continuation = theListener.onSolution(currentVars);
         }
         return continuation;
+    }
+
+    @Predicate
+    public Integer atom_length(SolutionListener theListener, UnifyContext currentVars, Object theAtom, Object theLength) {
+        final Object value = currentVars.reify(theAtom);
+        ensureBindingIsNotAFreeVar(value, "atom_length/2", 0);
+        final String atomText = value.toString();
+        final Long atomLength = (long) atomText.length();
+        return unify(theListener, currentVars, atomLength, theLength);
     }
 
     /**
@@ -382,7 +382,7 @@ public class CoreLibrary extends LibraryBase {
         };
         // Now solve the target sub goal
         final Object effectiveGoal = currentVars.reify(theGoal);
-        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
 
         // And unify with result
         final Long counted = listenerForSubGoal.getCounter();
@@ -405,7 +405,7 @@ public class CoreLibrary extends LibraryBase {
         };
         // Now solve the target sub goal
         final Object effectiveGoal = currentVars.reify(theGoal);
-        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
     }
 
 
@@ -414,7 +414,7 @@ public class CoreLibrary extends LibraryBase {
         final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener();
         // Now solve the target sub goal
         final Object effectiveGoal = currentVars.reify(theGoal);
-        getProlog().getSolver().solveGoal(effectiveGoal, currentVars, listenerForSubGoal);
+        getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
 
         // And unify with result
         final Integer counted = (int)listenerForSubGoal.getCounter();

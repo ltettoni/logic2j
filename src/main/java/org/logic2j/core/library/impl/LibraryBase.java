@@ -19,7 +19,6 @@ package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.model.term.Struct;
@@ -43,14 +42,13 @@ public class LibraryBase implements PLibrary {
      * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
      * <p/>
      * TODO Document example of typical overriding of dispatch()
-     *
-     * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
+     *  @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
      * @param theGoalStruct Regular argument for invoking a primitive
-     * @param currentVars           Regular argument for invoking a primitive
      * @param theListener   Regular argument for invoking a primitive
+     * @param currentVars           Regular argument for invoking a primitive
      */
     @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars, SolutionListener theListener) {
+    public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
         return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
 
