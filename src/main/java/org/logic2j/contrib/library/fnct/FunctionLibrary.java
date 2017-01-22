@@ -380,7 +380,7 @@ public class FunctionLibrary extends LibraryBase {
             transformationGoal.index = highestVarIndex + 1;
             // Now solve the target sub goal
             getProlog().getSolver().solveGoal(transformationGoal, listenerForSubGoal, runningMonad);
-            if (listenerForSubGoal.hadNoSolution()) {
+            if (! listenerForSubGoal.exists()) {
                 // No transformation found - relay untransformed value
                 final UnifyContext newVars = runningMonad.unify(effectiveInput, effectiveOutput);
                 if (newVars != currentVars) {

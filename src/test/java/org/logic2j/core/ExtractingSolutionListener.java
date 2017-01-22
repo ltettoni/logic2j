@@ -1,6 +1,5 @@
 package org.logic2j.core;
 
-import org.logic2j.core.api.solver.Continuation;
 import org.logic2j.core.api.model.term.TermApi;
 import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
@@ -53,7 +52,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     }
 
     public void report() {
-        switch ((int) getCounter()) {
+        switch ((int) count()) {
             case 0:
                 logger.info("Solving \"{}\" yields no solution", goal);
                 break;
@@ -61,7 +60,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
                 logger.info("Solving \"{}\" yields a single solution", goal);
                 break;
             default:
-                logger.info("Solving \"{}\" yields {} solution(s)", goal, getCounter());
+                logger.info("Solving \"{}\" yields {} solution(s)", goal, count());
                 break;
         }
     }

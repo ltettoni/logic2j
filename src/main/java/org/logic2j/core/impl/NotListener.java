@@ -17,7 +17,6 @@ package org.logic2j.core.impl;/*
  */
 
 import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.SolutionListener;
 import org.logic2j.core.api.solver.listener.SolutionListenerBase;
 import org.logic2j.core.api.unify.UnifyContext;
 
@@ -25,16 +24,18 @@ import org.logic2j.core.api.unify.UnifyContext;
  * A SolutionListener that implements the logical not.
  */
 public class NotListener extends SolutionListenerBase {
-    boolean found = false;
+    private boolean atLeastOneSolution = false;
 
     @Override
     public Integer onSolution(UnifyContext currentVars) {
         // Do NOT relay the solution further, just remember there was one
-        this.found = true;
-        return Continuation.USER_ABORT; // No need to seek for further solutions
+        this.atLeastOneSolution = true;
+        // No need to seek for further solutions. Watch out this means the goal will stop evaluating on first success.
+        // Fixme Should rather say the enumeration was cancelled on purpose (optimized like in AND statements)
+        return Continuation.USER_ABORT;
     }
 
-    public boolean hasSolution() {
-        return found;
+    public boolean exists() {
+        return atLeastOneSolution;
     }
 }

@@ -49,16 +49,12 @@ public class CountingSolutionListener extends SolutionListenerBase {
     // Accessors
     // ---------------------------------------------------------------------------
 
-    public long getCounter() {
+    public long count() {
         return this.counter;
     }
 
-    public boolean hadSolution() {
+    public boolean exists() {
         return this.counter > 0;
-    }
-
-    public boolean hadNoSolution() {
-        return this.counter == 0;
     }
 
 }

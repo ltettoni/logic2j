@@ -23,7 +23,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveFail() {
         final Object goal = unmarshall("fail");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(0, nbSolutions);
     }
 
@@ -31,21 +31,21 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrue() {
         final Object goal = unmarshall("true");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(1, nbSolutions);
     }
 
     @Test
     public void primitiveCut() {
         final Object goal = unmarshall("!");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(1, nbSolutions);
     }
 
     @Test
     public void atomUndefined() {
         final Object goal = unmarshall("undefined_atom");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(0, nbSolutions);
     }
 
@@ -53,7 +53,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrueAndTrue() {
         final Object goal = unmarshall("true,true");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(1, nbSolutions);
     }
 
@@ -61,7 +61,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrueOrTrue() {
         final Object goal = unmarshall("true;true");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(2, nbSolutions);
     }
 
@@ -177,7 +177,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyLiteralsNoSolution() {
         final Object goal = unmarshall("a=b");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(0, nbSolutions);
     }
 
@@ -185,7 +185,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyLiteralsOneSolution() {
         final Object goal = unmarshall("c=c");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(1, nbSolutions);
     }
 
@@ -193,7 +193,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyAnonymousToAnonymous() {
         final Object goal = unmarshall("_=_");
-        final long nbSolutions = solveWithExtractingListener(goal).getCounter();
+        final long nbSolutions = solveWithExtractingListener(goal).count();
         assertEquals(1, nbSolutions);
     }
 
@@ -202,7 +202,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyVarToLiteral() {
         final Object goal = unmarshall("Q=d");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.getCounter());
+        assertEquals(1, listener.count());
         assertEquals("[Q]", listener.getVariables().toString());
         assertEquals("[d = d]", marshall(listener.getValues(".")));
         assertEquals("[d]", marshall(listener.getValues("Q")));
@@ -212,7 +212,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyVarToAnonymous() {
         final Object goal = unmarshall("Q=_");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.getCounter());
+        assertEquals(1, listener.count());
         assertEquals("[Q]", listener.getVariables().toString());
         assertEquals("[_ = _]", marshall(listener.getValues(".")));
         assertEquals("[_]", marshall(listener.getValues("Q")));
@@ -223,7 +223,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyVarToVar() {
         final Object goal = unmarshall("Q=Z");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.getCounter());
+        assertEquals(1, listener.count());
         assertEquals("[., Q, Z]", listener.getVarNames().toString());
         assertEquals("[Q = Q]", marshall(listener.getValues(".")));
         assertEquals("[Q]", marshall(listener.getValues("Q")));

@@ -80,7 +80,7 @@ public class REPL {
                 public Integer onSolution(UnifyContext currentVars) {
                     super.onSolution(currentVars);
                     final Object solution = currentVars.reify(goal);
-                    System.out.println("Solution " + getCounter() + ": " + termMarshaller.marshall(solution));
+                    System.out.println("Solution " + count() + ": " + termMarshaller.marshall(solution));
                     for (Var v : vars) {
                         final Object varValue = currentVars.reify(v);
                         System.out.println(" " + v + "=" + termMarshaller.marshall(varValue));

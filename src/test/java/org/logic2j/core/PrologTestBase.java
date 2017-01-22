@@ -99,7 +99,7 @@ public abstract class PrologTestBase {
             Object term = unmarshall(goalText);
             final CountingSolutionListener listener = new CountingSolutionListener();
             getProlog().getSolver().solveGoal(term, listener);
-            assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.getCounter());
+            assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.count());
         }
     }
 

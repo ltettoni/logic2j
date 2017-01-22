@@ -222,7 +222,7 @@ public class DefaultTheoryManager implements TheoryManager {
         // Execute right now
         final CountingSolutionListener countingListener = new CountingSolutionListener();
         this.prolog.getSolver().solveGoal(directiveGoal, countingListener);
-        logger.debug("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.getCounter());
+        logger.debug("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.count());
     }
 
     private boolean isDirective(Struct clauseStruct) {

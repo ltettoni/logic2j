@@ -244,7 +244,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         @Override
         public Integer onSolution(UnifyContext currentVars) {
             super.onSolution(currentVars);
-            final boolean requestContinue = getCounter() < 5;
+            final boolean requestContinue = count() < 5;
             return requestContinue ? Continuation.CONTINUE : Continuation.USER_ABORT;
         }
     }
@@ -254,15 +254,15 @@ public class ExecutionPruningTest extends PrologTestBase {
         final Object term = unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingSolutionListener listenerAll = new CountingSolutionListener();
         this.prolog.getSolver().solveGoal(term, listenerAll);
-        assertEquals(10, listenerAll.getCounter());
+        assertEquals(10, listenerAll.count());
         // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
         this.prolog.getSolver().solveGoal(term, maxOneSolution);
-        assertEquals(1, maxOneSolution.getCounter());
+        assertEquals(1, maxOneSolution.count());
         // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
         this.prolog.getSolver().solveGoal(term, maxFiveSolutions);
-        assertEquals(5, maxFiveSolutions.getCounter());
+        assertEquals(5, maxFiveSolutions.count());
     }
 
 

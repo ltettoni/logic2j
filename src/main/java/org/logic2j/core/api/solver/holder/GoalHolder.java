@@ -53,7 +53,7 @@ public class GoalHolder {
     public long count() {
         final CountingSolutionListener listener = new CountingSolutionListener();
         prolog.getSolver().solveGoal(goal, listener);
-        return listener.getCounter();
+        return listener.count();
     }
 
     /**

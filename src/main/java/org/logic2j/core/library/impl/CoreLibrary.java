@@ -342,7 +342,7 @@ public class CoreLibrary extends LibraryBase {
         Solver solver = getProlog().getSolver();
         solver.solveGoal(theGoal, callListener, currentVars);
         final Integer continuation;
-        if (callListener.hasSolution()) {
+        if (callListener.exists()) {
             continuation = Continuation.CONTINUE;
         } else {
             // Not found - notify a solution (that's the purpose of not/1 !)
@@ -385,7 +385,7 @@ public class CoreLibrary extends LibraryBase {
         getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
 
         // And unify with result
-        final Long counted = listenerForSubGoal.getCounter();
+        final Long counted = listenerForSubGoal.count();
         // Note: won't ever be greater than one due to our listener that stops generation
         if (counted > 0) {
             return notifySolution(theListener, currentVars);
@@ -417,7 +417,7 @@ public class CoreLibrary extends LibraryBase {
         getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
 
         // And unify with result
-        final Integer counted = (int)listenerForSubGoal.getCounter();
+        final Integer counted = (int)listenerForSubGoal.count();
         return unify(theListener, currentVars, theNumber, counted);
     }
 
