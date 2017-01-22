@@ -22,12 +22,15 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.logic2j.core.api.model.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.util.TypeUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,20 +185,21 @@ public class ExcelReader {
             final HSSFCell cell = row.getCell(c);
             Object value = null;
             if (cell != null) {
-                switch (cell.getCellType()) {
-                case Cell.CELL_TYPE_FORMULA:
-                    value = cell.getCellFormula();
-                    break;
-                case Cell.CELL_TYPE_NUMERIC:
-                    value = cell.getNumericCellValue();
-                    break;
-                case Cell.CELL_TYPE_STRING:
-                    value = cell.getStringCellValue();
-                    break;
-                case Cell.CELL_TYPE_BLANK:
-                    break;
-                default:
-                    throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " not handled, value is " + value);
+                switch (cell.getCellTypeEnum()) {
+                    case FORMULA:
+                        value = cell.getCellFormula();
+                        break;
+                    case NUMERIC:
+                        value = cell.getNumericCellValue();
+                        break;
+                    case STRING:
+                        value = cell.getStringCellValue();
+                        break;
+                    case BLANK:
+                        break;
+                    default:
+                        throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " "
+                            + "not handled, value is " + value);
                 }
             }
             value = mapCellValue(value);
