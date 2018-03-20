@@ -38,6 +38,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Relate Java POJOs to Prolog variables: used to instantiate Java objects, access properties (setters, getters),
+ * and convert Java collections to Prolog lists.
+ */
 public class PojoLibrary extends LibraryBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PojoLibrary.class);
 
@@ -199,10 +203,10 @@ public class PojoLibrary extends LibraryBase {
 
     /**
      * Get, set or check a variable.
-     * If theTarget is a free Var
+     * If theTarget is a free Var, then:
      * If the binding has a value, unify it to the free Var (this means, gets the value)
      * If the binding has no value, do nothing (but yields a successful solution)
-     * If theTarget is a bound Var
+     * If theTarget is a bound Var, then:
      * If the binding has no value, set the bound Var's value into the binding
      * If the binding has a value unifiable to theVar, succeed without other effect
      * If the binding has a value that cannot be unified, fails
@@ -249,9 +253,12 @@ public class PojoLibrary extends LibraryBase {
     }
 
     /**
+     * Instantiate Java object calling one of its constructors.
+     * For example: X is javaNew('java.lang.String', 'text')
+     *
      * @param theListener
      * @param currentVars
-     * @param args
+     * @param args First argument is the fully qualified class name, then remaining arguments are passed to constructor.
      * @return Java invocation of constructor
      */
     @Functor
@@ -304,7 +311,8 @@ public class PojoLibrary extends LibraryBase {
     }
 
     /**
-     * Unify Prolog list to Java list.
+     * Unify Prolog list to Java list, in two directions.
+     *
      * @param theListener
      * @param currentVars
      * @param prologList

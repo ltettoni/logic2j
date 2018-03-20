@@ -75,8 +75,8 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test
     public void javaNewWithConstructorAndArgs() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg')").var("X").single();
-        assertEquals("arg", x);
+        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").single();
+        assertEquals("text", x);
     }
 
 
