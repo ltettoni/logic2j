@@ -317,7 +317,7 @@ public class Solver {
     for (final ClauseProvider provider : providers) {
       final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, currentVars);
       if (matchingClauses == null) {
-        continue loopOnProviders;
+        continue;
       }
       // Within one provider, iterate on potentially-matching clauses
       for (final Clause clause : matchingClauses) {
