@@ -25,7 +25,8 @@ import org.logic2j.core.api.unify.UnifyContext;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test test requires expanding the provided test Derby database, see
@@ -38,12 +39,12 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     @Before
     public void initRdbClauseProvider() {
         this.provider = new RDBClauseProvider(this.prolog, zipcodesDataSource());
-        assertNotNull(this.provider);
+        assertThat(this.provider).isNotNull();
     }
 
     @Test
     public void getConnection() throws SQLException {
-        assertNotNull(zipcodesConnection());
+        assertThat(zipcodesConnection()).isNotNull();
     }
 
     @Test
@@ -56,7 +57,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
         for (counter = 0; iterator.hasNext(); iterator.next()) {
             counter++;
         }
-        org.junit.Assert.assertEquals(79991, counter);
+        assertThat(counter).isEqualTo(79991);
     }
 
     @Test

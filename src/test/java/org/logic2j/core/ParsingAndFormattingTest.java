@@ -20,7 +20,8 @@ import org.junit.Test;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test parsing and formatting.
@@ -38,8 +39,8 @@ public class ParsingAndFormattingTest extends PrologTestBase {
 
     @Test
     public void parsing() {
-        assertEquals("p(X, Y) :- a ; b , c , d", marshall(unmarshall("p(X,Y) :- a;b,c,d")));
-        assertEquals("[1, 2, 3]", marshall(unmarshall("[1,2,3]")));
+        assertThat(marshall(unmarshall("p(X,Y) :- a;b,c,d"))).isEqualTo("p(X, Y) :- a ; b , c , d");
+        assertThat(marshall(unmarshall("[1,2,3]"))).isEqualTo("[1, 2, 3]");
     }
 
     @Test
@@ -47,7 +48,7 @@ public class ParsingAndFormattingTest extends PrologTestBase {
         this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
         final Object t = unmarshall("a oo b oo c oo d");
         logger.info("Result: {}", t);
-        assertEquals("oo(a, b, c, d)", marshall(t));
+        assertThat(marshall(t)).isEqualTo("oo(a, b, c, d)");
     }
 
 
@@ -56,11 +57,11 @@ public class ParsingAndFormattingTest extends PrologTestBase {
         Object t;
         //
         t = unmarshall("'An atom'");
-        assertEquals(String.class, t.getClass());
+        assertThat(t.getClass()).isEqualTo(String.class);
         //
         t = unmarshall("t('A', b, 'C')");
         logger.info("Formatted: {}", t);
-        assertEquals("t('A', b, 'C')", marshall(t));
+        assertThat(marshall(t)).isEqualTo("t('A', b, 'C')");
     }
 
 }

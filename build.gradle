@@ -34,11 +34,11 @@ repositories {
 
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.22', 'commons-beanutils:commons-beanutils:1.9.3', 'org.apache.poi:poi:3.15'
+    compile 'org.slf4j:slf4j-api:1.7.25', 'commons-beanutils:commons-beanutils:1.9.3', 'org.apache.poi:poi:3.17'
     // Need very specific Derby version since the test resource host
     // a zipped DB version in binary format. Require 10.8.1.2.
-    testCompile 'junit:junit:4.12', 'org.hamcrest:hamcrest-library:1.3' , 'org.apache.derby:derby:10.13.1.1'
-    runtime 'ch.qos.logback:logback-classic:1.1.8'
+    testCompile 'junit:junit:4.12', 'org.assertj:assertj-core:3.9.1', 'org.apache.derby:derby:10.13.1.1'
+    runtime 'ch.qos.logback:logback-classic:1.2.3'
 }
 
 

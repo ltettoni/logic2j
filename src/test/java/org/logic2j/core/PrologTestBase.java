@@ -39,7 +39,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Base class for tests, initiazlize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is
@@ -98,7 +99,7 @@ public abstract class PrologTestBase {
             Object term = unmarshall(goalText);
             final CountingSolutionListener listener = new CountingSolutionListener();
             getProlog().getSolver().solveGoal(term, listener);
-            assertEquals("Solving goalText \"" + goalText + '"', nbr, listener.count());
+            assertThat(listener.count()).as("Solving goalText \"" + goalText + '"').isEqualTo(nbr);
         }
     }
 
@@ -108,7 +109,7 @@ public abstract class PrologTestBase {
      * @param theGoals
      */
     protected void assertGoalMustFail(CharSequence... theGoals) {
-        assertTrue("theGoals must not be empty for assertGoalMustFail()", theGoals.length > 0);
+        assertThat(theGoals.length > 0).as("theGoals must not be empty for assertGoalMustFail()").isTrue();
         for (final CharSequence theGoal : theGoals) {
             try {
                 this.prolog.solve(theGoal).exists();
@@ -161,14 +162,14 @@ public abstract class PrologTestBase {
      * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
-        assertTrue("theGoals must not be empty for countOneSolution()", theGoals.length > 0);
+        assertThat(theGoals.length > 0).as("theGoals must not be empty for countOneSolution()").isTrue();
         GoalHolder result = null;
         for (final CharSequence goal : theGoals) {
             logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
             result = this.prolog.solve(goal);
             // Now execute the goal - only extracting the number of solutions
             final long number = result.count();
-            assertEquals("Checking number of solutions for goal \"" + goal + '"', theNumber, number);
+            assertThat(number).as("Checking number of solutions for goal \"" + goal + '"').isEqualTo(theNumber);
         }
         return result;
     }
@@ -212,7 +213,7 @@ public abstract class PrologTestBase {
      * @return A List of term, corresponding to the related elements passed as argument.
      */
     protected List<Object> termList(CharSequence... elements) {
-        assertTrue("elements must not be empty for termList()", elements.length > 0);
+        assertThat(elements.length > 0).as("elements must not be empty for termList()").isTrue();
         final List<Object> result = new ArrayList<Object>(elements.length);
         for (final CharSequence element : elements) {
             result.add(term(element));

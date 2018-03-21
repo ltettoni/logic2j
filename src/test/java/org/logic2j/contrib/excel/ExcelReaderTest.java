@@ -27,8 +27,8 @@ import org.logic2j.core.api.model.term.Var;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ExcelReaderTest extends ExcelClauseProviderTestBase {
 
@@ -38,9 +38,9 @@ public class ExcelReaderTest extends ExcelClauseProviderTestBase {
     public void read() throws IOException {
         final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
         final TabularData data = new ExcelReader(file, true, -1).read();
-        assertNotNull(data);
-        assertEquals(10, data.getNbRows());
-        assertEquals(11, data.getNbColumns());
+        assertThat(data).isNotNull();
+        assertThat(data.getNbRows()).isEqualTo(10);
+        assertThat(data.getNbColumns()).isEqualTo(11);
     }
 
     @Test
@@ -50,9 +50,9 @@ public class ExcelReaderTest extends ExcelClauseProviderTestBase {
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, TermAdapter.AssertionMode.EAVT);
         final Struct theGoal = new Struct("eavt", Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR);
         final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
-        assertNotNull(listMatchingClauses);
-        assertNotNull(listMatchingClauses.iterator());
-        assertNotNull(listMatchingClauses.iterator().next());
+        assertThat(listMatchingClauses).isNotNull();
+        assertThat(listMatchingClauses.iterator()).isNotNull();
+        assertThat(listMatchingClauses.iterator().next()).isNotNull();
     }
 
     @Test

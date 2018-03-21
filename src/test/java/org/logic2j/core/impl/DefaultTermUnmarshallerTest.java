@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.term.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test both the DefaultTermUnmarshaller and DefaultTermMarshaller
@@ -40,24 +40,24 @@ public class DefaultTermUnmarshallerTest {
 
     @Test
     public void numbers() throws Exception {
-        assertEquals(new Integer(2323), UNMARSHALLER.unmarshall("2323"));
-        assertEquals(new Double(3.14), UNMARSHALLER.unmarshall("3.14"));
-        assertEquals(new Long(2323), UNMARSHALLER.unmarshall("2323L"));
-        assertEquals(new Float(3.14), UNMARSHALLER.unmarshall("3.14f"));
+        assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(new Integer(2323));
+        assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(new Double(3.14));
+        assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(new Long(2323));
+        assertThat(UNMARSHALLER.unmarshall("3.14f")).isEqualTo(new Float(3.14));
     }
 
 
     @Test
     public void basicTerms() throws Exception {
-        assertSame("a", UNMARSHALLER.unmarshall("a"));
-        assertTrue(UNMARSHALLER.unmarshall("X") instanceof Var);
-        assertSame(Var.ANONYMOUS_VAR, UNMARSHALLER.unmarshall("_"));
+        assertThat(UNMARSHALLER.unmarshall("a")).isEqualTo("a");
+        assertThat(UNMARSHALLER.unmarshall("X") instanceof Var).isTrue();
+        assertThat(UNMARSHALLER.unmarshall("_")).isEqualTo(Var.ANONYMOUS_VAR);
     }
 
     @Test
     public void struct() throws Exception {
-        assertEquals("f(a)", MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(a)")));
-        assertEquals("f(1, 3.14, a, X)", MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(1, 3.14, a, X)")));
+        assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(a)"))).isEqualTo("f(a)");
+        assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(1, 3.14, a, X)"))).isEqualTo("f(1, 3.14, a, X)");
     }
 
     @Test(expected = InvalidTermException.class)
@@ -75,6 +75,6 @@ public class DefaultTermUnmarshallerTest {
     public void normalization() throws Exception {
         final Struct term = (Struct) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
         logger.info("raw: {}", term);
-        assertSame(term.getArg(0), term.getArg(3));
+        assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
     }
 }

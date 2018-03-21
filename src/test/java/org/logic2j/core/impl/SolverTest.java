@@ -22,8 +22,8 @@ import org.logic2j.core.ExtractingSolutionListener;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Lowest-level tests of the Solver: check core primitives: true, fail, cut, and, or. Check basic unification.
@@ -41,7 +41,7 @@ public class SolverTest extends PrologTestBase {
     public void primitiveFail() {
         final Object goal = unmarshall("fail");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(0, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(0);
     }
 
 
@@ -49,21 +49,21 @@ public class SolverTest extends PrologTestBase {
     public void primitiveTrue() {
         final Object goal = unmarshall("true");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(1, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(1);
     }
 
     @Test
     public void primitiveCut() {
         final Object goal = unmarshall("!");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(1, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(1);
     }
 
     @Test
     public void atomUndefined() {
         final Object goal = unmarshall("undefined_atom");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(0, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(0);
     }
 
 
@@ -71,7 +71,7 @@ public class SolverTest extends PrologTestBase {
     public void primitiveTrueAndTrue() {
         final Object goal = unmarshall("true,true");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(1, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(1);
     }
 
 
@@ -79,7 +79,7 @@ public class SolverTest extends PrologTestBase {
     public void primitiveTrueOrTrue() {
         final Object goal = unmarshall("true;true");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(2, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(2);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class SolverTest extends PrologTestBase {
         //
         GoalHolder solutions;
         solutions = this.prolog.solve("X=a; X=b; X=c");
-        assertEquals("[a, b, c]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[a, b, c]");
     }
 
 
@@ -160,8 +160,7 @@ public class SolverTest extends PrologTestBase {
         GoalHolder solutions;
         solutions = this.prolog.solve("X=1; Y=2");
         final String actual = solutions.vars().list().toString();
-        assertTrue("[{Y=Y, X=1}, {Y=2, X=X}]".equals(actual) ||
-        "[{X=1, Y=Y}, {X=X, Y=2}]".equals(actual));
+        assertThat("[{Y=Y, X=1}, {Y=2, X=X}]".equals(actual) || "[{X=1, Y=Y}, {X=X, Y=2}]".equals(actual)).isTrue();
     }
 
     @Test
@@ -169,7 +168,7 @@ public class SolverTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         GoalHolder solutions;
         solutions = this.prolog.solve("or3(X)");
-        assertEquals("[a, b, c]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[a, b, c]");
     }
 
     @Test
@@ -195,7 +194,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyLiteralsNoSolution() {
         final Object goal = unmarshall("a=b");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(0, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(0);
     }
 
 
@@ -203,7 +202,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyLiteralsOneSolution() {
         final Object goal = unmarshall("c=c");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(1, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(1);
     }
 
 
@@ -211,7 +210,7 @@ public class SolverTest extends PrologTestBase {
     public void unifyAnonymousToAnonymous() {
         final Object goal = unmarshall("_=_");
         final long nbSolutions = solveWithExtractingListener(goal).count();
-        assertEquals(1, nbSolutions);
+        assertThat(nbSolutions).isEqualTo(1);
     }
 
 
@@ -219,20 +218,20 @@ public class SolverTest extends PrologTestBase {
     public void unifyVarToLiteral() {
         final Object goal = unmarshall("Q=d");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.count());
-        assertEquals("[Q]", listener.getVariables().toString());
-        assertEquals("[d = d]", marshall(listener.getValues(".")));
-        assertEquals("[d]", marshall(listener.getValues("Q")));
+        assertThat(listener.count()).isEqualTo(1);
+        assertThat(listener.getVariables().toString()).isEqualTo("[Q]");
+        assertThat(marshall(listener.getValues("."))).isEqualTo("[d = d]");
+        assertThat(marshall(listener.getValues("Q"))).isEqualTo("[d]");
     }
 
     @Test
     public void unifyVarToAnonymous() {
         final Object goal = unmarshall("Q=_");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.count());
-        assertEquals("[Q]", listener.getVariables().toString());
-        assertEquals("[_ = _]", marshall(listener.getValues(".")));
-        assertEquals("[_]", marshall(listener.getValues("Q")));
+        assertThat(listener.count()).isEqualTo(1);
+        assertThat(listener.getVariables().toString()).isEqualTo("[Q]");
+        assertThat(marshall(listener.getValues("."))).isEqualTo("[_ = _]");
+        assertThat(marshall(listener.getValues("Q"))).isEqualTo("[_]");
     }
 
 
@@ -240,10 +239,10 @@ public class SolverTest extends PrologTestBase {
     public void unifyVarToVar() {
         final Object goal = unmarshall("Q=Z");
         final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
-        assertEquals(1, listener.count());
-        assertEquals("[., Q, Z]", listener.getVarNames().toString());
-        assertEquals("[Q = Q]", marshall(listener.getValues(".")));
-        assertEquals("[Q]", marshall(listener.getValues("Q")));
-        assertEquals("[Q]", marshall(listener.getValues("Z")));
+        assertThat(listener.count()).isEqualTo(1);
+        assertThat(listener.getVarNames().toString()).isEqualTo("[., Q, Z]");
+        assertThat(marshall(listener.getValues("."))).isEqualTo("[Q = Q]");
+        assertThat(marshall(listener.getValues("Q"))).isEqualTo("[Q]");
+        assertThat(marshall(listener.getValues("Z"))).isEqualTo("[Q]");
     }
 }

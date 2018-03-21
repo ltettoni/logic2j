@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class TabularDataClauseProviderTest extends TabularDataTestBase {
 
@@ -39,12 +40,11 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         final GoalHolder sixSolutions = nSolutions(6, "smallData(E,A,V)");
-        assertEquals(
-                "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]",
-        varsSortedToString(sixSolutions));
-        assertEquals("[CHE, CHE, FRA, FRA, DEU, DEU]", sixSolutions.var("E").list().toString());
-        assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.var("A").list().toString());
-        assertEquals("[Switzerland, 7.8, France, 65.0, Germany, 85.4]", sixSolutions.var("V").list().toString());
+        assertThat(varsSortedToString(sixSolutions)).isEqualTo(
+            "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]");
+        assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
+        assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
+        assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
     }
 
     @Test
@@ -53,12 +53,11 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         final GoalHolder sixSolutions = nSolutions(6, "eavt(E,A,V,smallData)");
-        assertEquals(
-                "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]",
-        varsSortedToString(sixSolutions));
-        assertEquals("[CHE, CHE, FRA, FRA, DEU, DEU]", sixSolutions.var("E").list().toString());
-        assertEquals("[countryName, population, countryName, population, countryName, population]", sixSolutions.var("A").list().toString());
-        assertEquals("[Switzerland, 7.8, France, 65.0, Germany, 85.4]", sixSolutions.var("V").list().toString());
+        assertThat(varsSortedToString(sixSolutions)).isEqualTo(
+            "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]");
+        assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
+        assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
+        assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
     }
 
     @Test
@@ -67,10 +66,11 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         final GoalHolder sixSolutions = nSolutions(3, "smallData(Country,Code,Pop)");
-        assertEquals("[{Code=CHE, Country=Switzerland, Pop=7.8}, {Code=FRA, Country=France, Pop=65.0}, {Code=DEU, Country=Germany, Pop=85.4}]", varsSortedToString(sixSolutions));
-        assertEquals("[Switzerland, France, Germany]", sixSolutions.var("Country").list().toString());
-        assertEquals("[CHE, FRA, DEU]", sixSolutions.var("Code").list().toString());
-        assertEquals("[7.8, 65.0, 85.4]", sixSolutions.var("Pop").list().toString());
+        assertThat(varsSortedToString(sixSolutions))
+            .isEqualTo("[{Code=CHE, Country=Switzerland, Pop=7.8}, {Code=FRA, Country=France, Pop=65.0}, {Code=DEU, Country=Germany, Pop=85.4}]");
+        assertThat(sixSolutions.var("Country").list().toString()).isEqualTo("[Switzerland, France, Germany]");
+        assertThat(sixSolutions.var("Code").list().toString()).isEqualTo("[CHE, FRA, DEU]");
+        assertThat(sixSolutions.var("Pop").list().toString()).isEqualTo("[7.8, 65.0, 85.4]");
     }
 
     @Test

@@ -28,7 +28,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Run higher-level tests such as whole programs.
@@ -77,18 +78,19 @@ public class HigherLevelTest extends PrologTestBase {
     public void queensLighter() {
         loadTheoryFromTestResourcesDir("queens.pro");
 
-        assertEquals("[1]", uniqueSolution("queens(1, Positions)").var("Positions").unique().toString());
+        assertThat(uniqueSolution("queens(1, Positions)").var("Positions").unique().toString()).isEqualTo("[1]");
         GoalHolder solutions;
         //
         //
         solutions = this.prolog.solve("queens(4, Positions)");
-        assertEquals("[[3,1,4,2], [2,4,1,3]]", solutions.var("Positions").list().toString());
+        assertThat(solutions.var("Positions").list().toString()).isEqualTo("[[3,1,4,2], [2,4,1,3]]");
         //
         solutions = this.prolog.solve("queens(5, Positions)");
-        assertEquals("[[4,2,5,3,1], [3,5,2,4,1], [5,3,1,4,2], [4,1,3,5,2], [5,2,4,1,3], [1,4,2,5,3], [2,5,3,1,4], [1,3,5,2,4], [3,1,4,2,5], [2,4,1,3,5]]", solutions.var("Positions").list().toString());
+        assertThat(solutions.var("Positions").list().toString()).isEqualTo(
+            "[[4,2,5,3,1], [3,5,2,4,1], [5,3,1,4,2], [4,1,3,5,2], [5,2,4,1,3], [1,4,2,5,3], [2,5,3,1,4], [1,3,5,2,4], [3,1,4,2,5], [2,4,1,3,5]]");
         //
         solutions = this.prolog.solve("queens(6, Positions)");
-        assertEquals("[[5,3,1,6,4,2], [4,1,5,2,6,3], [3,6,2,5,1,4], [2,4,6,1,3,5]]", solutions.var("Positions").list().toString());
+        assertThat(solutions.var("Positions").list().toString()).isEqualTo("[[5,3,1,6,4,2], [4,1,5,2,6,3], [3,6,2,5,1,4], [2,4,6,1,3,5]]");
         //
         nSolutions(0, "queens(2, _)");
         nSolutions(0, "queens(3, _)");
@@ -119,8 +121,9 @@ public class HigherLevelTest extends PrologTestBase {
         final String goal = "findall(X, queens(5, X), List)";
         // Numbers
         final Struct plist = getProlog().solve(goal).var("List", Struct.class).unique();
-        assertEquals(10, plist.listSize());
-        assertEquals("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]", plist.toString());
+        assertThat(plist.listSize()).isEqualTo(10);
+        assertThat(plist.toString())
+            .isEqualTo("[[4,2,5,3,1],[3,5,2,4,1],[5,3,1,4,2],[4,1,3,5,2],[5,2,4,1,3],[1,4,2,5,3],[2,5,3,1,4],[1,3,5,2,4],[3,1,4,2,5],[2,4,1,3,5]]");
     }
 
     @Test
@@ -131,24 +134,24 @@ public class HigherLevelTest extends PrologTestBase {
         nSolutions(0, "takeout(a, [], X)");
         //
         solutions = this.prolog.solve("takeout(a, [a], X)");
-        assertEquals("[[]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[]]");
         //
         nSolutions(0, "takeout(k, [a], X)");
         //
         solutions = this.prolog.solve("takeout(a, [a, b, c], X)");
-        assertEquals("[[b,c]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[b,c]]");
         //
         solutions = this.prolog.solve("takeout(b, [a, b, c], X)");
-        assertEquals("[[a,c]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[a,c]]");
         //
         solutions = this.prolog.solve("takeout(c, [a, b, c], X)");
-        assertEquals("[[a,b]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[a,b]]");
         //
         nSolutions(0, "takeout(k, [a, b, c], X)");
         //
         solutions = this.prolog.solve("takeout(X, [a, b, c], Y)");
-        assertEquals("[a, b, c]", solutions.var("X").list().toString());
-        assertEquals("[[b,c], [a,c], [a,b]]", solutions.var("Y").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[a, b, c]");
+        assertThat(solutions.var("Y").list().toString()).isEqualTo("[[b,c], [a,c], [a,b]]");
         //
         nSolutions(10, "takeout(_, [_,_,_,_,_,_,_,_,_,_], _)");
     }
@@ -159,16 +162,16 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("perm([], X)");
-        assertEquals("[[]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[]]");
         //
         solutions = this.prolog.solve("perm([a], X)");
-        assertEquals("[[a]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[a]]");
         //
         solutions = this.prolog.solve("perm([a,b], X)");
-        assertEquals("[[a,b], [b,a]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[a,b], [b,a]]");
         //
         solutions = this.prolog.solve("perm([a,b,c], X)");
-        assertEquals("[[a,b,c], [a,c,b], [b,a,c], [b,c,a], [c,a,b], [c,b,a]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[a,b,c], [a,c,b], [b,a,c], [b,c,a], [c,a,b], [c,b,a]]");
         //
         nSolutions(24, "perm([_,_,_,_], _)");
         nSolutions(40320, "perm([_,_,_,_,_,_,_,_], _)");
@@ -180,10 +183,10 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("naive_sort([6,3,9,1], X)");
-        assertEquals("[[1,3,6,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,3,6,9]]");
         //
         solutions = this.prolog.solve("naive_sort([1,7,9,3,2,4,5,8], X)");
-        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,2,3,4,5,7,8,9]]");
     }
 
     @Test
@@ -192,10 +195,10 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("insert_sort([6,3,9,1], X)");
-        assertEquals("[[1,3,6,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,3,6,9]]");
         //
         solutions = this.prolog.solve("insert_sort([1,7,9,3,2,4,5,8], X)");
-        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,2,3,4,5,7,8,9]]");
     }
 
     @Test
@@ -204,10 +207,10 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("bubble_sort([6,3,9,1], X)");
-        assertEquals("[[1,3,6,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,3,6,9]]");
         //
         solutions = this.prolog.solve("bubble_sort([1,7,9,3,2,4,5,8], X)");
-        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,2,3,4,5,7,8,9]]");
     }
 
     @Test
@@ -216,10 +219,10 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("merge_sort([6,3,9,1], X)");
-        assertEquals("[[1,3,6,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,3,6,9]]");
         //
         solutions = this.prolog.solve("merge_sort([1,7,9,3,2,4,5,8], X)");
-        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,2,3,4,5,7,8,9]]");
     }
 
     @Test
@@ -228,10 +231,10 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("quick_sort([6,3,9,1], X)");
-        assertEquals("[[1,3,6,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,3,6,9]]");
         //
         solutions = this.prolog.solve("quick_sort([1,7,9,3,2,4,5,8], X)");
-        assertEquals("[[1,2,3,4,5,7,8,9]]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[[1,2,3,4,5,7,8,9]]");
     }
 
     @Test
@@ -240,16 +243,16 @@ public class HigherLevelTest extends PrologTestBase {
         GoalHolder solutions;
         //
         solutions = this.prolog.solve("fib(2, X)");
-        assertEquals("[1]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[1]");
         //
         solutions = this.prolog.solve("fib(3, X)");
-        assertEquals("[2]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[2]");
         //
         solutions = this.prolog.solve("fib(4, X)");
-        assertEquals("[3]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[3]");
         //
         solutions = this.prolog.solve("fib(8, X)");
-        assertEquals("[21]", solutions.var("X").list().toString());
+        assertThat(solutions.var("X").list().toString()).isEqualTo("[21]");
         // Requires a lot of stack, use with -Xss10m
         // solutions = this.prolog.solve("fib(10, X)");
         // assertEquals("[55]", solutions.var("X").list().toString());
@@ -258,13 +261,16 @@ public class HigherLevelTest extends PrologTestBase {
     @Test
     public void mappingTransformer() {
         loadTheoryFromTestResourcesDir("transformations.pro");
-        assertEquals("[{Z=eav(13, classification, LEVEL_MAIN)}]", this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString());
-        assertEquals("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]", this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString());
-        assertEquals("[{ID=ID, Z=eav(ID, class, Committee)}]", this.prolog.solve("transformForContext(committee(ID), Z)").vars().list().toString());
+        assertThat(this.prolog.solve("transformForContext(main(13), Z)").vars().list().toString())
+            .isEqualTo("[{Z=eav(13, classification, LEVEL_MAIN)}]");
+        assertThat(this.prolog.solve("transformForContext(tc(ID), Z)").vars().list().toString())
+            .isEqualTo("[{ID=ID, Z=','(eav(ID, class, Committee), eav(ID, classification, LEVEL_MAIN))}]");
+        assertThat(this.prolog.solve("transformForContext(committee(ID), Z)").vars().list().toString())
+            .isEqualTo("[{ID=ID, Z=eav(ID, class, Committee)}]");
         //
-        assertEquals("[{Z=','(one, ten)}]", this.prolog.solve("transformForContext(11, Z)").vars().list().toString());
-        assertEquals("[{Z=ten}]", this.prolog.solve("transformForContext(10, Z)").vars().list().toString());
-        assertEquals("[{Z=one}]", this.prolog.solve("transformForContext(1, Z)").vars().list().toString());
-        assertEquals("[{Z=4}]", this.prolog.solve("transformForContext(4, Z)").vars().list().toString());
+        assertThat(this.prolog.solve("transformForContext(11, Z)").vars().list().toString()).isEqualTo("[{Z=','(one, ten)}]");
+        assertThat(this.prolog.solve("transformForContext(10, Z)").vars().list().toString()).isEqualTo("[{Z=ten}]");
+        assertThat(this.prolog.solve("transformForContext(1, Z)").vars().list().toString()).isEqualTo("[{Z=one}]");
+        assertThat(this.prolog.solve("transformForContext(4, Z)").vars().list().toString()).isEqualTo("[{Z=4}]");
     }
 }

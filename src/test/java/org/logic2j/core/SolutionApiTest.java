@@ -31,8 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test the solution API (and describe its use cases too).
@@ -52,17 +52,17 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void existsFalse() throws Exception {
-        assertFalse(getProlog().solve("fail").exists());
+        assertThat(getProlog().solve("fail").exists()).isFalse();
     }
 
     @Test
     public void existsTrue() throws Exception {
-        assertTrue(getProlog().solve("true").exists());
+        assertThat(getProlog().solve("true").exists()).isTrue();
     }
 
     @Test
     public void existsTrue2() throws Exception {
-        assertTrue(getProlog().solve("true;true").exists());
+        assertThat(getProlog().solve("true;true").exists()).isTrue();
     }
 
     // ---------------------------------------------------------------------------
@@ -71,24 +71,24 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void count0() throws Exception {
-        assertEquals(0L, getProlog().solve("fail").count());
+        assertThat(getProlog().solve("fail").count()).isEqualTo(0L);
     }
 
 
     @Test
     public void count1() throws Exception {
-        assertEquals(1L, getProlog().solve("true").count());
+        assertThat(getProlog().solve("true").count()).isEqualTo(1L);
     }
 
 
     @Test
     public void count2() throws Exception {
-        assertEquals(2L, getProlog().solve("true;true").count());
+        assertThat(getProlog().solve("true;true").count()).isEqualTo(2L);
     }
 
     @Test
     public void count6() throws Exception {
-        assertEquals(6L, getProlog().solve("hex_char(_,_)").count());
+        assertThat(getProlog().solve("hex_char(_,_)").count()).isEqualTo(6L);
     }
 
     // ---------------------------------------------------------------------------
@@ -97,44 +97,44 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void solutionSingle1() throws Exception {
-        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().single()));
+        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().single())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
     public void solutionSingle0() throws Exception {
-        assertNull(getProlog().solve("hex_char(Q,'Z')").solution().single());
+        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().single()).isNull();
     }
 
     @Test(expected = TooManySolutionsException.class)
     public void solutionSingle6() throws Exception {
-        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,_)").solution().single()));
+        assertThat(marshall(getProlog().solve("hex_char(Q,_)").solution().single())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
     public void solutionFirst1() throws Exception {
-        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().first()));
+        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().first())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
     public void solutionFirst0() throws Exception {
-        assertNull(getProlog().solve("hex_char(Q,'Z')").solution().first());
+        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().first()).isNull();
     }
 
     @Test
     public void solutionFirst6() throws Exception {
-        assertEquals("hex_char(10, 'A')", marshall(getProlog().solve("hex_char(Q,C)").solution().first()));
+        assertThat(marshall(getProlog().solve("hex_char(Q,C)").solution().first())).isEqualTo("hex_char(10, 'A')");
     }
 
     @Test
     public void solutionUnique() throws Exception {
-        assertEquals("hex_char(12, 'C')", marshall(getProlog().solve("hex_char(Q,'C')").solution().unique()));
+        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().unique())).isEqualTo("hex_char(12, 'C')");
     }
 
 
     @Test
     public void solutionList() throws Exception {
         final List<Object> list = getProlog().solve("Q=12;Q=13").solution().list();
-        assertEquals(2, list.size());
+        assertThat(list.size()).isEqualTo(2);
     }
 
     // ---------------------------------------------------------------------------
@@ -149,25 +149,25 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void varUnique() throws Exception {
-        assertEquals(12, getProlog().solve("Q=12").var("Q", Integer.class).unique().intValue());
+        assertThat(getProlog().solve("Q=12").var("Q", Integer.class).unique().intValue()).isEqualTo(12);
     }
 
 
     @Test
     public void varFree() throws Exception {
-        assertEquals("Q", getProlog().solve("Q=Q").var("Q").unique().toString());
+        assertThat(getProlog().solve("Q=Q").var("Q").unique().toString()).isEqualTo("Q");
     }
 
     @Test
     public void varBoundToFreeVar() throws Exception {
-        assertEquals("Q", getProlog().solve("Q=Z").var("Q").unique().toString());
+        assertThat(getProlog().solve("Q=Z").var("Q").unique().toString()).isEqualTo("Q");
     }
 
 
     @Test
     public void varUniqueConverted() throws Exception {
         final String unique = getProlog().solve("Q=12").var("Q", String.class).unique();
-        assertEquals("12", unique);
+        assertThat(unique).isEqualTo("12");
     }
 
     // ---------------------------------------------------------------------------
@@ -177,15 +177,15 @@ public class SolutionApiTest extends PrologTestBase {
     @Test
     public void varsUnique() throws Exception {
         final Map<Var<?>, Object> unique = getProlog().solve("Q=12,R=13").vars().unique();
-        assertTrue(unique.toString().contains("Q=12"));
-        assertTrue(unique.toString().contains("R=13"));
+        assertThat(unique.toString().contains("Q=12")).isTrue();
+        assertThat(unique.toString().contains("R=13")).isTrue();
     }
 
 
     @Test
     public void varsList() throws Exception {
         final List<Map<Var<?>, Object>> map = getProlog().solve("Q=12;R=13").vars().list();
-        assertEquals(2, map.size());
+        assertThat(map.size()).isEqualTo(2);
     }
 
     // ---------------------------------------------------------------------------
@@ -255,7 +255,7 @@ public class SolutionApiTest extends PrologTestBase {
         ProfilingInfo.setTimer1();
         final boolean exists = holder.exists();
         ProfilingInfo.reportAll("Existence of solutions to " + goal + " is " + exists);
-        assertTrue(exists);
+        assertThat(exists).isTrue();
     }
 
     @Test
@@ -265,7 +265,7 @@ public class SolutionApiTest extends PrologTestBase {
         ProfilingInfo.setTimer1();
         final long count = holder.count();
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
-        assertEquals(40320, count);
+        assertThat(count).isEqualTo(40320);
     }
 
 
@@ -277,7 +277,7 @@ public class SolutionApiTest extends PrologTestBase {
         final List<Object> solutions = holder.solution().list();
         ProfilingInfo.reportAll("list()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", solutions, 10));
-        assertEquals(40320, solutions.size());
+        assertThat(solutions.size()).isEqualTo(40320);
     }
 
     @Test
@@ -295,7 +295,7 @@ public class SolutionApiTest extends PrologTestBase {
             counter++;
         }
         ProfilingInfo.reportAll("iterator()");
-        assertEquals(40320, counter);
+        assertThat(counter).isEqualTo(40320);
     }
 
     @Test
@@ -306,7 +306,7 @@ public class SolutionApiTest extends PrologTestBase {
         final List<Struct> values = holder.var("Q", Struct.class).list();
         ProfilingInfo.reportAll("var()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
-        assertEquals(40320, values.size());
+        assertThat(values.size()).isEqualTo(40320);
     }
 
     @Test
@@ -317,7 +317,7 @@ public class SolutionApiTest extends PrologTestBase {
         final Struct[] values = holder.var("Q").array(new Struct[]{});
         ProfilingInfo.reportAll("var()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
-        assertEquals(40320, values.length);
+        assertThat(values.length).isEqualTo(40320);
     }
 
     @Test
@@ -335,7 +335,7 @@ public class SolutionApiTest extends PrologTestBase {
             counter++;
         }
         ProfilingInfo.reportAll("iterator()");
-        assertEquals(40320, counter);
+        assertThat(counter).isEqualTo(40320);
     }
 
     @Test
@@ -351,7 +351,7 @@ public class SolutionApiTest extends PrologTestBase {
             counter++;
         }
         ProfilingInfo.reportAll("iterable()");
-        assertEquals(40320, counter);
+        assertThat(counter).isEqualTo(40320);
     }
 
     @Test
@@ -362,7 +362,7 @@ public class SolutionApiTest extends PrologTestBase {
         final List<Map<Var<?>, Object>> values = holder.vars().list();
         ProfilingInfo.reportAll("vars()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
-        assertEquals(40320, values.size());
+        assertThat(values.size()).isEqualTo(40320);
     }
 
 
@@ -381,6 +381,6 @@ public class SolutionApiTest extends PrologTestBase {
             counter++;
         }
         ProfilingInfo.reportAll("iterator()");
-        assertEquals(40320, counter);
+        assertThat(counter).isEqualTo(40320);
     }
 }

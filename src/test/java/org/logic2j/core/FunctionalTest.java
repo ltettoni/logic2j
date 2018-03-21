@@ -24,7 +24,7 @@ import org.logic2j.core.impl.util.CollectionUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Functional tests of the core features.
@@ -52,11 +52,11 @@ public class FunctionalTest extends PrologTestBase {
         countNoSolution("member(d, [a,b,c])");
         logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").vars().list(), 0));
 
-        assertEquals("[1,2,3]", uniqueSolution("append([1],[2,3],X)").var("X").unique().toString());
+        assertThat(uniqueSolution("append([1],[2,3],X)").var("X").unique().toString()).isEqualTo("[1,2,3]");
 
         final GoalHolder all = nSolutions(3, "append(X,Y,[1,2])");
-        assertEquals(termList("[]", "[1]", "[1,2]"), all.var("X").list());
-        assertEquals(termList("[1,2]", "[2]", "[]"), all.var("Y").list());
+        assertThat(all.var("X").list()).isEqualTo(termList("[]", "[1]", "[1,2]"));
+        assertThat(all.var("Y").list()).isEqualTo(termList("[1,2]", "[2]", "[]"));
     }
 
 
@@ -64,19 +64,19 @@ public class FunctionalTest extends PrologTestBase {
     public void appendWithArraySolutions() {
         final List<Object[]> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsArray().list();
         logger.info(CollectionUtils.format("All bindings as varsArray(): ", list, 0));
-        assertEquals(5, list.size());
+        assertThat(list.size()).isEqualTo(5);
         final Object[] rec0 = list.get(0);
-        assertEquals(2, rec0.length);
-        assertEquals(2, list.get(1).length);
-        assertEquals(2, list.get(2).length);
-        assertEquals(2, list.get(3).length);
-        assertEquals(2, list.get(4).length);
+        assertThat(rec0.length).isEqualTo(2);
+        assertThat(list.get(1).length).isEqualTo(2);
+        assertThat(list.get(2).length).isEqualTo(2);
+        assertThat(list.get(3).length).isEqualTo(2);
+        assertThat(list.get(4).length).isEqualTo(2);
         final Object rec00 = rec0[0];
-        assertEquals(Struct.class, rec00.getClass());
-        assertEquals("[]", rec00.toString());
+        assertThat(rec00.getClass()).isEqualTo(Struct.class);
+        assertThat(rec00.toString()).isEqualTo("[]");
         final Object rec01 = rec0[1];
-        assertEquals(Struct.class, rec01.getClass());
-        assertEquals("[a,b,c,d]", rec01.toString());
+        assertThat(rec01.getClass()).isEqualTo(Struct.class);
+        assertThat(rec01.toString()).isEqualTo("[a,b,c,d]");
     }
 
     @Test
@@ -90,29 +90,29 @@ public class FunctionalTest extends PrologTestBase {
             }
         };
         final List<Integer> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsToFactory(justLog).list();
-        assertEquals(5, list.size());
-        assertEquals("[0, 1, 2, 3, 4]", list.toString());
+        assertThat(list.size()).isEqualTo(5);
+        assertThat(list.toString()).isEqualTo("[0, 1, 2, 3, 4]");
     }
 
     @Test
     public void sumial() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
-        assertEquals(term(0), uniqueSolution("sumial(0, X)").intValue("X"));
-        assertEquals(term(1), uniqueSolution("sumial(1, X)").intValue("X"));
-        assertEquals(term(3), uniqueSolution("sumial(2, X)").intValue("X"));
-        assertEquals(term(15), uniqueSolution("sumial(5, X)").intValue("X"));
-        assertEquals(term(55), uniqueSolution("sumial(10, X)").intValue("X"));
-        assertEquals(term(5050), uniqueSolution("sumial(100, X)").intValue("X"));
+        assertThat(uniqueSolution("sumial(0, X)").intValue("X")).isEqualTo(term(0));
+        assertThat(uniqueSolution("sumial(1, X)").intValue("X")).isEqualTo(term(1));
+        assertThat(uniqueSolution("sumial(2, X)").intValue("X")).isEqualTo(term(3));
+        assertThat(uniqueSolution("sumial(5, X)").intValue("X")).isEqualTo(term(15));
+        assertThat(uniqueSolution("sumial(10, X)").intValue("X")).isEqualTo(term(55));
+        assertThat(uniqueSolution("sumial(100, X)").intValue("X")).isEqualTo(term(5050));
     }
 
     @Test
     public void unify() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         uniqueSolution("unifyterms(X,X)");
-        assertEquals(term(123), uniqueSolution("unifyterms21(X,123)").intValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms21(123, X)").intValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(X,123)").intValue("X"));
-        assertEquals(term(123), uniqueSolution("unifyterms22(123, X)").intValue("X"));
+        assertThat(uniqueSolution("unifyterms21(X,123)").intValue("X")).isEqualTo(term(123));
+        assertThat(uniqueSolution("unifyterms21(123, X)").intValue("X")).isEqualTo(term(123));
+        assertThat(uniqueSolution("unifyterms22(X,123)").intValue("X")).isEqualTo(term(123));
+        assertThat(uniqueSolution("unifyterms22(123, X)").intValue("X")).isEqualTo(term(123));
     }
 
 
@@ -151,14 +151,14 @@ public class FunctionalTest extends PrologTestBase {
     public void findall() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
 
-        assertEquals("[]", uniqueSolution("findall(1, fail, L)").toString("L"));
-        assertEquals("[1]", uniqueSolution("findall(1, true, L)").toString("L"));
-        assertEquals("[1,1,1]", uniqueSolution("findall(1, (true;true;true), L)").toString("L"));
-        assertEquals("[a(b),a(b)]", uniqueSolution("findall(a(b), (true;fail;true), L)").toString("L"));
+        assertThat(uniqueSolution("findall(1, fail, L)").toString("L")).isEqualTo("[]");
+        assertThat(uniqueSolution("findall(1, true, L)").toString("L")).isEqualTo("[1]");
+        assertThat(uniqueSolution("findall(1, (true;true;true), L)").toString("L")).isEqualTo("[1,1,1]");
+        assertThat(uniqueSolution("findall(a(b), (true;fail;true), L)").toString("L")).isEqualTo("[a(b),a(b)]");
 
-        assertEquals("[1,2,3]", uniqueSolution("findall(X, a(X), L)").toString("L"));
-        assertEquals("[b(1),b(2),b(3)]", uniqueSolution("findall(b(X), a(X), L)").toString("L"));
-        assertEquals("[Z,Z,Z]", uniqueSolution("findall(Z, a(X), L)").toString("L"));
+        assertThat(uniqueSolution("findall(X, a(X), L)").toString("L")).isEqualTo("[1,2,3]");
+        assertThat(uniqueSolution("findall(b(X), a(X), L)").toString("L")).isEqualTo("[b(1),b(2),b(3)]");
+        assertThat(uniqueSolution("findall(Z, a(X), L)").toString("L")).isEqualTo("[Z,Z,Z]");
         countNoSolution("findall(X, a(X), [1])");
         uniqueSolution("findall(X, a(X), [1,2,3])");
     }
@@ -166,15 +166,15 @@ public class FunctionalTest extends PrologTestBase {
     @Test
     public void findall_bindFreeVars() {
         final GoalHolder sol = uniqueSolution("findall(X, member(X,[a,B,c]), Res)");
-        assertEquals("[a,B,c]", sol.toString("Res"));
+        assertThat(sol.toString("Res")).isEqualTo("[a,B,c]");
     }
 
 
     @Test
     public void deleteList() {
-        assertEquals("[a,b,c,d,b]", uniqueSolution("deletelist([a,b,c,d,b], [], Res)").toString("Res"));
-        assertEquals("[b,d,b]", uniqueSolution("deletelist([a,b,c,d,b], [a,c], Res)").toString("Res"));
-        assertEquals("[a,d]", uniqueSolution("deletelist([a,b,c,d,b], [b,c], Res)").toString("Res"));
-        assertEquals("[]", uniqueSolution("deletelist([a,b,c,d,b], [z,a,b,c,d,b,f], Res)").toString("Res"));
+        assertThat(uniqueSolution("deletelist([a,b,c,d,b], [], Res)").toString("Res")).isEqualTo("[a,b,c,d,b]");
+        assertThat(uniqueSolution("deletelist([a,b,c,d,b], [a,c], Res)").toString("Res")).isEqualTo("[b,d,b]");
+        assertThat(uniqueSolution("deletelist([a,b,c,d,b], [b,c], Res)").toString("Res")).isEqualTo("[a,d]");
+        assertThat(uniqueSolution("deletelist([a,b,c,d,b], [z,a,b,c,d,b,f], Res)").toString("Res")).isEqualTo("[]");
     }
 }

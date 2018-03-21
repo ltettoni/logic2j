@@ -23,6 +23,9 @@ import org.logic2j.core.api.TermAdapter.AssertionMode;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 /**
  * Read Excel as TabularData and register into Prolog as TabularDataFactProvider.
  */

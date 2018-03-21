@@ -24,7 +24,8 @@ import org.logic2j.core.api.TermAdapter;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * This test requires test data, see build.gradle, target "downloadTestResources".
@@ -43,7 +44,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
-        assertEquals(15, number);
+        assertThat(number).isEqualTo(15);
     }
 
     @Test
@@ -51,7 +52,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
         final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
-        assertEquals(15, number);
+        assertThat(number).isEqualTo(15);
     }
 
 }

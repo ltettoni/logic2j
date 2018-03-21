@@ -23,7 +23,8 @@ import org.logic2j.core.api.model.term.Var;
 import org.logic2j.core.api.unify.UnifyContext;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultTermMarshallerTest extends PrologTestBase {
 
@@ -37,7 +38,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall(REFERENCE_EXPRESSION);
         String formatted = term.toString();
         logger.info("toString: {}", formatted);
-        assertEquals(EXPECTED_TOSTRING, formatted);
+        assertThat(formatted).isEqualTo(EXPECTED_TOSTRING);
     }
 
     @Test
@@ -45,7 +46,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall(REFERENCE_EXPRESSION);
         CharSequence formatted = new DefaultTermMarshaller().marshall(term);
         logger.info("uninitialized marshaller: {}", formatted);
-        assertEquals("a , b ; c , d ; e", formatted.toString());
+        assertThat(formatted.toString()).isEqualTo("a , b ; c , d ; e");
     }
 
     @Test
@@ -53,7 +54,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall(REFERENCE_EXPRESSION);
         CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
         logger.info("prolog initialized marshaller: {}", formatted);
-        assertEquals("a , b ; c , d ; e", formatted);
+        assertThat(formatted).isEqualTo("a , b ; c , d ; e");
     }
 
     @Test
@@ -64,7 +65,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         final UnifyContext initialContext = getProlog().getSolver().initialContext();
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
-        assertEquals("f(X, Y)", formatted);
+        assertThat(formatted).isEqualTo("f(X, Y)");
     }
 
     @Test
@@ -75,7 +76,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         final UnifyContext initialContext = getProlog().getSolver().initialContext();
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
-        assertEquals("f(X, Y)", formatted);
+        assertThat(formatted).isEqualTo("f(X, Y)");
     }
 
 }

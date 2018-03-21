@@ -31,7 +31,8 @@ import org.logic2j.core.api.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class AdHocLibraryTest extends PrologTestBase {
     private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
@@ -43,7 +44,7 @@ public class AdHocLibraryTest extends PrologTestBase {
 
     @Test
     public void int_range_classic_1() {
-        assertEquals(termList("12", "13", "14"), nSolutions(3, "int_range_classic(12, Q, 15)").var("Q").list());
+        assertThat(nSolutions(3, "int_range_classic(12, Q, 15)").var("Q").list()).isEqualTo(termList("12", "13", "14"));
         noSolutions("int_range_classic(12, X, 10)");
     }
 
@@ -70,21 +71,21 @@ public class AdHocLibraryTest extends PrologTestBase {
     public void int_range_multi() {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15)";
-        assertEquals(termList("10", "11", "12", "13", "14"), nSolutions(5, goalText).var("Q").list());
+        assertThat(nSolutions(5, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14"));
     }
 
     @Test
     public void int_range_multi_OR() {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15) ; int_range_multi(12, Q, 18)";
-        assertEquals(termList("10", "11", "12", "13", "14", "12", "13", "14", "15", "16", "17"), nSolutions(11, goalText).var("Q").list());
+        assertThat(nSolutions(11, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14", "12", "13", "14", "15", "16", "17"));
     }
 
     @Test
     public void int_range_multi_AND() {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
-        assertEquals(termList("12", "13", "14"), nSolutions(3, goalText).var("Q").list());
+        assertThat(nSolutions(3, goalText).var("Q").list()).isEqualTo(termList("12", "13", "14"));
     }
 
     // ---------------------------------------------------------------------------

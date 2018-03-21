@@ -24,7 +24,7 @@ import org.logic2j.core.api.Prolog;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Demonstrate simple use cases for Logic2j.
@@ -34,22 +34,22 @@ public class UseCaseTest {
     @Test
     public void instantiateViaFactory() throws Exception {
         final Prolog prolog = new FluentPrologBuilder().build();
-        assertNotNull(prolog);
+        assertThat(prolog).isNotNull();
     }
 
 
     @Test
     public void configureDefaultLibs() throws Exception {
-        assertFalse(new FluentPrologBuilder().withoutLibraries(false).isNoLibraries());
-        assertTrue(new FluentPrologBuilder().withoutLibraries(true).isNoLibraries());
-        assertFalse(new FluentPrologBuilder().withCoreLibraries(false).isCoreLibraries());
-        assertTrue(new FluentPrologBuilder().withCoreLibraries(true).isCoreLibraries());
+        assertThat(new FluentPrologBuilder().withoutLibraries(false).isNoLibraries()).isFalse();
+        assertThat(new FluentPrologBuilder().withoutLibraries(true).isNoLibraries()).isTrue();
+        assertThat(new FluentPrologBuilder().withCoreLibraries(false).isCoreLibraries()).isFalse();
+        assertThat(new FluentPrologBuilder().withCoreLibraries(true).isCoreLibraries()).isTrue();
     }
 
     @Test
     public void obtainDefaultPrologAndSolve() throws Exception {
         final Prolog prolog = new FluentPrologBuilder().build();
-        assertEquals(4, prolog.solve("member(X, [a,b,c,d])").count());
+        assertThat(prolog.solve("member(X, [a,b,c,d])").count()).isEqualTo(4);
     }
 
 
@@ -58,7 +58,7 @@ public class UseCaseTest {
         final File th1 = new File("src/test/resources/queens.pro");
         final File th2 = new File("src/test/resources/hanoi.pro");
         final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).build();
-        assertEquals(2, prolog.solve("queens(4, _)").count());
+        assertThat(prolog.solve("queens(4, _)").count()).isEqualTo(2);
     }
 
 
@@ -68,8 +68,8 @@ public class UseCaseTest {
         .withTheory(new File("src/test/resources/queens.pro"))
         .build();
         final List<List> objectList = prolog.solve("queens(4, Q)").var("Q", List.class).list();
-        assertEquals(2, objectList.size());
-        assertEquals("[3, 1, 4, 2]", objectList.get(0).toString());
-        assertEquals("[2, 4, 1, 3]", objectList.get(1).toString());
+        assertThat(objectList.size()).isEqualTo(2);
+        assertThat(objectList.get(0).toString()).isEqualTo("[3, 1, 4, 2]");
+        assertThat(objectList.get(1).toString()).isEqualTo("[2, 4, 1, 3]");
     }
 }

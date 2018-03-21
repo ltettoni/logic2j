@@ -22,8 +22,7 @@ import org.logic2j.core.api.model.term.Struct;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Testing the TermAdapter: how Java objects can invoke and be returned
@@ -46,7 +45,7 @@ public class AdapterTest extends PrologTestBase {
 
     @Test
     public void retrieveJavaObjects() {
-        assertEquals(5, this.prolog.solve("X is 2+3").var("X", Integer.class).unique().intValue());
+        assertThat(this.prolog.solve("X is 2+3").var("X", Integer.class).unique().intValue()).isEqualTo(5);
     }
 
     @Test
@@ -54,13 +53,13 @@ public class AdapterTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         final List<Object> binding = this.prolog.solve("dbl(X)").var("X").list();
-        assertEquals("[1.1, 1.2, 1.3]", binding.toString());
+        assertThat(binding.toString()).isEqualTo("[1.1, 1.2, 1.3]");
     }
 
     @Test
     public void javaEnum() {
         final Struct term = this.prolog.getTermAdapter().toStruct("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
         final Object binding = this.prolog.solve(term).var("X").unique();
-        assertSame(MyEnum.V2, binding);
+        assertThat(binding).isEqualTo(MyEnum.V2);
     }
 }

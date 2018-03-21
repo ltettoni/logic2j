@@ -16,7 +16,6 @@
  */
 package org.logic2j.contrib.library.pojo;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.TermAdapter;
@@ -25,7 +24,8 @@ import org.logic2j.core.impl.EnvManager;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 
 public class PojoLibraryTest extends PrologTestBase {
@@ -61,14 +61,14 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaNewForEnum() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").single();
-        Assert.assertSame(TermAdapter.FactoryMode.ANY_TERM, x);
+        assertThat(x).isEqualTo(TermAdapter.FactoryMode.ANY_TERM);
     }
 
     @Test
     public void javaNewWithDefaultConstructor() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").single();
-        Assert.assertTrue(x instanceof ArrayList<?>);
+        assertThat(x instanceof ArrayList<?>).isTrue();
     }
 
 
@@ -76,7 +76,7 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaNewWithConstructorAndArgs() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").single();
-        assertEquals("text", x);
+        assertThat(x).isEqualTo("text");
     }
 
 
@@ -90,11 +90,11 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithConstructorArgs() throws Exception {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").single();
-        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertEquals("toto", pojo.getStr());
-        assertEquals(new Integer(1), pojo.getAnInt());
-        assertEquals(new Double(2.3), pojo.getaDouble());
+        assertThat(pojo.getStr()).isEqualTo("toto");
+        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
     }
 
     @Test
@@ -102,11 +102,11 @@ public class PojoLibraryTest extends PrologTestBase {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
         "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").single();
-        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertEquals("toto", pojo.getStr());
-        assertEquals(new Integer(1), pojo.getAnInt());
-        assertEquals(new Double(2.3), pojo.getaDouble());
+        assertThat(pojo.getStr()).isEqualTo("toto");
+        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
     }
 
 
@@ -115,11 +115,11 @@ public class PojoLibraryTest extends PrologTestBase {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
         "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").single();
-        Assert.assertTrue(x instanceof PrologInstantiatedPojo);
+        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertEquals("toto", pojo.getStr());
-        assertEquals(new Integer(1), pojo.getAnInt());
-        assertEquals(new Double(2.3), pojo.getaDouble());
+        assertThat(pojo.getStr()).isEqualTo("toto");
+        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
     }
 
 

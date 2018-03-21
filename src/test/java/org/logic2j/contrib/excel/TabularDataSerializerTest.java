@@ -23,6 +23,9 @@ import org.logic2j.core.PrologTestBase;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 public class TabularDataSerializerTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataSerializerTest.class);
 

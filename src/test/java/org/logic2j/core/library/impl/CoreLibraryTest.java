@@ -23,8 +23,8 @@ import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 import org.logic2j.core.api.solver.holder.GoalHolder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class CoreLibraryTest extends PrologTestBase {
 
@@ -46,11 +46,11 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void is() {
-        assertEquals(term(6), uniqueSolution("X is 2+4").intValue("X"));
-        assertEquals(term(-5), uniqueSolution("X is 5-10").intValue("X"));
-        assertEquals(term(-12), uniqueSolution("X is -12").intValue("X"));
-        assertEquals(term(1), uniqueSolution("X is 6 - (2+3)").intValue("X"));
-        assertEquals(term(9), uniqueSolution("N=10, M is N-1").intValue("M"));
+        assertThat(uniqueSolution("X is 2+4").intValue("X")).isEqualTo(term(6));
+        assertThat(uniqueSolution("X is 5-10").intValue("X")).isEqualTo(term(-5));
+        assertThat(uniqueSolution("X is -12").intValue("X")).isEqualTo(term(-12));
+        assertThat(uniqueSolution("X is 6 - (2+3)").intValue("X")).isEqualTo(term(1));
+        assertThat(uniqueSolution("N=10, M is N-1").intValue("M")).isEqualTo(term(9));
     }
 
     @Test
@@ -126,14 +126,14 @@ public class CoreLibraryTest extends PrologTestBase {
     @Ignore("Need to clarify the behaviour of no-op binding of free bindings")
     @Test
     public void solvePrimitivePredicates_representation_FREE() {
-        assertEquals(term("X"), uniqueSolution("X=X").var("X").unique());
-        assertEquals(term("Y"), uniqueSolution("X=Y").var("X").unique());
-        assertEquals(term("Y"), uniqueSolution("X=Y").var("Y").unique());
-        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
+        assertThat(uniqueSolution("X=X").var("X").unique()).isEqualTo(term("X"));
+        assertThat(uniqueSolution("X=Y").var("X").unique()).isEqualTo(term("Y"));
+        assertThat(uniqueSolution("X=Y").var("Y").unique()).isEqualTo(term("Y"));
+        assertThat(uniqueSolution("X=2").var("X").unique()).isEqualTo(term(2));
         //
-        assertEquals(term("Z"), uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique());
-        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("X").unique());
-        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("Y").unique());
+        assertThat(uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique()).isEqualTo(term("Z"));
+        assertThat(uniqueSolution("X=Y, 2=X").var("X").unique()).isEqualTo(term(2));
+        assertThat(uniqueSolution("X=Y, 2=X").var("Y").unique()).isEqualTo(term(2));
         //
         uniqueSolution("2>1");
         uniqueSolution("A=1, 2>A");
@@ -141,14 +141,14 @@ public class CoreLibraryTest extends PrologTestBase {
 
     @Test
     public void solvePrimitivePredicates_representation_NULL() {
-        assertEquals("X", uniqueSolution("X=X").var("X").unique().toString());
-        assertEquals("X", uniqueSolution("X=Y").var("X").unique().toString());
-        assertEquals("X", uniqueSolution("X=Y").var("Y").unique().toString());
-        assertEquals(term(2), uniqueSolution("X=2").var("X").unique());
+        assertThat(uniqueSolution("X=X").var("X").unique().toString()).isEqualTo("X");
+        assertThat(uniqueSolution("X=Y").var("X").unique().toString()).isEqualTo("X");
+        assertThat(uniqueSolution("X=Y").var("Y").unique().toString()).isEqualTo("X");
+        assertThat(uniqueSolution("X=2").var("X").unique()).isEqualTo(term(2));
         //
-        assertEquals("Y", uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique().toString());
-        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("X").unique());
-        assertEquals(term(2), uniqueSolution("X=Y, 2=X").var("Y").unique());
+        assertThat(uniqueSolution("p(X,Y) = p(Z,Z)").var("X").unique().toString()).isEqualTo("Y");
+        assertThat(uniqueSolution("X=Y, 2=X").var("X").unique()).isEqualTo(term(2));
+        assertThat(uniqueSolution("X=Y, 2=X").var("Y").unique()).isEqualTo(term(2));
         //
         uniqueSolution("2>1");
         uniqueSolution("A=1, 2>A");
@@ -158,24 +158,24 @@ public class CoreLibraryTest extends PrologTestBase {
     @Test
     public void predicate2PList_1() {
         countNoSolution("a(b,c,d) =.. f");
-        assertEquals("[a,b,c,d]", uniqueSolution("a(b,c,d) =.. X").var("X").unique().toString());
-        assertEquals("a(b, c)", uniqueSolution("X =.. [a,b,c]").var("X").unique().toString());
+        assertThat(uniqueSolution("a(b,c,d) =.. X").var("X").unique().toString()).isEqualTo("[a,b,c,d]");
+        assertThat(uniqueSolution("X =.. [a,b,c]").var("X").unique().toString()).isEqualTo("a(b, c)");
     }
 
     @Test
     public void predicate2PList_2() {
         final String string = varsSortedToString(uniqueSolution("Expr=coco(Com), Expr=..[Pred, Arg]"));
-        assertEquals("[{Arg=Com, Com=Com, Expr=coco(Com), Pred=coco}]", string);
+        assertThat(string).isEqualTo("[{Arg=Com, Com=Com, Expr=coco(Com), Pred=coco}]");
     }
 
     @Test
     public void reverse() {
-        assertEquals(term("[c,b,a]"), this.prolog.solve("reverse([a,b,c], L)").var("L").unique());
+        assertThat(this.prolog.solve("reverse([a,b,c], L)").var("L").unique()).isEqualTo(term("[c,b,a]"));
     }
 
     @Test
     public void perm() {
-        assertEquals(720, this.prolog.solve("perm([a,b,c,d,e,f], L)").count());
+        assertThat(this.prolog.solve("perm([a,b,c,d,e,f], L)").count()).isEqualTo(720);
     }
 
 
@@ -193,11 +193,11 @@ public class CoreLibraryTest extends PrologTestBase {
         uniqueSolution("clause(a(X), true), X=3");
         countNSolutions(3, "clause(a(X), Z)");
         countNSolutions(3, "clause(a(X), Z), Z=true");
-        assertEquals(termList("true", "true", "true"), nSolutions(3, "clause(a(X), Z), Z\\=false").var("Z").list());
+        assertThat(nSolutions(3, "clause(a(X), Z), Z\\=false").var("Z").list()).isEqualTo(termList("true", "true", "true"));
         countNSolutions(3, "clause(a(X), Z), Z\\=false");
-        assertEquals(termList("1", "2", "3"), nSolutions(3, "clause(a(X), true)").var("X").list());
+        assertThat(nSolutions(3, "clause(a(X), true)").var("X").list()).isEqualTo(termList("1", "2", "3"));
         countNSolutions(5, "clause(f(_), true)");
-        assertEquals(term("2"), uniqueSolution("clause(cut2(X), !)").var("X").unique());
+        assertThat(uniqueSolution("clause(cut2(X), !)").var("X").unique()).isEqualTo(term("2"));
     }
 
 
@@ -258,7 +258,7 @@ public class CoreLibraryTest extends PrologTestBase {
         loadTheoryFromTestResourcesDir("test-data.pro");
         final GoalHolder holder = uniqueSolution("exists(int10(X))");
         // Contrary to once/1, exists/1 does NOT bind variables
-        assertTrue(holder.var("X").isFree());
+        assertThat(holder.var("X").isFree()).isTrue();
         countNoSolution("exists(int10(56))");
     }
 
@@ -266,6 +266,6 @@ public class CoreLibraryTest extends PrologTestBase {
     public void once() {
         loadTheoryFromTestResourcesDir("test-data.pro");
         final GoalHolder holder = uniqueSolution("once(int10(X))");
-        assertEquals(1, holder.var("X").unique());
+        assertThat(holder.var("X").unique()).isEqualTo(1);
     }
 }

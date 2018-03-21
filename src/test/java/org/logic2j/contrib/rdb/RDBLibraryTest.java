@@ -20,12 +20,13 @@ import org.junit.Test;
 
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
     @Test
     public void ensureCanGetConnection() throws SQLException {
-        assertNotNull(zipcodesConnection());
+        assertThat(zipcodesConnection()).isNotNull();
     }
 }

@@ -20,6 +20,9 @@ package org.logic2j.contrib.excel;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 public class TabularDataFactProviderTest extends TabularDataTestBase {
 
     @Test

@@ -26,8 +26,7 @@ import org.logic2j.core.impl.util.ProfilingInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UnifyContextTest {
     private static final Logger logger = LoggerFactory.getLogger(UnifyContextTest.class);
@@ -88,12 +87,12 @@ public class UnifyContextTest {
     private UnifyContext bind(Var<?> v, Object t2) {
         logger.info("Binding   : {} -> {}", v, t2);
         UnifyContext m = initialContext;
-        assertNotNull(m);
+        assertThat(m).isNotNull();
         UnifyContext m2 = m.bind(v, t2);
-        assertNotNull(m2);
-        assertNotSame(m, m2);
+        assertThat(m2).isNotNull();
+        assertThat(m2).isNotEqualTo(m);
         //
-        assertSame(v, m.reify(v));
+        assertThat(m.reify(v)).isEqualTo(v);
         //logger.info("Reify under original monad: {}", reified(m, v));
         logger.info("Term reified with returned UnifyContext: {}", reified(m2, v));
         return m2;
@@ -129,7 +128,7 @@ public class UnifyContextTest {
     @Test
     public void bindVarToVar() throws Exception {
         UnifyContext m2 = bind(X, Y);
-        assertSame(Y, m2.reify(X));
+        assertThat(m2.reify(X)).isEqualTo(Y);
     }
 
     @Test
@@ -150,40 +149,40 @@ public class UnifyContextTest {
 
     @Test
     public void atomToSameAtom() throws Exception {
-        assertNotNull(unify(a, a2));
+        assertThat(unify(a, a2)).isNotNull();
     }
 
 
     @Test
     public void atomToDifferentAtom() throws Exception {
-        assertNull(unify(a, b));
+        assertThat(unify(a, b)).isNull();
     }
 
     @Test
     public void varToStruct() throws Exception {
-        assertNotNull(unify(f_ab, X));
+        assertThat(unify(f_ab, X)).isNotNull();
     }
 
 
     @Test
     public void structToStruct() throws Exception {
-        assertNotNull(unify(f_ab, f_XY));
+        assertThat(unify(f_ab, f_XY)).isNotNull();
     }
 
 
     @Test
     public void structToStruct2() throws Exception {
-        assertNotNull(unify(f_aZ, f_XX));
+        assertThat(unify(f_aZ, f_XX)).isNotNull();
     }
 
     @Test
     public void structToStruct3() throws Exception {
-        assertNotNull(unify(f_aZZ, f_XXa));
+        assertThat(unify(f_aZZ, f_XXa)).isNotNull();
     }
 
     @Test
     public void structToStruct4() throws Exception {
-        assertNull(unify(f_aZZ, f_XXb));
+        assertThat(unify(f_aZZ, f_XXb)).isNull();
     }
 
 

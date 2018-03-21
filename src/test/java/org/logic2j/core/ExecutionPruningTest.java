@@ -27,7 +27,7 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test the cut and user abort features.
@@ -131,64 +131,64 @@ public class ExecutionPruningTest extends PrologTestBase {
         uniqueSolution("max(2,3,3)");
         uniqueSolution("max(3,2,3)");
         //
-        assertEquals(term(3), uniqueSolution("max(2,3,X)").var("X").unique());
-        assertEquals(term(3), uniqueSolution("max(3,2,X)").var("X").unique());
+        assertThat(uniqueSolution("max(2,3,X)").var("X").unique()).isEqualTo(term(3));
+        assertThat(uniqueSolution("max(3,2,X)").var("X").unique()).isEqualTo(term(3));
         //
         uniqueSolution("max4(3,1,7,5,7)");
         uniqueSolution("max4(1,3,5,7,7)");
         uniqueSolution("max4(7,5,3,1,7)");
-        assertEquals(term(7), uniqueSolution("max4(3,1,7,5,X)").var("X").unique());
+        assertThat(uniqueSolution("max4(3,1,7,5,X)").var("X").unique()).isEqualTo(term(7));
     }
 
     @Test
     public void sign() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
-        assertEquals(term("positive"), uniqueSolution("sign(5,X)").var("X").unique());
-        assertEquals(term("negative"), uniqueSolution("sign(-5,X)").var("X").unique());
-        assertEquals(term("zero"), uniqueSolution("sign(0,X)").var("X").unique());
+        assertThat(uniqueSolution("sign(5,X)").var("X").unique()).isEqualTo(term("positive"));
+        assertThat(uniqueSolution("sign(-5,X)").var("X").unique()).isEqualTo(term("negative"));
+        assertThat(uniqueSolution("sign(0,X)").var("X").unique()).isEqualTo(term("zero"));
     }
 
     @Test
     public void sign2() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
-        assertEquals(term("zero"), uniqueSolution("sign2(0,X)").var("X").unique());
+        assertThat(uniqueSolution("sign2(0,X)").var("X").unique()).isEqualTo(term("zero"));
         //
         GoalHolder solutions;
         solutions = this.prolog.solve("sign2(-5,X)");
-        assertEquals("negative", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("negative");
         //
         solutions = this.prolog.solve("sign2(5,X)");
-        assertEquals("positive", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("positive");
     }
 
     @Test
     public void sign3() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
-        assertEquals(term("zero"), uniqueSolution("sign3(0,X)").var("X").unique());
+        assertThat(uniqueSolution("sign3(0,X)").var("X").unique()).isEqualTo(term("zero"));
         //
         GoalHolder solutions;
         solutions = this.prolog.solve("sign3(-5,X)");
-        assertEquals("negative", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("negative");
         //
         solutions = this.prolog.solve("sign3(5,X)");
-        assertEquals("positive", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("positive");
     }
 
     @Test
     public void sign4() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
-        assertEquals(term("zero"), uniqueSolution("sign4(0,X)").var("X").unique());
+        assertThat(uniqueSolution("sign4(0,X)").var("X").unique()).isEqualTo(term("zero"));
         //
         GoalHolder solutions;
         solutions = this.prolog.solve("sign4(-5,X)");
-        assertEquals("negative", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("negative");
         //
         solutions = this.prolog.solve("sign4(5,X)");
-        assertEquals("positive", solutions.var("X").unique().toString());
+        assertThat(solutions.var("X").unique().toString()).isEqualTo("positive");
     }
 
     @Test
@@ -196,7 +196,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         //
         loadTheoryFromTestResourcesDir("test-functional.pro");
         final List<Map<Var<?>, Object>> list = this.prolog.solve("transform(complex, Z)").vars().list();
-        assertEquals("[{Z=verySimple}]", list.toString());
+        assertThat(list.toString()).isEqualTo("[{Z=verySimple}]");
     }
 
     // ---------------------------------------------------------------------------
@@ -253,15 +253,15 @@ public class ExecutionPruningTest extends PrologTestBase {
         final Object term = unmarshall("member(X, [0,1,2,3,4,5,6,7,8,9])");
         final CountingSolutionListener listenerAll = new CountingSolutionListener();
         this.prolog.getSolver().solveGoal(term, listenerAll);
-        assertEquals(10, listenerAll.count());
+        assertThat(listenerAll.count()).isEqualTo(10);
         // Only one
         final Max1Listener maxOneSolution = new Max1Listener();
         this.prolog.getSolver().solveGoal(term, maxOneSolution);
-        assertEquals(1, maxOneSolution.count());
+        assertThat(maxOneSolution.count()).isEqualTo(1);
         // Only five
         final Max5Listener maxFiveSolutions = new Max5Listener();
         this.prolog.getSolver().solveGoal(term, maxFiveSolutions);
-        assertEquals(5, maxFiveSolutions.count());
+        assertThat(maxFiveSolutions.count()).isEqualTo(5);
     }
 
 

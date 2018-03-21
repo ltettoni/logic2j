@@ -19,8 +19,7 @@ package org.logic2j.contrib.library;
 import junit.framework.TestCase;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OptionsStringTest {
 
@@ -36,10 +35,10 @@ public class OptionsStringTest {
     @Test
     public void testHasOption() throws Exception {
         final OptionsString optionsString = new OptionsString("a, b,  c,");
-        assertTrue(optionsString.hasOption("a"));
-        assertTrue(optionsString.hasOption("b"));
-        assertTrue(optionsString.hasOption("c"));
-        assertFalse(optionsString.hasOption("d"));
+        assertThat(optionsString.hasOption("a")).isTrue();
+        assertThat(optionsString.hasOption("b")).isTrue();
+        assertThat(optionsString.hasOption("c")).isTrue();
+        assertThat(optionsString.hasOption("d")).isFalse();
     }
 
 

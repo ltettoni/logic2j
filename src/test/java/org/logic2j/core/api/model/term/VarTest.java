@@ -20,15 +20,15 @@ package org.logic2j.core.api.model.term;
 import org.junit.Test;
 import org.logic2j.core.api.model.exception.InvalidTermException;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class VarTest {
 
     @Test
     public void constructorValid() throws Exception {
         final Var<?> v1 = new Var<Object>("X");
-        assertSame("X", v1.getName());
-        assertEquals(Term.NO_INDEX, v1.getIndex());
+        assertThat(v1.getName()).isEqualTo("X");
+        assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
 
     @Test(expected = InvalidTermException.class)
@@ -50,15 +50,15 @@ public class VarTest {
     @Test
     public void constructorWithCharSequence() throws Exception {
         final Var<?> v1 = new Var<Object>(new StringBuilder("X"));
-        assertSame("X", v1.getName());
-        assertEquals(Term.NO_INDEX, v1.getIndex());
+        assertThat(v1.getName()).isEqualTo("X");
+        assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
 
 
     @Test
     public void idempotence() throws Exception {
         final Var<?> v1 = new Var<Object>("X");
-        assertEquals(v1, v1);
+        assertThat(v1).isEqualTo(v1);
     }
 
 
@@ -66,17 +66,17 @@ public class VarTest {
     public void equality() throws Exception {
         final Var<?> v1 = new Var<Object>("X");
         final Var<?> v2 = new Var<Object>("X");
-        assertNotSame(v1, v2);
-        assertEquals(v1, v2);
-        assertEquals(v2, v1);
+        assertThat(v2).isNotSameAs(v1);
+        assertThat(v2).isEqualTo(v1);
+        assertThat(v1).isEqualTo(v2);
     }
 
 
     @Test
     public void lowerCaseIsValid() throws Exception {
         final Var<?> v1 = new Var<Object>("lowercase");
-        assertSame("lowercase", v1.getName());
-        assertEquals(Term.NO_INDEX, v1.getIndex());
+        assertThat(v1.getName()).isEqualTo("lowercase");
+        assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
 
 
@@ -87,12 +87,12 @@ public class VarTest {
 
     @Test
     public void isAnonymousTrue() throws Exception {
-        assertTrue(Var.ANONYMOUS_VAR.isAnonymous());
+        assertThat(Var.ANONYMOUS_VAR.isAnonymous()).isTrue();
     }
 
     @Test
     public void isAnonymousFalse() throws Exception {
-        assertFalse(new Var<Object>("X").isAnonymous());
+        assertThat(new Var<Object>("X").isAnonymous()).isFalse();
     }
 
 

@@ -26,7 +26,8 @@ import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test the FunctionLibrary's mapping predicates.
@@ -164,9 +165,9 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
-        assertEquals(theExpectedToString.length, holder.count());
+        assertThat(holder.count()).isEqualTo(theExpectedToString.length);
         final List<Object> unique = holder.var("Q").list();
-        assertEquals(Arrays.asList(theExpectedToString).toString(), unique.toString());
+        assertThat(unique.toString()).isEqualTo(Arrays.asList(theExpectedToString).toString());
     }
 
 
@@ -175,9 +176,9 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
-        assertEquals(1, holder.count());
+        assertThat(holder.count()).isEqualTo(1);
         final Object unique = holder.var("Q").unique();
-        assertEquals(theExpectedToString, unique.toString());
+        assertThat(unique.toString()).isEqualTo(theExpectedToString);
     }
 
 
@@ -186,9 +187,9 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
-        assertEquals(1, holder.count());
+        assertThat(holder.count()).isEqualTo(1);
         final List<Object> unique = holder.var("Q").list();
-        assertEquals(Arrays.asList(theExpectedToString).toString(), unique.toString());
+        assertThat(unique.toString()).isEqualTo(Arrays.asList(theExpectedToString).toString());
     }
 
     private void assertWrongMapping(String t1, String t2, String options) {
@@ -196,7 +197,7 @@ public class FunctionLibraryTest extends PrologTestBase {
         final Object goal = unmarshall(goalText);
         logger.info("Transformation goal: \"{}\"", goal);
         final GoalHolder holder = this.prolog.solve(goal);
-        assertEquals(0, holder.count());
+        assertThat(holder.count()).isEqualTo(0);
     }
 
 
