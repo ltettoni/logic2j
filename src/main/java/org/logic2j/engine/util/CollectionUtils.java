@@ -136,7 +136,7 @@ public final class CollectionUtils {
       if (nbrOfThisClass == null) {
         nbrOfThisClass = 0;
       }
-      nbrOfThisClass = nbrOfThisClass.intValue() + 1;
+      nbrOfThisClass = nbrOfThisClass + 1;
       instancesByClass.put(theElementClass, nbrOfThisClass);
 
       // Report

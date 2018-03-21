@@ -41,11 +41,11 @@ public final class Struct extends Term {
   // Constants defining Prolog lists
   // ---------------------------------------------------------------------------
 
-  public static final String FUNCTOR_LIST_NODE = ".".intern();
+  public static final String FUNCTOR_LIST_NODE = ".";
 
-  public static final String FUNCTOR_EMPTY_LIST = "[]".intern(); // The list end marker
+  public static final String FUNCTOR_EMPTY_LIST = "[]"; // The list end marker
 
-  public static final String LIST_ELEM_SEPARATOR = ",".intern(); // In notations [a,b,c]
+  public static final String LIST_ELEM_SEPARATOR = ","; // In notations [a,b,c]
 
   public static final char LIST_CLOSE = ']';
 
@@ -62,19 +62,19 @@ public final class Struct extends Term {
   // Names of functors
   // ---------------------------------------------------------------------------
 
-  public static final String LIST_SEPARATOR = ",".intern(); // In notations pred(a, b, c)
+  public static final String LIST_SEPARATOR = ","; // In notations pred(a, b, c)
 
   public static final char PAR_CLOSE = ')';
 
   public static final char PAR_OPEN = '(';
 
-  public static final String FUNCTOR_CALL = "call".intern();
+  public static final String FUNCTOR_CALL = "call";
 
-  public static final String FUNCTOR_CLAUSE = ":-".intern();
+  public static final String FUNCTOR_CLAUSE = ":-";
 
   // TODO Move these constants to a common place?
   // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
-  public static final String FUNCTOR_COMMA = ",".intern();
+  public static final String FUNCTOR_COMMA = ",";
 
   public static final String FUNCTOR_CUT = "!";
       // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
@@ -85,14 +85,14 @@ public final class Struct extends Term {
   // Some key atoms as singletons
   // ---------------------------------------------------------------------------
 
-  public static final String FUNCTOR_SEMICOLON = ";".intern();
+  public static final String FUNCTOR_SEMICOLON = ";";
 
   public static final String FUNCTOR_TRUE = "true";
       // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
 
   public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
 
-  public static final String FUNCTOR_FALSE = "false".intern(); // TODO do we need "false" or is this "fail"?
+  public static final String FUNCTOR_FALSE = "false"; // TODO do we need "false" or is this "fail"?
 
   public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
 
@@ -108,7 +108,7 @@ public final class Struct extends Term {
   private static final String VARARG_PREDICATE_TRAILER = "/" + VARARG_ARITY_SIGNATURE;
 
   // Separator of functor arguments: f(a,b), NOT the ',' functor for logical AND.
-  public static final String ARG_SEPARATOR = ", ".intern();
+  public static final String ARG_SEPARATOR = ", ";
 
   public static final char QUOTE = '\'';
 

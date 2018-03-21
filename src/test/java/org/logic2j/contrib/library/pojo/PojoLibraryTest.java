@@ -25,7 +25,6 @@ import org.logic2j.core.impl.EnvManager;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 
 public class PojoLibraryTest extends PrologTestBase {

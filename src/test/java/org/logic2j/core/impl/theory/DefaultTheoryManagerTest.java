@@ -24,9 +24,6 @@ import org.logic2j.core.impl.PrologReferenceImplementation;
 import java.io.File;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 public class DefaultTheoryManagerTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManagerTest.class);
 

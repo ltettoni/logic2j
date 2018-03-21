@@ -1,6 +1,35 @@
    logic2j - Bring Logic to your Java
    ==================================
 
+Refactoring needed to extend from logic2j-engine:
+
+Many diffs :-(
+Use this branch: "over-engine"
+
+
+Diff using WinMerge:
+left:  C:\Git\logic2j-engine\src\main\java\org\logic2j\engine\
+right: C:\Git\logic2j\src\main\java\org\logic2j\engine\
+
+Hard part:
+
+Struct: features lost: primitiveInfo, prolog lists, formatStruct for lists
+TermApi: no lists, evaluate() removed, no LibraryContent, selectTerm() removed
+
+SingleVarExtractor:  TermAdapter removed
+GoalHolder: no more PrologReferenceImplementation, but has ref to Solver
+SolutionHolder: remove support for arrays, FactoryExtractor
+UnifyContext: lots of changes (but should not impact)
+
+
+New exceptions.
+
+
+
+
+
+
+
 A library to bring declarative & logic programming to your Java software.
 
 Logic2j is designed for first-order predicate formal logic, it includes all necessary

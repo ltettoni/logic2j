@@ -21,7 +21,6 @@ import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test parsing and formatting.

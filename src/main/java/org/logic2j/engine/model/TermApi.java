@@ -88,10 +88,7 @@ public final class TermApi {
   }
 
   public static boolean isAtomic(Object theTerm) {
-    if (isAtom(theTerm)) {
-      return true;
-    }
-    return theTerm instanceof Number;
+    return isAtom(theTerm) || theTerm instanceof Number;
   }
 
 
@@ -203,10 +200,7 @@ public final class TermApi {
    * @return true if this Term denotes a Prolog list.
    */
   public static boolean isList(Object theTerm) {
-    if (theTerm instanceof Struct) {
-      return ((Struct) theTerm).isList();
-    }
-    return false;
+    return theTerm instanceof Struct && ((Struct) theTerm).isList();
   }
 
   /**

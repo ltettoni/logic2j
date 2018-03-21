@@ -23,9 +23,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 /**
  * Common base class for testing the Prolog engine with data sources. Although it would be formally cleaner to instantiate data sources once
  * per test case (using a @Before), let's go for a slightly faster approach: one connection per test class, since we only reading from our

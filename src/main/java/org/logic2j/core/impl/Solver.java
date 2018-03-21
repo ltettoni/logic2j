@@ -249,11 +249,11 @@ public class Solver {
       // Cut IS a valid solution in itself. We just ignore what the application asks (via return value) us to do next.
       final Integer continuationFromCaller = theSolutionListener.onSolution(currentVars);// Signalling one valid solution, but ignoring return value
 
-      if (continuationFromCaller != Continuation.CONTINUE && continuationFromCaller.intValue() > 0) {
+      if (continuationFromCaller != Continuation.CONTINUE && continuationFromCaller > 0) {
         result = continuationFromCaller;
       } else {
         // Stopping there for this iteration
-        result = Integer.valueOf(cutLevel);
+        result = cutLevel;
       }
     } else if (prim != null) {
       // ---------------------------------------------------------------------------
@@ -361,7 +361,7 @@ public class Solver {
 
           // If not asking for a regular "CONTINUE", handle result from notification of a fact, or solution to a theorem
           if (result != Continuation.CONTINUE) {
-            final int intResult = result.intValue();
+            final int intResult = result;
             if (intResult < 0) {
               // User abort
               if (isDebug) {

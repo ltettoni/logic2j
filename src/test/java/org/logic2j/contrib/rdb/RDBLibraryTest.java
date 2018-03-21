@@ -21,7 +21,6 @@ import org.junit.Test;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 

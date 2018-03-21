@@ -24,7 +24,6 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.solver.holder.GoalHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class CoreLibraryTest extends PrologTestBase {
 

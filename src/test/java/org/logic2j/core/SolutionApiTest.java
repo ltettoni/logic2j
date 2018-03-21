@@ -26,13 +26,11 @@ import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.util.CollectionUtils;
 import org.logic2j.engine.util.ProfilingInfo;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test the solution API (and describe its use cases too).

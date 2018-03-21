@@ -130,10 +130,7 @@ public class Completer {
 
   static boolean acceptPredicateKey(String predicateKey) {
     // Check if this is a technical predicate,
-    if (TECH_PREDICATE.matcher(predicateKey).matches()) {
-      return false;
-    }
-    return ACCEPTABLE.matcher(predicateKey).matches();
+    return !TECH_PREDICATE.matcher(predicateKey).matches() && ACCEPTABLE.matcher(predicateKey).matches();
   }
 
 

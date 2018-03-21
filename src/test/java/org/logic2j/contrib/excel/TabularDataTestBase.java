@@ -21,9 +21,6 @@ import org.logic2j.core.PrologTestBase;
 
 import java.io.Serializable;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 class TabularDataTestBase extends PrologTestBase {
 
     protected TabularData smallData() {

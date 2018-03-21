@@ -19,9 +19,6 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.library.impl.IOLibrary;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 /**
  * Check non-regression on issues that have been found and solved over time.
  */

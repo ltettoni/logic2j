@@ -84,9 +84,9 @@ public class TermApiTest {
         nbVars = TermApi.assignIndexes(Var.ANONYMOUS_VAR, 0);
         assertThat(nbVars).isEqualTo(0);
         //
-        nbVars = TermApi.assignIndexes(Long.valueOf(2), 0);
+        nbVars = TermApi.assignIndexes(2L, 0);
         assertThat(nbVars).isEqualTo(0);
-        nbVars = TermApi.assignIndexes(Double.valueOf(1.1), 0);
+        nbVars = TermApi.assignIndexes(1.1, 0);
         assertThat(nbVars).isEqualTo(0);
     }
 

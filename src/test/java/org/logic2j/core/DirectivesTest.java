@@ -18,10 +18,7 @@ package org.logic2j.core;
 
 import org.junit.Test;
 import org.logic2j.contrib.library.pojo.PojoLibrary;
-import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Test parsing and formatting.

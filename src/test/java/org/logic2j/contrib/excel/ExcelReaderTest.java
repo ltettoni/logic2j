@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class ExcelReaderTest extends ExcelClauseProviderTestBase {
 

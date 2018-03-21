@@ -25,7 +25,6 @@ import org.logic2j.core.api.TermAdapter;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * This test requires test data, see build.gradle, target "downloadTestResources".

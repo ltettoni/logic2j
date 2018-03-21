@@ -28,7 +28,6 @@ import java.awt.*;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DynamicClauseProviderTest extends PrologTestBase {
 

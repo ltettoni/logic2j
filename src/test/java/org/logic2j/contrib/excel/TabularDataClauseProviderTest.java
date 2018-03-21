@@ -24,7 +24,6 @@ import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class TabularDataClauseProviderTest extends TabularDataTestBase {
 

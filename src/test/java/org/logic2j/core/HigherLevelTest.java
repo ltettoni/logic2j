@@ -23,10 +23,7 @@ import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.IOLibrary;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Run higher-level tests such as whole programs.

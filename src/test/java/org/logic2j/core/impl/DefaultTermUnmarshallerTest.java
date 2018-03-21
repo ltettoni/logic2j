@@ -39,10 +39,10 @@ public class DefaultTermUnmarshallerTest {
 
     @Test
     public void numbers() {
-        assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(new Integer(2323));
-        assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(new Double(3.14));
-        assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(new Long(2323));
-        assertThat(UNMARSHALLER.unmarshall("3.14f")).isEqualTo(new Float(3.14));
+        assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(2323);
+        assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(3.14);
+        assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(2323L);
+        assertThat(UNMARSHALLER.unmarshall("3.14f")).isEqualTo(3.14f);
     }
 
 

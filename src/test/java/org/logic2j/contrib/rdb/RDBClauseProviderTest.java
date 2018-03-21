@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Test test requires expanding the provided test Derby database, see

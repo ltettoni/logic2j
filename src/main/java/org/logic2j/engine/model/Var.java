@@ -35,13 +35,13 @@ public final class Var<T> extends Term implements Comparable<Var<T>> {
 
   private static final long serialVersionUID = 1L;
 
-  public static final String WHOLE_SOLUTION_VAR_NAME = ".".intern();
+  public static final String WHOLE_SOLUTION_VAR_NAME = ".";
 
   /**
    * Name of the anonymous variable is always "_". This constant is internalized, you
    * can safely compare it with ==.
    */
-  public static final String ANONYMOUS_VAR_NAME = "_".intern();
+  public static final String ANONYMOUS_VAR_NAME = "_";
 
   /**
    * Singleton anonymous variable. You can safely compare them with ==.

@@ -24,7 +24,6 @@ import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultTermMarshallerTest extends PrologTestBase {
 
