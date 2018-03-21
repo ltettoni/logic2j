@@ -20,14 +20,14 @@ package org.logic2j.core.api;
 
 /**
  * This class manages Prolog operators.
- * 
+ *
  * @see org.logic2j.core.api.model.Operator
  */
 public interface OperatorManager {
 
-    void addOperator(String operatorText, String associativity, int precedence);
+  void addOperator(String operatorText, String associativity, int precedence);
 
-    // TODO Unclear how this is an operation of a "manager". Rename method?
-    int precedence(String operatorText, String associativity);
+  // TODO Unclear how this is an operation of a "manager". Rename method?
+  int precedence(String operatorText, String associativity);
 
 }

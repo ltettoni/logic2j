@@ -17,7 +17,7 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * Provide {@link Clause}s (facts or rules) from various content sources to the {@link org.logic2j.core.impl.Solver}.
@@ -25,28 +25,28 @@ import org.logic2j.core.api.unify.UnifyContext;
  * Other implementations include database back-ends, or online resources.<br/>
  * Notice the {@link Iterable} nature of the returned clauses. This allows implementers to return large
  * results sets, for example from database cursors: the {@link org.logic2j.core.impl.Solver} does not need all clauses in memory at once!
- * 
+ * <p>
  * Contract: The {@link org.logic2j.core.impl.Solver} will never cache the result of
- * {@link #listMatchingClauses(Object, org.logic2j.core.api.unify.UnifyContext)},
+ * {@link #listMatchingClauses(Object, UnifyContext)},
  * therefore consider implementing caching if access to resources is slow.
  */
 public interface ClauseProvider {
 
-    /**
-     * Provide {@link Clause}s (facts or rules) potentially matching theGoal argument, which often is a Struct with bound or unbound
-     * variables.<br/>
-     * All clauses that could (but may eventually not) match theGoal must be returned by this method. This implies that the match may be
-     * broader than actually needed, the {@link org.logic2j.core.impl.Solver} will determine by unification if {@link Clause}s
-     * returned by this method will be eligible for inference.
-     *
-     * @param theGoal
-     * @param currentVars TODO Remove this argument it is used only once for a contrib (
-     * @return An ordered {@link java.lang.Iterable} of {@link Clause}s that are candidates for unifying with theGoal.
-     * Must never return null - emnpty instead.
-     * Implementers may return {@link Clause}s whose head would eventually not unify hence not be used by the
-     *         {@link org.logic2j.core.impl.Solver}, however for performance reasons theGoal is provided and you better
-     *         return only potentially matching clauses.
-     */
-    Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars);
+  /**
+   * Provide {@link Clause}s (facts or rules) potentially matching theGoal argument, which often is a Struct with bound or unbound
+   * variables.<br/>
+   * All clauses that could (but may eventually not) match theGoal must be returned by this method. This implies that the match may be
+   * broader than actually needed, the {@link org.logic2j.core.impl.Solver} will determine by unification if {@link Clause}s
+   * returned by this method will be eligible for inference.
+   *
+   * @param theGoal
+   * @param currentVars TODO Remove this argument it is used only once for a contrib (
+   * @return An ordered {@link java.lang.Iterable} of {@link Clause}s that are candidates for unifying with theGoal.
+   * Must never return null - emnpty instead.
+   * Implementers may return {@link Clause}s whose head would eventually not unify hence not be used by the
+   * {@link org.logic2j.core.impl.Solver}, however for performance reasons theGoal is provided and you better
+   * return only potentially matching clauses.
+   */
+  Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars);
 
 }

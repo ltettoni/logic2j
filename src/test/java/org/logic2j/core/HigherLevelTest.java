@@ -18,15 +18,12 @@ package org.logic2j.core;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.library.impl.IOLibrary;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -116,7 +113,7 @@ public class HigherLevelTest extends PrologTestBase {
 
 
     @Test
-    public void queensWithFindall() throws IOException {
+    public void queensWithFindall() {
         loadTheoryFromTestResourcesDir("queens.pro");
         final String goal = "findall(X, queens(5, X), List)";
         // Numbers

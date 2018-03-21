@@ -18,7 +18,7 @@ package org.logic2j.core;
 
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.engine.model.Struct;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class AdapterTest extends PrologTestBase {
         // Empty
     }
 
-    public static enum MyEnum {
+    public enum MyEnum {
         V1, V2, V3
     }
 

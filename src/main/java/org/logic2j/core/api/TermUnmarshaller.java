@@ -16,19 +16,19 @@
  */
 package org.logic2j.core.api;
 
-import org.logic2j.core.api.model.term.Term;
+import org.logic2j.engine.model.Term;
 
 /**
  * Umnarshalls streamable representations back to create new {@link Term}s.
  */
 public interface TermUnmarshaller {
 
-    /**
-     * Parse a character stream into a {@link Term}.
-     * 
-     * @param theChars
-     * @return The new {@link Term} obtained from its textual representation.
-     */
-    Object unmarshall(CharSequence theChars);
+  /**
+   * Parse a character stream into a {@link Term}.
+   *
+   * @param theChars
+   * @return The new {@link Term} obtained from its textual representation.
+   */
+  Object unmarshall(CharSequence theChars);
 
 }

@@ -20,8 +20,8 @@ package org.logic2j.core.library.impl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.solver.holder.GoalHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

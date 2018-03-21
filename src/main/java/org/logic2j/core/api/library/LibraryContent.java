@@ -16,7 +16,7 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,77 +26,77 @@ import java.util.Map;
  */
 public class LibraryContent {
 
-    private final Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
 
-    private final Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
 
-    private final Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
 
-    private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
 
-    public void putDirective(String theKey, PrimitiveInfo theDesc) {
-        if (this.directiveMap.containsKey(theKey)) {
-            throw new PrologNonSpecificError("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
-        }
-        this.directiveMap.put(theKey, theDesc);
+  public void putDirective(String theKey, PrimitiveInfo theDesc) {
+    if (this.directiveMap.containsKey(theKey)) {
+      throw new PrologNonSpecificError("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
+    }
+    this.directiveMap.put(theKey, theDesc);
+  }
+
+  public void putPredicate(String theKey, PrimitiveInfo theDesc) {
+    if (this.predicateMap.containsKey(theKey)) {
+      throw new PrologNonSpecificError("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
+    }
+    this.predicateMap.put(theKey, theDesc);
+  }
+
+  public void putFunctor(String theKey, PrimitiveInfo theDesc) {
+    if (this.functorMap.containsKey(theKey)) {
+      throw new PrologNonSpecificError("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
+    }
+    this.functorMap.put(theKey, theDesc);
+  }
+
+  public void putPrimitive(String theKey, PrimitiveInfo theDesc) {
+    if (this.primitiveMap.containsKey(theKey)) {
+      throw new PrologNonSpecificError("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
+    }
+    switch (theDesc.getType()) {
+      case DIRECTIVE:
+        putDirective(theKey, theDesc);
+        break;
+      case PREDICATE:
+        putPredicate(theKey, theDesc);
+        break;
+      case FUNCTOR:
+        putFunctor(theKey, theDesc);
+        break;
+      default:
+        assert false : "Unplanned case in switch on PrimitiveType";
     }
 
-    public void putPredicate(String theKey, PrimitiveInfo theDesc) {
-        if (this.predicateMap.containsKey(theKey)) {
-            throw new PrologNonSpecificError("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
-        }
-        this.predicateMap.put(theKey, theDesc);
-    }
+    this.primitiveMap.put(theKey, theDesc);
+  }
 
-    public void putFunctor(String theKey, PrimitiveInfo theDesc) {
-        if (this.functorMap.containsKey(theKey)) {
-            throw new PrologNonSpecificError("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
-        }
-        this.functorMap.put(theKey, theDesc);
-    }
+  /**
+   * Merge the content of theLoadedContent into this, by adding all directives, primitives, functors and predicates.
+   *
+   * @param theLoadedContent
+   */
+  public void addAll(LibraryContent theLoadedContent) {
+    this.directiveMap.putAll(theLoadedContent.directiveMap);
+    this.predicateMap.putAll(theLoadedContent.predicateMap);
+    this.functorMap.putAll(theLoadedContent.functorMap);
+    this.primitiveMap.putAll(theLoadedContent.primitiveMap);
+  }
 
-    public void putPrimitive(String theKey, PrimitiveInfo theDesc) {
-        if (this.primitiveMap.containsKey(theKey)) {
-            throw new PrologNonSpecificError("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
-        }
-        switch (theDesc.getType()) {
-            case DIRECTIVE:
-                putDirective(theKey, theDesc);
-                break;
-            case PREDICATE:
-                putPredicate(theKey, theDesc);
-                break;
-            case FUNCTOR:
-                putFunctor(theKey, theDesc);
-                break;
-            default:
-                assert false : "Unplanned case in switch on PrimitiveType";
-        }
+  /**
+   * @param thePredicateSignature
+   * @return The {@link PrimitiveInfo} for the specified primitive's signature, or null when not registered in this {@link LibraryContent}
+   */
+  public PrimitiveInfo getPrimitive(String thePredicateSignature) {
+    return this.primitiveMap.get(thePredicateSignature);
+  }
 
-        this.primitiveMap.put(theKey, theDesc);
-    }
-
-    /**
-     * Merge the content of theLoadedContent into this, by adding all directives, primitives, functors and predicates.
-     *
-     * @param theLoadedContent
-     */
-    public void addAll(LibraryContent theLoadedContent) {
-        this.directiveMap.putAll(theLoadedContent.directiveMap);
-        this.predicateMap.putAll(theLoadedContent.predicateMap);
-        this.functorMap.putAll(theLoadedContent.functorMap);
-        this.primitiveMap.putAll(theLoadedContent.primitiveMap);
-    }
-
-    /**
-     * @param thePredicateSignature
-     * @return The {@link PrimitiveInfo} for the specified primitive's signature, or null when not registered in this {@link LibraryContent}
-     */
-    public PrimitiveInfo getPrimitive(String thePredicateSignature) {
-        return this.primitiveMap.get(thePredicateSignature);
-    }
-
-    public boolean hasPrimitive(String thePredicateSignature) {
-        return this.primitiveMap.containsKey(thePredicateSignature);
-    }
+  public boolean hasPrimitive(String thePredicateSignature) {
+    return this.primitiveMap.containsKey(thePredicateSignature);
+  }
 }

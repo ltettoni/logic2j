@@ -17,8 +17,7 @@
 
 package org.logic2j.contrib.helper;
 
-import org.logic2j.core.api.Prolog;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.theory.TheoryContent;
@@ -44,107 +43,107 @@ import java.util.Collection;
  */
 public class FluentPrologBuilder implements PrologBuilder {
 
-    private boolean noLibraries = false;
+  private boolean noLibraries = false;
 
-    private boolean coreLibraries = false;
+  private boolean coreLibraries = false;
 
-    private Collection<File> theoryFiles = new ArrayList<File>();
-    private Collection<String> theoryResources = new ArrayList<String>();
+  private Collection<File> theoryFiles = new ArrayList<File>();
+  private Collection<String> theoryResources = new ArrayList<String>();
 
   @Override
-    public PrologImplementation build() {
-        final PrologReferenceImplementation.InitLevel initLevel;
-        if (isNoLibraries()) {
-            initLevel = PrologReferenceImplementation.InitLevel.L0_BARE;
-        } else if (isCoreLibraries()) {
-            initLevel = PrologReferenceImplementation.InitLevel.L1_CORE_LIBRARY;
-        } else {
-            initLevel = PrologReferenceImplementation.InitLevel.L2_BASE_LIBRARIES;
-        }
-        final PrologReferenceImplementation prolog = new PrologReferenceImplementation(initLevel);
+  public PrologImplementation build() {
+    final PrologReferenceImplementation.InitLevel initLevel;
+    if (isNoLibraries()) {
+      initLevel = PrologReferenceImplementation.InitLevel.L0_BARE;
+    } else if (isCoreLibraries()) {
+      initLevel = PrologReferenceImplementation.InitLevel.L1_CORE_LIBRARY;
+    } else {
+      initLevel = PrologReferenceImplementation.InitLevel.L2_BASE_LIBRARIES;
+    }
+    final PrologReferenceImplementation prolog = new PrologReferenceImplementation(initLevel);
 
 
-        // Theories from files
-        final TheoryManager theoryManager = prolog.getTheoryManager();
-        try {
-            for (File theory : theoryFiles) {
-                final TheoryContent content = theoryManager.load(theory);
-                theoryManager.addTheory(content);
-            }
-        } catch (IOException e) {
-            throw new PrologNonSpecificError("Builder could not load theory: " + e);
-        }
-        // Theories from resources
-        for (String resource : theoryResources) {
-            final TheoryContent content = theoryManager.load(resource);
-            theoryManager.addTheory(content);
-        }
-
-        return prolog;
+    // Theories from files
+    final TheoryManager theoryManager = prolog.getTheoryManager();
+    try {
+      for (File theory : theoryFiles) {
+        final TheoryContent content = theoryManager.load(theory);
+        theoryManager.addTheory(content);
+      }
+    } catch (IOException e) {
+      throw new PrologNonSpecificError("Builder could not load theory: " + e);
+    }
+    // Theories from resources
+    for (String resource : theoryResources) {
+      final TheoryContent content = theoryManager.load(resource);
+      theoryManager.addTheory(content);
     }
 
+    return prolog;
+  }
 
-    // ---------------------------------------------------------------------------
-    // Fluent API
-    // ---------------------------------------------------------------------------
 
-    public FluentPrologBuilder withoutLibraries(boolean noLibraries) {
-        this.noLibraries = noLibraries;
-        return this;
+  // ---------------------------------------------------------------------------
+  // Fluent API
+  // ---------------------------------------------------------------------------
+
+  public FluentPrologBuilder withoutLibraries(boolean noLibraries) {
+    this.noLibraries = noLibraries;
+    return this;
+  }
+
+  public FluentPrologBuilder withCoreLibraries(boolean coreLibraries) {
+    this.coreLibraries = coreLibraries;
+    return this;
+  }
+
+
+  public FluentPrologBuilder withTheory(File... files) {
+    for (File file : files) {
+      theoryFiles.add(file);
     }
+    return this;
+  }
 
-    public FluentPrologBuilder withCoreLibraries(boolean coreLibraries) {
-        this.coreLibraries = coreLibraries;
-        return this;
+  public FluentPrologBuilder withTheory(String... resources) {
+    for (String resource : resources) {
+      theoryResources.add(resource);
     }
+    return this;
+  }
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // ---------------------------------------------------------------------------
 
+  public boolean isNoLibraries() {
+    return noLibraries;
+  }
 
-    public FluentPrologBuilder withTheory(File... files) {
-        for (File file : files) {
-            theoryFiles.add(file);
-        }
-        return this;
-    }
+  public void setNoLibraries(boolean noLibraries) {
+    this.noLibraries = noLibraries;
+  }
 
-    public FluentPrologBuilder withTheory(String... resources) {
-        for (String resource : resources) {
-            theoryResources.add(resource);
-        }
-        return this;
-    }
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
+  public boolean isCoreLibraries() {
+    return coreLibraries;
+  }
 
-    public boolean isNoLibraries() {
-        return noLibraries;
-    }
+  public void setCoreLibraries(boolean coreLibraries) {
+    this.coreLibraries = coreLibraries;
+  }
 
-    public void setNoLibraries(boolean noLibraries) {
-        this.noLibraries = noLibraries;
-    }
+  public Collection<File> getTheoryFiles() {
+    return theoryFiles;
+  }
 
-    public boolean isCoreLibraries() {
-        return coreLibraries;
-    }
+  public void setTheoryFiles(Collection<File> theoryFiles) {
+    this.theoryFiles = theoryFiles;
+  }
 
-    public void setCoreLibraries(boolean coreLibraries) {
-        this.coreLibraries = coreLibraries;
-    }
+  public Collection<String> getTheoryResources() {
+    return theoryResources;
+  }
 
-    public Collection<File> getTheoryFiles() {
-        return theoryFiles;
-    }
-
-    public void setTheoryFiles(Collection<File> theoryFiles) {
-        this.theoryFiles = theoryFiles;
-    }
-
-    public Collection<String> getTheoryResources() {
-        return theoryResources;
-    }
-
-    public void setTheoryResources(Collection<String> theoryResources) {
-        this.theoryResources = theoryResources;
-    }
+  public void setTheoryResources(Collection<String> theoryResources) {
+    this.theoryResources = theoryResources;
+  }
 }

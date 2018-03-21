@@ -24,32 +24,32 @@ import org.logic2j.core.api.*;
  */
 public interface PrologImplementation extends Prolog {
 
-    // ---------------------------------------------------------------------------
-    // Accessors to the sub-features of the Prolog engine
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Accessors to the sub-features of the Prolog engine
+  // ---------------------------------------------------------------------------
 
-    /**
-     * @return The implementation for managing libraries.
-     */
-    LibraryManager getLibraryManager();
+  /**
+   * @return The implementation for managing libraries.
+   */
+  LibraryManager getLibraryManager();
 
-    /**
-     * @return The implementation of inference logic.
-     */
-    Solver getSolver();
+  /**
+   * @return The implementation of inference logic.
+   */
+  Solver getSolver();
 
-    /**
-     * @return The implementation for managing operators.
-     */
-    OperatorManager getOperatorManager();
+  /**
+   * @return The implementation for managing operators.
+   */
+  OperatorManager getOperatorManager();
 
-    /**
-     * @return Marshalling
-     */
-    TermMarshaller getTermMarshaller();
+  /**
+   * @return Marshalling
+   */
+  TermMarshaller getTermMarshaller();
 
-    TermUnmarshaller getTermUnmarshaller();
+  TermUnmarshaller getTermUnmarshaller();
 
-    void setTermAdapter(TermAdapter termAdapter);
+  void setTermAdapter(TermAdapter termAdapter);
 
 }

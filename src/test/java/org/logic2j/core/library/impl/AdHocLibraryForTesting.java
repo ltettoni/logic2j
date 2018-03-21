@@ -17,12 +17,12 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.multi.ListMultiResult;
-import org.logic2j.core.api.solver.listener.multi.MultiResult;
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.multi.ListMultiResult;
+import org.logic2j.engine.solver.listener.multi.MultiResult;
+import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;

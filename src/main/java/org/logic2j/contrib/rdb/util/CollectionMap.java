@@ -24,31 +24,31 @@ import java.util.LinkedHashMap;
  * A {@link java.util.LinkedHashMap} whose values are {@link java.util.Collection}s of TypeValue.
  */
 public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Collection<TypeValue>> {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Add a value to the collection addressed by theKey. If nothing was registered a new collection is instantiated by
-     * {@link #instantiateCollection()} and the theElement is added to it.
-     *
-     * @param theKey
-     * @param theElement
-     */
-    public void add(TypeKey theKey, TypeValue theElement) {
-        Collection<TypeValue> collection = get(theKey);
-        if (collection == null) {
-            collection = instantiateCollection();
-            put(theKey, collection);
-        }
-        collection.add(theElement);
+  /**
+   * Add a value to the collection addressed by theKey. If nothing was registered a new collection is instantiated by
+   * {@link #instantiateCollection()} and the theElement is added to it.
+   *
+   * @param theKey
+   * @param theElement
+   */
+  public void add(TypeKey theKey, TypeValue theElement) {
+    Collection<TypeValue> collection = get(theKey);
+    if (collection == null) {
+      collection = instantiateCollection();
+      put(theKey, collection);
     }
+    collection.add(theElement);
+  }
 
-    /**
-     * Override this to provide your preferred implementation of Collection.
-     *
-     * @return An empty {@link java.util.ArrayList}.
-     */
-    protected Collection<TypeValue> instantiateCollection() {
-        return new ArrayList<TypeValue>();
-    }
+  /**
+   * Override this to provide your preferred implementation of Collection.
+   *
+   * @return An empty {@link java.util.ArrayList}.
+   */
+  protected Collection<TypeValue> instantiateCollection() {
+    return new ArrayList<TypeValue>();
+  }
 
 }

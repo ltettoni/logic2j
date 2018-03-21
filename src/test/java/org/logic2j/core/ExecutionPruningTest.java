@@ -17,12 +17,13 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.api.solver.listener.CountingSolutionListener;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.engine.solver.listener.SolutionListener;
 
 import java.util.List;
 import java.util.Map;
@@ -216,7 +217,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     /**
-     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after the first solution was found.
+     * A {@link SolutionListener} that will request user cancellation after the first solution was found.
      */
     private static class Max1Listener extends CountingSolutionListener {
 
@@ -232,7 +233,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     /**
-     * A {@link org.logic2j.core.api.solver.listener.SolutionListener} that will request user cancellation after 5 solutions were found.
+     * A {@link SolutionListener} that will request user cancellation after 5 solutions were found.
      */
     private static class Max5Listener extends CountingSolutionListener {
 
@@ -266,7 +267,7 @@ public class ExecutionPruningTest extends PrologTestBase {
 
 
     @Test
-    public void level() throws Exception {
+    public void level() {
         final PrologReferenceImplementation.InitLevel initLevel = initLevel();
         System.out.println("Level=" + initLevel);
 

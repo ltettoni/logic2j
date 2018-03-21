@@ -21,29 +21,29 @@ package org.logic2j.core.impl.io.tuprolog.parse;
  * Binary masks and values.
  */
 class MaskConstants {
-    static final int TYPEMASK = 0x00FF;
-    static final int ATTRMASK = 0xFF00;
+  static final int TYPEMASK = 0x00FF;
+  static final int ATTRMASK = 0xFF00;
 
-    // Type values
-    static final int LPAR = 0x0001; // Left parenthesis
-    static final int RPAR = 0x0002; // Right parenthesis
-    static final int LBRA = 0x0003; // Left bracket
-    static final int RBRA = 0x0004; // Left bracket
-    static final int BAR = 0x0005;
-    static final int INTEGER = 0x0006;
-    static final int LONG = 0x0016; // New in logic2j not original tuprolog
-    static final int FLOAT = 0x0017; // New in logic2j not original tuprolog
-    static final int DOUBLE = 0x0007;
-    static final int ATOM = 0x0008;
-    static final int VARIABLE = 0x0009;
-    static final int SQ_SEQUENCE = 0x000A; // Single quote (apos)
-    static final int DQ_SEQUENCE = 0x000B; // Double quote (quot)
-    static final int END = 0x000D;
-    static final int LBRA2 = 0x000E; // Left brace '{'
-    static final int RBRA2 = 0x000F; // Right brace '}'
+  // Type values
+  static final int LPAR = 0x0001; // Left parenthesis
+  static final int RPAR = 0x0002; // Right parenthesis
+  static final int LBRA = 0x0003; // Left bracket
+  static final int RBRA = 0x0004; // Left bracket
+  static final int BAR = 0x0005;
+  static final int INTEGER = 0x0006;
+  static final int LONG = 0x0016; // New in logic2j not original tuprolog
+  static final int FLOAT = 0x0017; // New in logic2j not original tuprolog
+  static final int DOUBLE = 0x0007;
+  static final int ATOM = 0x0008;
+  static final int VARIABLE = 0x0009;
+  static final int SQ_SEQUENCE = 0x000A; // Single quote (apos)
+  static final int DQ_SEQUENCE = 0x000B; // Double quote (quot)
+  static final int END = 0x000D;
+  static final int LBRA2 = 0x000E; // Left brace '{'
+  static final int RBRA2 = 0x000F; // Right brace '}'
 
-    // Attribute values
-    static final int FUNCTOR = 0x0100;
-    static final int OPERATOR = 0x0200;
-    static final int EOF = 0x1000;
+  // Attribute values
+  static final int FUNCTOR = 0x0100;
+  static final int OPERATOR = 0x0200;
+  static final int EOF = 0x1000;
 }

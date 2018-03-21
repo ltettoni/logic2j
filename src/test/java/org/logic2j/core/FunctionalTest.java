@@ -17,9 +17,9 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.impl.util.CollectionUtils;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;

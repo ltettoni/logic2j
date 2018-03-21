@@ -25,27 +25,27 @@ import java.util.Set;
  */
 public class CompletionData {
 
-    public String original; // Complete input submitted
+  public String original; // Complete input submitted
 
-    public String originalBeforeStripped;
+  public String originalBeforeStripped;
 
-    public String stripped; // Only the last part where we search for completion
-    public String functor;  // When processing arguments, the functor of these arguments
+  public String stripped; // Only the last part where we search for completion
+  public String functor;  // When processing arguments, the functor of these arguments
 
-    /**
-     * From the beginning of the predicate (functor), until before the stripped part
-     */
-    public String partialPredicate;
+  /**
+   * From the beginning of the predicate (functor), until before the stripped part
+   */
+  public String partialPredicate;
 
-    public int argNo;
+  public int argNo;
 
-    Set<String> completions = Collections.emptySet();
+  Set<String> completions = Collections.emptySet();
 
-    public Set<String> getCompletions() {
-        return completions;
-    }
+  public Set<String> getCompletions() {
+    return completions;
+  }
 
-    public void setCompletions(Set<String> completions) {
-        this.completions = completions;
-    }
+  public void setCompletions(Set<String> completions) {
+    this.completions = completions;
+  }
 }

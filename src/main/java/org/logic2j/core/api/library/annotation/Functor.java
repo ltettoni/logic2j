@@ -25,20 +25,20 @@ import java.lang.annotation.Target;
  * Annotation for methods of a {@link org.logic2j.core.api.library.PLibrary} that implement a Prolog functor in Java.
  * A functor returns any type of value, and is typically invoked with: X is my_functor(args).
  */
-@Target({ ElementType.METHOD })
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Functor {
 
-    /**
-     * When "name" is defined, then the annotated method's name won't be used to register the primitive. Very useful when the primitive name
-     * is not an allowed Java identifier, for example the "=" unification primitive. Otherwise, when name is the default, the method's name
-     * becomes the functor's name.
-     */
-    String name() default "";
+  /**
+   * When "name" is defined, then the annotated method's name won't be used to register the primitive. Very useful when the primitive name
+   * is not an allowed Java identifier, for example the "=" unification primitive. Otherwise, when name is the default, the method's name
+   * becomes the functor's name.
+   */
+  String name() default "";
 
-    /**
-     * Alternate names for the primitive.
-     */
-    String[] synonyms() default {};
+  /**
+   * Alternate names for the primitive.
+   */
+  String[] synonyms() default {};
 
 }

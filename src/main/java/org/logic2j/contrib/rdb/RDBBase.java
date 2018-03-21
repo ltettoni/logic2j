@@ -26,54 +26,55 @@ import javax.sql.DataSource;
  * Base class for RDB access using JDBC.
  */
 public abstract class RDBBase {
-    /**
-     * A {@link org.logic2j.core.api.TermAdapter} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
-     */
-    public static class AllStringsAsAtoms extends DefaultTermAdapter {
+  /**
+   * A {@link org.logic2j.core.api.TermAdapter} that will parse all strings as atoms (especially those starting with uppercase that must not become bindings).
+   */
+  public static class AllStringsAsAtoms extends DefaultTermAdapter {
 
-        public AllStringsAsAtoms() {
-            super();
-        }
-
-        @Override
-        public Object toTerm(Object theObject, FactoryMode theMode) {
-            return super.toTerm(theObject, FactoryMode.ATOM);
-        }
-
+    public AllStringsAsAtoms() {
+      super();
     }
 
-    private final PrologImplementation prolog;
-    private DataSource dataSource;
-    private TermAdapter termAdapter;
-
-    protected RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
-        this.prolog = theProlog;
-        this.dataSource = theDataSource;
-        this.termAdapter = new RDBBase.AllStringsAsAtoms();
+    @Override
+    public Object toTerm(Object theObject, FactoryMode theMode) {
+      return super.toTerm(theObject, FactoryMode.ATOM);
     }
 
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
+  }
 
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
 
-    public void setDataSource(DataSource theDataSource) {
-        this.dataSource = theDataSource;
-    }
+  private final PrologImplementation prolog;
+  private DataSource dataSource;
+  private TermAdapter termAdapter;
 
-    public TermAdapter getTermAdapter() {
-        return this.termAdapter;
-    }
+  protected RDBBase(PrologImplementation theProlog, DataSource theDataSource) {
+    this.prolog = theProlog;
+    this.dataSource = theDataSource;
+    this.termAdapter = new RDBBase.AllStringsAsAtoms();
+  }
 
-    public void setTermAdapter(TermAdapter theTermAdapter) {
-        this.termAdapter = theTermAdapter;
-    }
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // ---------------------------------------------------------------------------
 
-    public PrologImplementation getProlog() {
-        return this.prolog;
-    }
+  public DataSource getDataSource() {
+    return this.dataSource;
+  }
+
+  public void setDataSource(DataSource theDataSource) {
+    this.dataSource = theDataSource;
+  }
+
+  public TermAdapter getTermAdapter() {
+    return this.termAdapter;
+  }
+
+  public void setTermAdapter(TermAdapter theTermAdapter) {
+    this.termAdapter = theTermAdapter;
+  }
+
+  public PrologImplementation getProlog() {
+    return this.prolog;
+  }
 
 }

@@ -16,9 +16,9 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * A library of Prolog primitives implemented in Java, each as a method of the class.
@@ -28,18 +28,18 @@ import org.logic2j.core.api.unify.UnifyContext;
  */
 public interface PLibrary {
 
-    static final String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
+  String NO_DIRECT_INVOCATION_USE_REFLECTION = "no-direct-invocation-use-reflection";
 
-    /**
-     * The dispatcher allow direct invocation of the primitives, without the need for reflection,
-     * for performance reasons.
-     *
-     * @param theMethodName
-     * @param theGoalStruct
-     * @param theListener
-     * @param currentVars
-     * @return
-     */
-    Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars);
+  /**
+   * The dispatcher allow direct invocation of the primitives, without the need for reflection,
+   * for performance reasons.
+   *
+   * @param theMethodName
+   * @param theGoalStruct
+   * @param theListener
+   * @param currentVars
+   * @return
+   */
+  Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars);
 
 }

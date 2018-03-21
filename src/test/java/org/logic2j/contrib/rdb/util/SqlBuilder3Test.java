@@ -21,7 +21,7 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
-import org.logic2j.core.impl.util.CollectionUtils;
+import org.logic2j.engine.util.CollectionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -45,7 +45,7 @@ public class SqlBuilder3Test {
      * @throws Exception
      */
     @Test
-    public void inlistParamsPlaceholders() throws Exception {
+    public void inlistParamsPlaceholders() {
       assertThat(SqlBuilder3.inlistParamsPlaceholders(-10).toString()).isEqualTo("");
       assertThat(SqlBuilder3.inlistParamsPlaceholders(-1).toString()).isEqualTo("");
       assertThat(SqlBuilder3.inlistParamsPlaceholders(0).toString()).isEqualTo("");
@@ -58,7 +58,7 @@ public class SqlBuilder3Test {
      * @throws Exception
      */
     @Test
-    public void flattenedParams() throws Exception {
+    public void flattenedParams() {
       assertThat(CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams(), "|")).isEqualTo("");
       assertThat(CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams((Object[]) null), "|")).isEqualTo("");
       assertThat(CollectionUtils.formatSeparated(SqlBuilder3.flattenedParams(5), "|")).isEqualTo("5");
@@ -67,13 +67,13 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void empty() throws Exception {
+    public void empty() {
       final SqlBuilder3 sb = new SqlBuilder3();
       assertThat(sb.getStatement()).isEqualTo("select * /* no_proj_defined */ from ");
     }
 
     @Test
-    public void simple0() throws Exception {
+    public void simple0() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.column(sb.table("tbl"), "id"), 12);
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where tbl.id=?");
@@ -82,7 +82,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void simple1() throws Exception {
+    public void simple1() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.column(sb.table("tbl"), "col"), "val");
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where tbl.col=?");
@@ -91,7 +91,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void caseInsensitive() throws Exception {
+    public void caseInsensitive() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.criterion(sb.column(sb.table("tbl"), "col"), Operator.EQ_CASE_INSENSITIVE, "val"));
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where lower(tbl.col)=lower(?)");
@@ -100,7 +100,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void simpleIsNull() throws Exception {
+    public void simpleIsNull() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.column(sb.table("tbl"), "checknull"), null);
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where tbl.checknull is null");
@@ -108,7 +108,7 @@ public class SqlBuilder3Test {
     }
     
     @Test
-    public void simpleIsNotNull() throws Exception {
+    public void simpleIsNotNull() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.criterion(sb.column(sb.table("tbl"), "checknotnull"), Operator.NOT_EQ, null));
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where tbl.checknotnull is not null");
@@ -116,7 +116,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void criterionNeverEquals() throws Exception {
+    public void criterionNeverEquals() {
       final SqlBuilder3 sb = new SqlBuilder3();
       sb.addConjunction(sb.criterionNeverEquals(sb.column(sb.table("tbl"), "id")));
       assertThat(sb.getSelect()).isEqualTo("select * /* no_proj_defined */ from tbl where tbl.id!=tbl.id");
@@ -125,7 +125,7 @@ public class SqlBuilder3Test {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void simple2() throws Exception {
+    public void simple2() {
       {
         SqlBuilder3 sb = new SqlBuilder3();
         Column col = sb.column(sb.table("tbl"), "col");
@@ -181,7 +181,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void multipleTables() throws Exception {
+    public void multipleTables() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column col = sb.column(sb.table("t1"), "c1");
       sb.addConjunction(sb.criterion(col, 1));
@@ -192,7 +192,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void join() throws Exception {
+    public void join() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column t1c1 = sb.column(sb.table("table1", "t1"), "c1");
       sb.addConjunction(sb.criterion(t1c1, 1));
@@ -209,7 +209,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void joinSameTable() throws Exception {
+    public void joinSameTable() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column col = sb.column(sb.table("table"), "c1");
       Column col2 = sb.column(sb.table("table", "alias"), "c2");
@@ -218,7 +218,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void joinWithExtraCriterion() throws Exception {
+    public void joinWithExtraCriterion() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column t1c1 = sb.column(sb.table("table1", "t1"), "c1");
       Table t2 = sb.table("table2", "t2");
@@ -233,7 +233,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void existsInsteadOfJoin() throws Exception {
+    public void existsInsteadOfJoin() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column t1c1 = sb.column(sb.table("table1", "t1"), "c1");
       Table t2 = sb.table("table2", "t2");
@@ -248,7 +248,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void notExists() throws Exception {
+    public void notExists() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column t1c1 = sb.column(sb.table("table1", "t1"), "c1");
       Table t2 = sb.table("table2", "t2");
@@ -263,7 +263,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void subtableUnion() throws Exception {
+    public void subtableUnion() {
       final SqlBuilder3 sb = new SqlBuilder3();
       boolean all = false;
       sb.tableSubUnion("sub", all, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
@@ -274,7 +274,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void subtableUnionAll() throws Exception {
+    public void subtableUnionAll() {
       final SqlBuilder3 sb = new SqlBuilder3();
       boolean all = true;
       sb.tableSubUnion("sub", all, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
@@ -285,7 +285,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void subselect() throws Exception {
+    public void subselect() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column col = sb.column(sb.table("table"), "id");
       sb.addConjunction(sb.subselect(col, "my_sub_select of ? or ?", new Integer[] { 5, 6 }));
@@ -294,7 +294,7 @@ public class SqlBuilder3Test {
     }
 
     @Test
-    public void apiUseCase1() throws Exception {
+    public void apiUseCase1() {
       SqlBuilder3 sb = new SqlBuilder3();
       Column committeeId = sb.tableWithAutoAlias("committee").column("id");
       Table nav = sb.tableWithAutoAlias("apinav3_fw_cp");
@@ -317,7 +317,7 @@ public class SqlBuilder3Test {
      * Yet I'm not 100% sure it's the correct behaviour we want - but at least not bogus SQL.
      */
     @Test
-    public void countMoreThanOneProjectedColumn() throws Exception {
+    public void countMoreThanOneProjectedColumn() {
       final SqlBuilder3 sb = new SqlBuilder3();
       Table table = sb.table("tbl");
       sb.addProjection(sb.column(table, "col1"));

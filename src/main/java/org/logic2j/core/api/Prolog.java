@@ -16,58 +16,60 @@
  */
 package org.logic2j.core.api;
 
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Term;
+import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
+import org.logic2j.engine.solver.holder.SolutionHolder;
+import org.logic2j.engine.solver.listener.SolutionListener;
 
 /**
  * Interface for using Prolog from an application's perspective.
  */
 public interface Prolog {
 
-    // ---------------------------------------------------------------------------
-    // Shortcuts or "syntactic sugars" to ease programming.
-    // The following methods delegate calls to sub-features of the Prolog engine.
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Shortcuts or "syntactic sugars" to ease programming.
+  // The following methods delegate calls to sub-features of the Prolog engine.
+  // ---------------------------------------------------------------------------
 
-    /**
-     * The top-level method for solving a goal (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API,
-     * internally it uses the low-level {@link org.logic2j.core.api.solver.listener.SolutionListener}).
-     * This does NOT YET start solving.
-     * If you already have a parsed term, use {@link #solve(Object)} instead.
-     *
-     * @param theGoal To solve, will be parsed into a Term.
-     * @return A {@link org.logic2j.core.api.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
-     */
-    GoalHolder solve(CharSequence theGoal);
+  /**
+   * The top-level method for solving a goal (exposes the high-level {@link SolutionHolder} API,
+   * internally it uses the low-level {@link SolutionListener}).
+   * This does NOT YET start solving.
+   * If you already have a parsed term, use {@link #solve(Object)} instead.
+   *
+   * @param theGoal To solve, will be parsed into a Term.
+   * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
+   */
+  GoalHolder solve(CharSequence theGoal);
 
-    /**
-     * Solves a goal expressed as a {@link Term} (exposes the high-level {@link org.logic2j.core.api.solver.holder.SolutionHolder} API, internally it usess the low-level
-     * {@link org.logic2j.core.api.solver.listener.SolutionListener}).
-     *
-     * @param theGoal The {@link Term} to solve, usually a {@link Struct}
-     * @return A {@link org.logic2j.core.api.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
-     */
-    GoalHolder solve(Object theGoal);
+  /**
+   * Solves a goal expressed as a {@link Term} (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
+   * {@link SolutionListener}).
+   *
+   * @param theGoal The {@link Term} to solve, usually a {@link Struct}
+   * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
+   */
+  GoalHolder solve(Object theGoal);
 
-    // ---------------------------------------------------------------------------
-    // Accessors to the sub-features of the Prolog engine
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Accessors to the sub-features of the Prolog engine
+  // ---------------------------------------------------------------------------
 
-    /**
-     * The current adapter to convert {@link Term}s to and from Java {@link Object}s.
-     *
-     * @return Our {@link TermAdapter}
-     */
-    TermAdapter getTermAdapter();
+  /**
+   * The current adapter to convert {@link Term}s to and from Java {@link Object}s.
+   *
+   * @return Our {@link TermAdapter}
+   */
+  TermAdapter getTermAdapter();
 
-    /**
-     * The current theory manager, will allow calling code to add clauses, load theories, etc.
-     * 
-     * @return Our {@link TheoryManager}
-     */
-    TheoryManager getTheoryManager();
+  /**
+   * The current theory manager, will allow calling code to add clauses, load theories, etc.
+   *
+   * @return Our {@link TheoryManager}
+   */
+  TheoryManager getTheoryManager();
 
 
 }

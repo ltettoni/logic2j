@@ -24,52 +24,62 @@ import java.io.Serializable;
  * This class defines a tuProlog operator, in terms of a text, a associativity, and a priority.
  */
 public final class Operator implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    // TODO Probably this should become an enum
-    public static final String FX = "fx"; // prefix non-associative - (i.e. --5 not possible)
-    public static final String FY = "fy"; // prefix associative
-    public static final String XF = "xf"; // postfix non-associative
-    public static final String XFX = "xfx"; // infix non-associative =, is, < (i.e. no nesting)
-    public static final String XFY = "xfy"; // infix right-associative , (for subgoals)
-    public static final String YF = "yf"; // postfix associative
-    public static final String YFX = "yfx"; // infix left-associative +, -, *
-    public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
+  // TODO Probably this should become an enum
+  public static final String FX = "fx"; // prefix non-associative - (i.e. --5 not possible)
+  public static final String FY = "fy"; // prefix associative
+  public static final String XF = "xf"; // postfix non-associative
+  public static final String XFX = "xfx"; // infix non-associative =, is, < (i.e. no nesting)
+  public static final String XFY = "xfy"; // infix right-associative , (for subgoals)
+  public static final String YF = "yf"; // postfix associative
+  public static final String YFX = "yfx"; // infix left-associative +, -, *
+  public static final String YFY = "yfy"; // makes no sense, structuring would be impossible
 
-    /** highest operator precedence */
-    public static final int OP_HIGHEST = 1200;
-    /** lowest operator precedence */
-    public static final int OP_LOWEST = 1;
+  /**
+   * highest operator precedence
+   */
+  public static final int OP_HIGHEST = 1200;
+  /**
+   * lowest operator precedence
+   */
+  public static final int OP_LOWEST = 1;
 
-    /** operator text representation */
-    private final String text;
+  /**
+   * operator text representation
+   */
+  private final String text;
 
-    /** precedence */
-    private final int precedence;
+  /**
+   * precedence
+   */
+  private final int precedence;
 
-    /** xf, yf, fx, fy, xfx, xfy, yfx, (yfy) */
-    private final String associativity;
+  /**
+   * xf, yf, fx, fy, xfx, xfy, yfx, (yfy)
+   */
+  private final String associativity;
 
-    public Operator(String theText, String theAssociativity, int thePrecedence) {
-        this.text = theText;
-        this.associativity = theAssociativity;
-        this.precedence = thePrecedence;
-    }
+  public Operator(String theText, String theAssociativity, int thePrecedence) {
+    this.text = theText;
+    this.associativity = theAssociativity;
+    this.precedence = thePrecedence;
+  }
 
-    // ---------------------------------------------------------------------------
-    // Getters
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Getters
+  // ---------------------------------------------------------------------------
 
 
-    public String getText() {
-        return text;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public int getPrecedence() {
-        return precedence;
-    }
+  public int getPrecedence() {
+    return precedence;
+  }
 
-    public String getAssociativity() {
-        return associativity;
-    }
+  public String getAssociativity() {
+    return associativity;
+  }
 }

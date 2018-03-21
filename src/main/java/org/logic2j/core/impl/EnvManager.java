@@ -42,87 +42,86 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnvManager {
-    private static final Logger logger = LoggerFactory.getLogger(EnvManager.class);
+  private static final Logger logger = LoggerFactory.getLogger(EnvManager.class);
 
-    /**
-     * Thread variables will be prefixed with this name.
-     */
-    public static final String VAR_PREFIX_THREAD = "thread.";
+  /**
+   * Thread variables will be prefixed with this name.
+   */
+  public static final String VAR_PREFIX_THREAD = "thread.";
 
-    /**
-     * JVM properties will be prefixed with this name.
-     */
-    public static final String VAR_PREFIX_JVM = "jvm.";
+  /**
+   * JVM properties will be prefixed with this name.
+   */
+  public static final String VAR_PREFIX_JVM = "jvm.";
 
-    /**
-     * Operating-system process environment variables will be prefixed with this name.
-     */
-    public static final String VAR_PREFIX_ENV = "env.";
+  /**
+   * Operating-system process environment variables will be prefixed with this name.
+   */
+  public static final String VAR_PREFIX_ENV = "env.";
 
-    private final Map<String, Object> environment = new HashMap<String, Object>();
+  private final Map<String, Object> environment = new HashMap<String, Object>();
 
 
-    public EnvManager() {
-        this.environment.put(VAR_PREFIX_ENV.replace(".", ""), System.getenv());
+  public EnvManager() {
+    this.environment.put(VAR_PREFIX_ENV.replace(".", ""), System.getenv());
+  }
+
+
+  public Object getVariable(String theExpression) {
+    final Object value;
+    try {
+      if (theExpression.startsWith(VAR_PREFIX_JVM)) {
+        // VAR_PREFIX_JVM properties have this stupid habit of using dot (".") which is also BeanUtils (and most ELs)
+        // nested properties separator - we have to work this around
+        final String rest = theExpression.replaceFirst(VAR_PREFIX_JVM, "");
+        value = System.getProperty(rest);
+      } else if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
+        final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
+        value = getThreadVariable(rest);
+      } else {
+        value = PropertyUtils.getProperty(this.environment, theExpression);
+      }
+    } catch (IllegalAccessException e) {
+      // No solution
+      return null;
+    } catch (InvocationTargetException e) {
+      // No solution
+      return null;
+    } catch (NoSuchMethodException e) {
+      // No solution
+      return null;
+    }
+    logger.debug("Getting variable \"{}\",  value={}", theExpression, value);
+    return value;
+  }
+
+  public void setVariable(String theExpression, Object theValue) {
+    logger.debug("Setting variable \"{}\", value={}", theExpression, theValue);
+    if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
+      final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
+      setThreadVariable(rest, theValue);
+    } else {
+      this.environment.put(theExpression, theValue);
+    }
+  }
+
+
+
+  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
+
+    @Override
+    protected Map<String, Object> initialValue() {
+      return new HashMap<String, Object>();
     }
 
+  };
 
-    public Object getVariable(String theExpression) {
-        final Object value;
-        try {
-            if (theExpression.startsWith(VAR_PREFIX_JVM)) {
-                // VAR_PREFIX_JVM properties have this stupid habit of using dot (".") which is also BeanUtils (and most ELs)
-                // nested properties separator - we have to work this around
-                final String rest = theExpression.replaceFirst(VAR_PREFIX_JVM, "");
-                value = System.getProperty(rest);
-            } else if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
-                final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
-                value = getThreadVariable(rest);
-            } else {
-                value = PropertyUtils.getProperty(this.environment, theExpression);
-            }
-        } catch (IllegalAccessException e) {
-            // No solution
-            return null;
-        } catch (InvocationTargetException e) {
-            // No solution
-            return null;
-        } catch (NoSuchMethodException e) {
-            // No solution
-            return null;
-        }
-        logger.debug("Getting variable \"{}\",  value={}", theExpression, value);
-        return value;
-    }
+  public static Object getThreadVariable(String theVariableName) {
+    return threadLocalBindings.get().get(theVariableName);
+  }
 
-    public void setVariable(String theExpression, Object theValue) {
-        logger.debug("Setting variable \"{}\", value={}", theExpression, theValue);
-        if (theExpression.startsWith(VAR_PREFIX_THREAD)) {
-            final String rest = theExpression.replaceFirst(VAR_PREFIX_THREAD, "");
-            setThreadVariable(rest, theValue);
-        } else {
-            this.environment.put(theExpression, theValue);
-        }
-    }
-
-
-
-
-    private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
-
-        @Override
-        protected Map<String, Object> initialValue() {
-            return new HashMap<String, Object>();
-        }
-
-    };
-
-    public static Object getThreadVariable(String theVariableName) {
-        return threadLocalBindings.get().get(theVariableName);
-    }
-
-    public static void setThreadVariable(String theVariableName, Object theValue) {
-        threadLocalBindings.get().put(theVariableName, theValue);
-    }
+  public static void setThreadVariable(String theVariableName, Object theValue) {
+    threadLocalBindings.get().put(theVariableName, theValue);
+  }
 
 }

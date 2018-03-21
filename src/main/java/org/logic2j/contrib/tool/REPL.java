@@ -35,12 +35,12 @@ package org.logic2j.contrib.tool;/*
 
 import org.logic2j.contrib.helper.FluentPrologBuilder;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.CountingSolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.io.BufferedReader;
@@ -55,68 +55,68 @@ import java.util.List;
  */
 public class REPL {
 
-    private PrologImplementation prolog;
+  private PrologImplementation prolog;
 
-    public void run(String args[]) throws IOException {
-        System.out.println("logic2j REPL");
+  public void run(String args[]) throws IOException {
+    System.out.println("logic2j REPL");
 
-        final List<File> theories = new ArrayList<File>();
-        for (String arg : args) {
-            theories.add(new File(arg));
-        }
-
-        prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[]{})).build();
-
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while (true) {
-            System.out.print("?- ");
-            String goal = br.readLine();
-            goal = goal.trim();
-            // Removing trailing period
-            if (goal.lastIndexOf('.') >= 0) {
-                goal = goal.substring(0, goal.lastIndexOf('.'));
-            }
-            if ("quit".equals(goal) || "exit".equals(goal) || "bye".equals(goal)) {
-                System.out.println("Bye");
-                return;
-            }
-            runOne(goal);
-        }
+    final List<File> theories = new ArrayList<File>();
+    for (String arg : args) {
+      theories.add(new File(arg));
     }
 
+    prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[] {})).build();
 
-    protected void runOne(String goalText) {
-        try {
-            // Parse and extract vars
-            final TermMarshaller termMarshaller = prolog.getTermMarshaller();
-            final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
-            final Var<?>[] vars = TermApi.distinctVars(goal);
-            // Solve
-            final SolutionListener listener = new CountingSolutionListener() {
-                @Override
-                public Integer onSolution(UnifyContext currentVars) {
-                    super.onSolution(currentVars);
-                    final Object solution = currentVars.reify(goal);
-                    System.out.println("Solution " + count() + ": " + termMarshaller.marshall(solution));
-                    for (Var v : vars) {
-                        final Object varValue = currentVars.reify(v);
-                        System.out.println(" " + v + "=" + termMarshaller.marshall(varValue));
-                    }
-                    return Continuation.CONTINUE;
-                }
-            };
-            final long startTime = System.currentTimeMillis();
-            this.prolog.getSolver().solveGoal(goal, listener);
-            final long endTime = System.currentTimeMillis();
-            // Report
-            // System.out.println("Solutions: " + count);
-        } catch (Exception e) {
-            System.out.println("Exception caught: " + e);
-            // e.printStackTrace();
+    final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    while (true) {
+      System.out.print("?- ");
+      String goal = br.readLine();
+      goal = goal.trim();
+      // Removing trailing period
+      if (goal.lastIndexOf('.') >= 0) {
+        goal = goal.substring(0, goal.lastIndexOf('.'));
+      }
+      if ("quit".equals(goal) || "exit".equals(goal) || "bye".equals(goal)) {
+        System.out.println("Bye");
+        return;
+      }
+      runOne(goal);
+    }
+  }
+
+
+  protected void runOne(String goalText) {
+    try {
+      // Parse and extract vars
+      final TermMarshaller termMarshaller = prolog.getTermMarshaller();
+      final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
+      final Var<?>[] vars = TermApi.distinctVars(goal);
+      // Solve
+      final SolutionListener listener = new CountingSolutionListener() {
+        @Override
+        public Integer onSolution(UnifyContext currentVars) {
+          super.onSolution(currentVars);
+          final Object solution = currentVars.reify(goal);
+          System.out.println("Solution " + count() + ": " + termMarshaller.marshall(solution));
+          for (Var v : vars) {
+            final Object varValue = currentVars.reify(v);
+            System.out.println(" " + v + "=" + termMarshaller.marshall(varValue));
+          }
+          return Continuation.CONTINUE;
         }
+      };
+      final long startTime = System.currentTimeMillis();
+      this.prolog.getSolver().solveGoal(goal, listener);
+      final long endTime = System.currentTimeMillis();
+      // Report
+      // System.out.println("Solutions: " + count);
+    } catch (Exception e) {
+      System.out.println("Exception caught: " + e);
+      // e.printStackTrace();
     }
+  }
 
-    public static void main(String args[]) throws IOException {
-        new REPL().run(args);
-    }
+  public static void main(String args[]) throws IOException {
+    new REPL().run(args);
+  }
 }

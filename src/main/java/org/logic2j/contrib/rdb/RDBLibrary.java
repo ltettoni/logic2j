@@ -24,20 +24,20 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.core.api.solver.listener.SolutionListener;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Term;
+import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.EnvManager;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.util.CollectionUtils;
-import org.logic2j.core.impl.util.TypeUtils;
+import org.logic2j.engine.util.CollectionUtils;
+import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.core.library.impl.LibraryBase;
 
 import javax.sql.DataSource;
@@ -46,7 +46,7 @@ import java.util.*;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(org.logic2j.core.api.solver.listener.SolutionListener, org.logic2j.core.api.unify.UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO the {@link #select(SolutionListener, UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);
@@ -58,7 +58,7 @@ public class RDBLibrary extends LibraryBase {
   private static final Set<String> ALLOWED_OPERATORS;
 
   static {
-    ALLOWED_OPERATORS = new HashSet<String>(Arrays.asList(new String[] { "=", "\\=", "<", ">", "=<", ">=" }));
+    ALLOWED_OPERATORS = new HashSet<String>(Arrays.asList("=", "\\=", "<", ">", "=<", ">="));
   }
 
   private TermAdapter termAdapter;
@@ -74,9 +74,9 @@ public class RDBLibrary extends LibraryBase {
     final Object theExpression = theArguments[1];
     final DataSource ds = bound(theDataSource, currentVars, DataSource.class);
 
-      final Object finalExpression = currentVars.reify(theExpression);
-      ensureBindingIsNotAFreeVar(finalExpression, "select/*", 1);
-      final Struct conditions = (Struct) finalExpression;
+    final Object finalExpression = currentVars.reify(theExpression);
+    ensureBindingIsNotAFreeVar(finalExpression, "select/*", 1);
+    final Struct conditions = (Struct) finalExpression;
 
     // Options
     final Set<Object> optionSet = new HashSet<Object>(Arrays.asList(theArguments).subList(2, theArguments.length));
@@ -207,7 +207,8 @@ public class RDBLibrary extends LibraryBase {
     logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
     // Now collect join conditions: all columns having the same variable
-    final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable = new CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion>();
+    final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable =
+        new CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion>();
     // Join clauses
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
       if (column.getOperand() instanceof Var) {
@@ -222,7 +223,8 @@ public class RDBLibrary extends LibraryBase {
     for (final Collection<ColumnOperatorParameterCriterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
       builder.addProjection(clausesOfOneJoinExpression.iterator().next().getColumn());
       if (clausesOfOneJoinExpression.size() >= 2) {
-        final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin = new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>(clausesOfOneJoinExpression);
+        final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin =
+            new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>(clausesOfOneJoinExpression);
         for (int i = 1; i < toJoin.size(); i++) {
           builder.innerJoin(toJoin.get(0).getColumn(), toJoin.get(i).getColumn());
         }
@@ -254,12 +256,11 @@ public class RDBLibrary extends LibraryBase {
     if (builder.getNbProjections() == 0) {
       final List<Object[]> countOnly = sqlRunner.query(effectiveSql, builder.getParameters());
       if (countOnly.size() != 1) {
-        throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single result set row but "
-            + countOnly.size());
+        throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
       }
       if (countOnly.get(0).length != 1) {
-        throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single column set row but "
-            + countOnly.get(0).length);
+        throw new PrologNonSpecificError(
+            "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
       }
       final Number resultSet = (Number) countOnly.get(0)[0];
       int number = resultSet.intValue();
@@ -268,7 +269,7 @@ public class RDBLibrary extends LibraryBase {
         notifySolution(theListener, currentVars);
       }
     } else {
-        throw new UnsupportedOperationException("Feature not yet migrated to unify version");
+      throw new UnsupportedOperationException("Feature not yet migrated to unify version");
         /*
       final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
       // Vars referenced in projections
@@ -305,22 +306,22 @@ public class RDBLibrary extends LibraryBase {
     return Continuation.CONTINUE;
   }
 
-//  /**
-//   * Translate prolog operators into SQL operator.
-//   * 
-//   * @param theOperator
-//   * @return The valid SQL operator.
-//   */
-//  private String sqlOperator(Operator theOperator) {
-//    return theOperator.getSql();
-////    if ("=<".equals(theOperator)) {
-////      return "<=";
-////    }
-////    if ("\\=".equals(theOperator)) {
-////      return "!=";
-////    }
-////    return theOperator;
-//  }
+  //  /**
+  //   * Translate prolog operators into SQL operator.
+  //   *
+  //   * @param theOperator
+  //   * @return The valid SQL operator.
+  //   */
+  //  private String sqlOperator(Operator theOperator) {
+  //    return theOperator.getSql();
+  ////    if ("=<".equals(theOperator)) {
+  ////      return "<=";
+  ////    }
+  ////    if ("\\=".equals(theOperator)) {
+  ////      return "!=";
+  ////    }
+  ////    return theOperator;
+  //  }
 
   /**
    * @param theTerm
@@ -347,12 +348,12 @@ public class RDBLibrary extends LibraryBase {
   /**
    * @param theBinding
    * @param currentVars
-   * @param desiredClassOrInterface  @return The object bound to a Term by its name
+   * @param desiredClassOrInterface @return The object bound to a Term by its name
    */
   private <T> T bound(Object theBinding, UnifyContext currentVars, Class<T> desiredClassOrInterface) {
-      final Object value = currentVars.reify(theBinding);
-      ensureBindingIsNotAFreeVar(value, "bound/1", 0);
-      final String bindingName = String.valueOf(value);
+    final Object value = currentVars.reify(theBinding);
+    ensureBindingIsNotAFreeVar(value, "bound/1", 0);
+    final String bindingName = String.valueOf(value);
 
     final Object instance = EnvManager.getThreadVariable(bindingName);
     return TypeUtils.safeCastNotNull("unwrapping binding \"" + instance + '"', instance, desiredClassOrInterface);

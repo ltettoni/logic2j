@@ -33,26 +33,26 @@ package org.logic2j.core.impl;/*
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.SolutionListenerBase;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * A SolutionListener that implements the logical not.
  */
 public class NotListener extends SolutionListenerBase {
-    private boolean atLeastOneSolution = false;
+  private boolean atLeastOneSolution = false;
 
-    @Override
-    public Integer onSolution(UnifyContext currentVars) {
-        // Do NOT relay the solution further, just remember there was one
-        this.atLeastOneSolution = true;
-        // No need to seek for further solutions. Watch out this means the goal will stop evaluating on first success.
-        // Fixme Should rather say the enumeration was cancelled on purpose (optimized like in AND statements)
-        return Continuation.USER_ABORT;
-    }
+  @Override
+  public Integer onSolution(UnifyContext currentVars) {
+    // Do NOT relay the solution further, just remember there was one
+    this.atLeastOneSolution = true;
+    // No need to seek for further solutions. Watch out this means the goal will stop evaluating on first success.
+    // Fixme Should rather say the enumeration was cancelled on purpose (optimized like in AND statements)
+    return Continuation.USER_ABORT;
+  }
 
-    public boolean exists() {
-        return atLeastOneSolution;
-    }
+  public boolean exists() {
+    return atLeastOneSolution;
+  }
 }

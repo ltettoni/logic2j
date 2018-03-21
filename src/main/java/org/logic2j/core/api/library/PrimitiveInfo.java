@@ -16,11 +16,11 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.exception.RecursionException;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.exception.RecursionException;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.unify.UnifyContext;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,139 +33,142 @@ import java.util.HashSet;
  * <li>Predicate - a "function" in Prolog, will produce solutions</li>
  * <li>Functor - evaluates to a result, for example the addition of two numbers</li>
  * </ul>
- * 
+ *
  * @note Strangely, this class has ivoke() features so it's not only a description!
  */
 public class PrimitiveInfo {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
-    private static final boolean isDebug = logger.isDebugEnabled();
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
+  private static final boolean isDebug = logger.isDebugEnabled();
 
-    private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<String>();
+  private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<String>();
 
-    public static enum PrimitiveType {
-        /**
-         * Not yet implemented.
-         */
-        DIRECTIVE,
-        /**
-         * A predicate implemented as a Java method, will produce solution(s) through a {@link SolutionListener} interface.
-         */
-        PREDICATE,
-        /**
-         * A functor yields a result, such as +(2,3).
-         */
-        FUNCTOR
-    }
 
-    private final PrimitiveType type;
-    private final String name;
-    private final String methodName;
-    private final PLibrary library; // The library instance on which the method will be invoked (they are not static methods)
-    private final Method method; // The method that implements the primitive's logic
-    private final boolean isVarargs;
-
-    public PrimitiveInfo(PrimitiveType theType, PLibrary theLibrary, String theName, Method theMethod, boolean theVarargs) {
-        super();
-        this.type = theType;
-        this.library = theLibrary;
-        this.name = theName;
-        this.method = theMethod;
-        this.methodName = theMethod.getName().intern();
-        this.isVarargs = theVarargs;
-    }
-
-    public Object invoke(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
-        final Object result = this.library.dispatch(this.methodName, theGoalStruct, theListener, currentVars);
-        if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
-            return result;
-        }
-        // We did not do a direct invocation - we will have to rely on reflection
-        if (!methodNeedingReflectiveInvocation.contains(this.methodName)) {
-            logger.warn("Invocation of library primitive \"{}\" for goal \"{}\" uses reflection - consider implementing {}.dispatch()", this.methodName, theGoalStruct, this.library);
-            // Avoid multiple logging
-            methodNeedingReflectiveInvocation.add(this.methodName);
-        }
-        try {
-            if (isDebug) {
-                logger.debug("PRIMITIVE > invocation of {}", this);
-            }
-            return invokeReflective(theGoalStruct, theListener, currentVars);
-        } catch (final IllegalArgumentException e) {
-            throw e;
-        } catch (final IllegalAccessException e) {
-            throw new InvalidTermException("Could not access method " + this.method, e);
-        } catch (final InvocationTargetException e) {
-            final Throwable targetException = e.getTargetException();
-            if (targetException instanceof RecursionException) {
-                // If we already have trouble in recursivity, don't add further exceptions - just rethrow.
-                throw (RecursionException) targetException;
-            }
-            if (targetException instanceof StackOverflowError) {
-                final RecursionException recursionException = new RecursionException("Stack overflow while executing primitive " + this);
-                throw recursionException;
-            }
-            if (targetException instanceof RuntimeException) {
-                throw (RuntimeException) targetException;
-            }
-            throw new InvalidTermException("Primitive threw an exception: " + this + ": " + targetException, targetException);
-        } catch (final Throwable e) {
-            throw new InvalidTermException("Invocation of method " + this.method + " went really bad: " + e, e);
-        }
-    }
-
+  public enum PrimitiveType {
     /**
-     * @param theGoalStruct
-     * @param currentVars
-     * @throws java.lang.reflect.InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * Not yet implemented.
      */
-    private Object invokeReflective(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        final int arity = theGoalStruct.getArity();
-        final int nbArgs = this.isVarargs ? 3 : (2 + arity);
-        final Object[] args = new Object[nbArgs];
-        int i = 0;
-        args[i++] = theListener;
-        args[i++] = currentVars;
-        if (this.isVarargs) {
-            // All arguments as an array
-            final Object[] varargArray = new Object[arity];
-            int j = 0;
-            while (j < arity) {
-                varargArray[j] = theGoalStruct.getArg(j);
-                j++;
-            }
-            args[i++] = varargArray;
-        } else {
-            // Regular argument passing
-            int j = 0;
-            while (j < arity) {
-                args[i++] = theGoalStruct.getArg(j++);
-            }
-        }
-        final Object result = this.method.invoke(this.library, args);
-        if (isDebug) {
-            logger.debug("PRIMITIVE < result={}", result);
-        }
-        return result;
+    DIRECTIVE, /**
+     * A predicate implemented as a Java method, will produce solution(s) through a {@link SolutionListener} interface.
+     */
+    PREDICATE, /**
+     * A functor yields a result, such as +(2,3).
+     */
+    FUNCTOR
+  }
 
+
+  private final PrimitiveType type;
+  private final String name;
+  private final String methodName;
+  private final PLibrary library; // The library instance on which the method will be invoked (they are not static methods)
+  private final Method method; // The method that implements the primitive's logic
+  private final boolean isVarargs;
+
+  public PrimitiveInfo(PrimitiveType theType, PLibrary theLibrary, String theName, Method theMethod, boolean theVarargs) {
+    super();
+    this.type = theType;
+    this.library = theLibrary;
+    this.name = theName;
+    this.method = theMethod;
+    this.methodName = theMethod.getName().intern();
+    this.isVarargs = theVarargs;
+  }
+
+  public Object invoke(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
+    final Object result = this.library.dispatch(this.methodName, theGoalStruct, theListener, currentVars);
+    if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
+      return result;
     }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-    public PrimitiveType getType() {
-        return this.type;
+    // We did not do a direct invocation - we will have to rely on reflection
+    if (!methodNeedingReflectiveInvocation.contains(this.methodName)) {
+      logger.warn("Invocation of library primitive \"{}\" for goal \"{}\" uses reflection - consider implementing {}.dispatch()", this.methodName,
+          theGoalStruct, this.library);
+      // Avoid multiple logging
+      methodNeedingReflectiveInvocation.add(this.methodName);
     }
-
-    // ---------------------------------------------------------------------------
-    // Methods of java.lang.Object
-    // ---------------------------------------------------------------------------
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{lib=" + this.library + ", type=" + getType() + ", name=" + this.name + ", method=" + this.method.getName() + '}';
+    try {
+      if (isDebug) {
+        logger.debug("PRIMITIVE > invocation of {}", this);
+      }
+      return invokeReflective(theGoalStruct, theListener, currentVars);
+    } catch (final IllegalArgumentException e) {
+      throw e;
+    } catch (final IllegalAccessException e) {
+      throw new InvalidTermException("Could not access method " + this.method, e);
+    } catch (final InvocationTargetException e) {
+      final Throwable targetException = e.getTargetException();
+      if (targetException instanceof RecursionException) {
+        // If we already have trouble in recursivity, don't add further exceptions - just rethrow.
+        throw (RecursionException) targetException;
+      }
+      if (targetException instanceof StackOverflowError) {
+        final RecursionException recursionException = new RecursionException("Stack overflow while executing primitive " + this);
+        throw recursionException;
+      }
+      if (targetException instanceof RuntimeException) {
+        throw (RuntimeException) targetException;
+      }
+      throw new InvalidTermException("Primitive threw an exception: " + this + ": " + targetException, targetException);
+    } catch (final Throwable e) {
+      throw new InvalidTermException("Invocation of method " + this.method + " went really bad: " + e, e);
     }
+  }
+
+  /**
+   * @param theGoalStruct
+   * @param currentVars
+   * @throws java.lang.reflect.InvocationTargetException
+   * @throws IllegalArgumentException
+   * @throws IllegalAccessException
+   */
+  private Object invokeReflective(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars)
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    final int arity = theGoalStruct.getArity();
+    final int nbArgs = this.isVarargs ? 3 : (2 + arity);
+    final Object[] args = new Object[nbArgs];
+    int i = 0;
+    args[i++] = theListener;
+    args[i++] = currentVars;
+    if (this.isVarargs) {
+      // All arguments as an array
+      final Object[] varargArray = new Object[arity];
+      int j = 0;
+      while (j < arity) {
+        varargArray[j] = theGoalStruct.getArg(j);
+        j++;
+      }
+      args[i++] = varargArray;
+    } else {
+      // Regular argument passing
+      int j = 0;
+      while (j < arity) {
+        args[i++] = theGoalStruct.getArg(j++);
+      }
+    }
+    final Object result = this.method.invoke(this.library, args);
+    if (isDebug) {
+      logger.debug("PRIMITIVE < result={}", result);
+    }
+    return result;
+
+  }
+
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // ---------------------------------------------------------------------------
+
+  public PrimitiveType getType() {
+    return this.type;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Methods of java.lang.Object
+  // ---------------------------------------------------------------------------
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + "{lib=" + this.library + ", type=" + getType() + ", name=" + this.name + ", method=" + this.method
+        .getName() + '}';
+  }
 
 }

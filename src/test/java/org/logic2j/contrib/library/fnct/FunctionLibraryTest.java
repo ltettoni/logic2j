@@ -20,7 +20,7 @@ package org.logic2j.contrib.library.fnct;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 
 import java.util.Arrays;

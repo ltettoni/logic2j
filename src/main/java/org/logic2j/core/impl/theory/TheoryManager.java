@@ -37,64 +37,66 @@ import java.net.URL;
  */
 public interface TheoryManager extends ClauseProvider {
 
-    // ---------------------------------------------------------------------------
-    // Load Theories from various sources into a TheoryContent representation
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Load Theories from various sources into a TheoryContent representation
+  // ---------------------------------------------------------------------------
 
-    /**
-     * Load the {@link TheoryContent} from a File defining a theory;
-     * this only loads and return the content, use {@link #addTheory(TheoryContent)} to make it
-     * available to the {@link org.logic2j.core.impl.PrologImplementation}.
-     *
-     * @param theFile
-     * @return The content of the theory
-     * @throws java.io.IOException
-     */
-    TheoryContent load(File theFile) throws IOException;
+  /**
+   * Load the {@link TheoryContent} from a File defining a theory;
+   * this only loads and return the content, use {@link #addTheory(TheoryContent)} to make it
+   * available to the {@link org.logic2j.core.impl.PrologImplementation}.
+   *
+   * @param theFile
+   * @return The content of the theory
+   * @throws java.io.IOException
+   */
+  TheoryContent load(File theFile) throws IOException;
 
-    /**
-     * Load from a URL.
-     * @param theTheory
-     * @return The content of the theory
-     */
-    TheoryContent load(URL theTheory);
+  /**
+   * Load from a URL.
+   *
+   * @param theTheory
+   * @return The content of the theory
+   */
+  TheoryContent load(URL theTheory);
 
-    /**
-     * Load from a classloadable resource.
-     * @param theClassloadableResourceOrUrl
-     * @return The content of the theory
-     */
-    TheoryContent load(String theClassloadableResourceOrUrl);
+  /**
+   * Load from a classloadable resource.
+   *
+   * @param theClassloadableResourceOrUrl
+   * @return The content of the theory
+   */
+  TheoryContent load(String theClassloadableResourceOrUrl);
 
-    /**
-     * @return All clause providers, in same order as when registered.
-     *         TODO The actual ordering of ClauseProviders may not always be required: it is only
-     *         important when the same predicate is available from several providers (rare). Could we in certain cases use
-     *         multi-threaded access to all clause providers?
-     */
-    Iterable<ClauseProvider> getClauseProviders();
+  /**
+   * @return All clause providers, in same order as when registered.
+   * TODO The actual ordering of ClauseProviders may not always be required: it is only
+   * important when the same predicate is available from several providers (rare). Could we in certain cases use
+   * multi-threaded access to all clause providers?
+   */
+  Iterable<ClauseProvider> getClauseProviders();
 
-    boolean hasDataFactProviders();
+  boolean hasDataFactProviders();
 
-    Iterable<DataFactProvider> getDataFactProviders();
+  Iterable<DataFactProvider> getDataFactProviders();
 
-    /**
-     * @param theNewProvider
-     */
-    void addClauseProvider(ClauseProvider theNewProvider);
+  /**
+   * @param theNewProvider
+   */
+  void addClauseProvider(ClauseProvider theNewProvider);
 
-    /**
-     * @param theNewProvider
-     */
-    void addDataFactProvider(DataFactProvider theNewProvider);
+  /**
+   * @param theNewProvider
+   */
+  void addDataFactProvider(DataFactProvider theNewProvider);
 
-    // ---------------------------------------------------------------------------
-    // Alter the current Prolog instance with content from theories
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Alter the current Prolog instance with content from theories
+  // ---------------------------------------------------------------------------
 
-    /**
-     * @param theContent To be merged into this and made available to the {@link org.logic2j.core.impl.PrologImplementation}.
-     */
-    void addTheory(TheoryContent theContent);
+  /**
+   * @param theContent To be merged into this and made available to the {@link org.logic2j.core.impl.PrologImplementation}.
+   */
+  void addTheory(TheoryContent theContent);
 
 }

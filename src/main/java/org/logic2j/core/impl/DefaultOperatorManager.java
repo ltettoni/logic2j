@@ -18,61 +18,61 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.model.Operator;
-import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.engine.model.Struct;
 
 /**
  * This class defines an OperatorManager with many standard Prolog operators defined.
  */
 public class DefaultOperatorManager extends OperatorManagerBase {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public DefaultOperatorManager() {
-        addOperator(Struct.FUNCTOR_CLAUSE, Operator.XFX, 1200);
-        addOperator("-->", Operator.XFX, 1200);
-        addOperator(Struct.FUNCTOR_CLAUSE, Operator.FX, 1200); // Theorem
-        addOperator("?-", Operator.FX, 1200);
-        addOperator(Struct.FUNCTOR_SEMICOLON, Operator.XFY, 1100); // OR
-        addOperator("->", Operator.XFY, 1050);
-        addOperator(Struct.FUNCTOR_COMMA, Operator.XFY, 1000); // AND
-        // addOperator(Struct.FUNCTOR_COMMA, Operator.YFY, 1000); // To implement direct optimization of ','/n but this is quite
-        // prototypical
-        addOperator("\\+", Operator.FY, 900); // Surprisingly enough the operator \+ means "not provable".
-        addOperator("not", Operator.FY, 900);
-        addOperator("=", Operator.XFX, 700);
-        addOperator("\\=", Operator.XFX, 700);
-        addOperator("==", Operator.XFX, 700);
-        addOperator("\\==", Operator.XFX, 700);
-        // addOperator("@==", Operator.XFX,700);
-        // addOperator("@\\==", Operator.XFX,700);
-        addOperator("@>", Operator.XFX, 700);
-        addOperator("@<", Operator.XFX, 700);
-        addOperator("@=<", Operator.XFX, 700);
-        addOperator("@>=", Operator.XFX, 700);
-        addOperator("=:=", Operator.XFX, 700);
-        addOperator("=\\=", Operator.XFX, 700);
-        addOperator(">", Operator.XFX, 700);
-        addOperator("<", Operator.XFX, 700);
-        addOperator("=<", Operator.XFX, 700);
-        addOperator(">=", Operator.XFX, 700);
-        addOperator("is", Operator.XFX, 700);
-        addOperator("=..", Operator.XFX, 700);
-        // opNew("?", Operator.XFX,600);
-        // opNew("@", Operator.XFX,550);
-        addOperator("+", Operator.YFX, 500);
-        addOperator("-", Operator.YFX, 500);
-        addOperator("/\\", Operator.YFX, 500);
-        addOperator("\\/", Operator.YFX, 500);
-        addOperator("*", Operator.YFX, 400);
-        addOperator("/", Operator.YFX, 400);
-        addOperator("//", Operator.YFX, 400);
-        addOperator(">>", Operator.YFX, 400);
-        addOperator("<<", Operator.YFX, 400);
-        addOperator("rem", Operator.YFX, 400);
-        addOperator("mod", Operator.YFX, 400);
-        addOperator("**", Operator.XFX, 200);
-        addOperator("^", Operator.XFY, 200);
-        addOperator("\\", Operator.FX, 200);
-        addOperator("-", Operator.FY, 200);
-    }
+  public DefaultOperatorManager() {
+    addOperator(Struct.FUNCTOR_CLAUSE, Operator.XFX, 1200);
+    addOperator("-->", Operator.XFX, 1200);
+    addOperator(Struct.FUNCTOR_CLAUSE, Operator.FX, 1200); // Theorem
+    addOperator("?-", Operator.FX, 1200);
+    addOperator(Struct.FUNCTOR_SEMICOLON, Operator.XFY, 1100); // OR
+    addOperator("->", Operator.XFY, 1050);
+    addOperator(Struct.FUNCTOR_COMMA, Operator.XFY, 1000); // AND
+    // addOperator(Struct.FUNCTOR_COMMA, Operator.YFY, 1000); // To implement direct optimization of ','/n but this is quite
+    // prototypical
+    addOperator("\\+", Operator.FY, 900); // Surprisingly enough the operator \+ means "not provable".
+    addOperator("not", Operator.FY, 900);
+    addOperator("=", Operator.XFX, 700);
+    addOperator("\\=", Operator.XFX, 700);
+    addOperator("==", Operator.XFX, 700);
+    addOperator("\\==", Operator.XFX, 700);
+    // addOperator("@==", Operator.XFX,700);
+    // addOperator("@\\==", Operator.XFX,700);
+    addOperator("@>", Operator.XFX, 700);
+    addOperator("@<", Operator.XFX, 700);
+    addOperator("@=<", Operator.XFX, 700);
+    addOperator("@>=", Operator.XFX, 700);
+    addOperator("=:=", Operator.XFX, 700);
+    addOperator("=\\=", Operator.XFX, 700);
+    addOperator(">", Operator.XFX, 700);
+    addOperator("<", Operator.XFX, 700);
+    addOperator("=<", Operator.XFX, 700);
+    addOperator(">=", Operator.XFX, 700);
+    addOperator("is", Operator.XFX, 700);
+    addOperator("=..", Operator.XFX, 700);
+    // opNew("?", Operator.XFX,600);
+    // opNew("@", Operator.XFX,550);
+    addOperator("+", Operator.YFX, 500);
+    addOperator("-", Operator.YFX, 500);
+    addOperator("/\\", Operator.YFX, 500);
+    addOperator("\\/", Operator.YFX, 500);
+    addOperator("*", Operator.YFX, 400);
+    addOperator("/", Operator.YFX, 400);
+    addOperator("//", Operator.YFX, 400);
+    addOperator(">>", Operator.YFX, 400);
+    addOperator("<<", Operator.YFX, 400);
+    addOperator("rem", Operator.YFX, 400);
+    addOperator("mod", Operator.YFX, 400);
+    addOperator("**", Operator.XFX, 200);
+    addOperator("^", Operator.XFY, 200);
+    addOperator("\\", Operator.FX, 200);
+    addOperator("-", Operator.FY, 200);
+  }
 
 }

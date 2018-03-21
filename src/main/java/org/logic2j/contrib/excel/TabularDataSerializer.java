@@ -21,45 +21,45 @@ import java.io.*;
 
 /**
  * Read and write {@link TabularData} in binary format.
- * 
+ *
  * @note It's critical to use a BufferedReader
  */
 public class TabularDataSerializer {
 
-    private final File file;
+  private final File file;
 
-    /**
-     * @param theFile
-     */
-    public TabularDataSerializer(File theFile) {
-        super();
-        this.file = theFile;
-    }
+  /**
+   * @param theFile
+   */
+  public TabularDataSerializer(File theFile) {
+    super();
+    this.file = theFile;
+  }
 
-    public TabularData read() throws IOException, ClassNotFoundException {
-        final InputStream in = new FileInputStream(this.file);
-        final BufferedInputStream buf = new BufferedInputStream(in, 102400); // Absolutely critical for perf!!!
-        final ObjectInput input = new ObjectInputStream(buf);
-        try {
-            final TabularData td = (TabularData) input.readObject();
-            return td;
-        } finally {
-            input.close();
-            buf.close();
-            in.close();
-        }
+  public TabularData read() throws IOException, ClassNotFoundException {
+    final InputStream in = new FileInputStream(this.file);
+    final BufferedInputStream buf = new BufferedInputStream(in, 102400); // Absolutely critical for perf!!!
+    final ObjectInput input = new ObjectInputStream(buf);
+    try {
+      final TabularData td = (TabularData) input.readObject();
+      return td;
+    } finally {
+      input.close();
+      buf.close();
+      in.close();
     }
+  }
 
-    public void write(TabularData data) throws IOException {
-        final FileOutputStream out = new FileOutputStream(this.file);
-        final BufferedOutputStream buf = new BufferedOutputStream(out, 102400);
-        final ObjectOutputStream oos = new ObjectOutputStream(buf);
-        try {
-            oos.writeObject(data);
-        } finally {
-            oos.close();
-            buf.close();
-            out.close();
-        }
+  public void write(TabularData data) throws IOException {
+    final FileOutputStream out = new FileOutputStream(this.file);
+    final BufferedOutputStream buf = new BufferedOutputStream(out, 102400);
+    final ObjectOutputStream oos = new ObjectOutputStream(buf);
+    try {
+      oos.writeObject(data);
+    } finally {
+      oos.close();
+      buf.close();
+      out.close();
     }
+  }
 }

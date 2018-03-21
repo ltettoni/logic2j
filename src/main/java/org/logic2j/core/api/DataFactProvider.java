@@ -18,13 +18,13 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.DataFact;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * Provide {@link DataFact}s from various data sources to the {@link org.logic2j.core.impl.Solver}.
  */
 public interface DataFactProvider {
 
-    Iterable<DataFact> listMatchingDataFacts(Object theGoal, UnifyContext currentVars);
+  Iterable<DataFact> listMatchingDataFacts(Object theGoal, UnifyContext currentVars);
 
 }

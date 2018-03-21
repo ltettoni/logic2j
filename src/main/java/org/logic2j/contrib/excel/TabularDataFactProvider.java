@@ -20,8 +20,8 @@ package org.logic2j.contrib.excel;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
 import org.logic2j.core.api.model.DataFact;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.unify.UnifyContext;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -30,71 +30,73 @@ import java.util.ArrayList;
  * An implementation of DataFactProvider for TabularData.
  */
 public class TabularDataFactProvider implements DataFactProvider {
-    private final TabularData tabularData;
-    private final AssertionMode assertionMode;
-    final ArrayList<DataFact> dataFacts = new ArrayList<DataFact>();
+  private final TabularData tabularData;
+  private final AssertionMode assertionMode;
+  final ArrayList<DataFact> dataFacts = new ArrayList<DataFact>();
 
-    public TabularDataFactProvider(TabularData theTabularData, AssertionMode theMode) {
-        this.tabularData = theTabularData;
-        this.assertionMode = theMode;
-        initDataFacts();
-    }
+  public TabularDataFactProvider(TabularData theTabularData, AssertionMode theMode) {
+    this.tabularData = theTabularData;
+    this.assertionMode = theMode;
+    initDataFacts();
+  }
 
-    private void initDataFacts() {
-        final String dataSetName = this.tabularData.getDataSetName();
-        final int nbColumns = this.tabularData.getNbColumns();
-        final int primaryKeyColumn = this.tabularData.getPrimaryKeyColumn();
-        final String[] columnNames = this.tabularData.getColumnNames();
-        final Serializable[][] data = this.tabularData.getData();
-        for (final Serializable[] row : data) {
-            switch (this.assertionMode) {
-            case EAV_NAMED: {
-                if (primaryKeyColumn < 0) {
-                    throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                }
-                final String identifier = row[primaryKeyColumn].toString();
-                for (int c = 0; c < nbColumns; c++) {
-                    if (c != primaryKeyColumn) {
-                        final String property = columnNames[c];
-                        // TODO Null values should actually just not be asserted - so we use "n/a" but it this a good idea?
-                        Serializable value = row[c];
-                        if (value == null) {
-                            value = "n/a";
-                        }
-                        final DataFact fact = new DataFact(dataSetName, identifier, property, value);
-                        this.dataFacts.add(fact);
-                    }
-                }
-                break;
+  private void initDataFacts() {
+    final String dataSetName = this.tabularData.getDataSetName();
+    final int nbColumns = this.tabularData.getNbColumns();
+    final int primaryKeyColumn = this.tabularData.getPrimaryKeyColumn();
+    final String[] columnNames = this.tabularData.getColumnNames();
+    final Serializable[][] data = this.tabularData.getData();
+    for (final Serializable[] row : data) {
+      switch (this.assertionMode) {
+        case EAV_NAMED: {
+          if (primaryKeyColumn < 0) {
+            throw new PrologNonSpecificError(
+                "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+          }
+          final String identifier = row[primaryKeyColumn].toString();
+          for (int c = 0; c < nbColumns; c++) {
+            if (c != primaryKeyColumn) {
+              final String property = columnNames[c];
+              // TODO Null values should actually just not be asserted - so we use "n/a" but it this a good idea?
+              Serializable value = row[c];
+              if (value == null) {
+                value = "n/a";
+              }
+              final DataFact fact = new DataFact(dataSetName, identifier, property, value);
+              this.dataFacts.add(fact);
             }
-            case EAVT: {
-                if (primaryKeyColumn < 0) {
-                    throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                }
-                final String identifier = row[primaryKeyColumn].toString();
-                for (int c = 0; c < nbColumns; c++) {
-                    if (c != primaryKeyColumn) {
-                        final String property = columnNames[c];
-                        final Serializable value = row[c];
-                        final DataFact fact = new DataFact(identifier, property, value, dataSetName);
-                        this.dataFacts.add(fact);
-                    }
-                }
-                break;
-            }
-            case RECORD: {
-                this.dataFacts.add(new DataFact((Object[]) row));
-                break;
-            }
-            default:
-                throw new PrologNonSpecificError("Unknown AssertionMode " + this.assertionMode);
-
-            }
+          }
+          break;
         }
-    }
+        case EAVT: {
+          if (primaryKeyColumn < 0) {
+            throw new PrologNonSpecificError(
+                "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+          }
+          final String identifier = row[primaryKeyColumn].toString();
+          for (int c = 0; c < nbColumns; c++) {
+            if (c != primaryKeyColumn) {
+              final String property = columnNames[c];
+              final Serializable value = row[c];
+              final DataFact fact = new DataFact(identifier, property, value, dataSetName);
+              this.dataFacts.add(fact);
+            }
+          }
+          break;
+        }
+        case RECORD: {
+          this.dataFacts.add(new DataFact((Object[]) row));
+          break;
+        }
+        default:
+          throw new PrologNonSpecificError("Unknown AssertionMode " + this.assertionMode);
 
-    @Override
-    public Iterable<DataFact> listMatchingDataFacts(Object theGoal, UnifyContext currentVars) {
-        return this.dataFacts;
+      }
     }
+  }
+
+  @Override
+  public Iterable<DataFact> listMatchingDataFacts(Object theGoal, UnifyContext currentVars) {
+    return this.dataFacts;
+  }
 }

@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.engine.model.Struct;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
         final Struct fact2 = new Struct("zz", 22);
         final int index2 = this.dynamic.assertClause(fact2);
         assertThat(index2).isEqualTo(1);
-        assertThat(nSolutions(2, "zz(Q)").var("Q").list()).isEqualTo(Arrays.asList(new Integer[] {11, 22}));
+        assertThat(nSolutions(2, "zz(Q)").var("Q").list()).isEqualTo(Arrays.asList(11, 22));
         // Retract
         this.dynamic.retractFactAt(index1);
         assertThat(uniqueSolution("zz(Q)").var("Q").unique()).isEqualTo(22);
@@ -113,7 +113,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     }
 
     @Test
-    public void retractToIndex() throws Exception {
+    public void retractToIndex() {
         noSolutions("iter");
         // Assert first range
         for (int i=0; i<50; i++) {

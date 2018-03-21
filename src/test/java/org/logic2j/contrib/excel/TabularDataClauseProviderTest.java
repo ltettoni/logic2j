@@ -20,14 +20,8 @@ package org.logic2j.contrib.excel;
 import org.junit.Test;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;

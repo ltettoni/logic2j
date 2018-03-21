@@ -25,53 +25,53 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
  * This class represents a token read by the prolog term tokenizer
  */
 class Token implements Serializable {
-    private static final long serialVersionUID = 1L;
-    // token textual representation
-    final String text;
-    // token type and attribute
-    private final int type;
+  private static final long serialVersionUID = 1L;
+  // token textual representation
+  final String text;
+  // token type and attribute
+  private final int type;
 
-    public Token(String seq_, int type_) {
-        this.text = seq_;
-        this.type = type_;
-    }
+  public Token(String seq_, int type_) {
+    this.text = seq_;
+    this.type = type_;
+  }
 
-    /**
-     * @return Type flag
-     */
-    public int getType() {
-        return this.type & TYPEMASK;
-    }
+  /**
+   * @return Type flag
+   */
+  public int getType() {
+    return this.type & TYPEMASK;
+  }
 
-    /**
-     * @return Attribute flag could be FUNCTOR, OPERATOR or EOF
-     */
-    private int getAttribute() {
-        return this.type & ATTRMASK;
-    }
+  /**
+   * @return Attribute flag could be FUNCTOR, OPERATOR or EOF
+   */
+  private int getAttribute() {
+    return this.type & ATTRMASK;
+  }
 
-    public boolean isOperator(boolean commaIsEndMarker) {
-        return !(commaIsEndMarker && ",".equals(this.text)) && getAttribute() == OPERATOR;
-    }
+  public boolean isOperator(boolean commaIsEndMarker) {
+    return !(commaIsEndMarker && ",".equals(this.text)) && getAttribute() == OPERATOR;
+  }
 
-    public boolean isFunctor() {
-        return getAttribute() == FUNCTOR;
-    }
+  public boolean isFunctor() {
+    return getAttribute() == FUNCTOR;
+  }
 
-    public boolean isNumber() {
-        return this.type == INTEGER || this.type == LONG || this.type == FLOAT || this.type == DOUBLE;
-    }
+  public boolean isNumber() {
+    return this.type == INTEGER || this.type == LONG || this.type == FLOAT || this.type == DOUBLE;
+  }
 
-    boolean isEOF() {
-        return getAttribute() == EOF;
-    }
+  boolean isEOF() {
+    return getAttribute() == EOF;
+  }
 
-    boolean isType(int theType) {
-        return getType() == theType;
-    }
+  boolean isType(int theType) {
+    return getType() == theType;
+  }
 
-    @Override
-    public String toString() {
-        return "Token('" + text + '\'' + ", type=" + type + '}';
-    }
+  @Override
+  public String toString() {
+    return "Token('" + text + '\'' + ", type=" + type + '}';
+  }
 }

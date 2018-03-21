@@ -18,8 +18,8 @@
 package org.logic2j.contrib.excel;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.term.Struct;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.Struct;
 import org.logic2j.core.impl.DefaultTermAdapter;
 
 import java.io.Serializable;
@@ -30,72 +30,74 @@ import java.util.List;
  * A {@link org.logic2j.core.api.TermAdapter} capable of handling {@link TabularData}.
  */
 public class TabularDataTermAdapter extends DefaultTermAdapter {
-    private static final String EAVT = TabularDataClauseProvider.EAVT;
+  private static final String EAVT = TabularDataClauseProvider.EAVT;
 
-    private final TermAdapter baseTermAdapter;
+  private final TermAdapter baseTermAdapter;
 
-    public TabularDataTermAdapter(TermAdapter baseTermAdapter) {
-        this.baseTermAdapter = baseTermAdapter;
+  public TabularDataTermAdapter(TermAdapter baseTermAdapter) {
+    this.baseTermAdapter = baseTermAdapter;
+  }
+
+  @Override
+  public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
+    if (!(theObject instanceof TabularData)) {
+      return super.toTerms(theObject, theAssertionMode);
     }
-
-    @Override
-    public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
-        if (!(theObject instanceof TabularData)) {
-            return super.toTerms(theObject, theAssertionMode);
-        }
-        final TabularData tabularData = (TabularData) theObject;
-        final String dataSetName = tabularData.getDataSetName();
-        final int nbRows = tabularData.getNbRows();
-        final int nbColumns = tabularData.getNbColumns();
-        final List<Object> result = new ArrayList<Object>();
-        for (int r = 0; r < nbRows; r++) {
-            try {
-                final Serializable[] row = tabularData.getData()[r];
-                switch (theAssertionMode) {
-                case EAV_NAMED: {
-                    if (tabularData.getPrimaryKeyColumn() < 0) {
-                        throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                    }
-                    final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
-                    for (int c = 0; c < nbColumns; c++) {
-                        if (c != tabularData.getPrimaryKeyColumn()) {
-                            final String property = tabularData.getColumnNames()[c];
-                            final Serializable value = row[c];
-                            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, identifier, property, value);
-                            result.add(term);
-                        }
-                    }
-                    break;
-                }
-                case EAVT: {
-                    if (tabularData.getPrimaryKeyColumn() < 0) {
-                        throw new PrologNonSpecificError("Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
-                    }
-                    final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
-                    for (int c = 0; c < nbColumns; c++) {
-                        if (c != tabularData.getPrimaryKeyColumn()) {
-                            final String property = tabularData.getColumnNames()[c];
-                            final Serializable value = row[c];
-                            final Struct term = baseTermAdapter.toStruct(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
-                            result.add(term);
-                        }
-                    }
-                    break;
-                }
-                case RECORD: {
-                    final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, (Object[]) row);
-                    result.add(term);
-                    break;
-                }
-                default:
-                    throw new PrologNonSpecificError("Unknown AssertionMode " + theAssertionMode);
-                }
-            } catch (final Exception e) {
-                throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
+    final TabularData tabularData = (TabularData) theObject;
+    final String dataSetName = tabularData.getDataSetName();
+    final int nbRows = tabularData.getNbRows();
+    final int nbColumns = tabularData.getNbColumns();
+    final List<Object> result = new ArrayList<Object>();
+    for (int r = 0; r < nbRows; r++) {
+      try {
+        final Serializable[] row = tabularData.getData()[r];
+        switch (theAssertionMode) {
+          case EAV_NAMED: {
+            if (tabularData.getPrimaryKeyColumn() < 0) {
+              throw new PrologNonSpecificError(
+                  "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
             }
+            final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
+            for (int c = 0; c < nbColumns; c++) {
+              if (c != tabularData.getPrimaryKeyColumn()) {
+                final String property = tabularData.getColumnNames()[c];
+                final Serializable value = row[c];
+                final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, identifier, property, value);
+                result.add(term);
+              }
+            }
+            break;
+          }
+          case EAVT: {
+            if (tabularData.getPrimaryKeyColumn() < 0) {
+              throw new PrologNonSpecificError(
+                  "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+            }
+            final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
+            for (int c = 0; c < nbColumns; c++) {
+              if (c != tabularData.getPrimaryKeyColumn()) {
+                final String property = tabularData.getColumnNames()[c];
+                final Serializable value = row[c];
+                final Struct term = baseTermAdapter.toStruct(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
+                result.add(term);
+              }
+            }
+            break;
+          }
+          case RECORD: {
+            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, (Object[]) row);
+            result.add(term);
+            break;
+          }
+          default:
+            throw new PrologNonSpecificError("Unknown AssertionMode " + theAssertionMode);
         }
-        return result;
+      } catch (final Exception e) {
+        throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
+      }
     }
+    return result;
+  }
 
 
 }

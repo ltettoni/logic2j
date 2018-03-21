@@ -19,15 +19,13 @@ package org.logic2j.core.library.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.solver.extractor.SingleVarExtractor;
-import org.logic2j.core.api.solver.listener.SingleVarSolutionListener;
-import org.logic2j.core.api.solver.listener.SolutionListenerBase;
-import org.logic2j.core.api.solver.listener.multi.MultiResult;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.SolutionListenerBase;
+import org.logic2j.engine.solver.listener.multi.MultiResult;
+import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +91,7 @@ public class AdHocLibraryTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void int_range_multi_with_listener() throws Exception {
+    public void int_range_multi_with_listener() {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
         Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);

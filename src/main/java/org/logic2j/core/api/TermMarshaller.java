@@ -16,8 +16,10 @@
  */
 package org.logic2j.core.api;
 
+import org.logic2j.engine.model.Term;
+
 /**
- * Marshall Prolog {@link org.logic2j.core.api.model.term.Term} hierarchies to streamable representations.
+ * Marshall Prolog {@link Term} hierarchies to streamable representations.
  * <p>
  * <em>
  * Marshalling (Wikipedia): In computer science, marshalling (sometimes spelled marshaling) is the process of
@@ -29,12 +31,12 @@ package org.logic2j.core.api;
  */
 public interface TermMarshaller {
 
-    /**
-     * Formats a {@link org.logic2j.core.api.model.term.Term} to its character representation.
-     * 
-     * @param theTerm
-     * @return The character representation of theTerm.
-     */
-    CharSequence marshall(Object theTerm);
+  /**
+   * Formats a {@link Term} to its character representation.
+   *
+   * @param theTerm
+   * @return The character representation of theTerm.
+   */
+  CharSequence marshall(Object theTerm);
 
 }

@@ -16,13 +16,13 @@
  */
 package org.logic2j.contrib.rdb.util;
 
-import org.logic2j.core.impl.util.CollectionUtils;
+import org.logic2j.engine.util.CollectionUtils;
 
 import java.util.*;
 
 /**
  * Generate the lexical part of SQL and array of arguments based on higher-levels components of a query.
- * 
+ * <p>
  * TODO: possibility to inject parameter valus at a later stage, when the structure of the SqlBuilder is already created (factorized)
  * TODO: cannot express AST expressions (OR, NOT)
  * TODO: no aggregations (min, max, sum, count)
@@ -224,11 +224,12 @@ public class SqlBuilder3 {
 
   /**
    * Add a value or values to the array {@link #parameters}.
+   *
    * @param theParameters
    * @return The placeholder, "?" for a scalar, or "(?,?,?...)" for an array or collection.
    */
   public String addParameter(Object... theParameters) {
-    if (theParameters.length==1 && theParameters[0]==null) {
+    if (theParameters.length == 1 && theParameters[0] == null) {
       return null;
     }
     final Object[] flattenedParams = flattenedParams(theParameters);
@@ -243,8 +244,9 @@ public class SqlBuilder3 {
 
   /**
    * Generate several "?" parameter placeholders for scalar or vectorial (inlist) params.
+   *
    * @param theNumber 0 for no parameter, 1 for a scalar parameter, >1 for vectorial params,
-   * this implies the INlist operator.
+   *                  this implies the INlist operator.
    * @return "" when theNumber=0, "?" when theNumber=1, otherwise "(?,?,?,?...?)" with
    * as many question marks as argument theNumber
    */
@@ -270,6 +272,7 @@ public class SqlBuilder3 {
   /**
    * Flatten out params of arrays and collections: in case one element is itself
    * an array or collection, all its first level elements will be added to the returned collection.
+   *
    * @param theParameters
    * @return An array of theParameters, where elements of arrays or collections are flatted
    * out (only the first level). May be empty but never null.
@@ -282,7 +285,7 @@ public class SqlBuilder3 {
     // Flatten out collections and arrays
     for (Object param : theParameters) {
       if (param instanceof Object[]) {
-          Collections.addAll(sqlParams, (Object[]) param);
+        Collections.addAll(sqlParams, (Object[]) param);
       } else if (param instanceof Collection<?>) {
         for (Object p : (Collection<?>) param) {
           sqlParams.add(p);
@@ -300,6 +303,7 @@ public class SqlBuilder3 {
 
   /**
    * An ugly methods - normally should not be used, but in some cases we have to :-(
+   *
    * @return A flat SQL string
    */
   public String getSelectWithInlineParams() {
@@ -347,6 +351,7 @@ public class SqlBuilder3 {
 
   /**
    * Determine the vectorial size of a single Object, an Array or a Collection.
+   *
    * @param theScalarOrListValue
    * @return 0 if null, 1 if a single object or collection or array of one, or the
    * effective size.
@@ -447,6 +452,7 @@ public class SqlBuilder3 {
 
   /**
    * Create and register a new table with a specified alias, or obtain previously registered one (with same name or alias).
+   *
    * @param theTableName
    * @param theAlias
    * @return A new or previously-registered Table.
@@ -464,6 +470,7 @@ public class SqlBuilder3 {
 
   /**
    * Create and register a new table with a new automatically generated alias. Cannot return an existing one.
+   *
    * @param theTableName
    * @return A new.
    */
@@ -476,9 +483,10 @@ public class SqlBuilder3 {
   /**
    * Create a subtable with other sub-queries (not sub-selects):
    * "select ... from ( subselect1 union subselect2 union ... union subselectN ) alias"
-   * @param theAlias The alias name of the subtable
+   *
+   * @param theAlias       The alias name of the subtable
    * @param optionUnionAll When true, will use "union all", otherwise simple "union"
-   * @param theSubQueries The sub-queries tu union, at least one.
+   * @param theSubQueries  The sub-queries tu union, at least one.
    * @return A union subtable.
    */
   public Table tableSubUnion(String theAlias, boolean optionUnionAll, SqlBuilder3... theSubQueries) {
@@ -493,6 +501,7 @@ public class SqlBuilder3 {
 
   /**
    * Vararg signature will allow type conversion
+   *
    * @param theColumn
    * @param theValues Notice the compiler will autobox primary types into Objects, which is the desired feature...
    * @return The new Criterion.
@@ -501,8 +510,10 @@ public class SqlBuilder3 {
     return criterion(theColumn, theValues);
   }
 
-  /**s
+  /**
+   * s
    * Criterion for COLUMN = LITERAL VALUE.
+   *
    * @param theColumn
    * @param theScalarOrListValue
    * @return The Criterion
@@ -513,6 +524,7 @@ public class SqlBuilder3 {
 
   /**
    * Criterion for COLUMN <OPERATOR> LITERAL VALUE.
+   *
    * @param theColumn
    * @param theOperator
    * @param theScalarOrListValue
@@ -533,6 +545,7 @@ public class SqlBuilder3 {
   /**
    * Generates column != column, this is used when we need to produce no solution, as a boundary
    * condition.
+   *
    * @param theColumn
    * @return A valid Criterion without parameter.
    */
@@ -542,6 +555,7 @@ public class SqlBuilder3 {
 
   /**
    * Subselect of plain literal SQL without parameters.
+   *
    * @param theCol
    * @param theSql
    * @return The SubSelect
@@ -605,13 +619,13 @@ public class SqlBuilder3 {
 
   /**
    * Generate an "exists" criterion in the form "exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn".
+   *
    * @param theColumnInThisSqlBuilder
    * @param theJoinedColumnInExistsSubquery
    * @param theCriteria
    */
   public ExistsCriterion exists(Column theColumnInThisSqlBuilder, Column theJoinedColumnInExistsSubquery, Criterion... theCriteria) {
-    final ExistsCriterion existsCriterion = new ExistsCriterion(theColumnInThisSqlBuilder, theJoinedColumnInExistsSubquery, true,
-        theCriteria);
+    final ExistsCriterion existsCriterion = new ExistsCriterion(theColumnInThisSqlBuilder, theJoinedColumnInExistsSubquery, true, theCriteria);
     // We have to remove the table registered in this SqlBuilder that will be used in the subquery.
     // Otherwise, we get a "select ... from parentTable, childTable where exists(criterion on child table).
     this.tables.remove(theJoinedColumnInExistsSubquery.getTable());
@@ -620,13 +634,13 @@ public class SqlBuilder3 {
 
   /**
    * Generate an "not exists" criterion in the form "not exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn".
+   *
    * @param theColumnInThisSqlBuilder
    * @param theJoinedColumnInExistsSubquery
    * @param theCriteria
    */
   public ExistsCriterion notExists(Column theColumnInThisSqlBuilder, Column theJoinedColumnInExistsSubquery, Criterion... theCriteria) {
-    final ExistsCriterion existsCriterion = new ExistsCriterion(theColumnInThisSqlBuilder, theJoinedColumnInExistsSubquery, false,
-        theCriteria);
+    final ExistsCriterion existsCriterion = new ExistsCriterion(theColumnInThisSqlBuilder, theJoinedColumnInExistsSubquery, false, theCriteria);
     // We have to remove the table registered in this SqlBuilder that will be used in the subquery.
     // Otherwise, we get a "select ... from parentTable, childTable where exists(criterion on child table).
     this.tables.remove(theJoinedColumnInExistsSubquery.getTable());
@@ -660,6 +674,7 @@ public class SqlBuilder3 {
   // Support classes
   //---------------------------------------------------------------------------
 
+
   /**
    * Describe references to a table or view, possibly with an alias.
    *
@@ -689,6 +704,7 @@ public class SqlBuilder3 {
 
     /**
      * Table based on sub queries.
+     *
      * @param theSubQueries
      * @param theOptionUnionAll
      * @param theAlias
@@ -791,13 +807,9 @@ public class SqlBuilder3 {
         return false;
       }
       if (this.table == null) {
-        if (other.table != null) {
-          return false;
-        }
-      } else if (!this.table.equals(other.table)) {
-        return false;
-      }
-      return true;
+        return other.table == null;
+      } else
+        return this.table.equals(other.table);
     }
 
     @Override
@@ -814,6 +826,7 @@ public class SqlBuilder3 {
     }
   }
 
+
   public static class Join {
     public final String joinType;
     public final Column leftColumn;
@@ -823,8 +836,7 @@ public class SqlBuilder3 {
     public Join(Column theLeftColumn, Column theRightColumn, String theJoinType, Criterion... theExtraCriteria) {
       super();
       if (theLeftColumn.getTable().exactlyEquals(theRightColumn.getTable())) {
-        throw new IllegalStateException("Cannot join on the same table with same alias: " + theLeftColumn + " and "
-            + theRightColumn);
+        throw new IllegalStateException("Cannot join on the same table with same alias: " + theLeftColumn + " and " + theRightColumn);
       }
       this.leftColumn = theLeftColumn;
       this.rightColumn = theRightColumn;
@@ -834,10 +846,11 @@ public class SqlBuilder3 {
 
     /**
      * Generate the new SQL join representation such as, for example: "inner join Table TableAlias on Conditions"
+     *
      * @param theAlreadyDeclaredTable The tables that was already declared, so that if this join won't redeclare it, only
-     * declare the other. Eg if this join is between A.id and B.id, when theAlreadyDeclaredTable contains B,
-     * it would generate "inner join B on B.id = A.id". If theAlreadyDeclaredTable contains A, it would generate
-     * "inner join A on A.id = B.id".
+     *                                declare the other. Eg if this join is between A.id and B.id, when theAlreadyDeclaredTable contains B,
+     *                                it would generate "inner join B on B.id = A.id". If theAlreadyDeclaredTable contains A, it would generate
+     *                                "inner join A on A.id = B.id".
      * @return The string representation of the join.
      */
     public String generate(Table theAlreadyDeclaredTable) {
@@ -849,12 +862,12 @@ public class SqlBuilder3 {
         }
       }
       if (!theAlreadyDeclaredTable.equals(this.rightColumn.getTable())) {
-        return this.joinType + " join " + this.rightColumn.getTable().declaration() + " on " + this.rightColumn
-            + Operator.EQ.getSql() + this.leftColumn + otherClauses;
+        return this.joinType + " join " + this.rightColumn.getTable().declaration() + " on " + this.rightColumn + Operator.EQ.getSql()
+            + this.leftColumn + otherClauses;
       }
       if (!theAlreadyDeclaredTable.equals(this.leftColumn.getTable())) {
-        return this.joinType + " join " + this.leftColumn.getTable().declaration() + " on " + this.leftColumn
-            + Operator.EQ.getSql() + this.rightColumn + otherClauses;
+        return this.joinType + " join " + this.leftColumn.getTable().declaration() + " on " + this.leftColumn + Operator.EQ.getSql()
+            + this.rightColumn + otherClauses;
       }
       throw new IllegalStateException("Cannot generate join clause for " + this + ", internal error");
     }
@@ -868,10 +881,10 @@ public class SqlBuilder3 {
       if (this.criteria == null || this.criteria.length == 0) {
         return "Join(" + this.leftColumn + ", " + this.rightColumn + ", " + this.joinType + ")";
       }
-      return "Join(" + this.leftColumn + ", " + this.rightColumn + ", " + this.joinType + ", crit=" + Arrays.asList(this.criteria)
-          + ")";
+      return "Join(" + this.leftColumn + ", " + this.rightColumn + ", " + this.joinType + ", crit=" + Arrays.asList(this.criteria) + ")";
     }
   }
+
 
   public class Column {
 
@@ -904,9 +917,11 @@ public class SqlBuilder3 {
     }
   }
 
+
   public interface Criterion {
-    public String sql();
+    String sql();
   }
+
 
   /**
    * A {@link Criterion} whereby a {@link Column} is associated by an operator
@@ -942,6 +957,7 @@ public class SqlBuilder3 {
     }
   }
 
+
   /**
    * A {@link Criterion} expressing a relation between two columns, typ t1.c1=t2.c2.
    *
@@ -961,6 +977,7 @@ public class SqlBuilder3 {
       return this.formatter.format(getColumn(), getOperator(), this.rightColumn);
     }
   }
+
 
   /**
    * A {@link Criterion} expressing that a {@link Column}'s is related by an operator to a value,
@@ -999,6 +1016,7 @@ public class SqlBuilder3 {
 
   }
 
+
   /**
    * Column <operator> <immediate value>
    */
@@ -1027,6 +1045,7 @@ public class SqlBuilder3 {
 
   }
 
+
   /**
    * A criterion expressed as plain SQL.
    *
@@ -1052,16 +1071,17 @@ public class SqlBuilder3 {
 
   }
 
+
   public static class ExistsCriterion implements Criterion {
     private final SqlBuilder3 subquery;
     private final boolean positiveExistence;
 
-    public ExistsCriterion(Column theParentColumn, Column theSubqueryJoinColumn, boolean thePositiveExistence,
-        Criterion... theCriteria) {
+    public ExistsCriterion(Column theParentColumn, Column theSubqueryJoinColumn, boolean thePositiveExistence, Criterion... theCriteria) {
       this.positiveExistence = thePositiveExistence;
       SqlBuilder3 sb = new SqlBuilder3();
       sb.addProjection(theSubqueryJoinColumn);
-      sb.table(theSubqueryJoinColumn.getTable().getTable(), theSubqueryJoinColumn.getTable().getAlias()); // We have to re-register the table in the sub-builder
+      sb.table(theSubqueryJoinColumn.getTable().getTable(),
+          theSubqueryJoinColumn.getTable().getAlias()); // We have to re-register the table in the sub-builder
       for (Criterion criterion : theCriteria) {
         sb.addConjunction(criterion);
       }
@@ -1082,6 +1102,7 @@ public class SqlBuilder3 {
 
   }
 
+
   /**
    * A subselect expressed with a SQL query (and "?" placehoders), an a parameters array.
    * Note: the operator is always {@link Operator#IN}
@@ -1095,7 +1116,7 @@ public class SqlBuilder3 {
     /**
      * @param theColumn
      * @param theSubSelectQuery
-     * @param theParameters May be null or empty
+     * @param theParameters     May be null or empty
      */
     public SubSelect(Column theColumn, String theSubSelectQuery, Object[] theParameters) {
       super(theColumn, Operator.IN, theParameters);
@@ -1115,6 +1136,7 @@ public class SqlBuilder3 {
       return getColumn().sql() + getOperator().getSql() + '(' + this.sql + ')';
     }
   }
+
 
   public class ColumnOrder {
 
@@ -1140,27 +1162,19 @@ public class SqlBuilder3 {
     }
   }
 
+
   /**
    * Operator enum with SQL equivalent and Prolog equivalent representations.
    */
   public enum Operator {
-    EQ("=", "="),
-    NOT_EQ("!=", "\\="),
-    IN(" in ", null),
-    NOT_IN(" not in ", null),
-    LE("<=", "=<"),
-    LT("<", "<"),
-    GE(">=", ">="),
-    GT(">", ">"),
-    EQ_CASE_INSENSITIVE("=", null),
-    // somewhat doubtful they should be defined as operators - these are more SQL constructs
-    EXISTS(" exists ", "E"),
-    NOT_EXISTS(" not exists ", "\\E");
+    EQ("=", "="), NOT_EQ("!=", "\\="), IN(" in ", null), NOT_IN(" not in ", null), LE("<=", "=<"), LT("<", "<"), GE(">=", ">="), GT(">",
+        ">"), EQ_CASE_INSENSITIVE("=", null), // somewhat doubtful they should be defined as operators - these are more SQL constructs
+    EXISTS(" exists ", "E"), NOT_EXISTS(" not exists ", "\\E");
 
     private final String sql;
     private final String prolog;
 
-    private Operator(String theSql, String theProlog) {
+    Operator(String theSql, String theProlog) {
       this.sql = theSql;
       this.prolog = theProlog;
     }
@@ -1207,6 +1221,7 @@ public class SqlBuilder3 {
     }
   }
 
+
   public class BinaryOperatorFormatter {
 
     public String format(Column theColumn, Operator theOperator, Object theOperand) {
@@ -1218,8 +1233,8 @@ public class SqlBuilder3 {
           case NOT_EQ:
             return theColumn.sql() + " is not null";
           default:
-            throw new UnsupportedOperationException("Don't know how to format SQL binary operator \"" + theOperator
-                + "\" when the operand value is null");
+            throw new UnsupportedOperationException(
+                "Don't know how to format SQL binary operator \"" + theOperator + "\" when the operand value is null");
         }
       }
       final String formattedOperand;

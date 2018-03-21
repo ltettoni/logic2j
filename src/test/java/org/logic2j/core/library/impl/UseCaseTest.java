@@ -32,14 +32,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UseCaseTest {
 
     @Test
-    public void instantiateViaFactory() throws Exception {
+    public void instantiateViaFactory() {
         final Prolog prolog = new FluentPrologBuilder().build();
         assertThat(prolog).isNotNull();
     }
 
 
     @Test
-    public void configureDefaultLibs() throws Exception {
+    public void configureDefaultLibs() {
         assertThat(new FluentPrologBuilder().withoutLibraries(false).isNoLibraries()).isFalse();
         assertThat(new FluentPrologBuilder().withoutLibraries(true).isNoLibraries()).isTrue();
         assertThat(new FluentPrologBuilder().withCoreLibraries(false).isCoreLibraries()).isFalse();
@@ -47,14 +47,14 @@ public class UseCaseTest {
     }
 
     @Test
-    public void obtainDefaultPrologAndSolve() throws Exception {
+    public void obtainDefaultPrologAndSolve() {
         final Prolog prolog = new FluentPrologBuilder().build();
         assertThat(prolog.solve("member(X, [a,b,c,d])").count()).isEqualTo(4);
     }
 
 
     @Test
-    public void loadTheoryAndSolve() throws Exception {
+    public void loadTheoryAndSolve() {
         final File th1 = new File("src/test/resources/queens.pro");
         final File th2 = new File("src/test/resources/hanoi.pro");
         final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).build();
@@ -63,7 +63,7 @@ public class UseCaseTest {
 
 
     @Test
-    public void solve() throws Exception {
+    public void solve() {
         final Prolog prolog = new FluentPrologBuilder()
         .withTheory(new File("src/test/resources/queens.pro"))
         .build();

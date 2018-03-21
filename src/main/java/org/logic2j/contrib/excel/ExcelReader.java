@@ -22,8 +22,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.impl.util.TypeUtils;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.util.TypeUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,82 +38,82 @@ import java.util.List;
  */
 public class ExcelReader {
 
-    private final File file;
-    private final boolean firstRowIsHeaders;
-    private final int primaryKeyColumn;
+  private final File file;
+  private final boolean firstRowIsHeaders;
+  private final int primaryKeyColumn;
 
-    public ExcelReader(File theFile, boolean theFirstRowIsHeaders) {
-        this(theFile, theFirstRowIsHeaders, -1);
+  public ExcelReader(File theFile, boolean theFirstRowIsHeaders) {
+    this(theFile, theFirstRowIsHeaders, -1);
+  }
+
+  /**
+   * @param theFile
+   * @param theFirstRowIsHeaders True when first row contains column headers.
+   * @param thePrimaryKeyColumn  The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
+   */
+  public ExcelReader(File theFile, boolean theFirstRowIsHeaders, int thePrimaryKeyColumn) {
+    this.file = theFile;
+    this.firstRowIsHeaders = theFirstRowIsHeaders;
+    this.primaryKeyColumn = thePrimaryKeyColumn;
+  }
+
+  /**
+   * @return Data read from cache and cached.
+   * @throws java.io.IOException
+   */
+  public TabularData readCached() throws IOException {
+    final File cached = cachedFile();
+    if (cached.exists() && cached.isFile() && cached.canRead() && cached.lastModified() > this.file.lastModified()) {
+      // We can use the cached version
+      try {
+        return new TabularDataSerializer(cached).read();
+      } catch (final ClassNotFoundException e) {
+        throw new IOException("Recent cached version of " + this.file + " located at " + cached + " was not loadable: " + e);
+      }
     }
+    // Read the file
+    final TabularData data = read();
+    // Cache it
+    cached.getParentFile().mkdirs();
+    new TabularDataSerializer(cached).write(data);
+    return data;
+  }
 
-    /**
-     * @param theFile
-     * @param theFirstRowIsHeaders True when first row contains column headers.
-     * @param thePrimaryKeyColumn The column (0-based) which should be considered as a unique (primary) key, or -1 for none.
-     */
-    public ExcelReader(File theFile, boolean theFirstRowIsHeaders, int thePrimaryKeyColumn) {
-        this.file = theFile;
-        this.firstRowIsHeaders = theFirstRowIsHeaders;
-        this.primaryKeyColumn = thePrimaryKeyColumn;
-    }
-
-    /**
-     * @return Data read from cache and cached.
-     * @throws java.io.IOException
-     */
-    public TabularData readCached() throws IOException {
-        final File cached = cachedFile();
-        if (cached.exists() && cached.isFile() && cached.canRead() && cached.lastModified() > this.file.lastModified()) {
-            // We can use the cached version
-            try {
-                return new TabularDataSerializer(cached).read();
-            } catch (final ClassNotFoundException e) {
-                throw new IOException("Recent cached version of " + this.file + " located at " + cached + " was not loadable: " + e);
-            }
+  public TabularData read() throws IOException {
+    if (this.file.getName().endsWith(".xls")) {
+      final InputStream myxls = new FileInputStream(this.file);
+      final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
+      final Sheet sheet = workBook.getSheetAt(0);
+      final int excelPhysicalRows = sheet.getPhysicalNumberOfRows();
+      List<String> columnNames;
+      if (this.firstRowIsHeaders) {
+        columnNames = readRow(sheet, 0, String.class);
+      } else {
+        final int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
+        final List<String> colNames = new ArrayList<String>();
+        for (int i = 0; i < nbColunms; i++) {
+          colNames.add(createSequenceElement(i));
         }
-        // Read the file
-        final TabularData data = read();
-        // Cache it
-        cached.getParentFile().mkdirs();
-        new TabularDataSerializer(cached).write(data);
-        return data;
-    }
+        columnNames = colNames;
+      }
+      final List<List<Serializable>> listData = new ArrayList<List<Serializable>>();
 
-    public TabularData read() throws IOException {
-        if (this.file.getName().endsWith(".xls")) {
-            final InputStream myxls = new FileInputStream(this.file);
-            final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
-            final Sheet sheet = workBook.getSheetAt(0);
-            final int excelPhysicalRows = sheet.getPhysicalNumberOfRows();
-            List<String> columnNames;
-            if (this.firstRowIsHeaders) {
-                columnNames = readRow(sheet, 0, String.class);
-            } else {
-                final int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
-                final List<String> colNames = new ArrayList<String>();
-                for (int i = 0; i < nbColunms; i++) {
-                    colNames.add(createSequenceElement(i));
-                }
-                columnNames = colNames;
-            }
-            final List<List<Serializable>> listData = new ArrayList<List<Serializable>>();
-
-            for (int r = this.firstRowIsHeaders ? 1 : 0; r < excelPhysicalRows; r++) {
-                final List<Serializable> listRow = readRow(sheet, r, Serializable.class);
-                if (listRow != null) {
-                    // Sometimes
-                    listData.add(listRow);
-                }
-            }
-            String dataSetName = this.file.getName();
-            if (dataSetName.lastIndexOf('.') >= 0) {
-                dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
-            }
-            final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
-            tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
-            return tbl;
+      for (int r = this.firstRowIsHeaders ? 1 : 0; r < excelPhysicalRows; r++) {
+        final List<Serializable> listRow = readRow(sheet, r, Serializable.class);
+        if (listRow != null) {
+          // Sometimes
+          listData.add(listRow);
         }
-        throw new IOException("According to extension file may not be of Excel format: " + this.file);
+      }
+      String dataSetName = this.file.getName();
+      if (dataSetName.lastIndexOf('.') >= 0) {
+        dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
+      }
+      final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
+      tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
+      return tbl;
+    }
+    throw new IOException("According to extension file may not be of Excel format: " + this.file);
         /*
          OOXML
         else if (this.fileName.endsWith(".xlsx")) {
@@ -157,77 +157,77 @@ public class ExcelReader {
             }
         }
         */
-    }
+  }
 
-    private File cachedFile() {
-        final File tempDir = new File(System.getProperty("java.io.tmpdir"));
-        final String relativePath = this.file.getPath();
-        final File pathWithinTempDir = new File(tempDir, relativePath);
-        return pathWithinTempDir;
-    }
+  private File cachedFile() {
+    final File tempDir = new File(System.getProperty("java.io.tmpdir"));
+    final String relativePath = this.file.getPath();
+    final File pathWithinTempDir = new File(tempDir, relativePath);
+    return pathWithinTempDir;
+  }
 
-    /**
-     * @param sheet
-     * @param rowNumber Row index
-     * @param theTargetClass
-     * @return Null if row is empty or only containing nulls.
-     */
-    private <T> List<T> readRow(Sheet sheet, final int rowNumber, Class<T> theTargetClass) {
-        final HSSFRow row = ((HSSFSheet) sheet).getRow(rowNumber);
-        if (row == null) {
-            return null;
-        }
-        final int nbCols = row.getPhysicalNumberOfCells();
-        final ArrayList<T> values = new ArrayList<T>();
-        boolean hasSomeData = false;
-        for (int c = 0; c < nbCols; c++) {
-            final HSSFCell cell = row.getCell(c);
-            Object value = null;
-            if (cell != null) {
-                switch (cell.getCellTypeEnum()) {
-                    case FORMULA:
-                        value = cell.getCellFormula();
-                        break;
-                    case NUMERIC:
-                        value = cell.getNumericCellValue();
-                        break;
-                    case STRING:
-                        value = cell.getStringCellValue();
-                        break;
-                    case BLANK:
-                        break;
-                    default:
-                        throw new PrologNonSpecificError("Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " "
-                            + "not handled, value is " + value);
-                }
-            }
-            value = mapCellValue(value);
-            if (value != null) {
-                hasSomeData = true;
-            }
-            final T cast = TypeUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
-            values.add(cast);
-        }
-        if (!hasSomeData) {
-            return null;
-        }
-        return values;
+  /**
+   * @param sheet
+   * @param rowNumber      Row index
+   * @param theTargetClass
+   * @return Null if row is empty or only containing nulls.
+   */
+  private <T> List<T> readRow(Sheet sheet, final int rowNumber, Class<T> theTargetClass) {
+    final HSSFRow row = ((HSSFSheet) sheet).getRow(rowNumber);
+    if (row == null) {
+      return null;
     }
+    final int nbCols = row.getPhysicalNumberOfCells();
+    final ArrayList<T> values = new ArrayList<T>();
+    boolean hasSomeData = false;
+    for (int c = 0; c < nbCols; c++) {
+      final HSSFCell cell = row.getCell(c);
+      Object value = null;
+      if (cell != null) {
+        switch (cell.getCellTypeEnum()) {
+          case FORMULA:
+            value = cell.getCellFormula();
+            break;
+          case NUMERIC:
+            value = cell.getNumericCellValue();
+            break;
+          case STRING:
+            value = cell.getStringCellValue();
+            break;
+          case BLANK:
+            break;
+          default:
+            throw new PrologNonSpecificError(
+                "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled, value is " + value);
+        }
+      }
+      value = mapCellValue(value);
+      if (value != null) {
+        hasSomeData = true;
+      }
+      final T cast = TypeUtils.safeCastOrNull("casting Excel cell", value, theTargetClass);
+      values.add(cast);
+    }
+    if (!hasSomeData) {
+      return null;
+    }
+    return values;
+  }
 
-    private Object mapCellValue(Object value) {
-        if (value instanceof CharSequence) {
-            return value.toString().trim();
-        }
-        return value;
+  private Object mapCellValue(Object value) {
+    if (value instanceof CharSequence) {
+      return value.toString().trim();
     }
+    return value;
+  }
 
-    // From : http://stackoverflow.com/questions/8710719/generating-an-alphabetic-sequence-in-java
-    private String createSequenceElement(int index) {
-        final int first = index / 26;
-        final int second = index % 26;
-        if (first < 1) {
-            return String.valueOf((char) ('A' + second));
-        }
-        return createSequenceElement(first) + (char) ('A' + second);
+  // From : http://stackoverflow.com/questions/8710719/generating-an-alphabetic-sequence-in-java
+  private String createSequenceElement(int index) {
+    final int first = index / 26;
+    final int second = index % 26;
+    if (first < 1) {
+      return String.valueOf((char) ('A' + second));
     }
+    return createSequenceElement(first) + (char) ('A' + second);
+  }
 }

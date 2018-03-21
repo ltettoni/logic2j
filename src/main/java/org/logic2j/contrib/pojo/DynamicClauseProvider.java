@@ -19,7 +19,7 @@ package org.logic2j.contrib.pojo;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ public class DynamicClauseProvider implements ClauseProvider {
 
   /**
    * Watch out will return all clauses not only those potentially matching.
+   *
    * @param theGoal
    * @param currentVars
    * @return This implementation will also return clauses whose head don't match theGoal.
@@ -59,11 +60,12 @@ public class DynamicClauseProvider implements ClauseProvider {
 
   /**
    * Add a fact or a rule at the end of this ClauseProvider.
-   * @note The name "assert" has to do with Prolog's assert, not Java's!
+   *
    * @param theClauseStruct There's no parsing, just a plain Object; if this has to be a Prolog fact it's likely
-   *                that you have to pass a Struct.
+   *                        that you have to pass a Struct.
    * @return An index corresponding to the sequence number in which the fact or rule was asserted, that you may
    * use for retracting to before this assertion.
+   * @note The name "assert" has to do with Prolog's assert, not Java's!
    */
   public int assertClause(Object theClauseStruct) {
     final Clause clause = new Clause(this.prolog, theClauseStruct);
@@ -73,6 +75,7 @@ public class DynamicClauseProvider implements ClauseProvider {
 
   /**
    * Retract only the assertion that returned theIndex
+   *
    * @param theIndex
    */
   public void retractFactAt(int theIndex) {
@@ -88,11 +91,12 @@ public class DynamicClauseProvider implements ClauseProvider {
 
   /**
    * Retract to before the assertion that returned theIndex
+   *
    * @param indexToRetractTo
    */
   public void retractToBeforeIndex(int indexToRetractTo) {
-      if (indexToRetractTo<clauses.size()) {
-          clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
-      }
+    if (indexToRetractTo < clauses.size()) {
+      clauses = Collections.synchronizedList(clauses.subList(0, indexToRetractTo));
+    }
   }
 }

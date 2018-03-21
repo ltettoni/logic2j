@@ -19,11 +19,11 @@ package org.logic2j.core;
 import org.junit.Before;
 import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.core.api.model.exception.PrologException;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.api.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.exception.PrologException;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
@@ -138,7 +138,7 @@ public abstract class PrologTestBase {
          *
          * @param theNumber
          * @param theGoals  All goals to check for
-         * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder}
+         * @return The {@link GoalHolder}
          */
     protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
         return internalAssert(theNumber, theGoals);
@@ -148,7 +148,7 @@ public abstract class PrologTestBase {
      * Make sure there are no solutions to the goals.
      *
      * @param theGoals  All goals to check for
-     * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder}
+     * @return The {@link GoalHolder}
      */
     protected void noSolutions(CharSequence... theGoals) {
         internalAssert(0, theGoals);
@@ -159,7 +159,7 @@ public abstract class PrologTestBase {
      * call by obtaining a particular variable value - the engine will run twice!
      * @param theNumber
      * @param theGoals
-     * @return The {@link org.logic2j.core.api.solver.holder.GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
+     * @return The {@link GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
      */
     private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
         assertThat(theGoals.length > 0).as("theGoals must not be empty for countOneSolution()").isTrue();
@@ -247,7 +247,7 @@ public abstract class PrologTestBase {
 
     /**
      * Syntactic sugar to load a theory located in the src/test/resources directory.
-     * Also wraps the checked {@link java.io.IOException} into a {@link org.logic2j.core.api.model.exception.PrologNonSpecificError} runtime exception in case of problem.
+     * Also wraps the checked {@link java.io.IOException} into a {@link PrologNonSpecificError} runtime exception in case of problem.
      *
      * @param theTheoryFile
      */

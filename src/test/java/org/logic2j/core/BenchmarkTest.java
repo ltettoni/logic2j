@@ -18,8 +18,8 @@ package org.logic2j.core;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.impl.util.ProfilingInfo;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.util.ProfilingInfo;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class BenchmarkTest extends PrologTestBase {
     }
 
     @Test
-    public void queensForReferenceTiming() throws IOException {
+    public void queensForReferenceTiming() {
         loadTheoryFromTestResourcesDir("queens.pro");
         final String goal = "queens(9, Q)";
         // Numbers
@@ -126,7 +126,7 @@ public class BenchmarkTest extends PrologTestBase {
 
     @Ignore("Use this in conjunction with jvisualvm to profile - sleeps for ages")
     @Test
-    public void queensForJVisualVMSleeping() throws IOException, InterruptedException {
+    public void queensForJVisualVMSleeping() throws InterruptedException {
         loadTheoryFromTestResourcesDir("queens.pro");
         final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

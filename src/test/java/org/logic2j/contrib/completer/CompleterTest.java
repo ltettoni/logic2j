@@ -130,14 +130,14 @@ public class CompleterTest extends PrologTestBase {
 
 
     @Test
-    public void a_lpar_value_rpar() throws Exception {
+    public void a_lpar_value_rpar() {
         CompletionData data = complete("a(1)");
         assertThat(data.getCompletions().size()).isEqualTo(0);
     }
 
 
     @Test
-    public void a_lpar_value_rpar_comma() throws Exception {
+    public void a_lpar_value_rpar_comma() {
         CompletionData data = complete("a(1),");
         assertAllPredicatesAreCompleted("a(1),", data);
     }
@@ -156,7 +156,7 @@ public class CompleterTest extends PrologTestBase {
 
 
     @Test
-    public void a_lpar_value_rpar_comma_ab() throws Exception {
+    public void a_lpar_value_rpar_comma_ab() {
         CompletionData data = complete("a(1), ab");
         assertThat(data.getCompletions().size()).isEqualTo(1);
         assertThat(data.getCompletions()).contains("a(1), ab(");
@@ -164,7 +164,7 @@ public class CompleterTest extends PrologTestBase {
 
 
     @Test
-    public void a_lpar_value_rpar_comma_ab_lpar() throws Exception {
+    public void a_lpar_value_rpar_comma_ab_lpar() {
         CompletionData data = complete("a(1), ab(");
         assertThat(data.getCompletions().size()).isEqualTo(6);
         assertThat(data.getCompletions()).contains("a(1), ab(1, ");

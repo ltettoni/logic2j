@@ -17,12 +17,12 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.PLibrary;
-import org.logic2j.core.api.solver.listener.SolutionListener;
-import org.logic2j.core.api.solver.Continuation;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.unify.UnifyContext;
+import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
 /**
@@ -30,88 +30,91 @@ import org.logic2j.core.impl.PrologImplementation;
  * features.
  */
 public class LibraryBase implements PLibrary {
-    private final PrologImplementation prolog;
+  private final PrologImplementation prolog;
 
-    public LibraryBase(PrologImplementation theProlog) {
-        this.prolog = theProlog;
+  public LibraryBase(PrologImplementation theProlog) {
+    this.prolog = theProlog;
+  }
+
+  /**
+   * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
+   * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
+   * <p/>
+   * TODO Document example of typical overriding of dispatch()
+   *
+   * @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
+   * @param theGoalStruct Regular argument for invoking a primitive
+   * @param theListener   Regular argument for invoking a primitive
+   * @param currentVars   Regular argument for invoking a primitive
+   */
+  @Override
+  public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
+    return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
+  }
+
+
+  /**
+   * Notify theSolutionListener that a solution has been found.
+   *
+   * @param theSolutionListener
+   * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(UnifyContext)}
+   */
+  protected Integer notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
+    final Integer continuation = theSolutionListener.onSolution(currentVars);
+    return continuation;
+  }
+
+  /**
+   * Make sure term is not a free {@link Var}.
+   *
+   * @param term
+   * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
+   * @param indexOfArg      zero-based index of argument causing error
+   * @throws InvalidTermException
+   */
+  protected void ensureBindingIsNotAFreeVar(Object term, String nameOfPrimitive, int indexOfArg) {
+    if (term instanceof Var) {
+      // TODO Should be a kind of InvalidGoalException instead?
+      final int positionOfArgument = indexOfArg + 1;
+      throw new InvalidTermException(
+          "Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
     }
+  }
 
-    /**
-     * Direct dispatch to avoid reflective invocation using Method.invoke() due to performance reasons.
-     * You MAY override this method, if you don't, reflection will be used instead at a little performance cost.
-     * <p/>
-     * TODO Document example of typical overriding of dispatch()
-     *  @param theMethodName The name of the method, internalized using {@link String#intern()} so you can use ==
-     * @param theGoalStruct Regular argument for invoking a primitive
-     * @param theListener   Regular argument for invoking a primitive
-     * @param currentVars           Regular argument for invoking a primitive
-     */
-    @Override
-    public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
-        return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
+  /**
+   * Unify terms t1 and t2, and if they could be unified, call theListener with the solution of the newly
+   * unified variables; return the result from notifying. If not, return CONTINUE.
+   *
+   * @param theListener
+   * @param currentVars
+   * @param t1
+   * @param t2
+   * @return
+   */
+  protected Integer unifyAndNotify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
+    final UnifyContext after = currentVars.unify(t1, t2);
+    if (after == null) {
+      // Not unified: do not notify a solution and inform to continue solving
+      return Continuation.CONTINUE;
     }
+    // Unified
+    return notifySolution(theListener, after);
+  }
 
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // ---------------------------------------------------------------------------
 
-    /**
-     * Notify theSolutionListener that a solution has been found.
-     *
-     * @param theSolutionListener
-     * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(org.logic2j.core.api.unify.UnifyContext)}
-     */
-    protected Integer notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
-        final Integer continuation = theSolutionListener.onSolution(currentVars);
-        return continuation;
-    }
+  /**
+   * @return the prolog
+   */
+  protected PrologImplementation getProlog() {
+    return this.prolog;
+  }
 
-    /**
-     * Make sure term is not a free {@link Var}.
-     *
-     * @param term
-     * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
-     * @param indexOfArg zero-based index of argument causing error
-     * @throws org.logic2j.core.api.model.exception.InvalidTermException
-     */
-    protected void ensureBindingIsNotAFreeVar(Object term, String nameOfPrimitive, int indexOfArg) {
-        if (term instanceof Var) {
-            // TODO Should be a kind of InvalidGoalException instead?
-            final int positionOfArgument = indexOfArg + 1;
-            throw new InvalidTermException("Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
-        }
-    }
-
-    /**
-     * Unify terms t1 and t2, and if they could be unified, call theListener with the solution of the newly
-     * unified variables; return the result from notifying. If not, return CONTINUE.
-     * @param theListener
-     * @param currentVars
-     * @param t1
-     * @param t2
-     * @return
-     */
-    protected Integer unifyAndNotify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-        final UnifyContext after = currentVars.unify(t1, t2);
-        if (after == null) {
-            // Not unified: do not notify a solution and inform to continue solving
-            return Continuation.CONTINUE;
-        }
-        // Unified
-        return notifySolution(theListener, after);
-    }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-    /**
-     * @return the prolog
-     */
-    protected PrologImplementation getProlog() {
-        return this.prolog;
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName();
+  }
 
 }

@@ -17,9 +17,9 @@
 
 package org.logic2j.core.api;
 
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Term;
-import org.logic2j.core.api.model.term.Var;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Term;
+import org.logic2j.engine.model.Var;
 
 import java.util.List;
 
@@ -30,97 +30,96 @@ import java.util.List;
  */
 public interface TermAdapter {
 
-    static enum FactoryMode {
-        /**
-         * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
-         * In the case of null, will create an empty-string atom.
-         */
-        ATOM,
-
-        /**
-         * Result will be either an atom (a {@link Struct} of 0-arity), an object, but not a {@link Var}iable neither a
-         * compound {@link Struct}.
-         */
-        LITERAL,
-
-        /**
-         * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
-         */
-        ANY_TERM,
-
-        /**
-         * Result can be any term plus compound structures.
-         */
-        COMPOUND
-    }
+  enum FactoryMode {
+    /**
+     * Result will always be an atom (a {@link Struct} of 0-arity), will never be a {@link Var}iable.
+     * In the case of null, will create an empty-string atom.
+     */
+    ATOM,
 
     /**
-     * Describe the form that data structures should take when represented as Prolog compounds (Struct).
-     * See TabularData and related classes.
+     * Result will be either an atom (a {@link Struct} of 0-arity), an object, but not a {@link Var}iable neither a
+     * compound {@link Struct}.
      */
-    static enum AssertionMode {
-        /**
-         * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
-         * myData(entityIdentifier, propertyName, propertyValue).
-         */
-        EAV_NAMED,
-        /**
-         * Data is asserted as "quads". The predicate is always "eavt(entity, attribute, value, transaction)".
-         * The "transaction" identifier is the dataset name. For example:
-         * eavt(entityIdentifier, propertyName, propertyValue, myData).
-         */
-        EAVT,
-        /**
-         * Data is asserted as full records with one argument per column, such as
-         * "myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN)."
-         * The order of columns obviously matters.
-         * If your data is already triples, use this mode.
-         * This is the least flexible form since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
-         */
-        RECORD
-    }
+    LITERAL,
 
     /**
-     * Convert: From regular Java Object to Prolog internal Term.
-     * Convert from virtually any possible instance of singular {@link Object} into to a Prolog term
-     * (usually a Struct but any object is valid in logic2j).
-     * This is the highest-level factory for terms.
-     * 
-     * @param theObject
-     * @param theMode
-     * @return A factorized and normalized {@link Term}.
+     * Result will be any {@link Term} (atom, number, {@link Var}iable), but not a compound {@link Struct}.
      */
-    Object toTerm(Object theObject, FactoryMode theMode);
+    ANY_TERM,
 
     /**
-     * Instantiate a Struct with arguments from virtually any class of {@link Object}
-     * This is the highest-level factory for Struct.
-     *
-     * @param thePredicateName The predicate (functor)
-     * @param theMode
-     * @param theArguments
-     * @return A factorized and normalized {@link Term}.
+     * Result can be any term plus compound structures.
      */
-    Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments);
+    COMPOUND
+  }
 
+
+  /**
+   * Describe the form that data structures should take when represented as Prolog compounds (Struct).
+   * See TabularData and related classes.
+   */
+  enum AssertionMode {
     /**
-     * Instantiate a list of Terms from one (possibly large) {@link Object}.
-     * 
-     * @param theObject
-     * @return A List of terms.
+     * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
+     * myData(entityIdentifier, propertyName, propertyValue).
      */
-    List<Object> toTerms(Object theObject, AssertionMode theAssertionMode);
-
-    /**
-     * Convert: From Prolog internal Term to regular Java Object.
-     *
-     * @param theTargetClass Either very specific or quite general like Enum, or even Object
-     * @return The converted instance
+    EAV_NAMED, /**
+     * Data is asserted as "quads". The predicate is always "eavt(entity, attribute, value, transaction)".
+     * The "transaction" identifier is the dataset name. For example:
+     * eavt(entityIdentifier, propertyName, propertyValue, myData).
      */
-    <T> T fromTerm(Object theTerm, Class<T> theTargetClass);
+    EAVT, /**
+     * Data is asserted as full records with one argument per column, such as
+     * "myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN)."
+     * The order of columns obviously matters.
+     * If your data is already triples, use this mode.
+     * This is the least flexible form since changes to the tabularData (adding or removing or reordering columns) will change the assertions.
+     */
+    RECORD
+  }
+
+  /**
+   * Convert: From regular Java Object to Prolog internal Term.
+   * Convert from virtually any possible instance of singular {@link Object} into to a Prolog term
+   * (usually a Struct but any object is valid in logic2j).
+   * This is the highest-level factory for terms.
+   *
+   * @param theObject
+   * @param theMode
+   * @return A factorized and normalized {@link Term}.
+   */
+  Object toTerm(Object theObject, FactoryMode theMode);
+
+  /**
+   * Instantiate a Struct with arguments from virtually any class of {@link Object}
+   * This is the highest-level factory for Struct.
+   *
+   * @param thePredicateName The predicate (functor)
+   * @param theMode
+   * @param theArguments
+   * @return A factorized and normalized {@link Term}.
+   */
+  Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments);
+
+  /**
+   * Instantiate a list of Terms from one (possibly large) {@link Object}.
+   *
+   * @param theObject
+   * @return A List of terms.
+   */
+  List<Object> toTerms(Object theObject, AssertionMode theAssertionMode);
+
+  /**
+   * Convert: From Prolog internal Term to regular Java Object.
+   *
+   * @param theTargetClass Either very specific or quite general like Enum, or even Object
+   * @return The converted instance
+   */
+  <T> T fromTerm(Object theTerm, Class<T> theTargetClass);
 
 
-    Object getVariable(String theExpression);
+  Object getVariable(String theExpression);
 
-    TermAdapter setVariable(String theExpression, Object theValue);
+  TermAdapter setVariable(String theExpression, Object theValue);
 }

@@ -24,17 +24,17 @@ import org.logic2j.core.api.library.LibraryContent;
  */
 public interface LibraryManager {
 
-    /**
-     * Load a {@link org.logic2j.core.api.library.PLibrary}
-     * 
-     * @param theLibrary
-     * @return The content of the library
-     */
-    LibraryContent loadLibrary(PLibrary theLibrary);
+  /**
+   * Load a {@link org.logic2j.core.api.library.PLibrary}
+   *
+   * @param theLibrary
+   * @return The content of the library
+   */
+  LibraryContent loadLibrary(PLibrary theLibrary);
 
-    /**
-     * @return The whole {@link PLibrary}'s content.
-     */
-    LibraryContent wholeContent();
+  /**
+   * @return The whole {@link PLibrary}'s content.
+   */
+  LibraryContent wholeContent();
 
 }

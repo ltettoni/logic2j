@@ -24,6 +24,6 @@ import org.logic2j.core.api.Prolog;
  */
 public interface PrologBuilder {
 
-  public Prolog build();
+  Prolog build();
 
 }

@@ -25,7 +25,7 @@ public class OptionsStringTest {
 
 
     @Test
-    public void testConstructor() throws Exception {
+    public void testConstructor() {
         new OptionsString("");
         new OptionsString("  ");
         new OptionsString(null);
@@ -33,7 +33,7 @@ public class OptionsStringTest {
 
 
     @Test
-    public void testHasOption() throws Exception {
+    public void testHasOption() {
         final OptionsString optionsString = new OptionsString("a, b,  c,");
         assertThat(optionsString.hasOption("a")).isTrue();
         assertThat(optionsString.hasOption("b")).isTrue();
@@ -43,13 +43,13 @@ public class OptionsStringTest {
 
 
     @Test
-    public void testAssertValidOptions() throws Exception {
+    public void testAssertValidOptions() {
         final OptionsString optionsString = new OptionsString("a, b,  c,");
         optionsString.assertValidOptions(new String[]{"a", "b", "c", "d"});
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testAssertValidOptions_noB() throws Exception {
+    public void testAssertValidOptions_noB() {
         final OptionsString optionsString = new OptionsString("a, b,  c,");
         optionsString.assertValidOptions(new String[]{"a", "c", "d"});
     }

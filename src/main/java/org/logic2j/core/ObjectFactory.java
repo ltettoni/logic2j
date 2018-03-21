@@ -21,6 +21,6 @@ package org.logic2j.core;
  */
 public interface ObjectFactory<T> {
 
-  public T valueOf(Object[] values);
+  T valueOf(Object[] values);
 
 }

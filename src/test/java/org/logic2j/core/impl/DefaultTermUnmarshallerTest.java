@@ -18,10 +18,9 @@
 package org.logic2j.core.impl;
 
 import org.junit.Test;
-import org.logic2j.core.api.model.exception.InvalidTermException;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.model.term.Var;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ public class DefaultTermUnmarshallerTest {
 
 
     @Test
-    public void numbers() throws Exception {
+    public void numbers() {
         assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(new Integer(2323));
         assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(new Double(3.14));
         assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(new Long(2323));
@@ -48,31 +47,31 @@ public class DefaultTermUnmarshallerTest {
 
 
     @Test
-    public void basicTerms() throws Exception {
+    public void basicTerms() {
         assertThat(UNMARSHALLER.unmarshall("a")).isEqualTo("a");
         assertThat(UNMARSHALLER.unmarshall("X") instanceof Var).isTrue();
         assertThat(UNMARSHALLER.unmarshall("_")).isEqualTo(Var.ANONYMOUS_VAR);
     }
 
     @Test
-    public void struct() throws Exception {
+    public void struct() {
         assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(a)"))).isEqualTo("f(a)");
         assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(1, 3.14, a, X)"))).isEqualTo("f(1, 3.14, a, X)");
     }
 
     @Test(expected = InvalidTermException.class)
-    public void emptyString() throws Exception {
+    public void emptyString() {
         UNMARSHALLER.unmarshall("");
     }
 
 
     @Test(expected = InvalidTermException.class)
-    public void nullString() throws Exception {
+    public void nullString() {
         UNMARSHALLER.unmarshall(null);
     }
 
     @Test
-    public void normalization() throws Exception {
+    public void normalization() {
         final Struct term = (Struct) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
         logger.info("raw: {}", term);
         assertThat(term.getArg(3)).isEqualTo(term.getArg(0));

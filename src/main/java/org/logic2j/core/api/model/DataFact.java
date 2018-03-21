@@ -18,9 +18,9 @@
 package org.logic2j.core.api.model;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.exception.PrologNonSpecificError;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.TermApi;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.TermApi;
 
 import java.util.Arrays;
 
@@ -32,37 +32,37 @@ import java.util.Arrays;
  */
 public final class DataFact {
 
-    /**
-     * Elments are actually public - this object id just a data container, not a JavaBean.
-     */
-    public final Object[] elements;
+  /**
+   * Elments are actually public - this object id just a data container, not a JavaBean.
+   */
+  public final Object[] elements;
 
-    public DataFact(Object... arguments) {
-        if (arguments == null || arguments.length < 2) {
-            throw new PrologNonSpecificError("Dubious instantiation of DataFact with null record, or arity < 1");
-        }
-        this.elements = new Object[arguments.length];
-        this.elements[0] = ((String) arguments[0]).intern();
-        // Internalize all strings
-        for (int i = 1; i < arguments.length; i++) {
-            this.elements[i] = TermApi.valueOf(arguments[i], TermAdapter.FactoryMode.ATOM);
-        }
+  public DataFact(Object... arguments) {
+    if (arguments == null || arguments.length < 2) {
+      throw new PrologNonSpecificError("Dubious instantiation of DataFact with null record, or arity < 1");
     }
-
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // ---------------------------------------------------------------------------
-
-    public String functor() {
-        return (String) this.elements[0];
+    this.elements = new Object[arguments.length];
+    this.elements[0] = ((String) arguments[0]).intern();
+    // Internalize all strings
+    for (int i = 1; i < arguments.length; i++) {
+      this.elements[i] = TermApi.valueOf(arguments[i], TermAdapter.FactoryMode.ATOM);
     }
+  }
 
-    public int arity() {
-        return this.elements.length - 1;
-    }
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // ---------------------------------------------------------------------------
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + Arrays.asList(this.elements).toString();
-    }
+  public String functor() {
+    return (String) this.elements[0];
+  }
+
+  public int arity() {
+    return this.elements.length - 1;
+  }
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + Arrays.asList(this.elements).toString();
+  }
 }

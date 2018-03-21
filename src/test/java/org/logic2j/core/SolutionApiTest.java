@@ -18,13 +18,13 @@ package org.logic2j.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.logic2j.core.api.model.exception.MissingSolutionException;
-import org.logic2j.core.api.model.exception.TooManySolutionsException;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Var;
-import org.logic2j.core.api.solver.holder.GoalHolder;
-import org.logic2j.core.impl.util.CollectionUtils;
-import org.logic2j.core.impl.util.ProfilingInfo;
+import org.logic2j.engine.exception.MissingSolutionException;
+import org.logic2j.engine.exception.TooManySolutionsException;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.util.CollectionUtils;
+import org.logic2j.engine.util.ProfilingInfo;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -51,17 +51,17 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void existsFalse() throws Exception {
+    public void existsFalse() {
         assertThat(getProlog().solve("fail").exists()).isFalse();
     }
 
     @Test
-    public void existsTrue() throws Exception {
+    public void existsTrue() {
         assertThat(getProlog().solve("true").exists()).isTrue();
     }
 
     @Test
-    public void existsTrue2() throws Exception {
+    public void existsTrue2() {
         assertThat(getProlog().solve("true;true").exists()).isTrue();
     }
 
@@ -70,24 +70,24 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void count0() throws Exception {
+    public void count0() {
         assertThat(getProlog().solve("fail").count()).isEqualTo(0L);
     }
 
 
     @Test
-    public void count1() throws Exception {
+    public void count1() {
         assertThat(getProlog().solve("true").count()).isEqualTo(1L);
     }
 
 
     @Test
-    public void count2() throws Exception {
+    public void count2() {
         assertThat(getProlog().solve("true;true").count()).isEqualTo(2L);
     }
 
     @Test
-    public void count6() throws Exception {
+    public void count6() {
         assertThat(getProlog().solve("hex_char(_,_)").count()).isEqualTo(6L);
     }
 
@@ -96,43 +96,43 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void solutionSingle1() throws Exception {
+    public void solutionSingle1() {
         assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().single())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
-    public void solutionSingle0() throws Exception {
+    public void solutionSingle0() {
         assertThat(getProlog().solve("hex_char(Q,'Z')").solution().single()).isNull();
     }
 
     @Test(expected = TooManySolutionsException.class)
-    public void solutionSingle6() throws Exception {
+    public void solutionSingle6() {
         assertThat(marshall(getProlog().solve("hex_char(Q,_)").solution().single())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
-    public void solutionFirst1() throws Exception {
+    public void solutionFirst1() {
         assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().first())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
-    public void solutionFirst0() throws Exception {
+    public void solutionFirst0() {
         assertThat(getProlog().solve("hex_char(Q,'Z')").solution().first()).isNull();
     }
 
     @Test
-    public void solutionFirst6() throws Exception {
+    public void solutionFirst6() {
         assertThat(marshall(getProlog().solve("hex_char(Q,C)").solution().first())).isEqualTo("hex_char(10, 'A')");
     }
 
     @Test
-    public void solutionUnique() throws Exception {
+    public void solutionUnique() {
         assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().unique())).isEqualTo("hex_char(12, 'C')");
     }
 
 
     @Test
-    public void solutionList() throws Exception {
+    public void solutionList() {
         final List<Object> list = getProlog().solve("Q=12;Q=13").solution().list();
         assertThat(list.size()).isEqualTo(2);
     }
@@ -142,30 +142,30 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test(expected = MissingSolutionException.class)
-    public void varMissing() throws Exception {
+    public void varMissing() {
         getProlog().solve("1=2").var("Q");
     }
 
 
     @Test
-    public void varUnique() throws Exception {
+    public void varUnique() {
         assertThat(getProlog().solve("Q=12").var("Q", Integer.class).unique().intValue()).isEqualTo(12);
     }
 
 
     @Test
-    public void varFree() throws Exception {
+    public void varFree() {
         assertThat(getProlog().solve("Q=Q").var("Q").unique().toString()).isEqualTo("Q");
     }
 
     @Test
-    public void varBoundToFreeVar() throws Exception {
+    public void varBoundToFreeVar() {
         assertThat(getProlog().solve("Q=Z").var("Q").unique().toString()).isEqualTo("Q");
     }
 
 
     @Test
-    public void varUniqueConverted() throws Exception {
+    public void varUniqueConverted() {
         final String unique = getProlog().solve("Q=12").var("Q", String.class).unique();
         assertThat(unique).isEqualTo("12");
     }
@@ -175,7 +175,7 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void varsUnique() throws Exception {
+    public void varsUnique() {
         final Map<Var<?>, Object> unique = getProlog().solve("Q=12,R=13").vars().unique();
         assertThat(unique.toString().contains("Q=12")).isTrue();
         assertThat(unique.toString().contains("R=13")).isTrue();
@@ -183,7 +183,7 @@ public class SolutionApiTest extends PrologTestBase {
 
 
     @Test
-    public void varsList() throws Exception {
+    public void varsList() {
         final List<Map<Var<?>, Object>> map = getProlog().solve("Q=12;R=13").vars().list();
         assertThat(map.size()).isEqualTo(2);
     }
@@ -193,51 +193,51 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test(expected = TooManySolutionsException.class)
-    public void exactly1() throws Exception {
+    public void exactly1() {
         getProlog().solve("Q=12;Q=13").vars().exactly(1).list();
     }
 
     @Test
-    public void exactly2() throws Exception {
+    public void exactly2() {
         getProlog().solve("Q=12;Q=13").vars().exactly(2).list();
     }
 
     @Test(expected = MissingSolutionException.class)
-    public void exactly3() throws Exception {
+    public void exactly3() {
         getProlog().solve("Q=12;Q=13").vars().exactly(3).list();
     }
 
 
     @Test
-    public void atLeast1() throws Exception {
+    public void atLeast1() {
         getProlog().solve("Q=12;Q=13").vars().atLeast(1).list();
     }
 
 
     @Test
-    public void atLeast2() throws Exception {
+    public void atLeast2() {
         getProlog().solve("Q=12;Q=13").vars().atLeast(2).list();
     }
 
     @Test(expected = MissingSolutionException.class)
-    public void atLeast3() throws Exception {
+    public void atLeast3() {
         getProlog().solve("Q=12;Q=13").vars().atLeast(3).list();
     }
 
 
     @Test(expected = TooManySolutionsException.class)
-    public void atMost1() throws Exception {
+    public void atMost1() {
         getProlog().solve("Q=12;Q=13").vars().atMost(1).list();
     }
 
 
     @Test
-    public void atMost2() throws Exception {
+    public void atMost2() {
         getProlog().solve("Q=12;Q=13").vars().atMost(2).list();
     }
 
     @Test
-    public void atMost3() throws Exception {
+    public void atMost3() {
         getProlog().solve("Q=12;Q=13").vars().atMost(3).list();
     }
 
@@ -249,7 +249,7 @@ public class SolutionApiTest extends PrologTestBase {
     // ---------------------------------------------------------------------------
 
     @Test
-    public void permExists() throws IOException {
+    public void permExists() {
         final String goal = "perm([a,b,c,d,e,f,g,h], X)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -259,7 +259,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permCount() throws IOException {
+    public void permCount() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -270,7 +270,7 @@ public class SolutionApiTest extends PrologTestBase {
 
 
     @Test
-    public void permSolutions() throws IOException {
+    public void permSolutions() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -281,7 +281,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permSolutionsIterator() throws IOException {
+    public void permSolutionsIterator() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -299,7 +299,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permVarList() throws IOException {
+    public void permVarList() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -310,7 +310,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permVarArray() throws IOException {
+    public void permVarArray() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -321,7 +321,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permVarIterator() throws IOException {
+    public void permVarIterator() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -339,7 +339,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permVarIterable() throws IOException {
+    public void permVarIterable() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -355,7 +355,7 @@ public class SolutionApiTest extends PrologTestBase {
     }
 
     @Test
-    public void permVars() throws IOException {
+    public void permVars() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
@@ -367,7 +367,7 @@ public class SolutionApiTest extends PrologTestBase {
 
 
     @Test
-    public void permVarsIterator() throws IOException {
+    public void permVarsIterator() {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();

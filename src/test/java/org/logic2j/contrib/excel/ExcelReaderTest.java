@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.core.api.model.term.Struct;
-import org.logic2j.core.api.model.term.Var;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Var;
 
 import java.io.File;
 import java.io.IOException;

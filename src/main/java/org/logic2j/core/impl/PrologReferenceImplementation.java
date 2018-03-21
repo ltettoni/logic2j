@@ -18,8 +18,8 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.library.PLibrary;
-import org.logic2j.core.api.model.term.TermApi;
-import org.logic2j.core.api.solver.holder.GoalHolder;
+import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.core.library.impl.CoreLibrary;
@@ -30,173 +30,172 @@ import org.logic2j.core.library.DefaultLibraryManager;
  * Reference implementation of logic2j's {@link PrologImplementation} API.
  */
 public class PrologReferenceImplementation implements PrologImplementation {
-    public static final boolean PROFILING = true;
+  public static final boolean PROFILING = true;
 
+
+  /**
+   * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
+   * This enum is not in the {@link PrologImplementation} interface since it's particular to the reference implementation.
+   */
+  public enum InitLevel {
     /**
-     * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
-     * This enum is not in the {@link PrologImplementation} interface since it's particular to the reference implementation.
+     * A completely bare prolog engine, not functional for running programs (misses core predicates such as true/1, fail/1, !/1 (cut),
+     * =/2, call/1, not/1, etc. Yet unification and inference of user predicates will work. No libraries loaded at all.
      */
-    public enum InitLevel {
-        /**
-         * A completely bare prolog engine, not functional for running programs (misses core predicates such as true/1, fail/1, !/1 (cut),
-         * =/2, call/1, not/1, etc. Yet unification and inference of user predicates will work. No libraries loaded at all.
-         */
-        L0_BARE,
-        /**
-         * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.CoreLibrary},
-         * containing (among others), core predicates such as
-         * true/1, fail/1, !/1 (cut), =/2, call/1, not/1, findall/3, etc.
-         */
-        L1_CORE_LIBRARY,
-        /**
-         * Higher level libraries loaded, such as {@link org.logic2j.core.library.impl.IOLibrary}.
-         */
-        L2_BASE_LIBRARIES,
-    }
-
-    // ---------------------------------------------------------------------------
-    // Define all sub-features of this reference implementation and initialize with default, reference implementations
-    // ---------------------------------------------------------------------------
-
-    private TermAdapter termAdapter = new DefaultTermAdapter();
-
-    private TermMarshaller termMarshaller = new DefaultTermMarshaller();
-
-    private final DefaultTermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller();
-
-    private final TheoryManager theoryManager = new DefaultTheoryManager(this);
-
-    private LibraryManager libraryManager = new DefaultLibraryManager(this);
-
-    private OperatorManager operatorManager = new DefaultOperatorManager();
-
-    private Solver solver = new Solver(this);
-
-    /**
-     * Default constructor will only provide an engine with the {@link org.logic2j.core.library.impl.CoreLibrary} loaded.
+    L0_BARE, /**
+     * This is the default initialization level, it loads the {@link org.logic2j.core.library.impl.CoreLibrary},
+     * containing (among others), core predicates such as
+     * true/1, fail/1, !/1 (cut), =/2, call/1, not/1, findall/3, etc.
      */
-    public PrologReferenceImplementation() {
-        this(InitLevel.L1_CORE_LIBRARY);
-    }
-
-    /**
-     * Constructor for a specific level of initialization.
-     *
-     * @param theLevel
+    L1_CORE_LIBRARY, /**
+     * Higher level libraries loaded, such as {@link org.logic2j.core.library.impl.IOLibrary}.
      */
-    public PrologReferenceImplementation(InitLevel theLevel) {
-        // Here we load libs, watch out for the order
+    L2_BASE_LIBRARIES,
+  }
 
-        // First we load libraries that define primitives, and only after libraries that define theories
-        // This is because at the time a theory is parsed, it will initialize PrimitiveInfo only to those
-        // primitive that have already been loaded
-        if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
-            final PLibrary lib = new IOLibrary(this);
-            this.libraryManager.loadLibrary(lib);
-        }
-        if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
-            final PLibrary lib = new CoreLibrary(this);
-            this.libraryManager.loadLibrary(lib);
-        }
-        final TermMapper normalizer = new TermMapper() {
-            @Override
-            public Object apply(Object theTerm) {
-                return TermApi.normalize(theTerm, getLibraryManager().wholeContent());
-            }
-        };
-        this.termUnmarshaller.setNormalizer(normalizer);
-        this.termUnmarshaller.setOperatorManager(getOperatorManager());
-        ((DefaultTermAdapter)this.termAdapter).setNormalizer(normalizer);
+  // ---------------------------------------------------------------------------
+  // Define all sub-features of this reference implementation and initialize with default, reference implementations
+  // ---------------------------------------------------------------------------
+
+  private TermAdapter termAdapter = new DefaultTermAdapter();
+
+  private TermMarshaller termMarshaller = new DefaultTermMarshaller();
+
+  private final DefaultTermUnmarshaller termUnmarshaller = new DefaultTermUnmarshaller();
+
+  private final TheoryManager theoryManager = new DefaultTheoryManager(this);
+
+  private LibraryManager libraryManager = new DefaultLibraryManager(this);
+
+  private OperatorManager operatorManager = new DefaultOperatorManager();
+
+  private Solver solver = new Solver(this);
+
+  /**
+   * Default constructor will only provide an engine with the {@link org.logic2j.core.library.impl.CoreLibrary} loaded.
+   */
+  public PrologReferenceImplementation() {
+    this(InitLevel.L1_CORE_LIBRARY);
+  }
+
+  /**
+   * Constructor for a specific level of initialization.
+   *
+   * @param theLevel
+   */
+  public PrologReferenceImplementation(InitLevel theLevel) {
+    // Here we load libs, watch out for the order
+
+    // First we load libraries that define primitives, and only after libraries that define theories
+    // This is because at the time a theory is parsed, it will initialize PrimitiveInfo only to those
+    // primitive that have already been loaded
+    if (theLevel.ordinal() >= InitLevel.L2_BASE_LIBRARIES.ordinal()) {
+      final PLibrary lib = new IOLibrary(this);
+      this.libraryManager.loadLibrary(lib);
     }
-
-    // ---------------------------------------------------------------------------
-    // Implementation of interface Prolog.
-    // These are actually shortcuts or "syntactic sugars".
-    // ---------------------------------------------------------------------------
-
-    @Override
-    public GoalHolder solve(CharSequence theGoal) {
-        final Object parsed = termUnmarshaller.unmarshall(theGoal);
-        return solve(parsed);
+    if (theLevel.ordinal() >= InitLevel.L1_CORE_LIBRARY.ordinal()) {
+      final PLibrary lib = new CoreLibrary(this);
+      this.libraryManager.loadLibrary(lib);
     }
+    final TermMapper normalizer = new TermMapper() {
+      @Override
+      public Object apply(Object theTerm) {
+        return TermApi.normalize(theTerm, getLibraryManager().wholeContent());
+      }
+    };
+    this.termUnmarshaller.setNormalizer(normalizer);
+    this.termUnmarshaller.setOperatorManager(getOperatorManager());
+    ((DefaultTermAdapter) this.termAdapter).setNormalizer(normalizer);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Implementation of interface Prolog.
+  // These are actually shortcuts or "syntactic sugars".
+  // ---------------------------------------------------------------------------
+
+  @Override
+  public GoalHolder solve(CharSequence theGoal) {
+    final Object parsed = termUnmarshaller.unmarshall(theGoal);
+    return solve(parsed);
+  }
 
 
-    @Override
-    public GoalHolder solve(Object theGoal) {
-        return new GoalHolder(this, theGoal);
-    }
+  @Override
+  public GoalHolder solve(Object theGoal) {
+    return new GoalHolder(this, theGoal);
+  }
 
-    // ---------------------------------------------------------------------------
-    // Accessors
-    // You may use DI to inject all sub-features into setters
-    // TODO I think that we probably have to reinit/load the full engine's configuration everytime one setter is called, but we lack an
-    // "afterPropertiesSet()" feature. We should use the standard @PostConstruct instead.
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Accessors
+  // You may use DI to inject all sub-features into setters
+  // TODO I think that we probably have to reinit/load the full engine's configuration everytime one setter is called, but we lack an
+  // "afterPropertiesSet()" feature. We should use the standard @PostConstruct instead.
+  // ---------------------------------------------------------------------------
 
-    @Override
-    public TermAdapter getTermAdapter() {
-        return this.termAdapter;
-    }
+  @Override
+  public TermAdapter getTermAdapter() {
+    return this.termAdapter;
+  }
 
-    @Override
-    public void setTermAdapter(TermAdapter theTermAdapter) {
-        this.termAdapter = theTermAdapter;
-    }
+  @Override
+  public void setTermAdapter(TermAdapter theTermAdapter) {
+    this.termAdapter = theTermAdapter;
+  }
 
-    @Override
-    public TheoryManager getTheoryManager() {
-        return this.theoryManager;
-    }
+  @Override
+  public TheoryManager getTheoryManager() {
+    return this.theoryManager;
+  }
 
-    @Override
-    public LibraryManager getLibraryManager() {
-        return this.libraryManager;
-    }
+  @Override
+  public LibraryManager getLibraryManager() {
+    return this.libraryManager;
+  }
 
-    public void setLibraryManager(LibraryManager theLibraryManager) {
-        this.libraryManager = theLibraryManager;
-    }
+  public void setLibraryManager(LibraryManager theLibraryManager) {
+    this.libraryManager = theLibraryManager;
+  }
 
-    @Override
-    public Solver getSolver() {
-        return this.solver;
-    }
+  @Override
+  public Solver getSolver() {
+    return this.solver;
+  }
 
-    @Override
-    public OperatorManager getOperatorManager() {
-        return this.operatorManager;
-    }
+  @Override
+  public OperatorManager getOperatorManager() {
+    return this.operatorManager;
+  }
 
-    public TermMarshaller getTermMarshaller() {
-        return this.termMarshaller;
-    }
+  public TermMarshaller getTermMarshaller() {
+    return this.termMarshaller;
+  }
 
-    public void setTermMarshaller(TermMarshaller newOne) {
-        this.termMarshaller = newOne;
-    }
+  public void setTermMarshaller(TermMarshaller newOne) {
+    this.termMarshaller = newOne;
+  }
 
-    @Override
-    public TermUnmarshaller getTermUnmarshaller() {
-        return this.termUnmarshaller;
-    }
+  @Override
+  public TermUnmarshaller getTermUnmarshaller() {
+    return this.termUnmarshaller;
+  }
 
-    public void setOperatorManager(OperatorManager theOperatorManager) {
-        this.operatorManager = theOperatorManager;
-    }
+  public void setOperatorManager(OperatorManager theOperatorManager) {
+    this.operatorManager = theOperatorManager;
+  }
 
-    public void setSolver(Solver theSolver) {
-        this.solver = theSolver;
-    }
+  public void setSolver(Solver theSolver) {
+    this.solver = theSolver;
+  }
 
 
-    // ---------------------------------------------------------------------------
-    // Methods of java.lang.Object
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Methods of java.lang.Object
+  // ---------------------------------------------------------------------------
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName();
+  }
 
 
 }
