@@ -25,11 +25,6 @@ public class PrologInternalError extends PrologException {
 
   private static final long serialVersionUID = 1;
 
-  @Override
-  public boolean isStacktraceUsefulOnClient() {
-    return true;
-  }
-
   public PrologInternalError(String theString) {
     super(theString);
   }

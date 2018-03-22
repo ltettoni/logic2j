@@ -22,14 +22,6 @@ package org.logic2j.engine.exception;
 public abstract class PrologException extends RuntimeException {
   private static final long serialVersionUID = 1L;
 
-  /**
-   * Certain classes of serious exceptions require to report the stacktrace to the client application.
-   * Others such as term formatting errors don't need.
-   *
-   * @return true if client application should report the stacktrace in addition to the message.
-   */
-  public abstract boolean isStacktraceUsefulOnClient();
-
   public PrologException(CharSequence theMessage) {
     super(theMessage.toString());
   }

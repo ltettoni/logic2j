@@ -25,11 +25,6 @@ package org.logic2j.engine.exception;
 public class TooManySolutionsException extends PrologException {
   private static final long serialVersionUID = 1L;
 
-  @Override
-  public boolean isStacktraceUsefulOnClient() {
-    return false;
-  }
-
   public TooManySolutionsException(CharSequence theMessage) {
     super(theMessage.toString());
   }
