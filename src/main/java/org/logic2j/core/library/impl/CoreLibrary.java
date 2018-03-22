@@ -276,7 +276,7 @@ public class CoreLibrary extends LibraryBase {
     Integer continuation = Continuation.CONTINUE;
     if (t1 instanceof Var) {
       final Var<?> var = (Var) t1;
-      if (var.isAnonymous()) {
+      if (var == Var.anon()) {
         notifySolution(theListener, currentVars);
       } else {
         final Object value = currentVars.reify(t1);

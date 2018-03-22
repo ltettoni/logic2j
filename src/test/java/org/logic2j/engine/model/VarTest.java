@@ -21,35 +21,36 @@ import org.junit.Test;
 import org.logic2j.engine.exception.InvalidTermException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.Var.strVar;
 
 public class VarTest {
 
     @Test
     public void constructorValid() {
-        final Var<?> v1 = new Var<Object>("X");
+        final Var<?> v1 = strVar("X");
         assertThat(v1.getName()).isEqualTo("X");
         assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
 
     @Test(expected = InvalidTermException.class)
     public void constructorNull() {
-        new Var<Object>(null);
+        strVar(null);
     }
 
     @Test(expected = InvalidTermException.class)
     public void constructorEmpty() {
-        new Var<Object>("");
+        strVar("");
     }
 
     @Test(expected = InvalidTermException.class)
     public void constructorCannotInstantiateAnonymous() {
-        new Var<Object>("_");
+        strVar("_");
     }
 
 
     @Test
     public void constructorWithCharSequence() {
-        final Var<?> v1 = new Var<Object>(new StringBuilder("X"));
+        final Var<?> v1 = strVar(new StringBuilder("X"));
         assertThat(v1.getName()).isEqualTo("X");
         assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
@@ -57,15 +58,15 @@ public class VarTest {
 
     @Test
     public void idempotence() {
-        final Var<?> v1 = new Var<Object>("X");
+        final Var<?> v1 = strVar("X");
         assertThat(v1).isEqualTo(v1);
     }
 
 
     @Test
     public void equality() {
-        final Var<?> v1 = new Var<Object>("X");
-        final Var<?> v2 = new Var<Object>("X");
+        final Var<?> v1 = strVar("X");
+        final Var<?> v2 = strVar("X");
         assertThat(v2).isNotSameAs(v1);
         assertThat(v2).isEqualTo(v1);
         assertThat(v1).isEqualTo(v2);
@@ -74,7 +75,7 @@ public class VarTest {
 
     @Test
     public void lowerCaseIsValid() {
-        final Var<?> v1 = new Var<Object>("lowercase");
+        final Var<?> v1 = strVar("lowercase");
         assertThat(v1.getName()).isEqualTo("lowercase");
         assertThat(v1.getIndex()).isEqualTo(Term.NO_INDEX);
     }
@@ -82,17 +83,17 @@ public class VarTest {
 
     @Test(expected = InvalidTermException.class)
     public void cannotCloneAnonymous() {
-        Var.copy(Var.ANONYMOUS_VAR);
+        Var.copy(Var.anon());
     }
 
     @Test
     public void isAnonymousTrue() {
-        assertThat(Var.ANONYMOUS_VAR.isAnonymous()).isTrue();
+        assertThat(Var.anon()==Var.anon()).isTrue();
     }
 
     @Test
     public void isAnonymousFalse() {
-        assertThat(new Var<Object>("X").isAnonymous()).isFalse();
+        assertThat(strVar("X")==Var.<String>anon()).isFalse();
     }
 
 

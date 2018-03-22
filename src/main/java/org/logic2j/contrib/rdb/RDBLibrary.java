@@ -181,7 +181,7 @@ public class RDBLibrary extends LibraryBase {
         final Column sqlColumn = builder.column(table, columnName);
         if (valueTerm instanceof Var) {
           final Var<?> var = (Var) valueTerm;
-          if (var.isAnonymous()) {
+          if (var == Var.anon()) {
             // Will ignore any anonymous var
             continue;
           }

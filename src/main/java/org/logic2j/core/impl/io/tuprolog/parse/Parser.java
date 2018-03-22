@@ -48,6 +48,7 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA2;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RPAR;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.SQ_SEQUENCE;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.VARIABLE;
+import static org.logic2j.engine.model.Var.strVar;
 
 /**
  * This class defines a parser of Prolog terms and sentences.
@@ -410,9 +411,9 @@ public class Parser {
 
     if (t1.isType(VARIABLE)) {
       if (Var.ANONYMOUS_VAR_NAME.equals(t1.text)) {
-        return Var.ANONYMOUS_VAR;
+        return Var.anon();
       }
-      return new Var<Object>(t1.text);
+      return strVar(t1.text);
     }
 
     if (t1.isType(ATOM) || t1.isType(SQ_SEQUENCE) || t1.isType(DQ_SEQUENCE)) {

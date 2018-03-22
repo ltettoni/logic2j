@@ -21,6 +21,7 @@ import org.logic2j.engine.exception.InvalidTermException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.logic2j.engine.model.Var.strVar;
 
 /**
  * Low-level tests of the {@link TermApi} facade.
@@ -37,9 +38,9 @@ public class TermApiTest {
     @Test
     public void structurallyEquals() {
         // Vars are never structurally equal ...
-        assertThat(new Var<Object>("X").structurallyEquals(new Var<Object>("Y"))).isFalse();
-        final Var<?> x1 = new Var<Object>("X");
-        final Var<?> x2 = new Var<Object>("X");
+        assertThat(strVar("X").structurallyEquals(strVar("Y"))).isFalse();
+        final Var<?> x1 = strVar("X");
+        final Var<?> x2 = strVar("X");
         // ... even when they have the same name
         assertThat(x1.structurallyEquals(x2)).isFalse();
         final Struct s = new Struct("s", x1, x2);
@@ -79,9 +80,9 @@ public class TermApiTest {
         int nbVars;
         nbVars = TermApi.assignIndexes(new Struct("f"), 0);
         assertThat(nbVars).isEqualTo(0);
-        nbVars = TermApi.assignIndexes(new Var<Object>("X"), 0);
+        nbVars = TermApi.assignIndexes(strVar("X"), 0);
         assertThat(nbVars).isEqualTo(1);
-        nbVars = TermApi.assignIndexes(Var.ANONYMOUS_VAR, 0);
+        nbVars = TermApi.assignIndexes(Var.anon(), 0);
         assertThat(nbVars).isEqualTo(0);
         //
         nbVars = TermApi.assignIndexes(2L, 0);

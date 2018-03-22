@@ -184,7 +184,7 @@ public class Clause {
       if (arg instanceof Struct) {
         final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
         clonedArgs[i] = recursedClonedElement;
-      } else if (arg instanceof Var<?> && arg != Var.ANONYMOUS_VAR) {
+      } else if (arg instanceof Var<?> && arg != Var.anon()) {
         final int originalVarIndex = ((Var<?>) arg).getIndex();
         clonedArgs[i] = clonedVars[originalVarIndex];
       } else {

@@ -26,6 +26,7 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 
+
 /**
  * Default and reference implementation of {@link org.logic2j.core.api.TermMarshaller#marshall(Object)}.
  * This implementation may be derived or composed to your wish.
@@ -72,7 +73,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     }
     if (finalValue instanceof Var) {
       // Must be free
-      if (theVar.isAnonymous()) {
+      if (theVar == Var.anon()) {
         return Var.ANONYMOUS_VAR_NAME;
       }
       return theVar.getName();

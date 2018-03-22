@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static org.logic2j.engine.model.Var.strVar;
+
 /**
  * Created by tettoni on 2015-10-11.
  */
@@ -113,7 +115,7 @@ public class Completer {
     final Set<String> signatures = new TreeSet<String>();
     // From all loaded clause providers
     for (final ClauseProvider cp : this.prolog.getTheoryManager().getClauseProviders()) {
-      for (final Clause clause : cp.listMatchingClauses(new Var<Object>("unused"), null)) {
+      for (final Clause clause : cp.listMatchingClauses(strVar("unused"), null)) {
         final String predicateKey = clause.getPredicateKey();
         if (acceptPredicateKey(predicateKey) && predicateKey.startsWith(partialInput.toString())) {
           signatures.add(predicateKey);

@@ -23,6 +23,8 @@ import org.logic2j.engine.model.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.logic2j.engine.model.Var.strVar;
+
 /**
  * A monad-like object that allows dereferencing variables to their effective current values,
  * or to modify variables (and return a new UnifyContext).
@@ -58,7 +60,7 @@ public class UnifyContext {
    * @return A new Var uniquely indexed
    */
   public Var<?> createVar(String theName) {
-    final Var<?> var = new Var<Object>(theName);
+    final Var<?> var = strVar(theName);
     var.index = topVarIndex++;
     return var;
   }

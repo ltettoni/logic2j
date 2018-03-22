@@ -47,7 +47,7 @@ public class ExcelReaderTest extends ExcelClauseProviderTestBase {
         final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
         final TabularData data = new ExcelReader(file, true, 0).read();
         final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, TermAdapter.AssertionMode.EAVT);
-        final Struct theGoal = new Struct("eavt", Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR, Var.ANONYMOUS_VAR);
+        final Struct theGoal = new Struct("eavt", Var.anon(), Var.anon(), Var.anon(), Var.anon());
         final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
         assertThat(listMatchingClauses).isNotNull();
         assertThat(listMatchingClauses.iterator()).isNotNull();

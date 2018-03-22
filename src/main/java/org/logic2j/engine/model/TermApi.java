@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static org.logic2j.engine.model.Var.strVar;
 
 /**
  * Facade API to the {@link Term} hierarchy, to ease their handling. This class resides in the same package than the {@link Term}
@@ -411,7 +412,7 @@ public final class TermApi {
           break;
         default:
           if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
-            result = Var.ANONYMOUS_VAR;
+            result = Var.anon();
           } else if (chars.isEmpty()) {
             // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent
             // them
@@ -419,7 +420,7 @@ public final class TermApi {
             result = new Struct("");
           } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
             // Use Prolog's convention re variables starting with uppercase or underscore
-            result = new Var<Object>(chars);
+            result = strVar(chars);
           } else {
             // Otherwise it's an atom
             // result = new Struct(chars);
@@ -544,7 +545,7 @@ public final class TermApi {
     final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
       @Override
       public Void visit(Var<?> theVar) {
-        if (!theVar.isAnonymous()) {
+        if (theVar != Var.anon()) {
           // Insert into array (even if may duplicate) - this will act as a sentinel
           final int highest = nbVars[0];
           tempArray[highest] = theVar;
