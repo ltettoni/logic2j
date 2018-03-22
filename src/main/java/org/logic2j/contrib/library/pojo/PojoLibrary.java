@@ -21,6 +21,8 @@ import org.logic2j.contrib.library.OptionsString;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
@@ -29,8 +31,6 @@ import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.impl.LibraryBase;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

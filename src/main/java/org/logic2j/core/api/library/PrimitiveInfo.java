@@ -16,10 +16,10 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.RecursionException;
 import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.lang.reflect.InvocationTargetException;

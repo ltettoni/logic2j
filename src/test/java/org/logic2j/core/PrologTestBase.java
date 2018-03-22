@@ -17,19 +17,19 @@
 package org.logic2j.core;
 
 import org.junit.Before;
-import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
-import org.logic2j.engine.exception.PrologException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
-import org.logic2j.engine.model.Var;
-import org.logic2j.engine.solver.holder.GoalHolder;
-import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.core.api.library.LibraryContent;
+import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.core.api.library.LibraryContent;
+import org.logic2j.engine.exception.Logic2jException;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.holder.GoalHolder;
+import org.logic2j.engine.solver.listener.CountingSolutionListener;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -114,7 +114,7 @@ public abstract class PrologTestBase {
             try {
                 this.prolog.solve(theGoal).exists();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
-            } catch (final PrologException e) {
+            } catch (final Logic2jException e) {
                 // Expected
             } catch (final AssertionError e) {
                 // Now we use assertions. Some test cases that assert failure also are caused by failing assertions

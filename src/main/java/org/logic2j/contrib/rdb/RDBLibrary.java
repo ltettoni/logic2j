@@ -23,26 +23,34 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.ColumnOperatorParameterCriterion
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
-import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.solver.Continuation;
+import org.logic2j.core.api.library.annotation.Predicate;
+import org.logic2j.core.impl.EnvManager;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.EnvManager;
-import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.util.CollectionUtils;
 import org.logic2j.engine.util.TypeUtils;
-import org.logic2j.core.library.impl.LibraryBase;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.

@@ -19,7 +19,7 @@ package org.logic2j.engine.exception;
 /**
  * When a solution is not expected or not possible, depending on the calling context.
  */
-public class IllegalSolutionException extends PrologException {
+public class IllegalSolutionException extends Logic2jException {
   private static final long serialVersionUID = 1L;
 
   public IllegalSolutionException(CharSequence theMessage) {

@@ -19,7 +19,7 @@ package org.logic2j.engine.exception;
 /**
  * Indicate some condition that requires breaking the execution flow but for which we do not YET have a proper Exception class.
  */
-public class PrologNonSpecificError extends PrologException {
+public class PrologNonSpecificError extends Logic2jException {
 
   private static final long serialVersionUID = 1;
 

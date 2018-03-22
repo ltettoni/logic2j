@@ -17,12 +17,12 @@
 package org.logic2j.engine.model;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
-import org.logic2j.engine.visitor.TermVisitor;
-import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.util.TypeUtils;
+import org.logic2j.engine.visitor.TermVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;

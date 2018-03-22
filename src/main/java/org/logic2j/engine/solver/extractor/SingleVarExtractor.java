@@ -21,8 +21,8 @@ import org.logic2j.engine.exception.MissingSolutionException;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
-import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

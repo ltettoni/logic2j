@@ -19,6 +19,8 @@ package org.logic2j.contrib.library.fnct;
 
 import org.logic2j.contrib.library.OptionsString;
 import org.logic2j.core.api.library.annotation.Predicate;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.RecursionException;
 import org.logic2j.engine.model.Struct;
@@ -30,8 +32,6 @@ import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListenerBase;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.library.impl.LibraryBase;
 
 /**
  * Functional features (mapping, etc).

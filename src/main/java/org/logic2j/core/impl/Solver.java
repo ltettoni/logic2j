@@ -22,7 +22,7 @@ import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.DataFact;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologException;
+import org.logic2j.engine.exception.Logic2jException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
@@ -66,11 +66,11 @@ public class Solver {
     }
     try {
       return solveGoal(goal, theSolutionListener, initialContext);
-    } catch (PrologException e) {
+    } catch (Logic2jException e) {
       // "Functional" exception thrown during solving will just be forwarded
       throw e;
     } catch (RuntimeException e) {
-      // Anything not a PrologException will be encapsulated
+      // Anything not a Logic2jException will be encapsulated
       throw new PrologNonSpecificError("Solver failed with " + e, e);
     }
 

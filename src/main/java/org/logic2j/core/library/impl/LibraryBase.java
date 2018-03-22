@@ -17,13 +17,13 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.PLibrary;
-import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.Continuation;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 /**
  * Base class for libraries, provides convenience methods to unify, deunify, and access the underlying {@link PrologImplementation}

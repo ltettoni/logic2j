@@ -16,9 +16,9 @@
  */
 package org.logic2j.engine.solver.listener;
 
-import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.exception.MissingSolutionException;
 import org.logic2j.engine.exception.TooManySolutionsException;
+import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.util.List;

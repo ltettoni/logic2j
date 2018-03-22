@@ -21,9 +21,9 @@ import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.Var;
-import org.logic2j.engine.model.Struct;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +34,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.ATOM;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DOUBLE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DQ_SEQUENCE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.FLOAT;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.INTEGER;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LBRA;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LBRA2;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LONG;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LPAR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA2;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RPAR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.SQ_SEQUENCE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.VARIABLE;
 
 /**
  * This class defines a parser of Prolog terms and sentences.

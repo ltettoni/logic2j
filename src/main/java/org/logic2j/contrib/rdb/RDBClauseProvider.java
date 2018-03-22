@@ -22,11 +22,11 @@ import org.logic2j.contrib.rdb.util.SqlRunner;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Clause;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;

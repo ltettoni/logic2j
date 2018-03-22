@@ -27,7 +27,25 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.ATOM;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.BAR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DOUBLE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DQ_SEQUENCE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.END;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.EOF;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.FLOAT;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.FUNCTOR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.INTEGER;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LBRA;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LBRA2;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LONG;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LPAR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.OPERATOR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA2;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RPAR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.SQ_SEQUENCE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.VARIABLE;
 
 /**
  * BNF for tuProlog
