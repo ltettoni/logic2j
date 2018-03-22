@@ -29,12 +29,12 @@ import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.listener.SolutionListenerBase;
-import org.logic2j.engine.solver.listener.multi.ListMultiResult;
-import org.logic2j.engine.solver.listener.multi.MultiResult;
+import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.unify.UnifyStateByLookup;
 import org.logic2j.engine.util.ProfilingInfo;
+
+import java.util.Iterator;
 
 /**
  * Solve goals - that's the core of the engine.
@@ -170,7 +170,7 @@ public class Solver {
       final Object lhs = goalStructArgs[0];
       for (int i = 0; i < arity - 1; i++) {
         final int index = i;
-        andingListeners[index] = new SolutionListenerBase() {
+        andingListeners[index] = new SolutionListener() {
 
           @Override
           public Integer onSolution(UnifyContext currentVars) {
@@ -184,19 +184,19 @@ public class Solver {
           }
 
           @Override
-          public Integer onSolutions(final MultiResult multiLHS) {
+          public Integer onSolutions(final Iterator<UnifyContext> multiLHS) {
             final int nextIndex = index + 1;
             final Object rhs = goalStructArgs[nextIndex]; // Usually the right-hand-side of a binary ','
-            final SolutionListener subListener = new SolutionListenerBase() {
+            final SolutionListener subListener = new SolutionListener() {
               @Override
               public Integer onSolution(UnifyContext currentVars) {
                 throw new UnsupportedOperationException("Should not be here");
               }
 
               @Override
-              public Integer onSolutions(MultiResult multiRHS) {
+              public Integer onSolutions(Iterator<UnifyContext> multiRHS) {
                 logger.info("AND sub-listener got multiLHS={} and multiRHS={}", multiLHS, multiRHS);
-                final ListMultiResult combined = new ListMultiResult(currentVars, multiLHS, multiRHS);
+                final UnifyContextIterator combined = new UnifyContextIterator(currentVars, multiLHS, multiRHS);
                 return andingListeners[nextIndex].onSolutions(combined);
               }
 

@@ -34,13 +34,13 @@ package org.logic2j.core.impl;/*
  */
 
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.SolutionListenerBase;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * A SolutionListener that implements the logical not.
  */
-public class NotListener extends SolutionListenerBase {
+public class NotListener implements SolutionListener {
   private boolean atLeastOneSolution = false;
 
   @Override

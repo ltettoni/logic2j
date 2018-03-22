@@ -17,13 +17,12 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.annotation.Predicate;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.multi.ListMultiResult;
-import org.logic2j.engine.solver.listener.multi.MultiResult;
 import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +97,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
                 values.add(val);
             }
 
-            final MultiResult multi = new ListMultiResult(currentVars, (Var)theIterable, values);
+            final UnifyContextIterator multi = new UnifyContextIterator(currentVars, (Var)theIterable, values);
             logger.info("{} is going to notify multi solutions: {}", this, multi);
             return theListener.onSolutions(multi);
         } else {

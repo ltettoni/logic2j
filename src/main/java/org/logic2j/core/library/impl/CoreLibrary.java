@@ -30,7 +30,6 @@ import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.listener.SolutionListenerBase;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.util.ArrayList;
@@ -393,7 +392,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   private void collectReifiedResults(UnifyContext currentVars, final Object theTemplate, Object theGoal, final Collection<Object> javaResults) {
-    final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
+    final SolutionListener listenerForSubGoal = new SolutionListener() {
 
       @Override
       public Integer onSolution(UnifyContext currentVars) {

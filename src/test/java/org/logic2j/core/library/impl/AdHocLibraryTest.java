@@ -23,11 +23,12 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.SolutionListenerBase;
-import org.logic2j.engine.solver.listener.multi.MultiResult;
+import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -95,7 +96,7 @@ public class AdHocLibraryTest extends PrologTestBase {
         goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
         Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
         final Var<?> q = TermApi.findVar(goal, "Q");
-        final SolutionListenerBase listener = new SolutionListenerBase() {
+        final SolutionListener listener = new SolutionListener() {
 
             @Override
             public Integer onSolution(UnifyContext currentVars) {
@@ -104,7 +105,7 @@ public class AdHocLibraryTest extends PrologTestBase {
             }
 
             @Override
-            public Integer onSolutions(MultiResult multi) {
+            public Integer onSolutions(Iterator<UnifyContext> multi) {
                 logger.info("App listener got multi solutions: {}", multi);
                 return Continuation.CONTINUE;
             }

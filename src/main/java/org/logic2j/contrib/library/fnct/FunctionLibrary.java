@@ -30,7 +30,6 @@ import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.listener.SolutionListenerBase;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
@@ -293,7 +292,7 @@ public class FunctionLibrary extends LibraryBase {
     } else {
       // Pattern of using an immutable array to store the mutable result of a callback...
       final Object transformationResult[] = new Object[1];
-      final SolutionListener listenerForSubGoal = new SolutionListenerBase() {
+      final SolutionListener listenerForSubGoal = new SolutionListener() {
 
         @Override
         public Integer onSolution(UnifyContext currentVars) {
