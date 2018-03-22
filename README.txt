@@ -13,10 +13,18 @@ right: C:\Git\logic2j\src\main\java\org\logic2j\engine\
 
 Hard part:
 
+SingleVarExtractor:  TermAdapter removed !   We would need some reification function to be specifiable
+  that would do:
+  reifiedValue = this.termAdapter.fromTerm(reifiedValue, this.targetClass);
+
+
+
 Struct: features lost: primitiveInfo, prolog lists, formatStruct for lists
 TermApi: no lists, evaluate() removed, no LibraryContent, selectTerm() removed
 
-SingleVarExtractor:  TermAdapter removed
+
+
+
 GoalHolder: no more PrologReferenceImplementation, but has ref to Solver
 SolutionHolder: remove support for arrays, FactoryExtractor
 UnifyContext: lots of changes (but should not impact)
