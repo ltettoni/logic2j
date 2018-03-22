@@ -146,8 +146,7 @@ public class UnifyStateByLookup {
       if (slotLiteral != null) {
         return slotLiteral;
       }
-      int slotVarIndex = boundVarIndex[slot];
-      slot = slotVarIndex;
+      slot = boundVarIndex[slot];
       runningVar = var[slot];
     }
     throw new IllegalStateException("Infinite loop detected during dereferencing of variable \"" + theVar + '"');
