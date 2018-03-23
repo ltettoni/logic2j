@@ -16,7 +16,7 @@
  */
 package org.logic2j.engine.solver.holder;
 
-import org.logic2j.core.ObjectFactory;
+import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
@@ -101,39 +101,15 @@ public class SolutionHolder<T> implements Iterable<T> {
    * @return Holds solutions as a List of Arrays
    */
   public static SolutionHolder<Object[]> extractingArrays(GoalHolder goalHolder) {
-    final SolutionHolder withArrays = new SolutionHolder(goalHolder, new ArrayExtractor(goalHolder.goal));
+    final SolutionHolder withArrays = new SolutionHolder(goalHolder, new ArrayExtractor(goalHolder.getGoal()));
     return withArrays;
   }
 
   public static <T> SolutionHolder<T> extractingFactory(GoalHolder goalHolder, ObjectFactory<T> factory) {
-    final SolutionHolder withFactory = new SolutionHolder(goalHolder, new FactoryExtractor<T>(goalHolder.goal, factory));
+    final SolutionHolder withFactory = new SolutionHolder(goalHolder, new FactoryExtractor<T>(goalHolder.getGoal(), factory));
     return withFactory;
   }
 
-  /**
-   * For cloning.
-   * @param goalHolder
-   * @param rangeListener
-   * @param singleVarExtractor
-   * @param multiVarExtractor
-
-  private SolutionHolder(GoalHolder goalHolder, RangeSolutionListener rangeListener, SingleVarExtractor<T> singleVarExtractor, MapExtractor multiVarExtractor) {
-  this.goalHolder = goalHolder;
-  this.rangeListener = rangeListener;
-  this.singleVarExtractor = singleVarExtractor;
-  this.multiVarExtractor = multiVarExtractor;
-  }
-   */
-
-  /**
-   * Copy constructor
-   *
-   * @param original
-
-  public <Tgt> SolutionHolder(SolutionHolder<T> original, Class<Tgt> targetClass) {
-  this(original.goalHolder, original.rangeListener, original.singleVarExtractor, original.multiVarExtractor);
-  }
-   */
 
   // ---------------------------------------------------------------------------
   // Scalar extractors (zero or one solution)

@@ -18,6 +18,7 @@ package org.logic2j.core;
 
 import org.junit.Test;
 import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.util.CollectionUtils;
 

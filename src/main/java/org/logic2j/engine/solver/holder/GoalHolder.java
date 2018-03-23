@@ -16,7 +16,7 @@
  */
 package org.logic2j.engine.solver.holder;
 
-import org.logic2j.core.ObjectFactory;
+import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.RangeSolutionListener;
