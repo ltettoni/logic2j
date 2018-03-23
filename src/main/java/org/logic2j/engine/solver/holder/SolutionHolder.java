@@ -71,7 +71,7 @@ public class SolutionHolder<T> implements Iterable<T> {
   public SolutionHolder(GoalHolder goalHolder, String varName, Class<? extends T> desiredTypeOfResult) {
     this.goalHolder = goalHolder;
     this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.goal, varName, desiredTypeOfResult);
-    this.singleVarExtractor.setTermAdapter(goalHolder.prolog.getTermAdapter());
+    this.singleVarExtractor.setTermToSolutionFunction(goalHolder.prolog.getTermAdapter()::fromTerm);
     this.multiVarExtractor = null;
   }
 

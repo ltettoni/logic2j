@@ -4,7 +4,7 @@ group =  'org.logic2j'
 apply plugin: 'java'
 apply plugin: 'maven'
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 version = '1.0.0'
 
 
