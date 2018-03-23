@@ -178,7 +178,7 @@ public class Completer {
           for (Object sol : listener.getResults()) {
             String compl;
             String envisagedCompletion;
-            if (sol instanceof Var<?>) {
+            if (sol instanceof Var) {
               hasVar = true;
               envisagedCompletion = null;
             } else if (sol instanceof Number) {

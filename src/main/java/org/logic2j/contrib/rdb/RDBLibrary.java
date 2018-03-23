@@ -126,11 +126,11 @@ public class RDBLibrary extends LibraryBase {
           final Term term2 = TermApi.selectTerm(pred, "[2]", Term.class);
           final String variableName;
           final Term value;
-          if (term1 instanceof Var<?> && !(term2 instanceof Var)) {
-            variableName = ((Var<?>) term1).getName();
+          if (term1 instanceof Var && !(term2 instanceof Var)) {
+            variableName = ((Var) term1).getName();
             value = term2;
-          } else if (term2 instanceof Var<?> && !(term1 instanceof Var)) {
-            variableName = ((Var<?>) term2).getName();
+          } else if (term2 instanceof Var && !(term1 instanceof Var)) {
+            variableName = ((Var) term2).getName();
             value = term1;
           } else {
             throw new PrologNonSpecificError("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
@@ -180,7 +180,7 @@ public class RDBLibrary extends LibraryBase {
         final Table table = builder.table(tableName, alias);
         final Column sqlColumn = builder.column(table, columnName);
         if (valueTerm instanceof Var) {
-          final Var<?> var = (Var) valueTerm;
+          final Var var = (Var) valueTerm;
           if (var == Var.anon()) {
             // Will ignore any anonymous var
             continue;
@@ -201,7 +201,7 @@ public class RDBLibrary extends LibraryBase {
             // Although we have a constant value and not a free variable, we will have to project its
             // _real_ value extracted from the database. In case of "=" this is dubious as the DB will
             // of course return the same. But for other operators (e.g. ">"), the real DB value will be needed!
-            final Var<?> originalVar = var;
+            final Var originalVar = var;
 
             projectVars.add(originalVar);
             builder.addProjection(sqlColumn);
@@ -220,7 +220,7 @@ public class RDBLibrary extends LibraryBase {
     // Join clauses
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
       if (column.getOperand() instanceof Var) {
-        final Var<?> var = (Var) column.getOperand();
+        final Var var = (Var) column.getOperand();
         projectVars.add(var);
         columnsPerVariable.add(var.getName(), column);
       }
@@ -281,11 +281,11 @@ public class RDBLibrary extends LibraryBase {
         /*
       final List<Object[]> resultSet = sqlRunner.query(effectiveSql, builder.getParameters());
       // Vars referenced in projections
-      final Var<?> projectedVars[] = new Var<?>[projectVars.size()];
+      final Var projectedVars[] = new Var[projectVars.size()];
       TermBindings originalBindings = null;
       int counter = 0;
-      for (final Var<?> var : projectVars) {
-        final Var<?> originalVar = TermApi.findVar(conditions, var.getName());
+      for (final Var var : projectVars) {
+        final Var originalVar = TermApi.findVar(conditions, var.getName());
         if (originalVar == null) {
           throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
         }

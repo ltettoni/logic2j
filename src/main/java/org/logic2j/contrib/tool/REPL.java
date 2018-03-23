@@ -90,7 +90,7 @@ public class REPL {
       // Parse and extract vars
       final TermMarshaller termMarshaller = prolog.getTermMarshaller();
       final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
-      final Var<?>[] vars = TermApi.distinctVars(goal);
+      final Var[] vars = TermApi.distinctVars(goal);
       // Solve
       final SolutionListener listener = new CountingSolutionListener() {
         @Override

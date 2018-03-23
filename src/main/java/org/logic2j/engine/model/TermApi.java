@@ -92,6 +92,25 @@ public final class TermApi {
     return isAtom(theTerm) || theTerm instanceof Number;
   }
 
+  /**
+   * Check free variable (incl. anonymous)
+   *
+   * @param theTerm
+   * @return true if theTerm denotes a free variable, or the anonymous variable.
+   */
+  public static boolean isFreeVar(Object theTerm) {
+    return theTerm instanceof Var;
+  }
+
+  /**
+   * Check free variable (not including anonymous)
+   *
+   * @param theTerm
+   * @return true if theTerm denotes a free variable, but not anonymous variable.
+   */
+  public static boolean isFreeNamedVar(Object theTerm) {
+    return theTerm instanceof Var && Var.anon() != theTerm;
+  }
 
   /**
    * Recursively collect all terms and add them to the collectedTerms collection, and also initialize their {@link Term#index} to
@@ -183,13 +202,13 @@ public final class TermApi {
    * @param theVariableName
    * @return A {@link Var} with the specified name, or null when not found.
    */
-  public static Var<?> findVar(Object theTerm, String theVariableName) {
+  public static Var findVar(Object theTerm, String theVariableName) {
     if (theVariableName == Var.WHOLE_SOLUTION_VAR_NAME) {
       return Var.WHOLE_SOLUTION_VAR;
     }
     if (theTerm instanceof Struct) {
       return ((Struct) theTerm).findVar(theVariableName);
-    } else if (theTerm instanceof Var<?> && ((Var) theTerm).getName() == theVariableName) {
+    } else if (theTerm instanceof Var && ((Var) theTerm).getName() == theVariableName) {
       return (Var) theTerm;
     } else {
       // Not a Term but a plain Java object - no var
@@ -537,14 +556,14 @@ public final class TermApi {
    * @param term
    * @return Array of unique Vars, in the order found by depth-first traversal.
    */
-  public static Var<?>[] distinctVars(Object term) {
+  public static Var[] distinctVars(Object term) {
     // TODO Does it make sense to use a Map for a few 1-5 vars?
-    final Var<?>[] tempArray = new Var<?>[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
+    final Var[] tempArray = new Var[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
     final int[] nbVars = new int[] {0};
 
     final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
       @Override
-      public Void visit(Var<?> theVar) {
+      public Void visit(Var theVar) {
         if (theVar != Var.anon()) {
           // Insert into array (even if may duplicate) - this will act as a sentinel
           final int highest = nbVars[0];
@@ -579,7 +598,7 @@ public final class TermApi {
       ((Term) term).accept(findVarsVisitor);
     }
     // Now copy the values found as the tempArray
-    final Var<?>[] result = Arrays.copyOf(tempArray, nbVars[0]);
+    final Var[] result = Arrays.copyOf(tempArray, nbVars[0]);
     return result;
   }
 

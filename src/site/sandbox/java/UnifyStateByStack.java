@@ -10,18 +10,18 @@ import org.logic2j.core.impl.util.ProfilingInfo;
 public class UnifyStateByStack {
     private static final int STACK_CHUNK = 1000;
 
-    final Var<?>[] vars;
+    final Var[] vars;
     final Object[] refs;
 
     public UnifyStateByStack() {
-        vars = new Var<?>[STACK_CHUNK];
+        vars = new Var[STACK_CHUNK];
         refs = new Object[STACK_CHUNK];
     }
 
 
 
 
-    Object dereference(Var<?> theVar, int startTop) {
+    Object dereference(Var theVar, int startTop) {
         if (theVar.isAnonymous()) {
             return theVar;
         }

@@ -17,7 +17,8 @@
 package org.logic2j.engine.solver.holder;
 
 import org.logic2j.core.ObjectFactory;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.SolverException;
+import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.extractor.ArrayExtractor;
 import org.logic2j.engine.solver.extractor.FactoryExtractor;
@@ -36,6 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -70,7 +72,7 @@ public class SolutionHolder<T> implements Iterable<T> {
    */
   public SolutionHolder(GoalHolder goalHolder, String varName, Class<? extends T> desiredTypeOfResult) {
     this.goalHolder = goalHolder;
-    this.singleVarExtractor = new SingleVarExtractor<T>(goalHolder.goal, varName, desiredTypeOfResult);
+    this.singleVarExtractor = new SingleVarExtractor<>(goalHolder.getGoal(), varName, desiredTypeOfResult);
     this.singleVarExtractor.setTermToSolutionFunction(goalHolder.prolog.getTermAdapter()::fromTerm);
     this.multiVarExtractor = null;
   }
@@ -87,8 +89,8 @@ public class SolutionHolder<T> implements Iterable<T> {
    * @param goalHolder
    * @return Holds solutions as a List of Maps
    */
-  public static SolutionHolder<Map<Var<?>, Object>> extractingMaps(GoalHolder goalHolder) {
-    final SolutionHolder withMaps = new SolutionHolder(goalHolder, new MapExtractor(goalHolder.goal));
+  public static SolutionHolder<Map<Var, Object>> extractingMaps(GoalHolder goalHolder) {
+    final SolutionHolder withMaps = new SolutionHolder(goalHolder, new MapExtractor(goalHolder.getGoal()));
     return withMaps;
   }
 
@@ -179,7 +181,7 @@ public class SolutionHolder<T> implements Iterable<T> {
    * @return true if solution is not bound to a literal term.
    */
   public boolean isFree() {
-    return unique() instanceof Var<?>;
+    return TermApi.isFreeVar(unique());
   }
 
   // ---------------------------------------------------------------------------
@@ -188,7 +190,7 @@ public class SolutionHolder<T> implements Iterable<T> {
 
 
   // ---------------------------------------------------------------------------
-  // Vectorial extractors (collections, arrays, iterables)
+  // Vector extractors (collections, arrays, iterables)
   // ---------------------------------------------------------------------------
 
   /**
@@ -225,7 +227,7 @@ public class SolutionHolder<T> implements Iterable<T> {
    * SolutionExtractor.extractSolution() is called, ie in one of the various
    */
   public Set<T> set() {
-    return new HashSet<T>(list());
+    return new HashSet<>(list());
   }
 
 
@@ -237,7 +239,7 @@ public class SolutionHolder<T> implements Iterable<T> {
 
   /**
    * Launch the prolog engine in a separate thread to produce solutions while the main caller can consume
-   * from this {@link java.util.Iterator} at its own pace.
+   * from this {@link Iterator} at its own pace.
    * This uses the {@link IterableSolutionListener}.
    * Note: there is no bounds checking when using iterator()
    *
@@ -252,14 +254,11 @@ public class SolutionHolder<T> implements Iterable<T> {
     }
     final IterableSolutionListener listener = new IterableSolutionListener(effectiveExtractor);
 
-    final Runnable prologSolverThread = new Runnable() {
-
-      @Override
-      public void run() {
+    final Runnable prologSolverThread = () -> {
         logger.debug("Started producer (prolog solver engine) thread");
         // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
         // and will wait for the main thread to extract it
-        SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.goal, listener);
+        SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.getGoal(), listener);
         logger.debug("Producer (prolog solver engine) thread finishes");
         // Last solution was extracted. Producer's callback won't now be called any more - so to
         // prevent the consumer for listening forever for the next solution that won't come...
@@ -268,7 +267,6 @@ public class SolutionHolder<T> implements Iterable<T> {
         // And we tell it we are aborting. No solution transferred for this last "hang up" message
         listener.engineToClientInterface().wakeUp();
         // Notice the 2 lines above are exactly the sames as those in the listener's onSolution()
-      }
     };
     new Thread(prologSolverThread).start();
 
@@ -289,7 +287,7 @@ public class SolutionHolder<T> implements Iterable<T> {
       @Override
       public T next() {
         if (this.solution == null) {
-          throw new PrologNonSpecificError(
+          throw new NoSuchElementException(
               "Program error: next() called when either hasNext() did not return true previously, or next() was called more than once");
         }
         final Object toReturn = this.solution;
@@ -301,7 +299,7 @@ public class SolutionHolder<T> implements Iterable<T> {
 
       @Override
       public void remove() {
-        throw new PrologNonSpecificError("iterator() provides a read-only Term iterator, cannot remove elements");
+        throw new SolverException("iterator() provides a read-only Term iterator, cannot remove elements");
       }
 
     };
@@ -368,14 +366,14 @@ public class SolutionHolder<T> implements Iterable<T> {
   }
 
   private void solveAndCheckRanges() {
-    this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.goal, this.rangeListener);
+    this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.getGoal(), this.rangeListener);
     this.rangeListener.checkRange();
   }
 
 
   @Override
   public String toString() {
-    return this.getClass().getSimpleName() + '(' + this.goalHolder.goal + ')';
+    return this.getClass().getSimpleName() + '(' + this.goalHolder.getGoal() + ')';
   }
 
 }

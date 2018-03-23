@@ -95,7 +95,7 @@ public class AdHocLibraryTest extends PrologTestBase {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
         Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
-        final Var<?> q = TermApi.findVar(goal, "Q");
+        final Var q = TermApi.findVar(goal, "Q");
         final SolutionListener listener = new SolutionListener() {
 
             @Override

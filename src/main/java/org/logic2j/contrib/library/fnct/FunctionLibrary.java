@@ -229,8 +229,8 @@ public class FunctionLibrary extends LibraryBase {
 
   private int highestVarIndex(Struct transformedStruct) {
     int highestVarIndex = Term.NO_INDEX;
-    final Var<?>[] distinctVars = TermApi.distinctVars(transformedStruct);
-    for (Var<?> var : distinctVars) {
+    final Var[] distinctVars = TermApi.distinctVars(transformedStruct);
+    for (Var var : distinctVars) {
       if (var.getIndex() > highestVarIndex) {
         highestVarIndex = var.getIndex();
       }
@@ -245,7 +245,7 @@ public class FunctionLibrary extends LibraryBase {
     // Transform the main inputTerm
     if (returnInfo.isIterative) {
 
-      final Var<?> tmpVar = runningMonad.createVar("_map_one_inter" + returnInfo.recursionCounter);
+      final Var tmpVar = runningMonad.createVar("_map_one_inter" + returnInfo.recursionCounter);
       logger.debug("mapRepeating created temp var {}", tmpVar);
 
       final TransformationInfo callingInfo = returnInfo.copy();

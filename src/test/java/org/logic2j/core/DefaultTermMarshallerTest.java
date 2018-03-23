@@ -59,8 +59,8 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     @Test
     public void xBoundToY() {
         Object term = unmarshall("f(X, Y)");
-        final Var<?> v1 = TermApi.findVar(term, "X");
-        final Var<?> v2 = TermApi.findVar(term, "Y");
+        final Var v1 = TermApi.findVar(term, "X");
+        final Var v2 = TermApi.findVar(term, "Y");
         final UnifyContext initialContext = getProlog().getSolver().initialContext();
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
@@ -70,8 +70,8 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     @Test
     public void yBoundToX() {
         Object term = unmarshall("f(X, Y)");
-        final Var<?> v1 = TermApi.findVar(term, "X");
-        final Var<?> v2 = TermApi.findVar(term, "Y");
+        final Var v1 = TermApi.findVar(term, "X");
+        final Var v2 = TermApi.findVar(term, "Y");
         final UnifyContext initialContext = getProlog().getSolver().initialContext();
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);

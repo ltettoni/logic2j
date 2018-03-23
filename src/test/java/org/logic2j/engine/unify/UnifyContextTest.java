@@ -34,11 +34,11 @@ public class UnifyContextTest {
     public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
     public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
 
-    protected Var<?> X;
+    protected Var X;
 
-    protected Var<?> Y;
+    protected Var Y;
 
-    protected Var<?> Z;
+    protected Var Z;
 
     protected Object _anon;
 
@@ -84,7 +84,7 @@ public class UnifyContextTest {
     }
 
 
-    private UnifyContext bind(Var<?> v, Object t2) {
+    private UnifyContext bind(Var v, Object t2) {
         logger.info("Binding   : {} -> {}", v, t2);
         UnifyContext m = initialContext;
         assertThat(m).isNotNull();

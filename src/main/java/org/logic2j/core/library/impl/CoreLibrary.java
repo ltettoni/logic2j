@@ -274,7 +274,7 @@ public class CoreLibrary extends LibraryBase {
   public Integer var(SolutionListener theListener, UnifyContext currentVars, Object t1) {
     Integer continuation = Continuation.CONTINUE;
     if (t1 instanceof Var) {
-      final Var<?> var = (Var) t1;
+      final Var var = (Var) t1;
       if (var == Var.anon()) {
         notifySolution(theListener, currentVars);
       } else {

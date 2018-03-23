@@ -54,7 +54,7 @@ public class Solver {
   }
 
   public Integer solveGoal(Object goal, SolutionListener theSolutionListener) {
-    if (goal instanceof Var<?>) {
+    if (goal instanceof Var) {
       throw new InvalidTermException("Cannot solve the goal \"" + goal + "\", the variable is not bound to a value");
     }
     this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
@@ -123,10 +123,10 @@ public class Solver {
       // Yet we are not capable of handing String everywhere below - so use a Struct atom still
       goalStruct = new Struct((String) goalTerm);
         /* Prototype code - does actually not work but could
-        } else if (goalTerm instanceof Var<?>) {
+        } else if (goalTerm instanceof Var) {
             // Crazy we, we allow a single Var to be considered as a goal - just assuming it is bound to a Struct
             final Object goalReified = currentVars.reify(goalTerm);
-            if (goalReified instanceof Var<?>) {
+            if (goalReified instanceof Var) {
                 throw new UnsupportedOperationException("A free variable cannot be used as a goal in a rule: \"" + goalTerm + '"');
             }
             if (! (goalReified instanceof Struct)) {
