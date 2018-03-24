@@ -17,6 +17,7 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.*;
+import org.logic2j.engine.solver.Solver;
 
 /**
  * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog} intended for client

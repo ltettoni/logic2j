@@ -14,20 +14,21 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.logic2j.core.impl;
+package org.logic2j.engine.solver;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.api.model.DataFact;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.Logic2jException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.Var;
-import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
@@ -43,7 +44,7 @@ public class Solver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);
 
   private static final boolean isDebug = logger.isDebugEnabled();
-  static final boolean FAST_OR = false; // (see note re. processing of OR in CoreLibrary.pro)
+  public static final boolean FAST_OR = false; // (see note re. processing of OR in CoreLibrary.pro)
 
   private final PrologImplementation prolog;
 

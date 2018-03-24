@@ -19,6 +19,7 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.Solver;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Testing the TermAdapter: how Java objects can invoke and be returned
- * from logic2j's {@link org.logic2j.core.api.Prolog} and {@link org.logic2j.core.impl.Solver}.
+ * from logic2j's {@link org.logic2j.core.api.Prolog} and {@link Solver}.
  */
 public class AdapterTest extends PrologTestBase {
     // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);

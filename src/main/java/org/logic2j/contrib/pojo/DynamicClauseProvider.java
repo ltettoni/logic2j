@@ -19,6 +19,7 @@ package org.logic2j.contrib.pojo;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
 
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * Allow dynamic assertion / retraction of facts or rules.
  * This {@link org.logic2j.core.api.ClauseProvider} will help you solving goals against data contexts that evolve over time.
- * You can easily add or retract facts or rules made available to the {@link org.logic2j.core.impl.Solver}.
+ * You can easily add or retract facts or rules made available to the {@link Solver}.
  */
 public class DynamicClauseProvider implements ClauseProvider {
 

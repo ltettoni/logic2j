@@ -19,6 +19,7 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.*;
 import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;

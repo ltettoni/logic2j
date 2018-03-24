@@ -22,7 +22,7 @@ import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.NotListener;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.Solver;
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;

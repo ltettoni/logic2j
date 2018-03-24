@@ -18,10 +18,11 @@
 package org.logic2j.core.api;
 
 import org.logic2j.core.api.model.DataFact;
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
- * Provide {@link DataFact}s from various data sources to the {@link org.logic2j.core.impl.Solver}.
+ * Provide {@link DataFact}s from various data sources to the {@link Solver}.
  */
 public interface DataFactProvider {
 

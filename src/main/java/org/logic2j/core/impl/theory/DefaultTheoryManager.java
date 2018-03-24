@@ -25,6 +25,7 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Prolog's most classic way of providing {@link Clause}s to the {@link org.logic2j.core.impl.Solver}
+ * Prolog's most classic way of providing {@link Clause}s to the {@link Solver}
  * inference engine: all clauses are parsed and normalized from
  * one or several theories' textual content managed by this class.
  * TODO Does the name "Manager" make sense here?
