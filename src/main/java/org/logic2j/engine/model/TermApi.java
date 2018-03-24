@@ -217,13 +217,6 @@ public final class TermApi {
   }
 
   /**
-   * @return true if this Term denotes a Prolog list.
-   */
-  public static boolean isList(Object theTerm) {
-    return theTerm instanceof Struct && ((Struct) theTerm).isList();
-  }
-
-  /**
    * Assign the {@link Term#index} value for {@link Var} and {@link Struct}s.
    * Will recurse through Struct.
    *
@@ -256,7 +249,7 @@ public final class TermApi {
 
 
   public static String functorFromSignature(String signature) {
-    int pos = signature.lastIndexOf("/");
+    int pos = signature.lastIndexOf('/');
     if (pos <= 0) {
       throw new InvalidTermException("Cannot find character '/' in predicate signature \"" + signature + "\" (supposed to be functor/arity)");
     }
@@ -265,11 +258,20 @@ public final class TermApi {
 
 
   public static int arityFromSignature(String signature) {
-    int pos = signature.lastIndexOf("/");
+    int pos = signature.lastIndexOf('/');
     if (pos <= 0) {
       throw new InvalidTermException("Cannot find character '/' in predicate signature \"" + signature + "\" (supposed to be functor/arity)");
     }
     return Integer.parseInt(signature.substring(pos + 1));
+  }
+
+
+
+  /**
+   * @return true if this Term denotes a Prolog list.
+   */
+  public static boolean isList(Object theTerm) {
+    return theTerm instanceof Struct && ((Struct) theTerm).isList();
   }
 
 
@@ -333,7 +335,7 @@ public final class TermApi {
     if (needQuote) {
       final StringBuilder sb = new StringBuilder(theText.length() + 2);
       sb.append(Struct.QUOTE); // Opening quote
-      for (char c : textAsString.toCharArray()) {
+      for (final char c : textAsString.toCharArray()) {
         sb.append(c);
         if (c == Struct.QUOTE) {
           sb.append(c); // Quotes are doubled
@@ -348,7 +350,7 @@ public final class TermApi {
 
   // TODO Currently unused - but probably we should detect cycles!
   void avoidCycle(Struct theClause) {
-    final List<Term> visited = new ArrayList<Term>(20);
+    final List<Term> visited = new ArrayList<>(20);
     theClause.avoidCycle(visited);
   }
 
@@ -442,7 +444,6 @@ public final class TermApi {
             result = strVar(chars);
           } else {
             // Otherwise it's an atom
-            // result = new Struct(chars);
             result = chars.intern();
           }
           break;
@@ -463,7 +464,6 @@ public final class TermApi {
     } else {
       // POJOs are also valid terms now
       result = theObject;
-      // throw new InvalidTermException("Cannot (yet) create a Term from '" + theObject + "' of " + theObject.getClass());
     }
     return result;
   }
@@ -557,14 +557,13 @@ public final class TermApi {
    * @return Array of unique Vars, in the order found by depth-first traversal.
    */
   public static Var[] distinctVars(Object term) {
-    // TODO Does it make sense to use a Map for a few 1-5 vars?
     final Var[] tempArray = new Var[100]; // Enough for the moment - we could plan an auto-allocating array if needed, I doubt it
     final int[] nbVars = new int[] {0};
 
     final TermVisitor<Void> findVarsVisitor = new TermVisitor<Void>() {
       @Override
       public Void visit(Var theVar) {
-        if (theVar != Var.anon()) {
+        if (!theVar.isAnon()) {
           // Insert into array (even if may duplicate) - this will act as a sentinel
           final int highest = nbVars[0];
           tempArray[highest] = theVar;
@@ -586,7 +585,7 @@ public final class TermApi {
       public Void visit(Struct theStruct) {
         // Recurse through children
         final Object[] args = theStruct.getArgs();
-        for (Object arg : args) {
+        for (final Object arg : args) {
           if (arg instanceof Term) {
             ((Term) arg).accept(this);
           }
