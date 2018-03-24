@@ -123,7 +123,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
   @Override
   public GoalHolder solve(Object theGoal) {
-    return new GoalHolder(this, theGoal);
+    return new GoalHolder(this.getSolver(), theGoal, this.getTermAdapter()::fromTerm);
   }
 
   // ---------------------------------------------------------------------------
