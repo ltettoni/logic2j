@@ -16,13 +16,13 @@
  */
 package org.logic2j.engine.solver.holder;
 
-import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.extractor.ArrayExtractor;
 import org.logic2j.engine.solver.extractor.FactoryExtractor;
 import org.logic2j.engine.solver.extractor.MapExtractor;
+import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.solver.extractor.SingleVarExtractor;
 import org.logic2j.engine.solver.extractor.SolutionExtractor;
 import org.logic2j.engine.solver.listener.IterableSolutionListener;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 /**
  * Launch the solver with appropriate SolutionListener to obtain what the user asks:
@@ -69,11 +70,13 @@ public class SolutionHolder<T> implements Iterable<T> {
    * @param goalHolder
    * @param varName
    * @param desiredTypeOfResult
+   * @param termToSolutionFunction
    */
-  public SolutionHolder(GoalHolder goalHolder, String varName, Class<? extends T> desiredTypeOfResult) {
+  public SolutionHolder(GoalHolder goalHolder, String varName, Class<? extends T> desiredTypeOfResult,
+      BiFunction<Object, Class, Object> termToSolutionFunction) {
     this.goalHolder = goalHolder;
     this.singleVarExtractor = new SingleVarExtractor<>(goalHolder.getGoal(), varName, desiredTypeOfResult);
-    this.singleVarExtractor.setTermToSolutionFunction(goalHolder.prolog.getTermAdapter()::fromTerm);
+    this.singleVarExtractor.setTermToSolutionFunction(termToSolutionFunction);
     this.multiVarExtractor = null;
   }
 
@@ -231,18 +234,18 @@ public class SolutionHolder<T> implements Iterable<T> {
     final IterableSolutionListener listener = new IterableSolutionListener(effectiveExtractor);
 
     final Runnable prologSolverThread = () -> {
-        logger.debug("Started producer (prolog solver engine) thread");
-        // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
-        // and will wait for the main thread to extract it
-        SolutionHolder.this.goalHolder.prolog.getSolver().solveGoal(SolutionHolder.this.goalHolder.getGoal(), listener);
-        logger.debug("Producer (prolog solver engine) thread finishes");
-        // Last solution was extracted. Producer's callback won't now be called any more - so to
-        // prevent the consumer for listening forever for the next solution that won't come...
-        // We wait from a last notify from our client
-        listener.clientToEngineInterface().waitUntilAvailable();
-        // And we tell it we are aborting. No solution transferred for this last "hang up" message
-        listener.engineToClientInterface().wakeUp();
-        // Notice the 2 lines above are exactly the sames as those in the listener's onSolution()
+      logger.debug("Started producer (prolog solver engine) thread");
+      // Start solving in a parallel thread, and rush to first solution (that will be called back in the listener)
+      // and will wait for the main thread to extract it
+      SolutionHolder.this.goalHolder.getSolver().solveGoal(SolutionHolder.this.goalHolder.getGoal(), listener);
+      logger.debug("Producer (prolog solver engine) thread finishes");
+      // Last solution was extracted. Producer's callback won't now be called any more - so to
+      // prevent the consumer for listening forever for the next solution that won't come...
+      // We wait from a last notify from our client
+      listener.clientToEngineInterface().waitUntilAvailable();
+      // And we tell it we are aborting. No solution transferred for this last "hang up" message
+      listener.engineToClientInterface().wakeUp();
+      // Notice the 2 lines above are exactly the sames as those in the listener's onSolution()
     };
     new Thread(prologSolverThread).start();
 
@@ -342,7 +345,7 @@ public class SolutionHolder<T> implements Iterable<T> {
   }
 
   private void solveAndCheckRanges() {
-    this.goalHolder.prolog.getSolver().solveGoal(this.goalHolder.getGoal(), this.rangeListener);
+    this.goalHolder.getSolver().solveGoal(this.goalHolder.getGoal(), this.rangeListener);
     this.rangeListener.checkRange();
   }
 

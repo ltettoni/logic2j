@@ -16,6 +16,7 @@
  */
 package org.logic2j.engine.solver.holder;
 
+import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
@@ -59,7 +60,7 @@ public class GoalHolder {
    * @return Solution to the whole goal. If the goal was a(X), will return a(1), a(2), etc.
    */
   public SolutionHolder<Object> solution() {
-    return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME, Object.class);
+    return new SolutionHolder<Object>(this, Var.WHOLE_SOLUTION_VAR_NAME, Object.class, this.prolog.getTermAdapter()::fromTerm);
   }
 
   /**
@@ -71,7 +72,7 @@ public class GoalHolder {
    * @return A SolutionHolder for only the specified variable.
    */
   public <T> SolutionHolder<T> var(String varName, Class<? extends T> desiredTypeOfResult) {
-    final SolutionHolder<T> solutionHolder = new SolutionHolder<T>(this, varName, desiredTypeOfResult);
+    final SolutionHolder<T> solutionHolder = new SolutionHolder<T>(this, varName, desiredTypeOfResult, this.prolog.getTermAdapter()::fromTerm);
     return solutionHolder;
   }
 
@@ -123,5 +124,9 @@ public class GoalHolder {
 
   public Object getGoal() {
     return goal;
+  }
+
+  public Solver getSolver() {
+    return this.prolog.getSolver();
   }
 }
