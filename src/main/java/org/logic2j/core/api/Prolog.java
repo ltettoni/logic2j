@@ -20,7 +20,6 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.engine.solver.holder.SolutionHolder;
 import org.logic2j.engine.solver.listener.SolutionListener;
 
 /**
