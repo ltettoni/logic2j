@@ -338,7 +338,7 @@ public class CoreLibrary extends LibraryBase {
     final NotListener callListener = new NotListener();
 
     Solver solver = getProlog().getSolver();
-    solver.solveGoal(theGoal, callListener, currentVars);
+    solver.solveGoal(theGoal, currentVars.withListener(callListener));
     final Integer continuation;
     if (callListener.exists()) {
       continuation = Continuation.CONTINUE;
@@ -380,7 +380,7 @@ public class CoreLibrary extends LibraryBase {
     };
     // Now solve the target sub goal
     final Object effectiveGoal = currentVars.reify(theGoal);
-    getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
+    getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
 
     // And unify with result
     final Long counted = listenerForSubGoal.count();
@@ -403,7 +403,7 @@ public class CoreLibrary extends LibraryBase {
     };
     // Now solve the target sub goal
     final Object effectiveGoal = currentVars.reify(theGoal);
-    getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
+    getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
   }
 
 
@@ -412,7 +412,7 @@ public class CoreLibrary extends LibraryBase {
     final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener();
     // Now solve the target sub goal
     final Object effectiveGoal = currentVars.reify(theGoal);
-    getProlog().getSolver().solveGoal(effectiveGoal, listenerForSubGoal, currentVars);
+    getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
 
     // And unify with result
     final Integer counted = (int) listenerForSubGoal.count();
