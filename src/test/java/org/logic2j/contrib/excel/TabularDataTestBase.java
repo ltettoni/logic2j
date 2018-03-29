@@ -30,17 +30,18 @@ class TabularDataTestBase extends PrologTestBase {
         return td;
     }
 
-    private static final int LARGE_DATA_NB_ROWS = 10000;
+    protected static final int LARGE_DATA_NB_ROWS = 10000;
 
     protected TabularData largeData() {
-        final String[] strings = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
-        final Serializable[][] array = new Serializable[LARGE_DATA_NB_ROWS][];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = strings;
+        final String[] headers = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+        final String[] contents = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
+        final Serializable[][] dataArray = new Serializable[LARGE_DATA_NB_ROWS][];
+        for (int row = 0; row < dataArray.length; row++) {
+            dataArray[row] = contents;
         }
-        final TabularData td = new TabularData("largeData", new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" }, array);
-        td.setPrimaryKeyColumn(0);
-        return td;
+        final TabularData tabData = new TabularData("largeData", headers, dataArray);
+        tabData.setPrimaryKeyColumn(0);
+        return tabData;
     }
 
 }

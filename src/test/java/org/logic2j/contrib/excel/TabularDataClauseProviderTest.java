@@ -72,7 +72,7 @@ public class TabularDataClauseProviderTest extends TabularDataTestBase {
         final TheoryManager theoryManager = getProlog().getTheoryManager();
         theoryManager.addClauseProvider(td);
         //
-        nSolutions(90000, "largeData(E,A,V)"); // Takes only 0.1 seconds: 900000 solutions/s
+        nSolutions(9 * LARGE_DATA_NB_ROWS, "largeData(E,A,V)"); // Takes only 0.1 seconds: 900000 solutions/s
     }
 
 }

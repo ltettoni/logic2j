@@ -25,6 +25,6 @@ public class TabularDataFactProviderTest extends TabularDataTestBase {
     @Test
     public void test10000() {
         getProlog().getTheoryManager().addDataFactProvider(new TabularDataFactProvider(largeData(), AssertionMode.RECORD));
-        nSolutions(10000, "a(b,C,d,e,f,g,h,i,j)");
+        nSolutions(LARGE_DATA_NB_ROWS, "a(b,C,d,e,f,g,h,i,j)");
     }
 }
