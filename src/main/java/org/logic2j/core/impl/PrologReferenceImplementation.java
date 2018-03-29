@@ -31,8 +31,6 @@ import org.logic2j.core.library.DefaultLibraryManager;
  * Reference implementation of logic2j's {@link PrologImplementation} API.
  */
 public class PrologReferenceImplementation implements PrologImplementation {
-  public static final boolean PROFILING = true;
-
 
   /**
    * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
