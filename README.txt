@@ -3,6 +3,10 @@
 
 Refactoring needed to extend from logic2j-engine:
 
+TO REINTRODUCE: FunctionLibrary (+Test) - deleted because needed quite internal access to solver and unification.
+
+
+
 Many diffs :-(
 Use this branch: "over-engine"
 
