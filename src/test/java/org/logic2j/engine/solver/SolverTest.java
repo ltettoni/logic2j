@@ -145,10 +145,10 @@ public class SolverTest extends PrologTestBase {
     public void nonBinaryOr() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(2, "';'(true, true)");
-        if (Solver.INTERNAL_OR) {
-            countNSolutions(1, "';'(true)");
-            countNSolutions(3, "';'(true, true, true)");
-        }
+//        if (Solver.INTERNAL_OR) {
+//            countNSolutions(1, "';'(true)");
+//            countNSolutions(3, "';'(true, true, true)");
+//        }
         countNSolutions(1, "true");
         countNSolutions(3, "true; true; true");
     }

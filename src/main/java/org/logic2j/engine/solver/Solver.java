@@ -21,14 +21,12 @@ import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.Logic2jException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.Term;
-import org.logic2j.engine.model.Var;
+import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
@@ -51,16 +49,17 @@ public class Solver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);
 
   private static final boolean isDebug = logger.isDebugEnabled();
+
   /**
    * Do we solve the ";" (OR) predicate internally here, or in the predicate.
    * (see note re. processing of OR in CoreLibrary.pro)
    */
-  public static final boolean INTERNAL_OR = false;
+  private static final boolean INTERNAL_OR = true;
 
   /**
    * Do we acquire profiling information (number of inferences, etc)
    */
-  static final boolean PROFILING = true;
+  private static final boolean PROFILING = true;
 
   private final PrologImplementation prolog;
 
@@ -70,19 +69,26 @@ public class Solver {
     this.prolog = theProlog;
   }
 
-  public Integer solveGoal(Object goal, SolutionListener theSolutionListener) {
-    if (goal instanceof Var) {
+  /**
+   * This is the naive, simplest entry point for solving a goal, when all variable have to be initially free.
+   *
+   * @param goal
+   * @param solutionListener
+   * @return
+   */
+  public Integer solveGoal(Object goal, SolutionListener solutionListener) {
+    if (TermApi.isFreeVar(goal)) {
       throw new InvalidTermException("Cannot solve the goal \"" + goal + "\", the variable is not bound to a value");
     }
+    final UnifyContext initialContext = new UnifyContext(this, solutionListener);
     this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
-    final UnifyContext initialContext = new UnifyContext(this, theSolutionListener);
     if (goal instanceof Struct) {
       // We will need to clone Clauses during resolution, hence the base index
       // for any new var must be higher than any of the currently used vars.
       initialContext.topVarIndex(((Struct) goal).getIndex());
     }
     try {
-      return solveGoal(goal, theSolutionListener, initialContext);
+      return solveGoal(goal, solutionListener, initialContext);
     } catch (Logic2jException e) {
       // "Functional" exception thrown during solving will just be forwarded
       throw e;
@@ -94,17 +100,18 @@ public class Solver {
   }
 
   /**
-   * Just calls the recursive internal method.
+   * This is an alternate entry point when a {@link UnifyContext}
+   * is already instantiated; this is needed in custom predicates implementing first-order logic like
+   * not(), exists(), etc.
+   * You enter here when part of the variables have been bound already.
    */
   public Integer solveGoal(Object goal, final SolutionListener theSolutionListener, UnifyContext currentVars) {
     // Check if we will have to deal with DataFacts in this session of solving.
     // This slightly improves performance - we can bypass calling the method that deals with that
-    if (goal instanceof Struct) {
-      if (((Struct) goal).getIndex() == Term.NO_INDEX) {
-        throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
-      }
+    if (goal instanceof Struct && !((Struct) goal).hasIndex()) {
+      throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
     }
-    final Integer cutIntercepted = solveGoalRecursive(goal, theSolutionListener, currentVars, 10);
+    final Integer cutIntercepted = solveGoalRecursive(goal, theSolutionListener, currentVars, /* FIXME why this value?*/10);
     return cutIntercepted;
   }
 
