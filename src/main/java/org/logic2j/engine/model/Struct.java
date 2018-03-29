@@ -194,7 +194,7 @@ public final class Struct extends Term {
     this.arity = original.arity;
     this.signature = original.signature;
     this.primitiveInfo = original.primitiveInfo;
-    this.index = original.index;
+    this.setIndex(original.getIndex());
     this.args = newArguments;
   }
 
@@ -245,7 +245,7 @@ public final class Struct extends Term {
    * @param theCollectedTerms
    */
   void collectTermsInto(Collection<Object> theCollectedTerms) {
-    this.index = NO_INDEX;
+    this.clearIndex();
     for (int i = 0; i < this.arity; i++) {
       final Object child = this.args[i];
       TermApi.collectTermsInto(child, theCollectedTerms);
@@ -677,7 +677,7 @@ public final class Struct extends Term {
    * goal(A, Z, Y) will guarantee that indexes are: A=0, Z=1, Y=2.
    */
   int assignIndexes(int theIndexOfNextNonIndexedVar) {
-    if (this.index != NO_INDEX) {
+    if (hasIndex()) {
       // Already assigned, do nothing and return the argument since we did
       // not assigned anything new
       return theIndexOfNextNonIndexedVar;
@@ -687,7 +687,7 @@ public final class Struct extends Term {
     for (int i = 0; i < this.arity; i++) {
       runningIndex = TermApi.assignIndexes(this.args[i], runningIndex);
     }
-    this.index = (short) runningIndex;
+    this.setIndex(runningIndex);
     return runningIndex;
   }
 

@@ -185,7 +185,7 @@ public class FunctionLibrary extends LibraryBase {
         }
         final Struct transformedStruct = new Struct(struct.getName(), postArgs);
         int highestVarIndex = highestVarIndex(transformedStruct);
-        transformedStruct.index = highestVarIndex + 1;
+        transformedStruct.setIndex(highestVarIndex + 1);
         logger.debug("'before' has transformed  {}", runningMonad.reify(transformedStruct));
         inputTerm = transformedStruct;
       }
@@ -217,7 +217,7 @@ public class FunctionLibrary extends LibraryBase {
         }
         final Struct transformedStruct = new Struct(struct.getName(), postArgs);
         int highestVarIndex = highestVarIndex(transformedStruct);
-        transformedStruct.index = highestVarIndex + 1;
+        transformedStruct.setIndex(highestVarIndex + 1);
         logger.debug("'after' has transformed  {}", runningMonad.reify(transformedStruct));
         runningMonad = runningMonad.unify(transformedStruct, outputTerm);
       } else {
@@ -305,7 +305,7 @@ public class FunctionLibrary extends LibraryBase {
       // Create the transformation goal
       final Struct transformationGoal = new Struct(mappingPredicate, effectiveInput, effectiveOutput);
       int highestVarIndex = highestVarIndex(transformationGoal);
-      transformationGoal.index = highestVarIndex + 1;
+      transformationGoal.setIndex(highestVarIndex + 1);
       // Now solve the target sub goal
       getProlog().getSolver().solveGoal(transformationGoal, listenerForSubGoal, runningMonad);
 
@@ -371,7 +371,7 @@ public class FunctionLibrary extends LibraryBase {
       // Create the transformation goal
       final Struct transformationGoal = new Struct((String) mappingPredicate, effectiveInput, effectiveOutput);
       int highestVarIndex = highestVarIndex(transformationGoal);
-      transformationGoal.index = highestVarIndex + 1;
+      transformationGoal.setIndex(highestVarIndex + 1);
       // Now solve the target sub goal
       getProlog().getSolver().solveGoal(transformationGoal, listenerForSubGoal, runningMonad);
       if (!listenerForSubGoal.exists()) {

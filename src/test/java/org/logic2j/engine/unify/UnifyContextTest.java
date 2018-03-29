@@ -60,11 +60,11 @@ public class UnifyContextTest {
         _anon = unmarshall("_");
 
         X = (Var) unmarshall("X");
-        X.index = 1;
+        X.setIndex(1);
         Y = (Var) unmarshall("Y");
-        Y.index = 2;
+        Y.setIndex(2);
         Z = (Var) unmarshall("Z");
-        Z.index = 3;
+        Z.setIndex(3);
 
         f_ab = unmarshall("f(a,b)");
         f_aZ = unmarshall("f(a,Z)");

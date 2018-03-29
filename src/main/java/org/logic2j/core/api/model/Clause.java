@@ -163,7 +163,7 @@ public class Clause {
     final Struct cloned = cloneStruct((Struct) theClause.content, clonedVars);
     // Now reindex the cloned indexedVars
     for (int i = 0; i < nbVars; i++) {
-      clonedVars[i].index += currentVars.topVarIndex;
+      clonedVars[i].setIndex(clonedVars[i].getIndex() + currentVars.topVarIndex);
     }
     // And increment the highest Var index accordingly
     currentVars.topVarIndex += nbVars;

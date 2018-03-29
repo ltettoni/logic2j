@@ -61,7 +61,7 @@ public class UnifyContext {
    */
   public Var createVar(String theName) {
     final Var var = strVar(theName);
-    var.index = topVarIndex++;
+    var.setIndex(topVarIndex++);
     return var;
   }
 
