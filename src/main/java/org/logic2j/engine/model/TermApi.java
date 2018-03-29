@@ -391,6 +391,10 @@ public final class TermApi {
     return factorized;
   }
 
+  public static Object valueOf(Object theObject) {
+    return valueOf(theObject, TermAdapter.FactoryMode.ATOM);
+  }
+
   /**
    * Primitive factory for simple {@link Term}s from plain Java {@link Object}s, use this
    * with parsimony at low-level.
