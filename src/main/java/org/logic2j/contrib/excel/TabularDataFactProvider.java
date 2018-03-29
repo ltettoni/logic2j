@@ -19,8 +19,8 @@ package org.logic2j.contrib.excel;
 
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
-import org.logic2j.core.api.model.DataFact;
 import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.io.Serializable;
