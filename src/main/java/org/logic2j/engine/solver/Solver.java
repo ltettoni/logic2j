@@ -32,7 +32,6 @@ import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.engine.unify.UnifyStateByLookup;
 import org.logic2j.engine.util.ProfilingInfo;
 
 import java.util.Iterator;
@@ -59,11 +58,11 @@ public class Solver {
       throw new InvalidTermException("Cannot solve the goal \"" + goal + "\", the variable is not bound to a value");
     }
     this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
-    final UnifyContext initialContext = initialContext();
+    final UnifyContext initialContext = new UnifyContext(this, theSolutionListener);
     if (goal instanceof Struct) {
       // We will need to clone Clauses during resolution, hence the base index
       // for any new var must be higher than any of the currently used vars.
-      initialContext.topVarIndex += ((Struct) goal).getIndex();
+      initialContext.topVarIndex(((Struct) goal).getIndex());
     }
     try {
       return solveGoal(goal, theSolutionListener, initialContext);
@@ -75,11 +74,6 @@ public class Solver {
       throw new PrologNonSpecificError("Solver failed with " + e, e);
     }
 
-  }
-
-  public UnifyContext initialContext() {
-    final UnifyContext initialContext = new UnifyStateByLookup().emptyContext();
-    return initialContext;
   }
 
   /**

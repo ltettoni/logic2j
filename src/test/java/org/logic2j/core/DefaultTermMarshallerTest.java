@@ -61,7 +61,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall("f(X, Y)");
         final Var v1 = TermApi.findVar(term, "X");
         final Var v2 = TermApi.findVar(term, "Y");
-        final UnifyContext initialContext = getProlog().getSolver().initialContext();
+        final UnifyContext initialContext = new UnifyContext(null, null);
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
         assertThat(formatted).isEqualTo("f(X, Y)");
@@ -72,7 +72,7 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
         Object term = unmarshall("f(X, Y)");
         final Var v1 = TermApi.findVar(term, "X");
         final Var v2 = TermApi.findVar(term, "Y");
-        final UnifyContext initialContext = getProlog().getSolver().initialContext();
+        final UnifyContext initialContext = new UnifyContext(null, null);
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
         assertThat(formatted).isEqualTo("f(X, Y)");

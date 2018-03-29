@@ -50,7 +50,7 @@ public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
     public void listMatchingClauses() {
         this.provider.saveTableInfo("zip_code", new String[] { "zip_code", "city" });
         final Object goal = getProlog().getTermUnmarshaller().unmarshall("zip_code(Zip, City)");
-        final UnifyContext currentVars = getProlog().getSolver().initialContext();
+        final UnifyContext currentVars = new UnifyContext(null, null);
         final Iterator<Clause> iterator = this.provider.listMatchingClauses(goal, currentVars).iterator();
         int counter;
         for (counter = 0; iterator.hasNext(); iterator.next()) {

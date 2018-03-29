@@ -21,6 +21,7 @@ import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.engine.visitor.TermVisitor;
 
@@ -34,7 +35,7 @@ import java.util.List;
  * This class is now final, one we'll have to carefully think if this could be user-extended.
  * Note: This class MUST be immutable.
  */
-public final class Struct extends Term {
+public class Struct extends Term implements Cloneable {
   private static final long serialVersionUID = 1L;
 
   // ---------------------------------------------------------------------------
@@ -68,9 +69,9 @@ public final class Struct extends Term {
 
   public static final char PAR_OPEN = '(';
 
-  public static final String FUNCTOR_CALL = "call";
+  public static final String FUNCTOR_CALL = "call"; // No need to "intern()" a compile-time constant
 
-  public static final String FUNCTOR_CLAUSE = ":-";
+  public static final String FUNCTOR_CLAUSE = ":-"; // No need to "intern()" a compile-time constant
 
   // TODO Move these constants to a common place?
   // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
@@ -112,7 +113,7 @@ public final class Struct extends Term {
 
   public static final char QUOTE = '\'';
 
-  public static final Object[] EMPTY_ARGS_ARRAY = new Object[0];
+  private static final Object[] EMPTY_ARGS_ARRAY = new Object[0];
 
   // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
   private PrimitiveInfo primitiveInfo;
@@ -147,7 +148,7 @@ public final class Struct extends Term {
     }
   }
 
-  public Struct(String theFunctor, Object... argList) throws InvalidTermException {
+  public Struct(String theFunctor, Object... argList) {
     this(theFunctor, argList.length);
     int i = 0;
     for (final Object element : argList) {
@@ -163,7 +164,7 @@ public final class Struct extends Term {
    * Creates a shallow copy but with all children which are Struct also cloned.
    */
   public Struct(Struct original) {
-    this.name = original.name;
+    this.name = original.getName();
     this.arity = original.arity;
     this.signature = original.signature;
     this.primitiveInfo = original.primitiveInfo;
@@ -181,21 +182,21 @@ public final class Struct extends Term {
   }
 
   /**
-   * Efficient cloning of the structure header - but passing a specified set of already-cloned args
+   * Clone with new arguments.
    *
-   * @param original
-   * @param newArguments
+   * @param newArguments New arguments, length must be same arity as original Struct
+   * @return A clone of this.
    */
-  public Struct(Struct original, Object[] newArguments) {
-    if (newArguments.length != original.arity) {
-      throw new IllegalArgumentException("Different number of arguments than arity of original Struct");
+  public Struct cloneWithNewArguments(Object[] newArguments) {
+    // We can actually change arity, this is used when we clone ","(X,Y) to ","(X,Y,Z)
+    try {
+      final Struct clone = (Struct) this.clone();
+      clone.args = newArguments;
+      clone.setNameAndArity(clone.name, clone.args.length); // Also calculate the signature
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new SolverException("Could not clone Struct " + this + ": " + e);
     }
-    this.name = original.name;
-    this.arity = original.arity;
-    this.signature = original.signature;
-    this.primitiveInfo = original.primitiveInfo;
-    this.setIndex(original.getIndex());
-    this.args = newArguments;
   }
 
   /**
@@ -224,7 +225,7 @@ public final class Struct extends Term {
    * @note This method is a static factory, not a constructor, to emphasize that arguments
    * are not of the type needed by this class, but need transformation.
    */
-  public static Struct valueOf(String theFunctor, Object... argList) throws InvalidTermException {
+  public static Struct valueOf(String theFunctor, Object... argList) {
     final Struct newInstance = new Struct(theFunctor, argList.length);
     int i = 0;
     for (final Object element : argList) {
@@ -245,10 +246,9 @@ public final class Struct extends Term {
    * @param theCollectedTerms
    */
   void collectTermsInto(Collection<Object> theCollectedTerms) {
-    this.clearIndex();
-    for (int i = 0; i < this.arity; i++) {
-      final Object child = this.args[i];
-      TermApi.collectTermsInto(child, theCollectedTerms);
+    clearIndex();
+    if (this.arity > 0) {
+      Arrays.stream(this.args).forEach(child -> TermApi.collectTermsInto(child, theCollectedTerms));
     }
     theCollectedTerms.add(this);
   }
@@ -328,7 +328,7 @@ public final class Struct extends Term {
     }
     this.name = theFunctor.intern();
     this.arity = theArity;
-    this.signature = (this.name + '/' + this.arity).intern();
+    this.signature = (this.getName() + '/' + this.arity).intern();
   }
 
   /**
@@ -622,7 +622,7 @@ public final class Struct extends Term {
   }
 
   public String getVarargsPredicateSignature() {
-    return this.name + VARARG_PREDICATE_TRAILER;
+    return this.getName() + VARARG_PREDICATE_TRAILER;
   }
 
   // ---------------------------------------------------------------------------
@@ -687,7 +687,7 @@ public final class Struct extends Term {
     for (int i = 0; i < this.arity; i++) {
       runningIndex = TermApi.assignIndexes(this.args[i], runningIndex);
     }
-    this.setIndex(runningIndex);
+    setIndex(runningIndex);
     return runningIndex;
   }
 
@@ -737,7 +737,7 @@ public final class Struct extends Term {
 
   @Override
   public int hashCode() {
-    int result = this.name.hashCode();
+    int result = this.getName().hashCode();
     result ^= this.arity << 8;
     for (int i = 0; i < this.arity; i++) {
       result ^= this.args[i].hashCode();
@@ -779,8 +779,7 @@ public final class Struct extends Term {
       return Struct.FUNCTOR_EMPTY_LIST;
     }
     final StringBuilder sb = new StringBuilder();
-    final String name = getName();
-    final int arity = getArity();
+    final int nArity = getArity();
     // list case
     if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
       sb.append(LIST_OPEN);
@@ -788,14 +787,14 @@ public final class Struct extends Term {
       sb.append(LIST_CLOSE);
       return sb.toString();
     }
-    sb.append(TermApi.quoteIfNeeded(name));
-    if (arity > 0) {
+    sb.append(TermApi.quoteIfNeeded(getName()));
+    if (nArity > 0) {
       sb.append(PAR_OPEN);
-      for (int c = 0; c < arity; c++) {
+      for (int c = 0; c < nArity; c++) {
         final Object arg = getArg(c);
         final String formatted = arg.toString();
         sb.append(formatted);
-        if (c < arity - 1) {
+        if (c < nArity - 1) {
           sb.append(ARG_SEPARATOR);
         }
       }

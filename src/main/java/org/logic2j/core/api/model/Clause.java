@@ -131,7 +131,7 @@ public class Clause {
       this.cache = new TreeMap<Integer, Clause>();
       //            logger.warn("Instantiating Clause cache for {}", this.content);
     }
-    final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(currentVars.topVarIndex);
+    final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(currentVars.topVarIndex(0));
     if (ceilingEntry == null) {
       //            logger.warn("Cloning {}", this);
       // No such entry: create and insert
@@ -141,7 +141,8 @@ public class Clause {
       return clonedClause;
     }
     final Clause reused = ceilingEntry.getValue();
-    currentVars.topVarIndex = reused.indexedVars[reused.indexedVars.length - 1].getIndex() + 1;
+    int desiredTop = reused.indexedVars[reused.indexedVars.length - 1].getIndex() + 1;
+    currentVars.topVarIndex(desiredTop - currentVars.topVarIndex(0));
     //        logger.warn("Reusing cloned clause {}", reused);
     return reused;
   }
@@ -163,10 +164,10 @@ public class Clause {
     final Struct cloned = cloneStruct((Struct) theClause.content, clonedVars);
     // Now reindex the cloned indexedVars
     for (int i = 0; i < nbVars; i++) {
-      clonedVars[i].setIndex(clonedVars[i].getIndex() + currentVars.topVarIndex);
+      clonedVars[i].setIndex(clonedVars[i].getIndex() + currentVars.topVarIndex(0));
     }
     // And increment the highest Var index accordingly
-    currentVars.topVarIndex += nbVars;
+    currentVars.topVarIndex(nbVars);
 
     //        if (currentVars.topVarIndex > ProfilingInfo.max1) {
     //            ProfilingInfo.max1 = currentVars.topVarIndex;
@@ -191,7 +192,7 @@ public class Clause {
         clonedArgs[i] = arg;
       }
     }
-    final Struct struct = new Struct(theStruct, clonedArgs);
+    final Struct struct = theStruct.cloneWithNewArguments(clonedArgs);
     return struct;
   }
 
