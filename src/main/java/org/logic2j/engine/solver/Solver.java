@@ -87,7 +87,7 @@ public class Solver {
       initialContext.topVarIndex(((Struct) goal).getIndex());
     }
     try {
-      return solveGoal(goal, solutionListener, initialContext);
+      return solveGoal(goal, initialContext.getSolutionListener(), initialContext);
     } catch (Logic2jException e) {
       // "Functional" exception thrown during solving will just be forwarded
       throw e;
@@ -110,7 +110,8 @@ public class Solver {
     if (goal instanceof Struct && !((Struct) goal).hasIndex()) {
       throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
     }
-    final Integer cutIntercepted = solveGoalRecursive(goal, theSolutionListener, currentVars, /* FIXME why this value?*/10);
+    final Integer cutIntercepted = solveGoalRecursive(goal, currentVars.withListener(theSolutionListener), /* FIXME why this
+    value?*/10);
     return cutIntercepted;
   }
 
@@ -118,12 +119,11 @@ public class Solver {
    * That's the complex method - the heart of the Solver.
    *
    * @param goalTerm
-   * @param theSolutionListener
    * @param currentVars
    * @param cutLevel
    * @return
    */
-  private Integer solveGoalRecursive(final Object goalTerm, final SolutionListener theSolutionListener, final UnifyContext currentVars,
+  private Integer solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars,
       final int cutLevel) {
     final long inferenceCounter = ProfilingInfo.nbInferences;
     if (isDebug) {
@@ -182,7 +182,7 @@ public class Solver {
 
       final SolutionListener[] andingListeners = new SolutionListener[arity];
       // The last listener is the one that called us (typically the one of the application, if this is the outermost "AND")
-      andingListeners[arity - 1] = theSolutionListener;
+      andingListeners[arity - 1] = currentVars.getSolutionListener();
       // Allocates N-1 andingListeners, usually this means one.
       // On solution, each will trigger solving of the next term
       final Object[] goalStructArgs = goalStruct.getArgs();
@@ -198,7 +198,7 @@ public class Solver {
             if (isDebug) {
               logger.debug("{}: onSolution() called; will now solve rhs={}", this, rhs);
             }
-            final Integer continuationFromSubGoal = solveGoalRecursive(rhs, andingListeners[nextIndex], currentVars, cutLevel);
+            final Integer continuationFromSubGoal = solveGoalRecursive(rhs, currentVars.withListener(andingListeners[nextIndex]), cutLevel);
             return continuationFromSubGoal;
           }
 
@@ -220,7 +220,7 @@ public class Solver {
               }
 
             };
-            final Integer continuationFromSubGoal = solveGoalRecursive(rhs, subListener, currentVars, cutLevel);
+            final Integer continuationFromSubGoal = solveGoalRecursive(rhs, currentVars.withListener(subListener), cutLevel);
             return continuationFromSubGoal;
           }
 
@@ -234,7 +234,7 @@ public class Solver {
       if (isDebug) {
         logger.debug("Handling AND, arity={}, will now solve lhs={}", arity, currentVars.reify(lhs));
       }
-      result = solveGoalRecursive(lhs, andingListeners[0], currentVars, cutLevel);
+      result = solveGoalRecursive(lhs, currentVars.withListener(andingListeners[0]), cutLevel);
     }
     // The OR predicate
     else if (INTERNAL_OR && Struct.FUNCTOR_SEMICOLON == functor) { // Names are {@link String#intern()}alized so OK to check by reference
@@ -248,7 +248,7 @@ public class Solver {
         if (isDebug) {
           logger.debug("Handling OR, element={} of {}", i, goalStruct);
         }
-        result = solveGoalRecursive(goalStruct.getArg(i), theSolutionListener, currentVars, cutLevel);
+        result = solveGoalRecursive(goalStruct.getArg(i), currentVars, cutLevel);
         if (result != Continuation.CONTINUE) {
           break;
         }
@@ -262,7 +262,7 @@ public class Solver {
       }
       final Object callTerm = goalStruct.getArg(0);  // Often a Var
       final Object realCallTerm = currentVars.reify(callTerm); // The real value of the Var
-      result = solveGoalRecursive(realCallTerm, theSolutionListener, currentVars, cutLevel);
+      result = solveGoalRecursive(realCallTerm, currentVars, cutLevel);
 
     }
     // The CUT functor
@@ -273,7 +273,7 @@ public class Solver {
 
       // Cut IS a valid solution in itself. We just ignore what the application asks (via return value) us to do next.
       final Integer continuationFromCaller =
-          theSolutionListener.onSolution(currentVars);// Signalling one valid solution, but ignoring return value
+          currentVars.getSolutionListener().onSolution(currentVars);// Signalling one valid solution, but ignoring return value
 
       if (continuationFromCaller != Continuation.CONTINUE && continuationFromCaller > 0) {
         result = continuationFromCaller;
@@ -288,7 +288,7 @@ public class Solver {
       // Primitive implemented in Java
       // ---------------------------------------------------------------------------
 
-      final Object resultOfPrimitive = prim.invoke(goalStruct, theSolutionListener, currentVars);
+      final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars.getSolutionListener(), currentVars);
       // Extract necessary objects from our current state
 
       switch (prim.getType()) {
@@ -314,10 +314,10 @@ public class Solver {
       // Regular prolog inference rule: goal :- subGoal
       //---------------------------------------------------------------------------
 
-      result = solveAgainstClauseProviders(goalTerm, theSolutionListener, currentVars, cutLevel + 1);
+      result = solveAgainstClauseProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
 
       if (this.hasDataFactProviders && result == Continuation.CONTINUE) {
-        solveAgainstDataProviders(goalTerm, theSolutionListener, currentVars, cutLevel + 1);
+        solveAgainstDataProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
       }
     }
     if (isDebug) {
@@ -380,7 +380,7 @@ public class Solver {
               logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, clauseBody);
             }
             // Solve the body in our current recursion context
-            final Integer theoremResult = solveGoalRecursive(clauseBody, theSolutionListener, contextAfterHeadUnified, cutLevel);
+            final Integer theoremResult = solveGoalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
             if (isDebug) {
               logger.debug("  back to having solved theorem's body = {} with theoremResult={}", clauseBody, theoremResult);
             }
