@@ -23,7 +23,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.Logic2jException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
@@ -62,8 +62,6 @@ public class Solver {
 
   private final PrologImplementation prolog;
 
-  private boolean hasDataFactProviders;
-
   public Solver(PrologImplementation theProlog) {
     this.prolog = theProlog;
   }
@@ -80,7 +78,6 @@ public class Solver {
       throw new InvalidTermException("Cannot solve the goal \"" + goal + "\", the variable is not bound to a value");
     }
     final UnifyContext initialContext = new UnifyContext(this, solutionListener);
-    this.hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
     if (goal instanceof Struct) {
       // We will need to clone Clauses during resolution, hence the base index
       // for any new var must be higher than any of the currently used vars.
@@ -93,9 +90,8 @@ public class Solver {
       throw e;
     } catch (RuntimeException e) {
       // Anything not a Logic2jException will be encapsulated
-      throw new PrologNonSpecificError("Solver failed with " + e, e);
+      throw new SolverException("Solver failed with: " + e, e);
     }
-
   }
 
   /**
@@ -157,7 +153,6 @@ public class Solver {
     }
 
     // Extract all features of the goal to solve
-    final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
     final String functor = goalStruct.getName();
     final int arity = goalStruct.getArity();
 
@@ -260,6 +255,9 @@ public class Solver {
       }
       final Object callTerm = goalStruct.getArg(0);  // Often a Var
       final Object realCallTerm = currentVars.reify(callTerm); // The real value of the Var
+      if (TermApi.isFreeVar(realCallTerm)) {
+        throw new SolverException("Cannot call/* on a free variable");
+      }
       result = solveGoalRecursive(realCallTerm, currentVars, cutLevel);
 
     }
@@ -280,11 +278,12 @@ public class Solver {
         result = cutLevel;
       }
     }
-    // A predicate in Java
-    else if (prim != null) {
-      // ---------------------------------------------------------------------------
-      // Primitive implemented in Java
-      // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Primitive implemented in Java
+    // ---------------------------------------------------------------------------
+    else if (goalStruct.getPrimitiveInfo() != null) {
+      final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
+
 
       final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars.getSolutionListener(), currentVars);
       // Extract necessary objects from our current state
@@ -314,7 +313,13 @@ public class Solver {
 
       result = solveAgainstClauseProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
 
-      if (this.hasDataFactProviders && result == Continuation.CONTINUE) {
+
+      //---------------------------------------------------------------------------
+      // Solve against data facts
+      //---------------------------------------------------------------------------
+
+      final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
+      if (hasDataFactProviders && result == Continuation.CONTINUE) {
         solveAgainstDataProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
       }
     }
