@@ -25,7 +25,7 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
-import org.logic2j.engine.solver.Solver;
+import org.logic2j.core.impl.Solver;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;

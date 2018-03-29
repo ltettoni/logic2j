@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.logic2j.engine.solver;
+package org.logic2j.core.impl;
 
 import org.junit.Test;
 import org.logic2j.core.ExtractingSolutionListener;

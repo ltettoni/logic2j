@@ -19,7 +19,7 @@ package org.logic2j.core.impl.theory;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.solver.Solver;
+import org.logic2j.core.impl.Solver;
 
 import java.io.File;
 import java.io.IOException;

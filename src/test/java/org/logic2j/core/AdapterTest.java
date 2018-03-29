@@ -19,7 +19,7 @@ package org.logic2j.core;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.solver.Solver;
+import org.logic2j.core.impl.Solver;
 
 import java.util.List;
 
