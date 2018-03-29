@@ -42,8 +42,7 @@ import java.util.Iterator;
  * "call(X)"
  * "!" (CUT)
  * ( and in the future, ":-" (RULE) )
- * All other predicates are delegated in implementations
- * of {@link FOPredicate#predicateLogic(UnifyContext)}.
+ * All other predicates are delegated in implementations of {@link FOPredicate#predicateLogic(UnifyContext)}.
  */
 public class Solver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);
@@ -54,7 +53,7 @@ public class Solver {
    * Do we solve the ";" (OR) predicate internally here, or in the predicate.
    * (see note re. processing of OR in CoreLibrary.pro)
    */
-  private static final boolean INTERNAL_OR = true;
+  private static final boolean INTERNAL_OR = false;
 
   /**
    * Do we acquire profiling information (number of inferences, etc)
