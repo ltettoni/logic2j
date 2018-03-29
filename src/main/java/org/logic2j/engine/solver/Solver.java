@@ -305,22 +305,22 @@ public class Solver {
           logger.warn("Result of Directive {} not yet used", goalStruct);
           break;
       }
+    }
+    //---------------------------------------------------------------------------
+    // Not any "special" handling
+    //---------------------------------------------------------------------------
 
-    } else {
-      //---------------------------------------------------------------------------
-      // Regular prolog inference rule: goal :- subGoal
-      //---------------------------------------------------------------------------
-
-      result = solveAgainstClauseProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
-
+    else {
+    //---------------------------------------------------------------------------
+    // Regular prolog inference rule: goal :- subGoal
+    //---------------------------------------------------------------------------
+      result = solveAgainstClauseProviders(goalTerm, currentVars, cutLevel + 1);
 
       //---------------------------------------------------------------------------
       // Solve against data facts
       //---------------------------------------------------------------------------
-
-      final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
-      if (hasDataFactProviders && result == Continuation.CONTINUE) {
-        solveAgainstDataProviders(goalTerm, currentVars.getSolutionListener(), currentVars, cutLevel + 1);
+      if (result == Continuation.CONTINUE) {
+        result = solveAgainstDataProviders(goalTerm, currentVars, cutLevel + 1);
       }
     }
     if (isDebug) {
@@ -330,8 +330,7 @@ public class Solver {
   }
 
 
-  private Integer solveAgainstClauseProviders(final Object goalTerm, final SolutionListener theSolutionListener, UnifyContext currentVars,
-      final int cutLevel) {
+  protected Integer solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final int cutLevel) {
     // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
     final long inferenceCounter = ProfilingInfo.nbInferences;
     if (isDebug) {
@@ -375,7 +374,7 @@ public class Solver {
               logger.debug(" Head unified. {} is a fact: notifying one solution", clauseHead);
             }
             // Notify one solution, and handle result if user wants to continue or not.
-            final Integer continuation = theSolutionListener.onSolution(contextAfterHeadUnified);
+            final Integer continuation = currentVars.getSolutionListener().onSolution(contextAfterHeadUnified);
             result = continuation;
           } else {
             // Not a fact, it's a theorem - it has a body - the body becomes our new goal
@@ -437,17 +436,12 @@ public class Solver {
     return result;
   }
 
-  /**
-   * Match row-data provided as DataFacts.
-   *
-   * @param goalTerm
-   * @param theSolutionListener
-   * @param currentVars
-   * @param cutLevel
-   * @return
-   */
-  private Integer solveAgainstDataProviders(final Object goalTerm, final SolutionListener theSolutionListener, final UnifyContext currentVars,
-      final int cutLevel) {
+  protected Integer solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
+    final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
+    if (! hasDataFactProviders) {
+      return Continuation.CONTINUE;
+    }
+
     Integer result = Continuation.CONTINUE;
     // Now fetch data
     final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
@@ -457,7 +451,7 @@ public class Solver {
         final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
         final boolean unified = varsAfterHeadUnified != null;
         if (unified) {
-          final Integer continuation = theSolutionListener.onSolution(currentVars);
+          final Integer continuation = currentVars.getSolutionListener().onSolution(currentVars);
           if (continuation != Continuation.CONTINUE) {
             result = continuation;
           }
