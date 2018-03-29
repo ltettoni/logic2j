@@ -66,33 +66,6 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     this.prolog = theProlog;
   }
 
-  /**
-   * This is the naive, simplest entry point for solving a goal, when all variable have to be initially free.
-   *
-   * @param goal
-   * @param solutionListener
-   * @return
-   */
-  public Integer solveGoal(Object goal, SolutionListener solutionListener) {
-    if (TermApi.isFreeVar(goal)) {
-      throw new InvalidTermException("Cannot solve the goal \"" + goal + "\", the variable is not bound to a value");
-    }
-    final UnifyContext initialContext = new UnifyContext(this, solutionListener);
-    if (goal instanceof Struct) {
-      // We will need to clone Clauses during resolution, hence the base index
-      // for any new var must be higher than any of the currently used vars.
-      initialContext.topVarIndex(((Struct) goal).getIndex());
-    }
-    try {
-      return solveGoal(goal, initialContext);
-    } catch (Logic2jException e) {
-      // "Functional" exception thrown during solving will just be forwarded
-      throw e;
-    } catch (RuntimeException e) {
-      // Anything not a Logic2jException will be encapsulated
-      throw new SolverException("Solver failed with: " + e, e);
-    }
-  }
 
   /**
    * This is an alternate entry point when a {@link UnifyContext}
@@ -464,9 +437,5 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     return result;
   }
 
-  @Override
-  public String toString() {
-    return this.getClass().getSimpleName();
-  }
 
 }
