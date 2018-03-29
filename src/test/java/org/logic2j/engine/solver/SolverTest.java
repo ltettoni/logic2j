@@ -15,12 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.logic2j.core.impl;
+package org.logic2j.engine.solver;
 
 import org.junit.Test;
 import org.logic2j.core.ExtractingSolutionListener;
 import org.logic2j.core.PrologTestBase;
-import org.logic2j.engine.solver.Solver;
 import org.logic2j.engine.solver.holder.GoalHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -146,7 +145,7 @@ public class SolverTest extends PrologTestBase {
     public void nonBinaryOr() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(2, "';'(true, true)");
-        if (Solver.FAST_OR) {
+        if (Solver.INTERNAL_OR) {
             countNSolutions(1, "';'(true)");
             countNSolutions(3, "';'(true, true, true)");
         }
