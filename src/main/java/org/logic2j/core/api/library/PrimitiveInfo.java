@@ -34,13 +34,14 @@ import java.util.HashSet;
  * <li>Functor - evaluates to a result, for example the addition of two numbers</li>
  * </ul>
  *
- * @note Strangely, this class has ivoke() features so it's not only a description!
+ * @note Strangely, this class has invoke() features so it's not only a description!
  */
 public class PrimitiveInfo {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
   private static final boolean isDebug = logger.isDebugEnabled();
 
-  private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<String>();
+  // Not functional - only used to warn once per JVM that inefficent invocation is in place
+  private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<>();
 
 
   public enum PrimitiveType {
