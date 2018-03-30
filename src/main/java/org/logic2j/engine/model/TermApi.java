@@ -21,7 +21,7 @@ import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.engine.visitor.ExtendedTermVisitor;
@@ -530,7 +530,7 @@ public final class TermApi {
       return selectTerm(s.getArg(position - 1), levelsTail, theClass);
     }
     if (!(theClass.isAssignableFrom(theTerm.getClass()))) {
-      throw new PrologNonSpecificError("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
+      throw new PrologNonSpecificException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
     }
     return (T) theTerm;
   }

@@ -22,7 +22,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.core.impl.Solver;
@@ -81,7 +81,7 @@ public class DefaultTheoryManager implements TheoryManager {
     try {
       return load(reader);
     } catch (final InvalidTermException e) {
-      throw new PrologNonSpecificError("Theory could not be loaded from file \"" + theFile + "\" into " + this.prolog + ": " + e, e);
+      throw new PrologNonSpecificException("Theory could not be loaded from file \"" + theFile + "\" into " + this.prolog + ": " + e, e);
     } finally {
       reader.close();
     }
@@ -109,7 +109,7 @@ public class DefaultTheoryManager implements TheoryManager {
   @Override
   public TheoryContent load(String theClassloadableResource) {
     if (theClassloadableResource == null) {
-      throw new PrologNonSpecificError("Resource for rules content cannot be null");
+      throw new PrologNonSpecificException("Resource for rules content cannot be null");
     }
     final URL url;
     try {
@@ -119,7 +119,7 @@ public class DefaultTheoryManager implements TheoryManager {
         url = new URL(theClassloadableResource);
       }
       if (url == null) {
-        throw new PrologNonSpecificError("No content at resource path: " + theClassloadableResource);
+        throw new PrologNonSpecificException("No content at resource path: " + theClassloadableResource);
       }
       InputStream in = null;
       try {

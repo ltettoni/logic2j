@@ -26,7 +26,7 @@ import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
 import org.logic2j.core.impl.theory.TheoryContent;
 import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.engine.exception.Logic2jException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
@@ -247,7 +247,7 @@ public abstract class PrologTestBase {
 
     /**
      * Syntactic sugar to load a theory located in the src/test/resources directory.
-     * Also wraps the checked {@link java.io.IOException} into a {@link PrologNonSpecificError} runtime exception in case of problem.
+     * Also wraps the checked {@link java.io.IOException} into a {@link PrologNonSpecificException} runtime exception in case of problem.
      *
      * @param theTheoryFile
      */
@@ -256,7 +256,7 @@ public abstract class PrologTestBase {
             loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
         } catch (final IOException e) {
             // Avoid bothering with checked IOException in our TestCases (since this is a helper method, let's help)
-            throw new PrologNonSpecificError("Could not load Theory from " + theTheoryFile + ": " + e);
+            throw new PrologNonSpecificException("Could not load Theory from " + theTheoryFile + ": " + e);
         }
     }
 

@@ -29,7 +29,7 @@ import org.logic2j.core.impl.EnvManager;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
@@ -133,7 +133,7 @@ public class RDBLibrary extends LibraryBase {
             variableName = ((Var) term2).getName();
             value = term1;
           } else {
-            throw new PrologNonSpecificError("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
+            throw new PrologNonSpecificException("Cannot (yet) handle operators with 2 unbound variables such as " + pred);
           }
           assignedVarValue.put(variableName, value);
           assignedVarOperator.put(variableName, functor);
@@ -264,10 +264,10 @@ public class RDBLibrary extends LibraryBase {
     if (builder.getNbProjections() == 0) {
       final List<Object[]> countOnly = sqlRunner.query(effectiveSql, builder.getParameters());
       if (countOnly.size() != 1) {
-        throw new PrologNonSpecificError("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
+        throw new PrologNonSpecificException("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
       }
       if (countOnly.get(0).length != 1) {
-        throw new PrologNonSpecificError(
+        throw new PrologNonSpecificException(
             "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
       }
       final Number resultSet = (Number) countOnly.get(0)[0];
@@ -349,7 +349,7 @@ public class RDBLibrary extends LibraryBase {
       }
       return struct.getName();
     } else {
-      throw new PrologNonSpecificError("Cannot convert to SQL parameter: " + theTerm.getClass());
+      throw new PrologNonSpecificException("Cannot convert to SQL parameter: " + theTerm.getClass());
     }
   }
 

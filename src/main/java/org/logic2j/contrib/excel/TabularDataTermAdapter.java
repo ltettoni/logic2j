@@ -18,9 +18,9 @@
 package org.logic2j.contrib.excel;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.PrologNonSpecificError;
-import org.logic2j.engine.model.Struct;
 import org.logic2j.core.impl.DefaultTermAdapter;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.Struct;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
         switch (theAssertionMode) {
           case EAV_NAMED: {
             if (tabularData.getPrimaryKeyColumn() < 0) {
-              throw new PrologNonSpecificError(
+              throw new InvalidTermException(
                   "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
             }
             final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
@@ -70,7 +70,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
           }
           case EAVT: {
             if (tabularData.getPrimaryKeyColumn() < 0) {
-              throw new PrologNonSpecificError(
+              throw new InvalidTermException(
                   "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
             }
             final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
@@ -90,10 +90,10 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
             break;
           }
           default:
-            throw new PrologNonSpecificError("Unknown AssertionMode " + theAssertionMode);
+            throw new InvalidTermException("Unknown AssertionMode " + theAssertionMode);
         }
       } catch (final Exception e) {
-        throw new PrologNonSpecificError("Could not initClauses on row=" + r, e);
+        throw new InvalidTermException("Could not initClauses on row=" + r, e);
       }
     }
     return result;

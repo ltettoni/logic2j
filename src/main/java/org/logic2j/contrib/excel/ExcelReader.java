@@ -22,7 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.util.TypeUtils;
 
 import java.io.File;
@@ -197,7 +197,7 @@ public class ExcelReader {
           case BLANK:
             break;
           default:
-            throw new PrologNonSpecificError(
+            throw new InvalidTermException(
                 "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled, value is " + value);
         }
       }

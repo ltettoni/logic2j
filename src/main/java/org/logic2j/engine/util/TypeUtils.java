@@ -16,7 +16,7 @@
  */
 package org.logic2j.engine.util;
 
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 /**
  * Provide minimal convenience functions to determine run-time accessibility of classes and methods. This class can be considered as a
@@ -46,7 +46,7 @@ public abstract class TypeUtils {
       final String message =
           "Could not cast an instance of " + instance.getClass() + " to expected " + desiredClassOrInterface + " [formatted object was " + instance
               + "]";
-      throw new PrologNonSpecificError(message);
+      throw new PrologNonSpecificException(message);
     }
     return (T) instance;
   }
@@ -64,7 +64,7 @@ public abstract class TypeUtils {
    */
   public static <T> T safeCastNotNull(String context, Object instance, Class<? extends T> desiredClassOrInterface) throws ClassCastException {
     if (instance == null) {
-      throw new PrologNonSpecificError("null value not allowed, expected an instance of " + desiredClassOrInterface + ", while " + context);
+      throw new PrologNonSpecificException("null value not allowed, expected an instance of " + desiredClassOrInterface + ", while " + context);
     }
     final String effectiveContext = (context != null) ? context : "casting undescribed object";
     return safeCastOrNull(effectiveContext, instance, desiredClassOrInterface);

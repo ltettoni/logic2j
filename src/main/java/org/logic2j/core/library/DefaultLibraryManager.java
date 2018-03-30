@@ -24,7 +24,7 @@ import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
@@ -139,7 +139,7 @@ public class DefaultLibraryManager implements LibraryManager {
         final String[] synonyms;
         if (predicateAnnotation != null) {
           if (returnType != Integer.class) {
-            throw new PrologNonSpecificError("Unexpected return type, require Integer for predicate " + method);
+            throw new PrologNonSpecificException("Unexpected return type, require Integer for predicate " + method);
           }
           type = PrimitiveType.PREDICATE;
           primitiveName = predicateAnnotation.name();
@@ -149,7 +149,7 @@ public class DefaultLibraryManager implements LibraryManager {
           primitiveName = functorAnnotation.name();
           synonyms = functorAnnotation.synonyms();
         } else {
-          throw new PrologNonSpecificError("Should not be here, annotation handling error");
+          throw new PrologNonSpecificException("Should not be here, annotation handling error");
         }
                 /*
                 final PrimitiveType type;
@@ -168,11 +168,11 @@ public class DefaultLibraryManager implements LibraryManager {
         final int nbMethodParams = paramTypes.length;
         int i = 0;
         if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
-          throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
+          throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
         }
         i++;
         if (!(UnifyContext.class.isAssignableFrom(paramTypes[i]))) {
-          throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + UnifyContext.class);
+          throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + UnifyContext.class);
         }
         i++;
         boolean varargs = false;
@@ -182,7 +182,7 @@ public class DefaultLibraryManager implements LibraryManager {
           } else {
             while (i < nbMethodParams) {
               if (!(Object.class.isAssignableFrom(paramTypes[i]))) {
-                throw new PrologNonSpecificError("Argument type at index " + i + " of method " + method + " not of proper " + Term.class);
+                throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + Term.class);
               }
               i++;
             }

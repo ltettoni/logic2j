@@ -20,7 +20,6 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
 import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.engine.visitor.TermVisitor;
@@ -37,27 +36,6 @@ import java.util.List;
  */
 public class Struct extends Term implements Cloneable {
   private static final long serialVersionUID = 1L;
-
-  // ---------------------------------------------------------------------------
-  // Constants defining Prolog lists
-  // ---------------------------------------------------------------------------
-
-  public static final String FUNCTOR_LIST_NODE = ".";
-
-  public static final String FUNCTOR_EMPTY_LIST = "[]"; // The list end marker
-
-  public static final String LIST_ELEM_SEPARATOR = ","; // In notations [a,b,c]
-
-  public static final char LIST_CLOSE = ']';
-
-  public static final char LIST_OPEN = '[';
-
-  public static final char HEAD_TAIL_SEPARATOR = '|';
-
-  /**
-   * The empty list complete Struct.
-   */
-  public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
 
   // ---------------------------------------------------------------------------
   // Names of functors
@@ -81,6 +59,28 @@ public class Struct extends Term implements Cloneable {
       // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
 
   public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
+
+
+  // ---------------------------------------------------------------------------
+  // Constants defining Prolog lists
+  // ---------------------------------------------------------------------------
+
+  public static final String FUNCTOR_EMPTY_LIST = "[]"; // The list end marker
+
+  /**
+   * The empty list complete Struct.
+   */
+  public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
+
+  public static final String FUNCTOR_LIST_NODE = ".";
+
+  public static final String LIST_ELEM_SEPARATOR = ","; // In notations [a,b,c]
+
+  public static final char LIST_CLOSE = ']';
+
+  public static final char LIST_OPEN = '[';
+
+  public static final char HEAD_TAIL_SEPARATOR = '|';
 
   // ---------------------------------------------------------------------------
   // Some key atoms as singletons
@@ -431,11 +431,11 @@ public class Struct extends Term implements Cloneable {
    * Make sure a Term is a Prolog List.
    *
    * @param thePList
-   * @throws PrologNonSpecificError If this is not a list.
+   * @throws InvalidTermException If this is not a list.
    */
   protected void assertPList(Term thePList) {
     if (!TermApi.isList(thePList)) {
-      throw new PrologNonSpecificError("The structure \"" + thePList + "\" is not a Prolog list.");
+      throw new InvalidTermException("The structure \"" + thePList + "\" is not a Prolog list.");
     }
   }
 
@@ -447,7 +447,7 @@ public class Struct extends Term implements Cloneable {
    * <code>PrologNonSpecificError</code>
    * </p>
    *
-   * @throws PrologNonSpecificError If this is not a list.
+   * @throws InvalidTermException If this is not a list.
    */
   public Object listHead() {
     assertPList(this);
@@ -457,7 +457,7 @@ public class Struct extends Term implements Cloneable {
   /**
    * Gets the tail of this structure, which is supposed to be a list.
    *
-   * @throws PrologNonSpecificError if this is not a prolog list.
+   * @throws InvalidTermException if this is not a prolog list.
    */
   public Struct listTail() {
     assertPList(this);
@@ -467,7 +467,7 @@ public class Struct extends Term implements Cloneable {
   /**
    * Gets the number of elements of this structure, which is supposed to be a list.
    *
-   * @throws PrologNonSpecificError if this is not a prolog list.
+   * @throws InvalidTermException if this is not a prolog list.
    */
   public int listSize() {
     assertPList(this);
@@ -484,7 +484,7 @@ public class Struct extends Term implements Cloneable {
    * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
    * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
    *
-   * @throws PrologNonSpecificError if this is not a prolog list.
+   * @throws InvalidTermException if this is not a prolog list.
    */
   // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
   public Struct predicateFromPList() {
@@ -520,7 +520,7 @@ public class Struct extends Term implements Cloneable {
    * @param <Q>
    * @param <T>
    * @return
-   * @throws PrologNonSpecificError if this is not a prolog list.
+   * @throws InvalidTermException if this is not a prolog list.
    */
   @SuppressWarnings("unchecked")
   public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
@@ -536,7 +536,7 @@ public class Struct extends Term implements Cloneable {
    * @param <Q>
    * @param <T>
    * @return
-   * @throws PrologNonSpecificError if this is not a prolog list.
+   * @throws InvalidTermException if this is not a prolog list.
    */
   @SuppressWarnings("unchecked")
   public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass, boolean recursive) {
@@ -636,7 +636,7 @@ public class Struct extends Term implements Cloneable {
    */
   public Object getLHS() {
     if (this.arity != 2) {
-      throw new PrologNonSpecificError(
+      throw new InvalidTermException(
           "Can't get the left-hand-side argument of \"" + this + "\" (predicate arity is: " + getPredicateSignature() + ")");
     }
     return this.args[0];
@@ -648,7 +648,7 @@ public class Struct extends Term implements Cloneable {
    */
   public Object getRHS() {
     if (this.arity != 2) {
-      throw new PrologNonSpecificError(
+      throw new InvalidTermException(
           "Can't get the right-hand-side argument of \"" + this + "\" (predicate arity is: " + getPredicateSignature() + ")");
     }
     return this.args[1];
@@ -694,7 +694,7 @@ public class Struct extends Term implements Cloneable {
   public void avoidCycle(List<Term> visited) {
     for (final Term term : visited) {
       if (term == this) {
-        throw new PrologNonSpecificError("Cycle detected");
+        throw new InvalidTermException("Cycle detected");
       }
     }
     visited.add(this);
@@ -709,7 +709,6 @@ public class Struct extends Term implements Cloneable {
   // ---------------------------------------------------------------------------
   // Accessors
   // ---------------------------------------------------------------------------
-
 
   /**
    * Gets the number of elements of this structure

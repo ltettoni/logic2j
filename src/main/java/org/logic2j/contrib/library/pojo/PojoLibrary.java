@@ -24,7 +24,7 @@ import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
@@ -106,12 +106,12 @@ public class PojoLibrary extends LibraryBase {
     try {
       value = PropertyUtils.getProperty(theInstance, theExpression);
     } catch (IllegalAccessException e) {
-      throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
+      throw new PrologNonSpecificException("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
     } catch (NoSuchMethodException e) {
       return null;
       // throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
     } catch (InvocationTargetException e) {
-      throw new PrologNonSpecificError(
+      throw new PrologNonSpecificException(
           "Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e.getTargetException());
     }
     return value;
@@ -122,11 +122,11 @@ public class PojoLibrary extends LibraryBase {
     try {
       PropertyUtils.setProperty(pojo, theExpression, newValue);
     } catch (IllegalAccessException e) {
-      throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
+      throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
     } catch (NoSuchMethodException e) {
-      throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
+      throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
     } catch (InvocationTargetException e) {
-      throw new PrologNonSpecificError("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e.getTargetException());
+      throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e.getTargetException());
     }
   }
 
@@ -174,7 +174,7 @@ public class PojoLibrary extends LibraryBase {
 
         return notifySolution(theListener, currentVars);
       }
-      throw new PrologNonSpecificError("Option \"" + mode + "\" is not allowed");
+      throw new PrologNonSpecificException("Option \"" + mode + "\" is not allowed");
     }
     // Collections will send multiple individual solutions
     if (currentValue instanceof Collection) {
@@ -298,13 +298,13 @@ public class PojoLibrary extends LibraryBase {
             return aClass.getConstructor(constructorClasses).newInstance(constructorArgs);
           }
         } catch (InstantiationException e) {
-          throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
+          throw new PrologNonSpecificException(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
         } catch (IllegalAccessException e) {
-          throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
+          throw new PrologNonSpecificException(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
         } catch (NoSuchMethodException e) {
-          throw new PrologNonSpecificError(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
+          throw new PrologNonSpecificException(this + " could not create instance of " + aClass + ", args=" + Arrays.asList(args) + " : " + e);
         } catch (InvocationTargetException e) {
-          throw new PrologNonSpecificError(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
+          throw new PrologNonSpecificException(this + " could not create instance of " + aClass + " constructor failed with: " + e.getTargetException());
         }
       }
     } catch (ClassNotFoundException e) {

@@ -18,7 +18,7 @@
 package org.logic2j.core.impl;
 
 import org.logic2j.core.api.OperatorManager;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.core.api.model.Operator;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
   /**
    * Creates and register a new operator. If the operator is already provided, it replaces it with the new one
    *
-   * @throws PrologNonSpecificError
+   * @throws PrologNonSpecificException
    */
   @Override
   public void addOperator(String operatorText, String associativity, int precedence) {
@@ -47,7 +47,7 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
     if (precedence >= Operator.OP_LOWEST && precedence <= Operator.OP_HIGHEST) {
       this.operatorList.addOperator(op);
     } else {
-      throw new PrologNonSpecificError("Operator priority not in valid range for " + op);
+      throw new PrologNonSpecificException("Operator priority not in valid range for " + op);
     }
   }
 

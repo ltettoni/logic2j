@@ -17,17 +17,20 @@
 package org.logic2j.engine.exception;
 
 /**
- * Indicate some condition that requires breaking the execution flow but for which we do not YET have a proper Exception class.
+ * Indicate some condition that requires breaking the execution flow but for which
+ * we do not YET have a proper Exception class.
+ * @Deprecated Exceptions with specific semantics must be defined instead
  */
-public class PrologNonSpecificError extends Logic2jException {
+@Deprecated
+public class PrologNonSpecificException extends Logic2jException {
 
   private static final long serialVersionUID = 1;
 
-  public PrologNonSpecificError(String theString) {
+  public PrologNonSpecificException(String theString) {
     super(theString);
   }
 
-  public PrologNonSpecificError(String theString, Throwable theRootCause) {
+  public PrologNonSpecificException(String theString, Throwable theRootCause) {
     super(theString, theRootCause);
   }
 

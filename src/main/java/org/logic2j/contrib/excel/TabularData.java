@@ -18,7 +18,7 @@
 package org.logic2j.contrib.excel;
 
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.core.impl.PrologImplementation;
 
 import java.io.Serializable;
@@ -101,7 +101,7 @@ public class TabularData implements Serializable {
       }
     }
     if (!duplicateKeys.isEmpty()) {
-      throw new PrologNonSpecificError("Tabular data " + this.dataSetName + " contains duplicate column names: " + duplicateKeys);
+      throw new PrologNonSpecificException("Tabular data " + this.dataSetName + " contains duplicate column names: " + duplicateKeys);
     }
   }
 
@@ -122,7 +122,7 @@ public class TabularData implements Serializable {
       }
     }
     if (!duplicateKeys.isEmpty()) {
-      throw new PrologNonSpecificError(
+      throw new PrologNonSpecificException(
           "Tabular data " + this.dataSetName + " contains duplicate keys in column " + this.primaryKeyColumn + ": " + duplicateKeys);
     }
   }

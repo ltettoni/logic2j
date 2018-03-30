@@ -19,7 +19,7 @@ package org.logic2j.contrib.excel;
 
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.TermAdapter.AssertionMode;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.unify.UnifyContext;
 
@@ -50,7 +50,7 @@ public class TabularDataFactProvider implements DataFactProvider {
       switch (this.assertionMode) {
         case EAV_NAMED: {
           if (primaryKeyColumn < 0) {
-            throw new PrologNonSpecificError(
+            throw new InvalidTermException(
                 "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
           }
           final String identifier = row[primaryKeyColumn].toString();
@@ -70,7 +70,7 @@ public class TabularDataFactProvider implements DataFactProvider {
         }
         case EAVT: {
           if (primaryKeyColumn < 0) {
-            throw new PrologNonSpecificError(
+            throw new InvalidTermException(
                 "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
           }
           final String identifier = row[primaryKeyColumn].toString();
@@ -89,7 +89,7 @@ public class TabularDataFactProvider implements DataFactProvider {
           break;
         }
         default:
-          throw new PrologNonSpecificError("Unknown AssertionMode " + this.assertionMode);
+          throw new InvalidTermException("Unknown AssertionMode " + this.assertionMode);
 
       }
     }

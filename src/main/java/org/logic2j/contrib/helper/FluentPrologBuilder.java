@@ -17,7 +17,7 @@
 
 package org.logic2j.contrib.helper;
 
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.theory.TheoryContent;
@@ -71,7 +71,7 @@ public class FluentPrologBuilder implements PrologBuilder {
         theoryManager.addTheory(content);
       }
     } catch (IOException e) {
-      throw new PrologNonSpecificError("Builder could not load theory: " + e);
+      throw new PrologNonSpecificException("Builder could not load theory: " + e);
     }
     // Theories from resources
     for (String resource : theoryResources) {

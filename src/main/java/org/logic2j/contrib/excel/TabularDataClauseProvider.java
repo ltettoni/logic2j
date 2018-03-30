@@ -20,7 +20,7 @@ package org.logic2j.contrib.excel;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
@@ -80,7 +80,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
         }
         return this.clauses;
       default:
-        throw new PrologNonSpecificError("Unknown mode " + this.mode);
+        throw new PrologNonSpecificException("Unknown mode " + this.mode);
     }
   }
 }

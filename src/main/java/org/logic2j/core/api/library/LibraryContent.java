@@ -16,7 +16,7 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,28 +36,28 @@ public class LibraryContent {
 
   public void putDirective(String theKey, PrimitiveInfo theDesc) {
     if (this.directiveMap.containsKey(theKey)) {
-      throw new PrologNonSpecificError("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
+      throw new PrologNonSpecificException("A directive is already defined for key " + theKey + ", cannot override with " + theDesc);
     }
     this.directiveMap.put(theKey, theDesc);
   }
 
   public void putPredicate(String theKey, PrimitiveInfo theDesc) {
     if (this.predicateMap.containsKey(theKey)) {
-      throw new PrologNonSpecificError("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
+      throw new PrologNonSpecificException("A predicate is already defined for key " + theKey + ", cannot override with " + theDesc);
     }
     this.predicateMap.put(theKey, theDesc);
   }
 
   public void putFunctor(String theKey, PrimitiveInfo theDesc) {
     if (this.functorMap.containsKey(theKey)) {
-      throw new PrologNonSpecificError("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
+      throw new PrologNonSpecificException("A functor is already defined for key " + theKey + ", cannot override with " + theDesc);
     }
     this.functorMap.put(theKey, theDesc);
   }
 
   public void putPrimitive(String theKey, PrimitiveInfo theDesc) {
     if (this.primitiveMap.containsKey(theKey)) {
-      throw new PrologNonSpecificError("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
+      throw new PrologNonSpecificException("A primitive is already defined for key " + theKey + ", cannot override with " + theDesc);
     }
     switch (theDesc.getType()) {
       case DIRECTIVE:

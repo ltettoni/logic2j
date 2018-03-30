@@ -19,7 +19,7 @@ package org.logic2j.contrib.library.pojo;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.PrologNonSpecificError;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.core.impl.EnvManager;
 
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class PojoLibraryTest extends PrologTestBase {
     }
 
 
-    @Test(expected = PrologNonSpecificError.class)
+    @Test(expected = PrologNonSpecificException.class)
     public void javaNewWithConstructorAndArgsFails() {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").single();
