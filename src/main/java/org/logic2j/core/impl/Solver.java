@@ -272,10 +272,10 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
 
   @Override
-  protected Integer invokeJava(Object goalStruct, UnifyContext currentVars) {
-    final PrimitiveInfo prim = ((Struct)goalStruct).getPrimitiveInfo();
+  protected Integer invokeJava(Struct goalStruct, UnifyContext currentVars) {
+    final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
 
-    final Object resultOfPrimitive = prim.invoke((Struct)goalStruct, currentVars.getSolutionListener(), currentVars);
+    final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars.getSolutionListener(), currentVars);
     // Extract necessary objects from our current state
 
    Integer result = Continuation.CONTINUE;;
