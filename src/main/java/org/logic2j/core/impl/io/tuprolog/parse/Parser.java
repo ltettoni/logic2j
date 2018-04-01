@@ -293,7 +293,7 @@ public class Parser {
           continue;
         }
         haveAttemptedXFX = true;
-        assert true : "Probably not OK to be here in the Parser (handling XFX)";
+        assert false : "Probably not OK to be here in the Parser (handling XFX)";
       }
       // XFY
       if (xfy >= xf && xfy >= left.priority) { // XFY has priority, or XFX has failed
@@ -303,7 +303,7 @@ public class Parser {
           left = new IdentifiedTerm(xfy, xfyStruct);
           continue;
         }
-        assert true : "Probably not OK to be here in the Parser (handling XFY)";
+        assert false : "Probably not OK to be here in the Parser (handling XFY)";
       }
       // XF
       if (xf >= left.priority) {
@@ -318,7 +318,7 @@ public class Parser {
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
-        assert true : "Probably not OK to be here in the Parser (handling other cases)";
+        assert false : "Probably not OK to be here in the Parser (handling other cases)";
       }
       break;
     }

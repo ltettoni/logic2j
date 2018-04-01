@@ -84,13 +84,15 @@ public class Solver extends org.logic2j.engine.solver.Solver {
         result = primitiveContinuation;
         break;
       case FUNCTOR:
+        // FIXME Why this code since we never pass here!
         if (isDebug) {
           logger.debug("Result of Functor {}: {}", goalStruct, resultOfPrimitive);
         }
         // logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
-        assert true : "We should not pass here with functors!? Directive " + goalStruct + " ignored";
+        assert false : "We should not pass here with functors!? Directive " + goalStruct + " ignored";
         break;
       case DIRECTIVE:
+        // FIXME Why this code since we never pass here!
         logger.warn("Result of Directive {} not yet used", goalStruct);
         break;
     }
