@@ -75,8 +75,8 @@ public class PrimitiveInfo {
     this.isVarargs = theVarargs;
   }
 
-  public Object invoke(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
-    final Object result = this.library.dispatch(this.methodName, theGoalStruct, theListener, currentVars);
+  public Object invoke(Struct theGoalStruct, UnifyContext currentVars) {
+    final Object result = this.library.dispatch(this.methodName, theGoalStruct, currentVars);
     if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
       return result;
     }
@@ -91,7 +91,7 @@ public class PrimitiveInfo {
       if (isDebug) {
         logger.debug("PRIMITIVE > invocation of {}", this);
       }
-      return invokeReflective(theGoalStruct, theListener, currentVars);
+      return invokeReflective(theGoalStruct, currentVars);
     } catch (final IllegalArgumentException e) {
       throw e;
     } catch (final IllegalAccessException e) {
@@ -122,13 +122,13 @@ public class PrimitiveInfo {
    * @throws IllegalArgumentException
    * @throws IllegalAccessException
    */
-  private Object invokeReflective(Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars)
+  private Object invokeReflective(Struct theGoalStruct, UnifyContext currentVars)
       throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final int arity = theGoalStruct.getArity();
     final int nbArgs = this.isVarargs ? 3 : (2 + arity);
     final Object[] args = new Object[nbArgs];
     int i = 0;
-    args[i++] = theListener;
+    args[i++] = currentVars.getSolutionListener();
     args[i++] = currentVars;
     if (this.isVarargs) {
       // All arguments as an array

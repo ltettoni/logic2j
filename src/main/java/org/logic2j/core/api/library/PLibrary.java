@@ -17,7 +17,6 @@
 package org.logic2j.core.api.library;
 
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
@@ -36,10 +35,9 @@ public interface PLibrary {
    *
    * @param theMethodName
    * @param theGoalStruct
-   * @param theListener
    * @param currentVars
    * @return
    */
-  Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars);
+  Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars);
 
 }

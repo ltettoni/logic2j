@@ -73,7 +73,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
   protected Integer invokeJava(Struct goalStruct, UnifyContext currentVars) {
     final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
 
-    final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars.getSolutionListener(), currentVars);
+    final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state
 
    Integer result = Continuation.CONTINUE;;

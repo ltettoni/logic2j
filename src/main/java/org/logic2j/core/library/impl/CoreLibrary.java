@@ -171,7 +171,8 @@ public class CoreLibrary extends LibraryBase {
 
 
   @Override
-  public Object dispatch(String theMethodName, Struct theGoalStruct, SolutionListener theListener, UnifyContext currentVars) {
+  public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars) {
+    final SolutionListener theListener = currentVars.getSolutionListener();
     final Object result;
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
     final Object[] goalStructArgs = theGoalStruct.getArgs();
