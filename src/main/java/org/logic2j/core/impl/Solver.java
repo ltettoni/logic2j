@@ -254,30 +254,8 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     // ---------------------------------------------------------------------------
     // Primitive implemented in Java
     // ---------------------------------------------------------------------------
-    else if (goalStruct.getPrimitiveInfo() != null) {
-      final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
-
-
-      final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars.getSolutionListener(), currentVars);
-      // Extract necessary objects from our current state
-
-      switch (prim.getType()) {
-        case PREDICATE:
-          // The result will be the continuation code or CUT level
-          final Integer primitiveContinuation = (Integer) resultOfPrimitive;
-          result = primitiveContinuation;
-          break;
-        case FUNCTOR:
-          if (isDebug) {
-            logger.debug("Result of Functor {}: {}", goalStruct, resultOfPrimitive);
-          }
-          // logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
-          assert true : "We should not pass here with functors!? Directive " + goalStruct + " ignored";
-          break;
-        case DIRECTIVE:
-          logger.warn("Result of Directive {} not yet used", goalStruct);
-          break;
-      }
+    else if (isJava(goalStruct)) {
+      result = invokeJava(goalStruct, currentVars);
     }
     //---------------------------------------------------------------------------
     // Not any "special" handling
@@ -298,6 +276,41 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     }
     if (isDebug) {
       logger.debug("<<-- Exiting  solveRecursive#" + inferenceCounter + ", reifiedGoal = {}, result={}", currentVars.reify(goalTerm), result);
+    }
+    return result;
+  }
+
+  @Override
+  protected boolean isJava(Struct goalStruct) {
+    return goalStruct.getPrimitiveInfo() != null;
+  }
+
+
+
+  @Override
+  protected Integer invokeJava(Object goalStruct, UnifyContext currentVars) {
+    final PrimitiveInfo prim = ((Struct)goalStruct).getPrimitiveInfo();
+
+    final Object resultOfPrimitive = prim.invoke((Struct)goalStruct, currentVars.getSolutionListener(), currentVars);
+    // Extract necessary objects from our current state
+
+   Integer result = Continuation.CONTINUE;;
+    switch (prim.getType()) {
+      case PREDICATE:
+        // The result will be the continuation code or CUT level
+        final Integer primitiveContinuation = (Integer) resultOfPrimitive;
+        result = primitiveContinuation;
+        break;
+      case FUNCTOR:
+        if (isDebug) {
+          logger.debug("Result of Functor {}: {}", goalStruct, resultOfPrimitive);
+        }
+        // logger.error("We should not pass here with functors!? Directive {} ignored", goalStruct);
+        assert true : "We should not pass here with functors!? Directive " + goalStruct + " ignored";
+        break;
+      case DIRECTIVE:
+        logger.warn("Result of Directive {} not yet used", goalStruct);
+        break;
     }
     return result;
   }
