@@ -68,22 +68,6 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
 
   /**
-   * This is an alternate entry point when a {@link UnifyContext}
-   * is already instantiated; this is needed in custom predicates implementing first-order logic like
-   * not(), exists(), etc.
-   * You enter here when part of the variables have been bound already.
-   */
-  public Integer solveGoal(Object goal, UnifyContext currentVars) {
-    // Check if we will have to deal with DataFacts in this session of solving.
-    // This slightly improves performance - we can bypass calling the method that deals with that
-    if (goal instanceof Struct && !((Struct) goal).hasIndex()) {
-      throw new InvalidTermException("Struct must be normalized before it can be solved: \"" + goal + "\" - call TermApi.normalize()");
-    }
-    final Integer cutIntercepted = solveGoalRecursive(goal, currentVars, /* FIXME why this value?*/10);
-    return cutIntercepted;
-  }
-
-  /**
    * That's the complex method - the heart of the Solver.
    *
    * @param goalTerm
@@ -91,7 +75,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
    * @param cutLevel
    * @return
    */
-  private Integer solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
+  protected Integer solveGoalRecursive(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
     final long inferenceCounter = ProfilingInfo.nbInferences;
     if (isDebug) {
       logger.debug("-->> Entering solveRecursive#{}, reifiedGoal = {}", inferenceCounter, currentVars.reify(goalTerm));
