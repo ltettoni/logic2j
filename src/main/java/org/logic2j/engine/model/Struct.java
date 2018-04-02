@@ -534,7 +534,7 @@ public class Struct extends Term implements Cloneable {
     // list case
     if (PrologLists.isListNode(this)) {
       sb.append(PrologLists.LIST_OPEN);
-      sb.append(PrologLists.formatPListRecursive(this));
+      PrologLists.formatPListRecursive(this, sb);
       sb.append(PrologLists.LIST_CLOSE);
       return sb.toString();
     }

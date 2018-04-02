@@ -254,23 +254,26 @@ public final class PrologLists {
     return result;
   }
 
-  public static String formatPListRecursive(Struct prologList) {
-    final Object head = prologList.getLHS();
-    final Object tail = prologList.getRHS();
+  public static StringBuilder formatPListRecursive(Struct prologList, StringBuilder sb) {
+    final Object head = listHead(prologList);
+    final Object tail = listTail(prologList);
     if (TermApi.isList(tail)) {
       final Struct tailStruct = (Struct) tail;
       // .(h, []) will be displayed as h
       if (isEmptyList(tailStruct)) {
-        return head.toString();
+        sb.append(head.toString());
+      } else {
+        sb.append(head.toString());
+        sb.append(LIST_ELEM_SEPARATOR);
+        formatPListRecursive(tailStruct, sb);
       }
-      return head.toString() + LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+    } else {
+      // Head
+      sb.append(head.toString());
+      sb.append(HEAD_TAIL_SEPARATOR);
+      // Tail
+      sb.append(tail.toString());
     }
-    final StringBuilder sb = new StringBuilder();
-    // Head
-    sb.append(head);
-    sb.append(HEAD_TAIL_SEPARATOR);
-    // Tail
-    sb.append(tail.toString());
-    return sb.toString();
+    return sb;
   }
 }
