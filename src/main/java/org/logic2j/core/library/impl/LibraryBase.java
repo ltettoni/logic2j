@@ -53,10 +53,10 @@ public class LibraryBase implements PLibrary {
 
 
   /**
-   * Notify theSolutionListener that a solution has been found.
+   * Notify the SolutionListener that a solution has been found.
    *
    * @param currentVars
-   * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(UnifyContext)}
+   * @return The {@link Continuation} as returned by {@link SolutionListener#onSolution(UnifyContext)}
    */
   protected Integer notifySolution(UnifyContext currentVars) {
     final Integer continuation = currentVars.getSolutionListener().onSolution(currentVars);

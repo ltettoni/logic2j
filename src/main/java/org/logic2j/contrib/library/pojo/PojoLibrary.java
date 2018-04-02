@@ -58,7 +58,6 @@ public class PojoLibrary extends LibraryBase {
     if (theMethodName == "javaNew") {
       result = javaNew(currentVars, args);
     } else if (arity == 1) {
-      final Object arg0 = args[0];
       result = NO_DIRECT_INVOCATION_USE_REFLECTION;
     } else if (arity == 2) {
       final Object arg0 = args[0];
