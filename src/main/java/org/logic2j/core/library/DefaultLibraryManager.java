@@ -46,6 +46,8 @@ public class DefaultLibraryManager implements LibraryManager {
    */
   private static final int NB_EXTRA_PARAMS = 1;
 
+  private static final Struct ATOM_CUT = new Struct(Struct.FUNCTOR_CUT);
+
   private final Prolog prolog;
 
   private final LibraryContent wholeContent = new LibraryContent();
@@ -110,7 +112,7 @@ public class DefaultLibraryManager implements LibraryManager {
     // We need to assignPrimitiveInfo(), but let's use the TermApi directly and invoke normalize() it won't harm to do a little more.
     TermApi.normalize(Struct.ATOM_TRUE, this.wholeContent);
     TermApi.normalize(Struct.ATOM_FALSE, this.wholeContent);
-    TermApi.normalize(Struct.ATOM_CUT, this.wholeContent);
+    TermApi.normalize(ATOM_CUT, this.wholeContent);
   }
 
   /**

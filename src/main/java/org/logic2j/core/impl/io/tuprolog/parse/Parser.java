@@ -84,6 +84,8 @@ public class Parser {
 
   private static final Pattern ATOM_PATTERN = Pattern.compile("(!|[a-z][a-zA-Z_0-9]*)");
 
+  private static final String LIST_SEPARATOR = ","; // In notations pred(a, b, c)
+
 
   private static class IdentifiedTerm {
     final int priority;
@@ -519,7 +521,7 @@ public class Parser {
   private LinkedList<Object> exprA0_arglist() throws InvalidTermException, IOException {
     final Object head = expr(true);
     final Token t = this.tokenizer.readToken();
-    if (Struct.LIST_SEPARATOR.equals(t.text)) {
+    if (LIST_SEPARATOR.equals(t.text)) {
       final LinkedList<Object> l = exprA0_arglist();
       l.addFirst(head);
       return l;

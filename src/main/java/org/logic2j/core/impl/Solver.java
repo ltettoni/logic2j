@@ -65,13 +65,13 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
   @Override
   protected boolean isJava(Struct goalStruct) {
-    return goalStruct.getPrimitiveInfo() != null;
+    return goalStruct.getContent() != null;
   }
 
 
   @Override
   protected Integer invokeJava(Struct goalStruct, UnifyContext currentVars) {
-    final PrimitiveInfo prim = goalStruct.getPrimitiveInfo();
+    final PrimitiveInfo prim = ((Struct<PrimitiveInfo>)goalStruct).getContent();
 
     final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state

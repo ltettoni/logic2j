@@ -297,8 +297,8 @@ public final class TermApi {
     }
 
     if (theTerm instanceof Struct) {
-      final Struct struct = (Struct) theTerm;
-      final PrimitiveInfo primInfo = struct.getPrimitiveInfo();
+      final Struct<PrimitiveInfo> struct = (Struct<PrimitiveInfo>) theTerm;
+      final PrimitiveInfo primInfo = struct.getContent();
       if (primInfo == null) {
         // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is not a primitive");
         return null;
@@ -355,12 +355,12 @@ public final class TermApi {
    * @param struct
    * @param theContent Primitives in a Library
    */
-  public static void assignPrimitiveInfo(Struct struct, LibraryContent theContent) {
+  public static void assignPrimitiveInfo(Struct<PrimitiveInfo> struct, LibraryContent theContent) {
     // Find by exact arity match
-    struct.setPrimitiveInfo(theContent.getPrimitive(struct.getPredicateSignature()));
-    if (struct.getPrimitiveInfo() == null) {
+    struct.setContent(theContent.getPrimitive(struct.getPredicateSignature()));
+    if (struct.getContent() == null) {
       // Alternate find by wildcard (varargs signature)
-      struct.setPrimitiveInfo(theContent.getPrimitive(struct.getVarargsPredicateSignature()));
+      struct.setContent(theContent.getPrimitive(struct.getVarargsPredicateSignature()));
     }
     for (Object child : struct.getArgs()) {
       // Not sure what was the intention in the following section but this looks invoked, but useless.
@@ -378,6 +378,36 @@ public final class TermApi {
       }
     }
   }
+
+  public static <T> String formatStruct(Struct<T> struct) {
+    if (PrologLists.isEmptyList(struct)) {
+      return PrologLists.FUNCTOR_EMPTY_LIST;
+    }
+    final StringBuilder sb = new StringBuilder();
+    final int nArity = struct.getArity();
+    // list case
+    if (PrologLists.isListNode(struct)) {
+      sb.append(PrologLists.LIST_OPEN);
+      PrologLists.formatPListRecursive(struct, sb);
+      sb.append(PrologLists.LIST_CLOSE);
+      return sb.toString();
+    }
+    sb.append(TermApi.quoteIfNeeded(struct.getName()));
+    if (nArity > 0) {
+      sb.append(Struct.PAR_OPEN);
+      for (int c = 0; c < nArity; c++) {
+        final Object arg = struct.getArg(c);
+        final String formatted = arg.toString();
+        sb.append(formatted);
+        if (c < nArity - 1) {
+          sb.append(Struct.ARG_SEPARATOR);
+        }
+      }
+      sb.append(Struct.PAR_CLOSE);
+    }
+    return sb.toString();
+  }
+
 
 
   // TODO Currently unused - but probably we should detect cycles!

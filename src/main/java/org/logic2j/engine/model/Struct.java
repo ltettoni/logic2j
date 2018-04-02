@@ -16,7 +16,6 @@
  */
 package org.logic2j.engine.model;
 
-import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.visitor.TermVisitor;
@@ -30,7 +29,7 @@ import java.util.List;
  * This class is now final, one we'll have to carefully think if this could be user-extended.
  * Note: This class MUST be immutable.
  */
-public class Struct extends Term implements Cloneable {
+public class Struct<T> extends Term implements Cloneable {
   private static final long serialVersionUID = 1L;
 
   // ---------------------------------------------------------------------------
@@ -68,10 +67,6 @@ public class Struct extends Term implements Cloneable {
 
   public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
 
-  public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
-
-  public static final String LIST_SEPARATOR = ","; // In notations pred(a, b, c)
-
   public static final char PAR_CLOSE = ')';
 
   public static final char PAR_OPEN = '(';
@@ -94,9 +89,6 @@ public class Struct extends Term implements Cloneable {
 
   private static final Object[] EMPTY_ARGS_ARRAY = new Object[0];
 
-  // TODO Findbugs found that PrimitiveInfo should be serializable too :-(
-  private PrimitiveInfo primitiveInfo;
-
 
   /**
    * The functor of the Struct is its "name". This is a final value but due to implementation via
@@ -112,6 +104,11 @@ public class Struct extends Term implements Cloneable {
    * The signature is internalized and allows for fast matching during unification
    */
   private String signature;
+
+  /**
+   * Payload
+   */
+  private T content;
 
   /**
    * Low-level constructor.
@@ -142,11 +139,11 @@ public class Struct extends Term implements Cloneable {
    * Copy constructor.
    * Creates a shallow copy but with all children which are Struct also cloned.
    */
-  public Struct(Struct original) {
+  public Struct(Struct<T> original) {
     this.name = original.getName();
     this.arity = original.arity;
     this.signature = original.signature;
-    this.primitiveInfo = original.primitiveInfo;
+    this.content = original.content;
     // What about "this.index" ?
     if (this.arity > 0) {
       this.args = new Object[this.arity];
@@ -310,7 +307,6 @@ public class Struct extends Term implements Cloneable {
     this.signature = (this.getName() + '/' + this.arity).intern();
   }
 
-
   // --------------------------------------------------------------------------
   // Accessors
   // --------------------------------------------------------------------------
@@ -446,12 +442,12 @@ public class Struct extends Term implements Cloneable {
     return this.name;
   }
 
-  public PrimitiveInfo getPrimitiveInfo() {
-    return this.primitiveInfo;
+  public T getContent() {
+    return content;
   }
 
-  public void setPrimitiveInfo(PrimitiveInfo primitiveInfo) {
-    this.primitiveInfo = primitiveInfo;
+  public void setContent(T content) {
+    this.content = content;
   }
 
   // ---------------------------------------------------------------------------
@@ -495,36 +491,7 @@ public class Struct extends Term implements Cloneable {
   // ---------------------------------------------------------------------------
 
   public String toString() {
-    return formatStruct();
-  }
-
-  private String formatStruct() {
-    if (PrologLists.isEmptyList(this)) {
-      return PrologLists.FUNCTOR_EMPTY_LIST;
-    }
-    final StringBuilder sb = new StringBuilder();
-    final int nArity = getArity();
-    // list case
-    if (PrologLists.isListNode(this)) {
-      sb.append(PrologLists.LIST_OPEN);
-      PrologLists.formatPListRecursive(this, sb);
-      sb.append(PrologLists.LIST_CLOSE);
-      return sb.toString();
-    }
-    sb.append(TermApi.quoteIfNeeded(getName()));
-    if (nArity > 0) {
-      sb.append(PAR_OPEN);
-      for (int c = 0; c < nArity; c++) {
-        final Object arg = getArg(c);
-        final String formatted = arg.toString();
-        sb.append(formatted);
-        if (c < nArity - 1) {
-          sb.append(ARG_SEPARATOR);
-        }
-      }
-      sb.append(PAR_CLOSE);
-    }
-    return sb.toString();
+    return TermApi.formatStruct(this);
   }
 
 }
