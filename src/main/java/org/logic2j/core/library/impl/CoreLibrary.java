@@ -364,7 +364,6 @@ public class CoreLibrary extends LibraryBase {
    * of subGoal is proven. This is a most efficient implementation but may have dubious effects - maybe to study
    * a little in details...
    *
-   * @param theListener
    * @param currentVars
    * @param theGoal
    * @return
@@ -455,7 +454,6 @@ public class CoreLibrary extends LibraryBase {
   }
 
   /**
-   * @param theListener
    * @param currentVars
    * @param theList
    * @param theLength
@@ -641,7 +639,6 @@ public class CoreLibrary extends LibraryBase {
   }
 
   /**
-   * @param theListener
    * @param currentVars
    * @param t1
    * @param t2
@@ -653,7 +650,6 @@ public class CoreLibrary extends LibraryBase {
   }
 
   /**
-   * @param theListener
    * @param t1
    * @param t2
    * @return Binary multiply
@@ -664,7 +660,6 @@ public class CoreLibrary extends LibraryBase {
   }
 
   /**
-   * @param theListener
    * @param currentVars
    * @param t1
    * @return Unary minus (negate)

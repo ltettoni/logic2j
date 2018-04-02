@@ -17,11 +17,10 @@
 package org.logic2j.core.library.impl;
 
 import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.solver.Continuation;
+import org.logic2j.engine.unify.UnifyContext;
 
 import java.io.PrintStream;
 
@@ -133,7 +132,6 @@ public class IOLibrary extends LibraryBase {
   /**
    * Replace any logging predicate by "nolog" to avoid any overhead with logging.
    *
-   * @param theListener
    * @param currentVars
    * @param terms
    * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}

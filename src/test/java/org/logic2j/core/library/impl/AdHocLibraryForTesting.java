@@ -20,7 +20,6 @@ import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
 
@@ -40,7 +39,6 @@ public class AdHocLibraryForTesting extends LibraryBase {
     /**
      * Classic production of several solutions.
      *
-     * @param theListener
      * @param currentVars
      * @param theLowerBound
      * @param theIterable
@@ -72,7 +70,6 @@ public class AdHocLibraryForTesting extends LibraryBase {
     /**
      * Special production of several solutions in one go.
      *
-     * @param theListener
      * @param currentVars
      * @param theMinBound
      * @param theIterable

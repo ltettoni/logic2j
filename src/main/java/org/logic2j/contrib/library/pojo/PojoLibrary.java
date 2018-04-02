@@ -139,7 +139,6 @@ public class PojoLibrary extends LibraryBase {
    * Extraction of values from POJO from reflection.
    * NOTE: Implementation far from complete: read-only, and requires property name to be specified (cannot extract all by backtracking a free var).
    *
-   * @param theListener
    * @param currentVars
    * @param thePojo
    * @param thePropertyName
@@ -212,7 +211,6 @@ public class PojoLibrary extends LibraryBase {
    * If the binding has a value unifiable to theVar, succeed without other effect
    * If the binding has a value that cannot be unified, fails
    *
-   * @param theListener
    * @param currentVars
    * @param theBindingName The name to use for the binding
    * @param theTarget      Typically a Var. If a value was bound: will unify with it. If no value was bound, unify with the anonymous variable.
@@ -257,7 +255,6 @@ public class PojoLibrary extends LibraryBase {
    * Instantiate Java object calling one of its constructors.
    * For example: X is javaNew('java.lang.String', 'text')
    *
-   * @param theListener
    * @param currentVars
    * @param args        First argument is the fully qualified class name, then remaining arguments are passed to constructor.
    * @return Java invocation of constructor
@@ -314,7 +311,6 @@ public class PojoLibrary extends LibraryBase {
   /**
    * Unify Prolog list to Java list, in two directions.
    *
-   * @param theListener
    * @param currentVars
    * @param prologList
    * @param javaList
