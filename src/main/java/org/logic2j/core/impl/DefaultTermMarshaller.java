@@ -130,10 +130,10 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();
     // list case
-    if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
-      sb.append(Struct.LIST_OPEN);
+    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
+      sb.append(PrologLists.LIST_OPEN);
       sb.append(formatPListRecursive(theStruct));
-      sb.append(Struct.LIST_CLOSE);
+      sb.append(PrologLists.LIST_CLOSE);
       return sb;
     }
     sb.append(TermApi.quoteIfNeeded(name));
@@ -163,9 +163,9 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
       }
       // Why this special test?
       if (head instanceof Var) {
-        return visit((Var) head) + Struct.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+        return visit((Var) head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
       }
-      return accept(head) + Struct.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+      return accept(head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
     }
     final StringBuilder sb = new StringBuilder();
     // Head
@@ -176,7 +176,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
       h0 = accept(head);
     }
     sb.append(h0);
-    sb.append(Struct.HEAD_TAIL_SEPARATOR);
+    sb.append(PrologLists.HEAD_TAIL_SEPARATOR);
     // Tail
     final CharSequence t0;
     if (tail instanceof Var) {
@@ -218,7 +218,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     }
     final StringBuilder sb = new StringBuilder();
     sb.append(toStringAsArgY(h, 0));
-    sb.append(Struct.HEAD_TAIL_SEPARATOR);
+    sb.append(PrologLists.HEAD_TAIL_SEPARATOR);
     sb.append(toStringAsArgY(t, 0));
     return sb;
   }
@@ -235,14 +235,14 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();
 
-    if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
+    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
       if (theStruct.getLHS() instanceof Struct && PrologLists.isEmptyList(((Struct) theStruct.getLHS()))) {
         return PrologLists.FUNCTOR_EMPTY_LIST;
       }
       final StringBuilder sb = new StringBuilder();
-      sb.append(Struct.LIST_OPEN);
+      sb.append(PrologLists.LIST_OPEN);
       sb.append(toStringAsList(theStruct));
-      sb.append(Struct.LIST_CLOSE);
+      sb.append(PrologLists.LIST_CLOSE);
       return sb;
     }
 

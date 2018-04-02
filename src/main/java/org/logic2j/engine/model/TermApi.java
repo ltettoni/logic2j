@@ -268,7 +268,8 @@ public final class TermApi {
 
 
   /**
-   * @return true if this Term denotes a Prolog list.
+   * @param theTerm
+   * @return true theTerm is a {@link Struct} and if {@link PrologLists#isList(Struct)}
    */
   public static boolean isList(Object theTerm) {
     return theTerm instanceof Struct && PrologLists.isList(((Struct) theTerm));

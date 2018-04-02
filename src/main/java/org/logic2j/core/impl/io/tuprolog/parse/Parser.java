@@ -503,7 +503,7 @@ public class Parser {
   private Term exprA0_list() throws InvalidTermException, IOException {
     final Object head = expr(true);
     final Token t = this.tokenizer.readToken();
-    if (Struct.LIST_ELEM_SEPARATOR.equals(t.text)) {
+    if (PrologLists.LIST_ELEM_SEPARATOR.equals(t.text)) {
       return PrologLists.createPList(head, exprA0_list());
     }
     if ("|".equals(t.text)) {

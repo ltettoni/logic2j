@@ -8,11 +8,27 @@ import java.util.Collection;
 
 public final class PrologLists {
 
+
+  // ---------------------------------------------------------------------------
+  // Constants defining Prolog lists
+  // ---------------------------------------------------------------------------
+
+  public static final String FUNCTOR_LIST_NODE = ".";
+
   public static final String FUNCTOR_EMPTY_LIST = "[]"; // The list end marker
+
   /**
    * The empty list complete Struct.
    */
   public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST);
+
+  public static final String LIST_ELEM_SEPARATOR = ","; // In notation of prolog lists: [a,b,c]
+
+  public static final char LIST_CLOSE = ']';
+
+  public static final char LIST_OPEN = '[';
+
+  public static final char HEAD_TAIL_SEPARATOR = '|';
 
   public PrologLists() {
     // static functions only
@@ -28,7 +44,7 @@ public final class PrologLists {
    * @return A prolog list provided head and tail
    */
   public static Struct createPList(Object head, Object tail) {
-    final Struct result = new Struct(Struct.FUNCTOR_LIST_NODE, head, tail);
+    final Struct result = new Struct(FUNCTOR_LIST_NODE, head, tail);
     return result;
   }
 
@@ -72,12 +88,22 @@ public final class PrologLists {
   }
 
   /**
-   * @return true if this list is the empty list, or if it is a Prolog list.
    * @param struct
+   * @return true if this list is the empty list, or any prolog list of 1 or more elements.
    */
   public static boolean isList(Struct struct) {
-    return (struct.getName() == Struct.FUNCTOR_LIST_NODE && struct.getArity() == 2 && TermApi.isList(struct.getArg(1))) || isEmptyList(struct);
+    return (isListNode(struct) && TermApi.isList(struct.getArg(1))) || isEmptyList(struct);
   }
+
+  /**
+   * True of struct denotes a list node, could be a list of one or many, but not the empty list.
+   * @param struct
+   * @return true this is a predicate '.'/2.
+   */
+  public static boolean isListNode(Struct struct) {
+    return struct.getName() == FUNCTOR_LIST_NODE && struct.getArity() == 2;
+  }
+
 
   /**
    * Make sure a Term is a Prolog List.

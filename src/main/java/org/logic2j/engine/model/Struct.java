@@ -60,20 +60,6 @@ public class Struct extends Term implements Cloneable {
 
 
   // ---------------------------------------------------------------------------
-  // Constants defining Prolog lists
-  // ---------------------------------------------------------------------------
-
-  public static final String FUNCTOR_LIST_NODE = ".";
-
-  public static final String LIST_ELEM_SEPARATOR = ","; // In notations [a,b,c]
-
-  public static final char LIST_CLOSE = ']';
-
-  public static final char LIST_OPEN = '[';
-
-  public static final char HEAD_TAIL_SEPARATOR = '|';
-
-  // ---------------------------------------------------------------------------
   // Some key atoms as singletons
   // ---------------------------------------------------------------------------
 
@@ -366,12 +352,12 @@ public class Struct extends Term implements Cloneable {
       if (PrologLists.isEmptyList(tailStruct)) {
         return head.toString();
       }
-      return head.toString() + LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
+      return head.toString() + PrologLists.LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
     }
     final StringBuilder sb = new StringBuilder();
     // Head
     sb.append(head);
-    sb.append(HEAD_TAIL_SEPARATOR);
+    sb.append(PrologLists.HEAD_TAIL_SEPARATOR);
     // Tail
     sb.append(tail.toString());
     return sb.toString();
@@ -568,10 +554,10 @@ public class Struct extends Term implements Cloneable {
     final StringBuilder sb = new StringBuilder();
     final int nArity = getArity();
     // list case
-    if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
-      sb.append(LIST_OPEN);
+    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
+      sb.append(PrologLists.LIST_OPEN);
       sb.append(formatPListRecursive());
-      sb.append(LIST_CLOSE);
+      sb.append(PrologLists.LIST_CLOSE);
       return sb.toString();
     }
     sb.append(TermApi.quoteIfNeeded(getName()));

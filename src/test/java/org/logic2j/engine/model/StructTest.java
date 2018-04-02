@@ -79,7 +79,7 @@ public class StructTest {
         final Struct pList = PrologLists.createPList(new Object[]{5, 6, 7});
         assertThat(pList).isNotNull();
         assertThat(pList.getArity()).isEqualTo(2);
-        assertThat(pList.getName()).isEqualTo(Struct.FUNCTOR_LIST_NODE);
+        assertThat(pList.getName()).isEqualTo(PrologLists.FUNCTOR_LIST_NODE);
         assertThat(pList.getPredicateSignature()).isEqualTo("./2");
         assertThat(pList.getLHS()).isEqualTo(5);
         assertThat(PrologLists.listHead(pList)).isEqualTo(5);
