@@ -16,7 +16,6 @@
  */
 package org.logic2j.engine.model;
 
-import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
@@ -39,40 +38,44 @@ public class Struct extends Term implements Cloneable {
   // Names of functors
   // ---------------------------------------------------------------------------
 
-  public static final String LIST_SEPARATOR = ","; // In notations pred(a, b, c)
+  // TODO Move these constants to a common place?
+  /**
+   * This is the logical "AND" operator, usable with /2 or /* arity.
+   */
+  public static final String FUNCTOR_COMMA = ","; // No need to "intern()" a compile-time constant
 
-  public static final char PAR_CLOSE = ')';
+  /**
+   * This is the logical "OR" operator, usable with /2 or /* arity.
+   */
+  public static final String FUNCTOR_SEMICOLON = ";"; // No need to "intern()" a compile-time constant
 
-  public static final char PAR_OPEN = '(';
+  public static final String FUNCTOR_TRUE = "true";
+  // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
+
+  public static final String FUNCTOR_FALSE = "false"; // TODO do we need "false" or is this "fail"? // No need to "intern()" a compile-time constant
+
+  public static final String FUNCTOR_CUT = "!";
+  // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
 
   public static final String FUNCTOR_CALL = "call"; // No need to "intern()" a compile-time constant
 
   public static final String FUNCTOR_CLAUSE = ":-"; // No need to "intern()" a compile-time constant
 
-  // TODO Move these constants to a common place?
-  // TODO Replace all calls to intern() by some factory to initialize our constants. Useless to do it here in Java all constant strings are already internalized?
-  public static final String FUNCTOR_COMMA = ",";
-
-  public static final String FUNCTOR_CUT = "!";
-      // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
-
-  public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
-
 
   // ---------------------------------------------------------------------------
   // Some key atoms as singletons
   // ---------------------------------------------------------------------------
-
-  public static final String FUNCTOR_SEMICOLON = ";";
-
-  public static final String FUNCTOR_TRUE = "true";
-      // Would like .intern() but it's anyway the case, and using this constant from an annotation won't work
-
   public static final Struct ATOM_TRUE = new Struct(FUNCTOR_TRUE);
 
-  public static final String FUNCTOR_FALSE = "false"; // TODO do we need "false" or is this "fail"?
-
   public static final Struct ATOM_FALSE = new Struct(FUNCTOR_FALSE);
+
+  public static final Struct ATOM_CUT = new Struct(FUNCTOR_CUT);
+
+  public static final String LIST_SEPARATOR = ","; // In notations pred(a, b, c)
+
+  public static final char PAR_CLOSE = ')';
+
+  public static final char PAR_OPEN = '(';
 
   /**
    * Indicate the arity of a variable arguments predicate, such as write/N.
@@ -197,7 +200,7 @@ public class Struct extends Term implements Cloneable {
 
   /**
    * Factory to builds a compound, with non-{@link Term} arguments that will be converted
-   * by {@link TermApi#valueOf(Object, org.logic2j.core.api.TermAdapter.FactoryMode)}.
+   * by {@link TermApi#valueOf(Object)}.
    *
    * @note This method is a static factory, not a constructor, to emphasize that arguments
    * are not of the type needed by this class, but need transformation.
@@ -206,7 +209,7 @@ public class Struct extends Term implements Cloneable {
     final Struct newInstance = new Struct(theFunctor, argList.length);
     int i = 0;
     for (final Object element : argList) {
-      newInstance.args[i++] = TermApi.valueOf(element, TermAdapter.FactoryMode.ANY_TERM);
+      newInstance.args[i++] = TermApi.valueOf(element);
     }
     return newInstance;
   }

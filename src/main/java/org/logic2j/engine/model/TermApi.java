@@ -393,7 +393,7 @@ public final class TermApi {
   }
 
   public static Object valueOf(Object theObject) {
-    return valueOf(theObject, TermAdapter.FactoryMode.ATOM);
+    return valueOf(theObject, TermAdapter.FactoryMode.ANY_TERM);
   }
 
   /**
