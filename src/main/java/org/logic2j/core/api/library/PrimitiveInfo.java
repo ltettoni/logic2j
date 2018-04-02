@@ -128,7 +128,6 @@ public class PrimitiveInfo {
     final int nbArgs = this.isVarargs ? 2 : (1 + arity);
     final Object[] args = new Object[nbArgs];
     int i = 0;
-//    args[i++] = currentVars.getSolutionListener();
     args[i++] = currentVars;
     if (this.isVarargs) {
       // All arguments as an array

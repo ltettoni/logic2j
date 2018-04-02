@@ -35,7 +35,6 @@ import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.CollectionUtils;
 import org.logic2j.engine.util.TypeUtils;
@@ -54,7 +53,7 @@ import java.util.Set;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
- * TODO the {@link #select(SolutionListener, UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
+ * TODO the {@link #select(UnifyContext, Object...)} method should actually take the goal and create a constraint graph, then transform the graph into SQL.
  */
 public class RDBLibrary extends LibraryBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(RDBLibrary.class);

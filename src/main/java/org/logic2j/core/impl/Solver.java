@@ -212,6 +212,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
       return Continuation.CONTINUE;
     }
 
+    final SolutionListener solutionListener = currentVars.getSolutionListener();
     Integer result = Continuation.CONTINUE;
     // Now fetch data
     final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
@@ -221,7 +222,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
         final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
         final boolean unified = varsAfterHeadUnified != null;
         if (unified) {
-          final Integer continuation = currentVars.getSolutionListener().onSolution(currentVars);
+          final Integer continuation = solutionListener.onSolution(currentVars);
           if (continuation != Continuation.CONTINUE) {
             result = continuation;
           }

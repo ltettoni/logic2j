@@ -166,10 +166,6 @@ public class DefaultLibraryManager implements LibraryManager {
                 */
         final int nbMethodParams = paramTypes.length;
         int i = 0;
-//        if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
-//          throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
-//        }
-//        i++;
         if (!(UnifyContext.class.isAssignableFrom(paramTypes[i]))) {
           throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + UnifyContext.class);
         }

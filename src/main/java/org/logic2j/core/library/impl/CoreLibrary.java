@@ -172,7 +172,6 @@ public class CoreLibrary extends LibraryBase {
 
   @Override
   public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars) {
-    final SolutionListener theListener = currentVars.getSolutionListener();
     final Object result;
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
     final Object[] goalStructArgs = theGoalStruct.getArgs();
@@ -345,7 +344,7 @@ public class CoreLibrary extends LibraryBase {
       continuation = Continuation.CONTINUE;
     } else {
       // Not found - notify a solution (that's the purpose of not/1 !)
-      continuation = currentVars.getSolutionListener().onSolution(currentVars);
+      continuation = notifySolution(currentVars);
     }
     return continuation;
   }
