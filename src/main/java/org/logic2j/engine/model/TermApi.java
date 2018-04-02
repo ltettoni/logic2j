@@ -348,6 +348,37 @@ public final class TermApi {
     return theText;
   }
 
+  /**
+   * Will set the "primitiveInfo" field to directly relate a token to an existing primitive
+   * defined in theContent
+   *
+   * @param struct
+   * @param theContent Primitives in a Library
+   */
+  public static void assignPrimitiveInfo(Struct struct, LibraryContent theContent) {
+    // Find by exact arity match
+    struct.setPrimitiveInfo(theContent.getPrimitive(struct.getPredicateSignature()));
+    if (struct.getPrimitiveInfo() == null) {
+      // Alternate find by wildcard (varargs signature)
+      struct.setPrimitiveInfo(theContent.getPrimitive(struct.getVarargsPredicateSignature()));
+    }
+    for (Object child : struct.getArgs()) {
+      // Not sure what was the intention in the following section but this looks invoked, but useless.
+      // All test cases pass OK without.
+      //      if (child instanceof String) {
+      //        if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
+      //          // Convert to Struct so that we can assign a primitive
+      //          child = new Struct((String) child);
+      //          child = TermApi.normalize(child, theContent);
+      //          this.args[i] = child; // Not 100% sure it's good to mutate
+      //        }
+      //      }
+      if (child instanceof Struct) {
+        assignPrimitiveInfo(((Struct) child), theContent);
+      }
+    }
+  }
+
 
   // TODO Currently unused - but probably we should detect cycles!
   void avoidCycle(Struct theClause) {
@@ -370,7 +401,7 @@ public final class TermApi {
 
 
   /**
-   * Normalize any term and refer to the primitives and operators defined in LibaryContent.
+   * Normalize any term and refer to the primitives and operators defined in LibraryContent.
    *
    * @param theTerm           To be normalized
    * @param theLibraryContent where primitives are to be found and assigned
@@ -386,7 +417,7 @@ public final class TermApi {
         }
       }
       if (factorized instanceof Struct) {
-        ((Struct) factorized).assignPrimitiveInfo(theLibraryContent);
+        assignPrimitiveInfo(((Struct) factorized), theLibraryContent);
       }
     }
     return factorized;

@@ -16,7 +16,6 @@
  */
 package org.logic2j.engine.model;
 
-import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.SolverException;
@@ -311,35 +310,6 @@ public class Struct extends Term implements Cloneable {
     this.signature = (this.getName() + '/' + this.arity).intern();
   }
 
-  /**
-   * Will set the "primitiveInfo" field to directly relate a token to an existing primitive
-   * defined in theContent
-   *
-   * @param theContent Primitives in a Library
-   */
-  public void assignPrimitiveInfo(LibraryContent theContent) {
-    // Find by exact arity match
-    this.primitiveInfo = theContent.getPrimitive(getPredicateSignature());
-    if (this.primitiveInfo == null) {
-      // Alternate find by wildcard (varargs signature)
-      this.primitiveInfo = theContent.getPrimitive(getVarargsPredicateSignature());
-    }
-    for (int i = 0; i < this.arity; i++) {
-      Object child = this.args[i];
-      if (child instanceof String) {
-        if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
-          // Convert to Struct so that we can assign a primitive
-          child = new Struct((String) child);
-          child = TermApi.normalize(child, theContent);
-          this.args[i] = child; // Not 100% sure it's good to mutate
-        }
-      }
-      if (child instanceof Struct) {
-        ((Struct) child).assignPrimitiveInfo(theContent);
-      }
-    }
-  }
-
 
   // --------------------------------------------------------------------------
   // Accessors
@@ -480,6 +450,9 @@ public class Struct extends Term implements Cloneable {
     return this.primitiveInfo;
   }
 
+  public void setPrimitiveInfo(PrimitiveInfo primitiveInfo) {
+    this.primitiveInfo = primitiveInfo;
+  }
 
   // ---------------------------------------------------------------------------
   // Methods of java.lang.Object
