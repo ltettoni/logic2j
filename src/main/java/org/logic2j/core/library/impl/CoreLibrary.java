@@ -345,7 +345,7 @@ public class CoreLibrary extends LibraryBase {
       continuation = Continuation.CONTINUE;
     } else {
       // Not found - notify a solution (that's the purpose of not/1 !)
-      continuation = theListener.onSolution(currentVars);
+      continuation = currentVars.getSolutionListener().onSolution(currentVars);
     }
     return continuation;
   }
@@ -356,7 +356,7 @@ public class CoreLibrary extends LibraryBase {
     ensureBindingIsNotAFreeVar(value, "atom_length/2", 0);
     final String atomText = value.toString();
     final Long atomLength = (long) atomText.length();
-    return unify(theListener, currentVars, atomLength, theLength);
+    return unify(currentVars.getSolutionListener(), currentVars, atomLength, theLength);
   }
 
   /**
@@ -417,7 +417,7 @@ public class CoreLibrary extends LibraryBase {
 
     // And unify with result
     final Integer counted = (int) listenerForSubGoal.count();
-    return unify(theListener, currentVars, theNumber, counted);
+    return unify(currentVars.getSolutionListener(), currentVars, theNumber, counted);
   }
 
   @Predicate
@@ -434,7 +434,7 @@ public class CoreLibrary extends LibraryBase {
     final Struct plist = Struct.createPList(allReifiedResults);
 
     // And unify with result
-    return unify(theListener, currentVars, theResult, plist);
+    return unify(currentVars.getSolutionListener(), currentVars, theResult, plist);
   }
 
   @Predicate
@@ -451,7 +451,7 @@ public class CoreLibrary extends LibraryBase {
     final Struct plist = Struct.createPList(distinctReifiedResults);
 
     // And unify with result
-    return unify(theListener, currentVars, theResult, plist);
+    return unify(currentVars.getSolutionListener(), currentVars, theResult, plist);
   }
 
   /**
@@ -470,7 +470,7 @@ public class CoreLibrary extends LibraryBase {
     }
     final ArrayList<Object> javalist = ((Struct) value).javaListFromPList(new ArrayList<Object>(), Object.class);
     final Long listLength = (long) javalist.size();
-    return unify(theListener, currentVars, listLength, theLength);
+    return unify(currentVars.getSolutionListener(), currentVars, listLength, theLength);
   }
 
   @Predicate
@@ -512,7 +512,7 @@ public class CoreLibrary extends LibraryBase {
       final Struct lst2 = (Struct) listValue;
       final Struct flattened = lst2.predicateFromPList();
 
-      return unify(theListener, currentVars, predicateValue, flattened);
+      return unify(currentVars.getSolutionListener(), currentVars, predicateValue, flattened);
     } else {
       // thePredicate is bound
       if (predicateValue instanceof Struct) {
@@ -524,7 +524,7 @@ public class CoreLibrary extends LibraryBase {
           elems.add(arg);
         }
         final Struct plist = Struct.createPList(elems);
-        return unify(theListener, currentVars, plist, theList);
+        return unify(currentVars.getSolutionListener(), currentVars, plist, theList);
       }
     }
     return Continuation.CONTINUE;
@@ -537,7 +537,7 @@ public class CoreLibrary extends LibraryBase {
       // No solution
       return Continuation.CONTINUE;
     }
-    return unify(theListener, currentVars, t1, evaluated);
+    return unify(currentVars.getSolutionListener(), currentVars, t1, evaluated);
   }
 
   // ---------------------------------------------------------------------------
@@ -554,14 +554,13 @@ public class CoreLibrary extends LibraryBase {
   /**
    * For all binary predicates that compare numeric values.
    *
-   * @param theListener
    * @param currentVars
    * @param t1
    * @param t2
    * @param theEvaluationFunction
    * @return The {@link Continuation} as returned by the solution notified.
    */
-  private Integer binaryComparisonPredicate(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2,
+  private Integer binaryComparisonPredicate(UnifyContext currentVars, Object t1, Object t2,
       ComparisonFunction theEvaluationFunction) {
     final Object effectiveT1 = TermApi.evaluate(t1, currentVars);
     final Object effectiveT2 = TermApi.evaluate(t2, currentVars);
@@ -586,32 +585,32 @@ public class CoreLibrary extends LibraryBase {
 
   @Predicate(name = ">")
   public Integer expression_greater_than(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARE_GT);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARE_GT);
   }
 
   @Predicate(name = "<")
   public Integer expression_lower_than(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARISON_LT);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LT);
   }
 
   @Predicate(name = ">=")
   public Integer expression_greater_equal_than(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARISON_GE);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_GE);
   }
 
   @Predicate(name = "=<")
   public Integer expression_lower_equal_than(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARISON_LE);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LE);
   }
 
   @Predicate(name = "=:=")
   public Integer expression_equals(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARISON_EQ);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_EQ);
   }
 
   @Predicate(name = "=\\=")
   public Integer expression_not_equals(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(theListener, currentVars, t1, t2, COMPARISON_NE);
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_NE);
   }
 
   // ---------------------------------------------------------------------------
@@ -623,7 +622,7 @@ public class CoreLibrary extends LibraryBase {
     Number apply(Number val1, Number val2);
   }
 
-  private Object binaryFunctor(@SuppressWarnings("unused") SolutionListener theListener, UnifyContext currentVars, Object theTerm1, Object theTerm2,
+  private Object binaryFunctor(UnifyContext currentVars, Object theTerm1, Object theTerm2,
       AggregationFunction theEvaluationFunction) {
     final Object t1 = TermApi.evaluate(theTerm1, currentVars);
     final Object t2 = TermApi.evaluate(theTerm2, currentVars);
@@ -638,7 +637,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Functor(name = "+")
   public Object plus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_PLUS);
+    return binaryFunctor(currentVars, t1, t2, AGGREGATION_PLUS);
   }
 
   /**
@@ -650,7 +649,7 @@ public class CoreLibrary extends LibraryBase {
    */
   @Functor(name = "-")
   public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryFunctor(theListener, currentVars, t1, t2, AGGREGATION_MINUS);
+    return binaryFunctor(currentVars, t1, t2, AGGREGATION_MINUS);
   }
 
   /**
@@ -661,7 +660,7 @@ public class CoreLibrary extends LibraryBase {
    */
   @Functor(name = "*")
   public Object multiply(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return binaryFunctor(theListener, currentVars, t1, t2, AGGREGRATION_TIMES);
+    return binaryFunctor(currentVars, t1, t2, AGGREGRATION_TIMES);
   }
 
   /**
@@ -672,6 +671,6 @@ public class CoreLibrary extends LibraryBase {
    */
   @Functor(name = "-")
   public Object minus(SolutionListener theListener, UnifyContext currentVars, Object t1) {
-    return binaryFunctor(theListener, currentVars, t1, 0L, AGGREGATION_NEGATE);
+    return binaryFunctor(currentVars, t1, 0L, AGGREGATION_NEGATE);
   }
 }

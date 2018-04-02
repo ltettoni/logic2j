@@ -133,7 +133,7 @@ public class PojoLibrary extends LibraryBase {
 
   @Predicate
   public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
-    return property(theListener, currentVars, thePojo, thePropertyName, theValue, null);
+    return property(null, currentVars, thePojo, thePropertyName, theValue, null);
   }
 
 
