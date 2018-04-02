@@ -24,6 +24,7 @@ import org.logic2j.core.impl.NotListener;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.Solver;
 import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
@@ -430,7 +431,7 @@ public class CoreLibrary extends LibraryBase {
     // copied into the resulting plist, so there's no need to reindex.
     // However, the root level Struct that makes up the list does contain a bogus
     // index value but -1.
-    final Struct plist = Struct.createPList(allReifiedResults);
+    final Struct plist = PrologLists.createPList(allReifiedResults);
 
     // And unify with result
     return unify(currentVars, theResult, plist);
@@ -447,7 +448,7 @@ public class CoreLibrary extends LibraryBase {
     // copied into the resulting plist, so there's no need to reindex.
     // However, the root level Struct that makes up the list does contain a bogus
     // index value but -1.
-    final Struct plist = Struct.createPList(distinctReifiedResults);
+    final Struct plist = PrologLists.createPList(distinctReifiedResults);
 
     // And unify with result
     return unify(currentVars, theResult, plist);
@@ -467,7 +468,7 @@ public class CoreLibrary extends LibraryBase {
     if (!TermApi.isList(value)) {
       throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
     }
-    final ArrayList<Object> javalist = ((Struct) value).javaListFromPList(new ArrayList<Object>(), Object.class);
+    final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<Object>(), Object.class);
     final Long listLength = (long) javalist.size();
     return unify(currentVars, listLength, theLength);
   }
@@ -509,7 +510,7 @@ public class CoreLibrary extends LibraryBase {
       final Object listValue = currentVars.reify(theList);
       ensureBindingIsNotAFreeVar(listValue, "=../2", 1);
       final Struct lst2 = (Struct) listValue;
-      final Struct flattened = lst2.predicateFromPList();
+      final Struct flattened = PrologLists.predicateFromPList(lst2);
 
       return unify(currentVars, predicateValue, flattened);
     } else {
@@ -522,7 +523,7 @@ public class CoreLibrary extends LibraryBase {
         for (Object arg : struct.getArgs()) {
           elems.add(arg);
         }
-        final Struct plist = Struct.createPList(elems);
+        final Struct plist = PrologLists.createPList(elems);
         return unify(currentVars, plist, theList);
       }
     }

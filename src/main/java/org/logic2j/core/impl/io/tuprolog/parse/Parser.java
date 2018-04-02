@@ -21,6 +21,7 @@ import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.Var;
@@ -447,7 +448,7 @@ public class Parser {
     if (t1.isType(LBRA)) {
       final Token t2 = this.tokenizer.readToken();
       if (t2.isType(RBRA)) {
-        return Struct.EMPTY_LIST;
+        return PrologLists.EMPTY_LIST;
       }
 
       this.tokenizer.unreadToken(t2);
@@ -503,14 +504,14 @@ public class Parser {
     final Object head = expr(true);
     final Token t = this.tokenizer.readToken();
     if (Struct.LIST_ELEM_SEPARATOR.equals(t.text)) {
-      return Struct.createPList(head, exprA0_list());
+      return PrologLists.createPList(head, exprA0_list());
     }
     if ("|".equals(t.text)) {
-      return Struct.createPList(head, expr(true));
+      return PrologLists.createPList(head, expr(true));
     }
     if ("]".equals(t.text)) {
       this.tokenizer.unreadToken(t);
-      return Struct.createPList(head, Struct.EMPTY_LIST);
+      return PrologLists.createPList(head, PrologLists.EMPTY_LIST);
     }
     throw new InvalidTermException("The expression \"" + head + "\" is not followed by either a ',' or '|'  or ']'.");
   }

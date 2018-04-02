@@ -25,11 +25,11 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.library.impl.LibraryBase;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificException;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
-import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.lang.reflect.InvocationTargetException;
@@ -331,14 +331,14 @@ public class PojoLibrary extends LibraryBase {
         return Continuation.CONTINUE;
       }
       final List<Object> elements = new ArrayList<Object>();
-      ((Struct) pList).javaListFromPList(elements, Object.class);
+      PrologLists.javaListFromPList(((Struct) pList), elements, Object.class);
       return unifyAndNotify(currentVars, elements, jList);
     } else {
       if (!(jList instanceof List<?>)) {
         // No solution
         return Continuation.CONTINUE;
       }
-      final Struct elements = Struct.createPList((List) jList);
+      final Struct elements = PrologLists.createPList((List) jList);
       return unifyAndNotify(currentVars, elements, pList);
     }
   }

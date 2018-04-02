@@ -21,10 +21,8 @@ import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.SolverException;
-import org.logic2j.engine.util.TypeUtils;
 import org.logic2j.engine.visitor.TermVisitor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -64,13 +62,6 @@ public class Struct extends Term implements Cloneable {
   // ---------------------------------------------------------------------------
   // Constants defining Prolog lists
   // ---------------------------------------------------------------------------
-
-  public static final String FUNCTOR_EMPTY_LIST = "[]"; // The list end marker
-
-  /**
-   * The empty list complete Struct.
-   */
-  public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST, 0);
 
   public static final String FUNCTOR_LIST_NODE = ".";
 
@@ -366,216 +357,13 @@ public class Struct extends Term implements Cloneable {
   // ---------------------------------------------------------------------------
 
 
-  /**
-   * Create a Prolog list from head and tail.
-   *
-   * @param head
-   * @param tail
-   * @return A prolog list provided head and tail
-   */
-  public static Struct createPList(Object head, Object tail) {
-    final Struct result = new Struct(FUNCTOR_LIST_NODE, 2);
-    result.args[0] = head;
-    result.args[1] = tail;
-    return result;
-  }
-
-  /**
-   * Create a Prolog list from a Java collection.
-   *
-   * @param theJavaCollection We use a collection not an Iterable because we need to know its size at first.
-   * @return A Prolog List structure from a Java {@link java.util.Collection}.
-   */
-  public static Struct createPList(Collection<?> theJavaCollection) {
-    final int size = theJavaCollection.size();
-    // Unroll elements into an array (we need this since we don't have an index-addressable collection)
-    final Object[] array = new Object[size];
-    int index = 0;
-    for (final Object element : theJavaCollection) {
-      array[index++] = element;
-    }
-    return createPList(array);
-  }
-
-  /**
-   * @param array
-   * @return A Prolog List structure from a Java array.
-   */
-  public static Struct createPList(final Object[] array) {
-    // Assemble the prolog list (head|tail) nodes from the last to the first element
-    Struct tail = Struct.EMPTY_LIST;
-    for (int i = array.length - 1; i >= 0; i--) {
-      final Object head = array[i];
-      tail = Struct.createPList(head, tail);
-    }
-    return tail;
-  }
-
-
-  /**
-   * @return true If this structure an empty list
-   */
-  public boolean isEmptyList() {
-    return this.name == FUNCTOR_EMPTY_LIST && this.arity == 0;
-  }
-
-  /**
-   * @return true if this list is the empty list, or if it is a Prolog list.
-   */
-  boolean isList() {
-    return (this.name == FUNCTOR_LIST_NODE && this.arity == 2 && TermApi.isList(this.args[1])) || isEmptyList();
-  }
-
-
-  /**
-   * Make sure a Term is a Prolog List.
-   *
-   * @param thePList
-   * @throws InvalidTermException If this is not a list.
-   */
-  protected void assertPList(Term thePList) {
-    if (!TermApi.isList(thePList)) {
-      throw new InvalidTermException("The structure \"" + thePList + "\" is not a Prolog list.");
-    }
-  }
-
-  /**
-   * Gets the head of this structure, which is assumed to be a list.
-   * <p/>
-   * <p>
-   * Gets the head of this structure, which is supposed to be a list. If the callee structure is not a list, throws an
-   * <code>PrologNonSpecificError</code>
-   * </p>
-   *
-   * @throws InvalidTermException If this is not a list.
-   */
-  public Object listHead() {
-    assertPList(this);
-    return getLHS();
-  }
-
-  /**
-   * Gets the tail of this structure, which is supposed to be a list.
-   *
-   * @throws InvalidTermException if this is not a prolog list.
-   */
-  public Struct listTail() {
-    assertPList(this);
-    return (Struct) getRHS();
-  }
-
-  /**
-   * Gets the number of elements of this structure, which is supposed to be a list.
-   *
-   * @throws InvalidTermException if this is not a prolog list.
-   */
-  public int listSize() {
-    assertPList(this);
-    Struct running = this;
-    int count = 0;
-    while (!running.isEmptyList()) {
-      count++;
-      running = (Struct) running.getRHS();
-    }
-    return count;
-  }
-
-  /**
-   * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
-   * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
-   *
-   * @throws InvalidTermException if this is not a prolog list.
-   */
-  // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
-  public Struct predicateFromPList() {
-    assertPList(this);
-    final Object functor = getLHS();
-    if (!TermApi.isAtom(functor)) {
-      return null;
-    }
-    Struct runningElement = (Struct) getRHS();
-    final ArrayList<Object> elements = new ArrayList<Object>();
-    while (!runningElement.isEmptyList()) {
-      if (!runningElement.isList()) {
-        return null;
-      }
-      elements.add(runningElement.getLHS());
-      runningElement = (Struct) runningElement.getRHS();
-    }
-    final String fnct;
-    if (functor instanceof String) {
-      fnct = (String) functor;
-    } else {
-      fnct = ((Struct) functor).name;
-    }
-
-    return new Struct(fnct, elements.toArray(new Object[elements.size()]));
-  }
-
-  /**
-   * Traverse Prolog List adding all elements (in right order) into a target collection.
-   *
-   * @param theCollectionToFillOrNull
-   * @param theElementRequiredClass
-   * @param <Q>
-   * @param <T>
-   * @return
-   * @throws InvalidTermException if this is not a prolog list.
-   */
-  @SuppressWarnings("unchecked")
-  public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
-    return javaListFromPList(theCollectionToFillOrNull, theElementRequiredClass, false);
-  }
-
-  /**
-   * Traverse Prolog List adding all elements (in right order) into a target collection, possibly recursing if elements are
-   * Prolog lists too.
-   *
-   * @param theCollectionToFillOrNull
-   * @param theElementRequiredClass
-   * @param <Q>
-   * @param <T>
-   * @return
-   * @throws InvalidTermException if this is not a prolog list.
-   */
-  @SuppressWarnings("unchecked")
-  public <Q, T extends Collection<Q>> T javaListFromPList(T theCollectionToFillOrNull, Class<Q> theElementRequiredClass, boolean recursive) {
-    final T result;
-    if (theCollectionToFillOrNull == null) {
-      result = (T) new ArrayList<Q>();
-    } else {
-      result = theCollectionToFillOrNull;
-    }
-    // In case not a list, we just add a single element to the collection to fill
-    if (!this.isList()) {
-      result.add(TypeUtils.safeCastNotNull("casting single value", this, theElementRequiredClass));
-      return result;
-    }
-
-    Struct runningElement = this;
-    int idx = 0;
-    while (!runningElement.isEmptyList()) {
-      assertPList(runningElement);
-      final Object lhs = runningElement.getLHS();
-      if (recursive && TermApi.isList(lhs)) {
-        ((Struct) lhs).javaListFromPList(theCollectionToFillOrNull, theElementRequiredClass, recursive);
-      } else {
-        final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + this, lhs, theElementRequiredClass);
-        result.add(term);
-      }
-      runningElement = (Struct) runningElement.getRHS();
-      idx++;
-    }
-    return result;
-  }
-
   private String formatPListRecursive() {
     final Object head = getLHS();
     final Object tail = getRHS();
     if (TermApi.isList(tail)) {
       final Struct tailStruct = (Struct) tail;
       // .(h, []) will be displayed as h
-      if (tailStruct.isEmptyList()) {
+      if (PrologLists.isEmptyList(tailStruct)) {
         return head.toString();
       }
       return head.toString() + LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
@@ -774,8 +562,8 @@ public class Struct extends Term implements Cloneable {
   }
 
   private String formatStruct() {
-    if (isEmptyList()) {
-      return Struct.FUNCTOR_EMPTY_LIST;
+    if (PrologLists.isEmptyList(this)) {
+      return PrologLists.FUNCTOR_EMPTY_LIST;
     }
     final StringBuilder sb = new StringBuilder();
     final int nArity = getArity();

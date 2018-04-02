@@ -19,6 +19,7 @@ package org.logic2j.core.impl;
 
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.Operator;
@@ -122,8 +123,8 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
    */
   private CharSequence formatStruct(Struct theStruct) {
     // empty list case
-    if (theStruct.isEmptyList()) {
-      return Struct.FUNCTOR_EMPTY_LIST;
+    if (PrologLists.isEmptyList(theStruct)) {
+      return PrologLists.FUNCTOR_EMPTY_LIST;
     }
     final StringBuilder sb = new StringBuilder();
     final String name = theStruct.getName();
@@ -157,7 +158,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final Object tail = theStruct.getRHS();
     if (TermApi.isList(tail)) {
       final Struct tailStruct = (Struct) tail;
-      if (tailStruct.isEmptyList()) {
+      if (PrologLists.isEmptyList(tailStruct)) {
         return accept(head);
       }
       // Why this special test?
@@ -206,7 +207,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final Object t = theStruct.getRHS();
     if (TermApi.isList(t)) {
       final Struct tl = (Struct) t;
-      if (tl.isEmptyList()) {
+      if (PrologLists.isEmptyList(tl)) {
         return toStringAsArgY(h, 0);
       }
       final StringBuilder sb = new StringBuilder();
@@ -235,8 +236,8 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final int arity = theStruct.getArity();
 
     if (name.equals(Struct.FUNCTOR_LIST_NODE) && arity == 2) {
-      if (theStruct.getLHS() instanceof Struct && ((Struct) theStruct.getLHS()).isEmptyList()) {
-        return Struct.FUNCTOR_EMPTY_LIST;
+      if (theStruct.getLHS() instanceof Struct && PrologLists.isEmptyList(((Struct) theStruct.getLHS()))) {
+        return PrologLists.FUNCTOR_EMPTY_LIST;
       }
       final StringBuilder sb = new StringBuilder();
       sb.append(Struct.LIST_OPEN);

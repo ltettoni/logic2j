@@ -83,7 +83,7 @@ public final class TermApi {
     }
     if (theTerm instanceof Struct) {
       final Struct s = (Struct) theTerm;
-      return s.getArity() == 0 || s.isEmptyList();
+      return s.getArity() == 0 || PrologLists.isEmptyList(s);
     }
     return false;
   }
@@ -271,7 +271,7 @@ public final class TermApi {
    * @return true if this Term denotes a Prolog list.
    */
   public static boolean isList(Object theTerm) {
-    return theTerm instanceof Struct && ((Struct) theTerm).isList();
+    return theTerm instanceof Struct && PrologLists.isList(((Struct) theTerm));
   }
 
 

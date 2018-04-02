@@ -24,6 +24,7 @@ import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
@@ -94,7 +95,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         if (isAtom) {
           builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));
         } else if (TermApi.isList(t)) {
-          addConjunctionList(builder, table, i, ((Struct) t).javaListFromPList(new ArrayList<Object>(), Object.class));
+          addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct) t), new ArrayList<Object>(), Object.class));
         }
       }
       // Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a

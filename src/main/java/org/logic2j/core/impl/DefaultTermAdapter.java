@@ -19,6 +19,7 @@ package org.logic2j.core.impl;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.slf4j.Logger;
@@ -170,7 +171,7 @@ public class DefaultTermAdapter implements TermAdapter {
       return (T) String.valueOf(theTerm);
     }
     if (theTerm instanceof Struct && theTargetClass == List.class) {
-      final Collection<?> collection = ((Struct) theTerm).javaListFromPList(null, Object.class);
+      final Collection<?> collection = PrologLists.javaListFromPList(((Struct) theTerm), null, Object.class);
       return (T) collection;
     }
 
