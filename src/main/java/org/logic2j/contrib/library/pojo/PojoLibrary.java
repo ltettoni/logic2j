@@ -27,7 +27,6 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
@@ -322,7 +321,7 @@ public class PojoLibrary extends LibraryBase {
     final Object jList = currentVars.reify(javaList);
     if (javaList instanceof Var) {
       // Prolog to Java
-      if (!TermApi.isList(pList)) {
+      if (!PrologLists.isList(pList)) {
         // No solution
         return Continuation.CONTINUE;
       }

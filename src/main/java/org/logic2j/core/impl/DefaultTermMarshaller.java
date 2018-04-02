@@ -156,7 +156,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
   private CharSequence formatPListRecursive(Struct theStruct) {
     final Object head = theStruct.getLHS();
     final Object tail = theStruct.getRHS();
-    if (TermApi.isList(tail)) {
+    if (PrologLists.isList(tail)) {
       final Struct tailStruct = (Struct) tail;
       if (PrologLists.isEmptyList(tailStruct)) {
         return accept(head);
@@ -205,7 +205,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
   private CharSequence toStringAsList(Struct theStruct) {
     final Object h = theStruct.getLHS();
     final Object t = theStruct.getRHS();
-    if (TermApi.isList(t)) {
+    if (PrologLists.isList(t)) {
       final Struct tl = (Struct) t;
       if (PrologLists.isEmptyList(tl)) {
         return toStringAsArgY(h, 0);

@@ -340,7 +340,7 @@ public class RDBLibrary extends LibraryBase {
       return ((Number) theTerm).longValue();
     } else if (theTerm instanceof Struct) {
       final Struct struct = (Struct) theTerm;
-      if (TermApi.isList(struct)) {
+      if (PrologLists.isList(struct)) {
         final Set<Object> javaList = new HashSet<Object>();
         for (final Term t : PrologLists.javaListFromPList(struct, new ArrayList<Term>(), Term.class)) {
           javaList.add(jdbcFromTerm(t));

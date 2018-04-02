@@ -79,12 +79,13 @@ public final class PrologLists {
     return tail;
   }
 
+
   /**
-   * @return true If this structure an empty list
-   * @param struct
+   * @param theTerm
+   * @return true theTerm is a {@link Struct} and if {@link PrologLists#isList(Struct)}
    */
-  public static boolean isEmptyList(Struct struct) {
-    return struct.getName() == FUNCTOR_EMPTY_LIST && struct.getArity() == 0;
+  public static boolean isList(Object theTerm) {
+    return theTerm instanceof Struct && isList(((Struct) theTerm));
   }
 
   /**
@@ -92,7 +93,7 @@ public final class PrologLists {
    * @return true if this list is the empty list, or any prolog list of 1 or more elements.
    */
   public static boolean isList(Struct struct) {
-    return (isListNode(struct) && TermApi.isList(struct.getArg(1))) || isEmptyList(struct);
+    return (isListNode(struct) && isList(struct.getArg(1))) || isEmptyList(struct);
   }
 
   /**
@@ -105,14 +106,23 @@ public final class PrologLists {
   }
 
 
+
+  /**
+   * @return true If this structure an empty list
+   * @param struct
+   */
+  public static boolean isEmptyList(Struct struct) {
+    return struct.getName() == FUNCTOR_EMPTY_LIST && struct.getArity() == 0;
+  }
+
   /**
    * Make sure a Term is a Prolog List.
    *
    * @param thePList
-   * @throws InvalidTermException If this is not a list.
+   * @throws InvalidTermException If this is not a prolog list.
    */
-  public static void assertPList(Term thePList) {
-    if (!TermApi.isList(thePList)) {
+  public static void requireList(Term thePList) {
+    if (!isList(thePList)) {
       throw new InvalidTermException("The structure \"" + thePList + "\" is not a Prolog list.");
     }
   }
@@ -129,7 +139,7 @@ public final class PrologLists {
    * @param prologList
    */
   public static Object listHead(Struct prologList) {
-    assertPList(prologList);
+    requireList(prologList);
     return prologList.getLHS();
   }
 
@@ -140,7 +150,7 @@ public final class PrologLists {
    * @param prologList
    */
   public static Struct listTail(Struct prologList) {
-    assertPList(prologList);
+    requireList(prologList);
     return (Struct) prologList.getRHS();
   }
 
@@ -151,7 +161,7 @@ public final class PrologLists {
    * @param prologList
    */
   public static int listSize(Struct prologList) {
-    assertPList(prologList);
+    requireList(prologList);
     Struct running = prologList;
     int count = 0;
     while (!isEmptyList(running)) {
@@ -170,7 +180,7 @@ public final class PrologLists {
    */
   // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
   public static Struct predicateFromPList(Struct prologList) {
-    assertPList(prologList);
+    requireList(prologList);
     final Object functor = prologList.getLHS();
     if (!TermApi.isAtom(functor)) {
       return null;
@@ -240,9 +250,9 @@ public final class PrologLists {
     Struct runningElement = prologList;
     int idx = 0;
     while (!isEmptyList(runningElement)) {
-      assertPList(runningElement);
+      requireList(runningElement);
       final Object lhs = runningElement.getLHS();
-      if (recursive && TermApi.isList(lhs)) {
+      if (recursive && isList(lhs)) {
         javaListFromPList(((Struct) lhs), theCollectionToFillOrNull, theElementRequiredClass, recursive);
       } else {
         final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + prologList, lhs, theElementRequiredClass);
@@ -257,7 +267,7 @@ public final class PrologLists {
   public static StringBuilder formatPListRecursive(Struct prologList, StringBuilder sb) {
     final Object head = listHead(prologList);
     final Object tail = listTail(prologList);
-    if (TermApi.isList(tail)) {
+    if (isList(tail)) {
       final Struct tailStruct = (Struct) tail;
       // .(h, []) will be displayed as h
       if (isEmptyList(tailStruct)) {
@@ -276,4 +286,5 @@ public final class PrologLists {
     }
     return sb;
   }
+
 }

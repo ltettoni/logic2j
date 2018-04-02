@@ -140,7 +140,7 @@ public final class TermApi {
    * @return A collection of terms, never empty. Same terms may appear multiple times.
    */
   static Collection<Object> collectTerms(Object theTerm) {
-    final ArrayList<Object> recipient = new ArrayList<Object>();
+    final ArrayList<Object> recipient = new ArrayList<>();
     collectTermsInto(theTerm, recipient);
     // Remove ourself from the result - we are always at the end of the collection
     recipient.remove(recipient.size() - 1);
@@ -162,7 +162,7 @@ public final class TermApi {
   /**
    * Factorizing will either return a new {@link Term} or this {@link Term} depending if it already exists in the supplied Collection.
    * This will factorize duplicated atoms, numbers, variables, or even structures that are statically equal. A factorized {@link Struct}
-   * will have all occurences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
+   * will have all occurrences of the same {@link Var}iable sharing the same object reference. This is an internal template method: the
    * public API entry point is {@link TermApi#factorize(Object)}; see a more detailed description there.
    *
    * @return Either this, or a new equivalent but factorized Term.
@@ -267,15 +267,6 @@ public final class TermApi {
 
 
 
-  /**
-   * @param theTerm
-   * @return true theTerm is a {@link Struct} and if {@link PrologLists#isList(Struct)}
-   */
-  public static boolean isList(Object theTerm) {
-    return theTerm instanceof Struct && PrologLists.isList(((Struct) theTerm));
-  }
-
-
   //---------------------------------------------------------------------------
   // Access and extract data from Terms
   //---------------------------------------------------------------------------
@@ -312,6 +303,72 @@ public final class TermApi {
     }
     return theTerm;
   }
+
+
+  /**
+   * Extract one {@link Term} from within another ({@link Struct}) using a rudimentary XPath-like expression language.
+   *
+   * @param theTerm            To select from
+   * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
+   * @param theClass           The {@link Term} class or one of its subclass that the desired returned object should be.
+   */
+  // TODO Should this go to TermAdapter instead? - since we return a new Term
+  @SuppressWarnings("unchecked")
+  public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
+    if (theTPathExpression.isEmpty()) {
+      return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
+    }
+    if (theTerm instanceof String) {
+      if (!theTerm.equals(theTPathExpression)) {
+        throw new InvalidTermException("Term \"" + theTerm + "\" cannot match expression \"" + theTPathExpression + '"');
+      }
+      return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
+    }
+
+    final Struct s = (Struct) theTerm;
+    int position = 0;
+    String level0 = theTPathExpression;
+    int end = theTPathExpression.length();
+    final int slash = theTPathExpression.indexOf('/');
+    if (slash >= 1) {
+      end = slash;
+      level0 = theTPathExpression.substring(0, slash);
+      position = 1;
+    }
+    String functor = level0;
+    final int par = level0.indexOf('[');
+    if (par >= 0) {
+      end = max(par, end);
+      functor = level0.substring(0, par);
+      if (!level0.endsWith("]")) {
+        throw new InvalidTermException("Malformed TPath expression: \"" + theTPathExpression + "\": missing ending ']'");
+      }
+      position = Integer.parseInt(level0.substring(par + 1, level0.length() - 1));
+      if (position <= 0) {
+        throw new InvalidTermException("Index " + position + " in \"" + theTPathExpression + "\" is <=0");
+      }
+      if (position > s.getArity()) {
+        throw new InvalidTermException("Index " + position + " in \"" + theTPathExpression + "\" is > arity of " + s.getArity());
+      }
+    }
+    // In case functor was defined ("f[n]", since the expression "[n]" without f is also allowed)
+    if (!functor.isEmpty()) {
+      // Make sure the root name matches the struct at level 0
+      if (!s.getName().equals(functor)) {
+        throw new InvalidTermException("Term \"" + theTerm + "\" does not start with functor  \"" + functor + '"');
+      }
+    }
+    if (position >= 1) {
+      final String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
+      return selectTerm(s.getArg(position - 1), levelsTail, theClass);
+    }
+    if (!(theClass.isAssignableFrom(theTerm.getClass()))) {
+      throw new PrologNonSpecificException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
+    }
+    return (T) theTerm;
+  }
+
+
 
   /**
    * Quote atoms if needed.
@@ -379,57 +436,6 @@ public final class TermApi {
     }
   }
 
-  public static <T> String formatStruct(Struct<T> struct) {
-    if (PrologLists.isEmptyList(struct)) {
-      return PrologLists.FUNCTOR_EMPTY_LIST;
-    }
-    final StringBuilder sb = new StringBuilder();
-    final int nArity = struct.getArity();
-    // list case
-    if (PrologLists.isListNode(struct)) {
-      sb.append(PrologLists.LIST_OPEN);
-      PrologLists.formatPListRecursive(struct, sb);
-      sb.append(PrologLists.LIST_CLOSE);
-      return sb.toString();
-    }
-    sb.append(TermApi.quoteIfNeeded(struct.getName()));
-    if (nArity > 0) {
-      sb.append(Struct.PAR_OPEN);
-      for (int c = 0; c < nArity; c++) {
-        final Object arg = struct.getArg(c);
-        final String formatted = arg.toString();
-        sb.append(formatted);
-        if (c < nArity - 1) {
-          sb.append(Struct.ARG_SEPARATOR);
-        }
-      }
-      sb.append(Struct.PAR_CLOSE);
-    }
-    return sb.toString();
-  }
-
-
-
-  // TODO Currently unused - but probably we should detect cycles!
-  void avoidCycle(Struct theClause) {
-    final List<Term> visited = new ArrayList<>(20);
-    theClause.avoidCycle(visited);
-  }
-
-  /**
-   * Normalize a term, NOT taking into account existing operators and primitives.
-   * In principle this method should not be used. Side-effect (execution) of primitives is not guaranteed to occur.
-   *
-   * @param theTerm To be normalized
-   * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
-   */
-  public static Object normalize(Object theTerm) {
-    final Object factorized = factorize(theTerm);
-    assignIndexes(factorized, 0);
-    return factorized;
-  }
-
-
   /**
    * Normalize any term and refer to the primitives and operators defined in LibraryContent.
    *
@@ -452,6 +458,58 @@ public final class TermApi {
     }
     return factorized;
   }
+
+
+  public static <T> String formatStruct(Struct<T> struct) {
+    if (PrologLists.isEmptyList(struct)) {
+      return PrologLists.FUNCTOR_EMPTY_LIST;
+    }
+    final StringBuilder sb = new StringBuilder();
+    final int nArity = struct.getArity();
+    // list case
+    if (PrologLists.isListNode(struct)) {
+      sb.append(PrologLists.LIST_OPEN);
+      PrologLists.formatPListRecursive(struct, sb);
+      sb.append(PrologLists.LIST_CLOSE);
+      return sb.toString();
+    }
+    sb.append(quoteIfNeeded(struct.getName()));
+    if (nArity > 0) {
+      sb.append(Struct.PAR_OPEN);
+      for (int c = 0; c < nArity; c++) {
+        final Object arg = struct.getArg(c);
+        final String formatted = arg.toString();
+        sb.append(formatted);
+        if (c < nArity - 1) {
+          sb.append(Struct.ARG_SEPARATOR);
+        }
+      }
+      sb.append(Struct.PAR_CLOSE);
+    }
+    return sb.toString();
+  }
+
+
+  // TODO Currently unused - but probably we should detect cycles!
+  void avoidCycle(Struct theClause) {
+    final List<Term> visited = new ArrayList<>(20);
+    theClause.avoidCycle(visited);
+  }
+
+  /**
+   * Normalize a term, NOT taking into account existing operators and primitives.
+   * In principle this method should not be used. Side-effect (execution) of primitives is not guaranteed to occur.
+   *
+   * @param theTerm To be normalized
+   * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
+   */
+  public static Object normalize(Object theTerm) {
+    final Object factorized = factorize(theTerm);
+    assignIndexes(factorized, 0);
+    return factorized;
+  }
+
+
 
   public static Object valueOf(Object theObject) {
     return valueOf(theObject, TermAdapter.FactoryMode.ANY_TERM);
@@ -534,68 +592,6 @@ public final class TermApi {
     return result;
   }
 
-  /**
-   * Extract one {@link Term} from within another ({@link Struct}) using a rudimentary XPath-like expression language.
-   *
-   * @param theTerm            To select from
-   * @param theTPathExpression The expression to select from theTerm, see the associated TestCase for specification.
-   * @param theClass           The {@link Term} class or one of its subclass that the desired returned object should be.
-   */
-  // TODO Should this go to TermAdapter instead? - since we return a new Term
-  @SuppressWarnings("unchecked")
-  public static <T> T selectTerm(Object theTerm, String theTPathExpression, Class<T> theClass) {
-    if (theTPathExpression.isEmpty()) {
-      return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
-    }
-    if (theTerm instanceof String) {
-      if (!theTerm.equals(theTPathExpression)) {
-        throw new InvalidTermException("Term \"" + theTerm + "\" cannot match expression \"" + theTPathExpression + '"');
-      }
-      return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
-    }
-
-    final Struct s = (Struct) theTerm;
-    int position = 0;
-    String level0 = theTPathExpression;
-    int end = theTPathExpression.length();
-    final int slash = theTPathExpression.indexOf('/');
-    if (slash >= 1) {
-      end = slash;
-      level0 = theTPathExpression.substring(0, slash);
-      position = 1;
-    }
-    String functor = level0;
-    final int par = level0.indexOf('[');
-    if (par >= 0) {
-      end = max(par, end);
-      functor = level0.substring(0, par);
-      if (!level0.endsWith("]")) {
-        throw new InvalidTermException("Malformed TPath expression: \"" + theTPathExpression + "\": missing ending ']'");
-      }
-      position = Integer.parseInt(level0.substring(par + 1, level0.length() - 1));
-      if (position <= 0) {
-        throw new InvalidTermException("Index " + position + " in \"" + theTPathExpression + "\" is <=0");
-      }
-      if (position > s.getArity()) {
-        throw new InvalidTermException("Index " + position + " in \"" + theTPathExpression + "\" is > arity of " + s.getArity());
-      }
-    }
-    // In case functor was defined ("f[n]", since the expression "[n]" without f is also allowed)
-    if (!functor.isEmpty()) {
-      // Make sure the root name matches the struct at level 0
-      if (!s.getName().equals(functor)) {
-        throw new InvalidTermException("Term \"" + theTerm + "\" does not start with functor  \"" + functor + '"');
-      }
-    }
-    if (position >= 1) {
-      final String levelsTail = theTPathExpression.substring(min(theTPathExpression.length(), end + 1));
-      return selectTerm(s.getArg(position - 1), levelsTail, theClass);
-    }
-    if (!(theClass.isAssignableFrom(theTerm.getClass()))) {
-      throw new PrologNonSpecificException("Cannot extract Term of " + theClass + " at expression=" + theTPathExpression + " from " + theTerm);
-    }
-    return (T) theTerm;
-  }
 
   // TODO Currently unused but we probably should use an assertion method with very clean error handling as this one
   private static Struct requireStruct(Object theTerm, String theFunctor, int theArity) {

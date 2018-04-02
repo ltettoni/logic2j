@@ -463,7 +463,7 @@ public class CoreLibrary extends LibraryBase {
   public Integer length(UnifyContext currentVars, Object theList, Object theLength) {
     final Object value = currentVars.reify(theList);
     ensureBindingIsNotAFreeVar(value, "length/2", 0);
-    if (!TermApi.isList(value)) {
+    if (!PrologLists.isList(value)) {
       throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
     }
     final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<Object>(), Object.class);

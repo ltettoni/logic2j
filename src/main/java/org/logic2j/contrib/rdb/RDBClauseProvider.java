@@ -91,10 +91,10 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     for (int i = 0; i < goalStruct.getArity(); i++) {
       Object t = goalStruct.getArg(i);
       final boolean isAtom = TermApi.isAtom(t);
-      if (t instanceof Struct && (isAtom || TermApi.isList(t))) {
+      if (t instanceof Struct && (isAtom || PrologLists.isList(t))) {
         if (isAtom) {
           builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));
-        } else if (TermApi.isList(t)) {
+        } else if (PrologLists.isList(t)) {
           addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct) t), new ArrayList<Object>(), Object.class));
         }
       }
