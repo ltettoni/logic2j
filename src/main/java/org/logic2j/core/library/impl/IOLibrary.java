@@ -74,13 +74,13 @@ public class IOLibrary extends LibraryBase {
       final String unquoted = IOLibrary.unquote(formatted);
       this.writer.print(unquoted);
     }
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
   public Integer nl(SolutionListener theListener, UnifyContext currentVars) {
     this.writer.println();
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
@@ -89,7 +89,7 @@ public class IOLibrary extends LibraryBase {
       final String substring = formatForLog(currentVars, terms);
       logger.debug(substring);
     }
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
@@ -98,7 +98,7 @@ public class IOLibrary extends LibraryBase {
       final String substring = formatForLog(currentVars, terms);
       logger.info(substring);
     }
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
@@ -107,7 +107,7 @@ public class IOLibrary extends LibraryBase {
       final String substring = formatForLog(currentVars, terms);
       logger.warn(substring);
     }
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
@@ -116,7 +116,7 @@ public class IOLibrary extends LibraryBase {
       final String substring = formatForLog(currentVars, terms);
       logger.error(substring);
     }
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   private String formatForLog(UnifyContext currentVars, Object... terms) {
@@ -142,7 +142,7 @@ public class IOLibrary extends LibraryBase {
   @Predicate
   public Integer nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
     // Do nothing, but succeeds!
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   private static String unquote(String st) {

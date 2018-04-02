@@ -173,7 +173,7 @@ public class PojoLibrary extends LibraryBase {
         final Object newValue = currentVars.reify(theValue);
         inject(pojo, (String) propertyName, newValue);
 
-        return notifySolution(theListener, currentVars);
+        return notifySolution(currentVars);
       }
       throw new PrologNonSpecificException("Option \"" + mode + "\" is not allowed");
     }
@@ -181,7 +181,7 @@ public class PojoLibrary extends LibraryBase {
     if (currentValue instanceof Collection) {
       for (Object javaElem : (Collection) currentValue) {
         final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+        final Integer result = unifyAndNotify(currentVars, prologRepresentation, theValue);
         if (result != Continuation.CONTINUE) {
           return result;
         }
@@ -191,7 +191,7 @@ public class PojoLibrary extends LibraryBase {
     if (currentValue instanceof Object[]) {
       for (Object javaElem : (Object[]) currentValue) {
         final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final Integer result = unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+        final Integer result = unifyAndNotify(currentVars, prologRepresentation, theValue);
         if (result != Continuation.CONTINUE) {
           return result;
         }
@@ -200,7 +200,7 @@ public class PojoLibrary extends LibraryBase {
     }
     // Convert java objects to Prolog terms
     final Object prologRepresentation = getProlog().getTermAdapter().toTerm(currentValue, FactoryMode.ATOM);
-    return unifyAndNotify(theListener, currentVars, prologRepresentation, theValue);
+    return unifyAndNotify(currentVars, prologRepresentation, theValue);
   }
 
 
@@ -237,19 +237,19 @@ public class PojoLibrary extends LibraryBase {
     if (targetIsFree) {
       if (bindingIsDefined) {
         // Getting value
-        result = unifyAndNotify(theListener, currentVars, bindingValue, theTarget);
+        result = unifyAndNotify(currentVars, bindingValue, theTarget);
       } else {
         // Nothing to unify but escalate a solution
-        result = notifySolution(theListener, currentVars);
+        result = notifySolution(currentVars);
       }
     } else {
       if (bindingIsDefined) {
         // Try to unify, will succeed or not
-        result = unifyAndNotify(theListener, currentVars, bindingValue, theTarget);
+        result = unifyAndNotify(currentVars, bindingValue, theTarget);
       } else {
         // Set the value (and return successful solution)
         this.getProlog().getTermAdapter().setVariable(name, targetTerm);
-        result = notifySolution(theListener, currentVars);
+        result = notifySolution(currentVars);
       }
     }
     return result;
@@ -334,14 +334,14 @@ public class PojoLibrary extends LibraryBase {
       }
       final List<Object> elements = new ArrayList<Object>();
       ((Struct) pList).javaListFromPList(elements, Object.class);
-      return unifyAndNotify(theListener, currentVars, elements, jList);
+      return unifyAndNotify(currentVars, elements, jList);
     } else {
       if (!(jList instanceof List<?>)) {
         // No solution
         return Continuation.CONTINUE;
       }
       final Struct elements = Struct.createPList((List) jList);
-      return unifyAndNotify(theListener, currentVars, elements, pList);
+      return unifyAndNotify(currentVars, elements, pList);
     }
   }
 

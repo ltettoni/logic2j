@@ -274,7 +274,7 @@ public class RDBLibrary extends LibraryBase {
       int number = resultSet.intValue();
       while (number-- > 0) {
         // Generates solutions without binding variables, just the right number of them
-        notifySolution(theListener, currentVars);
+        notifySolution(currentVars);
       }
     } else {
       throw new UnsupportedOperationException("Feature not yet migrated to unify version");

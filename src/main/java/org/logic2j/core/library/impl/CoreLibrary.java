@@ -262,7 +262,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate(name = Struct.FUNCTOR_TRUE)
   // We can't name the method "true" it's a Java reserved word...
   public Integer trueFunctor(SolutionListener theListener, UnifyContext currentVars) {
-    return notifySolution(theListener, currentVars);
+    return notifySolution(currentVars);
   }
 
   @Predicate
@@ -277,11 +277,11 @@ public class CoreLibrary extends LibraryBase {
     if (t1 instanceof Var) {
       final Var var = (Var) t1;
       if (var == Var.anon()) {
-        notifySolution(theListener, currentVars);
+        notifySolution(currentVars);
       } else {
         final Object value = currentVars.reify(t1);
         if (value instanceof Var) {
-          continuation = notifySolution(theListener, currentVars);
+          continuation = notifySolution(currentVars);
         }
       }
     }
@@ -292,7 +292,7 @@ public class CoreLibrary extends LibraryBase {
   public Integer atom(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
     if (TermApi.isAtom(value)) {
-      return notifySolution(theListener, currentVars);
+      return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
   }
@@ -301,7 +301,7 @@ public class CoreLibrary extends LibraryBase {
   public Integer atomic(SolutionListener theListener, UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
     if (TermApi.isAtomic(value)) {
-      return notifySolution(theListener, currentVars);
+      return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
   }
@@ -311,14 +311,14 @@ public class CoreLibrary extends LibraryBase {
     final Object value = currentVars.reify(theTerm);
     ensureBindingIsNotAFreeVar(value, "number/1", 0);
     if (value instanceof Number) {
-      return notifySolution(theListener, currentVars);
+      return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
   }
 
   @Predicate(name = "=")
   public Integer unify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
-    return unifyAndNotify(theListener, currentVars, t1, t2);
+    return unifyAndNotify(currentVars, t1, t2);
   }
 
   @Predicate(name = "\\=")
@@ -326,7 +326,7 @@ public class CoreLibrary extends LibraryBase {
     final UnifyContext after = currentVars.unify(t1, t2);
     if (after == null) {
       // Not unified
-      return notifySolution(theListener, currentVars);
+      return notifySolution(currentVars);
     }
     // Unified
     return Continuation.CONTINUE;
@@ -387,7 +387,7 @@ public class CoreLibrary extends LibraryBase {
     final Long counted = listenerForSubGoal.count();
     // Note: won't ever be greater than one due to our listener that stops generation
     if (counted > 0) {
-      return notifySolution(theListener, currentVars);
+      return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
   }
@@ -491,7 +491,7 @@ public class CoreLibrary extends LibraryBase {
           // Unify Body
           final UnifyContext varsAfterBodyUnified = varsAfterHeadUnified.unify(clauseBody, theBody);
           if (varsAfterBodyUnified != null) {
-            final Integer continuation = notifySolution(theListener, varsAfterBodyUnified);
+            final Integer continuation = notifySolution(varsAfterBodyUnified);
             if (continuation != Continuation.CONTINUE) {
               return continuation;
             }
@@ -569,14 +569,14 @@ public class CoreLibrary extends LibraryBase {
     if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
       final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
       if (condition) {
-        continuation = notifySolution(theListener, currentVars);
+        continuation = notifySolution(currentVars);
       }
       return continuation;
     }
     if (effectiveT1 instanceof CharSequence && effectiveT2 instanceof CharSequence) {
       final boolean condition = theEvaluationFunction.apply((CharSequence) effectiveT1, (CharSequence) effectiveT2);
       if (condition) {
-        continuation = notifySolution(theListener, currentVars);
+        continuation = notifySolution(currentVars);
       }
       return continuation;
     }

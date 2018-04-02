@@ -60,7 +60,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
         for (int iter = lower; iter < upper; iter++) {
             logger.info("{} is going to unify an notify one solution: {}", this, iter);
-            final Integer continuation = unifyAndNotify(theListener, currentVars, theIterable, iter);
+            final Integer continuation = unifyAndNotify(currentVars, theIterable, iter);
             if (continuation != Continuation.CONTINUE) {
                 return continuation;
             }
@@ -99,12 +99,12 @@ public class AdHocLibraryForTesting extends LibraryBase {
 
             final UnifyContextIterator multi = new UnifyContextIterator(currentVars, (Var)theIterable, values);
             logger.info("{} is going to notify multi solutions: {}", this, multi);
-            return theListener.onSolutions(multi);
+            return currentVars.getSolutionListener().onSolutions(multi);
         } else {
             // Check
             final int iter = ((Number) iterating).intValue();
             if (min <= iter && iter < max) {
-                return notifySolution(theListener, currentVars);
+                return notifySolution(currentVars);
             } else {
                 return Continuation.CONTINUE;
             }

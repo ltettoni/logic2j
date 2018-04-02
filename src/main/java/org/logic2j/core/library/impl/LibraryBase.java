@@ -55,11 +55,11 @@ public class LibraryBase implements PLibrary {
   /**
    * Notify theSolutionListener that a solution has been found.
    *
-   * @param theSolutionListener
+   * @param currentVars
    * @return The {@link Continuation} as returned by theSolutionListener's {@link SolutionListener#onSolution(UnifyContext)}
    */
-  protected Integer notifySolution(SolutionListener theSolutionListener, UnifyContext currentVars) {
-    final Integer continuation = theSolutionListener.onSolution(currentVars);
+  protected Integer notifySolution(UnifyContext currentVars) {
+    final Integer continuation = currentVars.getSolutionListener().onSolution(currentVars);
     return continuation;
   }
 
@@ -84,20 +84,19 @@ public class LibraryBase implements PLibrary {
    * Unify terms t1 and t2, and if they could be unified, call theListener with the solution of the newly
    * unified variables; return the result from notifying. If not, return CONTINUE.
    *
-   * @param theListener
    * @param currentVars
    * @param t1
    * @param t2
    * @return
    */
-  protected Integer unifyAndNotify(SolutionListener theListener, UnifyContext currentVars, Object t1, Object t2) {
+  protected Integer unifyAndNotify(UnifyContext currentVars, Object t1, Object t2) {
     final UnifyContext after = currentVars.unify(t1, t2);
     if (after == null) {
       // Not unified: do not notify a solution and inform to continue solving
       return Continuation.CONTINUE;
     }
     // Unified
-    return notifySolution(theListener, after);
+    return notifySolution(after);
   }
 
   // ---------------------------------------------------------------------------
