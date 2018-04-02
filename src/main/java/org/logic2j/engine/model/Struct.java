@@ -341,31 +341,6 @@ public class Struct extends Term implements Cloneable {
   }
 
 
-  // ---------------------------------------------------------------------------
-  // Methods for Prolog list structures (named "PList" hereafter)
-  // ---------------------------------------------------------------------------
-
-
-  private String formatPListRecursive() {
-    final Object head = getLHS();
-    final Object tail = getRHS();
-    if (TermApi.isList(tail)) {
-      final Struct tailStruct = (Struct) tail;
-      // .(h, []) will be displayed as h
-      if (PrologLists.isEmptyList(tailStruct)) {
-        return head.toString();
-      }
-      return head.toString() + PrologLists.LIST_ELEM_SEPARATOR + tailStruct.formatPListRecursive();
-    }
-    final StringBuilder sb = new StringBuilder();
-    // Head
-    sb.append(head);
-    sb.append(PrologLists.HEAD_TAIL_SEPARATOR);
-    // Tail
-    sb.append(tail.toString());
-    return sb.toString();
-  }
-
   // --------------------------------------------------------------------------
   // Accessors
   // --------------------------------------------------------------------------
@@ -557,9 +532,9 @@ public class Struct extends Term implements Cloneable {
     final StringBuilder sb = new StringBuilder();
     final int nArity = getArity();
     // list case
-    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
+    if (PrologLists.isListNode(this)) {
       sb.append(PrologLists.LIST_OPEN);
-      sb.append(formatPListRecursive());
+      sb.append(PrologLists.formatPListRecursive(this));
       sb.append(PrologLists.LIST_CLOSE);
       return sb.toString();
     }

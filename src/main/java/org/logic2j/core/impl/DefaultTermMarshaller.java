@@ -130,7 +130,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();
     // list case
-    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
+    if (PrologLists.isListNode(theStruct)) {
       sb.append(PrologLists.LIST_OPEN);
       sb.append(formatPListRecursive(theStruct));
       sb.append(PrologLists.LIST_CLOSE);
@@ -234,18 +234,16 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     int p;
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();
-
-    if (name.equals(PrologLists.FUNCTOR_LIST_NODE) && arity == 2) {
-      if (theStruct.getLHS() instanceof Struct && PrologLists.isEmptyList(((Struct) theStruct.getLHS()))) {
-        return PrologLists.FUNCTOR_EMPTY_LIST;
-      }
+    if (PrologLists.isEmptyList(theStruct)) {
+      return PrologLists.FUNCTOR_EMPTY_LIST;
+    }
+    if (PrologLists.isListNode(theStruct)) {
       final StringBuilder sb = new StringBuilder();
       sb.append(PrologLists.LIST_OPEN);
       sb.append(toStringAsList(theStruct));
       sb.append(PrologLists.LIST_CLOSE);
       return sb;
     }
-
 
     if (arity == 2) {
       if ((p = operatorManager.precedence(name, Operator.XFX)) >= Operator.OP_LOWEST) {
