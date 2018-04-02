@@ -47,19 +47,19 @@ public class IOLibrary extends LibraryBase {
     final Object[] args = theGoalStruct.getArgs();
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
     if (theMethodName == "write") {
-      result = write(theListener, currentVars, args);
+      result = write(currentVars, args);
     } else if (theMethodName == "nl") {
-      result = nl(theListener, currentVars);
+      result = nl(currentVars);
     } else if (theMethodName == "nolog") {
-      result = nolog(theListener, currentVars, args);
+      result = nolog(currentVars, args);
     } else if (theMethodName == "debug") {
-      result = debug(theListener, currentVars, args);
+      result = debug(currentVars, args);
     } else if (theMethodName == "info") {
-      result = info(theListener, currentVars, args);
+      result = info(currentVars, args);
     } else if (theMethodName == "warn") {
-      result = warn(theListener, currentVars, args);
+      result = warn(currentVars, args);
     } else if (theMethodName == "error") {
-      result = error(theListener, currentVars, args);
+      result = error(currentVars, args);
     } else {
       result = NO_DIRECT_INVOCATION_USE_REFLECTION;
     }
@@ -67,7 +67,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer write(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer write(UnifyContext currentVars, Object... terms) {
     for (final Object term : terms) {
       final Object value = currentVars.reify(term);
       final String formatted = getProlog().getTermMarshaller().marshall(value).toString();
@@ -78,13 +78,13 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer nl(SolutionListener theListener, UnifyContext currentVars) {
+  public Integer nl(UnifyContext currentVars) {
     this.writer.println();
     return notifySolution(currentVars);
   }
 
   @Predicate
-  public Integer debug(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer debug(UnifyContext currentVars, Object... terms) {
     if (logger.isDebugEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.debug(substring);
@@ -93,7 +93,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer info(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer info(UnifyContext currentVars, Object... terms) {
     if (logger.isInfoEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.info(substring);
@@ -102,7 +102,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer warn(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer warn(UnifyContext currentVars, Object... terms) {
     if (logger.isWarnEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.warn(substring);
@@ -111,7 +111,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer error(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer error(UnifyContext currentVars, Object... terms) {
     if (logger.isErrorEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.error(substring);
@@ -140,7 +140,7 @@ public class IOLibrary extends LibraryBase {
    * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
    */
   @Predicate
-  public Integer nolog(SolutionListener theListener, UnifyContext currentVars, Object... terms) {
+  public Integer nolog(UnifyContext currentVars, Object... terms) {
     // Do nothing, but succeeds!
     return notifySolution(currentVars);
   }

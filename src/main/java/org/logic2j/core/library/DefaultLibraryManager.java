@@ -17,21 +17,20 @@
 package org.logic2j.core.library;
 
 import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PLibrary;
-import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.library.PrimitiveInfo;
+import org.logic2j.core.api.library.PrimitiveInfo.PrimitiveType;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
-import org.logic2j.core.api.library.PrimitiveInfo;
-import org.logic2j.engine.solver.listener.SolutionListener;
+import org.logic2j.core.impl.theory.TheoryContent;
+import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.theory.TheoryContent;
-import org.logic2j.core.impl.theory.TheoryManager;
-import org.logic2j.core.api.library.PrimitiveInfo.PrimitiveType;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -43,9 +42,9 @@ public class DefaultLibraryManager implements LibraryManager {
 
   /**
    * Difference between number of args in Prolog's primitive invocation, and number of varargs
-   * passed to Java implementation of the primitive: (SolutionListener theListener, UnifierState currentVars, Object...)
+   * passed to Java implementation of the primitive: (UnifyContext currentVars, Object...)
    */
-  private static final int NB_EXTRA_PARAMS = 2;
+  private static final int NB_EXTRA_PARAMS = 1;
 
   private final Prolog prolog;
 
@@ -167,10 +166,10 @@ public class DefaultLibraryManager implements LibraryManager {
                 */
         final int nbMethodParams = paramTypes.length;
         int i = 0;
-        if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
-          throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
-        }
-        i++;
+//        if (!(SolutionListener.class.isAssignableFrom(paramTypes[i]))) {
+//          throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + SolutionListener.class);
+//        }
+//        i++;
         if (!(UnifyContext.class.isAssignableFrom(paramTypes[i]))) {
           throw new PrologNonSpecificException("Argument type at index " + i + " of method " + method + " not of proper " + UnifyContext.class);
         }

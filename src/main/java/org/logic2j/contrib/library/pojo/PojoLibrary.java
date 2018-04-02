@@ -57,7 +57,7 @@ public class PojoLibrary extends LibraryBase {
     final Object[] args = theGoalStruct.getArgs();
     final int arity = theGoalStruct.getArity();
     if (theMethodName == "javaNew") {
-      result = javaNew(theListener, currentVars, args);
+      result = javaNew(currentVars, args);
     } else if (arity == 1) {
       final Object arg0 = args[0];
       result = NO_DIRECT_INVOCATION_USE_REFLECTION;
@@ -65,7 +65,7 @@ public class PojoLibrary extends LibraryBase {
       final Object arg0 = args[0];
       final Object arg1 = args[1];
       if (theMethodName == "bind") {
-        result = bind(theListener, currentVars, arg0, arg1);
+        result = bind(currentVars, arg0, arg1);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -74,7 +74,7 @@ public class PojoLibrary extends LibraryBase {
       final Object arg1 = args[1];
       final Object arg2 = args[2];
       if (theMethodName == "property") {
-        result = property(theListener, currentVars, arg0, arg1, arg2);
+        result = property(currentVars, arg0, arg1, arg2);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -84,7 +84,7 @@ public class PojoLibrary extends LibraryBase {
       final Object arg2 = args[2];
       final Object arg3 = args[3];
       if (theMethodName == "property") {
-        result = property(theListener, currentVars, arg0, arg1, arg2, arg3);
+        result = property(currentVars, arg0, arg1, arg2, arg3);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -132,8 +132,8 @@ public class PojoLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
-    return property(null, currentVars, thePojo, thePropertyName, theValue, null);
+  public Integer property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
+    return property(currentVars, thePojo, thePropertyName, theValue, null);
   }
 
 
@@ -150,7 +150,7 @@ public class PojoLibrary extends LibraryBase {
    * @return
    */
   @Predicate
-  public Integer property(final SolutionListener theListener, UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue,
+  public Integer property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue,
       Object theOptions) {
     // First argument
     final Object pojo = currentVars.reify(thePojo);
@@ -221,7 +221,7 @@ public class PojoLibrary extends LibraryBase {
    * @return One solution, either theTarget is unified to a real value, or is left unchanged (unified to the anonymous var)
    */
   @Predicate
-  public Integer bind(final SolutionListener theListener, UnifyContext currentVars, Object theBindingName, Object theTarget) {
+  public Integer bind(UnifyContext currentVars, Object theBindingName, Object theTarget) {
     final Object nameTerm = currentVars.reify(theBindingName);
     ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
 
@@ -265,7 +265,7 @@ public class PojoLibrary extends LibraryBase {
    * @return Java invocation of constructor
    */
   @Functor
-  public Object javaNew(SolutionListener theListener, UnifyContext currentVars, Object... args) {
+  public Object javaNew(UnifyContext currentVars, Object... args) {
     // More generic instantiation than the TermFactory
     final Object className = currentVars.reify(args[0]);
     ensureBindingIsNotAFreeVar(className, "javaNew", 0);
@@ -323,7 +323,7 @@ public class PojoLibrary extends LibraryBase {
    * @return
    */
   @Predicate
-  public Integer javaList(SolutionListener theListener, UnifyContext currentVars, Object prologList, Object javaList) {
+  public Integer javaList(UnifyContext currentVars, Object prologList, Object javaList) {
     final Object pList = currentVars.reify(prologList);
     final Object jList = currentVars.reify(javaList);
     if (javaList instanceof Var) {
