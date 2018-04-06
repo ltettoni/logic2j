@@ -35,13 +35,12 @@ package org.logic2j.contrib.tool;/*
 
 import org.logic2j.contrib.helper.FluentPrologBuilder;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.engine.model.TermApi;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,6 +48,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Read, Eval, Print, Loop.
@@ -90,7 +91,7 @@ public class REPL {
       // Parse and extract vars
       final TermMarshaller termMarshaller = prolog.getTermMarshaller();
       final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
-      final Var[] vars = TermApi.distinctVars(goal);
+      final Var[] vars = termApi().distinctVars(goal);
       // Solve
       final SolutionListener listener = new CountingSolutionListener() {
         @Override

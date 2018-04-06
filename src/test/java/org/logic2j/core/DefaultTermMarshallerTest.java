@@ -18,12 +18,12 @@
 package org.logic2j.core;
 
 import org.junit.Test;
-import org.logic2j.engine.model.TermApi;
+import org.logic2j.core.impl.DefaultTermMarshaller;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.DefaultTermMarshaller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class DefaultTermMarshallerTest extends PrologTestBase {
 
@@ -59,8 +59,8 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     @Test
     public void xBoundToY() {
         Object term = unmarshall("f(X, Y)");
-        final Var v1 = TermApi.findVar(term, "X");
-        final Var v2 = TermApi.findVar(term, "Y");
+        final Var v1 = termApi().findVar(term, "X");
+        final Var v2 = termApi().findVar(term, "Y");
         final UnifyContext initialContext = new UnifyContext(null, null);
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
@@ -70,8 +70,8 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
     @Test
     public void yBoundToX() {
         Object term = unmarshall("f(X, Y)");
-        final Var v1 = TermApi.findVar(term, "X");
-        final Var v2 = TermApi.findVar(term, "Y");
+        final Var v1 = termApi().findVar(term, "X");
+        final Var v2 = termApi().findVar(term, "Y");
         final UnifyContext initialContext = new UnifyContext(null, null);
         final UnifyContext nextContext = initialContext.unify(v1, v2);
         CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);

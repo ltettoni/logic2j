@@ -16,15 +16,21 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.api.*;
+import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.OperatorManager;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermMapper;
+import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.PLibrary;
-import org.logic2j.engine.model.TermApi;
-import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.DefaultTheoryManager;
 import org.logic2j.core.impl.theory.TheoryManager;
+import org.logic2j.core.library.DefaultLibraryManager;
 import org.logic2j.core.library.impl.CoreLibrary;
 import org.logic2j.core.library.impl.IOLibrary;
-import org.logic2j.core.library.DefaultLibraryManager;
+import org.logic2j.engine.solver.holder.GoalHolder;
+
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Reference implementation of logic2j's {@link PrologImplementation} API.
@@ -98,7 +104,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
     final TermMapper normalizer = new TermMapper() {
       @Override
       public Object apply(Object theTerm) {
-        return TermApi.normalize(theTerm, getLibraryManager().wholeContent());
+        return termApiExt().normalize(theTerm, getLibraryManager().wholeContent());
       }
     };
     this.termUnmarshaller.setNormalizer(normalizer);

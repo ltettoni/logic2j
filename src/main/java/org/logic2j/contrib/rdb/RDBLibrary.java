@@ -33,7 +33,6 @@ import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
@@ -51,6 +50,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.
@@ -100,7 +101,7 @@ public class RDBLibrary extends LibraryBase {
       internalGoal = new Struct((Struct) internalGoal);
     }
     // Watch out this destroys the indexes in the original expression !!!!
-    internalGoal = TermApi.normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
+    internalGoal = termApiExt().normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
 
     final Object result = getProlog().solve(internalGoal).var(resultVar).unique();
     if (!(result instanceof Struct)) {
@@ -122,8 +123,8 @@ public class RDBLibrary extends LibraryBase {
         }
         // Operator
         else if (ALLOWED_OPERATORS.contains(functor)) {
-          final Term term1 = TermApi.selectTerm(pred, "[1]", Term.class);
-          final Term term2 = TermApi.selectTerm(pred, "[2]", Term.class);
+          final Term term1 = termApiExt().selectTerm(pred, "[1]", Term.class);
+          final Term term2 = termApiExt().selectTerm(pred, "[2]", Term.class);
           final String variableName;
           final Term value;
           if (term1 instanceof Var && !(term2 instanceof Var)) {
@@ -170,12 +171,12 @@ public class RDBLibrary extends LibraryBase {
           throw new InvalidTermException("Arity of term " + tbl + " must be 4 or 5");
         }
         // Convert this predicate into a Criterion. When variables are specified, use the var as the operand value
-        final String tableName = TermApi.selectTerm(tbl, "tbl[1]", Struct.class).getName();
-        final String columnName = TermApi.selectTerm(tbl, "tbl[2]", Struct.class).getName();
-        final Term valueTerm = TermApi.selectTerm(tbl, "tbl[4]", Term.class);
+        final String tableName = termApiExt().selectTerm(tbl, "tbl[1]", Struct.class).getName();
+        final String columnName = termApiExt().selectTerm(tbl, "tbl[2]", Struct.class).getName();
+        final Term valueTerm = termApiExt().selectTerm(tbl, "tbl[4]", Term.class);
         Operator operator = SqlBuilder3.Operator.EQ;
         if (tbl.getArity() >= 5) {
-          operator = Operator.valueOfProlog(TermApi.selectTerm(tbl, "tbl[5]", Struct.class).getName());
+          operator = Operator.valueOfProlog(termApiExt().selectTerm(tbl, "tbl[5]", Struct.class).getName());
         }
         final Table table = builder.table(tableName, alias);
         final Column sqlColumn = builder.column(table, columnName);
@@ -285,7 +286,7 @@ public class RDBLibrary extends LibraryBase {
       TermBindings originalBindings = null;
       int counter = 0;
       for (final Var var : projectVars) {
-        final Var originalVar = TermApi.findVar(conditions, var.getName());
+        final Var originalVar = termApi().findVar(conditions, var.getName());
         if (originalVar == null) {
           throw new InvalidTermException("Could no find original var " + var.getName() + " within " + conditions);
         }

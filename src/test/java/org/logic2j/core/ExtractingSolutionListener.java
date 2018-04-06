@@ -17,14 +17,22 @@
 
 package org.logic2j.core;
 
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
-import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Used in test cases to extract number of solutions and solutions to a goal.
@@ -39,7 +47,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
 
     public ExtractingSolutionListener(Object theGoal) {
         this.goal = theGoal;
-        this.vars = TermApi.distinctVars(this.goal);
+        this.vars = termApi().distinctVars(this.goal);
         // Here we use an expensive TreeSet but this is only for test cases - it will get the solutions ordered and will help assertions
         this.varNames = new TreeSet<String>();
         for (Var var : vars) {

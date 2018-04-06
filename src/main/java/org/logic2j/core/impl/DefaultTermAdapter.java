@@ -21,7 +21,6 @@ import org.logic2j.core.api.TermMapper;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Default and reference implementation of {@link TermAdapter}.
@@ -132,7 +133,7 @@ public class DefaultTermAdapter implements TermAdapter {
     }
     // Otherwise apply basic algorithm from TermApi
     if (result == null) {
-      result = TermApi.valueOf(theObject, theMode);
+      result = termApiExt().valueOf(theObject, theMode);
     }
     return result;
   }

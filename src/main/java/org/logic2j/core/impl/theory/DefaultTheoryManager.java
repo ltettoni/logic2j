@@ -20,12 +20,11 @@ import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.Solver;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
-import org.logic2j.core.impl.Solver;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;
@@ -40,6 +39,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Prolog's most classic way of providing {@link Clause}s to the {@link Solver}
@@ -224,7 +225,7 @@ public class DefaultTheoryManager implements TheoryManager {
   }
 
   private void executeDirective(Object directiveGoal) {
-    directiveGoal = TermApi.normalize(directiveGoal, this.prolog.getLibraryManager().wholeContent());
+    directiveGoal = termApiExt().normalize(directiveGoal, this.prolog.getLibraryManager().wholeContent());
     // Execute right now
     final CountingSolutionListener countingListener = new CountingSolutionListener();
     this.prolog.getSolver().solveGoal(directiveGoal, countingListener);

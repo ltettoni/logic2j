@@ -16,13 +16,16 @@
  */
 package org.logic2j.core.api.model;
 
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologImplementation;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Represents a fact or a rule in a Theory; this is described by "content" Object.
@@ -64,9 +67,9 @@ public class Clause {
     // throw new InvalidTermException("Need a Struct to build a clause, not " + theClauseTerm);
     // }
     // Any Clause must be normalized otherwise we won't be able to infer on it!
-    this.content = TermApi.normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
+    this.content = termApiExt().normalize(theClauseTerm, theProlog.getLibraryManager().wholeContent());
     // Store indexedVars into an array, indexed by the var's index
-    final Var[] distinctVars = TermApi.distinctVars(content);
+    final Var[] distinctVars = termApi().distinctVars(content);
     this.indexedVars = new Var[distinctVars.length];
     for (Var distinctVar : distinctVars) {
       this.indexedVars[distinctVar.getIndex()] = distinctVar;
@@ -215,7 +218,7 @@ public class Clause {
    * @return The key that uniquely identifies the family of the {@link Clause}'s head predicate.
    */
   public String getPredicateKey() {
-    return TermApi.predicateSignature(this.head);
+    return termApi().predicateSignature(this.head);
   }
 
   // ---------------------------------------------------------------------------

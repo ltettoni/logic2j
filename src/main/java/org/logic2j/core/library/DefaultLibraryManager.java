@@ -29,13 +29,14 @@ import org.logic2j.core.impl.theory.TheoryManager;
 import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 public class DefaultLibraryManager implements LibraryManager {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);
@@ -110,9 +111,9 @@ public class DefaultLibraryManager implements LibraryManager {
     // It's actually unclear if when we load a new library, the new available functors would influence theories currently loaded.
 
     // We need to assignPrimitiveInfo(), but let's use the TermApi directly and invoke normalize() it won't harm to do a little more.
-    TermApi.normalize(Struct.ATOM_TRUE, this.wholeContent);
-    TermApi.normalize(Struct.ATOM_FALSE, this.wholeContent);
-    TermApi.normalize(ATOM_CUT, this.wholeContent);
+    termApiExt().normalize(Struct.ATOM_TRUE, this.wholeContent);
+    termApiExt().normalize(Struct.ATOM_FALSE, this.wholeContent);
+    termApiExt().normalize(ATOM_CUT, this.wholeContent);
   }
 
   /**

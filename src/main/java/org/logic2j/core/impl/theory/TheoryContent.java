@@ -17,12 +17,17 @@
 package org.logic2j.core.impl.theory;
 
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Storage of the clauses of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.
@@ -99,7 +104,7 @@ public class TheoryContent {
       return result;
     }
 
-    final String clauseFamilyKey = TermApi.predicateSignature(theGoalTerm);
+    final String clauseFamilyKey = termApi().predicateSignature(theGoalTerm);
     final List<Clause> family = this.clauses.get(clauseFamilyKey);
     if (family == null) {
       // Predicate not registered in this theory clauses, return empty, it's not a failure condition

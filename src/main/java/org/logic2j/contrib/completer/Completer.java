@@ -19,11 +19,10 @@ package org.logic2j.contrib.completer;
 
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.model.TermApi;
+import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.extractor.SingleVarExtractor;
 import org.logic2j.engine.solver.listener.SingleVarSolutionListener;
-import org.logic2j.core.impl.PrologImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 import static org.logic2j.engine.model.Var.strVar;
 
 /**
@@ -155,8 +155,8 @@ public class Completer {
       }
       // find same predicate
       for (String signature : signatures) {
-        if (TermApi.functorFromSignature(signature).equals(completionData.functor)) {
-          int arity = TermApi.arityFromSignature(signature);
+        if (termApi().functorFromSignature(signature).equals(completionData.functor)) {
+          int arity = termApi().arityFromSignature(signature);
 
           final int commaCount = commaCount(completionData.partialPredicate);
           String goal = buildGoal(completionData.partialPredicate, arity);
@@ -185,7 +185,7 @@ public class Completer {
               envisagedCompletion = sol.toString();
             } else {
               compl = String.valueOf(sol);
-              compl = TermApi.quoteIfNeeded(compl).toString();
+              compl = termApi().quoteIfNeeded(compl).toString();
               envisagedCompletion = compl;
             }
             // FIXME: watch out - instead of using all the solutions, we must first make sure
@@ -206,7 +206,7 @@ public class Completer {
       // Find all predicate's signatures starting with the stripped fragment
       for (String signature : allSignatures(completionData.stripped)) {
         // Generate fragment from signature:  "append/3" -> "append("
-        final String functor = TermApi.functorFromSignature(signature);
+        final String functor = termApi().functorFromSignature(signature);
         final String fragment = functor + '(';
         if (fragment.startsWith(completionData.stripped)) {
           completions.add(completionData.originalBeforeStripped + fragment);

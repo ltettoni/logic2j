@@ -21,8 +21,9 @@ import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.core.api.TermUnmarshaller;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Reference implementation of {@link org.logic2j.core.api.TermUnmarshaller}.
@@ -40,7 +41,7 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
 
     @Override
     public Object apply(Object theTerm) {
-      return TermApi.normalize(theTerm); // Uh, will ignore any existing primitives, etc?
+      return termApi().normalize(theTerm); // Uh, will ignore any existing primitives, etc?
     }
   };
 

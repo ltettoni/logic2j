@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class AdHocLibraryTest extends PrologTestBase {
     private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
@@ -95,7 +95,7 @@ public class AdHocLibraryTest extends PrologTestBase {
         final String goalText;
         goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
         Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
-        final Var q = TermApi.findVar(goal, "Q");
+        final Var q = termApi().findVar(goal, "Q");
         final SolutionListener listener = new SolutionListener() {
 
             @Override

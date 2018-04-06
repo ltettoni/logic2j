@@ -6,6 +6,8 @@ import org.logic2j.engine.util.TypeUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 public final class PrologLists {
 
 
@@ -182,7 +184,7 @@ public final class PrologLists {
   public static Struct predicateFromPList(Struct prologList) {
     requireList(prologList);
     final Object functor = prologList.getLHS();
-    if (!TermApi.isAtom(functor)) {
+    if (!termApi().isAtom(functor)) {
       return null;
     }
     Struct runningElement = (Struct) prologList.getRHS();

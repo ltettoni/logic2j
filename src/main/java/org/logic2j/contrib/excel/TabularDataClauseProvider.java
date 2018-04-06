@@ -20,14 +20,15 @@ package org.logic2j.contrib.excel;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.exception.PrologNonSpecificException;
-import org.logic2j.engine.model.TermApi;
-import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.engine.exception.PrologNonSpecificException;
+import org.logic2j.engine.unify.UnifyContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * An implementation of ClauseProvider for TabularData.
@@ -62,7 +63,7 @@ public class TabularDataClauseProvider implements ClauseProvider {
 
   @Override
   public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
-    final String predicateSignature = TermApi.predicateSignature(theGoal);
+    final String predicateSignature = termApi().predicateSignature(theGoal);
     switch (this.mode) {
       case EAV_NAMED:
         if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {

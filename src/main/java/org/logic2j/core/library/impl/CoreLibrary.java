@@ -26,7 +26,6 @@ import org.logic2j.core.impl.Solver;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
@@ -36,6 +35,9 @@ import org.logic2j.engine.unify.UnifyContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Provide the core primitives of the Prolog language.
@@ -291,7 +293,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public Integer atom(UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
-    if (TermApi.isAtom(value)) {
+    if (termApi().isAtom(value)) {
       return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
@@ -300,7 +302,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public Integer atomic(UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
-    if (TermApi.isAtomic(value)) {
+    if (termApi().isAtomic(value)) {
       return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
@@ -530,7 +532,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Predicate
   public Integer is(UnifyContext currentVars, Object t1, Object t2) {
-    final Object evaluated = TermApi.evaluate(t2, currentVars);
+    final Object evaluated = termApiExt().evaluate(t2, currentVars);
     if (evaluated == null) {
       // No solution
       return Continuation.CONTINUE;
@@ -560,8 +562,8 @@ public class CoreLibrary extends LibraryBase {
    */
   private Integer binaryComparisonPredicate(UnifyContext currentVars, Object t1, Object t2,
       ComparisonFunction theEvaluationFunction) {
-    final Object effectiveT1 = TermApi.evaluate(t1, currentVars);
-    final Object effectiveT2 = TermApi.evaluate(t2, currentVars);
+    final Object effectiveT1 = termApiExt().evaluate(t1, currentVars);
+    final Object effectiveT2 = termApiExt().evaluate(t2, currentVars);
     Integer continuation = Continuation.CONTINUE;
     if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
       final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
@@ -622,8 +624,8 @@ public class CoreLibrary extends LibraryBase {
 
   private Object binaryFunctor(UnifyContext currentVars, Object theTerm1, Object theTerm2,
       AggregationFunction theEvaluationFunction) {
-    final Object t1 = TermApi.evaluate(theTerm1, currentVars);
-    final Object t2 = TermApi.evaluate(theTerm2, currentVars);
+    final Object t1 = termApiExt().evaluate(theTerm1, currentVars);
+    final Object t2 = termApiExt().evaluate(theTerm2, currentVars);
     if (t1 instanceof Number && t2 instanceof Number) {
       if (t1 instanceof Integer && t2 instanceof Integer) {
         return theEvaluationFunction.apply((Number) t1, (Number) t2).intValue();

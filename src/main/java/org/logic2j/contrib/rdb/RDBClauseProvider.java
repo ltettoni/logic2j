@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 /**
  * List {@link org.logic2j.core.api.model.Clause}s (facts, never rules) from relational database tables or views accessed from the JDBC {@link javax.sql.DataSource} API. When
  * trying to solve the goal "zipcode_city(94101, City)" which yields City='SAN FRANCISCO', this class expects a database table or view such
@@ -90,7 +92,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
     for (int i = 0; i < goalStruct.getArity(); i++) {
       Object t = goalStruct.getArg(i);
-      final boolean isAtom = TermApi.isAtom(t);
+      final boolean isAtom = termApi().isAtom(t);
       if (t instanceof Struct && (isAtom || PrologLists.isList(t))) {
         if (isAtom) {
           builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));

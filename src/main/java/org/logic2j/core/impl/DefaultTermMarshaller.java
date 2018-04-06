@@ -27,6 +27,8 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 
 /**
  * Default and reference implementation of {@link org.logic2j.core.api.TermMarshaller#marshall(Object)}.
@@ -93,7 +95,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
   @Override
   public CharSequence visit(String theAtomString) {
-    return TermApi.quoteIfNeeded(theAtomString);
+    return termApi().quoteIfNeeded(theAtomString);
   }
 
   @Override
@@ -112,7 +114,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
    * @return The formatted term.
    */
   protected CharSequence accept(Object theTerm) {
-    return TermApi.accept(this, theTerm);
+    return termApi().accept(this, theTerm);
   }
 
   /**
@@ -136,7 +138,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
       sb.append(PrologLists.LIST_CLOSE);
       return sb;
     }
-    sb.append(TermApi.quoteIfNeeded(name));
+    sb.append(termApi().quoteIfNeeded(name));
     if (arity > 0) {
       sb.append(Struct.PAR_OPEN);
       for (int c = 0; c < arity; c++) {
@@ -225,7 +227,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
 
   private CharSequence toStringAsArg(Object theTerm, int precedence, boolean x) {
     if (theTerm instanceof CharSequence) {
-      return TermApi.quoteIfNeeded((CharSequence) theTerm);
+      return termApi().quoteIfNeeded((CharSequence) theTerm);
     }
     if (!(theTerm instanceof Struct)) {
       return accept(theTerm);
@@ -280,7 +282,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
             (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
     }
-    final StringBuilder sb = new StringBuilder(TermApi.quoteIfNeeded(name));
+    final StringBuilder sb = new StringBuilder(termApi().quoteIfNeeded(name));
     if (arity == 0) {
       return sb.toString();
     }
