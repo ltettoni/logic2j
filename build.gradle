@@ -5,7 +5,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 sourceCompatibility = 1.8
-version = '1.0.0'
+version = '1.1.0'
 
 
 description = """\
@@ -38,7 +38,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25',
             'commons-beanutils:commons-beanutils:1.9.3',
             'org.apache.poi:poi:3.17',
-            'org.logic2j:logic2j-engine:1.0.0-SNAPSHOT'
+            'org.logic2j:logic2j-engine:1.1.0-SNAPSHOT'
     // Need very specific Derby version since the test resource host
     // a zipped DB version in binary format. Require 10.8.1.2.
     testCompile 'junit:junit:4.12', 'org.assertj:assertj-core:3.9.1', 'org.apache.derby:derby:10.13.1.1'
