@@ -53,7 +53,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
   private final LibraryContent wholeContent = new LibraryContent();
 
-  private final Map<Class<? extends PLibrary>, PLibrary> libraries = new HashMap<Class<? extends PLibrary>, PLibrary>();
+  private final Map<Class<? extends PLibrary>, PLibrary> libraries = new HashMap<>();
 
   /**
    * @param theProlog

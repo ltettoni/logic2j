@@ -35,7 +35,7 @@ import java.util.List;
 public class DynamicClauseProvider implements ClauseProvider {
 
   private final PrologImplementation prolog;
-  private List<Clause> clauses = Collections.synchronizedList(new ArrayList<Clause>());
+  private List<Clause> clauses = Collections.synchronizedList(new ArrayList<>());
 
   public DynamicClauseProvider(PrologImplementation theProlog) {
     this.prolog = theProlog;
@@ -50,7 +50,7 @@ public class DynamicClauseProvider implements ClauseProvider {
    */
   @Override
   public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
-    final List<Clause> clauses = new ArrayList<Clause>(this.clauses.size());
+    final List<Clause> clauses = new ArrayList<>(this.clauses.size());
     for (final Clause cl : this.clauses) {
       if (cl != null) {
         clauses.add(cl);

@@ -67,7 +67,7 @@ public class RDBLibrary extends LibraryBase {
   private static final Set<String> ALLOWED_OPERATORS;
 
   static {
-    ALLOWED_OPERATORS = new HashSet<String>(Arrays.asList("=", "\\=", "<", ">", "=<", ">="));
+    ALLOWED_OPERATORS = new HashSet<>(Arrays.asList("=", "\\=", "<", ">", "=<", ">="));
   }
 
   private TermAdapter termAdapter;
@@ -88,7 +88,7 @@ public class RDBLibrary extends LibraryBase {
     final Struct conditions = (Struct) finalExpression;
 
     // Options
-    final Set<Object> optionSet = new HashSet<Object>(Arrays.asList(theArguments).subList(2, theArguments.length));
+    final Set<Object> optionSet = new HashSet<>(Arrays.asList(theArguments).subList(2, theArguments.length));
     final boolean isDistinct = optionSet.contains(new Struct("distinct"));
 
     //
@@ -109,14 +109,14 @@ public class RDBLibrary extends LibraryBase {
     }
     final Struct plistOfTblPredicates = (Struct) result;
     logger.debug("select/3: Solving {} gives internal solution: {}", plistOfTblPredicates);
-    final List<Struct> javaListRoot = PrologLists.javaListFromPList(plistOfTblPredicates, new ArrayList<Struct>(), Struct.class);
+    final List<Struct> javaListRoot = PrologLists.javaListFromPList(plistOfTblPredicates, new ArrayList<>(), Struct.class);
     logger.info(CollectionUtils.format("Internal solution, list elements:", javaListRoot, 10));
-    final Map<String, Term> assignedVarValue = new HashMap<String, Term>();
-    final Map<String, String> assignedVarOperator = new HashMap<String, String>();
+    final Map<String, Term> assignedVarValue = new HashMap<>();
+    final Map<String, String> assignedVarOperator = new HashMap<>();
     // Count number of references to tables
     int nbTbl = 0;
     for (final Struct tbls : javaListRoot) {
-      for (final Struct pred : PrologLists.javaListFromPList(tbls, new ArrayList<Struct>(), Struct.class)) {
+      for (final Struct pred : PrologLists.javaListFromPList(tbls, new ArrayList<>(), Struct.class)) {
         final String functor = pred.getName();
         if (functor.equals(TBL_PREDICATE)) {
           nbTbl++;
@@ -156,12 +156,12 @@ public class RDBLibrary extends LibraryBase {
     // And convert Struct to references to tables, columns and column criteria
     // Meanwhile, check individual predicates
     final SqlBuilder3 builder = new SqlBuilder3();
-    final List<SqlBuilder3.ColumnOperatorParameterCriterion> rawColumns = new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>();
+    final List<SqlBuilder3.ColumnOperatorParameterCriterion> rawColumns = new ArrayList<>();
     int aliasIndex = 1;
-    final Set<Var> projectVars = new LinkedHashSet<Var>();
+    final Set<Var> projectVars = new LinkedHashSet<>();
     for (final Struct tbls : javaListRoot) {
       final String alias = "t" + (aliasIndex++);
-      final List<Struct> javaList = PrologLists.javaListFromPList(tbls, new ArrayList<Struct>(), Struct.class);
+      final List<Struct> javaList = PrologLists.javaListFromPList(tbls, new ArrayList<>(), Struct.class);
       for (final Struct tbl : javaList) {
         // Check predicate received must be "tbl" with arity of 4
         if (!tbl.getName().equals(TBL_PREDICATE)) {
@@ -216,8 +216,7 @@ public class RDBLibrary extends LibraryBase {
     logger.debug(CollectionUtils.format("rawColumns:", rawColumns, 10));
 
     // Now collect join conditions: all columns having the same variable
-    final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable =
-        new CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion>();
+    final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable = new CollectionMap<>();
     // Join clauses
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
       if (column.getOperand() instanceof Var) {
@@ -232,8 +231,7 @@ public class RDBLibrary extends LibraryBase {
     for (final Collection<ColumnOperatorParameterCriterion> clausesOfOneJoinExpression : columnsPerVariable.values()) {
       builder.addProjection(clausesOfOneJoinExpression.iterator().next().getColumn());
       if (clausesOfOneJoinExpression.size() >= 2) {
-        final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin =
-            new ArrayList<SqlBuilder3.ColumnOperatorParameterCriterion>(clausesOfOneJoinExpression);
+        final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin = new ArrayList<>(clausesOfOneJoinExpression);
         for (int i = 1; i < toJoin.size(); i++) {
           builder.innerJoin(toJoin.get(0).getColumn(), toJoin.get(i).getColumn());
         }
@@ -342,8 +340,8 @@ public class RDBLibrary extends LibraryBase {
     } else if (theTerm instanceof Struct) {
       final Struct struct = (Struct) theTerm;
       if (PrologLists.isList(struct)) {
-        final Set<Object> javaList = new HashSet<Object>();
-        for (final Term t : PrologLists.javaListFromPList(struct, new ArrayList<Term>(), Term.class)) {
+        final Set<Object> javaList = new HashSet<>();
+        for (final Term t : PrologLists.javaListFromPList(struct, new ArrayList<>(), Term.class)) {
           javaList.add(jdbcFromTerm(t));
         }
         return javaList;

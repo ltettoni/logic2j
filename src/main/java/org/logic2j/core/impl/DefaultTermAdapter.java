@@ -100,7 +100,7 @@ public class DefaultTermAdapter implements TermAdapter {
    */
   @Override
   public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
-    final List<Object> result = new ArrayList<Object>();
+    final List<Object> result = new ArrayList<>();
     final Object term = toTerm(theObject, FactoryMode.ATOM);
     result.add(term);
     return result;
@@ -244,7 +244,7 @@ public class DefaultTermAdapter implements TermAdapter {
    * @param theAtoms
    */
   public void setPredefinedAtoms(Map<String, Object> theAtoms) {
-    this.predefinedAtoms = new IdentityHashMap<String, Object>(theAtoms.size());
+    this.predefinedAtoms = new IdentityHashMap<>(theAtoms.size());
     for (final Entry<String, Object> entry : theAtoms.entrySet()) {
       this.predefinedAtoms.put(entry.getKey().intern(), entry.getValue());
     }

@@ -104,7 +104,7 @@ public class SqlRunner {
    * @throws java.sql.SQLException
    */
   private List<Object[]> handle(ResultSet theResultSet) throws SQLException {
-    final List<Object[]> result = new ArrayList<Object[]>();
+    final List<Object[]> result = new ArrayList<>();
 
     final ResultSetMetaData meta = theResultSet.getMetaData();
     final int cols = meta.getColumnCount();

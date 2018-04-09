@@ -90,13 +90,13 @@ public class ExcelReader {
         columnNames = readRow(sheet, 0, String.class);
       } else {
         final int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
-        final List<String> colNames = new ArrayList<String>();
+        final List<String> colNames = new ArrayList<>();
         for (int i = 0; i < nbColunms; i++) {
           colNames.add(createSequenceElement(i));
         }
         columnNames = colNames;
       }
-      final List<List<Serializable>> listData = new ArrayList<List<Serializable>>();
+      final List<List<Serializable>> listData = new ArrayList<>();
 
       for (int r = this.firstRowIsHeaders ? 1 : 0; r < excelPhysicalRows; r++) {
         final List<Serializable> listRow = readRow(sheet, r, Serializable.class);
@@ -179,7 +179,7 @@ public class ExcelReader {
       return null;
     }
     final int nbCols = row.getPhysicalNumberOfCells();
-    final ArrayList<T> values = new ArrayList<T>();
+    final ArrayList<T> values = new ArrayList<>();
     boolean hasSomeData = false;
     for (int c = 0; c < nbCols; c++) {
       final HSSFCell cell = row.getCell(c);

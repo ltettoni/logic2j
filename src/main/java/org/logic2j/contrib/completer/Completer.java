@@ -111,7 +111,7 @@ public class Completer {
    * @return Ordered set of predicates signatures (a/1, append/3, )
    */
   Set<String> allSignatures(CharSequence partialInput) {
-    final Set<String> signatures = new TreeSet<String>();
+    final Set<String> signatures = new TreeSet<>();
     // From all loaded clause providers
     for (final ClauseProvider cp : this.prolog.getTheoryManager().getClauseProviders()) {
       for (final Clause clause : cp.listMatchingClauses(strVar("unused"), null)) {
@@ -143,7 +143,7 @@ public class Completer {
    */
   public CompletionData complete(CharSequence partialInput) {
     final CompletionData completionData = strip(partialInput.toString());
-    final Set<String> completions = new TreeSet<String>();
+    final Set<String> completions = new TreeSet<>();
     if (partialInput.toString().endsWith(")")) {
       // Nothing
     } else if (completionData.functor != null) {
@@ -162,8 +162,8 @@ public class Completer {
           logger.info("Going to execute: {}", goal);
           Object goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
 
-          SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<Object>(goalObj, COMPLETION_VAR, Object.class);
-          SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<Object>(stringSingleVarExtractor);
+          SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<>(goalObj, COMPLETION_VAR, Object.class);
+          SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<>(stringSingleVarExtractor);
           listener.setMaxFetch(MAX_FETCH);
 
           try {

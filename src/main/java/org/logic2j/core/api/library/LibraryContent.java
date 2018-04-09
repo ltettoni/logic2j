@@ -26,13 +26,13 @@ import java.util.Map;
  */
 public class LibraryContent {
 
-  private final Map<String, PrimitiveInfo> directiveMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> directiveMap = new HashMap<>();
 
-  private final Map<String, PrimitiveInfo> predicateMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> predicateMap = new HashMap<>();
 
-  private final Map<String, PrimitiveInfo> functorMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> functorMap = new HashMap<>();
 
-  private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<String, PrimitiveInfo>();
+  private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<>();
 
   public void putDirective(String theKey, PrimitiveInfo theDesc) {
     if (this.directiveMap.containsKey(theKey)) {

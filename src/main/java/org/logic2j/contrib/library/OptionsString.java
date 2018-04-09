@@ -59,12 +59,12 @@ public class OptionsString {
 
 
   public boolean hasOption(String optionText) {
-    return internalCommaSurrounded.contains(new StringBuilder().append(SEPARATOR).append(optionText).append(SEPARATOR).toString());
+    return internalCommaSurrounded.contains(SEPARATOR + optionText + SEPARATOR);
   }
 
   public void assertValidOptions(String[] options) {
     final List<String> optionsList = Arrays.asList(options);
-    final Set<String> set = new HashSet<String>(optionsList);
+    final Set<String> set = new HashSet<>(optionsList);
     for (String presentOption : internalCommaSurrounded.split(SEPARATOR)) {
       if (presentOption.isEmpty()) {
         continue; // Initial and final ","

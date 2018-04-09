@@ -128,48 +128,32 @@ public class CoreLibrary extends LibraryBase {
     }
   };
 
-  private static final AggregationFunction AGGREGATION_PLUS = new AggregationFunction() {
-    @Override
-    public Number apply(Number val1, Number val2) {
-      if (val1 instanceof Integer && val2 instanceof Integer) {
-        return val1.intValue() + val2.intValue();
-      }
-      return (double) (val1.intValue() + val2.intValue());
+  private static final AggregationFunction AGGREGATION_PLUS = (val1, val2) -> {
+    if (val1 instanceof Integer && val2 instanceof Integer) {
+      return val1.intValue() + val2.intValue();
     }
-
+    return (double) (val1.intValue() + val2.intValue());
   };
 
-  private static final AggregationFunction AGGREGATION_MINUS = new AggregationFunction() {
-    @Override
-    public Number apply(Number val1, Number val2) {
-      if (val1 instanceof Integer && val2 instanceof Integer) {
-        return val1.intValue() - val2.intValue();
-      }
-      return (double) (val1.intValue() - val2.intValue());
+  private static final AggregationFunction AGGREGATION_MINUS = (val1, val2) -> {
+    if (val1 instanceof Integer && val2 instanceof Integer) {
+      return val1.intValue() - val2.intValue();
     }
-
+    return (double) (val1.intValue() - val2.intValue());
   };
 
-  private static final AggregationFunction AGGREGRATION_TIMES = new AggregationFunction() {
-    @Override
-    public Number apply(Number val1, Number val2) {
-      if (val1 instanceof Integer && val2 instanceof Integer) {
-        return val1.intValue() * val2.intValue();
-      }
-      return (double) (val1.intValue() * val2.intValue());
+  private static final AggregationFunction AGGREGRATION_TIMES = (val1, val2) -> {
+    if (val1 instanceof Integer && val2 instanceof Integer) {
+      return val1.intValue() * val2.intValue();
     }
-
+    return (double) (val1.intValue() * val2.intValue());
   };
 
-  private static final AggregationFunction AGGREGATION_NEGATE = new AggregationFunction() {
-    @Override
-    public Number apply(Number val1, Number val2) {
-      if (val1 instanceof Integer && val2 instanceof Integer) {
-        return -val1.intValue();
-      }
-      return (double) -val1.intValue();
+  private static final AggregationFunction AGGREGATION_NEGATE = (val1, val2) -> {
+    if (val1 instanceof Integer && val2 instanceof Integer) {
+      return -val1.intValue();
     }
-
+    return (double) -val1.intValue();
   };
 
 
@@ -390,14 +374,10 @@ public class CoreLibrary extends LibraryBase {
   }
 
   private void collectReifiedResults(UnifyContext currentVars, final Object theTemplate, Object theGoal, final Collection<Object> javaResults) {
-    final SolutionListener listenerForSubGoal = new SolutionListener() {
-
-      @Override
-      public Integer onSolution(UnifyContext currentVars) {
-        final Object templateReified = currentVars.reify(theTemplate);
-        javaResults.add(templateReified);
-        return Continuation.CONTINUE;
-      }
+    final SolutionListener listenerForSubGoal = vars -> {
+      final Object templateReified = vars.reify(theTemplate);
+      javaResults.add(templateReified);
+      return Continuation.CONTINUE;
     };
     // Now solve the target sub goal
     final Object effectiveGoal = currentVars.reify(theGoal);
@@ -420,7 +400,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public Integer findall(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
       final Object theResult) {
-    final ArrayList<Object> allReifiedResults = new ArrayList<Object>(100); // Our internal collection of results
+    final ArrayList<Object> allReifiedResults = new ArrayList<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, allReifiedResults);
 
     // Convert all results into a prolog list structure
@@ -437,7 +417,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public Integer distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
       final Object theResult) {
-    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<Object>(100); // Our internal collection of results
+    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
 
     // Convert all results into a prolog list structure
@@ -464,7 +444,7 @@ public class CoreLibrary extends LibraryBase {
     if (!PrologLists.isList(value)) {
       throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
     }
-    final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<Object>(), Object.class);
+    final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<>(), Object.class);
     final Long listLength = (long) javalist.size();
     return unify(currentVars, listLength, theLength);
   }
@@ -514,7 +494,7 @@ public class CoreLibrary extends LibraryBase {
       if (predicateValue instanceof Struct) {
         final Struct struct = (Struct) predicateValue;
         final int arity = struct.getArity();
-        final ArrayList<Object> elems = new ArrayList<Object>(1 + arity);
+        final ArrayList<Object> elems = new ArrayList<>(1 + arity);
         elems.add(struct.getName());
         for (Object arg : struct.getArgs()) {
           elems.add(arg);

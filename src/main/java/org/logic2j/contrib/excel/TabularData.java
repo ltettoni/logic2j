@@ -61,11 +61,11 @@ public class TabularData implements Serializable {
    */
   public TabularData(String theDataSetName, List<String> colNames, List<List<Serializable>> listData) {
     this.dataSetName = theDataSetName;
-    this.columnNames = colNames.toArray(new String[colNames.size()]);
+    this.columnNames = colNames.toArray(new String[0]);
     this.data = new Serializable[listData.size()][];
     for (int i = 0; i < this.data.length; i++) {
       List<Serializable> var = listData.get(i);
-      final Serializable[] row = var.toArray(new Serializable[var.size()]);
+      final Serializable[] row = var.toArray(new Serializable[0]);
       this.data[i] = row;
     }
     checkAll();
@@ -91,8 +91,8 @@ public class TabularData implements Serializable {
   }
 
   private void checkColumnNames() {
-    final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
-    final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
+    final HashSet<Serializable> duplicateKeys = new HashSet<>();
+    final HashSet<Serializable> existingKeys = new HashSet<>();
     for (final String name : this.columnNames) {
       if (existingKeys.contains(name)) {
         duplicateKeys.add(name);
@@ -109,8 +109,8 @@ public class TabularData implements Serializable {
    * Make sure there are no duplicate values within the column defined as being the primary key.
    */
   private void checkPrimaryKeyColumn() {
-    final HashSet<Serializable> duplicateKeys = new HashSet<Serializable>();
-    final HashSet<Serializable> existingKeys = new HashSet<Serializable>();
+    final HashSet<Serializable> duplicateKeys = new HashSet<>();
+    final HashSet<Serializable> existingKeys = new HashSet<>();
     if (this.primaryKeyColumn >= 0) {
       for (final Serializable[] element : this.data) {
         final Serializable value = element[this.primaryKeyColumn];

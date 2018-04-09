@@ -214,7 +214,7 @@ public abstract class PrologTestBase {
      */
     protected List<Object> termList(CharSequence... elements) {
         assertThat(elements.length > 0).as("elements must not be empty for termList()").isTrue();
-        final List<Object> result = new ArrayList<Object>(elements.length);
+        final List<Object> result = new ArrayList<>(elements.length);
         for (final CharSequence element : elements) {
             result.add(term(element));
         }
@@ -223,7 +223,7 @@ public abstract class PrologTestBase {
 
 
     protected String marshall(Iterable<Object> terms) {
-        ArrayList<String> marshalled = new ArrayList<String>();
+        ArrayList<String> marshalled = new ArrayList<>();
         for (Object term : terms) {
             marshalled.add(marshall(term));
         }
@@ -261,13 +261,9 @@ public abstract class PrologTestBase {
     }
 
     protected File[] allTheoryFilesFromTestResourceDir() {
-        final FilenameFilter filesOnly = new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String name) {
-                final File file = new File(dir, name);
-                return file.canRead() && file.isFile() && file.getName().endsWith(".pro");
-            }
+        final FilenameFilter filesOnly = (dir, name) -> {
+            final File file = new File(dir, name);
+            return file.canRead() && file.isFile() && file.getName().endsWith(".pro");
         };
         return TEST_RESOURCES_DIR.listFiles(filesOnly);
     }
@@ -282,7 +278,7 @@ public abstract class PrologTestBase {
      * @return All variables of a GoalHolder, ordered by name, converted to String.
      */
     protected String varsSortedToString(GoalHolder goalHolder) {
-        final List<Map<Var, Object>> listOfSortedMaps = new ArrayList<Map<Var, Object>>();
+        final List<Map<Var, Object>> listOfSortedMaps = new ArrayList<>();
         for (Map<Var, Object> unorderedMap: goalHolder.vars().list()) {
             final TreeMap<Var, Object> orderedMap = new TreeMap<>(Var.COMPARATOR_BY_NAME);
             orderedMap.putAll(unorderedMap);

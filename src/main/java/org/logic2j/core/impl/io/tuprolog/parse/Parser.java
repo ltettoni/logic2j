@@ -221,7 +221,7 @@ public class Parser {
 
       // VERY VERY PROTOTYPICAL - SHOULD ACTUALLY NOT BE USED
       if (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOWEST) {
-        final List<Object> elements = new ArrayList<Object>();
+        final List<Object> elements = new ArrayList<>();
         elements.add(leftSide.result);
         final String functor = oper.text;
         while (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOWEST) {
@@ -239,7 +239,7 @@ public class Parser {
           }
         }
         logger.info("Stop loop, found so far: {}", elements);
-        return new IdentifiedTerm(yfy, new Struct(functor, elements.toArray(new Object[elements.size()])));
+        return new IdentifiedTerm(yfy, new Struct(functor, elements.toArray(new Object[0])));
       }
 
       // YFX has priority over YF
@@ -430,7 +430,7 @@ public class Parser {
       final LinkedList<Object> a = exprA0_arglist(); // reading arguments
       final Token t3 = this.tokenizer.readToken();
       if (t3.isType(RPAR)) {
-        return new Struct(functor, a.toArray(new Object[a.size()]));
+        return new Struct(functor, a.toArray(new Object[0]));
       }
       throw new InvalidTermException("Missing right parenthesis: (" + a + " -> here <-");
     }
@@ -524,7 +524,7 @@ public class Parser {
     }
     if (")".equals(t.text)) {
       this.tokenizer.unreadToken(t);
-      final LinkedList<Object> l = new LinkedList<Object>();
+      final LinkedList<Object> l = new LinkedList<>();
       l.add(head);
       return l;
     }

@@ -48,7 +48,7 @@ public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Co
    * @return An empty {@link java.util.ArrayList}.
    */
   protected Collection<TypeValue> instantiateCollection() {
-    return new ArrayList<TypeValue>();
+    return new ArrayList<>();
   }
 
 }

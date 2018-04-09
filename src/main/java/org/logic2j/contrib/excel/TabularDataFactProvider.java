@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class TabularDataFactProvider implements DataFactProvider {
   private final TabularData tabularData;
   private final AssertionMode assertionMode;
-  final ArrayList<DataFact> dataFacts = new ArrayList<DataFact>();
+  final ArrayList<DataFact> dataFacts = new ArrayList<>();
 
   public TabularDataFactProvider(TabularData theTabularData, AssertionMode theMode) {
     this.tabularData = theTabularData;

@@ -47,7 +47,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
     final String dataSetName = tabularData.getDataSetName();
     final int nbRows = tabularData.getNbRows();
     final int nbColumns = tabularData.getNbColumns();
-    final List<Object> result = new ArrayList<Object>();
+    final List<Object> result = new ArrayList<>();
     for (int r = 0; r < nbRows; r++) {
       try {
         final Serializable[] row = tabularData.getData()[r];

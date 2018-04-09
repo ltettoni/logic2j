@@ -41,14 +41,14 @@ public class SqlBuilder3 {
    * One of the constants {@link #SELECT}, {@link #UPDATE} or {@link #DELETE}.
    */
   private String instruction = SELECT; // The default statement is a query
-  List<Object> parameters = new ArrayList<Object>();
+  List<Object> parameters = new ArrayList<>();
   private boolean distinct = false; // Generate "select distinct ..." or "count(distinct ...)"
 
-  private Set<Table> tables = new LinkedHashSet<Table>(); // All tables registered, unique!
-  private List<Criterion> conjunctions = new ArrayList<Criterion>();
-  private List<Column> projections = new ArrayList<Column>();
-  private List<ColumnOrder> orders = new ArrayList<ColumnOrder>();
-  private List<Join> join = new ArrayList<Join>();
+  private Set<Table> tables = new LinkedHashSet<>(); // All tables registered, unique!
+  private List<Criterion> conjunctions = new ArrayList<>();
+  private List<Column> projections = new ArrayList<>();
+  private List<ColumnOrder> orders = new ArrayList<>();
+  private List<Join> join = new ArrayList<>();
   private int aliasCounter = 0;
 
   public SqlBuilder3() {
@@ -56,15 +56,15 @@ public class SqlBuilder3 {
   }
 
   public SqlBuilder3(SqlBuilder3 original) {
-    this.parameters = new ArrayList<Object>(original.parameters);
+    this.parameters = new ArrayList<>(original.parameters);
     this.instruction = original.instruction;
     this.distinct = original.distinct;
     this.aliasCounter = original.aliasCounter;
-    this.tables = new LinkedHashSet<Table>(original.tables);
-    this.conjunctions = new ArrayList<Criterion>(original.conjunctions);
-    this.projections = new ArrayList<Column>(original.projections);
-    this.orders = new ArrayList<ColumnOrder>(original.orders);
-    this.join = new ArrayList<Join>(original.join);
+    this.tables = new LinkedHashSet<>(original.tables);
+    this.conjunctions = new ArrayList<>(original.conjunctions);
+    this.projections = new ArrayList<>(original.projections);
+    this.orders = new ArrayList<>(original.orders);
+    this.join = new ArrayList<>(original.join);
   }
 
   /**
@@ -109,11 +109,11 @@ public class SqlBuilder3 {
   }
 
   private void allTables(StringBuilder sb) {
-    final HashSet<Table> classicTables = new HashSet<Table>();
-    final HashSet<Table> joinedTables = new HashSet<Table>();
+    final HashSet<Table> classicTables = new HashSet<>();
+    final HashSet<Table> joinedTables = new HashSet<>();
 
-    final List<String> classicFragments = new ArrayList<String>();
-    final List<String> joinFragments = new ArrayList<String>();
+    final List<String> classicFragments = new ArrayList<>();
+    final List<String> joinFragments = new ArrayList<>();
 
     // Analyze joined tables
     for (Join jn : this.join) {
@@ -183,7 +183,7 @@ public class SqlBuilder3 {
   }
 
   private CharSequence orderByClause() {
-    final List<String> fragments = new ArrayList<String>();
+    final List<String> fragments = new ArrayList<>();
     for (ColumnOrder order : this.orders) {
       fragments.add(order.toString());
     }
@@ -191,7 +191,7 @@ public class SqlBuilder3 {
   }
 
   private CharSequence generateProjections() {
-    final List<String> fragments = new ArrayList<String>();
+    final List<String> fragments = new ArrayList<>();
     for (Column proj : this.projections) {
       fragments.add(proj.toString());
     }
@@ -206,7 +206,7 @@ public class SqlBuilder3 {
   }
 
   private Object conjunctions() {
-    final List<String> fragments = new ArrayList<String>();
+    final List<String> fragments = new ArrayList<>();
     for (Criterion conj : this.conjunctions) {
       fragments.add(conj.sql());
     }
@@ -282,15 +282,13 @@ public class SqlBuilder3 {
     if (theParameters == null) {
       return new Object[0];
     }
-    final ArrayList<Object> sqlParams = new ArrayList<Object>();
+    final ArrayList<Object> sqlParams = new ArrayList<>();
     // Flatten out collections and arrays
     for (Object param : theParameters) {
       if (param instanceof Object[]) {
         Collections.addAll(sqlParams, (Object[]) param);
       } else if (param instanceof Collection<?>) {
-        for (Object p : (Collection<?>) param) {
-          sqlParams.add(p);
-        }
+        sqlParams.addAll((Collection<?>)param);
       } else {
         // Scalar: one single element
         sqlParams.add(param);
@@ -298,7 +296,7 @@ public class SqlBuilder3 {
       // TODO handle the case of enums - but by name or position???
       // If param was null nothing is added
     }
-    final Object[] array = sqlParams.toArray(new Object[sqlParams.size()]);
+    final Object[] array = sqlParams.toArray(new Object[0]);
     return array;
   }
 
@@ -421,11 +419,11 @@ public class SqlBuilder3 {
   }
 
   public Object[] getParameters() {
-    return this.parameters.toArray(new Object[this.parameters.size()]);
+    return this.parameters.toArray(new Object[0]);
   }
 
   public void setParameters(Object... theParameters) {
-    this.parameters = new ArrayList<Object>(theParameters != null ? Arrays.asList(theParameters) : Collections.emptyList());
+    this.parameters = new ArrayList<>(theParameters != null ? Arrays.asList(theParameters) : Collections.emptyList());
   }
 
   boolean isSelect() {

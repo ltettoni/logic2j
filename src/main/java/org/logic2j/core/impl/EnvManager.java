@@ -59,7 +59,7 @@ public class EnvManager {
    */
   public static final String VAR_PREFIX_ENV = "env.";
 
-  private final Map<String, Object> environment = new HashMap<String, Object>();
+  private final Map<String, Object> environment = new HashMap<>();
 
 
   public EnvManager() {
@@ -107,14 +107,7 @@ public class EnvManager {
 
 
 
-  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = new ThreadLocal<Map<String, Object>>() {
-
-    @Override
-    protected Map<String, Object> initialValue() {
-      return new HashMap<String, Object>();
-    }
-
-  };
+  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = ThreadLocal.withInitial(() -> new HashMap<>());
 
   public static Object getThreadVariable(String theVariableName) {
     return threadLocalBindings.get().get(theVariableName);

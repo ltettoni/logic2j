@@ -188,7 +188,7 @@ public final class PrologLists {
       return null;
     }
     Struct runningElement = (Struct) prologList.getRHS();
-    final ArrayList<Object> elements = new ArrayList<Object>();
+    final ArrayList<Object> elements = new ArrayList<>();
     while (!isEmptyList(runningElement)) {
       if (!isList(runningElement)) {
         return null;
@@ -203,7 +203,7 @@ public final class PrologLists {
       fnct = ((Struct) functor).getName();
     }
 
-    return new Struct(fnct, elements.toArray(new Object[elements.size()]));
+    return new Struct(fnct, elements.toArray(new Object[0]));
   }
 
   /**

@@ -57,9 +57,9 @@ public class DefaultTheoryManager implements TheoryManager {
 
   private final TheoryContent wholeContent = new TheoryContent();
 
-  private List<ClauseProvider> clauseProviders = new ArrayList<ClauseProvider>();
+  private List<ClauseProvider> clauseProviders = new ArrayList<>();
 
-  private List<DataFactProvider> dataFactProviders = new ArrayList<DataFactProvider>();
+  private List<DataFactProvider> dataFactProviders = new ArrayList<>();
 
   public DefaultTheoryManager(PrologImplementation theProlog) {
     this.prolog = theProlog;

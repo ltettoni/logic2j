@@ -61,12 +61,12 @@ public class REPL {
   public void run(String args[]) throws IOException {
     System.out.println("logic2j REPL");
 
-    final List<File> theories = new ArrayList<File>();
+    final List<File> theories = new ArrayList<>();
     for (String arg : args) {
       theories.add(new File(arg));
     }
 
-    prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[] {})).build();
+    prolog = new FluentPrologBuilder().withTheory(theories.toArray(new File[0])).build();
 
     final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     while (true) {

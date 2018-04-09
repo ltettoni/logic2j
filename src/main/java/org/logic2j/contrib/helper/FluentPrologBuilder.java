@@ -47,8 +47,8 @@ public class FluentPrologBuilder implements PrologBuilder {
 
   private boolean coreLibraries = false;
 
-  private Collection<File> theoryFiles = new ArrayList<File>();
-  private Collection<String> theoryResources = new ArrayList<String>();
+  private Collection<File> theoryFiles = new ArrayList<>();
+  private Collection<String> theoryResources = new ArrayList<>();
 
   @Override
   public PrologImplementation build() {

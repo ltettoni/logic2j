@@ -325,7 +325,7 @@ public class PojoLibrary extends LibraryBase {
         // No solution
         return Continuation.CONTINUE;
       }
-      final List<Object> elements = new ArrayList<Object>();
+      final List<Object> elements = new ArrayList<>();
       PrologLists.javaListFromPList(((Struct) pList), elements, Object.class);
       return unifyAndNotify(currentVars, elements, jList);
     } else {

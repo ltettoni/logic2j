@@ -107,7 +107,7 @@ public final class CollectionUtils {
       label = "";
     }
 
-    final Map<Class<?>, Integer> instancesByClass = new HashMap<Class<?>, Integer>();
+    final Map<Class<?>, Integer> instancesByClass = new HashMap<>();
     final StringBuilder sb = new StringBuilder(label);
 
     if (label.length() > 0) {

@@ -89,7 +89,7 @@ public class AdHocLibraryForTesting extends LibraryBase {
         final int max = ((Number) maxBound).intValue();
 
         if (iterating instanceof Var) {
-            final List<Integer> values = new ArrayList<Integer>();
+            final List<Integer> values = new ArrayList<>();
             for (int val = min; val < max; val++) {
                 values.add(val);
             }

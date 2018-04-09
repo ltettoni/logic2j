@@ -26,7 +26,6 @@ import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.unify.UnifyContext;
 
 import javax.sql.DataSource;
@@ -48,7 +47,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
    * The target database is supposed to implement tables, or (more realistically) views that start with the following name. The rest of
    * the table or view name will be the predicate being listed.
    */
-  private final HashMap<String, String[]> nameMapper = new HashMap<String, String[]>();
+  private final HashMap<String, String[]> nameMapper = new HashMap<>();
   private final String prefix;
 
   public RDBClauseProvider(PrologImplementation theProlog, DataSource theDataSource, String thePrefix) {
@@ -97,7 +96,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
         if (isAtom) {
           builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));
         } else if (PrologLists.isList(t)) {
-          addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct) t), new ArrayList<Object>(), Object.class));
+          addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct) t), new ArrayList<>(), Object.class));
         }
       }
       // Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a
@@ -117,7 +116,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
 
   protected List<Clause> queryForClauses(SqlBuilder3 builder, String predicateName) {
 
-    final List<Clause> clauses = new ArrayList<Clause>();
+    final List<Clause> clauses = new ArrayList<>();
     List<Object[]> rows;
     try {
       builder.getSelect();

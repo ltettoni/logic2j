@@ -131,7 +131,7 @@ public class Clause {
 
   private Clause cloned(UnifyContext currentVars) {
     if (this.cache == null) {
-      this.cache = new TreeMap<Integer, Clause>();
+      this.cache = new TreeMap<>();
       //            logger.warn("Instantiating Clause cache for {}", this.content);
     }
     final Map.Entry<Integer, Clause> ceilingEntry = this.cache.ceilingEntry(currentVars.topVarIndex(0));

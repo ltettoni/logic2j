@@ -41,7 +41,7 @@ public class TheoryContent {
    * head makes a family, see {@link Clause#getPredicateKey()}.
    * Value: ordered list of very very very immutable {@link Clause}s.
    */
-  private final HashMap<String, List<Clause>> clauses = new HashMap<String, List<Clause>>();
+  private final HashMap<String, List<Clause>> clauses = new HashMap<>();
 
   private Object initializationGoal = null;
 
@@ -52,12 +52,7 @@ public class TheoryContent {
    */
   public synchronized void add(Clause theClause) {
     final String clauseFamilyKey = theClause.getPredicateKey();
-    List<Clause> family = this.clauses.get(clauseFamilyKey);
-    if (family == null) {
-      // No Clause yet defined in this family, create one
-      family = new ArrayList<Clause>();
-      this.clauses.put(clauseFamilyKey, family);
-    }
+    final List<Clause> family = this.clauses.computeIfAbsent(clauseFamilyKey, key -> new ArrayList<>());
     family.add(theClause);
   }
 
@@ -71,12 +66,7 @@ public class TheoryContent {
   public synchronized void addAll(TheoryContent theContentToAddToThis) {
     for (final Map.Entry<String, List<Clause>> extraEntry : theContentToAddToThis.clauses.entrySet()) {
       final String clauseFamilyKey = extraEntry.getKey();
-      List<Clause> family = this.clauses.get(clauseFamilyKey);
-      if (family == null) {
-        // No Clause yet defined in this family, create one
-        family = new ArrayList<Clause>();
-        this.clauses.put(clauseFamilyKey, family);
-      }
+      final List<Clause> family = this.clauses.computeIfAbsent(clauseFamilyKey, key -> new ArrayList<>());
       final List<Clause> clausesToAdd = extraEntry.getValue();
       family.addAll(clausesToAdd);
     }
@@ -97,7 +87,7 @@ public class TheoryContent {
    */
   public Iterable<Clause> find(Object theGoalTerm) {
     if (theGoalTerm instanceof Var) {
-      final ArrayList<Clause> result = new ArrayList<Clause>();
+      final ArrayList<Clause> result = new ArrayList<>();
       for (List<Clause> cl : this.clauses.values()) {
         result.addAll(cl);
       }

@@ -75,8 +75,8 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
 
     // map of operators by name and type
     // key is the nameType of an operator (for example ":-xfx") - value is an Operator
-    private final HashMap<String, Operator> nameTypeToKey = new HashMap<String, Operator>();
-    private final LinkedHashSet<Operator> operators = new LinkedHashSet<Operator>();
+    private final HashMap<String, Operator> nameTypeToKey = new HashMap<>();
+    private final LinkedHashSet<Operator> operators = new LinkedHashSet<>();
 
     public boolean addOperator(Operator op) {
       final String key = mapKey(op.getText(), op.getAssociativity());
