@@ -255,7 +255,7 @@ public class SqlBuilder3 {
     final StringBuilder sb = new StringBuilder(1000);
     if (theNumber == 1) {
       sb.append('?');
-    } else {
+    } else if (theNumber > 1) {
       sb.append('(');
       for (int i = theNumber; i > 0; i--) {
         sb.append('?');

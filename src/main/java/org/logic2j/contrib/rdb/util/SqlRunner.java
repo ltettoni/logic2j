@@ -49,46 +49,21 @@ public class SqlRunner {
    * @throws java.sql.SQLException
    */
   public List<Object[]> query(String theSelect, Object[] theParameters) throws SQLException {
-    // if (theParameters == null) {
-    // theParameters = EMPTY_PARAMS;
-    // }
-    PreparedStatement stmt = null;
-    ResultSet rs = null;
     List<Object[]> result = null;
     if (DEBUG_ENABLED) {
       logger.debug("SqlRunner SQL \"" + theSelect + '"');
       logger.debug(" parameters=" + Arrays.asList(theParameters));
     }
-    Connection conn = null;
-    try {
-      conn = this.dataSource.getConnection();
-      stmt = this.prepareStatement(conn, theSelect);
+    try (final Connection conn = this.dataSource.getConnection(); //
+        final PreparedStatement stmt = this.prepareStatement(conn, theSelect)) {
       this.fillStatement(stmt, theParameters);
-      rs = stmt.executeQuery();
-
-      result = handle(rs);
-    } catch (final SQLException e) {
-      if (DEBUG_ENABLED) {
-        logger.debug("Caught exception \"" + e + "\", going to rethrow");
-      }
-      this.rethrow(e, theSelect, theParameters);
-    } finally {
-      try {
-        if (rs != null) {
-          rs.close();
+      try (final ResultSet rs = stmt.executeQuery()) {
+        result = handle(rs);
+      } catch (final SQLException e) {
+        if (DEBUG_ENABLED) {
+          logger.debug("Caught exception \"" + e + "\", going to rethrow");
         }
-      } catch (final SQLException ignored) {
-        // Quiet
-      }
-      try {
-        if (stmt != null) {
-          stmt.close();
-        }
-      } catch (final SQLException ignored) {
-        // Quiet
-      }
-      if (conn != null) {
-        conn.close();
+        this.rethrow(e, theSelect, theParameters);
       }
     }
     return result;

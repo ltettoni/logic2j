@@ -77,13 +77,10 @@ public class DefaultTheoryManager implements TheoryManager {
 
   @Override
   public TheoryContent load(File theFile) throws IOException {
-    final FileReader reader = new FileReader(theFile); // Note: the Parser further below will use a LineNumberReader
-    try {
+    try (final FileReader reader = new FileReader(theFile)) {
       return load(reader);
     } catch (final InvalidTermException e) {
       throw new PrologNonSpecificException("Theory could not be loaded from file \"" + theFile + "\" into " + this.prolog + ": " + e, e);
-    } finally {
-      reader.close();
     }
   }
 
@@ -121,16 +118,10 @@ public class DefaultTheoryManager implements TheoryManager {
       if (url == null) {
         throw new PrologNonSpecificException("No content at resource path: " + theClassloadableResource);
       }
-      InputStream in = null;
-      try {
-        in = TypeUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class);
+      try (InputStream in = TypeUtils.safeCastNotNull("obtaining rules content from URL", url.getContent(), InputStream.class)) {
         // FIXME there will be encoding issues when using InputStream instead of Reader
         final Reader reader = new InputStreamReader(in);
         return load(reader);
-      } finally {
-        if (in != null) {
-          in.close();
-        }
       }
     } catch (final IOException e) {
       throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
