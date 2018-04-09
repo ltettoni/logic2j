@@ -67,8 +67,7 @@ public class Completer {
     result.functor = null;
     if (str.length() > 0) {
       char c;
-      int pos = str.length() - 1;
-      for (pos = str.length() - 1; pos >= 0; pos--) {
+      for (int pos = str.length() - 1; pos >= 0; pos--) {
         c = str.charAt(pos);
         final boolean cont = Character.isJavaIdentifierPart(c) || Character.isJavaIdentifierStart(c) || Character.isDigit(c) || c == '\'';
         if (!cont) {

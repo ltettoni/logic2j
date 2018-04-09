@@ -287,7 +287,6 @@ public class Parser {
       }
 
       // XFX
-      boolean haveAttemptedXFX = false;
       if (xfx >= xfy && xfx >= xf && xfx >= left.priority) { // XFX has priority
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
@@ -295,7 +294,6 @@ public class Parser {
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
-        haveAttemptedXFX = true;
         assert false : "Probably not OK to be here in the Parser (handling XFX)";
       }
       // XFY
@@ -314,7 +312,7 @@ public class Parser {
       }
 
       // XFX did not have top priority, but XFY failed
-      if (!haveAttemptedXFX && xfx >= left.priority) {
+      if (xfx >= left.priority) {
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
           final Struct xfxStruct = new Struct(oper.text, left.result, found.result);
@@ -362,13 +360,11 @@ public class Parser {
       }
 
       // FX has priority over FY
-      boolean haveAttemptedFX = false;
       if (fx >= fy && fx >= Operator.OP_LOWEST) {
         final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
         if (found != null) {
           return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
         }
-        haveAttemptedFX = true;
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // FY has priority over FX, or FX has failed
@@ -380,7 +376,7 @@ public class Parser {
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // FY has priority over FX, but FY failed
-      if (!haveAttemptedFX && fx >= Operator.OP_LOWEST) {
+      if (fx >= Operator.OP_LOWEST) {
         final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
         if (found != null) {
           return new IdentifiedTerm(fx, new Struct(oper.text, found.result));

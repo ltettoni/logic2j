@@ -59,6 +59,7 @@ public class SqlBuilder3 {
     this.parameters = new ArrayList<Object>(original.parameters);
     this.instruction = original.instruction;
     this.distinct = original.distinct;
+    this.aliasCounter = original.aliasCounter;
     this.tables = new LinkedHashSet<Table>(original.tables);
     this.conjunctions = new ArrayList<Criterion>(original.conjunctions);
     this.projections = new ArrayList<Column>(original.projections);

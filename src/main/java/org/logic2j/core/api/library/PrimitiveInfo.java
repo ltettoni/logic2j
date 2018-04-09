@@ -137,7 +137,7 @@ public class PrimitiveInfo {
         varargArray[j] = theGoalStruct.getArg(j);
         j++;
       }
-      args[i++] = varargArray;
+      args[i] = varargArray;
     } else {
       // Regular argument passing
       int j = 0;

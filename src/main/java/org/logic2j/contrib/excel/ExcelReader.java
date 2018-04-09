@@ -85,7 +85,7 @@ public class ExcelReader {
       final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
       final Sheet sheet = workBook.getSheetAt(0);
       final int excelPhysicalRows = sheet.getPhysicalNumberOfRows();
-      List<String> columnNames;
+      final List<String> columnNames;
       if (this.firstRowIsHeaders) {
         columnNames = readRow(sheet, 0, String.class);
       } else {
@@ -198,7 +198,7 @@ public class ExcelReader {
             break;
           default:
             throw new InvalidTermException(
-                "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled, value is " + value);
+                "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled");
         }
       }
       value = mapCellValue(value);

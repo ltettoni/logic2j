@@ -96,7 +96,7 @@ public class RDBLibrary extends LibraryBase {
 
     // The goal we are solving
     Object internalGoal = Struct.valueOf("gd3_solve", conditions, resultVar);
-    if (internalGoal instanceof Struct) {
+    if (internalGoal != null) {
       // Clone
       internalGoal = new Struct((Struct) internalGoal);
     }

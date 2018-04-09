@@ -182,6 +182,8 @@ public class CoreLibrary extends LibraryBase {
     if (arity == 0) {
       if (theMethodName == "fail") {
         result = fail(currentVars);
+      } else if (theMethodName == "trueFunctor") {
+        result = trueFunctor(currentVars);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -246,12 +248,6 @@ public class CoreLibrary extends LibraryBase {
         result = findall(currentVars, arg0, arg1, arg2);
       } else if (theMethodName == "distinct") {
         result = distinct(currentVars, arg0, arg1, arg2);
-      } else {
-        result = NO_DIRECT_INVOCATION_USE_REFLECTION;
-      }
-    } else if (arity == 0) {
-      if (theMethodName == "trueFunctor") {
-        result = trueFunctor(currentVars);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
