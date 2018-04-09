@@ -29,11 +29,6 @@ public class CoreLibraryTest extends PrologTestBase {
 
 
     @Test
-    public void placeholderToReproduceError() {
-        // Empty yet
-    }
-
-    @Test
     public void var() {
         uniqueSolution("var(_)");
         uniqueSolution("var(V)");

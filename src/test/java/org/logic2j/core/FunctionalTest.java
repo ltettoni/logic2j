@@ -34,11 +34,6 @@ public class FunctionalTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
 
     @Test
-    public void placeholderToReproduceError() {
-        // Insert problematic test case here
-    }
-
-    @Test
     public void rules() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         countNSolutions(3, "a(X)");

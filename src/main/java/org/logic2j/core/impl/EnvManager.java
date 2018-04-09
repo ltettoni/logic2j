@@ -81,13 +81,7 @@ public class EnvManager {
       } else {
         value = PropertyUtils.getProperty(this.environment, theExpression);
       }
-    } catch (IllegalAccessException e) {
-      // No solution
-      return null;
-    } catch (InvocationTargetException e) {
-      // No solution
-      return null;
-    } catch (NoSuchMethodException e) {
+    } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       // No solution
       return null;
     }
@@ -107,7 +101,7 @@ public class EnvManager {
 
 
 
-  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = ThreadLocal.withInitial(() -> new HashMap<>());
+  private static final ThreadLocal<Map<String, Object>> threadLocalBindings = ThreadLocal.withInitial(HashMap::new);
 
   public static Object getThreadVariable(String theVariableName) {
     return threadLocalBindings.get().get(theVariableName);

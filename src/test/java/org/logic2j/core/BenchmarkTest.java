@@ -31,11 +31,6 @@ import java.io.InputStreamReader;
 public class BenchmarkTest extends PrologTestBase {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
 
-    @Test
-    public void placeholderToReproduceError() {
-        //
-    }
-
     /**
      * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
      * 512k

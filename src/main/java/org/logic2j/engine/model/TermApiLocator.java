@@ -23,7 +23,7 @@ public class TermApiLocator {
   private TermApiLocator() {
   }
 
-  private static TermApiExt termApi = new TermApiExt();
+  private static final TermApiExt termApi = new TermApiExt();
 
   public static TermApi termApi() {
     return termApi;

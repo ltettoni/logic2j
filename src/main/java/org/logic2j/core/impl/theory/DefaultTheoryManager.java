@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,8 +132,6 @@ public class DefaultTheoryManager implements TheoryManager {
           in.close();
         }
       }
-    } catch (final MalformedURLException e) {
-      throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
     } catch (final IOException e) {
       throw new InvalidTermException("Could not load theory from resource " + theClassloadableResource + ": " + e);
     }

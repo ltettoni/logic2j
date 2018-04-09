@@ -114,10 +114,8 @@ public abstract class PrologTestBase {
             try {
                 this.prolog.solve(theGoal).exists();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
-            } catch (final Logic2jException e) {
+            } catch (final Logic2jException | AssertionError e) {
                 // Expected
-            } catch (final AssertionError e) {
-                // Now we use assertions. Some test cases that assert failure also are caused by failing assertions
             }
         }
     }

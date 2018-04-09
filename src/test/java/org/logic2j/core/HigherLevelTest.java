@@ -39,11 +39,6 @@ public class HigherLevelTest extends PrologTestBase {
         return InitLevel.L2_BASE_LIBRARIES;
     }
 
-    @Test
-    public void placeholderToReproduceError() {
-        // Insert problematic test case here
-    }
-
     /**
      * Reasonably-sided Towers of Hanoi. See also {@link BenchmarkTest#hanoi()}
      */

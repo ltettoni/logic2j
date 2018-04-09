@@ -63,8 +63,7 @@ public class TermApiExt extends TermApi {
         // throw new IllegalArgumentException("Predicate's functor " + struct.getName() + " is a primitive, but not a functor");
         return null;
       }
-      final Object result = primInfo.invoke(struct, currentVars);
-      return result;
+      return primInfo.invoke(struct, currentVars);
     }
     return theTerm;
   }
