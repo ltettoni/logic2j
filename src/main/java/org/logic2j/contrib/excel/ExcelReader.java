@@ -109,6 +109,7 @@ public class ExcelReader {
       if (dataSetName.lastIndexOf('.') >= 0) {
         dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
       }
+      assert columnNames!=null;
       final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
       tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
       return tbl;
