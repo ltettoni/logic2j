@@ -56,17 +56,17 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
 
   @Override
-  protected Integer invokeJava(Struct goalStruct, UnifyContext currentVars) {
+  protected int invokeJava(Struct goalStruct, UnifyContext currentVars) {
     final PrimitiveInfo prim = ((Struct<PrimitiveInfo>)goalStruct).getContent();
 
     final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state
 
-   Integer result = Continuation.CONTINUE;
+    int result = Continuation.CONTINUE;
     switch (prim.getType()) {
       case PREDICATE:
         // The result will be the continuation code or CUT level
-        final Integer primitiveContinuation = (Integer) resultOfPrimitive;
+        final int primitiveContinuation = (Integer) resultOfPrimitive;
         result = primitiveContinuation;
         break;
       case FUNCTOR:
@@ -86,13 +86,13 @@ public class Solver extends org.logic2j.engine.solver.Solver {
   }
 
 
-  protected Integer solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final int cutLevel) {
+  protected int solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final int cutLevel) {
     // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
     final long inferenceCounter = ProfilingInfo.nbInferences;
     if (isDebug) {
       logger.debug(" +>> Entering solveAgainstClauseProviders#{}, cutLevel={}", inferenceCounter, cutLevel);
     }
-    Integer result = Continuation.CONTINUE;
+    int result = Continuation.CONTINUE;
 
     // Now ready to iteratively try clause by clause, by first attempting to unify with its headTerm
     final Object[] clauseHeadAndBody = new Object[2];
@@ -130,7 +130,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
               logger.debug(" Head unified. {} is a fact: notifying one solution", clauseHead);
             }
             // Notify one solution, and handle result if user wants to continue or not.
-            final Integer continuation = currentVars.getSolutionListener().onSolution(contextAfterHeadUnified);
+            final int continuation = currentVars.getSolutionListener().onSolution(contextAfterHeadUnified);
             result = continuation;
           } else {
             // Not a fact, it's a theorem - it has a body - the body becomes our new goal
@@ -138,7 +138,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
               logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, clauseBody);
             }
             // Solve the body in our current recursion context
-            final Integer theoremResult = solveGoalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
+            final int theoremResult = solveGoalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
             if (isDebug) {
               logger.debug("  back to having solved theorem's body = {} with theoremResult={}", clauseBody, theoremResult);
             }
@@ -192,14 +192,14 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     return result;
   }
 
-  protected Integer solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
+  protected int solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
     final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
     if (! hasDataFactProviders) {
       return Continuation.CONTINUE;
     }
 
     final SolutionListener solutionListener = currentVars.getSolutionListener();
-    Integer result = Continuation.CONTINUE;
+    int result = Continuation.CONTINUE;
     // Now fetch data
     final Iterable<DataFactProvider> dataProviders = this.prolog.getTheoryManager().getDataFactProviders();
     for (final DataFactProvider dataFactProvider : dataProviders) {
@@ -208,7 +208,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
         final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
         final boolean unified = varsAfterHeadUnified != null;
         if (unified) {
-          final Integer continuation = solutionListener.onSolution(currentVars);
+          final int continuation = solutionListener.onSolution(currentVars);
           if (continuation != Continuation.CONTINUE) {
             result = continuation;
           }

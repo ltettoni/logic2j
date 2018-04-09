@@ -232,7 +232,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         }
 
         @Override
-        public Integer onSolution(UnifyContext currentVars) {
+        public int onSolution(UnifyContext currentVars) {
             super.onSolution(currentVars);
             return Continuation.USER_ABORT;
         }
@@ -248,7 +248,7 @@ public class ExecutionPruningTest extends PrologTestBase {
         }
 
         @Override
-        public Integer onSolution(UnifyContext currentVars) {
+        public int onSolution(UnifyContext currentVars) {
             super.onSolution(currentVars);
             final boolean requestContinue = count() < 5;
             return requestContinue ? Continuation.CONTINUE : Continuation.USER_ABORT;

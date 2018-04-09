@@ -65,7 +65,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer write(UnifyContext currentVars, Object... terms) {
+  public int write(UnifyContext currentVars, Object... terms) {
     for (final Object term : terms) {
       final Object value = currentVars.reify(term);
       final String formatted = getProlog().getTermMarshaller().marshall(value).toString();
@@ -76,13 +76,13 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer nl(UnifyContext currentVars) {
+  public int nl(UnifyContext currentVars) {
     this.writer.println();
     return notifySolution(currentVars);
   }
 
   @Predicate
-  public Integer debug(UnifyContext currentVars, Object... terms) {
+  public int debug(UnifyContext currentVars, Object... terms) {
     if (logger.isDebugEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.debug(substring);
@@ -91,7 +91,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer info(UnifyContext currentVars, Object... terms) {
+  public int info(UnifyContext currentVars, Object... terms) {
     if (logger.isInfoEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.info(substring);
@@ -100,7 +100,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer warn(UnifyContext currentVars, Object... terms) {
+  public int warn(UnifyContext currentVars, Object... terms) {
     if (logger.isWarnEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.warn(substring);
@@ -109,7 +109,7 @@ public class IOLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer error(UnifyContext currentVars, Object... terms) {
+  public int error(UnifyContext currentVars, Object... terms) {
     if (logger.isErrorEnabled()) {
       final String substring = formatForLog(currentVars, terms);
       logger.error(substring);
@@ -137,7 +137,7 @@ public class IOLibrary extends LibraryBase {
    * @return This predicate succeeds with one solution, {@link Continuation#CONTINUE}
    */
   @Predicate
-  public Integer nolog(UnifyContext currentVars, Object... terms) {
+  public int nolog(UnifyContext currentVars, Object... terms) {
     // Do nothing, but succeeds!
     return notifySolution(currentVars);
   }

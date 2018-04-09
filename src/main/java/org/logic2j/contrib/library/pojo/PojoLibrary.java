@@ -127,7 +127,7 @@ public class PojoLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
+  public int property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue) {
     return property(currentVars, thePojo, thePropertyName, theValue, null);
   }
 
@@ -144,7 +144,7 @@ public class PojoLibrary extends LibraryBase {
    * @return
    */
   @Predicate
-  public Integer property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue,
+  public int property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue,
       Object theOptions) {
     // First argument
     final Object pojo = currentVars.reify(thePojo);
@@ -175,7 +175,7 @@ public class PojoLibrary extends LibraryBase {
     if (currentValue instanceof Collection) {
       for (Object javaElem : (Collection) currentValue) {
         final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final Integer result = unifyAndNotify(currentVars, prologRepresentation, theValue);
+        final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
         if (result != Continuation.CONTINUE) {
           return result;
         }
@@ -185,7 +185,7 @@ public class PojoLibrary extends LibraryBase {
     if (currentValue instanceof Object[]) {
       for (Object javaElem : (Object[]) currentValue) {
         final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final Integer result = unifyAndNotify(currentVars, prologRepresentation, theValue);
+        final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
         if (result != Continuation.CONTINUE) {
           return result;
         }
@@ -214,7 +214,7 @@ public class PojoLibrary extends LibraryBase {
    * @return One solution, either theTarget is unified to a real value, or is left unchanged (unified to the anonymous var)
    */
   @Predicate
-  public Integer bind(UnifyContext currentVars, Object theBindingName, Object theTarget) {
+  public int bind(UnifyContext currentVars, Object theBindingName, Object theTarget) {
     final Object nameTerm = currentVars.reify(theBindingName);
     ensureBindingIsNotAFreeVar(nameTerm, "bind/2", 0);
 
@@ -226,7 +226,7 @@ public class PojoLibrary extends LibraryBase {
     final boolean targetIsFree = targetTerm instanceof Var;
 
     // Implement the logic as per the spec defined in comment above
-    final Integer result;
+    final int result;
     if (targetIsFree) {
       if (bindingIsDefined) {
         // Getting value
@@ -314,7 +314,7 @@ public class PojoLibrary extends LibraryBase {
    * @return
    */
   @Predicate
-  public Integer javaList(UnifyContext currentVars, Object prologList, Object javaList) {
+  public int javaList(UnifyContext currentVars, Object prologList, Object javaList) {
     final Object pList = currentVars.reify(prologList);
     final Object jList = currentVars.reify(javaList);
     if (javaList instanceof Var) {

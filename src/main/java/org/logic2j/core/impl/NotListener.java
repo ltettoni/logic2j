@@ -44,7 +44,7 @@ public class NotListener implements SolutionListener {
   private boolean atLeastOneSolution = false;
 
   @Override
-  public Integer onSolution(UnifyContext currentVars) {
+  public int onSolution(UnifyContext currentVars) {
     // Do NOT relay the solution further, just remember there was one
     this.atLeastOneSolution = true;
     // No need to seek for further solutions. Watch out this means the goal will stop evaluating on first success.

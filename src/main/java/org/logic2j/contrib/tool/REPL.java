@@ -95,7 +95,7 @@ public class REPL {
       // Solve
       final SolutionListener listener = new CountingSolutionListener() {
         @Override
-        public Integer onSolution(UnifyContext currentVars) {
+        public int onSolution(UnifyContext currentVars) {
           super.onSolution(currentVars);
           final Object solution = currentVars.reify(goal);
           System.out.println("Solution " + count() + ": " + termMarshaller.marshall(solution));

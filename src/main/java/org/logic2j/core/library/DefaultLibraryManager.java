@@ -140,8 +140,8 @@ public class DefaultLibraryManager implements LibraryManager {
         String primitiveName;
         final String[] synonyms;
         if (predicateAnnotation != null) {
-          if (returnType != Integer.class) {
-            throw new PrologNonSpecificException("Unexpected return type, require Integer for predicate " + method);
+          if (returnType != Integer.TYPE) {
+            throw new PrologNonSpecificException("Unexpected return type, require \"int\" for predicate " + method);
           }
           type = PrimitiveType.PREDICATE;
           primitiveName = predicateAnnotation.name();

@@ -58,8 +58,8 @@ public class LibraryBase implements PLibrary {
    * @param currentVars
    * @return The {@link Continuation} as returned by {@link SolutionListener#onSolution(UnifyContext)}
    */
-  protected Integer notifySolution(UnifyContext currentVars) {
-    final Integer continuation = currentVars.getSolutionListener().onSolution(currentVars);
+  protected int notifySolution(UnifyContext currentVars) {
+    final int continuation = currentVars.getSolutionListener().onSolution(currentVars);
     return continuation;
   }
 
@@ -89,7 +89,7 @@ public class LibraryBase implements PLibrary {
    * @param t2
    * @return
    */
-  protected Integer unifyAndNotify(UnifyContext currentVars, Object t1, Object t2) {
+  protected int unifyAndNotify(UnifyContext currentVars, Object t1, Object t2) {
     final UnifyContext after = currentVars.unify(t1, t2);
     if (after == null) {
       // Not unified: do not notify a solution and inform to continue solving

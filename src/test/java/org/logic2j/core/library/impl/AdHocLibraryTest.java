@@ -99,13 +99,13 @@ public class AdHocLibraryTest extends PrologTestBase {
         final SolutionListener listener = new SolutionListener() {
 
             @Override
-            public Integer onSolution(UnifyContext currentVars) {
+            public int onSolution(UnifyContext currentVars) {
                 logger.info("App listener got one solution: {}", currentVars.reify(q));
                 return Continuation.CONTINUE;
             }
 
             @Override
-            public Integer onSolutions(Iterator<UnifyContext> multi) {
+            public int onSolutions(Iterator<UnifyContext> multi) {
                 logger.info("App listener got multi solutions: {}", multi);
                 return Continuation.CONTINUE;
             }

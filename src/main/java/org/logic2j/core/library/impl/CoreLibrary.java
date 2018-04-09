@@ -243,19 +243,19 @@ public class CoreLibrary extends LibraryBase {
 
   @Predicate(name = Struct.FUNCTOR_TRUE)
   // We can't name the method "true" it's a Java reserved word...
-  public Integer trueFunctor(UnifyContext currentVars) {
+  public int trueFunctor(UnifyContext currentVars) {
     return notifySolution(currentVars);
   }
 
   @Predicate
-  public Integer fail(@SuppressWarnings("unused") UnifyContext currentVars) {
+  public int fail(@SuppressWarnings("unused") UnifyContext currentVars) {
     // Do not propagate a solution - that's all
     return Continuation.CONTINUE;
   }
 
   @Predicate
-  public Integer var(UnifyContext currentVars, Object t1) {
-    Integer continuation = Continuation.CONTINUE;
+  public int var(UnifyContext currentVars, Object t1) {
+    int continuation = Continuation.CONTINUE;
     if (t1 instanceof Var) {
       final Var var = (Var) t1;
       if (var == Var.anon()) {
@@ -271,7 +271,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer atom(UnifyContext currentVars, Object theTerm) {
+  public int atom(UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
     if (termApi().isAtom(value)) {
       return notifySolution(currentVars);
@@ -280,7 +280,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer atomic(UnifyContext currentVars, Object theTerm) {
+  public int atomic(UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
     if (termApi().isAtomic(value)) {
       return notifySolution(currentVars);
@@ -289,7 +289,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer number(UnifyContext currentVars, Object theTerm) {
+  public int number(UnifyContext currentVars, Object theTerm) {
     final Object value = currentVars.reify(theTerm);
     ensureBindingIsNotAFreeVar(value, "number/1", 0);
     if (value instanceof Number) {
@@ -299,12 +299,12 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate(name = "=")
-  public Integer unify(UnifyContext currentVars, Object t1, Object t2) {
+  public int unify(UnifyContext currentVars, Object t1, Object t2) {
     return unifyAndNotify(currentVars, t1, t2);
   }
 
   @Predicate(name = "\\=")
-  public Integer notUnify(UnifyContext currentVars, Object t1, Object t2) {
+  public int notUnify(UnifyContext currentVars, Object t1, Object t2) {
     final UnifyContext after = currentVars.unify(t1, t2);
     if (after == null) {
       // Not unified
@@ -316,13 +316,13 @@ public class CoreLibrary extends LibraryBase {
 
   // Surprisingly enough the operator \+ means "not provable".
   @Predicate(synonyms = "\\+")
-  public Integer not(UnifyContext currentVars, Object theGoal) {
+  public int not(UnifyContext currentVars, Object theGoal) {
 
     final NotListener callListener = new NotListener();
 
     Solver solver = getProlog().getSolver();
     solver.solveGoal(theGoal, currentVars.withListener(callListener));
-    final Integer continuation;
+    final int continuation;
     if (callListener.exists()) {
       continuation = Continuation.CONTINUE;
     } else {
@@ -333,7 +333,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer atom_length(UnifyContext currentVars, Object theAtom, Object theLength) {
+  public int atom_length(UnifyContext currentVars, Object theAtom, Object theLength) {
     final Object value = currentVars.reify(theAtom);
     ensureBindingIsNotAFreeVar(value, "atom_length/2", 0);
     final String atomText = value.toString();
@@ -351,10 +351,10 @@ public class CoreLibrary extends LibraryBase {
    * @return
    */
   @Predicate
-  public Integer exists(UnifyContext currentVars, final Object theGoal) {
+  public int exists(UnifyContext currentVars, final Object theGoal) {
     final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener() {
       @Override
-      public Integer onSolution(UnifyContext currentVars) {
+      public int onSolution(UnifyContext currentVars) {
         super.onSolution(currentVars);
         // Upon the first solution found, notify the engine to stop generating
         return Continuation.USER_ABORT;
@@ -386,19 +386,19 @@ public class CoreLibrary extends LibraryBase {
 
 
   @Predicate
-  public Integer count(UnifyContext currentVars, final Object theGoal, final Object theNumber) {
+  public int count(UnifyContext currentVars, final Object theGoal, final Object theNumber) {
     final CountingSolutionListener listenerForSubGoal = new CountingSolutionListener();
     // Now solve the target sub goal
     final Object effectiveGoal = currentVars.reify(theGoal);
     getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
 
-    // And unify with result
+    // And unify with result of counting (as Integer)
     final Integer counted = (int) listenerForSubGoal.count();
     return unify(currentVars, theNumber, counted);
   }
 
   @Predicate
-  public Integer findall(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
+  public int findall(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
       final Object theResult) {
     final ArrayList<Object> allReifiedResults = new ArrayList<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, allReifiedResults);
@@ -415,7 +415,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
+  public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
       final Object theResult) {
     final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
@@ -438,7 +438,7 @@ public class CoreLibrary extends LibraryBase {
    * @return Length of a prolog list
    */
   @Predicate
-  public Integer length(UnifyContext currentVars, Object theList, Object theLength) {
+  public int length(UnifyContext currentVars, Object theList, Object theLength) {
     final Object value = currentVars.reify(theList);
     ensureBindingIsNotAFreeVar(value, "length/2", 0);
     if (!PrologLists.isList(value)) {
@@ -450,7 +450,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer clause(UnifyContext currentVars, Object theHead, Object theBody) {
+  public int clause(UnifyContext currentVars, Object theHead, Object theBody) {
     final Object headValue = currentVars.reify(theHead);
     final Object[] clauseHeadAndBody = new Object[2];
     for (final ClauseProvider cp : getProlog().getTheoryManager().getClauseProviders()) {
@@ -467,7 +467,7 @@ public class CoreLibrary extends LibraryBase {
           // Unify Body
           final UnifyContext varsAfterBodyUnified = varsAfterHeadUnified.unify(clauseBody, theBody);
           if (varsAfterBodyUnified != null) {
-            final Integer continuation = notifySolution(varsAfterBodyUnified);
+            final int continuation = notifySolution(varsAfterBodyUnified);
             if (continuation != Continuation.CONTINUE) {
               return continuation;
             }
@@ -479,7 +479,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate(name = "=..")
-  public Integer predicate2PList(UnifyContext currentVars, Object thePredicate, Object theList) {
+  public int predicate2PList(UnifyContext currentVars, Object thePredicate, Object theList) {
     final Object predicateValue = currentVars.reify(thePredicate);
     if (predicateValue instanceof Var) {
       // thePredicate is still free, going ot match from theList
@@ -507,7 +507,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   @Predicate
-  public Integer is(UnifyContext currentVars, Object t1, Object t2) {
+  public int is(UnifyContext currentVars, Object t1, Object t2) {
     final Object evaluated = termApiExt().evaluate(t2, currentVars);
     if (evaluated == null) {
       // No solution
@@ -536,11 +536,11 @@ public class CoreLibrary extends LibraryBase {
    * @param theEvaluationFunction
    * @return The {@link Continuation} as returned by the solution notified.
    */
-  private Integer binaryComparisonPredicate(UnifyContext currentVars, Object t1, Object t2,
+  private int binaryComparisonPredicate(UnifyContext currentVars, Object t1, Object t2,
       ComparisonFunction theEvaluationFunction) {
     final Object effectiveT1 = termApiExt().evaluate(t1, currentVars);
     final Object effectiveT2 = termApiExt().evaluate(t2, currentVars);
-    Integer continuation = Continuation.CONTINUE;
+    int continuation = Continuation.CONTINUE;
     if (effectiveT1 instanceof Number && effectiveT2 instanceof Number) {
       final boolean condition = theEvaluationFunction.apply((Number) effectiveT1, (Number) effectiveT2);
       if (condition) {
@@ -560,32 +560,32 @@ public class CoreLibrary extends LibraryBase {
 
 
   @Predicate(name = ">")
-  public Integer expression_greater_than(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_greater_than(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARE_GT);
   }
 
   @Predicate(name = "<")
-  public Integer expression_lower_than(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_lower_than(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LT);
   }
 
   @Predicate(name = ">=")
-  public Integer expression_greater_equal_than(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_greater_equal_than(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_GE);
   }
 
   @Predicate(name = "=<")
-  public Integer expression_lower_equal_than(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_lower_equal_than(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LE);
   }
 
   @Predicate(name = "=:=")
-  public Integer expression_equals(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_equals(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_EQ);
   }
 
   @Predicate(name = "=\\=")
-  public Integer expression_not_equals(UnifyContext currentVars, Object t1, Object t2) {
+  public int expression_not_equals(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_NE);
   }
 
