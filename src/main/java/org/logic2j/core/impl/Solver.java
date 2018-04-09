@@ -20,19 +20,12 @@ import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.exception.Logic2jException;
-import org.logic2j.engine.exception.SolverException;
 import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.logic2j.engine.solver.listener.UnifyContextIterator;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.ProfilingInfo;
-
-import java.util.Iterator;
 
 /**
  * Solve goals - that's the core of the engine, the resolution algorithm is in this class.
@@ -76,7 +69,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state
 
-   Integer result = Continuation.CONTINUE;;
+   Integer result = Continuation.CONTINUE;
     switch (prim.getType()) {
       case PREDICATE:
         // The result will be the continuation code or CUT level
