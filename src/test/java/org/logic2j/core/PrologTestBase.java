@@ -43,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- * Base class for tests, initiazlize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is
+ * Base class for tests, initialize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is
  * {@link org.logic2j.core.impl.PrologReferenceImplementation.InitLevel#L1_CORE_LIBRARY}, and
  * provides utility methods.
  */
@@ -74,7 +74,7 @@ public abstract class PrologTestBase {
 
     /**
      * @return Our {@link org.logic2j.core.impl.PrologImplementation}. In normal application code it must be sufficient to use the {@link org.logic2j.core.api.Prolog} but since here
-     * we test details of the implmenetation, we need more.
+     * we test details of the implementation, we need more.
      */
     protected PrologImplementation getProlog() {
         return this.prolog;
@@ -82,7 +82,7 @@ public abstract class PrologTestBase {
 
 
     // ---------------------------------------------------------------------------
-    // Low-lever solution counting assertions just using a COuntingSolutionListener
+    // Low-lever solution counting assertions just using a CountingSolutionListener
     // ---------------------------------------------------------------------------
 
     protected void countOneSolution(CharSequence... theGoals) {

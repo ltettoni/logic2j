@@ -44,7 +44,7 @@ public interface Prolog {
   GoalHolder solve(CharSequence theGoal);
 
   /**
-   * Solves a goal expressed as a {@link Term} (exposes the high-level {@link SolutionHolder} API, internally it usess the low-level
+   * Solves a goal expressed as a {@link Term} (exposes the high-level {@link SolutionHolder} API, internally it uses the low-level
    * {@link SolutionListener}).
    *
    * @param theGoal The {@link Term} to solve, usually a {@link Struct}

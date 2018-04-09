@@ -32,7 +32,7 @@ import java.util.Collection;
  * A builder to instantiate a Prolog implementation ready to be used.
  * This object helps with the following tasks:
  * - selecting the implementation to use
- * - parameterize
+ * - set parameters
  * - configure the libraries (none, default, or extensions)
  * - load theoryFiles
  * <p/>

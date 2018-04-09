@@ -118,7 +118,7 @@ public class DefaultLibraryManager implements LibraryManager {
 
   /**
    * Introspect annotations within the {@link PLibrary} and return a description of it.
-   * Look for {@link org.logic2j.core.api.library.annotation.Predicate} annotations; notice that a privmitive may have several names (to allow for non-Java identifiers such as
+   * Look for {@link org.logic2j.core.api.library.annotation.Predicate} annotations; notice that a primitive may have several names (to allow for non-Java identifiers such as
    * \=)
    *
    * @param theLibrary

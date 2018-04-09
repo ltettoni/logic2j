@@ -19,7 +19,7 @@ package org.logic2j.core.api;
 import org.logic2j.engine.model.Term;
 
 /**
- * Umnarshalls streamable representations back to create new {@link Term}s.
+ * Umnarshall streamable representations back to create new {@link Term}s.
  */
 public interface TermUnmarshaller {
 

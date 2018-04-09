@@ -95,7 +95,7 @@ public class SqlRunner {
   }
 
   // ---------------------------------------------------------------------------
-  // Template methods - may be overidden
+  // Template methods - may be overridden
   // ---------------------------------------------------------------------------
 
   /**
@@ -150,7 +150,7 @@ public class SqlRunner {
    *
    * @param cause  The original exception that will be chained to the new exception when it's rethrown.
    * @param sql    The query that was executing when the exception happened.
-   * @param params The query replacement paramaters; <code>null</code> is a valid value to pass in.
+   * @param params The query replacement parameters; <code>null</code> is a valid value to pass in.
    * @throws java.sql.SQLException
    */
   protected void rethrow(SQLException cause, String sql, Object[] params) throws SQLException {

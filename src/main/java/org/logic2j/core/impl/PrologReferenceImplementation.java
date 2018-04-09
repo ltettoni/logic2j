@@ -38,7 +38,7 @@ import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 public class PrologReferenceImplementation implements PrologImplementation {
 
   /**
-   * Describe the level of initialization of the Prolog system, between bare mimimum, and full-featured.
+   * Describe the level of initialization of the Prolog system, between bare minimum, and full-featured.
    * This enum is not in the {@link PrologImplementation} interface since it's particular to the reference implementation.
    */
   public enum InitLevel {
@@ -132,7 +132,7 @@ public class PrologReferenceImplementation implements PrologImplementation {
   // ---------------------------------------------------------------------------
   // Accessors
   // You may use DI to inject all sub-features into setters
-  // TODO I think that we probably have to reinit/load the full engine's configuration everytime one setter is called, but we lack an
+  // TODO I think that we probably have to reinit/load the full engine's configuration every time one setter is called, but we lack an
   // "afterPropertiesSet()" feature. We should use the standard @PostConstruct instead.
   // ---------------------------------------------------------------------------
 

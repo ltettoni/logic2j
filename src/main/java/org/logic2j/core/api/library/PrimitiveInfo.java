@@ -40,7 +40,7 @@ public class PrimitiveInfo {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
   private static final boolean isDebug = logger.isDebugEnabled();
 
-  // Not functional - only used to warn once per JVM that inefficent invocation is in place
+  // Not functional - only used to warn once per JVM that inefficient invocation is in place
   private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<>();
 
 
@@ -99,7 +99,7 @@ public class PrimitiveInfo {
     } catch (final InvocationTargetException e) {
       final Throwable targetException = e.getTargetException();
       if (targetException instanceof RecursionException) {
-        // If we already have trouble in recursivity, don't add further exceptions - just rethrow.
+        // If we already have trouble in recursion, don't add further exceptions - just rethrow.
         throw (RecursionException) targetException;
       }
       if (targetException instanceof StackOverflowError) {
