@@ -253,9 +253,7 @@ public class SqlBuilder3 {
    */
   static StringBuilder inlistParamsPlaceholders(int theNumber) {
     final StringBuilder sb = new StringBuilder(1000);
-    if (theNumber <= 0) {
-      // return empty
-    } else if (theNumber == 1) {
+    if (theNumber == 1) {
       sb.append('?');
     } else {
       sb.append('(');

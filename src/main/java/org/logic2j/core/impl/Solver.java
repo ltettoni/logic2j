@@ -28,14 +28,7 @@ import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.ProfilingInfo;
 
 /**
- * Solve goals - that's the core of the engine, the resolution algorithm is in this class.
- * There are 4 predicates managed directly in this class:
- * "," (AND)
- * ";" (OR)
- * "call(X)"
- * "!" (CUT)
- * ( and in the future, ":-" (RULE) )
- * All other predicates are delegated in implementations of {@link FOPredicate#predicateLogic(UnifyContext)}.
+ * Solve goals with extension to {@link DataFact}s and {@link Clause}s.
  */
 public class Solver extends org.logic2j.engine.solver.Solver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);

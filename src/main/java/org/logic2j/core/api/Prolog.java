@@ -20,6 +20,7 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
+import org.logic2j.engine.solver.holder.SolutionHolder;
 import org.logic2j.engine.solver.listener.SolutionListener;
 
 /**
@@ -39,7 +40,7 @@ public interface Prolog {
    * If you already have a parsed term, use {@link #solve(Object)} instead.
    *
    * @param theGoal To solve, will be parsed into a Term.
-   * @return A {@link SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
+   * @return A {@link org.logic2j.engine.solver.holder.SolutionHolder} that will allow the caller code to dereference solution(s) and their bindings (values of variables).
    */
   GoalHolder solve(CharSequence theGoal);
 

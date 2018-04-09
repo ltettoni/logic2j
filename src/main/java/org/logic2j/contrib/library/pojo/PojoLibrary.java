@@ -119,9 +119,7 @@ public class PojoLibrary extends LibraryBase {
   private void inject(Object pojo, String theExpression, Object newValue) {
     try {
       PropertyUtils.setProperty(pojo, theExpression, newValue);
-    } catch (IllegalAccessException e) {
-      throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
-    } catch (NoSuchMethodException e) {
+    } catch (IllegalAccessException | NoSuchMethodException e) {
       throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e);
     } catch (InvocationTargetException e) {
       throw new PrologNonSpecificException("Could not set property \"" + theExpression + "\" from object: " + pojo + ": " + e.getTargetException());
