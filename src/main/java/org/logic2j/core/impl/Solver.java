@@ -138,7 +138,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
               logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, clauseBody);
             }
             // Solve the body in our current recursion context
-            final int theoremResult = solveGoalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
+            final int theoremResult = solveInternalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
             if (isDebug) {
               logger.debug("  back to having solved theorem's body = {} with theoremResult={}", clauseBody, theoremResult);
             }
