@@ -95,7 +95,7 @@ public final class PrologLists {
    * @return true if this list is the empty list, or any prolog list of 1 or more elements.
    */
   public static boolean isList(Struct struct) {
-    return (isListNode(struct) && isList(struct.getArg(1))) || isEmptyList(struct);
+    return isListNode(struct) || isEmptyList(struct);
   }
 
   /**
@@ -151,9 +151,9 @@ public final class PrologLists {
    * @throws InvalidTermException if this is not a prolog list.
    * @param prologList
    */
-  public static Struct listTail(Struct prologList) {
+  public static Object listTail(Struct prologList) {
     requireList(prologList);
-    return (Struct) prologList.getRHS();
+    return prologList.getRHS();
   }
 
   /**
