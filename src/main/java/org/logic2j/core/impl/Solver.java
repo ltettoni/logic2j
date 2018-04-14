@@ -85,7 +85,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     return result;
   }
 
-
+  @Override
   protected int solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final int cutLevel) {
     // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
     final long inferenceCounter = ProfilingInfo.nbInferences;
@@ -192,7 +192,8 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     return result;
   }
 
-  protected int solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars, final int cutLevel) {
+  @Override
+  protected int solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars) {
     final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
     if (! hasDataFactProviders) {
       return Continuation.CONTINUE;
