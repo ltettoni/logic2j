@@ -107,7 +107,8 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     final Object[] clauseHeadAndBody = new Object[2];
     final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
     // Iterate on providers
-    loopOnProviders: // This label used to cancel searching for more matching clauses following a CUT
+    loopOnProviders:
+    // This label used to cancel searching for more matching clauses following a CUT
     // Specifying a label because of two nested "for" loops - we need to break from the inner one
     for (final ClauseProvider provider : providers) {
       final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, currentVars);
@@ -153,27 +154,26 @@ public class Solver extends org.logic2j.engine.solver.Solver {
           if (result != Continuation.CONTINUE) {
             if (result == Continuation.USER_ABORT) {
               if (isDebug) {
-                logger.debug(" Iteration on clauses detected USER_ABORT - aborting search for clauses");
+                logger.debug(" Iteration on clauses detected USER_ABORT - aborting iterating clauses");
               }
               break loopOnProviders; // Stop matching more clauses
             }
             // Cut somewhere down the processing, or returned from notified solution
             // Logic to handle the CUT goal here
             if (isDebug) {
-              logger.debug("Got a CUT of result={}, at currentLevel={}", result, cutLevel);
+              logger.debug(" Got a CUT of result={}, at currentLevel={}", result, cutLevel);
             }
-            if (result <= cutLevel) {
+            assert result <= cutLevel;
+            if (result == cutLevel) {
               if (isDebug) {
-                logger.debug("Cutting solve#{} for {}", inferenceCounter, goalTerm);
+                logger.debug(" Reached parent predicate with CUT, stop escalating CUT, continue instead");
               }
-              if (result == cutLevel) {
-                if (isDebug) {
-                  logger.debug("Reached parent predicate with CUT, stop escalating CUT, continue instead");
-                }
-                result = Continuation.CONTINUE;
-              }
-              break loopOnProviders; // Stop matching more clauses
+              result = Continuation.CONTINUE;
             }
+            if (isDebug) {
+              logger.debug(" Cutting solveAgainstClauseProviders#{} for {}, stop iterating clauses", inferenceCounter, goalTerm);
+            }
+            break loopOnProviders; // Stop matching more clauses
           }
 
         } else {
@@ -181,11 +181,11 @@ public class Solver extends org.logic2j.engine.solver.Solver {
             logger.debug(" Head not unified - skipping to next clause");
           }
         }
-      }
+      } // Iterate clauses in one provider
       if (isDebug) {
         logger.debug("Last Clause of \"{}\" iterated", provider);
       }
-    }
+    } // Iterate providers
     if (isDebug) {
       logger
           .debug(" +<< Exiting  solveAgainstClauseProviders#{}: last ClauseProvider iterated for: {}, result=" + result, inferenceCounter, goalTerm);
