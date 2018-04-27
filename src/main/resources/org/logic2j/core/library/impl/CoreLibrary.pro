@@ -65,7 +65,7 @@ C -> T      :- call(C), !, call(T).
 
   Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
   however there is ONE case in which this can't work: the definition of the implication predicate '->' is such that
-  the head is (C->T);B and if we don't rely on head matching but rather implement ";" directly in the Solver, this theorem
+  the head is (C->T);B and if we don't rely on head matching but rather implement ";" directly in the Solver, this rule
   won't be picked-up and '->' will not work.
 */
 A ; B :- call(A).
