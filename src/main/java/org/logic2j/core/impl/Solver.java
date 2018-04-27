@@ -46,7 +46,9 @@ public class Solver extends org.logic2j.engine.solver.Solver {
    * Do we solve the ";" (OR) predicate internally here, or in the predicate.
    * (see note re. processing of OR in CoreLibrary.pro)
    */
-  protected final boolean isInternalOr() { return false; } // FIXME Bug with true on sign5neg test case
+  protected final boolean isInternalOr() {
+    return false;
+  } // FIXME Bug with true on sign5pos and sign5neg test cases
 
 
   @Override
@@ -57,7 +59,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
   @Override
   protected int invokeJava(Struct goalStruct, UnifyContext currentVars) {
-    final PrimitiveInfo prim = ((Struct<PrimitiveInfo>)goalStruct).getContent();
+    final PrimitiveInfo prim = ((Struct<PrimitiveInfo>) goalStruct).getContent();
 
     final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state
@@ -85,6 +87,13 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     return result;
   }
 
+  /**
+   * @param goalTerm
+   * @param currentVars
+   * @param cutLevel
+   * @return continuation
+   * @note There is logic to handle the CUT goal here
+   */
   @Override
   protected int solveAgainstClauseProviders(final Object goalTerm, UnifyContext currentVars, final int cutLevel) {
     // Simple "user-defined" goal to demonstrate - find matching goals in the theories loaded
@@ -98,7 +107,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
     final Object[] clauseHeadAndBody = new Object[2];
     final Iterable<ClauseProvider> providers = this.prolog.getTheoryManager().getClauseProviders();
     // Iterate on providers
-    loopOnProviders:
+    loopOnProviders: // This label used to cancel searching for more matching clauses following a CUT
     // Specifying a label because of two nested "for" loops - we need to break from the inner one
     for (final ClauseProvider provider : providers) {
       final Iterable<Clause> matchingClauses = provider.listMatchingClauses(goalTerm, currentVars);
@@ -113,12 +122,6 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
         clause.headAndBodyForSubgoal(currentVars, clauseHeadAndBody);
         final Object clauseHead = clauseHeadAndBody[0];
-                /*
-                if (isDebug) {
-                    logger.debug("  Unifying goal  : {}", goalTerm);
-                    logger.debug("   to clause head: {}", clauseHead);
-                }
-                */
         final UnifyContext contextAfterHeadUnified = currentVars.unify(goalTerm, clauseHead);
         final boolean headUnified = contextAfterHeadUnified != null;
 
@@ -133,45 +136,43 @@ public class Solver extends org.logic2j.engine.solver.Solver {
             final int continuation = currentVars.getSolutionListener().onSolution(contextAfterHeadUnified);
             result = continuation;
           } else {
-            // Not a fact, it's a theorem - it has a body - the body becomes our new goal
+            // Not a fact, it's a rule - it has a body - the body becomes our new goal
             if (isDebug) {
-              logger.debug(" Head unified. Clause with head = {} is a theorem, solving body = {}", clauseHead, clauseBody);
+              logger.debug(" Head unified. Clause with head = {} is a rule, solving body = {}", clauseHead, clauseBody);
             }
-            // Solve the body in our current recursion context
-            final int theoremResult = solveInternalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
+            // Solve the body with the same recursion level. The CUT logic is that only if a goal is solved
+            // against clauses, it will increment the recursion level.
+            final int ruleResult = solveInternalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
             if (isDebug) {
-              logger.debug("  back to having solved theorem's body = {} with theoremResult={}", clauseBody, theoremResult);
+              logger.debug("  back to having solved rule's body = {} with ruleResult={}", clauseBody, ruleResult);
             }
-            result = theoremResult;
-          } // else - was a theorem
+            result = ruleResult;
+          }
 
-          // If not asking for a regular "CONTINUE", handle result from notification of a fact, or solution to a theorem
+          // If not asking for a regular "CONTINUE", handle result from notification of a fact, or solution to a rule
           if (result != Continuation.CONTINUE) {
-            final int intResult = result;
-            if (intResult < 0) {
-              // User abort
+            if (result == Continuation.USER_ABORT) {
               if (isDebug) {
                 logger.debug(" Iteration on clauses detected USER_ABORT - aborting search for clauses");
               }
-              break loopOnProviders;
+              break loopOnProviders; // Stop matching more clauses
             }
-            if (intResult > 0) {
-              // Cut somewhere down the processing, or returned from notified solution
+            // Cut somewhere down the processing, or returned from notified solution
+            // Logic to handle the CUT goal here
+            if (isDebug) {
+              logger.debug("Got a CUT of result={}, at currentLevel={}", result, cutLevel);
+            }
+            if (result <= cutLevel) {
               if (isDebug) {
-                logger.debug("Got a CUT of resultLevel={}, at currentLevel={}", result, cutLevel);
+                logger.debug("Cutting solve#{} for {}", inferenceCounter, goalTerm);
               }
-              if (intResult <= cutLevel) {
+              if (result == cutLevel) {
                 if (isDebug) {
-                  logger.debug("Cutting solve#{} for {}", inferenceCounter, goalTerm);
+                  logger.debug("Reached parent predicate with CUT, stop escalating CUT, continue instead");
                 }
-                if (intResult == cutLevel) {
-                  if (isDebug) {
-                    logger.debug("Reached parent predicate with CUT, stop escalating CUT, continue instead");
-                  }
-                  result = Continuation.CONTINUE;
-                }
-                break loopOnProviders;
+                result = Continuation.CONTINUE;
               }
+              break loopOnProviders; // Stop matching more clauses
             }
           }
 
@@ -195,7 +196,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
   @Override
   protected int solveAgainstDataProviders(final Object goalTerm, final UnifyContext currentVars) {
     final boolean hasDataFactProviders = this.prolog.getTheoryManager().hasDataFactProviders();
-    if (! hasDataFactProviders) {
+    if (!hasDataFactProviders) {
       return Continuation.CONTINUE;
     }
 
