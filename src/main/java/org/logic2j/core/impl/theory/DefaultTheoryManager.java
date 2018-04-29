@@ -183,7 +183,7 @@ public class DefaultTheoryManager implements TheoryManager {
     final TheoryContent content = new TheoryContent();
     // Need to split parsing into terms and loading Clauses into Content separately, because of import/1
     for (Object clauseTerm = theParser.nextTerm(true); clauseTerm != null; clauseTerm = theParser.nextTerm(true)) {
-      logger.debug("Parsed clause: {}", clauseTerm);
+      logger.debug("Loading clause: {}", clauseTerm);
       if (clauseTerm instanceof CharSequence) {
         // Very rare case of facts being just a string (see "cut4" in our tests)
         clauseTerm = Struct.valueOf(clauseTerm.toString());
