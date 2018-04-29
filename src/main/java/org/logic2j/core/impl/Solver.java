@@ -145,7 +145,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
             // against clauses, it will increment the recursion level.
             final int ruleResult = solveInternalRecursive(clauseBody, contextAfterHeadUnified, cutLevel);
             if (isDebug) {
-              logger.debug("  back to having solved rule's body = {} with ruleResult={}", clauseBody, ruleResult);
+              logger.debug(" back from having solved rule's body = {} gave ruleResult={}", clauseBody, ruleResult);
             }
             result = ruleResult;
           }

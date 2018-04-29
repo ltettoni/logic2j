@@ -51,11 +51,11 @@ perm([], []).
 
 
 % Implication (see note below regarding the implementation of OR (;))
-% if-then-else
-C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
+% if-then-else   -   Watch out: due to precedence the rule head is actually ((C->T) ; B), and it clearly conflicts with the definition of A ; B
+Cond -> Then ; Else  :- ! /* The CUT will prevent backtracking to hit the rules for (A ; B) */ ,  ( (call(Cond), !, call(Then)) ; call(Else) ).
 
 % if-then
-C -> T      :- call(C), !, call(T).
+Cond -> Then   :- call(Cond), !, call(Then).
 
 
 
@@ -64,7 +64,8 @@ C -> T      :- call(C), !, call(T).
 /*
   This is a working version of OR implemented in prolog.
   WATCH OUT: Define the OR predicate AFTER other more complex clauses that may pattern match on it,
-  such as the definition of '->' see above.
+  such as the definition of '->' see above. Also a "!" is needed in the above definition to not backtrack
+  to this definition. Mhh, not so good.
 
   Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
   however there is ONE case in which this can't work: the definition of the implication predicate '->' is such that

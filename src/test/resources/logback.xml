@@ -19,6 +19,8 @@
     -->
 
     <logger name="org.logic2j" level="warn"/>
+    <logger name="org.logic2j.engine.solver.Solver" level="warn"/>
+    <logger name="org.logic2j.core.impl.Solver" level="warn"/>
 
     <root level="warn">
         <appender-ref ref="console"/>
