@@ -48,10 +48,13 @@ reverse(A,R) :- reverse(A,[],R).
 % All permutations of a list
 perm(List, [H|Perm]) :- takeout(H, List, Rest), perm(Rest, Perm).
 perm([], []).
-  
+
 
 % Implication (see note below regarding the implementation of OR (;))
+% if-then-else
 C -> T ; B  :- !, ';'((call(C), !, call(T)), call(B)).
+
+% if-then
 C -> T      :- call(C), !, call(T).
 
 
@@ -60,7 +63,7 @@ C -> T      :- call(C), !, call(T).
 
 /*
   This is a working version of OR implemented in prolog.
-  WATCH OUT: This must be define the OR predicate AFTER other more complex clauses that may pattern match on it,
+  WATCH OUT: Define the OR predicate AFTER other more complex clauses that may pattern match on it,
   such as the definition of '->' see above.
 
   Generally I would prefer the more efficient and more general N-arity implementation of OR in Java, in DefaultSolver,
