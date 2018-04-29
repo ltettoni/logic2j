@@ -147,7 +147,7 @@ sign3(N, Sign) :-
     N < 0, Sign=negative, ! ;
     Sign=zero.
 
-% Even more compact, using ->
+% Even more compact, using -> (if-then-else)
 sign4(N, Sign) :- 
         N > 0 -> Sign=positive ;
         N < 0 -> Sign=negative ;
