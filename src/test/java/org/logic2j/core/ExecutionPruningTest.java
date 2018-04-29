@@ -174,7 +174,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     @Test
-    public void sign4() {
+    public void sign4zero() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         //
         assertThat(uniqueSolution("sign4(0,X)").var("X").unique()).isEqualTo(term("zero"));
@@ -182,7 +182,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     @Test
-    public void sign5neg() {
+    public void sign4negative() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         GoalHolder solutions;
         solutions = this.prolog.solve("sign4(-5,X)");
@@ -190,7 +190,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     }
 
     @Test
-    public void sign5pos() {
+    public void sign4positive() {
         loadTheoryFromTestResourcesDir("test-functional.pro");
         GoalHolder solutions;
         //

@@ -48,7 +48,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
    */
   protected final boolean isInternalOr() {
     return false;
-  } // FIXME Bug with true on sign5pos and sign5neg test cases
+  } // FIXME Bug with "true" on sign4negative and sign4positive test cases
 
 
   @Override
