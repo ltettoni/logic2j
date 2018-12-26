@@ -365,7 +365,7 @@ public class CoreLibrary extends LibraryBase {
     getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
 
     // And unify with result
-    final Long counted = listenerForSubGoal.count();
+    final int counted = listenerForSubGoal.count();
     // Note: won't ever be greater than one due to our listener that stops generation
     if (counted > 0) {
       return notifySolution(currentVars);
@@ -393,7 +393,7 @@ public class CoreLibrary extends LibraryBase {
     getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(listenerForSubGoal));
 
     // And unify with result of counting (as Integer)
-    final Integer counted = (int) listenerForSubGoal.count();
+    final Integer counted = listenerForSubGoal.count();
     return unify(currentVars, theNumber, counted);
   }
 
@@ -445,7 +445,7 @@ public class CoreLibrary extends LibraryBase {
       throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
     }
     final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<>(), Object.class);
-    final Long listLength = (long) javalist.size();
+    final Integer listLength = javalist.size();
     return unify(currentVars, listLength, theLength);
   }
 

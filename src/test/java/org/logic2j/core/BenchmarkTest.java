@@ -90,9 +90,9 @@ public class BenchmarkTest extends PrologTestBase {
         // Numbers
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-//        long count = holder.var("Q").list().size();
-        long count = holder.count();
-//        long count = holder.exists() ? 1 : 0;
+//       final int count = holder.var("Q").list().size();
+        final int count = holder.count();
+//       final int count = holder.exists() ? 1 : 0;
         ProfilingInfo.reportAll("Number of solutions to " + goal + " is " + count);
     }
 

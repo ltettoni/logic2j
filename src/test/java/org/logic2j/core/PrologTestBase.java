@@ -166,8 +166,8 @@ public abstract class PrologTestBase {
             logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
             result = this.prolog.solve(goal);
             // Now execute the goal - only extracting the number of solutions
-            final long number = result.count();
-            assertThat(number).as("Checking number of solutions for goal \"" + goal + '"').isEqualTo(theNumber);
+            final int nbr = result.count();
+            assertThat(nbr).as("Checking number of solutions for goal \"" + goal + '"').isEqualTo(theNumber);
         }
         return result;
     }

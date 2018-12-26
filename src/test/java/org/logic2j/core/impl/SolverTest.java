@@ -39,7 +39,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveFail() {
         final Object goal = unmarshall("fail");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(0);
     }
 
@@ -47,21 +47,21 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrue() {
         final Object goal = unmarshall("true");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(1);
     }
 
     @Test
     public void primitiveCut() {
         final Object goal = unmarshall("!");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(1);
     }
 
     @Test
     public void atomUndefined() {
         final Object goal = unmarshall("undefined_atom");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(0);
     }
 
@@ -69,7 +69,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrueAndTrue() {
         final Object goal = unmarshall("true,true");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(1);
     }
 
@@ -77,7 +77,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void primitiveTrueOrTrue() {
         final Object goal = unmarshall("true;true");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(2);
     }
 
@@ -192,7 +192,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyLiteralsNoSolution() {
         final Object goal = unmarshall("a=b");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(0);
     }
 
@@ -200,7 +200,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyLiteralsOneSolution() {
         final Object goal = unmarshall("c=c");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(1);
     }
 
@@ -208,7 +208,7 @@ public class SolverTest extends PrologTestBase {
     @Test
     public void unifyAnonymousToAnonymous() {
         final Object goal = unmarshall("_=_");
-        final long nbSolutions = solveWithExtractingListener(goal).count();
+        final int nbSolutions = solveWithExtractingListener(goal).count();
         assertThat(nbSolutions).isEqualTo(1);
     }
 

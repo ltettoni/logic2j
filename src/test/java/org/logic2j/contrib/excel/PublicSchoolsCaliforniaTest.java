@@ -40,7 +40,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
 
     @Test
     public void withClauseProvider() {
-        final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
+        final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
         assertThat(number).isEqualTo(15);
@@ -48,7 +48,7 @@ public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
 
     @Test
     public void withDataProvider() {
-        final long number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
+        final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
         // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
         logger.info("unification: solutions: {}", number);
         assertThat(number).isEqualTo(15);
