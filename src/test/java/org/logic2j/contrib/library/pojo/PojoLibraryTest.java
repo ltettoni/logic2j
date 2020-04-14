@@ -59,14 +59,14 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test
     public void javaNewForEnum() {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").single();
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").get();
         assertThat(x).isEqualTo(TermAdapter.FactoryMode.ANY_TERM);
     }
 
     @Test
     public void javaNewWithDefaultConstructor() {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").single();
+        final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").get();
         assertThat(x instanceof ArrayList<?>).isTrue();
     }
 
@@ -74,7 +74,7 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test
     public void javaNewWithConstructorAndArgs() {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").single();
+        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").get();
         assertThat(x).isEqualTo("text");
     }
 
@@ -82,13 +82,13 @@ public class PojoLibraryTest extends PrologTestBase {
     @Test(expected = PrologNonSpecificException.class)
     public void javaNewWithConstructorAndArgsFails() {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").single();
+        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").get();
     }
 
     @Test
     public void javaInstantiateWithConstructorArgs() {
         loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").single();
+        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").get();
         assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertThat(pojo.getStr()).isEqualTo("toto");
@@ -100,7 +100,7 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithEmptyConstructorAndInjectProperties() {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").single();
+        "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").get();
         assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertThat(pojo.getStr()).isEqualTo("toto");
@@ -113,7 +113,7 @@ public class PojoLibraryTest extends PrologTestBase {
     public void javaInstantiateWithJavaUnify() {
         loadLibrary(new PojoLibrary(this.prolog));
         final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").single();
+        "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").get();
         assertThat(x instanceof PrologInstantiatedPojo).isTrue();
         final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
         assertThat(pojo.getStr()).isEqualTo("toto");

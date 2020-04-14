@@ -112,7 +112,7 @@ public abstract class PrologTestBase {
         assertThat(theGoals.length > 0).as("theGoals must not be empty for assertGoalMustFail()").isTrue();
         for (final CharSequence theGoal : theGoals) {
             try {
-                this.prolog.solve(theGoal).exists();
+                this.prolog.solve(theGoal).isPresent();
                 fail("Goal should have failed and did not: \"" + theGoal + '"');
             } catch (final Logic2jException | AssertionError e) {
                 // Expected

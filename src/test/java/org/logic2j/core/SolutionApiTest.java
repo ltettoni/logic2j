@@ -50,17 +50,17 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void existsFalse() {
-        assertThat(getProlog().solve("fail").exists()).isFalse();
+        assertThat(getProlog().solve("fail").isPresent()).isFalse();
     }
 
     @Test
     public void existsTrue() {
-        assertThat(getProlog().solve("true").exists()).isTrue();
+        assertThat(getProlog().solve("true").isPresent()).isTrue();
     }
 
     @Test
     public void existsTrue2() {
-        assertThat(getProlog().solve("true;true").exists()).isTrue();
+        assertThat(getProlog().solve("true;true").isPresent()).isTrue();
     }
 
     // ---------------------------------------------------------------------------
@@ -95,32 +95,32 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void solutionSingle1() {
-        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().single())).isEqualTo("hex_char(12, 'C')");
+        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().get())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
     public void solutionSingle0() {
-        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().single()).isNull();
+        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().get()).isNull();
     }
 
     @Test(expected = TooManySolutionsException.class)
     public void solutionSingle6() {
-        assertThat(marshall(getProlog().solve("hex_char(Q,_)").solution().single())).isEqualTo("hex_char(12, 'C')");
+        marshall(getProlog().solve("hex_char(Q,_)").solution().unique());
     }
 
     @Test
     public void solutionFirst1() {
-        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().first())).isEqualTo("hex_char(12, 'C')");
+        assertThat(marshall(getProlog().solve("hex_char(Q,'C')").solution().first().get())).isEqualTo("hex_char(12, 'C')");
     }
 
     @Test
     public void solutionFirst0() {
-        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().first()).isNull();
+        assertThat(getProlog().solve("hex_char(Q,'Z')").solution().get()).isNull();
     }
 
     @Test
     public void solutionFirst6() {
-        assertThat(marshall(getProlog().solve("hex_char(Q,C)").solution().first())).isEqualTo("hex_char(10, 'A')");
+        assertThat(marshall(getProlog().solve("hex_char(Q,C)").solution().first().get())).isEqualTo("hex_char(10, 'A')");
     }
 
     @Test
@@ -251,7 +251,7 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], X)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final boolean exists = holder.exists();
+        final boolean exists = holder.isPresent();
         ProfilingInfo.reportAll("Existence of solutions to " + goal + " is " + exists);
         assertThat(exists).isTrue();
     }
@@ -312,7 +312,7 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final Struct[] values = holder.var("Q").array(new Struct[]{});
+        final Object[] values = holder.var("Q").array(new Object[]{});
         ProfilingInfo.reportAll("var()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
         assertThat(values.length).isEqualTo(40320);
