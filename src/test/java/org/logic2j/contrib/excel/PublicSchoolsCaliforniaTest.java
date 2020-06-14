@@ -31,27 +31,27 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class PublicSchoolsCaliforniaTest extends ExcelClauseProviderTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PublicSchoolsCaliforniaTest.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PublicSchoolsCaliforniaTest.class);
 
-    @Before
-    public void init() throws IOException {
-        setExcelClauseProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
-    }
+  @Before
+  public void init() throws IOException {
+    setExcelClauseProvider("cde.ca.gov/pubschls.xls", TermAdapter.AssertionMode.EAV_NAMED);
+  }
 
-    @Test
-    public void withClauseProvider() {
-        final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
-        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
-        logger.info("unification: solutions: {}", number);
-        assertThat(number).isEqualTo(15);
-    }
+  @Test
+  public void withClauseProvider() {
+    final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
+    // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
+    logger.info("unification: solutions: {}", number);
+    assertThat(number).isEqualTo(15);
+  }
 
-    @Test
-    public void withDataProvider() {
-        final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
-        // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
-        logger.info("unification: solutions: {}", number);
-        assertThat(number).isEqualTo(15);
-    }
+  @Test
+  public void withDataProvider() {
+    final int number = getProlog().solve("pubschls(E, 'City', 'Fortuna')").count();
+    // logger.info(assertNSolutions(15, "pubschls(E, 'City', 'Fortuna')").var("E").list().toString());
+    logger.info("unification: solutions: {}", number);
+    assertThat(number).isEqualTo(15);
+  }
 
 }

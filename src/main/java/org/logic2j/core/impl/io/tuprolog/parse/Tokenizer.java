@@ -389,7 +389,7 @@ class Tokenizer extends StreamTokenizer {
         // 2.b first int is followed by a period
         if (typeb != '.') {
           throw new InvalidTermException(
-              "A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.' at line: " + super.lineno());
+                  "A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.' at line: " + super.lineno());
         }
 
         // lookahead 2
@@ -476,7 +476,7 @@ class Tokenizer extends StreamTokenizer {
       }
     }
     if (typec == ' ' || // space char (* 6.5.4 *)
-        Arrays.binarySearch(GRAPHIC_CHARS, (char) typec) >= 0) {
+            Arrays.binarySearch(GRAPHIC_CHARS, (char) typec) >= 0) {
       return typec;
     }
 

@@ -203,7 +203,7 @@ public class DefaultTermAdapter implements TermAdapter {
   protected <T extends Enum> T fromEnum(Object theTerm, Class<T> theTargetClass, String message) {
     if (theTargetClass == Enum.class) {
       throw new IllegalArgumentException(
-          message + ": converting to any Enum will require a custom TermAdapter, " + this + " cannot guess your intended Enum class");
+              message + ": converting to any Enum will require a custom TermAdapter, " + this + " cannot guess your intended Enum class");
     }
 
     // For converting to Enum, we expect that theTerm will match the name() of the target Enum.
@@ -253,7 +253,6 @@ public class DefaultTermAdapter implements TermAdapter {
   public void setNormalizer(TermMapper normalizer) {
     this.normalizer = normalizer;
   }
-
 
 
   @Override

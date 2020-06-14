@@ -64,12 +64,14 @@ public interface TermAdapter {
      * Data is asserted as "named triples". For a dataset called myData, assertions will be such as:
      * myData(entityIdentifier, propertyName, propertyValue).
      */
-    EAV_NAMED, /**
+    EAV_NAMED,
+    /**
      * Data is asserted as "quads". The predicate is always "eavt(entity, attribute, value, transaction)".
      * The "transaction" identifier is the dataset name. For example:
      * eavt(entityIdentifier, propertyName, propertyValue, myData).
      */
-    EAVT, /**
+    EAVT,
+    /**
      * Data is asserted as full records with one argument per column, such as
      * "myData(valueOfColumn1, valueOfColumn2, valueOfColumn3, ..., valueOfColumnN)."
      * The order of columns obviously matters.

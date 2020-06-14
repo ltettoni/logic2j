@@ -51,7 +51,7 @@ public class TabularDataFactProvider implements DataFactProvider {
         case EAV_NAMED: {
           if (primaryKeyColumn < 0) {
             throw new InvalidTermException(
-                "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                    "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
           }
           final String identifier = row[primaryKeyColumn].toString();
           for (int c = 0; c < nbColumns; c++) {
@@ -71,7 +71,7 @@ public class TabularDataFactProvider implements DataFactProvider {
         case EAVT: {
           if (primaryKeyColumn < 0) {
             throw new InvalidTermException(
-                "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                    "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
           }
           final String identifier = row[primaryKeyColumn].toString();
           for (int c = 0; c < nbColumns; c++) {

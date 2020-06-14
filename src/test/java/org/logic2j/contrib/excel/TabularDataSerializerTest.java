@@ -24,19 +24,19 @@ import java.io.File;
 import java.io.IOException;
 
 public class TabularDataSerializerTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataSerializerTest.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataSerializerTest.class);
 
-    @Test
-    public void loadExcelAndSerialize() throws IOException {
-        final File file = new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.xls");
-        final TabularData data = new ExcelReader(file, true, 0).read();
-        new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).write(data);
-    }
+  @Test
+  public void loadExcelAndSerialize() throws IOException {
+    final File file = new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.xls");
+    final TabularData data = new ExcelReader(file, true, 0).read();
+    new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).write(data);
+  }
 
-    @Test
-    public void deserialize() throws IOException, ClassNotFoundException {
-        final TabularData td = new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).read();
-        logger.info("Deserialized: {}", td);
-    }
+  @Test
+  public void deserialize() throws IOException, ClassNotFoundException {
+    final TabularData td = new TabularDataSerializer(new File(TEST_RESOURCES_DIR, "cde.ca.gov/pubschls.ser")).read();
+    logger.info("Deserialized: {}", td);
+  }
 
 }

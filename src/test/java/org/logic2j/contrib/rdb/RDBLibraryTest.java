@@ -24,8 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 
-    @Test
-    public void ensureCanGetConnection() throws SQLException {
-        assertThat(zipcodesConnection()).isNotNull();
-    }
+  @Test
+  public void ensureCanGetConnection() throws SQLException {
+    assertThat(zipcodesConnection()).isNotNull();
+  }
 }

@@ -73,7 +73,7 @@ public class TheoryContent {
     if (theContentToAddToThis.getInitializationGoal() != null) {
       if (this.getInitializationGoal() != null) {
         logger
-            .warn("Overwriting initialization goal \"{}\" with \"{}\"", this.getInitializationGoal(), theContentToAddToThis.getInitializationGoal());
+                .warn("Overwriting initialization goal \"{}\" with \"{}\"", this.getInitializationGoal(), theContentToAddToThis.getInitializationGoal());
       }
       this.setInitializationGoal(theContentToAddToThis.getInitializationGoal());
     }

@@ -24,23 +24,23 @@ import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
  * Test parsing and formatting.
  */
 public class DirectivesTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DirectivesTest.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DirectivesTest.class);
 
-    /**
-     * No need for special init for only testing parsing and formatting.
-     */
-    @Override
-    protected InitLevel initLevel() {
-        return InitLevel.L2_BASE_LIBRARIES;
-    }
+  /**
+   * No need for special init for only testing parsing and formatting.
+   */
+  @Override
+  protected InitLevel initLevel() {
+    return InitLevel.L2_BASE_LIBRARIES;
+  }
 
-    @Test
-    public void load() {
-        getProlog().getLibraryManager().loadLibrary(new PojoLibrary(getProlog()));
+  @Test
+  public void load() {
+    getProlog().getLibraryManager().loadLibrary(new PojoLibrary(getProlog()));
 
-        countNoSolution("directiveFileLoaded");
-        loadTheoryFromTestResourcesDir("directives-set-vars.pro");
-        countOneSolution("directiveFileLoaded");
-    }
+    countNoSolution("directiveFileLoaded");
+    loadTheoryFromTestResourcesDir("directives-set-vars.pro");
+    countOneSolution("directiveFileLoaded");
+  }
 
 }

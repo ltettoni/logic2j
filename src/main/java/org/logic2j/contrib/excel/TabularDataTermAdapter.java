@@ -55,7 +55,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
           case EAV_NAMED: {
             if (tabularData.getPrimaryKeyColumn() < 0) {
               throw new InvalidTermException(
-                  "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                      "Exposing tabular tabularData with mode EAV requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
             }
             final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
             for (int c = 0; c < nbColumns; c++) {
@@ -71,7 +71,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
           case EAVT: {
             if (tabularData.getPrimaryKeyColumn() < 0) {
               throw new InvalidTermException(
-                  "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
+                      "Exposing tabular tabularData with mode EAVT requires the entities have a unique identifier, specify the 'primaryKeyColumn' attribute");
             }
             final String identifier = row[tabularData.getPrimaryKeyColumn()].toString();
             for (int c = 0; c < nbColumns; c++) {

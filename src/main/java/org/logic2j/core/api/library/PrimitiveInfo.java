@@ -48,10 +48,12 @@ public class PrimitiveInfo {
     /**
      * Not yet implemented.
      */
-    DIRECTIVE, /**
+    DIRECTIVE,
+    /**
      * A predicate implemented as a Java method, will produce solution(s) through a {@link SolutionListener} interface.
      */
-    PREDICATE, /**
+    PREDICATE,
+    /**
      * A functor yields a result, such as +(2,3).
      */
     FUNCTOR
@@ -83,7 +85,7 @@ public class PrimitiveInfo {
     // We did not do a direct invocation - we will have to rely on reflection
     if (!methodNeedingReflectiveInvocation.contains(this.methodName)) {
       logger.warn("Invocation of library primitive \"{}\" for goal \"{}\" uses reflection - consider implementing {}.dispatch()", this.methodName,
-          theGoalStruct, this.library);
+              theGoalStruct, this.library);
       // Avoid multiple logging
       methodNeedingReflectiveInvocation.add(this.methodName);
     }
@@ -123,7 +125,7 @@ public class PrimitiveInfo {
    * @throws IllegalAccessException
    */
   private Object invokeReflective(Struct theGoalStruct, UnifyContext currentVars)
-      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+          throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final int arity = theGoalStruct.getArity();
     final int nbArgs = this.isVarargs ? 2 : (1 + arity);
     final Object[] args = new Object[nbArgs];
@@ -168,7 +170,7 @@ public class PrimitiveInfo {
   @Override
   public String toString() {
     return this.getClass().getSimpleName() + "{lib=" + this.library + ", type=" + getType() + ", name=" + this.name + ", method=" + this.method
-        .getName() + '}';
+            .getName() + '}';
   }
 
 }

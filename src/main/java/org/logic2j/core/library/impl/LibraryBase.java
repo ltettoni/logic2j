@@ -76,7 +76,7 @@ public class LibraryBase implements PLibrary {
       // TODO Should be a kind of InvalidGoalException instead?
       final int positionOfArgument = indexOfArg + 1;
       throw new InvalidTermException(
-          "Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
+              "Cannot invoke primitive \"" + nameOfPrimitive + "\" with a free variable, check argument #" + positionOfArgument);
     }
   }
 

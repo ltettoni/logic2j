@@ -30,37 +30,37 @@ import static org.assertj.core.api.Assertions.assertThat;
  * from logic2j's {@link org.logic2j.core.api.Prolog} and {@link Solver}.
  */
 public class AdapterTest extends PrologTestBase {
-    // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);
+  // private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdapterTest.class);
 
-    public static class MyOutputObject {
-        // Empty
-    }
+  public static class MyOutputObject {
+    // Empty
+  }
 
-    public enum MyEnum {
-        V1, V2, V3
-    }
+  public enum MyEnum {
+    V1, V2, V3
+  }
 
-    public static abstract class PrologAdapter<In, Out> {
-        public abstract Iterable<Out> solve(In in);
-    }
+  public static abstract class PrologAdapter<In, Out> {
+    public abstract Iterable<Out> solve(In in);
+  }
 
-    @Test
-    public void retrieveJavaObjects() {
-        assertThat(this.prolog.solve("X is 2+3").var("X", Integer.class).unique().intValue()).isEqualTo(5);
-    }
+  @Test
+  public void retrieveJavaObjects() {
+    assertThat(this.prolog.solve("X is 2+3").var("X", Integer.class).unique().intValue()).isEqualTo(5);
+  }
 
-    @Test
-    public void plainDouble() {
-        loadTheoryFromTestResourcesDir("test-functional.pro");
-        //
-        final List<Object> binding = this.prolog.solve("dbl(X)").var("X").list();
-        assertThat(binding.toString()).isEqualTo("[1.1, 1.2, 1.3]");
-    }
+  @Test
+  public void plainDouble() {
+    loadTheoryFromTestResourcesDir("test-functional.pro");
+    //
+    final List<Object> binding = this.prolog.solve("dbl(X)").var("X").list();
+    assertThat(binding.toString()).isEqualTo("[1.1, 1.2, 1.3]");
+  }
 
-    @Test
-    public void javaEnum() {
-        final Struct term = this.prolog.getTermAdapter().toStruct("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
-        final Object binding = this.prolog.solve(term).var("X").unique();
-        assertThat(binding).isEqualTo(MyEnum.V2);
-    }
+  @Test
+  public void javaEnum() {
+    final Struct term = this.prolog.getTermAdapter().toStruct("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
+    final Object binding = this.prolog.solve(term).var("X").unique();
+    assertThat(binding).isEqualTo(MyEnum.V2);
+  }
 }

@@ -22,9 +22,9 @@ import org.logic2j.core.api.TermAdapter.AssertionMode;
 
 public class TabularDataFactProviderTest extends TabularDataTestBase {
 
-    @Test
-    public void test10000() {
-        getProlog().getTheoryManager().addDataFactProvider(new TabularDataFactProvider(largeData(), AssertionMode.RECORD));
-        nSolutions(LARGE_DATA_NB_ROWS, "a(b,C,d,e,f,g,h,i,j)");
-    }
+  @Test
+  public void test10000() {
+    getProlog().getTheoryManager().addDataFactProvider(new TabularDataFactProvider(largeData(), AssertionMode.RECORD));
+    nSolutions(LARGE_DATA_NB_ROWS, "a(b,C,d,e,f,g,h,i,j)");
+  }
 }

@@ -123,7 +123,7 @@ public class TabularData implements Serializable {
     }
     if (!duplicateKeys.isEmpty()) {
       throw new PrologNonSpecificException(
-          "Tabular data " + this.dataSetName + " contains duplicate keys in column " + this.primaryKeyColumn + ": " + duplicateKeys);
+              "Tabular data " + this.dataSetName + " contains duplicate keys in column " + this.primaryKeyColumn + ": " + duplicateKeys);
     }
   }
 

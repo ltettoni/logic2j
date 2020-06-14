@@ -31,45 +31,45 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExcelReaderTest extends ExcelClauseProviderTestBase {
 
-    public static final String EXCEL_TEST_XLS = "excel/TEST.xls";
+  public static final String EXCEL_TEST_XLS = "excel/TEST.xls";
 
-    @Test
-    public void read() throws IOException {
-        final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
-        final TabularData data = new ExcelReader(file, true, -1).read();
-        assertThat(data).isNotNull();
-        assertThat(data.getNbRows()).isEqualTo(10);
-        assertThat(data.getNbColumns()).isEqualTo(11);
-    }
+  @Test
+  public void read() throws IOException {
+    final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
+    final TabularData data = new ExcelReader(file, true, -1).read();
+    assertThat(data).isNotNull();
+    assertThat(data.getNbRows()).isEqualTo(10);
+    assertThat(data.getNbColumns()).isEqualTo(11);
+  }
 
-    @Test
-    public void listMatchingClauses() throws IOException {
-        final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
-        final TabularData data = new ExcelReader(file, true, 0).read();
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, TermAdapter.AssertionMode.EAVT);
-        final Struct theGoal = new Struct("eavt", Var.anon(), Var.anon(), Var.anon(), Var.anon());
-        final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
-        assertThat(listMatchingClauses).isNotNull();
-        assertThat(listMatchingClauses.iterator()).isNotNull();
-        assertThat(listMatchingClauses.iterator().next()).isNotNull();
-    }
+  @Test
+  public void listMatchingClauses() throws IOException {
+    final File file = new File(TEST_RESOURCES_DIR, EXCEL_TEST_XLS);
+    final TabularData data = new ExcelReader(file, true, 0).read();
+    final ClauseProvider td = new TabularDataClauseProvider(getProlog(), data, TermAdapter.AssertionMode.EAVT);
+    final Struct theGoal = new Struct("eavt", Var.anon(), Var.anon(), Var.anon(), Var.anon());
+    final Iterable<Clause> listMatchingClauses = td.listMatchingClauses(theGoal, null);
+    assertThat(listMatchingClauses).isNotNull();
+    assertThat(listMatchingClauses.iterator()).isNotNull();
+    assertThat(listMatchingClauses.iterator().next()).isNotNull();
+  }
 
-    @Test
-    public void readAndSolve_eavt() throws IOException {
-        setExcelClauseProvider(EXCEL_TEST_XLS, TermAdapter.AssertionMode.EAVT);
-        nSolutions(1, "eavt('129/2008', 'Resolution title', 'Laboratory equipment', 'TEST')");
-    }
+  @Test
+  public void readAndSolve_eavt() throws IOException {
+    setExcelClauseProvider(EXCEL_TEST_XLS, TermAdapter.AssertionMode.EAVT);
+    nSolutions(1, "eavt('129/2008', 'Resolution title', 'Laboratory equipment', 'TEST')");
+  }
 
-    @Test
-    public void readAndSolve_record() throws IOException {
-        setExcelClauseProvider(EXCEL_TEST_XLS, TermAdapter.AssertionMode.RECORD);
-        //
-        nSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
-        nSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
-        nSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
-        // Failing tests
-        nSolutions(0, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
-        nSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
-    }
+  @Test
+  public void readAndSolve_record() throws IOException {
+    setExcelClauseProvider(EXCEL_TEST_XLS, TermAdapter.AssertionMode.RECORD);
+    //
+    nSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, F, G, H, I, J, K)");
+    nSolutions(1, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, 4.0, G, H, I, J, K)");
+    nSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+    // Failing tests
+    nSolutions(0, "'TEST'('129/2008', B, C, 'ISO/TC 48', E, '4.0', G, H, I, J, K)");
+    nSolutions(1, "'TEST'('A2', 'B2', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2', 'J2', 'K2')");
+  }
 
 }

@@ -110,7 +110,7 @@ public class PojoLibrary extends LibraryBase {
       // throw new PrologNonSpecificError("Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e);
     } catch (InvocationTargetException e) {
       throw new PrologNonSpecificException(
-          "Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e.getTargetException());
+              "Could not get property \"" + theExpression + "\" from object: " + theInstance + ": " + e.getTargetException());
     }
     return value;
   }
@@ -145,7 +145,7 @@ public class PojoLibrary extends LibraryBase {
    */
   @Predicate
   public int property(UnifyContext currentVars, Object thePojo, Object thePropertyName, Object theValue,
-      Object theOptions) {
+                      Object theOptions) {
     // First argument
     final Object pojo = currentVars.reify(thePojo);
     ensureBindingIsNotAFreeVar(pojo, "property/3", 0);

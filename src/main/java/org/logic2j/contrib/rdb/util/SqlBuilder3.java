@@ -286,7 +286,7 @@ public class SqlBuilder3 {
       if (param instanceof Object[]) {
         Collections.addAll(sqlParams, (Object[]) param);
       } else if (param instanceof Collection<?>) {
-        sqlParams.addAll((Collection<?>)param);
+        sqlParams.addAll((Collection<?>) param);
       } else {
         // Scalar: one single element
         sqlParams.add(param);
@@ -363,7 +363,7 @@ public class SqlBuilder3 {
       size = ((Object[]) theScalarOrListValue).length;
     } else if (theScalarOrListValue.getClass().isArray()) {
       throw new UnsupportedOperationException(
-          "At the moment, cannot handle primitive type arrays using the criterion() method, use the more dangerous criterionVararg() one");
+              "At the moment, cannot handle primitive type arrays using the criterion() method, use the more dangerous criterionVararg() one");
     } else {
       size = 1;
     }
@@ -805,8 +805,9 @@ public class SqlBuilder3 {
       }
       if (this.table == null) {
         return other.table == null;
-      } else
+      } else {
         return this.table.equals(other.table);
+      }
     }
 
     @Override
@@ -860,11 +861,11 @@ public class SqlBuilder3 {
       }
       if (!theAlreadyDeclaredTable.equals(this.rightColumn.getTable())) {
         return this.joinType + " join " + this.rightColumn.getTable().declaration() + " on " + this.rightColumn + Operator.EQ.getSql()
-            + this.leftColumn + otherClauses;
+                + this.leftColumn + otherClauses;
       }
       if (!theAlreadyDeclaredTable.equals(this.leftColumn.getTable())) {
         return this.joinType + " join " + this.leftColumn.getTable().declaration() + " on " + this.leftColumn + Operator.EQ.getSql()
-            + this.rightColumn + otherClauses;
+                + this.rightColumn + otherClauses;
       }
       throw new IllegalStateException("Cannot generate join clause for " + this + ", internal error");
     }
@@ -1078,7 +1079,7 @@ public class SqlBuilder3 {
       SqlBuilder3 sb = new SqlBuilder3();
       sb.addProjection(theSubqueryJoinColumn);
       sb.table(theSubqueryJoinColumn.getTable().getTable(),
-          theSubqueryJoinColumn.getTable().getAlias()); // We have to re-register the table in the sub-builder
+              theSubqueryJoinColumn.getTable().getAlias()); // We have to re-register the table in the sub-builder
       for (Criterion criterion : theCriteria) {
         sb.addConjunction(criterion);
       }
@@ -1165,7 +1166,7 @@ public class SqlBuilder3 {
    */
   public enum Operator {
     EQ("=", "="), NOT_EQ("!=", "\\="), IN(" in ", null), NOT_IN(" not in ", null), LE("<=", "=<"), LT("<", "<"), GE(">=", ">="), GT(">",
-        ">"), EQ_CASE_INSENSITIVE("=", null), // somewhat doubtful they should be defined as operators - these are more SQL constructs
+            ">"), EQ_CASE_INSENSITIVE("=", null), // somewhat doubtful they should be defined as operators - these are more SQL constructs
     EXISTS(" exists ", "E"), NOT_EXISTS(" not exists ", "\\E");
 
     private final String sql;
@@ -1231,7 +1232,7 @@ public class SqlBuilder3 {
             return theColumn.sql() + " is not null";
           default:
             throw new UnsupportedOperationException(
-                "Don't know how to format SQL binary operator \"" + theOperator + "\" when the operand value is null");
+                    "Don't know how to format SQL binary operator \"" + theOperator + "\" when the operand value is null");
         }
       }
       final String formattedOperand;

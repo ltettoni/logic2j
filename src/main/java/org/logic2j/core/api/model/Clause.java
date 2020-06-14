@@ -151,7 +151,6 @@ public class Clause {
   }
 
 
-
   private Clause cloneClauseAndRemapIndexes(Clause theClause, UnifyContext currentVars) {
     //            audit.info("Clone  {}  (base={})", content, this.topVarIndex);
     final Var[] originalVars = theClause.indexedVars;

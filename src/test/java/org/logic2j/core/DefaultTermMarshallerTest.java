@@ -27,55 +27,55 @@ import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class DefaultTermMarshallerTest extends PrologTestBase {
 
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshallerTest.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshallerTest.class);
 
-    private static final String REFERENCE_EXPRESSION = "a,b;c,d;e";
-    private static final String EXPECTED_TOSTRING = "';'(','(a, b), ';'(','(c, d), e))";
+  private static final String REFERENCE_EXPRESSION = "a,b;c,d;e";
+  private static final String EXPECTED_TOSTRING = "';'(','(a, b), ';'(','(c, d), e))";
 
-    @Test
-    public void simpleToString() {
-        Object term = unmarshall(REFERENCE_EXPRESSION);
-        String formatted = term.toString();
-        logger.info("toString: {}", formatted);
-        assertThat(formatted).isEqualTo(EXPECTED_TOSTRING);
-    }
+  @Test
+  public void simpleToString() {
+    Object term = unmarshall(REFERENCE_EXPRESSION);
+    String formatted = term.toString();
+    logger.info("toString: {}", formatted);
+    assertThat(formatted).isEqualTo(EXPECTED_TOSTRING);
+  }
 
-    @Test
-    public void defaultMarshallerUninitialized() {
-        Object term = unmarshall(REFERENCE_EXPRESSION);
-        CharSequence formatted = new DefaultTermMarshaller().marshall(term);
-        logger.info("uninitialized marshaller: {}", formatted);
-        assertThat(formatted.toString()).isEqualTo("a , b ; c , d ; e");
-    }
+  @Test
+  public void defaultMarshallerUninitialized() {
+    Object term = unmarshall(REFERENCE_EXPRESSION);
+    CharSequence formatted = new DefaultTermMarshaller().marshall(term);
+    logger.info("uninitialized marshaller: {}", formatted);
+    assertThat(formatted.toString()).isEqualTo("a , b ; c , d ; e");
+  }
 
-    @Test
-    public void defaultMarshaller() {
-        Object term = unmarshall(REFERENCE_EXPRESSION);
-        CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
-        logger.info("prolog initialized marshaller: {}", formatted);
-        assertThat(formatted).isEqualTo("a , b ; c , d ; e");
-    }
+  @Test
+  public void defaultMarshaller() {
+    Object term = unmarshall(REFERENCE_EXPRESSION);
+    CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
+    logger.info("prolog initialized marshaller: {}", formatted);
+    assertThat(formatted).isEqualTo("a , b ; c , d ; e");
+  }
 
-    @Test
-    public void xBoundToY() {
-        Object term = unmarshall("f(X, Y)");
-        final Var v1 = termApi().findVar(term, "X");
-        final Var v2 = termApi().findVar(term, "Y");
-        final UnifyContext initialContext = new UnifyContext(null, null);
-        final UnifyContext nextContext = initialContext.unify(v1, v2);
-        CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
-        assertThat(formatted).isEqualTo("f(X, Y)");
-    }
+  @Test
+  public void xBoundToY() {
+    Object term = unmarshall("f(X, Y)");
+    final Var v1 = termApi().findVar(term, "X");
+    final Var v2 = termApi().findVar(term, "Y");
+    final UnifyContext initialContext = new UnifyContext(null, null);
+    final UnifyContext nextContext = initialContext.unify(v1, v2);
+    CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
+    assertThat(formatted).isEqualTo("f(X, Y)");
+  }
 
-    @Test
-    public void yBoundToX() {
-        Object term = unmarshall("f(X, Y)");
-        final Var v1 = termApi().findVar(term, "X");
-        final Var v2 = termApi().findVar(term, "Y");
-        final UnifyContext initialContext = new UnifyContext(null, null);
-        final UnifyContext nextContext = initialContext.unify(v1, v2);
-        CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
-        assertThat(formatted).isEqualTo("f(X, Y)");
-    }
+  @Test
+  public void yBoundToX() {
+    Object term = unmarshall("f(X, Y)");
+    final Var v1 = termApi().findVar(term, "X");
+    final Var v2 = termApi().findVar(term, "Y");
+    final UnifyContext initialContext = new UnifyContext(null, null);
+    final UnifyContext nextContext = initialContext.unify(v1, v2);
+    CharSequence formatted = new DefaultTermMarshaller(nextContext).marshall(term);
+    assertThat(formatted).isEqualTo("f(X, Y)");
+  }
 
 }

@@ -109,7 +109,7 @@ public class ExcelReader {
       if (dataSetName.lastIndexOf('.') >= 0) {
         dataSetName = dataSetName.substring(0, dataSetName.lastIndexOf('.'));
       }
-      assert columnNames!=null;
+      assert columnNames != null;
       final TabularData tbl = new TabularData(dataSetName, columnNames, listData);
       tbl.setPrimaryKeyColumn(this.primaryKeyColumn);
       return tbl;
@@ -199,7 +199,7 @@ public class ExcelReader {
             break;
           default:
             throw new InvalidTermException(
-                "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled");
+                    "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled");
         }
       }
       value = mapCellValue(value);

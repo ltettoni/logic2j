@@ -100,7 +100,6 @@ public class EnvManager {
   }
 
 
-
   private static final ThreadLocal<Map<String, Object>> threadLocalBindings = ThreadLocal.withInitial(HashMap::new);
 
   public static Object getThreadVariable(String theVariableName) {

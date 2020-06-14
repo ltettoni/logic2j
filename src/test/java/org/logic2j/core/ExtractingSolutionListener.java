@@ -38,79 +38,79 @@ import static org.logic2j.engine.model.TermApiLocator.termApi;
  * Used in test cases to extract number of solutions and solutions to a goal.
  */
 public class ExtractingSolutionListener extends CountingSolutionListener {
-    private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
+  private static final Logger logger = LoggerFactory.getLogger(ExtractingSolutionListener.class);
 
-    private final Object goal;
-    private final Var[] vars;
-    private final Set<String> varNames;
-    private final List<Map<String, Object>> solutions;
+  private final Object goal;
+  private final Var[] vars;
+  private final Set<String> varNames;
+  private final List<Map<String, Object>> solutions;
 
-    public ExtractingSolutionListener(Object theGoal) {
-        this.goal = theGoal;
-        this.vars = termApi().distinctVars(this.goal);
-        // Here we use an expensive TreeSet but this is only for test cases - it will get the solutions ordered and will help assertions
-        this.varNames = new TreeSet<>();
-        for (Var var : vars) {
-            this.varNames.add(var.getName());
-        }
-        this.varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
-
-        this.solutions = new ArrayList<>();
-
-        logger.info("Init listener for \"{}\"", theGoal);
+  public ExtractingSolutionListener(Object theGoal) {
+    this.goal = theGoal;
+    this.vars = termApi().distinctVars(this.goal);
+    // Here we use an expensive TreeSet but this is only for test cases - it will get the solutions ordered and will help assertions
+    this.varNames = new TreeSet<>();
+    for (Var var : vars) {
+      this.varNames.add(var.getName());
     }
+    this.varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
 
-    @Override
-    public int onSolution(UnifyContext currentVars) {
-        final Object solution = currentVars.reify(goal);
-        logger.info(" solution: {}", solution);
+    this.solutions = new ArrayList<>();
 
-        final Map<String, Object> solutionVars = new HashMap<>();
-        solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution
-        for (Var var : vars) {
-            final Object varValue = currentVars.reify(var);
-            solutionVars.put(var.getName(), varValue);
-        }
-        this.solutions.add(solutionVars);
+    logger.info("Init listener for \"{}\"", theGoal);
+  }
 
-        return super.onSolution(currentVars);
+  @Override
+  public int onSolution(UnifyContext currentVars) {
+    final Object solution = currentVars.reify(goal);
+    logger.info(" solution: {}", solution);
+
+    final Map<String, Object> solutionVars = new HashMap<>();
+    solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution
+    for (Var var : vars) {
+      final Object varValue = currentVars.reify(var);
+      solutionVars.put(var.getName(), varValue);
     }
+    this.solutions.add(solutionVars);
 
-    public void report() {
-        switch ((int) count()) {
-            case 0:
-                logger.info("Solving \"{}\" yields no solution", goal);
-                break;
-            case 1:
-                logger.info("Solving \"{}\" yields a single solution", goal);
-                break;
-            default:
-                logger.info("Solving \"{}\" yields {} solution(s)", goal, count());
-                break;
-        }
+    return super.onSolution(currentVars);
+  }
+
+  public void report() {
+    switch ((int) count()) {
+      case 0:
+        logger.info("Solving \"{}\" yields no solution", goal);
+        break;
+      case 1:
+        logger.info("Solving \"{}\" yields a single solution", goal);
+        break;
+      default:
+        logger.info("Solving \"{}\" yields {} solution(s)", goal, count());
+        break;
     }
+  }
 
-    public Collection<Var> getVariables() {
-        return Arrays.asList(this.vars);
+  public Collection<Var> getVariables() {
+    return Arrays.asList(this.vars);
+  }
+
+  public List<Map<String, Object>> getSolutions() {
+    return this.solutions;
+  }
+
+  public List<Object> getValues(String varName) {
+    if (!varNames.contains(varName)) {
+      throw new IllegalArgumentException("Variable \"" + varName + "\" not defined in goal \"" + this.goal + '"');
     }
-
-    public List<Map<String, Object>> getSolutions() {
-        return this.solutions;
+    List<Object> values = new ArrayList<>(this.solutions.size());
+    for (Map<String, Object> solution : this.solutions) {
+      values.add(solution.get(varName));
     }
-
-    public List<Object> getValues(String varName) {
-        if (! varNames.contains(varName)) {
-            throw new IllegalArgumentException("Variable \"" + varName +"\" not defined in goal \"" + this.goal + '"');
-        }
-        List<Object> values = new ArrayList<>(this.solutions.size());
-        for (Map<String, Object> solution : this.solutions) {
-            values.add(solution.get(varName));
-        }
-        return values;
-    }
+    return values;
+  }
 
 
-    public Collection<String> getVarNames() {
-        return this.varNames;
-    }
+  public Collection<String> getVarNames() {
+    return this.varNames;
+  }
 }

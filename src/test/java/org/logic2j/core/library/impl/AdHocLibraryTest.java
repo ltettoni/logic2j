@@ -31,79 +31,79 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class AdHocLibraryTest extends PrologTestBase {
-    private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
 
-    @Before
-    public void registerLibrary() {
-        this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
-    }
+  @Before
+  public void registerLibrary() {
+    this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
+  }
 
-    @Test
-    public void int_range_classic_1() {
-        assertThat(nSolutions(3, "int_range_classic(12, Q, 15)").var("Q").list()).isEqualTo(termList("12", "13", "14"));
-        noSolutions("int_range_classic(12, X, 10)");
-    }
+  @Test
+  public void int_range_classic_1() {
+    assertThat(nSolutions(3, "int_range_classic(12, Q, 15)").var("Q").list()).isEqualTo(termList("12", "13", "14"));
+    noSolutions("int_range_classic(12, X, 10)");
+  }
 
-    @Test
-    public void int_range_classic_2() {
-        noSolutions("int_range_classic(10, X, 10)");
-    }
+  @Test
+  public void int_range_classic_2() {
+    noSolutions("int_range_classic(10, X, 10)");
+  }
 
-    @Test(expected = InvalidTermException.class)
-    public void int_range_classic_minNotBound() {
-        noSolutions("int_range_classic(Min, Q, 10)");
-    }
+  @Test(expected = InvalidTermException.class)
+  public void int_range_classic_minNotBound() {
+    noSolutions("int_range_classic(Min, Q, 10)");
+  }
 
-    @Test(expected = InvalidTermException.class)
-    public void int_range_classic_maxNotBound() {
-        noSolutions("int_range_classic(5, Q, Max)");
-    }
+  @Test(expected = InvalidTermException.class)
+  public void int_range_classic_maxNotBound() {
+    noSolutions("int_range_classic(5, Q, Max)");
+  }
 
-    // ---------------------------------------------------------------------------
-    // Multiple solutions with a normal listener
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Multiple solutions with a normal listener
+  // ---------------------------------------------------------------------------
 
-    @Test
-    public void int_range_multi() {
-        final String goalText;
-        goalText = "int_range_multi(10, Q, 15)";
-        assertThat(nSolutions(5, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14"));
-    }
+  @Test
+  public void int_range_multi() {
+    final String goalText;
+    goalText = "int_range_multi(10, Q, 15)";
+    assertThat(nSolutions(5, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14"));
+  }
 
-    @Test
-    public void int_range_multi_OR() {
-        final String goalText;
-        goalText = "int_range_multi(10, Q, 15) ; int_range_multi(12, Q, 18)";
-        assertThat(nSolutions(11, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14", "12", "13", "14", "15", "16", "17"));
-    }
+  @Test
+  public void int_range_multi_OR() {
+    final String goalText;
+    goalText = "int_range_multi(10, Q, 15) ; int_range_multi(12, Q, 18)";
+    assertThat(nSolutions(11, goalText).var("Q").list()).isEqualTo(termList("10", "11", "12", "13", "14", "12", "13", "14", "15", "16", "17"));
+  }
 
-    @Test
-    public void int_range_multi_AND() {
-        final String goalText;
-        goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
-        assertThat(nSolutions(3, goalText).var("Q").list()).isEqualTo(termList("12", "13", "14"));
-    }
+  @Test
+  public void int_range_multi_AND() {
+    final String goalText;
+    goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
+    assertThat(nSolutions(3, goalText).var("Q").list()).isEqualTo(termList("12", "13", "14"));
+  }
 
-    // ---------------------------------------------------------------------------
-    // Multiple solutions with special listener
-    // ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Multiple solutions with special listener
+  // ---------------------------------------------------------------------------
 
-    @Test
-    public void int_range_multi_with_listener() {
-        final String goalText;
-        goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
-        Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
-        final Var q = termApi().findVar(goal, "Q");
-        final SolutionListener listener = new SolutionListener() {
+  @Test
+  public void int_range_multi_with_listener() {
+    final String goalText;
+    goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
+    Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
+    final Var q = termApi().findVar(goal, "Q");
+    final SolutionListener listener = new SolutionListener() {
 
-            @Override
-            public int onSolution(UnifyContext currentVars) {
-                logger.info("App listener got one solution: {}", currentVars.reify(q));
-                return Continuation.CONTINUE;
-            }
+      @Override
+      public int onSolution(UnifyContext currentVars) {
+        logger.info("App listener got one solution: {}", currentVars.reify(q));
+        return Continuation.CONTINUE;
+      }
 
-        };
-        getProlog().getSolver().solveGoal(goal, listener);
+    };
+    getProlog().getSolver().solveGoal(goal, listener);
 
-    }
+  }
 }

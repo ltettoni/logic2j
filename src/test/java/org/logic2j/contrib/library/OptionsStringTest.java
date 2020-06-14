@@ -23,33 +23,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OptionsStringTest {
 
 
-    @Test
-    public void testConstructor() {
-        new OptionsString("");
-        new OptionsString("  ");
-        new OptionsString(null);
-    }
+  @Test
+  public void testConstructor() {
+    new OptionsString("");
+    new OptionsString("  ");
+    new OptionsString(null);
+  }
 
 
-    @Test
-    public void testHasOption() {
-        final OptionsString optionsString = new OptionsString("a, b,  c,");
-        assertThat(optionsString.hasOption("a")).isTrue();
-        assertThat(optionsString.hasOption("b")).isTrue();
-        assertThat(optionsString.hasOption("c")).isTrue();
-        assertThat(optionsString.hasOption("d")).isFalse();
-    }
+  @Test
+  public void testHasOption() {
+    final OptionsString optionsString = new OptionsString("a, b,  c,");
+    assertThat(optionsString.hasOption("a")).isTrue();
+    assertThat(optionsString.hasOption("b")).isTrue();
+    assertThat(optionsString.hasOption("c")).isTrue();
+    assertThat(optionsString.hasOption("d")).isFalse();
+  }
 
 
-    @Test
-    public void testAssertValidOptions() {
-        final OptionsString optionsString = new OptionsString("a, b,  c,");
-        optionsString.assertValidOptions(new String[]{"a", "b", "c", "d"});
-    }
+  @Test
+  public void testAssertValidOptions() {
+    final OptionsString optionsString = new OptionsString("a, b,  c,");
+    optionsString.assertValidOptions(new String[]{"a", "b", "c", "d"});
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testAssertValidOptions_noB() {
-        final OptionsString optionsString = new OptionsString("a, b,  c,");
-        optionsString.assertValidOptions(new String[]{"a", "c", "d"});
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void testAssertValidOptions_noB() {
+    final OptionsString optionsString = new OptionsString("a, b,  c,");
+    optionsString.assertValidOptions(new String[]{"a", "c", "d"});
+  }
 }

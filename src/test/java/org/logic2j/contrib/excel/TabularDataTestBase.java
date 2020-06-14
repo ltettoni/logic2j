@@ -23,25 +23,25 @@ import java.io.Serializable;
 
 class TabularDataTestBase extends PrologTestBase {
 
-    protected TabularData smallData() {
-        final TabularData td = new TabularData("smallData", new String[] { "countryName", "countryCode", "population" }, new Serializable[][] { { "Switzerland", "CHE", 7.8 },
-                { "France", "FRA", 65.0 }, { "Germany", "DEU", 85.4 } });
-        td.setPrimaryKeyColumn(1);
-        return td;
-    }
+  protected TabularData smallData() {
+    final TabularData td = new TabularData("smallData", new String[]{"countryName", "countryCode", "population"}, new Serializable[][]{{"Switzerland", "CHE", 7.8},
+            {"France", "FRA", 65.0}, {"Germany", "DEU", 85.4}});
+    td.setPrimaryKeyColumn(1);
+    return td;
+  }
 
-    protected static final int LARGE_DATA_NB_ROWS = 10000;
+  protected static final int LARGE_DATA_NB_ROWS = 10000;
 
-    protected TabularData largeData() {
-        final String[] headers = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-        final String[] contents = new String[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
-        final Serializable[][] dataArray = new Serializable[LARGE_DATA_NB_ROWS][];
-        for (int row = 0; row < dataArray.length; row++) {
-            dataArray[row] = contents;
-        }
-        final TabularData tabData = new TabularData("largeData", headers, dataArray);
-        tabData.setPrimaryKeyColumn(0);
-        return tabData;
+  protected TabularData largeData() {
+    final String[] headers = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+    final String[] contents = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+    final Serializable[][] dataArray = new Serializable[LARGE_DATA_NB_ROWS][];
+    for (int row = 0; row < dataArray.length; row++) {
+      dataArray[row] = contents;
     }
+    final TabularData tabData = new TabularData("largeData", headers, dataArray);
+    tabData.setPrimaryKeyColumn(0);
+    return tabData;
+  }
 
 }

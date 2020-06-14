@@ -250,36 +250,36 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     if (arity == 2) {
       if ((p = operatorManager.precedence(name, Operator.XFX)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " "
-            + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
       if ((p = operatorManager.precedence(name, Operator.YFX)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgY(theStruct.getLHS(), p) + " " + name + " "
-            + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                + toStringAsArgX(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
       if ((p = operatorManager.precedence(name, Operator.XFY)) >= Operator.OP_LOWEST) {
         if (!name.equals(Struct.ARG_SEPARATOR)) {
           return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + " " + name + " "
-              + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                  + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
         }
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getLHS(), p) + Struct.ARG_SEPARATOR
-            + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                + toStringAsArgY(theStruct.getRHS(), p) + (((x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
     } else if (arity == 1) {
       if ((p = operatorManager.precedence(name, Operator.FX)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + name + " " + toStringAsArgX(theStruct.getArg(0), p) + ((
-            (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
       if ((p = operatorManager.precedence(name, Operator.FY)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + name + " " + toStringAsArgY(theStruct.getArg(0), p) + ((
-            (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
       if ((p = operatorManager.precedence(name, Operator.XF)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgX(theStruct.getArg(0), p) + " " + name + " " + ((
-            (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
       if ((p = operatorManager.precedence(name, Operator.YF)) >= Operator.OP_LOWEST) {
         return ((((x && p >= precedence) || (!x && p > precedence)) ? "(" : "") + toStringAsArgY(theStruct.getArg(0), p) + " " + name + " " + ((
-            (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
+                (x && p >= precedence) || (!x && p > precedence)) ? ")" : ""));
       }
     }
     final StringBuilder sb = new StringBuilder(termApi().quoteIfNeeded(name));

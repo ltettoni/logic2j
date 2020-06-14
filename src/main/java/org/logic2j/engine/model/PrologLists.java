@@ -37,7 +37,6 @@ public final class PrologLists {
   }
 
 
-
   /**
    * Create a Prolog list from head and tail.
    *
@@ -100,6 +99,7 @@ public final class PrologLists {
 
   /**
    * True of struct denotes a list node, could be a list of one or many, but not the empty list.
+   *
    * @param struct
    * @return true this is a predicate '.'/2.
    */
@@ -108,10 +108,9 @@ public final class PrologLists {
   }
 
 
-
   /**
-   * @return true If this structure an empty list
    * @param struct
+   * @return true If this structure an empty list
    */
   public static boolean isEmptyList(Struct struct) {
     return struct.getName() == FUNCTOR_EMPTY_LIST && struct.getArity() == 0;
@@ -137,8 +136,8 @@ public final class PrologLists {
    * <code>PrologNonSpecificError</code>
    * </p>
    *
-   * @throws InvalidTermException If this is not a list.
    * @param prologList
+   * @throws InvalidTermException If this is not a list.
    */
   public static Object listHead(Struct prologList) {
     requireList(prologList);
@@ -148,8 +147,8 @@ public final class PrologLists {
   /**
    * Gets the tail of this structure, which is supposed to be a list.
    *
-   * @throws InvalidTermException if this is not a prolog list.
    * @param prologList
+   * @throws InvalidTermException if this is not a prolog list.
    */
   public static Object listTail(Struct prologList) {
     requireList(prologList);
@@ -159,8 +158,8 @@ public final class PrologLists {
   /**
    * Gets the number of elements of this structure, which is supposed to be a list.
    *
-   * @throws InvalidTermException if this is not a prolog list.
    * @param prologList
+   * @throws InvalidTermException if this is not a prolog list.
    */
   public static int listSize(Struct prologList) {
     requireList(prologList);
@@ -177,8 +176,8 @@ public final class PrologLists {
    * From a Prolog List, obtain a Struct with the first list element as functor, and all other elements as arguments. This returns
    * a(b,c,d) form [a,b,c,d]. This is the =.. predicate.
    *
-   * @throws InvalidTermException if this is not a prolog list.
    * @param prologList
+   * @throws InvalidTermException if this is not a prolog list.
    */
   // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
   public static Struct predicateFromPList(Struct prologList) {
@@ -236,7 +235,7 @@ public final class PrologLists {
    */
   @SuppressWarnings("unchecked")
   public static <Q, T extends Collection<Q>> T javaListFromPList(Struct prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass,
-      boolean recursive) {
+                                                                 boolean recursive) {
     final T result;
     if (theCollectionToFillOrNull == null) {
       result = (T) new ArrayList<Q>();

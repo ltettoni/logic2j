@@ -27,52 +27,52 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TabularDataClauseProviderTest extends TabularDataTestBase {
 
-    @Test
-    public void tabularClauseProvider_eav() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.EAV_NAMED);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
-        final GoalHolder sixSolutions = nSolutions(6, "smallData(E,A,V)");
-        assertThat(varsSortedToString(sixSolutions)).isEqualTo(
+  @Test
+  public void tabularClauseProvider_eav() {
+    final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.EAV_NAMED);
+    final TheoryManager theoryManager = getProlog().getTheoryManager();
+    theoryManager.addClauseProvider(td);
+    final GoalHolder sixSolutions = nSolutions(6, "smallData(E,A,V)");
+    assertThat(varsSortedToString(sixSolutions)).isEqualTo(
             "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]");
-        assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
-        assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
-        assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
-    }
+    assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
+    assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
+    assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
+  }
 
-    @Test
-    public void tabularClauseProvider_eavt() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.EAVT);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
-        final GoalHolder sixSolutions = nSolutions(6, "eavt(E,A,V,smallData)");
-        assertThat(varsSortedToString(sixSolutions)).isEqualTo(
+  @Test
+  public void tabularClauseProvider_eavt() {
+    final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.EAVT);
+    final TheoryManager theoryManager = getProlog().getTheoryManager();
+    theoryManager.addClauseProvider(td);
+    final GoalHolder sixSolutions = nSolutions(6, "eavt(E,A,V,smallData)");
+    assertThat(varsSortedToString(sixSolutions)).isEqualTo(
             "[{A=countryName, E=CHE, V=Switzerland}, {A=population, E=CHE, V=7.8}, {A=countryName, E=FRA, V=France}, {A=population, E=FRA, V=65.0}, {A=countryName, E=DEU, V=Germany}, {A=population, E=DEU, V=85.4}]");
-        assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
-        assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
-        assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
-    }
+    assertThat(sixSolutions.var("E").list().toString()).isEqualTo("[CHE, CHE, FRA, FRA, DEU, DEU]");
+    assertThat(sixSolutions.var("A").list().toString()).isEqualTo("[countryName, population, countryName, population, countryName, population]");
+    assertThat(sixSolutions.var("V").list().toString()).isEqualTo("[Switzerland, 7.8, France, 65.0, Germany, 85.4]");
+  }
 
-    @Test
-    public void tabularClauseProvider_record() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.RECORD);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
-        final GoalHolder sixSolutions = nSolutions(3, "smallData(Country,Code,Pop)");
-        assertThat(varsSortedToString(sixSolutions))
+  @Test
+  public void tabularClauseProvider_record() {
+    final ClauseProvider td = new TabularDataClauseProvider(getProlog(), smallData(), TermAdapter.AssertionMode.RECORD);
+    final TheoryManager theoryManager = getProlog().getTheoryManager();
+    theoryManager.addClauseProvider(td);
+    final GoalHolder sixSolutions = nSolutions(3, "smallData(Country,Code,Pop)");
+    assertThat(varsSortedToString(sixSolutions))
             .isEqualTo("[{Code=CHE, Country=Switzerland, Pop=7.8}, {Code=FRA, Country=France, Pop=65.0}, {Code=DEU, Country=Germany, Pop=85.4}]");
-        assertThat(sixSolutions.var("Country").list().toString()).isEqualTo("[Switzerland, France, Germany]");
-        assertThat(sixSolutions.var("Code").list().toString()).isEqualTo("[CHE, FRA, DEU]");
-        assertThat(sixSolutions.var("Pop").list().toString()).isEqualTo("[7.8, 65.0, 85.4]");
-    }
+    assertThat(sixSolutions.var("Country").list().toString()).isEqualTo("[Switzerland, France, Germany]");
+    assertThat(sixSolutions.var("Code").list().toString()).isEqualTo("[CHE, FRA, DEU]");
+    assertThat(sixSolutions.var("Pop").list().toString()).isEqualTo("[7.8, 65.0, 85.4]");
+  }
 
-    @Test
-    public void tabularClauseProvider_eav_big() {
-        final ClauseProvider td = new TabularDataClauseProvider(getProlog(), largeData(), TermAdapter.AssertionMode.EAV_NAMED);
-        final TheoryManager theoryManager = getProlog().getTheoryManager();
-        theoryManager.addClauseProvider(td);
-        //
-        nSolutions(9 * LARGE_DATA_NB_ROWS, "largeData(E,A,V)"); // Takes only 0.1 seconds: 900000 solutions/s
-    }
+  @Test
+  public void tabularClauseProvider_eav_big() {
+    final ClauseProvider td = new TabularDataClauseProvider(getProlog(), largeData(), TermAdapter.AssertionMode.EAV_NAMED);
+    final TheoryManager theoryManager = getProlog().getTheoryManager();
+    theoryManager.addClauseProvider(td);
+    //
+    nSolutions(9 * LARGE_DATA_NB_ROWS, "largeData(E,A,V)"); // Takes only 0.1 seconds: 900000 solutions/s
+  }
 
 }

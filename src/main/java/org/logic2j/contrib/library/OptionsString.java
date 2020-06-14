@@ -71,8 +71,8 @@ public class OptionsString {
       }
       if (!set.contains(presentOption)) {
         throw new IllegalArgumentException(
-            "Option \"" + presentOption + "\" of specified options \"" + this.internalCommaSurrounded + "\" not allowed. Allowed values are: "
-                + optionsList);
+                "Option \"" + presentOption + "\" of specified options \"" + this.internalCommaSurrounded + "\" not allowed. Allowed values are: "
+                        + optionsList);
       }
     }
   }

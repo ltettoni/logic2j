@@ -48,248 +48,249 @@ import static org.assertj.core.api.Assertions.fail;
  * provides utility methods.
  */
 public abstract class PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
 
-    protected static final File TEST_RESOURCES_DIR = new File("src/test/resources");
+  protected static final File TEST_RESOURCES_DIR = new File("src/test/resources");
 
-    /**
-     * Will be initialized for every test method, as per {@link #initLevel()}
-     */
-    protected PrologImplementation prolog;
+  /**
+   * Will be initialized for every test method, as per {@link #initLevel()}
+   */
+  protected PrologImplementation prolog;
 
-    /**
-     * @return Use only the core library - no extra features loaded.
-     */
-    protected InitLevel initLevel() {
-        return InitLevel.L1_CORE_LIBRARY;
+  /**
+   * @return Use only the core library - no extra features loaded.
+   */
+  protected InitLevel initLevel() {
+    return InitLevel.L1_CORE_LIBRARY;
+  }
+
+  /**
+   * Fully initialize the engine as per the {@link #initLevel()} specified before every test method.
+   */
+  @Before
+  public void initProlog() {
+    this.prolog = new PrologReferenceImplementation(initLevel());
+  }
+
+  /**
+   * @return Our {@link org.logic2j.core.impl.PrologImplementation}. In normal application code it must be sufficient to use the {@link org.logic2j.core.api.Prolog} but since here
+   * we test details of the implementation, we need more.
+   */
+  protected PrologImplementation getProlog() {
+    return this.prolog;
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // Low-lever solution counting assertions just using a CountingSolutionListener
+  // ---------------------------------------------------------------------------
+
+  protected void countOneSolution(CharSequence... theGoals) {
+    countNSolutions(1, theGoals);
+  }
+
+
+  protected void countNoSolution(CharSequence... theGoals) {
+    countNSolutions(0, theGoals);
+  }
+
+  protected void countNSolutions(int nbr, CharSequence... theGoals) {
+    for (CharSequence goalText : theGoals) {
+      Object term = unmarshall(goalText);
+      final CountingSolutionListener listener = new CountingSolutionListener();
+      getProlog().getSolver().solveGoal(term, listener);
+      assertThat(listener.count()).as("Solving goalText \"" + goalText + '"').isEqualTo(nbr);
     }
+  }
 
-    /**
-     * Fully initialize the engine as per the {@link #initLevel()} specified before every test method.
-     */
-    @Before
-    public void initProlog() {
-        this.prolog = new PrologReferenceImplementation(initLevel());
+
+  /**
+   * Will replace many test methods with JUnit's "expected=" feature
+   *
+   * @param theGoals
+   */
+  protected void assertGoalMustFail(CharSequence... theGoals) {
+    assertThat(theGoals.length > 0).as("theGoals must not be empty for assertGoalMustFail()").isTrue();
+    for (final CharSequence theGoal : theGoals) {
+      try {
+        this.prolog.solve(theGoal).isPresent();
+        fail("Goal should have failed and did not: \"" + theGoal + '"');
+      } catch (final Logic2jException | AssertionError e) {
+        // Expected
+      }
     }
+  }
 
-    /**
-     * @return Our {@link org.logic2j.core.impl.PrologImplementation}. In normal application code it must be sufficient to use the {@link org.logic2j.core.api.Prolog} but since here
-     * we test details of the implementation, we need more.
-     */
-    protected PrologImplementation getProlog() {
-        return this.prolog;
+
+  /**
+   * Make sure there is only one solution to goals.
+   *
+   * @param theGoals All goals to check for
+   * @return The GoalHolder holding the last solution of theGoals
+   */
+  protected GoalHolder uniqueSolution(CharSequence... theGoals) {
+    return internalAssert(1, theGoals);
+  }
+
+  /**
+   * Make sure there are exactly theNumber of solutions.
+   *
+   * @param theNumber
+   * @param theGoals  All goals to check for
+   * @return The {@link GoalHolder}
+   */
+  protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
+    return internalAssert(theNumber, theGoals);
+  }
+
+  /**
+   * Make sure there are no solutions to the goals.
+   *
+   * @param theGoals All goals to check for
+   * @return The {@link GoalHolder}
+   */
+  protected void noSolutions(CharSequence... theGoals) {
+    internalAssert(0, theGoals);
+  }
+
+  /**
+   * Solves once to calculate result size. So watch out this may trigger one extra solution in case you follow this
+   * call by obtaining a particular variable value - the engine will run twice!
+   *
+   * @param theNumber
+   * @param theGoals
+   * @return The {@link GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
+   */
+  private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
+    assertThat(theGoals.length > 0).as("theGoals must not be empty for countOneSolution()").isTrue();
+    GoalHolder result = null;
+    for (final CharSequence goal : theGoals) {
+      logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
+      result = this.prolog.solve(goal);
+      // Now execute the goal - only extracting the number of solutions
+      final int nbr = result.count();
+      assertThat(nbr).as("Checking number of solutions for goal \"" + goal + '"').isEqualTo(theNumber);
     }
+    return result;
+  }
+
+  /**
+   * Utility to unmarshall terms - just a shortcut.
+   *
+   * @param theString
+   * @return The unmarshalled object.
+   */
+  protected Object unmarshall(CharSequence theString) {
+    return this.prolog.getTermUnmarshaller().unmarshall(theString);
+  }
 
 
-    // ---------------------------------------------------------------------------
-    // Low-lever solution counting assertions just using a CountingSolutionListener
-    // ---------------------------------------------------------------------------
+  /**
+   * Factory.
+   *
+   * @param theObject
+   * @return A single Term, corresponding to theObject.
+   */
+  protected Object term(Object theObject) {
+    return this.prolog.getTermAdapter().toTerm(theObject, FactoryMode.ANY_TERM);
+  }
 
-    protected void countOneSolution(CharSequence... theGoals) {
-        countNSolutions(1, theGoals);
+  /**
+   * Factory.
+   *
+   * @param theText
+   * @return A single Term, corresponding to theObject.
+   */
+  protected Object term(CharSequence theText) {
+    return unmarshall(theText);
+  }
+
+  /**
+   * Create a Java list of Terms by parsing the arguments.
+   *
+   * @param elements The elements of the list to parse as Terms
+   * @return A List of term, corresponding to the related elements passed as argument.
+   */
+  protected List<Object> termList(CharSequence... elements) {
+    assertThat(elements.length > 0).as("elements must not be empty for termList()").isTrue();
+    final List<Object> result = new ArrayList<>(elements.length);
+    for (final CharSequence element : elements) {
+      result.add(term(element));
     }
+    return result;
+  }
 
 
-    protected void countNoSolution(CharSequence... theGoals) {
-        countNSolutions(0, theGoals);
+  protected String marshall(Iterable<Object> terms) {
+    ArrayList<String> marshalled = new ArrayList<>();
+    for (Object term : terms) {
+      marshalled.add(marshall(term));
     }
+    return marshalled.toString();
+  }
 
-    protected void countNSolutions(int nbr, CharSequence... theGoals) {
-        for (CharSequence goalText : theGoals) {
-            Object term = unmarshall(goalText);
-            final CountingSolutionListener listener = new CountingSolutionListener();
-            getProlog().getSolver().solveGoal(term, listener);
-            assertThat(listener.count()).as("Solving goalText \"" + goalText + '"').isEqualTo(nbr);
-        }
+  protected String marshall(Object term) {
+    return getProlog().getTermMarshaller().marshall(term).toString();
+  }
+
+  /**
+   * @param theFile To be loaded
+   */
+  private void loadTheory(File theFile) throws IOException {
+    final TheoryManager manager = this.prolog.getTheoryManager();
+    final TheoryContent load = manager.load(theFile);
+    manager.addTheory(load);
+
+    logger.debug("Loaded theory from: {}", theFile);
+  }
+
+  /**
+   * Syntactic sugar to load a theory located in the src/test/resources directory.
+   * Also wraps the checked {@link java.io.IOException} into a {@link PrologNonSpecificException} runtime exception in case of problem.
+   *
+   * @param theTheoryFile
+   */
+  protected void loadTheoryFromTestResourcesDir(String theTheoryFile) {
+    try {
+      loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
+    } catch (final IOException e) {
+      // Avoid bothering with checked IOException in our TestCases (since this is a helper method, let's help)
+      throw new PrologNonSpecificException("Could not load Theory from " + theTheoryFile + ": " + e);
     }
+  }
+
+  protected File[] allTheoryFilesFromTestResourceDir() {
+    final FilenameFilter filesOnly = (dir, name) -> {
+      final File file = new File(dir, name);
+      return file.canRead() && file.isFile() && file.getName().endsWith(".pro");
+    };
+    return TEST_RESOURCES_DIR.listFiles(filesOnly);
+  }
+
+  protected LibraryContent loadLibrary(PLibrary theLibrary) {
+    return this.prolog.getLibraryManager().loadLibrary(theLibrary);
+  }
 
 
-    /**
-     * Will replace many test methods with JUnit's "expected=" feature
-     * @param theGoals
-     */
-    protected void assertGoalMustFail(CharSequence... theGoals) {
-        assertThat(theGoals.length > 0).as("theGoals must not be empty for assertGoalMustFail()").isTrue();
-        for (final CharSequence theGoal : theGoals) {
-            try {
-                this.prolog.solve(theGoal).isPresent();
-                fail("Goal should have failed and did not: \"" + theGoal + '"');
-            } catch (final Logic2jException | AssertionError e) {
-                // Expected
-            }
-        }
+  /**
+   * @param goalHolder
+   * @return All variables of a GoalHolder, ordered by name, converted to String.
+   */
+  protected String varsSortedToString(GoalHolder goalHolder) {
+    final List<Map<Var<?>, Object>> listOfSortedMaps = new ArrayList<>();
+    for (Map<Var<?>, Object> unorderedMap : goalHolder.vars().list()) {
+      final TreeMap<Var<?>, Object> orderedMap = new TreeMap<>(Var.COMPARATOR_BY_NAME);
+      orderedMap.putAll(unorderedMap);
+      listOfSortedMaps.add(orderedMap);
     }
+    return listOfSortedMaps.toString();
+  }
 
 
-    /**
-     * Make sure there is only one solution to goals.
-     *
-     * @param theGoals All goals to check for
-     * @return The GoalHolder holding the last solution of theGoals
-     */
-    protected GoalHolder uniqueSolution(CharSequence... theGoals) {
-        return internalAssert(1, theGoals);
-    }
-
-        /**
-         * Make sure there are exactly theNumber of solutions.
-         *
-         * @param theNumber
-         * @param theGoals  All goals to check for
-         * @return The {@link GoalHolder}
-         */
-    protected GoalHolder nSolutions(int theNumber, CharSequence... theGoals) {
-        return internalAssert(theNumber, theGoals);
-    }
-
-    /**
-     * Make sure there are no solutions to the goals.
-     *
-     * @param theGoals  All goals to check for
-     * @return The {@link GoalHolder}
-     */
-    protected void noSolutions(CharSequence... theGoals) {
-        internalAssert(0, theGoals);
-    }
-
-    /**
-     * Solves once to calculate result size. So watch out this may trigger one extra solution in case you follow this
-     * call by obtaining a particular variable value - the engine will run twice!
-     * @param theNumber
-     * @param theGoals
-     * @return The {@link GoalHolder} resulting from solving the last goal (i.e. the first when only one...). Null if no goal specified.
-     */
-    private GoalHolder internalAssert(int theNumber, CharSequence... theGoals) {
-        assertThat(theGoals.length > 0).as("theGoals must not be empty for countOneSolution()").isTrue();
-        GoalHolder result = null;
-        for (final CharSequence goal : theGoals) {
-            logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
-            result = this.prolog.solve(goal);
-            // Now execute the goal - only extracting the number of solutions
-            final int nbr = result.count();
-            assertThat(nbr).as("Checking number of solutions for goal \"" + goal + '"').isEqualTo(theNumber);
-        }
-        return result;
-    }
-
-    /**
-     * Utility to unmarshall terms - just a shortcut.
-     *
-     * @param theString
-     * @return The unmarshalled object.
-     */
-    protected Object unmarshall(CharSequence theString) {
-        return this.prolog.getTermUnmarshaller().unmarshall(theString);
-    }
-
-
-
-    /**
-     * Factory.
-     *
-     * @param theObject
-     * @return A single Term, corresponding to theObject.
-     */
-    protected Object term(Object theObject) {
-        return this.prolog.getTermAdapter().toTerm(theObject, FactoryMode.ANY_TERM);
-    }
-
-    /**
-     * Factory.
-     *
-     * @param theText
-     * @return A single Term, corresponding to theObject.
-     */
-    protected Object term(CharSequence theText) {
-        return unmarshall(theText);
-    }
-
-    /**
-     * Create a Java list of Terms by parsing the arguments.
-     *
-     * @param elements The elements of the list to parse as Terms
-     * @return A List of term, corresponding to the related elements passed as argument.
-     */
-    protected List<Object> termList(CharSequence... elements) {
-        assertThat(elements.length > 0).as("elements must not be empty for termList()").isTrue();
-        final List<Object> result = new ArrayList<>(elements.length);
-        for (final CharSequence element : elements) {
-            result.add(term(element));
-        }
-        return result;
-    }
-
-
-    protected String marshall(Iterable<Object> terms) {
-        ArrayList<String> marshalled = new ArrayList<>();
-        for (Object term : terms) {
-            marshalled.add(marshall(term));
-        }
-        return marshalled.toString();
-    }
-
-    protected String marshall(Object term) {
-        return getProlog().getTermMarshaller().marshall(term).toString();
-    }
-
-    /**
-     * @param theFile To be loaded
-     */
-    private void loadTheory(File theFile) throws IOException {
-        final TheoryManager manager = this.prolog.getTheoryManager();
-        final TheoryContent load = manager.load(theFile);
-        manager.addTheory(load);
-
-        logger.debug("Loaded theory from: {}", theFile);
-    }
-
-    /**
-     * Syntactic sugar to load a theory located in the src/test/resources directory.
-     * Also wraps the checked {@link java.io.IOException} into a {@link PrologNonSpecificException} runtime exception in case of problem.
-     *
-     * @param theTheoryFile
-     */
-    protected void loadTheoryFromTestResourcesDir(String theTheoryFile) {
-        try {
-            loadTheory(new File(TEST_RESOURCES_DIR, theTheoryFile));
-        } catch (final IOException e) {
-            // Avoid bothering with checked IOException in our TestCases (since this is a helper method, let's help)
-            throw new PrologNonSpecificException("Could not load Theory from " + theTheoryFile + ": " + e);
-        }
-    }
-
-    protected File[] allTheoryFilesFromTestResourceDir() {
-        final FilenameFilter filesOnly = (dir, name) -> {
-            final File file = new File(dir, name);
-            return file.canRead() && file.isFile() && file.getName().endsWith(".pro");
-        };
-        return TEST_RESOURCES_DIR.listFiles(filesOnly);
-    }
-
-    protected LibraryContent loadLibrary(PLibrary theLibrary) {
-        return this.prolog.getLibraryManager().loadLibrary(theLibrary);
-    }
-
-
-    /**
-     * @param goalHolder
-     * @return All variables of a GoalHolder, ordered by name, converted to String.
-     */
-    protected String varsSortedToString(GoalHolder goalHolder) {
-        final List<Map<Var<?>, Object>> listOfSortedMaps = new ArrayList<>();
-        for (Map<Var<?>, Object> unorderedMap: goalHolder.vars().list()) {
-            final TreeMap<Var<?>, Object> orderedMap = new TreeMap<>(Var.COMPARATOR_BY_NAME);
-            orderedMap.putAll(unorderedMap);
-            listOfSortedMaps.add(orderedMap);
-        }
-        return listOfSortedMaps.toString();
-    }
-
-
-    protected ExtractingSolutionListener solveWithExtractingListener(Object goal) {
-        final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
-        getProlog().getSolver().solveGoal(goal, listener);
-        listener.report();
-        return listener;
-    }
+  protected ExtractingSolutionListener solveWithExtractingListener(Object goal) {
+    final ExtractingSolutionListener listener = new ExtractingSolutionListener(goal);
+    getProlog().getSolver().solveGoal(goal, listener);
+    listener.report();
+    return listener;
+  }
 }

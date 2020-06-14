@@ -30,50 +30,50 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test both the DefaultTermUnmarshaller and DefaultTermMarshaller
  */
 public class DefaultTermUnmarshallerTest {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
 
-    public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
+  public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
 
-    public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
-
-
-    @Test
-    public void numbers() {
-        assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(2323);
-        assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(3.14);
-        assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(2323L);
-        assertThat(UNMARSHALLER.unmarshall("3.14f")).isEqualTo(3.14f);
-    }
+  public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
 
 
-    @Test
-    public void basicTerms() {
-        assertThat(UNMARSHALLER.unmarshall("a")).isEqualTo("a");
-        assertThat(UNMARSHALLER.unmarshall("X") instanceof Var).isTrue();
-        assertThat(UNMARSHALLER.unmarshall("_")).isEqualTo(Var.anon());
-    }
-
-    @Test
-    public void struct() {
-        assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(a)"))).isEqualTo("f(a)");
-        assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(1, 3.14, a, X)"))).isEqualTo("f(1, 3.14, a, X)");
-    }
-
-    @Test(expected = InvalidTermException.class)
-    public void emptyString() {
-        UNMARSHALLER.unmarshall("");
-    }
+  @Test
+  public void numbers() {
+    assertThat(UNMARSHALLER.unmarshall("2323")).isEqualTo(2323);
+    assertThat(UNMARSHALLER.unmarshall("3.14")).isEqualTo(3.14);
+    assertThat(UNMARSHALLER.unmarshall("2323L")).isEqualTo(2323L);
+    assertThat(UNMARSHALLER.unmarshall("3.14f")).isEqualTo(3.14f);
+  }
 
 
-    @Test(expected = InvalidTermException.class)
-    public void nullString() {
-        UNMARSHALLER.unmarshall(null);
-    }
+  @Test
+  public void basicTerms() {
+    assertThat(UNMARSHALLER.unmarshall("a")).isEqualTo("a");
+    assertThat(UNMARSHALLER.unmarshall("X") instanceof Var).isTrue();
+    assertThat(UNMARSHALLER.unmarshall("_")).isEqualTo(Var.anon());
+  }
 
-    @Test
-    public void normalization() {
-        final Struct term = (Struct) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
-        logger.info("raw: {}", term);
-        assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
-    }
+  @Test
+  public void struct() {
+    assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(a)"))).isEqualTo("f(a)");
+    assertThat(MARSHALLER.marshall(UNMARSHALLER.unmarshall("f(1, 3.14, a, X)"))).isEqualTo("f(1, 3.14, a, X)");
+  }
+
+  @Test(expected = InvalidTermException.class)
+  public void emptyString() {
+    UNMARSHALLER.unmarshall("");
+  }
+
+
+  @Test(expected = InvalidTermException.class)
+  public void nullString() {
+    UNMARSHALLER.unmarshall(null);
+  }
+
+  @Test
+  public void normalization() {
+    final Struct term = (Struct) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
+    logger.info("raw: {}", term);
+    assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
+  }
 }

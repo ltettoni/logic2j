@@ -19,6 +19,7 @@ package org.logic2j.engine.exception;
 /**
  * Indicate some condition that requires breaking the execution flow but for which
  * we do not YET have a proper Exception class.
+ *
  * @Deprecated Exceptions with specific semantics must be defined instead
  */
 @Deprecated

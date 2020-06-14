@@ -44,8 +44,8 @@ public abstract class TypeUtils {
     }
     if (!(desiredClassOrInterface.isAssignableFrom(instance.getClass()))) {
       final String message =
-          "Could not cast an instance of " + instance.getClass() + " to expected " + desiredClassOrInterface + " [formatted object was " + instance
-              + "]";
+              "Could not cast an instance of " + instance.getClass() + " to expected " + desiredClassOrInterface + " [formatted object was " + instance
+                      + "]";
       throw new PrologNonSpecificException(message);
     }
     return (T) instance;

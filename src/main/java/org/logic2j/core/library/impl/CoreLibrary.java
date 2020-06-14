@@ -399,7 +399,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Predicate
   public int findall(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
-      final Object theResult) {
+                     final Object theResult) {
     final ArrayList<Object> allReifiedResults = new ArrayList<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, allReifiedResults);
 
@@ -416,7 +416,7 @@ public class CoreLibrary extends LibraryBase {
 
   @Predicate
   public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
-      final Object theResult) {
+                      final Object theResult) {
     final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
     collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
 
@@ -537,7 +537,7 @@ public class CoreLibrary extends LibraryBase {
    * @return The {@link Continuation} as returned by the solution notified.
    */
   private int binaryComparisonPredicate(UnifyContext currentVars, Object t1, Object t2,
-      ComparisonFunction theEvaluationFunction) {
+                                        ComparisonFunction theEvaluationFunction) {
     final Object effectiveT1 = termApiExt().evaluate(t1, currentVars);
     final Object effectiveT2 = termApiExt().evaluate(t2, currentVars);
     int continuation = Continuation.CONTINUE;
@@ -599,7 +599,7 @@ public class CoreLibrary extends LibraryBase {
   }
 
   private Object binaryFunctor(UnifyContext currentVars, Object theTerm1, Object theTerm2,
-      AggregationFunction theEvaluationFunction) {
+                               AggregationFunction theEvaluationFunction) {
     final Object t1 = termApiExt().evaluate(theTerm1, currentVars);
     final Object t2 = termApiExt().evaluate(theTerm2, currentVars);
     if (t1 instanceof Number && t2 instanceof Number) {

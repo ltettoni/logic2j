@@ -488,7 +488,7 @@ public class Parser {
       Object term = this.termAdapter.getVariable(varPathExpression.toString());
       if (term == null) {
         logger
-            .warn("Variable \"{}\" is undefined or null - substituting with empty string since nulls are not allowed in a theory", varPathExpression);
+                .warn("Variable \"{}\" is undefined or null - substituting with empty string since nulls are not allowed in a theory", varPathExpression);
         term = "";
         // throw new InvalidTermException("Oops, variable \"" + varPathExpression + "\" is undefined or null");
       }

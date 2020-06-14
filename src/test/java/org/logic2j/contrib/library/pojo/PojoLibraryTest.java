@@ -29,140 +29,140 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PojoLibraryTest extends PrologTestBase {
 
-    @Test
-    public void bind() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        uniqueSolution("bind('thread.name', X)");
-        bind("name", "value");
-        //
-        uniqueSolution("bind('thread.name', X), X=value");
-        noSolutions("bind('thread.name', X), X=some_other");
-        noSolutions("bind('thread.name', a)");
-        noSolutions("bind('thread.name', name)");
-        uniqueSolution("bind('thread.name', value)");
+  @Test
+  public void bind() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    uniqueSolution("bind('thread.name', X)");
+    bind("name", "value");
+    //
+    uniqueSolution("bind('thread.name', X), X=value");
+    noSolutions("bind('thread.name', X), X=some_other");
+    noSolutions("bind('thread.name', a)");
+    noSolutions("bind('thread.name', name)");
+    uniqueSolution("bind('thread.name', value)");
+  }
+
+  /**
+   * Helper method for PojoLibrary-related test cases: bind a Java object by name.
+   *
+   * @param theKey
+   * @param theValue
+   */
+  protected void bind(String theKey, Object theValue) {
+    EnvManager.setThreadVariable(theKey, theValue);
+  }
+
+  // Testing of the "property" predicate is done where we can assert objects into the theory,
+  // this is in DynamicClauseProviderTest
+
+
+  @Test
+  public void javaNewForEnum() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").get();
+    assertThat(x).isEqualTo(TermAdapter.FactoryMode.ANY_TERM);
+  }
+
+  @Test
+  public void javaNewWithDefaultConstructor() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").get();
+    assertThat(x instanceof ArrayList<?>).isTrue();
+  }
+
+
+  @Test
+  public void javaNewWithConstructorAndArgs() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").get();
+    assertThat(x).isEqualTo("text");
+  }
+
+
+  @Test(expected = PrologNonSpecificException.class)
+  public void javaNewWithConstructorAndArgsFails() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").get();
+  }
+
+  @Test
+  public void javaInstantiateWithConstructorArgs() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").get();
+    assertThat(x instanceof PrologInstantiatedPojo).isTrue();
+    final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+    assertThat(pojo.getStr()).isEqualTo("toto");
+    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+  }
+
+  @Test
+  public void javaInstantiateWithEmptyConstructorAndInjectProperties() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
+            "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").get();
+    assertThat(x instanceof PrologInstantiatedPojo).isTrue();
+    final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+    assertThat(pojo.getStr()).isEqualTo("toto");
+    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+  }
+
+
+  @Test
+  public void javaInstantiateWithJavaUnify() {
+    loadLibrary(new PojoLibrary(this.prolog));
+    final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
+            "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").get();
+    assertThat(x instanceof PrologInstantiatedPojo).isTrue();
+    final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
+    assertThat(pojo.getStr()).isEqualTo("toto");
+    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
+    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+  }
+
+
+  // ---------------------------------------------------------------------------
+  // A sample Pojo to be injected from Prolog
+  // ---------------------------------------------------------------------------
+
+  public static class PrologInstantiatedPojo {
+    private String str;
+    private Integer anInt;
+    private Double aDouble;
+
+    public PrologInstantiatedPojo() {
     }
 
-    /**
-     * Helper method for PojoLibrary-related test cases: bind a Java object by name.
-     *
-     * @param theKey
-     * @param theValue
-     */
-    protected void bind(String theKey, Object theValue) {
-        EnvManager.setThreadVariable(theKey, theValue);
+    public PrologInstantiatedPojo(String str, Integer anInt, Double aDouble) {
+      this.str = str;
+      this.anInt = anInt;
+      this.aDouble = aDouble;
     }
 
-    // Testing of the "property" predicate is done where we can assert objects into the theory,
-    // this is in DynamicClauseProviderTest
-
-
-    @Test
-    public void javaNewForEnum() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.core.api.TermAdapter$FactoryMode', 'ANY_TERM')").var("X").get();
-        assertThat(x).isEqualTo(TermAdapter.FactoryMode.ANY_TERM);
+    public String getStr() {
+      return str;
     }
 
-    @Test
-    public void javaNewWithDefaultConstructor() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.util.ArrayList')").var("X").get();
-        assertThat(x instanceof ArrayList<?>).isTrue();
+    public void setStr(String str) {
+      this.str = str;
     }
 
-
-    @Test
-    public void javaNewWithConstructorAndArgs() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'text')").var("X").get();
-        assertThat(x).isEqualTo("text");
+    public Integer getAnInt() {
+      return anInt;
     }
 
-
-    @Test(expected = PrologNonSpecificException.class)
-    public void javaNewWithConstructorAndArgsFails() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('java.lang.String', 'arg', 'extraArg')").var("X").get();
+    public void setAnInt(Integer anInt) {
+      this.anInt = anInt;
     }
 
-    @Test
-    public void javaInstantiateWithConstructorArgs() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo', 'toto', 1, 2.3)").var("X").get();
-        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
-        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertThat(pojo.getStr()).isEqualTo("toto");
-        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+    public Double getaDouble() {
+      return aDouble;
     }
 
-    @Test
-    public void javaInstantiateWithEmptyConstructorAndInjectProperties() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "property(X, 'str', 'toto', 'w'), property(X, 'anInt', 1, 'w'), property(X, 'aDouble', 2.3, 'w')").var("X").get();
-        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
-        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertThat(pojo.getStr()).isEqualTo("toto");
-        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+    public void setaDouble(Double aDouble) {
+      this.aDouble = aDouble;
     }
-
-
-    @Test
-    public void javaInstantiateWithJavaUnify() {
-        loadLibrary(new PojoLibrary(this.prolog));
-        final Object x = uniqueSolution("X is javaNew('org.logic2j.contrib.library.pojo.PojoLibraryTest$PrologInstantiatedPojo'), " +
-        "javaUnify(X, [str=toto, anInt=1, aDouble=2.3])").var("X").get();
-        assertThat(x instanceof PrologInstantiatedPojo).isTrue();
-        final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
-        assertThat(pojo.getStr()).isEqualTo("toto");
-        assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-        assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
-    }
-
-
-    // ---------------------------------------------------------------------------
-    // A sample Pojo to be injected from Prolog
-    // ---------------------------------------------------------------------------
-
-    public static class PrologInstantiatedPojo {
-        private String str;
-        private Integer anInt;
-        private Double aDouble;
-
-        public PrologInstantiatedPojo() {
-        }
-
-        public PrologInstantiatedPojo(String str, Integer anInt, Double aDouble) {
-            this.str = str;
-            this.anInt = anInt;
-            this.aDouble = aDouble;
-        }
-
-        public String getStr() {
-            return str;
-        }
-
-        public void setStr(String str) {
-            this.str = str;
-        }
-
-        public Integer getAnInt() {
-            return anInt;
-        }
-
-        public void setAnInt(Integer anInt) {
-            this.anInt = anInt;
-        }
-
-        public Double getaDouble() {
-            return aDouble;
-        }
-
-        public void setaDouble(Double aDouble) {
-            this.aDouble = aDouble;
-        }
-    }
+  }
 
 }

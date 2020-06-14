@@ -25,59 +25,58 @@ import org.logic2j.core.library.impl.IOLibrary;
 public class BugRegressionTest extends PrologTestBase {
 
 
+  /**
+   * There was a serious bug with CUT within subgoals. It's now fixed.
+   */
+  @Test
+  public void int5() {
+    loadTheoryFromTestResourcesDir("test-functional.pro");
+    nSolutions(5, "int5(X)");
+    nSolutions(5, "int5_rule(X)");
+    //
+    uniqueSolution("int5(X), !");
+    uniqueSolution("int5_rule(X), !"); // Horrible bug ! yields 5 solutions instead of 1!!!
+  }
 
-    /**
-     * There was a serious bug with CUT within subgoals. It's now fixed.
-     */
-    @Test
-    public void int5() {
-        loadTheoryFromTestResourcesDir("test-functional.pro");
-        nSolutions(5, "int5(X)");
-        nSolutions(5, "int5_rule(X)");
-        //
-        uniqueSolution("int5(X), !");
-        uniqueSolution("int5_rule(X), !"); // Horrible bug ! yields 5 solutions instead of 1!!!
-    }
+  /**
+   * Avoid creating cycles in bindings, or looping forever during unification.
+   */
+  @Test
+  public void infiniteLoopWhenUnifying2Vars() {
+    // This is a simple case: once we have bound, we should not redo it!
+    uniqueSolution("Free=X, Free=X");
+    // This is more complex: we must avoid binding X to Free, when Free is already linked to X!
+    uniqueSolution("Free=X, X=Free");
+  }
 
-    /**
-     * Avoid creating cycles in bindings, or looping forever during unification.
-     */
-    @Test
-    public void infiniteLoopWhenUnifying2Vars() {
-        // This is a simple case: once we have bound, we should not redo it!
-        uniqueSolution("Free=X, Free=X");
-        // This is more complex: we must avoid binding X to Free, when Free is already linked to X!
-        uniqueSolution("Free=X, X=Free");
-    }
+  /**
+   * See documentation in resource bug-cut-propagated-too-high.pro
+   */
+  @Test
+  public void bugWithCutPropagatedTooHighIntoCaller() {
+    loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
+    // Correct behaviour (used to work)
+    nSolutions(4, "distinct(X, a(X), L), member(E, L), existsOk1(a(E))");
+    nSolutions(4, "distinct(X, a(X), L), member(E, L), existsOk2(a(E))");
+    // Used to return only one solution instead of two!
+    nSolutions(4, "distinct(X,a(X), L), member(E, L), existsKo1(a(E))");
+    nSolutions(4, "distinct(X,a(X), L), member(E, L), existsKo2(a(E))");
 
-    /**
-     * See documentation in resource bug-cut-propagated-too-high.pro
-     */
-    @Test
-    public void bugWithCutPropagatedTooHighIntoCaller() {
-        loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
-        // Correct behaviour (used to work)
-        nSolutions(4, "distinct(X, a(X), L), member(E, L), existsOk1(a(E))");
-        nSolutions(4, "distinct(X, a(X), L), member(E, L), existsOk2(a(E))");
-        // Used to return only one solution instead of two!
-        nSolutions(4, "distinct(X,a(X), L), member(E, L), existsKo1(a(E))");
-        nSolutions(4, "distinct(X,a(X), L), member(E, L), existsKo2(a(E))");
+    nSolutions(2, "(E=1;E=2), existsOk1(a(E))");
+    nSolutions(2, "(E=1;E=2), existsOk2(a(E))");
 
-        nSolutions(2, "(E=1;E=2), existsOk1(a(E))");
-        nSolutions(2, "(E=1;E=2), existsOk2(a(E))");
-
-        nSolutions(2, "(E=1;E=2), existsKo1(a(E))"); // Used to return only one solution instead of two!
-        nSolutions(2, "(E=1;E=2), existsKo2(a(E))"); // Used to return only one solution instead of two!
-    }
+    nSolutions(2, "(E=1;E=2), existsKo1(a(E))"); // Used to return only one solution instead of two!
+    nSolutions(2, "(E=1;E=2), existsKo2(a(E))"); // Used to return only one solution instead of two!
+  }
 
 
-    /**
-     * Had an issue with calling primitives (eg. "nolog/*" and following a cut.
-     */
-    @Test
-    public void bugAddingPrimitiveBreaksNormalProcessingOfCut() {
-        loadLibrary(new IOLibrary(getProlog()));
-        loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
-        nSolutions(2, "(E=1;E=2), existsKo3(a(E))"); // Used to return only one solution instead of two!
-    }
+  /**
+   * Had an issue with calling primitives (eg. "nolog/*" and following a cut.
+   */
+  @Test
+  public void bugAddingPrimitiveBreaksNormalProcessingOfCut() {
+    loadLibrary(new IOLibrary(getProlog()));
+    loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
+    nSolutions(2, "(E=1;E=2), existsKo3(a(E))"); // Used to return only one solution instead of two!
+  }
 }

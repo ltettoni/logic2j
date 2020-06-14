@@ -55,7 +55,7 @@ public class SqlRunner {
       logger.debug(" parameters=" + Arrays.asList(theParameters));
     }
     try (final Connection conn = this.dataSource.getConnection(); //
-        final PreparedStatement stmt = this.prepareStatement(conn, theSelect)) {
+         final PreparedStatement stmt = this.prepareStatement(conn, theSelect)) {
       this.fillStatement(stmt, theParameters);
       try (final ResultSet rs = stmt.executeQuery()) {
         result = handle(rs);

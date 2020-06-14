@@ -267,7 +267,7 @@ public class RDBLibrary extends LibraryBase {
       }
       if (countOnly.get(0).length != 1) {
         throw new PrologNonSpecificException(
-            "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
+                "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
       }
       final Number resultSet = (Number) countOnly.get(0)[0];
       int number = resultSet.intValue();

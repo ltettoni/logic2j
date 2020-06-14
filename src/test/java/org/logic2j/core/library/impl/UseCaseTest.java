@@ -31,45 +31,45 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class UseCaseTest {
 
-    @Test
-    public void instantiateViaFactory() {
-        final Prolog prolog = new FluentPrologBuilder().build();
-        assertThat(prolog).isNotNull();
-    }
+  @Test
+  public void instantiateViaFactory() {
+    final Prolog prolog = new FluentPrologBuilder().build();
+    assertThat(prolog).isNotNull();
+  }
 
 
-    @Test
-    public void configureDefaultLibs() {
-        assertThat(new FluentPrologBuilder().withoutLibraries(false).isNoLibraries()).isFalse();
-        assertThat(new FluentPrologBuilder().withoutLibraries(true).isNoLibraries()).isTrue();
-        assertThat(new FluentPrologBuilder().withCoreLibraries(false).isCoreLibraries()).isFalse();
-        assertThat(new FluentPrologBuilder().withCoreLibraries(true).isCoreLibraries()).isTrue();
-    }
+  @Test
+  public void configureDefaultLibs() {
+    assertThat(new FluentPrologBuilder().withoutLibraries(false).isNoLibraries()).isFalse();
+    assertThat(new FluentPrologBuilder().withoutLibraries(true).isNoLibraries()).isTrue();
+    assertThat(new FluentPrologBuilder().withCoreLibraries(false).isCoreLibraries()).isFalse();
+    assertThat(new FluentPrologBuilder().withCoreLibraries(true).isCoreLibraries()).isTrue();
+  }
 
-    @Test
-    public void obtainDefaultPrologAndSolve() {
-        final Prolog prolog = new FluentPrologBuilder().build();
-        assertThat(prolog.solve("member(X, [a,b,c,d])").count()).isEqualTo(4);
-    }
-
-
-    @Test
-    public void loadTheoryAndSolve() {
-        final File th1 = new File("src/test/resources/queens.pro");
-        final File th2 = new File("src/test/resources/hanoi.pro");
-        final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).build();
-        assertThat(prolog.solve("queens(4, _)").count()).isEqualTo(2);
-    }
+  @Test
+  public void obtainDefaultPrologAndSolve() {
+    final Prolog prolog = new FluentPrologBuilder().build();
+    assertThat(prolog.solve("member(X, [a,b,c,d])").count()).isEqualTo(4);
+  }
 
 
-    @Test
-    public void solve() {
-        final Prolog prolog = new FluentPrologBuilder()
-        .withTheory(new File("src/test/resources/queens.pro"))
-        .build();
-        final List<List> objectList = prolog.solve("queens(4, Q)").var("Q", List.class).list();
-        assertThat(objectList.size()).isEqualTo(2);
-        assertThat(objectList.get(0).toString()).isEqualTo("[3, 1, 4, 2]");
-        assertThat(objectList.get(1).toString()).isEqualTo("[2, 4, 1, 3]");
-    }
+  @Test
+  public void loadTheoryAndSolve() {
+    final File th1 = new File("src/test/resources/queens.pro");
+    final File th2 = new File("src/test/resources/hanoi.pro");
+    final Prolog prolog = new FluentPrologBuilder().withTheory(th1, th2).build();
+    assertThat(prolog.solve("queens(4, _)").count()).isEqualTo(2);
+  }
+
+
+  @Test
+  public void solve() {
+    final Prolog prolog = new FluentPrologBuilder()
+            .withTheory(new File("src/test/resources/queens.pro"))
+            .build();
+    final List<List> objectList = prolog.solve("queens(4, Q)").var("Q", List.class).list();
+    assertThat(objectList.size()).isEqualTo(2);
+    assertThat(objectList.get(0).toString()).isEqualTo("[3, 1, 4, 2]");
+    assertThat(objectList.get(1).toString()).isEqualTo("[2, 4, 1, 3]");
+  }
 }

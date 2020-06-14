@@ -26,41 +26,41 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test parsing and formatting.
  */
 public class ParsingAndFormattingTest extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
+  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
 
-    /**
-     * No need for special init for only testing parsing and formatting.
-     */
-    @Override
-    protected InitLevel initLevel() {
-        return InitLevel.L0_BARE;
-    }
+  /**
+   * No need for special init for only testing parsing and formatting.
+   */
+  @Override
+  protected InitLevel initLevel() {
+    return InitLevel.L0_BARE;
+  }
 
-    @Test
-    public void parsing() {
-        assertThat(marshall(unmarshall("p(X,Y) :- a;b,c,d"))).isEqualTo("p(X, Y) :- a ; b , c , d");
-        assertThat(marshall(unmarshall("[1,2,3]"))).isEqualTo("[1, 2, 3]");
-    }
+  @Test
+  public void parsing() {
+    assertThat(marshall(unmarshall("p(X,Y) :- a;b,c,d"))).isEqualTo("p(X, Y) :- a ; b , c , d");
+    assertThat(marshall(unmarshall("[1,2,3]"))).isEqualTo("[1, 2, 3]");
+  }
 
-    @Test
-    public void parseNarityOperator() {
-        this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
-        final Object t = unmarshall("a oo b oo c oo d");
-        logger.info("Result: {}", t);
-        assertThat(marshall(t)).isEqualTo("oo(a, b, c, d)");
-    }
+  @Test
+  public void parseNarityOperator() {
+    this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
+    final Object t = unmarshall("a oo b oo c oo d");
+    logger.info("Result: {}", t);
+    assertThat(marshall(t)).isEqualTo("oo(a, b, c, d)");
+  }
 
 
-    @Test
-    public void formatting() {
-        Object t;
-        //
-        t = unmarshall("'An atom'");
-        assertThat(t.getClass()).isEqualTo(String.class);
-        //
-        t = unmarshall("t('A', b, 'C')");
-        logger.info("Formatted: {}", t);
-        assertThat(marshall(t)).isEqualTo("t('A', b, 'C')");
-    }
+  @Test
+  public void formatting() {
+    Object t;
+    //
+    t = unmarshall("'An atom'");
+    assertThat(t.getClass()).isEqualTo(String.class);
+    //
+    t = unmarshall("t('A', b, 'C')");
+    logger.info("Formatted: {}", t);
+    assertThat(marshall(t)).isEqualTo("t('A', b, 'C')");
+  }
 
 }
