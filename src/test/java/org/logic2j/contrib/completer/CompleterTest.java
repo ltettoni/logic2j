@@ -17,13 +17,13 @@
 
 package org.logic2j.contrib.completer;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.impl.PrologReferenceImplementation;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompleterTest extends PrologTestBase {
 

@@ -16,15 +16,14 @@
  */
 package org.logic2j.core.api.library;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashSet;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.exception.RecursionException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashSet;
 
 /**
  * Describe a {@link org.logic2j.core.api.library.annotation.Predicate}, which is either a:

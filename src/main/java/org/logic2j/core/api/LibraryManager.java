@@ -16,8 +16,8 @@
  */
 package org.logic2j.core.api;
 
-import org.logic2j.core.api.library.PLibrary;
 import org.logic2j.core.api.library.LibraryContent;
+import org.logic2j.core.api.library.PLibrary;
 
 /**
  * An API to manage {@link org.logic2j.core.api.library.PLibrary}es implementing Prolog primitives in Java.

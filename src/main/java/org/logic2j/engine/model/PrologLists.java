@@ -1,12 +1,11 @@
 package org.logic2j.engine.model;
 
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.util.TypeUtils;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.util.TypeUtils;
 
 public final class PrologLists {
 

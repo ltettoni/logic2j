@@ -16,16 +16,15 @@
  */
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.util.CollectionUtils;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Functional tests of the core features.

@@ -17,9 +17,17 @@
  */
 package org.logic2j.core.impl.io.tuprolog.parse;
 
-import java.io.Serializable;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.ATTRMASK;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DOUBLE;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.EOF;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.FLOAT;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.FUNCTOR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.INTEGER;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LONG;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.OPERATOR;
+import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.TYPEMASK;
 
-import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.*;
+import java.io.Serializable;
 
 /**
  * This class represents a token read by the prolog term tokenizer

@@ -17,13 +17,13 @@
 
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 import org.junit.Test;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class DefaultTermMarshallerTest extends PrologTestBase {
 

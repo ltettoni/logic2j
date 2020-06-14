@@ -17,14 +17,13 @@
 
 package org.logic2j.contrib.excel;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.TermAdapter;
-
-import java.io.IOException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This test requires test data, see build.gradle, target "downloadTestResources".

@@ -17,11 +17,7 @@
 
 package org.logic2j.core;
 
-import org.logic2j.engine.model.Var;
-import org.logic2j.engine.solver.listener.CountingSolutionListener;
-import org.logic2j.engine.unify.UnifyContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.unify.UnifyContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used in test cases to extract number of solutions and solutions to a goal.

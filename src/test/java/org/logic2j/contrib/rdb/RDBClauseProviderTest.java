@@ -16,16 +16,15 @@
  */
 package org.logic2j.contrib.rdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.sql.SQLException;
+import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.sql.SQLException;
-import java.util.Iterator;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test test requires expanding the provided test Derby database, see

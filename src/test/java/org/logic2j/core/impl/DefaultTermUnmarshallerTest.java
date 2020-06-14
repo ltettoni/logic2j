@@ -17,14 +17,14 @@
 
 package org.logic2j.core.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test both the DefaultTermUnmarshaller and DefaultTermMarshaller

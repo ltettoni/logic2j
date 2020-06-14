@@ -17,17 +17,16 @@
 
 package org.logic2j.contrib.pojo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.awt.Rectangle;
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.contrib.library.pojo.PojoLibrary;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.engine.model.Struct;
-
-import java.awt.*;
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class DynamicClauseProviderTest extends PrologTestBase {
 

@@ -16,10 +16,10 @@
  */
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.logic2j.core.impl.PrologReferenceImplementation;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test the cut and user abort features.

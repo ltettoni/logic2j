@@ -16,15 +16,15 @@
  */
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Ignore;
 import org.junit.Test;
+import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
+import org.logic2j.core.library.impl.IOLibrary;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.holder.GoalHolder;
-import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
-import org.logic2j.core.library.impl.IOLibrary;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Run higher-level tests such as whole programs.

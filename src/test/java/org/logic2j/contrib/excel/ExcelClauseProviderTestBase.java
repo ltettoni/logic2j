@@ -17,11 +17,10 @@
 
 package org.logic2j.contrib.excel;
 
-import org.logic2j.core.PrologTestBase;
-import org.logic2j.core.api.TermAdapter.AssertionMode;
-
 import java.io.File;
 import java.io.IOException;
+import org.logic2j.core.PrologTestBase;
+import org.logic2j.core.api.TermAdapter.AssertionMode;
 
 /**
  * Read Excel as TabularData and register into Prolog as TabularDataFactProvider.

@@ -16,9 +16,15 @@
  */
 package org.logic2j.contrib.rdb.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import org.logic2j.engine.util.CollectionUtils;
-
-import java.util.*;
 
 /**
  * Generate the lexical part of SQL and array of arguments based on higher-levels components of a query.

@@ -16,18 +16,17 @@
  */
 package org.logic2j.core.impl.theory;
 
-import org.logic2j.core.api.model.Clause;
-import org.logic2j.engine.model.Var;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
+import org.logic2j.core.api.model.Clause;
+import org.logic2j.engine.model.Var;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Storage of the clauses of a theory: an ordered collection of {@link Clause}s, with some indexing and structuring added for performance.

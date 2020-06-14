@@ -17,13 +17,13 @@
 
 package org.logic2j.core.impl;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Reference implementation of {@link org.logic2j.core.api.TermUnmarshaller}.

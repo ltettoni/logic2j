@@ -16,12 +16,11 @@
  */
 package org.logic2j.core.api.library.annotation;
 
-import org.logic2j.engine.solver.Continuation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.logic2j.engine.solver.Continuation;
 
 /**
  * Annotation for methods of a {@link org.logic2j.core.api.library.PLibrary} that implement a Prolog predicate in Java.

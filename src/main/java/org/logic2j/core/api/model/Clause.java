@@ -16,16 +16,15 @@
  */
 package org.logic2j.core.api.model;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import java.util.Map;
+import java.util.TreeMap;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Represents a fact or a rule in a Theory; this is described by "content" Object.

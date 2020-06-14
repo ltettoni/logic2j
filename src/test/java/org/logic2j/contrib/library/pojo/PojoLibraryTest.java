@@ -16,15 +16,14 @@
  */
 package org.logic2j.contrib.library.pojo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.ArrayList;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.core.impl.EnvManager;
-
-import java.util.ArrayList;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 
 public class PojoLibraryTest extends PrologTestBase {

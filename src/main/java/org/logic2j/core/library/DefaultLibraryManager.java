@@ -16,6 +16,12 @@
  */
 package org.logic2j.core.library;
 
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.Prolog;
 import org.logic2j.core.api.library.LibraryContent;
@@ -30,13 +36,6 @@ import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 public class DefaultLibraryManager implements LibraryManager {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultLibraryManager.class);

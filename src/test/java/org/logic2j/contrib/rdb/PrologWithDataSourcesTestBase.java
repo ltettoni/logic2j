@@ -16,12 +16,11 @@
  */
 package org.logic2j.contrib.rdb;
 
-import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.logic2j.core.PrologTestBase;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.sql.DataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.logic2j.core.PrologTestBase;
 
 /**
  * Common base class for testing the Prolog engine with data sources. Although it would be formally cleaner to instantiate data sources once

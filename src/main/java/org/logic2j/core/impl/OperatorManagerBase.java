@@ -17,13 +17,12 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.api.OperatorManager;
-import org.logic2j.engine.exception.PrologNonSpecificException;
-import org.logic2j.core.api.model.Operator;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import org.logic2j.core.api.OperatorManager;
+import org.logic2j.core.api.model.Operator;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 /**
  * Base implementation for OperatorManager

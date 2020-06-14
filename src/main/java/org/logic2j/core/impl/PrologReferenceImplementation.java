@@ -16,6 +16,8 @@
  */
 package org.logic2j.core.impl;
 
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
 import org.logic2j.core.api.LibraryManager;
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermAdapter;
@@ -29,8 +31,6 @@ import org.logic2j.core.library.DefaultLibraryManager;
 import org.logic2j.core.library.impl.CoreLibrary;
 import org.logic2j.core.library.impl.IOLibrary;
 import org.logic2j.engine.solver.holder.GoalHolder;
-
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Reference implementation of logic2j's {@link PrologImplementation} API.

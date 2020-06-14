@@ -16,6 +16,19 @@
  */
 package org.logic2j.contrib.rdb;
 
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.sql.DataSource;
 import org.logic2j.contrib.rdb.util.CollectionMap;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
@@ -38,20 +51,6 @@ import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.CollectionUtils;
 import org.logic2j.engine.util.TypeUtils;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Prolog library that bridges the Prolog engine and a relational database seen as a facts repository.

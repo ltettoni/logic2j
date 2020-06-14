@@ -16,12 +16,12 @@
  */
 package org.logic2j.engine.model;
 
-import org.junit.Test;
-import org.logic2j.engine.exception.InvalidTermException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import org.junit.Test;
+import org.logic2j.engine.exception.InvalidTermException;
 
 /**
  * Low-level tests of the {@link TermApi} facade.

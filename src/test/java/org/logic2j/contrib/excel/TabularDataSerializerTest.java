@@ -17,11 +17,10 @@
 
 package org.logic2j.contrib.excel;
 
-import org.junit.Test;
-import org.logic2j.core.PrologTestBase;
-
 import java.io.File;
 import java.io.IOException;
+import org.junit.Test;
+import org.logic2j.core.PrologTestBase;
 
 public class TabularDataSerializerTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TabularDataSerializerTest.class);

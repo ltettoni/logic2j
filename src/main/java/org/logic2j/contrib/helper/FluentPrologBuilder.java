@@ -17,16 +17,15 @@
 
 package org.logic2j.contrib.helper;
 
-import org.logic2j.engine.exception.PrologNonSpecificException;
-import org.logic2j.core.impl.PrologImplementation;
-import org.logic2j.core.impl.PrologReferenceImplementation;
-import org.logic2j.core.impl.theory.TheoryContent;
-import org.logic2j.core.impl.theory.TheoryManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.core.impl.PrologReferenceImplementation;
+import org.logic2j.core.impl.theory.TheoryContent;
+import org.logic2j.core.impl.theory.TheoryManager;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 /**
  * A builder to instantiate a Prolog implementation ready to be used.

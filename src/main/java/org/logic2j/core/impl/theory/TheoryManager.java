@@ -16,14 +16,13 @@
  */
 package org.logic2j.core.impl.theory;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.Solver;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text.

@@ -17,12 +17,11 @@
 
 package org.logic2j.core.impl.theory;
 
+import java.io.File;
+import java.io.IOException;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.impl.PrologReferenceImplementation;
-
-import java.io.File;
-import java.io.IOException;
 
 public class DefaultTheoryManagerTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManagerTest.class);

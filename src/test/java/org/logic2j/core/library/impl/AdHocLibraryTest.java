@@ -16,6 +16,9 @@
  */
 package org.logic2j.core.library.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
@@ -26,9 +29,6 @@ import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class AdHocLibraryTest extends PrologTestBase {
   private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);

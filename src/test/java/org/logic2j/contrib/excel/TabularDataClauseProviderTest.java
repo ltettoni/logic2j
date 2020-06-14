@@ -17,13 +17,13 @@
 
 package org.logic2j.contrib.excel;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Test;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.core.impl.theory.TheoryManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.logic2j.engine.solver.holder.GoalHolder;
 
 public class TabularDataClauseProviderTest extends TabularDataTestBase {
 

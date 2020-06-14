@@ -17,11 +17,10 @@
 
 package org.logic2j.core.api;
 
+import java.util.List;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Term;
 import org.logic2j.engine.model.Var;
-
-import java.util.List;
 
 /**
  * Interaction between the environment (host, programs, variables, streams/files) and the Prolog engine, in both directions.

@@ -16,14 +16,13 @@
  */
 package org.logic2j.core;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.util.ProfilingInfo;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  * Performance benchmarks.

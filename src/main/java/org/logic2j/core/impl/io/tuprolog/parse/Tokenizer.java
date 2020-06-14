@@ -17,16 +17,6 @@
  */
 package org.logic2j.core.impl.io.tuprolog.parse;
 
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.model.Struct;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.ATOM;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.BAR;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DOUBLE;
@@ -46,6 +36,15 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RBRA2;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RPAR;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.SQ_SEQUENCE;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.VARIABLE;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.LinkedList;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.Struct;
 
 /**
  * BNF for tuProlog

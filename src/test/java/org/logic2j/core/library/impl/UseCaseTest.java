@@ -17,14 +17,13 @@
 
 package org.logic2j.core.library.impl;
 
-import org.junit.Test;
-import org.logic2j.contrib.helper.FluentPrologBuilder;
-import org.logic2j.core.api.Prolog;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.logic2j.contrib.helper.FluentPrologBuilder;
+import org.logic2j.core.api.Prolog;
 
 /**
  * Demonstrate simple use cases for Logic2j.

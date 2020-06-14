@@ -16,6 +16,13 @@
  */
 package org.logic2j.contrib.rdb;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import javax.sql.DataSource;
 import org.logic2j.contrib.rdb.util.SqlBuilder3;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.contrib.rdb.util.SqlRunner;
@@ -27,14 +34,6 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.unify.UnifyContext;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * List {@link org.logic2j.core.api.model.Clause}s (facts, never rules) from relational database tables or views accessed from the JDBC {@link javax.sql.DataSource} API. When

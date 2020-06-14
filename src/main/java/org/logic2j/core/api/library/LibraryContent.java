@@ -16,10 +16,9 @@
  */
 package org.logic2j.core.api.library;
 
-import org.logic2j.engine.exception.PrologNonSpecificException;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 /**
  * Describe the content of a {@link PLibrary}: its primitives, directives, functors and predicates.

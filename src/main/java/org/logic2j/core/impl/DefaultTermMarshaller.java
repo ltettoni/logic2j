@@ -17,17 +17,17 @@
 
 package org.logic2j.core.impl;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 import org.logic2j.core.api.OperatorManager;
 import org.logic2j.core.api.TermMarshaller;
-import org.logic2j.engine.model.PrologLists;
-import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.engine.visitor.ExtendedTermVisitor;
 import org.logic2j.core.api.model.Operator;
+import org.logic2j.engine.model.PrologLists;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
+import org.logic2j.engine.unify.UnifyContext;
+import org.logic2j.engine.visitor.ExtendedTermVisitor;
 
 
 /**

@@ -17,14 +17,13 @@
 
 package org.logic2j.contrib.excel;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.impl.DefaultTermAdapter;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A {@link org.logic2j.core.api.TermAdapter} capable of handling {@link TabularData}.

@@ -16,11 +16,10 @@
  */
 package org.logic2j.contrib.rdb;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class RDBLibraryTest extends PrologWithDataSourcesTestBase {
 

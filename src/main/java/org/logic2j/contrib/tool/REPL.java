@@ -33,6 +33,14 @@ package org.logic2j.contrib.tool;/*
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import org.logic2j.contrib.helper.FluentPrologBuilder;
 import org.logic2j.core.api.TermMarshaller;
 import org.logic2j.core.impl.PrologImplementation;
@@ -41,15 +49,6 @@ import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Read, Eval, Print, Loop.

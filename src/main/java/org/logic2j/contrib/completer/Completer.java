@@ -17,6 +17,12 @@
 
 package org.logic2j.contrib.completer;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+import static org.logic2j.engine.model.Var.strVar;
+
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
@@ -25,13 +31,6 @@ import org.logic2j.engine.solver.extractor.SingleVarExtractor;
 import org.logic2j.engine.solver.listener.SingleVarSolutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-import static org.logic2j.engine.model.Var.strVar;
 
 /**
  * Created by tettoni on 2015-10-11.

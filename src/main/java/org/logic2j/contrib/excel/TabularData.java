@@ -17,14 +17,13 @@
 
 package org.logic2j.contrib.excel;
 
-import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.exception.PrologNonSpecificException;
-import org.logic2j.core.impl.PrologImplementation;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.impl.PrologImplementation;
+import org.logic2j.engine.exception.PrologNonSpecificException;
 
 /**
  * A tabular (grid) data set fully loaded in memory. The data has the form of a 2-dimension array

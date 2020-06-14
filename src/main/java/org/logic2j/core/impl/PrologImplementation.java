@@ -16,7 +16,12 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.api.*;
+import org.logic2j.core.api.LibraryManager;
+import org.logic2j.core.api.OperatorManager;
+import org.logic2j.core.api.Prolog;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermMarshaller;
+import org.logic2j.core.api.TermUnmarshaller;
 
 /**
  * An interface that Prolog implementations must provide; this goes beyond the lighter facade interface {@link Prolog} intended for client

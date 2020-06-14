@@ -17,9 +17,8 @@
 
 package org.logic2j.contrib.excel;
 
-import org.logic2j.core.PrologTestBase;
-
 import java.io.Serializable;
+import org.logic2j.core.PrologTestBase;
 
 class TabularDataTestBase extends PrologTestBase {
 

@@ -16,13 +16,7 @@
  */
 package org.logic2j.core.impl;
 
-import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.TermMapper;
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.model.PrologLists;
-import org.logic2j.engine.model.Struct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +24,13 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermMapper;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
+import org.logic2j.engine.model.Struct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default and reference implementation of {@link TermAdapter}.

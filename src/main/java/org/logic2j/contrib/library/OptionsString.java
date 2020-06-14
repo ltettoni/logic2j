@@ -16,12 +16,11 @@
  */
 package org.logic2j.contrib.library;
 
-import org.logic2j.engine.unify.UnifyContext;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * A series of options passed to primitives.

@@ -16,19 +16,18 @@
  */
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
+import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
-import org.logic2j.engine.unify.UnifyContext;
-import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.engine.solver.listener.SolutionListener;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * Test the cut and user abort features.

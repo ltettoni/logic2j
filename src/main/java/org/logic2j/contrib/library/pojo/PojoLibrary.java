@@ -16,6 +16,11 @@
  */
 package org.logic2j.contrib.library.pojo;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.logic2j.contrib.library.OptionsString;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
@@ -30,12 +35,6 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Relate Java POJOs to Prolog variables: used to instantiate Java objects, access properties (setters, getters),

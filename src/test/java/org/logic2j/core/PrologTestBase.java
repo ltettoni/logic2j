@@ -16,6 +16,16 @@
  */
 package org.logic2j.core;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import org.junit.Before;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.LibraryContent;
@@ -30,17 +40,6 @@ import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Base class for tests, initialize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is

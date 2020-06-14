@@ -16,15 +16,15 @@
  */
 package org.logic2j.contrib.rdb.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import org.junit.Test;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.engine.util.CollectionUtils;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class SqlBuilder3Test {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlBuilder3Test.class);

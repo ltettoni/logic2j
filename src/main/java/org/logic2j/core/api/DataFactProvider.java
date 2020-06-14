@@ -17,8 +17,8 @@
 
 package org.logic2j.core.api;
 
-import org.logic2j.engine.model.DataFact;
 import org.logic2j.core.impl.Solver;
+import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**

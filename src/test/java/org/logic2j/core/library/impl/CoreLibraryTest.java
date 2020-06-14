@@ -17,13 +17,13 @@
 
 package org.logic2j.core.library.impl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.solver.holder.GoalHolder;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoreLibraryTest extends PrologTestBase {
 

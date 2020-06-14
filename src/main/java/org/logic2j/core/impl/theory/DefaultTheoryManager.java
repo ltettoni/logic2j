@@ -16,6 +16,17 @@
  */
 package org.logic2j.core.impl.theory;
 
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
 import org.logic2j.core.api.model.Clause;
@@ -28,18 +39,6 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Prolog's most classic way of providing {@link Clause}s to the {@link Solver}

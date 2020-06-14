@@ -17,24 +17,6 @@
  */
 package org.logic2j.core.impl.io.tuprolog.parse;
 
-import org.logic2j.core.api.OperatorManager;
-import org.logic2j.core.api.TermAdapter;
-import org.logic2j.core.api.model.Operator;
-import org.logic2j.engine.exception.InvalidTermException;
-import org.logic2j.engine.model.PrologLists;
-import org.logic2j.engine.model.Struct;
-import org.logic2j.engine.model.Term;
-import org.logic2j.engine.model.Var;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.ATOM;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DOUBLE;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.DQ_SEQUENCE;
@@ -50,6 +32,23 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.RPAR;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.SQ_SEQUENCE;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.VARIABLE;
 import static org.logic2j.engine.model.Var.strVar;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Pattern;
+import org.logic2j.core.api.OperatorManager;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.model.Operator;
+import org.logic2j.engine.exception.InvalidTermException;
+import org.logic2j.engine.model.PrologLists;
+import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.model.Term;
+import org.logic2j.engine.model.Var;
 
 /**
  * This class defines a parser of Prolog terms and sentences.

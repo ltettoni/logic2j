@@ -16,14 +16,13 @@
  */
 package org.logic2j.core;
 
-import org.junit.Test;
-import org.logic2j.core.api.TermAdapter;
-import org.logic2j.engine.model.Struct;
-import org.logic2j.core.impl.Solver;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.impl.Solver;
+import org.logic2j.engine.model.Struct;
 
 /**
  * Testing the TermAdapter: how Java objects can invoke and be returned

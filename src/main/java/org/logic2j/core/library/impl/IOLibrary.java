@@ -16,13 +16,12 @@
  */
 package org.logic2j.core.library.impl;
 
+import java.io.PrintStream;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.io.PrintStream;
 
 public class IOLibrary extends LibraryBase {
   /**

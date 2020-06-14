@@ -1,5 +1,9 @@
 package org.logic2j.core.api.model;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static org.logic2j.engine.model.Var.strVar;
+
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
@@ -13,10 +17,6 @@ import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.TypeUtils;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static org.logic2j.engine.model.Var.strVar;
 
 public class TermApiExt extends TermApi {
 

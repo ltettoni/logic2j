@@ -16,16 +16,15 @@
  */
 package org.logic2j.core.library.impl;
 
+import static org.logic2j.engine.solver.Continuation.CONTINUE;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.logic2j.engine.solver.Continuation.CONTINUE;
 
 /**
  * A small ad-hoc implementation of a {@link org.logic2j.core.api.library.PLibrary} just for testing.

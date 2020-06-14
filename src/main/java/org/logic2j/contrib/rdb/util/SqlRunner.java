@@ -16,11 +16,16 @@
  */
 package org.logic2j.contrib.rdb.util;
 
-import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.sql.DataSource;
 
 /**
  * Execute SQL statements in an IoC manner, guaranteeing proper error handling and resource cleaning.

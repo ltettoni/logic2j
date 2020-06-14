@@ -16,6 +16,12 @@
  */
 package org.logic2j.core.library.impl;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+import static org.logic2j.engine.model.TermApiLocator.termApiExt;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
@@ -31,13 +37,6 @@ import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 /**
  * Provide the core primitives of the Prolog language.

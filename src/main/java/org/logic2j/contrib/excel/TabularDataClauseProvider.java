@@ -17,18 +17,17 @@
 
 package org.logic2j.contrib.excel;
 
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.exception.PrologNonSpecificException;
 import org.logic2j.engine.unify.UnifyContext;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * An implementation of ClauseProvider for TabularData.

@@ -16,11 +16,10 @@
  */
 package org.logic2j.contrib.rdb;
 
+import javax.sql.DataSource;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.impl.DefaultTermAdapter;
 import org.logic2j.core.impl.PrologImplementation;
-
-import javax.sql.DataSource;
 
 /**
  * Base class for RDB access using JDBC.
