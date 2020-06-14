@@ -94,14 +94,9 @@ public class AdHocLibraryTest extends PrologTestBase {
     goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
     Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
     final Var q = termApi().findVar(goal, "Q");
-    final SolutionListener listener = new SolutionListener() {
-
-      @Override
-      public int onSolution(UnifyContext currentVars) {
-        logger.info("App listener got one solution: {}", currentVars.reify(q));
-        return Continuation.CONTINUE;
-      }
-
+    final SolutionListener listener = currentVars -> {
+      logger.info("App listener got one solution: {}", currentVars.reify(q));
+      return Continuation.CONTINUE;
     };
     getProlog().getSolver().solveGoal(goal, listener);
 
