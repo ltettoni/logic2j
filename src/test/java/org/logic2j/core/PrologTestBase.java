@@ -276,9 +276,9 @@ public abstract class PrologTestBase {
      * @return All variables of a GoalHolder, ordered by name, converted to String.
      */
     protected String varsSortedToString(GoalHolder goalHolder) {
-        final List<Map<Var, Object>> listOfSortedMaps = new ArrayList<>();
-        for (Map<Var, Object> unorderedMap: goalHolder.vars().list()) {
-            final TreeMap<Var, Object> orderedMap = new TreeMap<>(Var.COMPARATOR_BY_NAME);
+        final List<Map<Var<?>, Object>> listOfSortedMaps = new ArrayList<>();
+        for (Map<Var<?>, Object> unorderedMap: goalHolder.vars().list()) {
+            final TreeMap<Var<?>, Object> orderedMap = new TreeMap<>(Var.COMPARATOR_BY_NAME);
             orderedMap.putAll(unorderedMap);
             listOfSortedMaps.add(orderedMap);
         }

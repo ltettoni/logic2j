@@ -202,7 +202,7 @@ public class ExecutionPruningTest extends PrologTestBase {
     public void transformWithCutAndCatchAll() {
         //
         loadTheoryFromTestResourcesDir("test-functional.pro");
-        final List<Map<Var, Object>> list = this.prolog.solve("transform(complex, Z)").vars().list();
+        final List<Map<Var<?>, Object>> list = this.prolog.solve("transform(complex, Z)").vars().list();
         assertThat(list.toString()).isEqualTo("[{Z=verySimple}]");
     }
 

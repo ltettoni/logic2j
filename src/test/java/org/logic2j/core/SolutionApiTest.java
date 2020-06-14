@@ -174,7 +174,7 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void varsUnique() {
-        final Map<Var, Object> unique = getProlog().solve("Q=12,R=13").vars().unique();
+        final Map<Var<?>, Object> unique = getProlog().solve("Q=12,R=13").vars().unique();
         assertThat(unique.toString().contains("Q=12")).isTrue();
         assertThat(unique.toString().contains("R=13")).isTrue();
     }
@@ -182,7 +182,7 @@ public class SolutionApiTest extends PrologTestBase {
 
     @Test
     public void varsList() {
-        final List<Map<Var, Object>> map = getProlog().solve("Q=12;R=13").vars().list();
+        final List<Map<Var<?>, Object>> map = getProlog().solve("Q=12;R=13").vars().list();
         assertThat(map.size()).isEqualTo(2);
     }
 
@@ -357,7 +357,7 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final List<Map<Var, Object>> values = holder.vars().list();
+        final List<Map<Var<?>, Object>> values = holder.vars().list();
         ProfilingInfo.reportAll("vars()");
         logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
         assertThat(values.size()).isEqualTo(40320);
@@ -369,10 +369,10 @@ public class SolutionApiTest extends PrologTestBase {
         final String goal = "perm([a,b,c,d,e,f,g,h], Q)";
         final GoalHolder holder = getProlog().solve(goal);
         ProfilingInfo.setTimer1();
-        final Iterator<Map<Var, Object>> iter = holder.vars().iterator();
+        final Iterator<Map<Var<?>, Object>> iter = holder.vars().iterator();
         int counter = 0;
         while (iter.hasNext()) {
-            final Map<Var, Object> next = iter.next();
+            final Map<Var<?>, Object> next = iter.next();
             if (counter < 10) {
                 logger.debug("Vars via iterator: {}", next);
             }
