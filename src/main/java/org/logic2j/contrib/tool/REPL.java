@@ -57,7 +57,7 @@ public class REPL {
 
   private PrologImplementation prolog;
 
-  public void run(String args[]) throws IOException {
+  public void run(String[] args) throws IOException {
     System.out.println("logic2j REPL");
 
     final List<File> theories = new ArrayList<>();
@@ -116,7 +116,7 @@ public class REPL {
     }
   }
 
-  public static void main(String args[]) throws IOException {
+  public static void main(String[] args) throws IOException {
     new REPL().run(args);
   }
 }

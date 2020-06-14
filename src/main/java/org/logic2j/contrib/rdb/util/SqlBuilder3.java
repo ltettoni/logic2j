@@ -835,7 +835,7 @@ public class SqlBuilder3 {
     public final String joinType;
     public final Column leftColumn;
     public final Column rightColumn;
-    public final Criterion criteria[];
+    public final Criterion[] criteria;
 
     public Join(Column theLeftColumn, Column theRightColumn, String theJoinType, Criterion... theExtraCriteria) {
       super();

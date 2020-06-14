@@ -76,7 +76,7 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
   }
 
   public void report() {
-    switch ((int) count()) {
+    switch (count()) {
       case 0:
         logger.info("Solving \"{}\" yields no solution", goal);
         break;

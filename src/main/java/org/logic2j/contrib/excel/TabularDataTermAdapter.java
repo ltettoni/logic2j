@@ -84,7 +84,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
             break;
           }
           case RECORD: {
-            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, (Object[]) row);
+            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, row);
             result.add(term);
             break;
           }

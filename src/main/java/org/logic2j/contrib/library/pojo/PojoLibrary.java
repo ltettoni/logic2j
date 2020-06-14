@@ -280,8 +280,8 @@ public class PojoLibrary extends LibraryBase {
             return aClass.newInstance();
           } else {
             // Collect arguments and their types
-            final Object constructorArgs[] = new Object[nbArgs];
-            final Class<?> constructorClasses[] = new Class<?>[nbArgs];
+            final Object[] constructorArgs = new Object[nbArgs];
+            final Class<?>[] constructorClasses = new Class<?>[nbArgs];
             for (int i = 1; i <= nbArgs; i++) {
               constructorArgs[i - 1] = currentVars.reify(args[i]);
               constructorClasses[i - 1] = constructorArgs[i - 1].getClass();

@@ -84,7 +84,7 @@ public class TabularDataFactProvider implements DataFactProvider {
           break;
         }
         case RECORD: {
-          this.dataFacts.add(new DataFact((Object[]) row));
+          this.dataFacts.add(new DataFact(row));
           break;
         }
         default:

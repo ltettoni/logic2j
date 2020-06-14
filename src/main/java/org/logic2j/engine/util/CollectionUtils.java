@@ -160,7 +160,7 @@ public final class CollectionUtils {
             sb.append(counter);
             sb.append("]=");
           }
-          sb.append(String.valueOf(element));
+          sb.append(element);
           sb.append('\n');
         }
       } else {
