@@ -5,6 +5,7 @@ import static java.lang.Math.min;
 import static org.logic2j.engine.model.Var.strVar;
 
 import org.logic2j.core.api.TermAdapter;
+import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.api.library.LibraryContent;
 import org.logic2j.core.api.library.PrimitiveInfo;
@@ -257,26 +258,23 @@ public class TermApiExt extends TermApi {
     } else if (theObject instanceof CharSequence || theObject instanceof Character) {
       // Very very vary rudimentary parsing
       final String chars = theObject.toString();
-      switch (theMode) {
-        case ATOM:
-          result = Struct.atom(chars);
-          break;
-        default:
-          if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
-            result = Var.anon();
-          } else if (chars.isEmpty()) {
-            // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent
-            // them
-            // as a Term
-            result = new Struct("");
-          } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
-            // Use Prolog's convention re variables starting with uppercase or underscore
-            result = strVar(chars);
-          } else {
-            // Otherwise it's an atom
-            result = chars.intern();
-          }
-          break;
+      if (theMode == FactoryMode.ATOM) {
+        result = Struct.atom(chars);
+      } else {
+        if (Var.ANONYMOUS_VAR_NAME.equals(chars)) {
+          result = Var.anon();
+        } else if (chars.isEmpty()) {
+          // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent
+          // them
+          // as a Term
+          result = new Struct("");
+        } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
+          // Use Prolog's convention re variables starting with uppercase or underscore
+          result = strVar(chars);
+        } else {
+          // Otherwise it's an atom
+          result = chars.intern();
+        }
       }
     } else if (theObject instanceof Number) {
       // Other types of numbers
