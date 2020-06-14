@@ -126,7 +126,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
           final Object object = row[i];
           args[i] = getTermAdapter().toTerm(object, FactoryMode.ANY_TERM);
         }
-        final Clause cl = new Clause(getProlog(), new Struct(predicateName, args));
+        final Clause cl = new Clause(getProlog(), new Struct<>(predicateName, args));
         clauses.add(cl);
       }
     } catch (final SQLException e) {
@@ -139,7 +139,7 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
   // Methods
   // ---------------------------------------------------------------------------
 
-  private String tableName(Struct theGoal) {
+  private String tableName(Struct<?> theGoal) {
     return theGoal.getName().substring(this.prefix.length());
   }
 

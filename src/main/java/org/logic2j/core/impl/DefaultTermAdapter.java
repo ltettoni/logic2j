@@ -89,7 +89,7 @@ public class DefaultTermAdapter implements TermAdapter {
     for (int i = 0; i < theArguments.length; i++) {
       convertedArgs[i] = toTermInternal(theArguments[i], theMode);
     }
-    final Struct<?> created = new Struct(thePredicateName, convertedArgs);
+    final Struct<?> created = new Struct<>(thePredicateName, convertedArgs);
     final Struct<?> normalized = (Struct<?>) normalizer.apply(created);
     return normalized;
   }
@@ -126,7 +126,7 @@ public class DefaultTermAdapter implements TermAdapter {
       final String chars = String.valueOf(theObject);
       if (theMode == FactoryMode.ATOM) {
         // Anything becomes an atom, actually only a Struct since we don't have powerful parsing here
-        // result = new Struct(chars);
+        // result = new Struct<>(chars);
         result = Struct.atom(chars);
       }
     }

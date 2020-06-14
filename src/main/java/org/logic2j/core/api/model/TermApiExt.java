@@ -154,7 +154,7 @@ public class TermApiExt extends TermApi {
       //      if (child instanceof String) {
       //        if (theContent.hasPrimitive(TermApi.predicateSignature(child))) {
       //          // Convert to Struct so that we can assign a primitive
-      //          child = new Struct((String) child);
+      //          child = new Struct<>((String) child);
       //          child = TermApi.normalize(child, theContent);
       //          this.args[i] = child; // Not 100% sure it's good to mutate
       //        }
@@ -178,7 +178,7 @@ public class TermApiExt extends TermApi {
     if (theLibraryContent != null) {
       if (factorized instanceof String) {
         if (theLibraryContent.hasPrimitive(predicateSignature(factorized))) {
-          return normalize((T) new Struct((String) factorized), theLibraryContent);
+          return normalize((T) new Struct<>((String) factorized), theLibraryContent);
         }
       }
       if (factorized instanceof Struct<?>) {
@@ -267,7 +267,7 @@ public class TermApiExt extends TermApi {
           // Dubious for real programming, but some data sources may contain empty fields, and this is the only way to represent
           // them
           // as a Term
-          result = new Struct("");
+          result = new Struct<>("");
         } else if (Character.isUpperCase(chars.charAt(0)) || chars.startsWith(Var.ANONYMOUS_VAR_NAME)) {
           // Use Prolog's convention re variables starting with uppercase or underscore
           result = strVar(chars);

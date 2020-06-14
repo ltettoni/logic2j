@@ -66,7 +66,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
   // ---------------------------------------------------------------------------
 
   @Override
-  public CharSequence visit(Var theVar) {
+  public CharSequence visit(Var<?> theVar) {
     // logger.info("Visiting: {}", theVar);
     final Object finalValue;
     if (this.currentVars != null) {
@@ -88,7 +88,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
    * @param theStruct
    */
   @Override
-  public CharSequence visit(Struct theStruct) {
+  public CharSequence visit(Struct<?> theStruct) {
     final CharSequence formatted = formatStruct(theStruct);
     return formatted;
   }
@@ -123,7 +123,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
    * Specific representations are provided for lists and atoms. Names starting with upper case letter are enclosed in apices.
    * TODO Remove if similar if not equal to Struct.formatStruct
    */
-  private CharSequence formatStruct(Struct theStruct) {
+  private CharSequence formatStruct(Struct<?> theStruct) {
     // empty list case
     if (PrologLists.isEmptyList(theStruct)) {
       return PrologLists.FUNCTOR_EMPTY_LIST;
@@ -155,7 +155,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
   }
 
   // TODO Remove if similar (if not equal) to Struct.formatPListRecursive
-  private CharSequence formatPListRecursive(Struct theStruct) {
+  private CharSequence formatPListRecursive(Struct<?> theStruct) {
     final Object head = theStruct.getLHS();
     final Object tail = theStruct.getRHS();
     if (PrologLists.isList(tail)) {
@@ -204,7 +204,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     return toStringAsArg(theTerm, precedence, false);
   }
 
-  private CharSequence toStringAsList(Struct theStruct) {
+  private CharSequence toStringAsList(Struct<?> theStruct) {
     final Object h = theStruct.getLHS();
     final Object t = theStruct.getRHS();
     if (PrologLists.isList(t)) {

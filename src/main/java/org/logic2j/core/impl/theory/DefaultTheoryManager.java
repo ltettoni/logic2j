@@ -219,7 +219,7 @@ public class DefaultTheoryManager implements TheoryManager {
     logger.debug("Execution of directive or initialization predicate \"{}\" gave {} solutions", directiveGoal, countingListener.count());
   }
 
-  private boolean isDirective(Struct clauseStruct) {
+  private boolean isDirective(Struct<?> clauseStruct) {
     return clauseStruct.getName() == Struct.FUNCTOR_CLAUSE && clauseStruct.getArity() == 1;
   }
 

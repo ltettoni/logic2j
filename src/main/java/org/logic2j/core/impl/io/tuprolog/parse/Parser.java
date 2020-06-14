@@ -238,21 +238,21 @@ public class Parser {
           }
         }
         logger.info("Stop loop, found so far: {}", elements);
-        return new IdentifiedTerm(yfy, new Struct(functor, elements.toArray(new Object[0])));
+        return new IdentifiedTerm(yfy, new Struct<>(functor, elements.toArray(new Object[0])));
       }
 
       // YFX has priority over YF
       if (yfx >= yf && yfx >= Operator.OP_LOWEST) {
         final IdentifiedTerm ta = exprA(yfx - 1, commaIsEndMarker);
         if (ta != null) {
-          leftSide = new IdentifiedTerm(yfx, new Struct(oper.text, leftSide.result, ta.result));
+          leftSide = new IdentifiedTerm(yfx, new Struct<>(oper.text, leftSide.result, ta.result));
           continue;
         }
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
       // either YF has priority over YFX or YFX failed
       if (yf >= Operator.OP_LOWEST) {
-        leftSide = new IdentifiedTerm(yf, new Struct(oper.text, leftSide.result));
+        leftSide = new IdentifiedTerm(yf, new Struct<>(oper.text, leftSide.result));
         continue;
       }
       break;
@@ -289,7 +289,7 @@ public class Parser {
       if (xfx >= xfy && xfx >= xf && xfx >= left.priority) { // XFX has priority
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
-          final Struct<?> xfxStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfxStruct = new Struct<>(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
@@ -299,7 +299,7 @@ public class Parser {
       if (xfy >= xf && xfy >= left.priority) { // XFY has priority, or XFX has failed
         final IdentifiedTerm found = exprA(xfy, commaIsEndMarker);
         if (found != null) {
-          final Struct<?> xfyStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfyStruct = new Struct<>(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfy, xfyStruct);
           continue;
         }
@@ -307,14 +307,14 @@ public class Parser {
       }
       // XF
       if (xf >= left.priority) {
-        return new IdentifiedTerm(xf, new Struct(oper.text, left.result));
+        return new IdentifiedTerm(xf, new Struct<>(oper.text, left.result));
       }
 
       // XFX did not have top priority, but XFY failed
       if (xfx >= left.priority) {
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
-          final Struct<?> xfxStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfxStruct = new Struct<>(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
@@ -362,7 +362,7 @@ public class Parser {
       if (fx >= fy && fx >= Operator.OP_LOWEST) {
         final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
         if (found != null) {
-          return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
+          return new IdentifiedTerm(fx, new Struct<>(oper.text, found.result));
         }
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
@@ -370,7 +370,7 @@ public class Parser {
       if (fy >= Operator.OP_LOWEST) {
         final IdentifiedTerm found = exprA(fy, commaIsEndMarker); // op(fy,n) exprA(1200) or op(fy,n) exprA(n)
         if (found != null) {
-          return new IdentifiedTerm(fy, new Struct(oper.text, found.result));
+          return new IdentifiedTerm(fy, new Struct<>(oper.text, found.result));
         }
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
@@ -378,7 +378,7 @@ public class Parser {
       if (fx >= Operator.OP_LOWEST) {
         final IdentifiedTerm found = exprA(fx - 1, commaIsEndMarker); // op(fx, n) exprA(n - 1)
         if (found != null) {
-          return new IdentifiedTerm(fx, new Struct(oper.text, found.result));
+          return new IdentifiedTerm(fx, new Struct<>(oper.text, found.result));
         }
         throw new IllegalStateException("Should we really get to here in the Parser?");
       }
@@ -429,7 +429,7 @@ public class Parser {
       final LinkedList<Object> a = exprA0_arglist(); // reading arguments
       final Token t3 = this.tokenizer.readToken();
       if (t3.isType(RPAR)) {
-        return new Struct(functor, a.toArray(new Object[0]));
+        return new Struct<>(functor, a.toArray(new Object[0]));
       }
       throw new InvalidTermException("Missing right parenthesis: (" + a + " -> here <-");
     }
@@ -459,14 +459,14 @@ public class Parser {
     if (t1.isType(LBRA2)) {
       Token t2 = this.tokenizer.readToken();
       if (t2.isType(RBRA2)) {
-        return new Struct("{}");
+        return new Struct<>("{}");
       }
 
       this.tokenizer.unreadToken(t2);
       final Object arg = expr(false);
       t2 = this.tokenizer.readToken();
       if (t2.isType(RBRA2)) {
-        return new Struct("{}", arg);
+        return new Struct<>("{}", arg);
       }
       throw new InvalidTermException("Missing right braces: {" + arg + " -> here <-");
     }

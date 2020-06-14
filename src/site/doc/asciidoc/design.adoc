@@ -74,7 +74,7 @@ Features for converting things into Terms hierarchies:
 
 From the most basic conversion to the most evolved
 
-.. new Struct(functor, args...)
+.. new Struct<>(functor, args...)
 .. Struct.createPList()
 .. Struct.valueOf(functor, args...)
 .  TermApi.valueOf(Object)

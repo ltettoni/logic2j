@@ -88,7 +88,7 @@ public class RDBLibrary extends LibraryBase {
 
     // Options
     final Set<Object> optionSet = new HashSet<>(Arrays.asList(theArguments).subList(2, theArguments.length));
-    final boolean isDistinct = optionSet.contains(new Struct("distinct"));
+    final boolean isDistinct = optionSet.contains(new Struct<>("distinct"));
 
     //
     final String resultVar = "Tbl";
@@ -97,7 +97,7 @@ public class RDBLibrary extends LibraryBase {
     Object internalGoal = Struct.valueOf("gd3_solve", conditions, resultVar);
     if (internalGoal != null) {
       // Clone
-      internalGoal = new Struct((Struct<?>) internalGoal);
+      internalGoal = new Struct<>((Struct<?>) internalGoal);
     }
     // Watch out this destroys the indexes in the original expression !!!!
     internalGoal = termApiExt().normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
@@ -157,7 +157,7 @@ public class RDBLibrary extends LibraryBase {
     final SqlBuilder3 builder = new SqlBuilder3();
     final List<SqlBuilder3.ColumnOperatorParameterCriterion> rawColumns = new ArrayList<>();
     int aliasIndex = 1;
-    final Set<Var> projectVars = new LinkedHashSet<>();
+    final Set<Var<?>> projectVars = new LinkedHashSet<>();
     for (final Struct<?> tbls : javaListRoot) {
       final String alias = "t" + (aliasIndex++);
       final List<Struct> javaList = PrologLists.javaListFromPList(tbls, new ArrayList<>(), Struct.class);

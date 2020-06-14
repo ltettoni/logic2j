@@ -21,7 +21,7 @@ public final class PrologLists {
   /**
    * The empty list complete Struct.
    */
-  public static final Struct<?> EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST);
+  public static final Struct<?> EMPTY_LIST = new Struct<>(FUNCTOR_EMPTY_LIST);
 
   public static final String LIST_ELEM_SEPARATOR = ","; // In notation of prolog lists: [a,b,c]
 
@@ -44,7 +44,7 @@ public final class PrologLists {
    * @return A prolog list provided head and tail
    */
   public static Struct<?> createPList(Object head, Object tail) {
-    final Struct<?> result = new Struct(FUNCTOR_LIST_NODE, head, tail);
+    final Struct<?> result = new Struct<>(FUNCTOR_LIST_NODE, head, tail);
     return result;
   }
 
@@ -92,7 +92,7 @@ public final class PrologLists {
    * @param struct
    * @return true if this list is the empty list, or any prolog list of 1 or more elements.
    */
-  public static boolean isList(Struct struct) {
+  public static boolean isList(Struct<?> struct) {
     return isListNode(struct) || isEmptyList(struct);
   }
 
@@ -102,7 +102,7 @@ public final class PrologLists {
    * @param struct
    * @return true this is a predicate '.'/2.
    */
-  public static boolean isListNode(Struct struct) {
+  public static boolean isListNode(Struct<?> struct) {
     return struct.getName() == FUNCTOR_LIST_NODE && struct.getArity() == 2;
   }
 
@@ -111,7 +111,7 @@ public final class PrologLists {
    * @param struct
    * @return true If this structure an empty list
    */
-  public static boolean isEmptyList(Struct struct) {
+  public static boolean isEmptyList(Struct<?> struct) {
     return struct.getName() == FUNCTOR_EMPTY_LIST && struct.getArity() == 0;
   }
 
@@ -138,7 +138,7 @@ public final class PrologLists {
    * @param prologList
    * @throws InvalidTermException If this is not a list.
    */
-  public static Object listHead(Struct prologList) {
+  public static Object listHead(Struct<?> prologList) {
     requireList(prologList);
     return prologList.getLHS();
   }
@@ -149,7 +149,7 @@ public final class PrologLists {
    * @param prologList
    * @throws InvalidTermException if this is not a prolog list.
    */
-  public static Object listTail(Struct prologList) {
+  public static Object listTail(Struct<?> prologList) {
     requireList(prologList);
     return prologList.getRHS();
   }
@@ -160,7 +160,7 @@ public final class PrologLists {
    * @param prologList
    * @throws InvalidTermException if this is not a prolog list.
    */
-  public static int listSize(Struct prologList) {
+  public static int listSize(Struct<?> prologList) {
     requireList(prologList);
     Struct<?> running = prologList;
     int count = 0;
@@ -179,7 +179,7 @@ public final class PrologLists {
    * @throws InvalidTermException if this is not a prolog list.
    */
   // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
-  public static Struct<?> predicateFromPList(Struct prologList) {
+  public static Struct<?> predicateFromPList(Struct<?> prologList) {
     requireList(prologList);
     final Object functor = prologList.getLHS();
     if (!termApi().isAtom(functor)) {
@@ -201,7 +201,7 @@ public final class PrologLists {
       fnct = ((Struct<?>) functor).getName();
     }
 
-    return new Struct(fnct, elements.toArray(new Object[0]));
+    return new Struct<>(fnct, elements.toArray(new Object[0]));
   }
 
   /**
@@ -216,7 +216,7 @@ public final class PrologLists {
    * @throws InvalidTermException if this is not a prolog list.
    */
   @SuppressWarnings("unchecked")
-  public static <Q, T extends Collection<Q>> T javaListFromPList(Struct prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
+  public static <Q, T extends Collection<Q>> T javaListFromPList(Struct<?> prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass) {
     return javaListFromPList(prologList, theCollectionToFillOrNull, theElementRequiredClass, false);
   }
 
@@ -233,7 +233,7 @@ public final class PrologLists {
    * @throws InvalidTermException if this is not a prolog list.
    */
   @SuppressWarnings("unchecked")
-  public static <Q, T extends Collection<Q>> T javaListFromPList(Struct prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass,
+  public static <Q, T extends Collection<Q>> T javaListFromPList(Struct<?> prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass,
                                                                  boolean recursive) {
     final T result;
     if (theCollectionToFillOrNull == null) {
@@ -264,7 +264,7 @@ public final class PrologLists {
     return result;
   }
 
-  public static StringBuilder formatPListRecursive(Struct prologList, StringBuilder sb) {
+  public static StringBuilder formatPListRecursive(Struct<?> prologList, StringBuilder sb) {
     final Object head = listHead(prologList);
     final Object tail = listTail(prologList);
     if (isList(tail)) {

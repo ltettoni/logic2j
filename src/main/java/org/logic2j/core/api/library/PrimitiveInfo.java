@@ -76,7 +76,7 @@ public class PrimitiveInfo {
     this.isVarargs = theVarargs;
   }
 
-  public Object invoke(Struct theGoalStruct, UnifyContext currentVars) {
+  public Object invoke(Struct<?> theGoalStruct, UnifyContext currentVars) {
     final Object result = this.library.dispatch(this.methodName, theGoalStruct, currentVars);
     if (result != PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION) {
       return result;
@@ -123,7 +123,7 @@ public class PrimitiveInfo {
    * @throws IllegalArgumentException
    * @throws IllegalAccessException
    */
-  private Object invokeReflective(Struct theGoalStruct, UnifyContext currentVars)
+  private Object invokeReflective(Struct<?> theGoalStruct, UnifyContext currentVars)
           throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     final int arity = theGoalStruct.getArity();
     final int nbArgs = this.isVarargs ? 2 : (1 + arity);

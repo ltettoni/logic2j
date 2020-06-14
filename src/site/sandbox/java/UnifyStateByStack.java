@@ -21,7 +21,7 @@ public class UnifyStateByStack {
 
 
 
-    Object dereference(Var theVar, int startTop) {
+    Object dereference(Var<?> theVar, int startTop) {
         if (theVar.isAnonymous()) {
             return theVar;
         }

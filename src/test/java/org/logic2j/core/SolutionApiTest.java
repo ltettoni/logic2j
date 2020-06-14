@@ -341,7 +341,7 @@ public class SolutionApiTest extends PrologTestBase {
     final GoalHolder holder = getProlog().solve(goal);
     ProfilingInfo.setTimer1();
     int counter = 0;
-    for (Struct next : holder.var("Q", Struct.class)) {
+    for (Struct<?> next : holder.var("Q", Struct.class)) {
       if (counter < 10) {
         logger.debug("Value via iterable: {}", next);
       }

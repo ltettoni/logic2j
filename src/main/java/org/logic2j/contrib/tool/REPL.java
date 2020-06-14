@@ -90,7 +90,7 @@ public class REPL {
       // Parse and extract vars
       final TermMarshaller termMarshaller = prolog.getTermMarshaller();
       final Object goal = this.prolog.getTermUnmarshaller().unmarshall(goalText);
-      final Var[] vars = termApi().distinctVars(goal);
+      final Var<?>[] vars = termApi().distinctVars(goal);
       // Solve
       final SolutionListener listener = new CountingSolutionListener() {
         @Override
@@ -98,7 +98,7 @@ public class REPL {
           super.onSolution(currentVars);
           final Object solution = currentVars.reify(goal);
           System.out.println("Solution " + count() + ": " + termMarshaller.marshall(solution));
-          for (Var v : vars) {
+          for (Var<?> v : vars) {
             final Object varValue = currentVars.reify(v);
             System.out.println(" " + v + "=" + termMarshaller.marshall(varValue));
           }

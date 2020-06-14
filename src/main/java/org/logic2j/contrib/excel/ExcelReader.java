@@ -151,7 +151,7 @@ public class ExcelReader {
                         // args[c] = prolog.getTermFactory().create("\""+value.replace("\"", "").replaceAll("\\r|\\n", "")+"\"",
                         // FactoryMode.ANY_TERM);
                     }
-                    final Clause cl = new Clause(this.prolog, new Struct(dataSetName, args));
+                    final Clause cl = new Clause(this.prolog, new Struct<>(dataSetName, args));
                     clauses.add(cl);
                 }
             }
