@@ -46,7 +46,7 @@ public class DefaultLibraryManager implements LibraryManager {
    */
   private static final int NB_EXTRA_PARAMS = 1;
 
-  private static final Struct ATOM_CUT = new Struct(Struct.FUNCTOR_CUT);
+  private static final Struct<?> ATOM_CUT = new Struct(Struct.FUNCTOR_CUT);
 
   private final Prolog prolog;
 

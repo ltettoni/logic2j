@@ -325,7 +325,7 @@ public class SolutionApiTest extends PrologTestBase {
     final Iterator<Struct> iter = holder.var("Q", Struct.class).iterator();
     int counter = 0;
     while (iter.hasNext()) {
-      final Struct next = iter.next();
+      final Struct<?> next = iter.next();
       if (counter < 10) {
         logger.debug("Value via iterator: {}", next);
       }

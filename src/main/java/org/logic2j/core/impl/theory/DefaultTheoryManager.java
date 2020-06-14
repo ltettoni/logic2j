@@ -190,13 +190,13 @@ public class DefaultTheoryManager implements TheoryManager {
       if (!(clauseTerm instanceof Struct)) {
         throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
       }
-      final Struct clauseStruct = (Struct) clauseTerm;
+      final Struct<?> clauseStruct = (Struct<?>) clauseTerm;
       if (isDirective(clauseStruct)) {
         // Identify directive
         final Object directiveGoal = clauseStruct.getArg(0);
-        if (directiveGoal instanceof Struct && ((Struct) directiveGoal).getName() == INITIALIZATION_PREDICATE
-                && ((Struct) directiveGoal).getArity() == 1) {
-          final Object goal = ((Struct) directiveGoal).getArg(0);
+        if (directiveGoal instanceof Struct<?> && ((Struct<?>) directiveGoal).getName() == INITIALIZATION_PREDICATE
+                && ((Struct<?>) directiveGoal).getArity() == 1) {
+          final Object goal = ((Struct<?>) directiveGoal).getArg(0);
           content.setInitializationGoal(goal);
         } else {
           executeDirective(directiveGoal);

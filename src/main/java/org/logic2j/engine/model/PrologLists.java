@@ -21,7 +21,7 @@ public final class PrologLists {
   /**
    * The empty list complete Struct.
    */
-  public static final Struct EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST);
+  public static final Struct<?> EMPTY_LIST = new Struct(FUNCTOR_EMPTY_LIST);
 
   public static final String LIST_ELEM_SEPARATOR = ","; // In notation of prolog lists: [a,b,c]
 
@@ -43,8 +43,8 @@ public final class PrologLists {
    * @param tail
    * @return A prolog list provided head and tail
    */
-  public static Struct createPList(Object head, Object tail) {
-    final Struct result = new Struct(FUNCTOR_LIST_NODE, head, tail);
+  public static Struct<?> createPList(Object head, Object tail) {
+    final Struct<?> result = new Struct(FUNCTOR_LIST_NODE, head, tail);
     return result;
   }
 
@@ -54,7 +54,7 @@ public final class PrologLists {
    * @param theJavaCollection We use a collection not an Iterable because we need to know its size at first.
    * @return A Prolog List structure from a Java {@link java.util.Collection}.
    */
-  public static Struct createPList(Collection<?> theJavaCollection) {
+  public static Struct<?> createPList(Collection<?> theJavaCollection) {
     final int size = theJavaCollection.size();
     // Unroll elements into an array (we need this since we don't have an index-addressable collection)
     final Object[] array = new Object[size];
@@ -69,9 +69,9 @@ public final class PrologLists {
    * @param array
    * @return A Prolog List structure from a Java array.
    */
-  public static Struct createPList(final Object[] array) {
+  public static Struct<?> createPList(final Object[] array) {
     // Assemble the prolog list (head|tail) nodes from the last to the first element
-    Struct tail = EMPTY_LIST;
+    Struct<?> tail = EMPTY_LIST;
     for (int i = array.length - 1; i >= 0; i--) {
       final Object head = array[i];
       tail = createPList(head, tail);
@@ -82,10 +82,10 @@ public final class PrologLists {
 
   /**
    * @param theTerm
-   * @return true theTerm is a {@link Struct} and if {@link PrologLists#isList(Struct)}
+   * @return true theTerm is a {@link Struct} and if {@link PrologLists#isList(Struct<?>)}
    */
   public static boolean isList(Object theTerm) {
-    return theTerm instanceof Struct && isList(((Struct) theTerm));
+    return theTerm instanceof Struct<?> && isList(((Struct<?>) theTerm));
   }
 
   /**
@@ -162,11 +162,11 @@ public final class PrologLists {
    */
   public static int listSize(Struct prologList) {
     requireList(prologList);
-    Struct running = prologList;
+    Struct<?> running = prologList;
     int count = 0;
     while (!isEmptyList(running)) {
       count++;
-      running = (Struct) running.getRHS();
+      running = (Struct<?>) running.getRHS();
     }
     return count;
   }
@@ -179,26 +179,26 @@ public final class PrologLists {
    * @throws InvalidTermException if this is not a prolog list.
    */
   // TODO (issue) Only used from Library. Clarify how it works, see https://github.com/ltettoni/logic2j/issues/14
-  public static Struct predicateFromPList(Struct prologList) {
+  public static Struct<?> predicateFromPList(Struct prologList) {
     requireList(prologList);
     final Object functor = prologList.getLHS();
     if (!termApi().isAtom(functor)) {
       return null;
     }
-    Struct runningElement = (Struct) prologList.getRHS();
+    Struct<?> runningElement = (Struct<?>) prologList.getRHS();
     final ArrayList<Object> elements = new ArrayList<>();
     while (!isEmptyList(runningElement)) {
       if (!isList(runningElement)) {
         return null;
       }
       elements.add(runningElement.getLHS());
-      runningElement = (Struct) runningElement.getRHS();
+      runningElement = (Struct<?>) runningElement.getRHS();
     }
     final String fnct;
     if (functor instanceof String) {
       fnct = (String) functor;
     } else {
-      fnct = ((Struct) functor).getName();
+      fnct = ((Struct<?>) functor).getName();
     }
 
     return new Struct(fnct, elements.toArray(new Object[0]));
@@ -247,18 +247,18 @@ public final class PrologLists {
       return result;
     }
 
-    Struct runningElement = prologList;
+    Struct<?> runningElement = prologList;
     int idx = 0;
     while (!isEmptyList(runningElement)) {
       requireList(runningElement);
       final Object lhs = runningElement.getLHS();
       if (recursive && isList(lhs)) {
-        javaListFromPList(((Struct) lhs), theCollectionToFillOrNull, theElementRequiredClass, recursive);
+        javaListFromPList(((Struct<?>) lhs), theCollectionToFillOrNull, theElementRequiredClass, recursive);
       } else {
         final Q term = TypeUtils.safeCastNotNull("obtaining element " + idx + " of PList " + prologList, lhs, theElementRequiredClass);
         result.add(term);
       }
-      runningElement = (Struct) runningElement.getRHS();
+      runningElement = (Struct<?>) runningElement.getRHS();
       idx++;
     }
     return result;
@@ -268,7 +268,7 @@ public final class PrologLists {
     final Object head = listHead(prologList);
     final Object tail = listTail(prologList);
     if (isList(tail)) {
-      final Struct tailStruct = (Struct) tail;
+      final Struct<?> tailStruct = (Struct<?>) tail;
       // .(h, []) will be displayed as h
       if (isEmptyList(tailStruct)) {
         sb.append(head.toString());

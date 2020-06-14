@@ -48,7 +48,7 @@ public class PojoLibrary extends LibraryBase {
   }
 
   @Override
-  public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars) {
+  public Object dispatch(String theMethodName, Struct<?> theGoalStruct, UnifyContext currentVars) {
     final Object result;
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
     final Object[] args = theGoalStruct.getArgs();
@@ -323,14 +323,14 @@ public class PojoLibrary extends LibraryBase {
         return Continuation.CONTINUE;
       }
       final List<Object> elements = new ArrayList<>();
-      PrologLists.javaListFromPList(((Struct) pList), elements, Object.class);
+      PrologLists.javaListFromPList(((Struct<?>) pList), elements, Object.class);
       return unifyAndNotify(currentVars, elements, jList);
     } else {
       if (!(jList instanceof List<?>)) {
         // No solution
         return Continuation.CONTINUE;
       }
-      final Struct elements = PrologLists.createPList((List) jList);
+      final Struct<?> elements = PrologLists.createPList((List) jList);
       return unifyAndNotify(currentVars, elements, pList);
     }
   }

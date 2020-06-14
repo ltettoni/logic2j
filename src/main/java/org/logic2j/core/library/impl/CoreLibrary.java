@@ -157,7 +157,7 @@ public class CoreLibrary extends LibraryBase {
 
 
   @Override
-  public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars) {
+  public Object dispatch(String theMethodName, Struct<?> theGoalStruct, UnifyContext currentVars) {
     final Object result;
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
     final Object[] goalStructArgs = theGoalStruct.getArgs();
@@ -256,7 +256,7 @@ public class CoreLibrary extends LibraryBase {
   public int var(UnifyContext currentVars, Object t1) {
     int continuation = Continuation.CONTINUE;
     if (t1 instanceof Var) {
-      final Var var = (Var) t1;
+      final Var<?> var = (Var<?>) t1;
       if (var == Var.anon()) {
         notifySolution(currentVars);
       } else {
@@ -407,7 +407,7 @@ public class CoreLibrary extends LibraryBase {
     // copied into the resulting plist, so there's no need to reindex.
     // However, the root level Struct that makes up the list does contain a bogus
     // index value but -1.
-    final Struct plist = PrologLists.createPList(allReifiedResults);
+    final Struct<?> plist = PrologLists.createPList(allReifiedResults);
 
     // And unify with result
     return unify(currentVars, theResult, plist);
@@ -424,7 +424,7 @@ public class CoreLibrary extends LibraryBase {
     // copied into the resulting plist, so there's no need to reindex.
     // However, the root level Struct that makes up the list does contain a bogus
     // index value but -1.
-    final Struct plist = PrologLists.createPList(distinctReifiedResults);
+    final Struct<?> plist = PrologLists.createPList(distinctReifiedResults);
 
     // And unify with result
     return unify(currentVars, theResult, plist);
@@ -443,7 +443,7 @@ public class CoreLibrary extends LibraryBase {
     if (!PrologLists.isList(value)) {
       throw new InvalidTermException("A Prolog list is required for length/2,  was " + value);
     }
-    final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct) value), new ArrayList<>(), Object.class);
+    final ArrayList<Object> javalist = PrologLists.javaListFromPList(((Struct<?>) value), new ArrayList<>(), Object.class);
     final Integer listLength = javalist.size();
     return unify(currentVars, listLength, theLength);
   }
@@ -484,21 +484,21 @@ public class CoreLibrary extends LibraryBase {
       // thePredicate is still free, going ot match from theList
       final Object listValue = currentVars.reify(theList);
       ensureBindingIsNotAFreeVar(listValue, "=../2", 1);
-      final Struct lst2 = (Struct) listValue;
-      final Struct flattened = PrologLists.predicateFromPList(lst2);
+      final Struct<?> lst2 = (Struct<?>) listValue;
+      final Struct<?> flattened = PrologLists.predicateFromPList(lst2);
 
       return unify(currentVars, predicateValue, flattened);
     } else {
       // thePredicate is bound
       if (predicateValue instanceof Struct) {
-        final Struct struct = (Struct) predicateValue;
+        final Struct<?> struct = (Struct<?>) predicateValue;
         final int arity = struct.getArity();
         final ArrayList<Object> elems = new ArrayList<>(1 + arity);
         elems.add(struct.getName());
         for (Object arg : struct.getArgs()) {
           elems.add(arg);
         }
-        final Struct plist = PrologLists.createPList(elems);
+        final Struct<?> plist = PrologLists.createPList(elems);
         return unify(currentVars, plist, theList);
       }
     }

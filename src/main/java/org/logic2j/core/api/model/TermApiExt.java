@@ -27,7 +27,7 @@ public class TermApiExt extends TermApi {
       return true;
     }
     if (theTerm instanceof Struct) {
-      final Struct s = (Struct) theTerm;
+      final Struct<?> s = (Struct<?>) theTerm;
       return s.getArity() == 0 || PrologLists.isEmptyList(s);
     }
     return false;
@@ -90,7 +90,7 @@ public class TermApiExt extends TermApi {
       return TypeUtils.safeCastNotNull("selecting term", theTerm, theClass);
     }
 
-    final Struct s = (Struct) theTerm;
+    final Struct<?> s = (Struct<?>) theTerm;
     int position = 0;
     String level0 = theTPathExpression;
     int end = theTPathExpression.length();
@@ -159,8 +159,8 @@ public class TermApiExt extends TermApi {
       //          this.args[i] = child; // Not 100% sure it's good to mutate
       //        }
       //      }
-      if (child instanceof Struct) {
-        assignPrimitiveInfo(((Struct) child), theContent);
+      if (child instanceof Struct<?>) {
+        assignPrimitiveInfo(((Struct<PrimitiveInfo>) child), theContent);
       }
     }
   }
@@ -181,8 +181,8 @@ public class TermApiExt extends TermApi {
           return normalize((T) new Struct((String) factorized), theLibraryContent);
         }
       }
-      if (factorized instanceof Struct) {
-        assignPrimitiveInfo(((Struct) factorized), theLibraryContent);
+      if (factorized instanceof Struct<?>) {
+        assignPrimitiveInfo(((Struct<PrimitiveInfo>) factorized), theLibraryContent);
       }
     }
     return factorized;

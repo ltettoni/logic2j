@@ -74,9 +74,9 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
   @Override
   public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
     if (!(theGoal instanceof Struct)) {
-      throw new InvalidTermException("Need a Struct term instead of " + theGoal);
+      throw new InvalidTermException("Need a Struct<?> term instead of " + theGoal);
     }
-    final Struct goalStruct = (Struct) currentVars.reify(theGoal);
+    final Struct<?> goalStruct = (Struct<?>) currentVars.reify(theGoal);
     final String predicateName = goalStruct.getName();
     final SqlBuilder3 builder = new SqlBuilder3();
     builder.setInstruction(SqlBuilder3.SELECT);
@@ -91,11 +91,11 @@ public class RDBClauseProvider extends RDBBase implements ClauseProvider {
     for (int i = 0; i < goalStruct.getArity(); i++) {
       Object t = goalStruct.getArg(i);
       final boolean isAtom = termApi().isAtom(t);
-      if (t instanceof Struct && (isAtom || PrologLists.isList(t))) {
+      if (t instanceof Struct<?> && (isAtom || PrologLists.isList(t))) {
         if (isAtom) {
-          builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct) t).getName()));
+          builder.addConjunction(builder.criterion(builder.column(table, columnName[i]), SqlBuilder3.Operator.EQ, ((Struct<?>) t).getName()));
         } else if (PrologLists.isList(t)) {
-          addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct) t), new ArrayList<>(), Object.class));
+          addConjunctionList(builder, table, i, PrologLists.javaListFromPList(((Struct<?>) t), new ArrayList<>(), Object.class));
         }
       }
       // Here we check if there is any bindings (theGoalBindings) that we can unify with the Term theGoal.getArg(i) which is a

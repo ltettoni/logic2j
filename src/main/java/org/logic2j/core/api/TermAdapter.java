@@ -55,7 +55,7 @@ public interface TermAdapter {
 
 
   /**
-   * Describe the form that data structures should take when represented as Prolog compounds (Struct).
+   * Describe the form that data structures should take when represented as Prolog compounds (Struct<?>).
    * See TabularData and related classes.
    */
   enum AssertionMode {
@@ -101,7 +101,7 @@ public interface TermAdapter {
    * @param theArguments
    * @return A factorized and normalized {@link Term}.
    */
-  Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments);
+  Struct<?> toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments);
 
   /**
    * Instantiate a list of Terms from one (possibly large) {@link Object}.

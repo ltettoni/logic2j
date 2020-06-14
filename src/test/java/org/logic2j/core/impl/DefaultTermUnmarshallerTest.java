@@ -72,7 +72,7 @@ public class DefaultTermUnmarshallerTest {
 
   @Test
   public void normalization() {
-    final Struct term = (Struct) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
+    final Struct<?> term = (Struct<?>) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
     logger.info("raw: {}", term);
     assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
   }

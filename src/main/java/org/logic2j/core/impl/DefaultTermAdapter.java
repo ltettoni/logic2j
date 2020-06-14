@@ -84,13 +84,13 @@ public class DefaultTermAdapter implements TermAdapter {
   }
 
   @Override
-  public Struct toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments) {
+  public Struct<?> toStruct(String thePredicateName, FactoryMode theMode, Object... theArguments) {
     final Object[] convertedArgs = new Object[theArguments.length];
     for (int i = 0; i < theArguments.length; i++) {
       convertedArgs[i] = toTermInternal(theArguments[i], theMode);
     }
-    final Struct created = new Struct(thePredicateName, convertedArgs);
-    final Struct normalized = (Struct) normalizer.apply(created);
+    final Struct<?> created = new Struct(thePredicateName, convertedArgs);
+    final Struct<?> normalized = (Struct<?>) normalizer.apply(created);
     return normalized;
   }
 
@@ -170,8 +170,8 @@ public class DefaultTermAdapter implements TermAdapter {
       }
       return (T) String.valueOf(theTerm);
     }
-    if (theTerm instanceof Struct && theTargetClass == List.class) {
-      final Collection<?> collection = PrologLists.javaListFromPList(((Struct) theTerm), null, Object.class);
+    if (theTerm instanceof Struct<?> && theTargetClass == List.class) {
+      final Collection<?> collection = PrologLists.javaListFromPList(((Struct<?>) theTerm), null, Object.class);
       return (T) collection;
     }
 
@@ -216,7 +216,7 @@ public class DefaultTermAdapter implements TermAdapter {
     if (theTerm instanceof String) {
       effectiveEnumName = theTerm.toString();
     } else if (theTerm instanceof Struct) {
-      Struct s = (Struct) theTerm;
+      Struct<?> s = (Struct<?>) theTerm;
       if (s.getArity() != 1) {
         throw new IllegalArgumentException(message + ": if a Struct is passed, arity must be 1, was " + s.getArity());
       }

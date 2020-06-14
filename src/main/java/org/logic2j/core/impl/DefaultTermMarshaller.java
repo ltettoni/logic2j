@@ -159,13 +159,13 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final Object head = theStruct.getLHS();
     final Object tail = theStruct.getRHS();
     if (PrologLists.isList(tail)) {
-      final Struct tailStruct = (Struct) tail;
+      final Struct<?> tailStruct = (Struct<?>) tail;
       if (PrologLists.isEmptyList(tailStruct)) {
         return accept(head);
       }
       // Why this special test?
       if (head instanceof Var) {
-        return visit((Var) head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
+        return visit((Var<?>) head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
       }
       return accept(head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
     }
@@ -173,7 +173,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     // Head
     final CharSequence h0;
     if (head instanceof Var) {
-      h0 = visit((Var) head);
+      h0 = visit((Var<?>) head);
     } else {
       h0 = accept(head);
     }
@@ -182,7 +182,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     // Tail
     final CharSequence t0;
     if (tail instanceof Var) {
-      t0 = visit((Var) tail);
+      t0 = visit((Var<?>) tail);
     } else {
       t0 = accept(tail);
     }
@@ -208,7 +208,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final Object h = theStruct.getLHS();
     final Object t = theStruct.getRHS();
     if (PrologLists.isList(t)) {
-      final Struct tl = (Struct) t;
+      final Struct<?> tl = (Struct<?>) t;
       if (PrologLists.isEmptyList(tl)) {
         return toStringAsArgY(h, 0);
       }
@@ -232,7 +232,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     if (!(theTerm instanceof Struct)) {
       return accept(theTerm);
     }
-    final Struct theStruct = (Struct) theTerm;
+    final Struct<?> theStruct = (Struct<?>) theTerm;
     int p;
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();

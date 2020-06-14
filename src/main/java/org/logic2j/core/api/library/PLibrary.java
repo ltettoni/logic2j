@@ -38,6 +38,6 @@ public interface PLibrary {
    * @param currentVars
    * @return
    */
-  Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars);
+  Object dispatch(String theMethodName, Struct<?> theGoalStruct, UnifyContext currentVars);
 
 }

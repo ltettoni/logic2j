@@ -64,7 +64,7 @@ public class TermApiExtTest {
       // OK
     }
     //
-    final Struct sTerm = (Struct) term;
+    final Struct<?> sTerm = (Struct<?>) term;
     assertThat(termApiExt().selectTerm(term, "a/", Struct.class)).isEqualTo(arg0);
     assertThat(termApiExt().selectTerm(term, "a[1]", Struct.class)).isEqualTo(arg0);
     assertThat(termApiExt().selectTerm(term, "[1]", Struct.class)).isEqualTo(arg0);

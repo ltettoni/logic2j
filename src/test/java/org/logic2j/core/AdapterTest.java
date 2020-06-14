@@ -58,7 +58,7 @@ public class AdapterTest extends PrologTestBase {
 
   @Test
   public void javaEnum() {
-    final Struct term = this.prolog.getTermAdapter().toStruct("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
+    final Struct<?> term = this.prolog.getTermAdapter().toStruct("=", TermAdapter.FactoryMode.ANY_TERM, "X", MyEnum.V2);
     final Object binding = this.prolog.solve(term).var("X").unique();
     assertThat(binding).isEqualTo(MyEnum.V2);
   }

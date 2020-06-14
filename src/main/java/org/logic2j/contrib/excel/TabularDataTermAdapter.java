@@ -61,7 +61,7 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
               if (c != tabularData.getPrimaryKeyColumn()) {
                 final String property = tabularData.getColumnNames()[c];
                 final Serializable value = row[c];
-                final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, identifier, property, value);
+                final Struct<?> term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, identifier, property, value);
                 result.add(term);
               }
             }
@@ -77,14 +77,14 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
               if (c != tabularData.getPrimaryKeyColumn()) {
                 final String property = tabularData.getColumnNames()[c];
                 final Serializable value = row[c];
-                final Struct term = baseTermAdapter.toStruct(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
+                final Struct<?> term = baseTermAdapter.toStruct(EAVT, FactoryMode.ATOM, identifier, property, value, dataSetName);
                 result.add(term);
               }
             }
             break;
           }
           case RECORD: {
-            final Struct term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, row);
+            final Struct<?> term = baseTermAdapter.toStruct(dataSetName, FactoryMode.ATOM, row);
             result.add(term);
             break;
           }

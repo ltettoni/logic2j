@@ -47,7 +47,7 @@ public class LibraryBase implements PLibrary {
    * @param currentVars   Regular argument for invoking a primitive
    */
   @Override
-  public Object dispatch(String theMethodName, Struct theGoalStruct, UnifyContext currentVars) {
+  public Object dispatch(String theMethodName, Struct<?> theGoalStruct, UnifyContext currentVars) {
     return PLibrary.NO_DIRECT_INVOCATION_USE_REFLECTION;
   }
 

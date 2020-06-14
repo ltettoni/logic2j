@@ -67,12 +67,12 @@ public class DynamicClauseProviderTest extends PrologTestBase {
   public void assertStructFact() {
     noSolutions("zz(X)");
     // Assert
-    final Struct fact1 = new Struct("zz", 11);
+    final Struct<?> fact1 = new Struct("zz", 11);
     final int index1 = this.dynamic.assertClause(fact1);
     assertThat(index1).isEqualTo(0);
     assertThat(uniqueSolution("zz(Q)").var("Q").unique()).isEqualTo(11);
     // Assert
-    final Struct fact2 = new Struct("zz", 22);
+    final Struct<?> fact2 = new Struct("zz", 22);
     final int index2 = this.dynamic.assertClause(fact2);
     assertThat(index2).isEqualTo(1);
     assertThat(nSolutions(2, "zz(Q)").var("Q").list()).isEqualTo(Arrays.asList(11, 22));
@@ -88,7 +88,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     noSolutions("zz(X)");
     // Assert
     final Object awtRectangle = new Rectangle(1, 2, 3, 4);
-    final Struct fact1 = new Struct("eav", "context", "shape", awtRectangle);
+    final Struct<?> fact1 = new Struct("eav", "context", "shape", awtRectangle);
     final int index1 = this.dynamic.assertClause(fact1);
     assertThat(index1).isEqualTo(0);
     assertThat(uniqueSolution("eav(_, _, X)").var("X").unique()).isEqualTo(awtRectangle);
@@ -102,7 +102,7 @@ public class DynamicClauseProviderTest extends PrologTestBase {
   public void assertObjectFactProperties() {
     // Assert
     final Object awtRectangle = new Rectangle(1, 2, 3, 4);
-    final Struct fact1 = new Struct("eav", "context", "shape", awtRectangle);
+    final Struct<?> fact1 = new Struct("eav", "context", "shape", awtRectangle);
     this.dynamic.assertClause(fact1);
     assertThat(uniqueSolution("eav(_,_,Rect)").var("Rect").unique()).isEqualTo(new Rectangle(1, 2, 3, 4));
     assertThat(uniqueSolution("eav(_,_,Rect), property(Rect, width, W)").var("W").unique()).isEqualTo(3.0);

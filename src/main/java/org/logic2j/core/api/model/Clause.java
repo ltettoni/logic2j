@@ -77,7 +77,7 @@ public class Clause {
   }
 
 
-  private Clause(Clause original, Struct cloned, Var[] clonedVars) {
+  private Clause(Clause original, Struct<?> cloned, Var[] clonedVars) {
     this.content = cloned;
     this.indexedVars = clonedVars;
     this.cache = null; // That one should never be modified - we are on a clone
@@ -92,7 +92,7 @@ public class Clause {
       this.body = null;
       return;
     }
-    final Struct struct = (Struct) this.content;
+    final Struct<?> struct = (Struct<?>) this.content;
     if (Struct.FUNCTOR_CLAUSE != struct.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
       this.head = this.content;
       this.body = null;
@@ -162,7 +162,7 @@ public class Clause {
       clonedVars[i] = Var.copy(originalVars[i]);
     }
     assert theClause.content instanceof Struct;
-    final Struct cloned = cloneStruct((Struct) theClause.content, clonedVars);
+    final Struct<?> cloned = cloneStruct((Struct<?>) theClause.content, clonedVars);
     // Now reindex the cloned indexedVars
     for (int i = 0; i < nbVars; i++) {
       clonedVars[i].setIndex(clonedVars[i].getIndex() + currentVars.topVarIndex(0));
@@ -177,23 +177,23 @@ public class Clause {
     return new Clause(theClause, cloned, clonedVars);
   }
 
-  private Struct cloneStruct(Struct theStruct, Var[] clonedVars) {
+  private Struct<?> cloneStruct(Struct theStruct, Var[] clonedVars) {
     final Object[] args = theStruct.getArgs();
     final int arity = args.length;
     final Object[] clonedArgs = new Object[arity];
     for (int i = 0; i < arity; i++) {
       final Object arg = args[i];
       if (arg instanceof Struct) {
-        final Struct recursedClonedElement = cloneStruct((Struct) arg, clonedVars);
+        final Struct<?> recursedClonedElement = cloneStruct((Struct<?>) arg, clonedVars);
         clonedArgs[i] = recursedClonedElement;
-      } else if (arg instanceof Var && arg != Var.anon()) {
-        final int originalVarIndex = ((Var) arg).getIndex();
+      } else if (arg instanceof Var<?> && arg != Var.anon()) {
+        final int originalVarIndex = ((Var<?>) arg).getIndex();
         clonedArgs[i] = clonedVars[originalVarIndex];
       } else {
         clonedArgs[i] = arg;
       }
     }
-    final Struct struct = theStruct.cloneWithNewArguments(clonedArgs);
+    final Struct<?> struct = theStruct.cloneWithNewArguments(clonedArgs);
     return struct;
   }
 
@@ -208,7 +208,7 @@ public class Clause {
     if (!(this.content instanceof Struct)) {
       return false;
     }
-    final Struct cs = (Struct) this.content;
+    final Struct<?> cs = (Struct<?>) this.content;
     return cs.getIndex() > 0;
   }
 

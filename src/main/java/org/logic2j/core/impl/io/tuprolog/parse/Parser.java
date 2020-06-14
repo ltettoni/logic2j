@@ -289,7 +289,7 @@ public class Parser {
       if (xfx >= xfy && xfx >= xf && xfx >= left.priority) { // XFX has priority
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
-          final Struct xfxStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfxStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
@@ -299,7 +299,7 @@ public class Parser {
       if (xfy >= xf && xfy >= left.priority) { // XFY has priority, or XFX has failed
         final IdentifiedTerm found = exprA(xfy, commaIsEndMarker);
         if (found != null) {
-          final Struct xfyStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfyStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfy, xfyStruct);
           continue;
         }
@@ -314,7 +314,7 @@ public class Parser {
       if (xfx >= left.priority) {
         final IdentifiedTerm found = exprA(xfx - 1, commaIsEndMarker);
         if (found != null) {
-          final Struct xfxStruct = new Struct(oper.text, left.result, found.result);
+          final Struct<?> xfxStruct = new Struct(oper.text, left.result, found.result);
           left = new IdentifiedTerm(xfx, xfxStruct);
           continue;
         }
