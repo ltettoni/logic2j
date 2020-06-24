@@ -126,10 +126,10 @@ public class RDBLibrary extends LibraryBase {
           final Term term2 = termApiExt().selectTerm(pred, "[2]", Term.class);
           final String variableName;
           final Term value;
-          if (term1 instanceof Var<?> && !(term2 instanceof Var)) {
+          if (term1 instanceof Var<?> && !(term2 instanceof Var<?>)) {
             variableName = ((Var<?>) term1).getName();
             value = term2;
-          } else if (term2 instanceof Var<?> && !(term1 instanceof Var)) {
+          } else if (term2 instanceof Var<?> && !(term1 instanceof Var<?>)) {
             variableName = ((Var<?>) term2).getName();
             value = term1;
           } else {
@@ -179,7 +179,7 @@ public class RDBLibrary extends LibraryBase {
         }
         final Table table = builder.table(tableName, alias);
         final Column sqlColumn = builder.column(table, columnName);
-        if (valueTerm instanceof Var) {
+        if (valueTerm instanceof Var<?>) {
           final Var<?> var = (Var<?>) valueTerm;
           if (var == Var.anon()) {
             // Will ignore any anonymous var
@@ -218,7 +218,7 @@ public class RDBLibrary extends LibraryBase {
     final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable = new CollectionMap<>();
     // Join clauses
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
-      if (column.getOperand() instanceof Var) {
+      if (column.getOperand() instanceof Var<?>) {
         final Var<?> var = (Var<?>) column.getOperand();
         projectVars.add(var);
         columnsPerVariable.add(var.getName(), column);
@@ -239,7 +239,7 @@ public class RDBLibrary extends LibraryBase {
 
     // Collect criteria (where value is constant)
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
-      if (!(column.getOperand() instanceof Var)) {
+      if (!(column.getOperand() instanceof Var<?>)) {
         builder.addConjunction(column);
       }
     }

@@ -316,7 +316,7 @@ public class PojoLibrary extends LibraryBase {
   public int javaList(UnifyContext currentVars, Object prologList, Object javaList) {
     final Object pList = currentVars.reify(prologList);
     final Object jList = currentVars.reify(javaList);
-    if (javaList instanceof Var) {
+    if (javaList instanceof Var<?>) {
       // Prolog to Java
       if (!PrologLists.isList(pList)) {
         // No solution

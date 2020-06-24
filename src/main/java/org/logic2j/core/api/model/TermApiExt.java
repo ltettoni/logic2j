@@ -48,7 +48,7 @@ public class TermApiExt extends TermApi {
       return null;
     }
     theTerm = currentVars.reify(theTerm);
-    if (theTerm instanceof Var) {
+    if (theTerm instanceof Var<?>) {
       // Free var
       return null;
     }

@@ -74,7 +74,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     } else {
       finalValue = theVar;
     }
-    if (finalValue instanceof Var) {
+    if (finalValue instanceof Var<?>) {
       // Must be free
       if (theVar == Var.anon()) {
         return Var.ANONYMOUS_VAR_NAME;
@@ -164,7 +164,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
         return accept(head);
       }
       // Why this special test?
-      if (head instanceof Var) {
+      if (head instanceof Var<?>) {
         return visit((Var<?>) head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
       }
       return accept(head) + PrologLists.LIST_ELEM_SEPARATOR + formatPListRecursive(tailStruct);
@@ -172,7 +172,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     final StringBuilder sb = new StringBuilder();
     // Head
     final CharSequence h0;
-    if (head instanceof Var) {
+    if (head instanceof Var<?>) {
       h0 = visit((Var<?>) head);
     } else {
       h0 = accept(head);
@@ -181,7 +181,7 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     sb.append(PrologLists.HEAD_TAIL_SEPARATOR);
     // Tail
     final CharSequence t0;
-    if (tail instanceof Var) {
+    if (tail instanceof Var<?>) {
       t0 = visit((Var<?>) tail);
     } else {
       t0 = accept(tail);

@@ -85,7 +85,7 @@ public class TheoryContent {
    * @return An Iterable for a foreach() loop, never null.
    */
   public Iterable<Clause> find(Object theGoalTerm) {
-    if (theGoalTerm instanceof Var) {
+    if (theGoalTerm instanceof Var<?>) {
       final ArrayList<Clause> result = new ArrayList<>();
       for (List<Clause> cl : this.clauses.values()) {
         result.addAll(cl);

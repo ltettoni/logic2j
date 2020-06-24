@@ -44,7 +44,7 @@ public class UnifyStateByStack {
                 res = refs[scan];
                 break;
             }
-        } while (found && res instanceof Var);  // the test instanceof is not much costly
+        } while (found && res instanceof Var<?>);  // the test instanceof is not much costly
         return res;
     }
 

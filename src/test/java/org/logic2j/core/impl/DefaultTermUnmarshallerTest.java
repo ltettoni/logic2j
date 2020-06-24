@@ -49,7 +49,7 @@ public class DefaultTermUnmarshallerTest {
   @Test
   public void basicTerms() {
     assertThat(UNMARSHALLER.unmarshall("a")).isEqualTo("a");
-    assertThat(UNMARSHALLER.unmarshall("X") instanceof Var).isTrue();
+    assertThat(UNMARSHALLER.unmarshall("X") instanceof Var<?>).isTrue();
     assertThat(UNMARSHALLER.unmarshall("_")).isEqualTo(Var.anon());
   }
 

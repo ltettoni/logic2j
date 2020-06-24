@@ -255,13 +255,13 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public int var(UnifyContext currentVars, Object t1) {
     int continuation = Continuation.CONTINUE;
-    if (t1 instanceof Var) {
+    if (t1 instanceof Var<?>) {
       final Var<?> var = (Var<?>) t1;
       if (var == Var.anon()) {
         notifySolution(currentVars);
       } else {
         final Object value = currentVars.reify(t1);
-        if (value instanceof Var) {
+        if (value instanceof Var<?>) {
           continuation = notifySolution(currentVars);
         }
       }
@@ -302,6 +302,13 @@ public class CoreLibrary extends LibraryBase {
     return unifyAndNotify(currentVars, t1, t2);
   }
 
+  /**
+   * Not unifyable
+   * @param currentVars
+   * @param t1
+   * @param t2
+   * @return success if t1 and t2 cannot be unified
+   */
   @Predicate(name = "\\=")
   public int notUnify(UnifyContext currentVars, Object t1, Object t2) {
     final UnifyContext after = currentVars.unify(t1, t2);
@@ -480,7 +487,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate(name = "=..")
   public int predicate2PList(UnifyContext currentVars, Object thePredicate, Object theList) {
     final Object predicateValue = currentVars.reify(thePredicate);
-    if (predicateValue instanceof Var) {
+    if (predicateValue instanceof Var<?>) {
       // thePredicate is still free, going ot match from theList
       final Object listValue = currentVars.reify(theList);
       ensureBindingIsNotAFreeVar(listValue, "=../2", 1);
