@@ -526,7 +526,9 @@ public class CoreLibrary extends LibraryBase {
   // Binary numeric predicates
   // ---------------------------------------------------------------------------
 
-
+  /**
+   * Compare numbers or chars.
+   */
   private interface ComparisonFunction {
     boolean apply(Number val1, Number val2);
 
