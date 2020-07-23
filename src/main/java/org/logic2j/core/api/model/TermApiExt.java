@@ -173,19 +173,18 @@ public class TermApiExt extends TermApi {
    * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
    */
   public <T> T normalize(T theTerm, LibraryContent theLibraryContent) {
-    T factorized = factorize(theTerm);
-    assignIndexes(factorized, 0);
+    T preNormalized = (T) super.normalize(theTerm);
     if (theLibraryContent != null) {
-      if (factorized instanceof String) {
-        if (theLibraryContent.hasPrimitive(predicateSignature(factorized))) {
-          return normalize((T) new Struct<>((String) factorized), theLibraryContent);
+      if (preNormalized instanceof String) {
+        if (theLibraryContent.hasPrimitive(predicateSignature(preNormalized))) {
+          return normalize((T) new Struct<>((String) preNormalized), theLibraryContent);
         }
       }
-      if (factorized instanceof Struct<?>) {
-        assignPrimitiveInfo(((Struct<PrimitiveInfo>) factorized), theLibraryContent);
+      if (preNormalized instanceof Struct<?>) {
+        assignPrimitiveInfo(((Struct<PrimitiveInfo>) preNormalized), theLibraryContent);
       }
     }
-    return factorized;
+    return preNormalized;
   }
 
 
