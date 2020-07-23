@@ -28,7 +28,7 @@ import org.logic2j.engine.unify.UnifyContext;
 import org.logic2j.engine.util.ProfilingInfo;
 
 /**
- * Solve goals with extension to {@link DataFact}s and {@link Clause}s.
+ * Extension to the engine's Solver to solve goals with handling of {@link DataFact}s and {@link Clause}s.
  */
 public class Solver extends org.logic2j.engine.solver.Solver {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(Solver.class);
