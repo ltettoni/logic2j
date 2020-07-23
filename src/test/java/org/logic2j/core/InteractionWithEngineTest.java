@@ -37,8 +37,8 @@ public class InteractionWithEngineTest extends PrologTestBase {
 
   @Test
   public void testUsingFOPredicateLt() {
-    Object term = new LT(bind(3), bind(4));
-    term = new TermApi().normalize(term);
+    final Object term = new LT(bind(3), bind(4));
+    final Object goal = new TermApi().normalize(term);
     final CountingSolutionListener listener = new CountingSolutionListener();
     getProlog().getSolver().solveGoal(term, listener);
     assertThat(listener.count()).as("Solving term \"" + term + '"').isEqualTo(1);
@@ -46,22 +46,27 @@ public class InteractionWithEngineTest extends PrologTestBase {
 
   @Test
   public void testUsingFOPredicateEq() {
-    Var<Integer> Z = intVar("Z");
-    Object term = new Eq(bind(2,3,4), (Binding) Z);
-    term = new TermApi().normalize(term);
-    final ExtractingSolutionListener listener = solveWithExtractingListener(term);
+    final Var<Integer> Z = intVar("Z");
+    final Object term = new Eq(bind(2,3,4), (Binding) Z);
+    final Object goal = new TermApi().normalize(term);
+    final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
     assertThat(listener.count()).isEqualTo(3);
     assertThat(listener.getValues("Z")).contains(2,3,4);
   }
 
   @Test
   public void testUsingFOPredicateDigit() {
-    Var<Integer> Z = intVar("Z");
-    Object term = new Digit(Z);
-    term = new TermApi().normalize(term);
-    final ExtractingSolutionListener listener = solveWithExtractingListener(term);
+    final Var<Integer> Z = intVar("Z");
+    final Object term = new Digit(Z);
+    final Object goal = new TermApi().normalize(term);
+    final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
     assertThat(listener.count()).isEqualTo(10);
     assertThat(listener.getValues("Z")).contains(0,1,2,3,4,5,6,7,8,9);
+  }
+
+  @Test
+  public void fromGoal() {
+    countOneSolution("2 < 3");
   }
 
   @Test
