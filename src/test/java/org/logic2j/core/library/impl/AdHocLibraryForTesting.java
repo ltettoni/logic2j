@@ -82,8 +82,8 @@ public class AdHocLibraryForTesting extends LibraryBase {
     final Object iterating = currentVars.reify(theIterable);
     final Object maxBound = currentVars.reify(theMaxBound);
 
-    ensureBindingIsNotAFreeVar(minBound, "int_range_classic/3", 0);
-    ensureBindingIsNotAFreeVar(maxBound, "int_range_classic/3", 2);
+    ensureBindingIsNotAFreeVar(minBound, "int_range_multi/3", 0);
+    ensureBindingIsNotAFreeVar(maxBound, "int_range_multi/3", 2);
 
     final int min = ((Number) minBound).intValue();
     final int max = ((Number) maxBound).intValue();
