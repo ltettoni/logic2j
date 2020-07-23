@@ -25,6 +25,7 @@ import org.logic2j.engine.model.Binding;
 import org.logic2j.engine.model.TermApi;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.predicates.impl.Eq;
+import org.logic2j.engine.predicates.impl.generator.Digit;
 import org.logic2j.engine.predicates.impl.math.compare.LT;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 
@@ -35,7 +36,7 @@ public class InteractionWithEngineTest extends PrologTestBase {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(InteractionWithEngineTest.class);
 
   @Test
-  public void testUsingFOPredicate() {
+  public void testUsingFOPredicateLt() {
     Object term = new LT(bind(3), bind(4));
     term = new TermApi().normalize(term);
     final CountingSolutionListener listener = new CountingSolutionListener();
@@ -44,13 +45,23 @@ public class InteractionWithEngineTest extends PrologTestBase {
   }
 
   @Test
-  public void testUsingFOPredicate2() {
+  public void testUsingFOPredicateEq() {
     Var<Integer> Z = intVar("Z");
     Object term = new Eq(bind(2,3,4), (Binding) Z);
     term = new TermApi().normalize(term);
     final ExtractingSolutionListener listener = solveWithExtractingListener(term);
     assertThat(listener.count()).isEqualTo(3);
     assertThat(listener.getValues("Z")).contains(2,3,4);
+  }
+
+  @Test
+  public void testUsingFOPredicateDigit() {
+    Var<Integer> Z = intVar("Z");
+    Object term = new Digit(Z);
+    term = new TermApi().normalize(term);
+    final ExtractingSolutionListener listener = solveWithExtractingListener(term);
+    assertThat(listener.count()).isEqualTo(10);
+    assertThat(listener.getValues("Z")).contains(0,1,2,3,4,5,6,7,8,9);
   }
 
   @Test
