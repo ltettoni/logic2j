@@ -18,9 +18,13 @@ package org.logic2j.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.logic2j.engine.model.SimpleBindings.bind;
+import static org.logic2j.engine.model.Var.intVar;
 
 import org.junit.Test;
+import org.logic2j.engine.model.Binding;
 import org.logic2j.engine.model.TermApi;
+import org.logic2j.engine.model.Var;
+import org.logic2j.engine.predicates.impl.Eq;
 import org.logic2j.engine.predicates.impl.math.compare.LT;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 
@@ -37,6 +41,16 @@ public class InteractionWithEngineTest extends PrologTestBase {
     final CountingSolutionListener listener = new CountingSolutionListener();
     getProlog().getSolver().solveGoal(term, listener);
     assertThat(listener.count()).as("Solving term \"" + term + '"').isEqualTo(1);
+  }
+
+  @Test
+  public void testUsingFOPredicate2() {
+    Var<Integer> Z = intVar("Z");
+    Object term = new Eq(bind(2,3,4), (Binding) Z);
+    term = new TermApi().normalize(term);
+    final ExtractingSolutionListener listener = solveWithExtractingListener(term);
+    assertThat(listener.count()).isEqualTo(3);
+    assertThat(listener.getValues("Z")).contains(2,3,4);
   }
 
   @Test
