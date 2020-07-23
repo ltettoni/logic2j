@@ -30,7 +30,7 @@ import org.logic2j.engine.unify.UnifyContext;
  * <ul>
  * <li>Directive - not yet supported</li>
  * <li>Predicate - a "function" in Prolog, will produce solutions</li>
- * <li>Functor - evaluates to a result, for example the addition of two numbers</li>
+ * <li>Functor - evaluates to a result, for example the addition of two numbers 1 + 2</li>
  * </ul>
  *
  * @note Strangely, this class has invoke() features so it's not only a description!
@@ -39,7 +39,7 @@ public class PrimitiveInfo {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);
   private static final boolean isDebug = logger.isDebugEnabled();
 
-  // Not functional - only used to warn once per JVM that inefficient invocation is in place
+  // Not functional - only used to warn once per JVM run that inefficient invocation is in place
   private static final HashSet<String> methodNeedingReflectiveInvocation = new HashSet<>();
 
 

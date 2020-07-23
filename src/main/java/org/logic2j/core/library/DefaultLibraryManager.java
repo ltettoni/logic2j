@@ -132,6 +132,8 @@ public class DefaultLibraryManager implements LibraryManager {
     for (final Method method : libraryClass.getMethods()) {
       final Predicate predicateAnnotation = method.getAnnotation(Predicate.class);
       final Functor functorAnnotation = method.getAnnotation(Functor.class);
+
+      // Handle the methods of interest
       if (predicateAnnotation != null || functorAnnotation != null) {
         final Class<?>[] paramTypes = method.getParameterTypes();
         final Class<?> returnType = method.getReturnType();
@@ -152,20 +154,8 @@ public class DefaultLibraryManager implements LibraryManager {
         } else {
           throw new PrologNonSpecificException("Should not be here, annotation handling error");
         }
-                /*
-                final PrimitiveType type;
-                if (Integer.class.equals(returnType)) {
-                    type = PrimitiveType.PREDICATE;
-                } else if (Void.TYPE.equals(returnType)) {
-                    type = PrimitiveType.DIRECTIVE;
-                } else if (Term.class.equals(returnType)) {
-                    type = PrimitiveType.FUNCTOR;
-                } else if (Object.class.equals(returnType)) {
-                    type = PrimitiveType.FUNCTOR;
-                } else {
-                    throw new PrologNonSpecificError("Unexpected return type " + returnType.getName() + " for primitive " + method);
-                }
-                */
+
+        // Check method arguments
         final int nbMethodParams = paramTypes.length;
         int i = 0;
         if (!(UnifyContext.class.isAssignableFrom(paramTypes[i]))) {
@@ -185,6 +175,7 @@ public class DefaultLibraryManager implements LibraryManager {
             }
           }
         }
+
         // Main name (default = method's name) for the primitive
 
         if (primitiveName == null || primitiveName.isEmpty()) {
