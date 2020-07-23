@@ -22,6 +22,7 @@ import org.logic2j.core.api.library.PrimitiveInfo;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.model.DataFact;
 import org.logic2j.engine.model.Struct;
+import org.logic2j.engine.predicates.impl.FOPredicate;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
@@ -53,14 +54,19 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
   @Override
   protected boolean isJava(Struct<?> goalStruct) {
-    return goalStruct.getContent() != null;
+    return goalStruct instanceof FOPredicate  // New logic2j-engine
+            || goalStruct.getContent() != null;  // Older logic2j Java predicates
   }
 
 
   @Override
   protected int invokeJava(Struct<?> goalStruct, UnifyContext currentVars) {
+    if (goalStruct instanceof FOPredicate) {
+      return super.invokeJava(goalStruct, currentVars);
+    }
     final PrimitiveInfo prim = ((Struct<PrimitiveInfo>) goalStruct).getContent();
 
+    assert prim != null : "A Java predicate must have a defined PrimitiveInfo";
     final Object resultOfPrimitive = prim.invoke(goalStruct, currentVars);
     // Extract necessary objects from our current state
 
