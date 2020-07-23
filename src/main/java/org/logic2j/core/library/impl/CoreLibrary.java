@@ -616,7 +616,7 @@ public class CoreLibrary extends LibraryBase {
       }
       return theEvaluationFunction.apply((Number) t1, (Number) t2).doubleValue();
     }
-    throw new InvalidTermException("Could not add because 2 terms are not Numbers: " + t1 + " and " + t2);
+    throw new InvalidTermException("Could not apply binaryFunctor because 2 terms are not Numbers: " + t1 + " and " + t2);
   }
 
   @Functor(name = "+")
