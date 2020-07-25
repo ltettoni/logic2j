@@ -65,8 +65,13 @@ public class InteractionWithEngineTest extends PrologTestBase {
   }
 
   @Test
-  public void fromGoal() {
+  public void fromGoalSimple() {
     countOneSolution("2 < 3");
+  }
+
+  @Test
+  public void fromGoalFOPredicate() {
+    countNSolutions(10, "digit(_)");
   }
 
   @Test
