@@ -4,6 +4,8 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.logic2j.engine.model.Var.strVar;
 
+import java.util.List;
+import java.util.function.Function;
 import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.TermUnmarshaller;
@@ -172,12 +174,15 @@ public class TermApiExt extends TermApi {
    * @param theLibraryContent where primitives are to be found and assigned
    * @return A normalized COPY of theTerm ready to be used for inference (in a Theory ore as a goal)
    */
-  public <T> T normalize(T theTerm, LibraryContent theLibraryContent) {
-    T preNormalized = (T) super.normalize(theTerm);
+  public Object normalize(Object theTerm, LibraryContent theLibraryContent) {
+    Object term2 = replaceStructByFOPredicates(theTerm, theLibraryContent);
+    Object preNormalized = super.normalize(term2);
     if (theLibraryContent != null) {
       if (preNormalized instanceof String) {
+        // Strings mustb be converted to atoms if they are primitives (need to be executed)
         if (theLibraryContent.hasPrimitive(predicateSignature(preNormalized))) {
-          return normalize((T) new Struct<>((String) preNormalized), theLibraryContent);
+          // Just recursing
+          return normalize(new Struct<>((String) preNormalized), theLibraryContent);
         }
       }
       if (preNormalized instanceof Struct<?>) {
@@ -187,6 +192,22 @@ public class TermApiExt extends TermApi {
     return preNormalized;
   }
 
+  private Object replaceStructByFOPredicates(Object theTerm, LibraryContent theLibraryContent) {
+    final List<Function<Struct<?>, Struct<?>>> factories = theLibraryContent.getFOPredicateFactories();
+    final Function<Struct<?>, Struct<?>> mappingFunction = struct -> {
+      for (Function<Struct<?>, Struct<?>> factory : factories) {
+        final Struct pred = factory.apply(struct);
+        if (pred != null) {
+          return pred;
+        }
+      }
+      return struct;
+    };
+
+
+    final Object transformed = depthFirstStructTransform(theTerm, mappingFunction);
+    return transformed;
+  }
 
   public <T> String formatStruct(Struct<T> struct) {
     if (PrologLists.isEmptyList(struct)) {

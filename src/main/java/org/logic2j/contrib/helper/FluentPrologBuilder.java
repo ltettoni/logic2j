@@ -61,7 +61,6 @@ public class FluentPrologBuilder implements PrologBuilder {
     }
     final PrologReferenceImplementation prolog = new PrologReferenceImplementation(initLevel);
 
-
     // Theories from files
     final TheoryManager theoryManager = prolog.getTheoryManager();
     try {

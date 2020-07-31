@@ -72,6 +72,7 @@ public class InteractionWithEngineTest extends PrologTestBase {
   @Test
   public void fromGoalFOPredicate() {
     countNSolutions(10, "digit(_)");
+    countNSolutions(5, "digit(X), X < 5");
   }
 
   @Test

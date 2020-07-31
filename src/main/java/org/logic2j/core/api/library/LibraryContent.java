@@ -16,9 +16,14 @@
  */
 package org.logic2j.core.api.library;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import org.logic2j.engine.exception.PrologNonSpecificException;
+import org.logic2j.engine.model.Struct;
 
 /**
  * Describe the content of a {@link PLibrary}: its primitives, directives, functors and predicates.
@@ -32,6 +37,8 @@ public class LibraryContent {
   private final Map<String, PrimitiveInfo> functorMap = new HashMap<>();
 
   private final Map<String, PrimitiveInfo> primitiveMap = new HashMap<>();
+
+  private List<Function<Struct<?>, Struct<?>>> foPredicateFactories = new ArrayList<>();
 
   public void putDirective(String theKey, PrimitiveInfo theDesc) {
     if (this.directiveMap.containsKey(theKey)) {
@@ -87,6 +94,15 @@ public class LibraryContent {
     this.primitiveMap.putAll(theLoadedContent.primitiveMap);
   }
 
+
+  public void addFOPredicateFactory(Function<Struct<?>, Struct<?>>... factory) {
+    Arrays.stream(factory).forEach(getFOPredicateFactories()::add);
+  }
+
+  // --------------------------------------------------------------------------
+  // Accessors
+  // --------------------------------------------------------------------------
+
   /**
    * @param thePredicateSignature
    * @return The {@link PrimitiveInfo} for the specified primitive's signature, or null when not registered in this {@link LibraryContent}
@@ -97,5 +113,13 @@ public class LibraryContent {
 
   public boolean hasPrimitive(String thePredicateSignature) {
     return this.primitiveMap.containsKey(thePredicateSignature);
+  }
+
+  public List<Function<Struct<?>, Struct<?>>> getFOPredicateFactories() {
+    return foPredicateFactories;
+  }
+
+  public void setFOPredicateFactories(List<Function<Struct<?>, Struct<?>>> foPredicateFactories) {
+    this.foPredicateFactories = foPredicateFactories;
   }
 }

@@ -190,15 +190,19 @@ public class CoreLibrary extends LibraryBase {
       final Object arg1 = goalStructArgs[1];
       if (theMethodName == "unify") {
         result = unify(currentVars, arg0, arg1);
-      } else if (theMethodName == "expression_greater_equal_than") {
+      } /*
+      else if (theMethodName == "expression_greater_equal_than") {
         result = expression_greater_equal_than(currentVars, arg0, arg1);
-      } else if (theMethodName == "expression_greater_than") {
+      }
+      else if (theMethodName == "expression_greater_than") {
         result = expression_greater_than(currentVars, arg0, arg1);
       } else if (theMethodName == "expression_lower_than") {
         result = expression_lower_than(currentVars, arg0, arg1);
       } else if (theMethodName == "expression_lower_equal_than") {
         result = expression_lower_equal_than(currentVars, arg0, arg1);
-      } else if (theMethodName == "expression_equals") {
+      }
+      */
+      else if (theMethodName == "expression_equals") {
         result = expression_equals(currentVars, arg0, arg1);
       } else if (theMethodName == "is") {
         result = is(currentVars, arg0, arg1);
@@ -566,6 +570,11 @@ public class CoreLibrary extends LibraryBase {
     return continuation;
   }
 
+/*
+  @Predicate(name = ">=")
+  public int expression_greater_equal_than(UnifyContext currentVars, Object t1, Object t2) {
+    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_GE);
+  }
 
   @Predicate(name = ">")
   public int expression_greater_than(UnifyContext currentVars, Object t1, Object t2) {
@@ -577,15 +586,11 @@ public class CoreLibrary extends LibraryBase {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LT);
   }
 
-  @Predicate(name = ">=")
-  public int expression_greater_equal_than(UnifyContext currentVars, Object t1, Object t2) {
-    return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_GE);
-  }
-
   @Predicate(name = "=<")
   public int expression_lower_equal_than(UnifyContext currentVars, Object t1, Object t2) {
     return binaryComparisonPredicate(currentVars, t1, t2, COMPARISON_LE);
   }
+*/
 
   @Predicate(name = "=:=")
   public int expression_equals(UnifyContext currentVars, Object t1, Object t2) {
