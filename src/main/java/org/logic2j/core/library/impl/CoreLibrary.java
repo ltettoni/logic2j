@@ -50,57 +50,6 @@ public class CoreLibrary extends LibraryBase {
     super(theProlog);
   }
 
-  private static final ComparisonFunction COMPARE_GT = new ComparisonFunction() {
-    @Override
-    public boolean apply(Number val1, Number val2) {
-      return val1.doubleValue() > val2.doubleValue();
-    }
-
-    @Override
-    public boolean apply(CharSequence val1, CharSequence val2) {
-      return val1.toString().compareTo(val2.toString()) > 0;
-    }
-  };
-
-  private static final ComparisonFunction COMPARISON_LT = new ComparisonFunction() {
-
-    @Override
-    public boolean apply(Number val1, Number val2) {
-      return val1.doubleValue() < val2.doubleValue();
-    }
-
-    @Override
-    public boolean apply(CharSequence val1, CharSequence val2) {
-      return val1.toString().compareTo(val2.toString()) < 0;
-    }
-  };
-
-  private static final ComparisonFunction COMPARISON_GE = new ComparisonFunction() {
-
-    @Override
-    public boolean apply(Number val1, Number val2) {
-      return val1.doubleValue() >= val2.doubleValue();
-    }
-
-    @Override
-    public boolean apply(CharSequence val1, CharSequence val2) {
-      return val1.toString().compareTo(val2.toString()) >= 0;
-    }
-  };
-
-  private static final ComparisonFunction COMPARISON_LE = new ComparisonFunction() {
-
-    @Override
-    public boolean apply(Number val1, Number val2) {
-      return val1.doubleValue() <= val2.doubleValue();
-    }
-
-    @Override
-    public boolean apply(CharSequence val1, CharSequence val2) {
-      return val1.toString().compareTo(val2.toString()) <= 0;
-    }
-  };
-
   private static final ComparisonFunction COMPARISON_EQ = new ComparisonFunction() {
 
     @Override
