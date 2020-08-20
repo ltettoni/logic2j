@@ -35,6 +35,8 @@ import org.logic2j.engine.predicates.impl.math.compare.GE;
 import org.logic2j.engine.predicates.impl.math.compare.GT;
 import org.logic2j.engine.predicates.impl.math.compare.LE;
 import org.logic2j.engine.predicates.impl.math.compare.LT;
+import org.logic2j.engine.predicates.impl.math.function.LowerCase;
+import org.logic2j.engine.predicates.impl.math.function.UpperCase;
 import org.logic2j.engine.solver.holder.GoalHolder;
 
 /**
@@ -110,7 +112,8 @@ public class PrologReferenceImplementation implements PrologImplementation {
 
       this.libraryManager.wholeContent().addFOPredicateFactory(
               Digit::valueOf,
-              LT::valueOf, LE::valueOf, GT::valueOf , GE::valueOf);
+              LT::valueOf, LE::valueOf, GT::valueOf , GE::valueOf,
+              LowerCase::valueOf, UpperCase::valueOf);
     }
     final TermMapper normalizer = theTerm -> termApiExt().normalize(theTerm, getLibraryManager().wholeContent());
     this.termUnmarshaller.setNormalizer(normalizer);
