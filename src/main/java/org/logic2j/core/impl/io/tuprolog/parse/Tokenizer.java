@@ -252,9 +252,10 @@ class Tokenizer extends StreamTokenizer {
       while (true) { // run through entire quote and added body to quote buffer
         typea = super.nextToken();
         svala = this.sval;
-        // continuation escape sequence
+        // Backslash could be a continuation escape sequence, or an escaped char
         if (typea == '\\') {
           final int typeb = super.nextToken();
+          final String svalb = this.sval;
           if (typeb == '\n') {
             continue;
           }
@@ -266,7 +267,30 @@ class Tokenizer extends StreamTokenizer {
             pushBack();
             continue; // continuation escape sequence marker \\r
           }
-          pushBack(); // pushback typeb
+          if (typeb == '\\') {
+            // Double backslash. Output only one and don't pushback
+            quote.append('\\');
+            continue; // 2 baclslashes eaten
+          }
+          // Sneak peek at the first character following the backslash
+          if (svalb != null && svalb.length()>=1) {
+            final char afterBackslash = svalb.charAt(0);
+            switch (afterBackslash) {
+              case 'n':
+                quote.append('\n');
+                svala = this.sval.substring(1); // "Remove that first char from what we will append below
+                break;
+              case 'r':
+                quote.append('\r');
+                svala = this.sval.substring(1); // "Remove that first char from what we will append below
+                break;
+              default:
+                // Any other should be handled as a normal token
+                pushBack();
+            }
+          } else {
+            pushBack(); // pushback typeb we continue parsing on next line
+          }
         }
         // double '' or "" or ``
         if (typea == qType) {

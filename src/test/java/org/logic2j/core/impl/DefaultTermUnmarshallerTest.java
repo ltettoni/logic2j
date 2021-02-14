@@ -18,6 +18,7 @@
 package org.logic2j.core.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.core.impl.DefaultTermMarshallerTest.MARSHALLER;
 
 import org.junit.Test;
 import org.logic2j.engine.exception.InvalidTermException;
@@ -32,10 +33,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultTermUnmarshallerTest {
   private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
 
-  public static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
-
-  public static final DefaultTermMarshaller MARSHALLER = new DefaultTermMarshaller();
-
+  static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
 
   @Test
   public void numbers() {
@@ -76,4 +74,36 @@ public class DefaultTermUnmarshallerTest {
     logger.info("raw: {}", term);
     assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
   }
+
+
+  @Test
+  public void spaces() {
+    assertThat(UNMARSHALLER.unmarshall("' txt  '")).isEqualTo(" txt  ");
+  }
+
+  @Test
+  public void tabs() {
+    assertThat(UNMARSHALLER.unmarshall("'a\tb'")).isEqualTo("a\tb");
+  }
+
+  @Test
+  public void nl() {
+    assertThat(UNMARSHALLER.unmarshall("'a\\nb'")).isEqualTo("a\nb");
+  }
+
+  @Test
+  public void cr() {
+    assertThat(UNMARSHALLER.unmarshall("'a\\rb'")).isEqualTo("a\rb");
+  }
+
+  @Test
+  public void backslash() {
+    assertThat(UNMARSHALLER.unmarshall("'a\\\\b\\\\\\\\c'")).isEqualTo("a\\b\\\\c");
+  }
+
+  @Test
+  public void complicated() {
+    assertThat(UNMARSHALLER.unmarshall("'\t\\n\\na\\rb\t '")).isEqualTo("\t\n\na\rb\t ");
+  }
+
 }
