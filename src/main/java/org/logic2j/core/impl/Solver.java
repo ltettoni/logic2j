@@ -216,7 +216,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
         final UnifyContext varsAfterHeadUnified = currentVars.unify(goalTerm, dataFact);
         final boolean unified = varsAfterHeadUnified != null;
         if (unified) {
-          final int continuation = solutionListener.onSolution(currentVars);
+          final int continuation = solutionListener.onSolution(varsAfterHeadUnified);
           if (continuation != Continuation.CONTINUE) {
             result = continuation;
           }
