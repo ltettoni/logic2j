@@ -46,12 +46,6 @@ dependencies {
 }
 
 
-// Unit tests use a publicly available database exposed as Excel
-task downloadTestResources(type: MyDownload) {
-     sourceUrl = 'ftp://ftp.cde.ca.gov/demo/schlname/pubschls.xls'
-     target = file('src/test/resources/cde.ca.gov/pubschls.xls')
-}
-
 // Unit tests use a public database embedded in the test resources
 task unzipTestDb {
     // Not yet needed - will be !
@@ -63,7 +57,7 @@ task unzipTestDb {
 
 
 // Not yet needed - will be !
-test.dependsOn downloadTestResources, unzipTestDb
+test.dependsOn unzipTestDb
 
 
 

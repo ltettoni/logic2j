@@ -6,6 +6,5 @@ gradle
 .idea
 build
 derby.log
-src/test/resources/cde.ca.gov
 src/test/resources/db/zipcodes1/derby-v10.13.1.1
 out/
