@@ -41,6 +41,24 @@ public class FunctionalTest extends PrologTestBase {
     countNSolutions(27, "a(X), b(Y), c(Z)");
   }
 
+
+  @Test
+  public void distinct3() {
+    loadTheoryFromTestResourcesDir("test-functional.pro");
+    assertThat(uniqueSolution("distinct(X, bool_3t_2f(X), Res)").var("Res").unique().toString()).isEqualTo("[true,false]");
+  }
+
+  @Test
+  public void distinct2() {
+    loadTheoryFromTestResourcesDir("test-functional.pro");
+    final GoalHolder all = nSolutions(2, "distinct(X, bool_3t_2f(X))");
+    assertThat(all.count()).isEqualTo(2);
+    List<Object> values = all.var("X").list();
+    assertThat(values).contains(Struct.ATOM_TRUE);
+    assertThat(values).contains(Struct.ATOM_FALSE);
+  }
+
+
   @Test
   public void member() {
     countOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");

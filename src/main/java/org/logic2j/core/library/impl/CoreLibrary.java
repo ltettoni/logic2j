@@ -173,6 +173,8 @@ public class CoreLibrary extends LibraryBase {
         result = length(currentVars, arg0, arg1);
       } else if (theMethodName == "count") {
         result = count(currentVars, arg0, arg1);
+      } else if (theMethodName == "distinct") {
+        result = distinct(currentVars, arg0, arg1);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -373,6 +375,14 @@ public class CoreLibrary extends LibraryBase {
     return unify(currentVars, theResult, plist);
   }
 
+  /**
+   * distinct/2
+   * @param currentVars
+   * @param theTemplate
+   * @param theGoal
+   * @param theResult
+   * @return
+   */
   @Predicate
   public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
                       final Object theResult) {
@@ -388,6 +398,27 @@ public class CoreLibrary extends LibraryBase {
 
     // And unify with result
     return unify(currentVars, theResult, plist);
+  }
+
+  /**
+   * distinct/2
+   * @param currentVars
+   * @param theTemplate
+   * @param theGoal
+   * @return
+   */
+  @Predicate
+  public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal) {
+    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
+    collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
+
+    for (Object element: distinctReifiedResults) {
+      final int result = unifyAndNotify(currentVars, theTemplate, element);
+      if (result != Continuation.CONTINUE) {
+        return result;
+      }
+    }
+    return Continuation.CONTINUE;
   }
 
   /**
