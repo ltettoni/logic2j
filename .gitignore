@@ -1,10 +1,5 @@
-settings.gradle
-gradlew*
-.gradle
-gradle
 *.iml
 .idea
-build
 derby.log
 src/test/resources/db/zipcodes1/derby-v10.13.1.1
-out/
+target
