@@ -58,33 +58,3 @@ task unzipTestDb {
 
 // Not yet needed - will be !
 test.dependsOn unzipTestDb
-
-
-
-/*
-    Documentation using asciidoctor
-    Reads source asciidoc files from: src/site/doc/asciidoc
-    Writes onto src/site/doc/html
-
- */
-// Install plugin
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.0'
-    }
-}
-apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-
-// Configure target "asciidoctor" (defined in plugin)
-asciidoctor {
-    sourceDir = new File("src/site/doc/asciidoc")
-    outputDir = new File("src/site/doc/html")
-    backends = ["html5"]
-    logDocuments = true
-    options = [
-            doctype: 'book'
-    ]
-}
