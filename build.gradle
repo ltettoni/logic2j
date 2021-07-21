@@ -61,25 +61,6 @@ test.dependsOn unzipTestDb
 
 
 
-
-// Download sourceUrl to target file
-class MyDownload extends DefaultTask {
-    @Input
-    String sourceUrl
-
-    @OutputFile
-    File target
-
-    @TaskAction
-    void download() {
-        if (!target.exists()) {
-            ant.get(src: sourceUrl, dest: target)
-        }
-    }
-}
-
-
-
 /*
     Documentation using asciidoctor
     Reads source asciidoc files from: src/site/doc/asciidoc
