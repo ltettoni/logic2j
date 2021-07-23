@@ -3,3 +3,4 @@
 derby.log
 src/test/resources/db/zipcodes1/derby-v10.13.1.1
 target
+**/.DS_Store
