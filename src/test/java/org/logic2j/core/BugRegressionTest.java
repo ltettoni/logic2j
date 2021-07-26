@@ -79,4 +79,15 @@ public class BugRegressionTest extends PrologTestBase {
     loadTheoryFromTestResourcesDir("bug-cut-propagated-too-high.pro");
     nSolutions(2, "(E=1;E=2), existsKo3(a(E))"); // Used to return only one solution instead of two!
   }
+
+  /**
+   * See documentation of the bug tested here in resource bug_anon.pro
+   */
+  @Test
+  public void invokeRuleWithAnonymousFindsDifferentSolutions() {
+    loadTheoryFromTestResourcesDir("bug_anon.pro");
+    nSolutions(2, "c(Z)");
+    nSolutions(2, "c(_Z)");
+    nSolutions(2, "c(_)");
+  }
 }
