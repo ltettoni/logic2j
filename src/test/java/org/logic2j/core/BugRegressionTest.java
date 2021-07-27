@@ -90,4 +90,21 @@ public class BugRegressionTest extends PrologTestBase {
     nSolutions(2, "c(_Z)"); // OK
     nSolutions(2, "c(_)"); // Here the bug strikes - 2x2 = 4 solutions instead of 2.
   }
+
+  @Test
+  public void invokeRuleWithAnonymousFindsDifferentSolutions2() {
+    loadTheoryFromTestResourcesDir("bug-anon.pro");
+    nSolutions(2, "c2(Z)"); // OK
+    nSolutions(2, "c2(_Z)"); // OK
+    nSolutions(2, "c2(_)"); // Here the bug strikes - 2x2 = 4 solutions instead of 2.
+  }
+
+
+  @Test
+  public void invokeRuleWithAnonymousFindsDifferentSolutions3() {
+    loadTheoryFromTestResourcesDir("bug-anon.pro");
+    nSolutions(2, "d(Z)");
+    nSolutions(2, "d(_Z)");
+    nSolutions(2, "d(_)");
+  }
 }

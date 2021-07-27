@@ -16,8 +16,16 @@
     The first solution to Local=1. The RHS side of the AND can unify 2 with _.
     This gives 4 solutions.
 
-  This bug is likely to only happen with the AND predicate as this is the only only one that continues further
-  execution after partial unification, when a rule applies.
+    This has the same effect as if the inside of the rule c/1 referenced "_" instead of "Local".
+
+  This bug is likely to only happen with the AND predicate because this is the only way to continue further
+  execution after partial unification.
+
+  Solutions:
+
+  1. Rule hard to enforce: any rule with an "and" should never be invoked with the anonymous variable, from the root-level or from another rule.
+  2. When unifying a free var that is linked to an anonymous var, bind the free var to the value, not delegate the unification to the latest (anonymous) of the chain.
+
 */
 
 a(1).
@@ -29,3 +37,9 @@ b(2).
 % The "Local" variable is local to the rule, whichever it binds with a real or anonymous variable
 % in the invoking context, there will be 2 solutions. Not 4.
 c(Local) :- a(Local), a(Local).
+
+% Just a one-to-one synonym rule
+c2(Z) :- c(Z).
+
+% Invoking c/1 with the anonymous variable
+d(Z) :- c(_).
