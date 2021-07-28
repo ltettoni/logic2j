@@ -25,7 +25,9 @@
 
   1. Rule hard to enforce: any rule with an "and" should never be invoked with the anonymous variable, from the root-level or from another rule.
   2. When unifying a free var that is linked to an anonymous var, bind the free var to the value, not delegate the unification to the latest (anonymous) of the chain.
+  3. When unifying a free var to the anonymous variable, we should not link the free var to the anon.
 
+Solution 3 is the right one, a 2 liner in logic2j-engine, class UnifyContext
 */
 
 a(1).
