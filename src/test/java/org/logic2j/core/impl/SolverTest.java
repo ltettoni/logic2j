@@ -223,8 +223,8 @@ public class SolverTest extends PrologTestBase {
     final ExtractingSolutionListener listener = solveWithExtractingListener(goal);
     assertThat(listener.count()).isEqualTo(1);
     assertThat(listener.getVariables().toString()).isEqualTo("[Q]");
-    assertThat(marshall(listener.getValues("."))).isEqualTo("[_ = _]");
-    assertThat(marshall(listener.getValues("Q"))).isEqualTo("[_]");
+    assertThat(marshall(listener.getValues("."))).isEqualTo("[Q = _]");
+    assertThat(marshall(listener.getValues("Q"))).isEqualTo("[Q]");
   }
 
 
