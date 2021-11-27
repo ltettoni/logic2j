@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by tettoni on 2015-10-11.
+ * A auto-completer that can propose completions from partial queries.
  */
 public class Completer {
   private static final Logger logger = LoggerFactory.getLogger(Completer.class);
@@ -56,23 +56,24 @@ public class Completer {
    */
   private static final Pattern TECH_PREDICATE = Pattern.compile("[\\w']+_\\d*/\\d+");
 
-
+  /**
+   * Prepare {@link CompletionData} with specified original input string
+   * @param str
+   * @return
+   */
   static CompletionData strip(String str) {
-    final CompletionData result = new CompletionData();
-    result.original = str;
-    result.stripped = str;
-    result.originalBeforeStripped = "";
-    result.partialPredicate = null;
-    result.functor = null;
+    final CompletionData result = new CompletionData(str);
     if (str.length() > 0) {
-      char c;
+      // Scan input from end towards beginning
       for (int pos = str.length() - 1; pos >= 0; pos--) {
-        c = str.charAt(pos);
-        final boolean cont = Character.isJavaIdentifierPart(c) || Character.isJavaIdentifierStart(c) || Character.isDigit(c) || c == '\'';
-        if (!cont) {
-          // stripped is only the last part we are completing on
-          result.stripped = str.substring(pos + 1);
-          result.originalBeforeStripped = str.substring(0, pos + 1);
+        char c = str.charAt(pos);
+        // Will move backwards as long as we have identifier chars or digits
+        final boolean conti = Character.isJavaIdentifierPart(c) || Character.isJavaIdentifierStart(c) || Character.isDigit(c) || c == '\'';
+        if (!conti) {
+          // Now we found a char we should stop at.
+
+          result.setStripped(str.substring(pos + 1)); // stripped is only the last part we are completing on
+          result.setOriginalBeforeStripped(str.substring(0, pos + 1));
 
           int end = pos + 1;
           int argNo = 0;
@@ -88,12 +89,12 @@ public class Completer {
                   break;
                 }
               }
-              result.partialPredicate = str.substring(pos + 1, end);
-              result.functor = str.substring(pos + 1, parenth);
-              result.argNo = argNo;
+              result.setPartialPredicate(str.substring(pos + 1, end));
+              result.setFunctor(str.substring(pos + 1, parenth));
+              result.setArgNo(argNo);
               return result;
             } else if (c == ')') {
-              result.functor = null;
+              result.setFunctor(null);
               break;
             }
           }
@@ -145,19 +146,19 @@ public class Completer {
     final Set<String> completions = new TreeSet<>();
     if (partialInput.toString().endsWith(")")) {
       // Nothing
-    } else if (completionData.functor != null) {
+    } else if (completionData.getFunctor() != null) {
       // Find arity
-      final Set<String> signatures = allSignatures(completionData.functor);
+      final Set<String> signatures = allSignatures(completionData.getFunctor());
       if (signatures.isEmpty()) {
         return completionData;
       }
       // find same predicate
       for (String signature : signatures) {
-        if (termApi().functorFromSignature(signature).equals(completionData.functor)) {
+        if (termApi().functorFromSignature(signature).equals(completionData.getFunctor())) {
           int arity = termApi().arityFromSignature(signature);
 
-          final int commaCount = commaCount(completionData.partialPredicate);
-          String goal = buildGoal(completionData.partialPredicate, arity);
+          final int commaCount = commaCount(completionData.getPartialPredicate());
+          String goal = buildGoal(completionData.getPartialPredicate(), arity);
           logger.info("Going to execute: {}", goal);
           Object goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
 
@@ -189,8 +190,8 @@ public class Completer {
             // FIXME: watch out - instead of using all the solutions, we must first make sure
             // the solution matches the beginning of the text specified!
 
-            if (envisagedCompletion != null && envisagedCompletion.startsWith(completionData.stripped)) {
-              completions.add(completionData.originalBeforeStripped + envisagedCompletion + termination);
+            if (envisagedCompletion != null && envisagedCompletion.startsWith(completionData.getStripped())) {
+              completions.add(completionData.getOriginalBeforeStripped() + envisagedCompletion + termination);
             }
           }
           if (hasVar) {
@@ -202,12 +203,12 @@ public class Completer {
 
     } else {
       // Find all predicate's signatures starting with the stripped fragment
-      for (String signature : allSignatures(completionData.stripped)) {
+      for (String signature : allSignatures(completionData.getStripped())) {
         // Generate fragment from signature:  "append/3" -> "append("
         final String functor = termApi().functorFromSignature(signature);
         final String fragment = functor + '(';
-        if (fragment.startsWith(completionData.stripped)) {
-          completions.add(completionData.originalBeforeStripped + fragment);
+        if (fragment.startsWith(completionData.getStripped())) {
+          completions.add(completionData.getOriginalBeforeStripped() + fragment);
         }
       }
     }

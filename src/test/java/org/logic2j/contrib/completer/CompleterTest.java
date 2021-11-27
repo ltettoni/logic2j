@@ -173,32 +173,32 @@ public class CompleterTest extends PrologTestBase {
 
   @Test
   public void strip1() {
-    assertThat(Completer.strip("").stripped).isEqualTo("");
-    assertThat(Completer.strip("a").stripped).isEqualTo("a");
-    assertThat(Completer.strip(" a").stripped).isEqualTo("a");
-    assertThat(Completer.strip(" a(").stripped).isEqualTo("");
+    assertThat(Completer.strip("").getStripped()).isEqualTo("");
+    assertThat(Completer.strip("a").getStripped()).isEqualTo("a");
+    assertThat(Completer.strip(" a").getStripped()).isEqualTo("a");
+    assertThat(Completer.strip(" a(").getStripped()).isEqualTo("");
   }
 
 
   @Test
   public void strip2() {
-    assertThat(Completer.strip("a").functor).isNull();
-    assertThat(Completer.strip(" f( ab").partialPredicate).isEqualTo("f( ");
-    assertThat(Completer.strip(" f( ab").functor).isEqualTo("f");
-    assertThat(Completer.strip(" f(").partialPredicate).isEqualTo("f(");
-    assertThat(Completer.strip(" f( ab, cd, ef").partialPredicate).isEqualTo("f( ab, cd, ");
-    assertThat(Completer.strip(" f( ab, cd, ef").functor).isEqualTo("f");
+    assertThat(Completer.strip("a").getFunctor()).isNull();
+    assertThat(Completer.strip(" f( ab").getPartialPredicate()).isEqualTo("f( ");
+    assertThat(Completer.strip(" f( ab").getFunctor()).isEqualTo("f");
+    assertThat(Completer.strip(" f(").getPartialPredicate()).isEqualTo("f(");
+    assertThat(Completer.strip(" f( ab, cd, ef").getPartialPredicate()).isEqualTo("f( ab, cd, ");
+    assertThat(Completer.strip(" f( ab, cd, ef").getFunctor()).isEqualTo("f");
   }
 
 
   @Test
   public void strip3() {
-    assertThat(Completer.strip("a(1)").stripped).isEqualTo("");
-    assertThat(Completer.strip("a(1)").functor).isNull();
-    assertThat(Completer.strip("a(1) ").stripped).isEqualTo("");
-    assertThat(Completer.strip("a(1) ").functor).isNull();
-    assertThat(Completer.strip("a(1) , ").stripped).isEqualTo("");
-    assertThat(Completer.strip("a(1) , ").functor).isNull();
+    assertThat(Completer.strip("a(1)").getStripped()).isEqualTo("");
+    assertThat(Completer.strip("a(1)").getFunctor()).isNull();
+    assertThat(Completer.strip("a(1) ").getStripped()).isEqualTo("");
+    assertThat(Completer.strip("a(1) ").getFunctor()).isNull();
+    assertThat(Completer.strip("a(1) , ").getStripped()).isEqualTo("");
+    assertThat(Completer.strip("a(1) , ").getFunctor()).isNull();
   }
 
 

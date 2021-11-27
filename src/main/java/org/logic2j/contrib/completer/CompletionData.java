@@ -21,25 +21,100 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Created by tettoni on 2015-10-11.
+ * State of completion: from the original input to all possible choices.
  */
 public class CompletionData {
 
-  public String original; // Complete input submitted
+  /**
+   * Original input submitted
+   */
+  private final String original;
 
-  public String originalBeforeStripped;
+  /**
+   * The first part of "original" until the position where we start searches for autocompletion.
+   * If the original is "myPred(abc", we are typicallly completing on abc, so originalBeforeStripped="myPred("
+   */
+  private String originalBeforeStripped;
 
-  public String stripped; // Only the last part where we search for completion
-  public String functor;  // When processing arguments, the functor of these arguments
+  /**
+   * The part of "original" we search for autocompletion.
+   * If the original is "myPred(abc", we are autocompleting on "abc", so stripped="abc"
+   */
+  private String stripped;
+
+
+  /**
+   * When we are autocompleting on arguments, this will be the functor before the first argument.
+   */
+  private String functor = null;
 
   /**
    * From the beginning of the predicate (functor), until before the stripped part
    */
-  public String partialPredicate;
+  private String partialPredicate = null;
 
-  public int argNo;
+  private int argNo = -1;
 
-  Set<String> completions = Collections.emptySet();
+  /**
+   * The current completions
+   */
+  private Set<String> completions = Collections.emptySet();
+
+
+  public CompletionData(String original) {
+    this.original = original;
+    this.stripped = original;
+    this.originalBeforeStripped = "";
+  }
+
+  // --------------------------------------------------------------------------
+  // Accessors
+  // --------------------------------------------------------------------------
+
+
+  public String getOriginal() {
+    return original;
+  }
+
+  public String getOriginalBeforeStripped() {
+    return originalBeforeStripped;
+  }
+
+  public void setOriginalBeforeStripped(String originalBeforeStripped) {
+    this.originalBeforeStripped = originalBeforeStripped;
+  }
+
+  public String getStripped() {
+    return stripped;
+  }
+
+  public void setStripped(String stripped) {
+    this.stripped = stripped;
+  }
+
+  public String getFunctor() {
+    return functor;
+  }
+
+  public void setFunctor(String functor) {
+    this.functor = functor;
+  }
+
+  public String getPartialPredicate() {
+    return partialPredicate;
+  }
+
+  public void setPartialPredicate(String partialPredicate) {
+    this.partialPredicate = partialPredicate;
+  }
+
+  public int getArgNo() {
+    return argNo;
+  }
+
+  public void setArgNo(int argNo) {
+    this.argNo = argNo;
+  }
 
   public Set<String> getCompletions() {
     return completions;
