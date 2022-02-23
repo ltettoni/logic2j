@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.DataFactProvider;
@@ -127,10 +128,9 @@ public class DefaultTheoryManager implements TheoryManager {
     }
   }
 
-  // TODO is it reasonable to return a mutable list so that callers can add() to it???
   @Override
   public List<ClauseProvider> getClauseProviders() {
-    return this.clauseProviders;
+    return Collections.unmodifiableList(this.clauseProviders);  // Make sure caller cannot modify it - we've had ConcurrentModificationException
   }
 
   public void setClauseProviders(List<ClauseProvider> theClauseProviders) {
