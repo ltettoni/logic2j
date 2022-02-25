@@ -24,6 +24,7 @@ import org.logic2j.core.api.TermAdapter;
 import org.logic2j.core.api.TermMapper;
 import org.logic2j.core.api.TermUnmarshaller;
 import org.logic2j.core.impl.io.tuprolog.parse.Parser;
+import org.logic2j.engine.exception.InvalidTermException;
 
 /**
  * Reference implementation of {@link org.logic2j.core.api.TermUnmarshaller}.
@@ -43,10 +44,21 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
 
   @Override
   public Object unmarshall(CharSequence theChars) {
-    final Parser parser = new Parser(this.operatorManager, termAdapter, theChars);
-    final Object parsed = parser.parseSingleTerm();
-    final Object normalized = normalizer.apply(parsed);
-    return normalized;
+    /*
+       Due to the highly recursive nature of the parser,
+       any Exception thrown in deep invocations will not carry any context,
+       such as "The following token could not be identified: "<""
+       Therefore we will throw a new exception that adds the context in the message.
+     */
+    try {
+      final Parser parser = new Parser(this.operatorManager, termAdapter, theChars);
+      final Object parsed = parser.parseSingleTerm();
+      final Object normalized = normalizer.apply(parsed);
+      return normalized;
+    } catch (InvalidTermException e) {
+      final String newMessage = "Parsing of expression \"" + theChars + "\" failed: " + e.getMessage();
+      throw new InvalidTermException(newMessage, e);
+    }
   }
 
 
