@@ -138,7 +138,7 @@ class Tokenizer extends StreamTokenizer {
     this.tokenList.addFirst(token);
   }
 
-  Token readNextToken() throws IOException, InvalidTermException {
+  private Token readNextToken() throws IOException, InvalidTermException {
     int typea;
     String svala;
     if (this.pushBack2 != null) {
