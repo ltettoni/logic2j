@@ -158,9 +158,15 @@ public class Completer {
           int arity = termApi().arityFromSignature(signature);
 
           final int commaCount = commaCount(completionData.getPartialPredicate());
-          String goal = buildGoal(completionData.getPartialPredicate(), arity);
+          final String goal = buildGoal(completionData.getPartialPredicate(), arity);
           logger.info("Going to execute: {}", goal);
-          Object goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
+          final Object goalObj;
+;         try {
+            goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
+          } catch (OutOfMemoryError e) {
+            // Under some conditions the Logic2j Parser and Tokenizer go to OOM we need to know on which goals
+            throw new IllegalStateException("Out of memory thrown while parsing: \"" + goal + "\"", e);
+          }
 
           SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<>(goalObj, COMPLETION_VAR, Object.class);
           SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<>(stringSingleVarExtractor);
