@@ -165,10 +165,15 @@ public class Completer {
             goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
           } catch (OutOfMemoryError e) {
             // Under some conditions, for example in autocompleters, the Logic2j Parser and Tokenizer go to OOM we need to understand on which goals
-            final String message = "Logic2j cannot parse: \"" + goal + "\"";
-            logger.error(message, e); // This will log where we fail for that goal with the stacktrace, but is of no interest to the caller
+
             // Here it's debatable if we should throw or just log and complete to nothing
-            // Indeed, it is clear that no completion can be proposed
+            // Eventually, it is clear that no completion can be proposed
+            final String message = "Logic2j cannot parse: \"" + goal + "\"";
+
+            // This will log where we fail for that goal with the stacktrace, but is of no interest to the caller
+            // Not sure this is a good idea to log here AND throw (with less detailed info).
+            logger.error(message, e);
+
             throw new OutOfMemoryError(message + ": " + e);
           }
 
