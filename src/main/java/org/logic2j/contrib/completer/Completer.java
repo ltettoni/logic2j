@@ -164,8 +164,10 @@ public class Completer {
 ;         try {
             goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
           } catch (OutOfMemoryError e) {
-            // Under some conditions the Logic2j Parser and Tokenizer go to OOM we need to know on which goals
-            throw new IllegalStateException("Out of memory thrown while parsing: \"" + goal + "\"", e);
+            // Under some conditions, for example in autocompleters, the Logic2j Parser and Tokenizer go to OOM we need to understand on which goals
+            final String message = "Logic2j cannot parse: \"" + goal + "\"";
+            logger.error(message, e); // This will log where we fail for that goal with the stacktrace, but is of no interest to the caller
+            throw new OutOfMemoryError(message + ": " + e);
           }
 
           SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<>(goalObj, COMPLETION_VAR, Object.class);
