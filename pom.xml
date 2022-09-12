@@ -12,7 +12,7 @@
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <poi.version>3.17</poi.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <derby.version>10.13.1.1</derby.version>
+    <derby.version>10.14.2.0</derby.version>
     <logback.version>1.2.11</logback.version>
     <junit.version>4.13.2</junit.version>
     <assertj.version>3.23.1</assertj.version>
