@@ -376,17 +376,17 @@ public class CoreLibrary extends LibraryBase {
   }
 
   /**
-   * distinct/2
+   * distinct/3
    * @param currentVars
-   * @param theTemplate
-   * @param theGoal
-   * @param theResult
-   * @return
+   * @param theTemplate What to project (the values we want to "distinct"). Usually a single var, but could be a struct.
+   * @param theGoal What to solve
+   * @param theResult A list of results
+   * @return Succeeds only once with the provided list
    */
   @Predicate
   public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal,
                       final Object theResult) {
-    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
+    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // A set to avoid duplicates, but keep order
     collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
 
     // Convert all results into a prolog list structure
@@ -403,13 +403,13 @@ public class CoreLibrary extends LibraryBase {
   /**
    * distinct/2
    * @param currentVars
-   * @param theTemplate
-   * @param theGoal
-   * @return
+   * @param theTemplate What to project (the values we want to "distinct"). Usually a single var, but could be a struct.
+   * @param theGoal What to solve
+   * @return For all solutions of theGoal, collect values from theTemplate and emit solutions for the distinct ones.
    */
   @Predicate
   public int distinct(UnifyContext currentVars, final Object theTemplate, final Object theGoal) {
-    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // Our internal collection of results
+    final LinkedHashSet<Object> distinctReifiedResults = new LinkedHashSet<>(100); // A set to avoid duplicates, but keep order
     collectReifiedResults(currentVars, theTemplate, theGoal, distinctReifiedResults);
 
     for (Object element: distinctReifiedResults) {
