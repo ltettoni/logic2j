@@ -22,6 +22,8 @@ import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import org.logic2j.core.api.ClauseProvider;
 import org.logic2j.core.api.library.annotation.Functor;
 import org.logic2j.core.api.library.annotation.Predicate;
@@ -35,6 +37,7 @@ import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
+import org.logic2j.engine.solver.listener.InterceptorSolutionListener;
 import org.logic2j.engine.solver.listener.SolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 
@@ -131,6 +134,8 @@ public class CoreLibrary extends LibraryBase {
         result = var(currentVars, arg0);
       } else if (theMethodName == "exists") {
         result = exists(currentVars, arg0);
+      } else if (theMethodName == "optional") {
+        result = optional(currentVars, arg0);
       } else {
         result = NO_DIRECT_INVOCATION_USE_REFLECTION;
       }
@@ -332,6 +337,38 @@ public class CoreLibrary extends LibraryBase {
       return notifySolution(currentVars);
     }
     return Continuation.CONTINUE;
+  }
+
+  /**
+   * optional/1   optional(goal)
+   * Will find all solutions to the goal.
+   * If there are 1,2,...,N solutions they will be relayed to the SolutionListener.
+   * In case there is no solution this goal will provide one successful solution.
+   *
+   * @param currentVars
+   * @param theGoal
+   * @return
+   */
+  @Predicate
+  public int optional(UnifyContext currentVars, final Object theGoal) {
+    // Solutions will go through this delegating listener, with side effect
+    final AtomicBoolean solutionHit = new AtomicBoolean(false);
+    final Function<UnifyContext, Integer> detectSolutions = (uc) -> {
+      solutionHit.set(true);
+      return Continuation.CONTINUE;
+    };
+    final SolutionListener solutionListenerProxy = new InterceptorSolutionListener(currentVars.getSolutionListener(), null, detectSolutions);
+
+
+    // Now solve the target sub goal
+    final Object effectiveGoal = currentVars.reify(theGoal);
+    int cont = getProlog().getSolver().solveGoal(effectiveGoal, currentVars.withListener(solutionListenerProxy));
+
+    if (! solutionHit.get()) {
+      // There was no solution, so we provide one (without binding variables)
+      cont = currentVars.getSolutionListener().onSolution(currentVars);
+    }
+    return cont;
   }
 
   private void collectReifiedResults(UnifyContext currentVars, final Object theTemplate, Object theGoal, final Collection<Object> javaResults) {
