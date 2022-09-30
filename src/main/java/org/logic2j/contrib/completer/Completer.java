@@ -168,11 +168,7 @@ public class Completer {
 
             // Here it's debatable if we should throw or just log and complete to nothing
             // Eventually, it is clear that no completion can be proposed
-            final String message = "Logic2j cannot parse: \"" + goal + "\"";
-
-            // This will log where we fail for that goal with the stacktrace, but is of no interest to the caller
-            // Not sure this is a good idea to log here AND throw (with less detailed info).
-            logger.error(message, e);
+            final String message = "Logic2j failed parsing expression: \"" + goal + "\"";
 
             throw new OutOfMemoryError(message + ": " + e);
           }
