@@ -27,7 +27,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
- * Test test requires expanding the provided test Derby database, see
+ * Test requires expanding the provided test Derby database, see
  * build.gradle, target "unzipTestDb".
  */
 @Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")

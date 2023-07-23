@@ -36,7 +36,7 @@ public final class CollectionUtils {
   }
 
   /**
-   * Format a collection using it's element's {@link String#valueOf(Object)} method, but inserting a separator between
+   * Format a collection using its element's {@link String#valueOf(Object)} method, but inserting a separator between
    * consecutive elements, and not surrounding the result by any braket, brace or parenthesis.
    *
    * @param theCollection The collection to format. Must not be null.
@@ -65,7 +65,7 @@ public final class CollectionUtils {
   }
 
   /**
-   * Format an array using it's element's {@link String#valueOf(Object)} method, but inserting a separator between consecutive
+   * Format an array using its element's {@link String#valueOf(Object)} method, but inserting a separator between consecutive
    * elements, and not surrounding the result by any braket, brace or parenthesis.
    *
    * @param theArray     The array to format. Must not be null.
@@ -202,7 +202,7 @@ public final class CollectionUtils {
    * @param theLabel          A label to display first, as is without change. If null, "" is used.
    * @param coll              A collection whose elements will be listed (if not too large)
    * @param maxNumberReported The maximum number of elements to report in case of large collections, or 0 to report all whatever the size.
-   * @return A usually multiline String describing the collection. This can be logged, or output to System.out, for instance. If the
+   * @return A usually multiline String describing the collection. This can be logged, or output to {@link System#out}, for instance. If the
    * collection is empty, one line is output. If the collection is large, only the first and last elements are output, while "..."
    * is shown in the middle.
    */

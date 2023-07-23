@@ -65,7 +65,7 @@ public class BenchmarkTest extends PrologTestBase {
   }
 
   /**
-   * Takes lots of time and stack - use with parsimony and with -Xss10m. By default we will ignore this test.
+   * Takes lots of time and stack - use with parsimony and with -Xss10m. By default, we will ignore this test.
    */
   @Test
   public void millionLoops() {

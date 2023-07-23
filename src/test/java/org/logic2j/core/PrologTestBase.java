@@ -43,7 +43,7 @@ import org.logic2j.engine.solver.listener.CountingSolutionListener;
 
 /**
  * Base class for tests, initialize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is
- * {@link org.logic2j.core.impl.PrologReferenceImplementation.InitLevel#L1_CORE_LIBRARY}, and
+ * {@link org.logic2j.core.impl.PrologReferenceImplementation.InitLevel#L1_CORE_LIBRARY}), and
  * provides utility methods.
  */
 public abstract class PrologTestBase {

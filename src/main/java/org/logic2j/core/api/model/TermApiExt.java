@@ -275,7 +275,7 @@ public class TermApiExt extends TermApi {
     } else if (theObject instanceof Boolean) {
       result = (Boolean) theObject ? Struct.ATOM_TRUE : Struct.ATOM_FALSE;
     } else if (theObject instanceof CharSequence || theObject instanceof Character) {
-      // Very very vary rudimentary parsing
+      // Very rudimentary parsing
       final String chars = theObject.toString();
       if (theMode == FactoryMode.ATOM) {
         result = Struct.atom(chars);

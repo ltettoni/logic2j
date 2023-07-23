@@ -33,7 +33,7 @@ import org.logic2j.engine.unify.UnifyContext;
  * <li>Functor - evaluates to a result, for example the addition of two numbers 1 + 2</li>
  * </ul>
  *
- * @note Strangely, this class has invoke() features so it's not only a description!
+ * @note Strangely, this class has {@link #invoke(Struct, UnifyContext)} features, so it's not only a description!
  */
 public class PrimitiveInfo {
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrimitiveInfo.class);

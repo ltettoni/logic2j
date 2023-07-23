@@ -24,7 +24,7 @@ import org.logic2j.core.PrologTestBase;
 
 /**
  * Common base class for testing the Prolog engine with data sources. Although it would be formally cleaner to instantiate data sources once
- * per test case (using a @Before), let's go for a slightly faster approach: one connection per test class, since we only reading from our
+ * per test case (using a @Before), let's go for a slightly faster approach: one connection per test class, since we are only reading from our
  * reference databases.
  */
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {

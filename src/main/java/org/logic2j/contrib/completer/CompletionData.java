@@ -38,7 +38,7 @@ public class CompletionData {
 
   /**
    * The part of "original" we search for autocompletion.
-   * If the original is "myPred(abc", we are autocompleting on "abc", so stripped="abc"
+   * If the original is "myPred(abc"), we are autocompleting on "abc", so stripped="abc"
    */
   private String stripped;
 

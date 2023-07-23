@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  * Copied from tuProlog sources, then refactored a little.
- * This class defines a tuProlog operator, in terms of a text, a associativity, and a priority.
+ * This class defines a tuProlog operator, in terms of a text, an associativity, and a priority.
  */
 public final class Operator implements Serializable {
   private static final long serialVersionUID = 1L;

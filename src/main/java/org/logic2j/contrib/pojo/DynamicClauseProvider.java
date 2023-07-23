@@ -28,7 +28,7 @@ import org.logic2j.engine.unify.UnifyContext;
 
 /**
  * Allow dynamic assertion / retraction of facts or rules.
- * This {@link org.logic2j.core.api.ClauseProvider} will help you solving goals against data contexts that evolve over time.
+ * This {@link org.logic2j.core.api.ClauseProvider} will help you solve goals against data contexts that evolve over time.
  * You can easily add or retract facts or rules made available to the {@link Solver}.
  */
 public class DynamicClauseProvider implements ClauseProvider {

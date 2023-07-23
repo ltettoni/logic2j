@@ -207,7 +207,7 @@ public class DefaultTermAdapter implements TermAdapter {
 
     // For converting to Enum, we expect that theTerm will match the name() of the target Enum.
     // We will allow theTerm to be either the exact atom (eg 'VAL'), or
-    // a struct/1 with any functor and the value, (eg my_enum_type_ignored('VAL')).
+    // a struct/1 with any functor and the value, (e.g. my_enum_type_ignored('VAL')).
     // The reason is for consistency with the cases when the Prolog will return an enum value of a class that
     // Java cannot pre-determine. In that case user has to override this method in a dedicated TermAdapter,
     // and lookup the effective enum from the specified functor.

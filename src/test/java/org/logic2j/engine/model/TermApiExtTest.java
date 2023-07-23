@@ -31,7 +31,7 @@ public class TermApiExtTest {
   @Test
   public void selectTerm() {
     final Object arg0 = Struct.valueOf("b", "c", "c2");
-    final Object term = Struct.valueOf("a", arg0, "b2");
+    final Struct<?> term = Struct.valueOf("a", arg0, "b2");
     //        unmarshall("a(b(c,c2),b2)");
     //
     assertThat(termApiExt().selectTerm(term, "", Struct.class)).isEqualTo(term);
@@ -64,7 +64,7 @@ public class TermApiExtTest {
       // OK
     }
     //
-    final Struct<?> sTerm = (Struct<?>) term;
+    final Struct<?> sTerm = term;
     assertThat(termApiExt().selectTerm(term, "a/", Struct.class)).isEqualTo(arg0);
     assertThat(termApiExt().selectTerm(term, "a[1]", Struct.class)).isEqualTo(arg0);
     assertThat(termApiExt().selectTerm(term, "[1]", Struct.class)).isEqualTo(arg0);

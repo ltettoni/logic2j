@@ -121,7 +121,7 @@ class Tokenizer extends StreamTokenizer {
     // comments
     ordinaryChar('%');
     // it is not possible to enable StreamTokenizer#slashStarComments and % as a StreamTokenizer#commentChar
-    // and it is also not possible to use StreamTokenizer#whitespaceChars for ' '
+    // , and it is also not possible to use StreamTokenizer#whitespaceChars for ' '
   }
 
   /**
@@ -268,7 +268,7 @@ class Tokenizer extends StreamTokenizer {
             continue; // continuation escape sequence marker \\r
           }
           if (typeb == '\\') {
-            // Double backslash. Output only one and don't pushback
+            // Double backslash. Output only one and don't push back
             quote.append('\\');
             continue; // 2 baclslashes eaten
           }
@@ -420,7 +420,7 @@ class Tokenizer extends StreamTokenizer {
         final String svalc = this.sval;
 
         // 2.c check that the next token after '.' is a possible fraction
-        if (typec != TT_WORD) { // if its not, the period is an End period
+        if (typec != TT_WORD) { // if it is not, the period is an End period
           pushBack(); // pushback 1 the token after period
           this.pushBack2 = new PushBack(typeb, svalb); // pushback 2 the period token
           if (svala.toUpperCase().endsWith("L")) {

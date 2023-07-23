@@ -44,7 +44,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
 
 
   /**
-   * Do we solve the ";" (OR) predicate internally here, or in the predicate.
+   * Do we solve the ";" (OR) predicate internally here or via using the external predicate?
    * (see note re. processing of OR in CoreLibrary.pro)
    */
   protected final boolean isInternalOr() {

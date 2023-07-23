@@ -217,7 +217,7 @@ public class Parser {
         yfy = -1;
       }
 
-      // VERY VERY PROTOTYPICAL - SHOULD ACTUALLY NOT BE USED
+      // VERY PROTOTYPICAL - SHOULD ACTUALLY NOT BE USED
       if (yfy >= yfx && yfy >= yf && yfy >= Operator.OP_LOWEST) {
         final List<Object> elements = new ArrayList<>();
         elements.add(leftSide.result);

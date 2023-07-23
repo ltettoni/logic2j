@@ -67,7 +67,7 @@ public class LibraryBase implements PLibrary {
    * Make sure term is not a free {@link Var}.
    *
    * @param term
-   * @param nameOfPrimitive Non functional - only to report the name of the primitive in case an Exception is thrown
+   * @param nameOfPrimitive Non-functional - only to report the name of the primitive in case an Exception is thrown
    * @param indexOfArg      zero-based index of argument causing error
    * @throws InvalidTermException
    */

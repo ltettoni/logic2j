@@ -39,7 +39,7 @@ public class DefaultTermUnmarshaller implements TermUnmarshaller {
    * A default TermMapper that will not handle primitives or operators defined in libraries.
    */
   private TermMapper normalizer = theTerm -> {
-    return termApi().normalize(theTerm); // Uh, will ignore any existing primitives, etc?
+    return termApi().normalize(theTerm); // Uh, will ignore any existing primitives, etc.?
   };
 
   @Override

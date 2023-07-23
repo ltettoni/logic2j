@@ -25,7 +25,7 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.core.impl.Solver;
 
 /**
- * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules) expressed as text.
+ * The API to manage theories (lists of Prolog {@link Clause}s (facts or rules)) expressed as text.
  * The {@link TheoryManager} also implements
  * {@link ClauseProvider} since it provides sequences of {@link Clause}s to
  * the {@link Solver} inference engine.
