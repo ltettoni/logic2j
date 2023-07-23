@@ -82,13 +82,13 @@ public class ExcelReader {
     if (this.file.getName().endsWith(".xls")) {
       final InputStream myxls = new FileInputStream(this.file);
       final HSSFWorkbook workBook = new HSSFWorkbook(myxls);
-      final Sheet sheet = workBook.getSheetAt(0);
+      final HSSFSheet sheet = workBook.getSheetAt(0);
       final int excelPhysicalRows = sheet.getPhysicalNumberOfRows();
       final List<String> columnNames;
       if (this.firstRowIsHeaders) {
         columnNames = readRow(sheet, 0, String.class);
       } else {
-        final int nbColunms = ((HSSFSheet) sheet).getRow(0).getPhysicalNumberOfCells();
+        final int nbColunms = sheet.getRow(0).getPhysicalNumberOfCells();
         final List<String> colNames = new ArrayList<>();
         for (int i = 0; i < nbColunms; i++) {
           colNames.add(createSequenceElement(i));
