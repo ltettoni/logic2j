@@ -736,7 +736,7 @@ public class SqlBuilder3 {
         int counter = 0;
         for (SqlBuilder3 sub : this.subQueries) {
           if (!sub.isSelect()) {
-            throw new IllegalArgumentException("Only subtables corresponding to select statement allowed, not " + sub.toString());
+            throw new IllegalArgumentException("Only subtables corresponding to select statement allowed, not " + sub);
           }
           if (counter > 0) {
             subTable.append(" union ");
@@ -1130,7 +1130,7 @@ public class SqlBuilder3 {
     @Override
     public String sql() {
       if (getOperand() != null) {
-        SqlBuilder3.this.parameters.addAll(Arrays.asList(getOperand()));
+        SqlBuilder3.this.parameters.addAll(Collections.singletonList(getOperand()));
       }
       return getColumn().sql() + getOperator().getSql() + '(' + this.sql + ')';
     }

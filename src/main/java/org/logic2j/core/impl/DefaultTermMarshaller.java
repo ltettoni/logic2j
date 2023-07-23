@@ -229,10 +229,9 @@ public class DefaultTermMarshaller implements TermMarshaller, ExtendedTermVisito
     if (theTerm instanceof CharSequence) {
       return termApi().quoteIfNeeded((CharSequence) theTerm);
     }
-    if (!(theTerm instanceof Struct)) {
+    if (!(theTerm instanceof Struct<?> theStruct)) {
       return accept(theTerm);
     }
-    final Struct<?> theStruct = (Struct<?>) theTerm;
     int p;
     final String name = theStruct.getName();
     final int arity = theStruct.getArity();

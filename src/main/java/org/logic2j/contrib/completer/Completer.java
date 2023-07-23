@@ -161,7 +161,7 @@ public class Completer {
           final String goal = buildGoal(completionData.getPartialPredicate(), arity);
           logger.info("Going to execute: {}", goal);
           final Object goalObj;
-;         try {
+          try {
             goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
           } catch (OutOfMemoryError e) {
             // Under some conditions, for example in autocompleters, the Logic2j Parser and Tokenizer go to OOM we need to understand on which goals

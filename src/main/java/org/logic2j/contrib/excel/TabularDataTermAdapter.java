@@ -39,10 +39,9 @@ public class TabularDataTermAdapter extends DefaultTermAdapter {
 
   @Override
   public List<Object> toTerms(Object theObject, AssertionMode theAssertionMode) {
-    if (!(theObject instanceof TabularData)) {
+    if (!(theObject instanceof TabularData tabularData)) {
       return super.toTerms(theObject, theAssertionMode);
     }
-    final TabularData tabularData = (TabularData) theObject;
     final String dataSetName = tabularData.getDataSetName();
     final int nbRows = tabularData.getNbRows();
     final int nbColumns = tabularData.getNbColumns();

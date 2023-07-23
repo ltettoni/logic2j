@@ -145,8 +145,7 @@ public final class CollectionUtils {
 
       // Report
       if (counter < half || counter >= size - half) {
-        if (element instanceof Entry<?, ?>) {
-          final Entry<?, ?> entry = (Entry<?, ?>) element;
+        if (element instanceof Entry<?, ?> entry) {
           if (entry.getValue() instanceof Collection<?>) {
             final int colLSize = ((Collection<?>) entry.getValue()).size();
             sb.append(" ").append(entry.getKey()).append('[').append(colLSize).append("]=").append(entry.getValue()).append('\n');

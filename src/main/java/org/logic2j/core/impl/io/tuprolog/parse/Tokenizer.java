@@ -367,13 +367,13 @@ class Tokenizer extends StreamTokenizer {
         // 1.a. complex integers
         if (svala.startsWith("0")) {
           if (svala.indexOf('b') == 1) {
-            return new Token("" + Long.parseLong(svala.substring(2), 2), INTEGER); // try binary
+            return new Token(String.valueOf(Long.parseLong(svala.substring(2), 2)), INTEGER); // try binary
           }
           if (svala.indexOf('o') == 1) {
-            return new Token("" + Long.parseLong(svala.substring(2), 8), INTEGER); // try octal
+            return new Token(String.valueOf(Long.parseLong(svala.substring(2), 8)), INTEGER); // try octal
           }
           if (svala.indexOf('x') == 1) {
-            return new Token("" + Long.parseLong(svala.substring(2), 16), INTEGER); // try hex
+            return new Token(String.valueOf(Long.parseLong(svala.substring(2), 16)), INTEGER); // try hex
           }
         }
 
@@ -387,9 +387,9 @@ class Tokenizer extends StreamTokenizer {
 
           if (svala.toUpperCase().endsWith("L")) {
             svala = svala.substring(0, svala.length() - 1);
-            return new Token("" + Long.parseLong(svala), LONG);
+            return new Token(String.valueOf(Long.parseLong(svala)), LONG);
           } else {
-            return new Token("" + Integer.parseInt(svala), INTEGER);
+            return new Token(String.valueOf(Integer.parseInt(svala)), INTEGER);
           }
         }
 
@@ -399,7 +399,7 @@ class Tokenizer extends StreamTokenizer {
           final String svalc = this.sval;
           int intVal;
           if ((intVal = isCharacterCodeConstantToken(typec, svalc)) != -1) {
-            return new Token("" + intVal, INTEGER);
+            return new Token(String.valueOf(intVal), INTEGER);
           }
 
           // this is an invalid character code constant int
@@ -425,9 +425,9 @@ class Tokenizer extends StreamTokenizer {
           this.pushBack2 = new PushBack(typeb, svalb); // pushback 2 the period token
           if (svala.toUpperCase().endsWith("L")) {
             svala = svala.substring(0, svala.length() - 1);
-            return new Token("" + Long.parseLong(svala), LONG);
+            return new Token(String.valueOf(Long.parseLong(svala)), LONG);
           } else {
-            return new Token("" + Integer.parseInt(svala), INTEGER);
+            return new Token(String.valueOf(Integer.parseInt(svala)), INTEGER);
           }
         }
 

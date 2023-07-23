@@ -91,8 +91,8 @@ public class PojoLibraryTest extends PrologTestBase {
     assertThat(x instanceof PrologInstantiatedPojo).isTrue();
     final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
     assertThat(pojo.getStr()).isEqualTo("toto");
-    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+    assertThat(pojo.getAnInt()).isEqualTo(Integer.valueOf(1));
+    assertThat(pojo.getaDouble()).isEqualTo(Double.valueOf(2.3));
   }
 
   @Test
@@ -103,8 +103,8 @@ public class PojoLibraryTest extends PrologTestBase {
     assertThat(x instanceof PrologInstantiatedPojo).isTrue();
     final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
     assertThat(pojo.getStr()).isEqualTo("toto");
-    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+    assertThat(pojo.getAnInt()).isEqualTo(Integer.valueOf(1));
+    assertThat(pojo.getaDouble()).isEqualTo(Double.valueOf(2.3));
   }
 
 
@@ -116,8 +116,8 @@ public class PojoLibraryTest extends PrologTestBase {
     assertThat(x instanceof PrologInstantiatedPojo).isTrue();
     final PrologInstantiatedPojo pojo = (PrologInstantiatedPojo) x;
     assertThat(pojo.getStr()).isEqualTo("toto");
-    assertThat(pojo.getAnInt()).isEqualTo(new Integer(1));
-    assertThat(pojo.getaDouble()).isEqualTo(new Double(2.3));
+    assertThat(pojo.getAnInt()).isEqualTo(Integer.valueOf(1));
+    assertThat(pojo.getaDouble()).isEqualTo(Double.valueOf(2.3));
   }
 
 

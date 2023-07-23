@@ -28,8 +28,7 @@ public class TermApiExt extends TermApi {
       // Now plain Strings are atoms!
       return true;
     }
-    if (theTerm instanceof Struct) {
-      final Struct<?> s = (Struct<?>) theTerm;
+    if (theTerm instanceof Struct<?> s) {
       return s.getArity() == 0 || PrologLists.isEmptyList(s);
     }
     return false;
@@ -296,9 +295,8 @@ public class TermApiExt extends TermApi {
           result = chars.intern();
         }
       }
-    } else if (theObject instanceof Number) {
+    } else if (theObject instanceof Number nbr) {
       // Other types of numbers
-      final Number nbr = (Number) theObject;
       if (nbr.doubleValue() % 1 != 0) {
         // Has floating point number
         result = nbr.doubleValue();

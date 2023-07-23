@@ -215,8 +215,7 @@ public class DefaultTermAdapter implements TermAdapter {
     final String effectiveEnumName;
     if (theTerm instanceof String) {
       effectiveEnumName = theTerm.toString();
-    } else if (theTerm instanceof Struct) {
-      Struct<?> s = (Struct<?>) theTerm;
+    } else if (theTerm instanceof Struct<?> s) {
       if (s.getArity() != 1) {
         throw new IllegalArgumentException(message + ": if a Struct is passed, arity must be 1, was " + s.getArity());
       }

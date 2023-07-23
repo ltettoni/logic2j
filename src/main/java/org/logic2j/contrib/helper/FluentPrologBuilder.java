@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 import org.logic2j.core.impl.theory.TheoryContent;
@@ -97,16 +99,12 @@ public class FluentPrologBuilder implements PrologBuilder {
 
 
   public FluentPrologBuilder withTheory(File... files) {
-    for (File file : files) {
-      theoryFiles.add(file);
-    }
+      Collections.addAll(theoryFiles, files);
     return this;
   }
 
   public FluentPrologBuilder withTheory(String... resources) {
-    for (String resource : resources) {
-      theoryResources.add(resource);
-    }
+      Collections.addAll(theoryResources, resources);
     return this;
   }
   // ---------------------------------------------------------------------------

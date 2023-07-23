@@ -103,10 +103,9 @@ public class RDBLibrary extends LibraryBase {
     internalGoal = termApiExt().normalize(internalGoal, getProlog().getLibraryManager().wholeContent());
 
     final Object result = getProlog().solve(internalGoal).var(resultVar).unique();
-    if (!(result instanceof Struct)) {
+    if (!(result instanceof Struct<?> plistOfTblPredicates)) {
       throw new InvalidTermException("Internal result must be a Struct");
     }
-    final Struct<?> plistOfTblPredicates = (Struct<?>) result;
     logger.debug("select/3: Solving {} gives internal solution: {}", plistOfTblPredicates);
     final List<Struct> javaListRoot = PrologLists.javaListFromPList(plistOfTblPredicates, new ArrayList<>(), Struct.class);
     logger.info(CollectionUtils.format("Internal solution, list elements:", javaListRoot, 10));
@@ -179,8 +178,7 @@ public class RDBLibrary extends LibraryBase {
         }
         final Table table = builder.table(tableName, alias);
         final Column sqlColumn = builder.column(table, columnName);
-        if (valueTerm instanceof Var<?>) {
-          final Var<?> var = (Var<?>) valueTerm;
+        if (valueTerm instanceof Var<?> var) {
           if (var == Var.anon()) {
             // Will ignore any anonymous var
             continue;
@@ -218,8 +216,7 @@ public class RDBLibrary extends LibraryBase {
     final CollectionMap<String, SqlBuilder3.ColumnOperatorParameterCriterion> columnsPerVariable = new CollectionMap<>();
     // Join clauses
     for (final SqlBuilder3.ColumnOperatorParameterCriterion column : rawColumns) {
-      if (column.getOperand() instanceof Var<?>) {
-        final Var<?> var = (Var<?>) column.getOperand();
+      if (column.getOperand() instanceof Var<?> var) {
         projectVars.add(var);
         columnsPerVariable.add(var.getName(), column);
       }
@@ -336,8 +333,7 @@ public class RDBLibrary extends LibraryBase {
   private Object jdbcFromTerm(Object theTerm) {
     if (theTerm instanceof Number) {
       return ((Number) theTerm).longValue();
-    } else if (theTerm instanceof Struct) {
-      final Struct<?> struct = (Struct<?>) theTerm;
+    } else if (theTerm instanceof Struct<?> struct) {
       if (PrologLists.isList(struct)) {
         final Set<Object> javaList = new HashSet<>();
         for (final Term t : PrologLists.javaListFromPList(struct, new ArrayList<>(), Term.class)) {

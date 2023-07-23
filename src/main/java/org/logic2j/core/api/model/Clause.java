@@ -86,13 +86,12 @@ public class Clause {
 
 
   private void initDenormalizedFields() {
-    if (!(this.content instanceof Struct)) {
+    if (!(this.content instanceof Struct<?> struct)) {
       // A single Object (typically a String) is a fact.
       this.head = this.content;
       this.body = null;
       return;
     }
-    final Struct<?> struct = (Struct<?>) this.content;
     if (Struct.FUNCTOR_CLAUSE != struct.getName()) { // Names are {@link String#intern()}alized so OK to check by reference
       this.head = this.content;
       this.body = null;
@@ -205,10 +204,9 @@ public class Clause {
    * @return true only if this Clause's content is a Struct which holds variables.
    */
   private boolean needCloning() {
-    if (!(this.content instanceof Struct)) {
+    if (!(this.content instanceof Struct<?> cs)) {
       return false;
     }
-    final Struct<?> cs = (Struct<?>) this.content;
     return cs.getIndex() > 0;
   }
 

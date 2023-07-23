@@ -155,8 +155,7 @@ public class Parser {
     } catch (final IOException ex) {
       throw new InvalidTermException("An I/O error occurred.");
     } catch (InvalidTermException e) {
-      if (this.reader instanceof LineNumberReader) {
-        LineNumberReader lnr = (LineNumberReader) this.reader;
+      if (this.reader instanceof LineNumberReader lnr) {
         int lineNumber = lnr.getLineNumber();
         throw new InvalidTermException("Error at line " + lineNumber + ": " + e.getMessage());
       }

@@ -187,10 +187,9 @@ public class DefaultTheoryManager implements TheoryManager {
         // Very rare case of facts being just a string (see "cut4" in our tests)
         clauseTerm = Struct.valueOf(clauseTerm.toString());
       }
-      if (!(clauseTerm instanceof Struct)) {
+      if (!(clauseTerm instanceof Struct<?> clauseStruct)) {
         throw new InvalidTermException("Non-Struct term \"" + clauseTerm + "\" cannot be used for a Clause");
       }
-      final Struct<?> clauseStruct = (Struct<?>) clauseTerm;
       if (isDirective(clauseStruct)) {
         // Identify directive
         final Object directiveGoal = clauseStruct.getArg(0);

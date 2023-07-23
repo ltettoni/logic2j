@@ -55,11 +55,11 @@ public class DynamicClauseProviderTest extends PrologTestBase {
     final Object theFact = "aYetUnknownFact";
     final int index = this.dynamic.assertClause(theFact); // Note: we use another string!
     assertThat(index).isEqualTo(0);
-    uniqueSolution("" + "aYetUnknownFact"); // Add empty string to make another reference
+    uniqueSolution("aYetUnknownFact"); // Add empty string to make another reference
     noSolutions("aStillUnknownFact");
     // Retract
     this.dynamic.retractFactAt(index); // Note: each time we use another string!
-    noSolutions("" + "aYetUnknownFact");
+    noSolutions("aYetUnknownFact");
     noSolutions("aStillUnknownFact");
   }
 

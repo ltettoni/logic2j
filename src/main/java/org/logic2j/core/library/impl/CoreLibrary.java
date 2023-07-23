@@ -21,6 +21,7 @@ import static org.logic2j.engine.model.TermApiLocator.termApiExt;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -215,8 +216,7 @@ public class CoreLibrary extends LibraryBase {
   @Predicate
   public int var(UnifyContext currentVars, Object t1) {
     int continuation = Continuation.CONTINUE;
-    if (t1 instanceof Var<?>) {
-      final Var<?> var = (Var<?>) t1;
+    if (t1 instanceof Var<?> var) {
       if (var == Var.anon()) {
         notifySolution(currentVars);
       } else {
@@ -518,14 +518,11 @@ public class CoreLibrary extends LibraryBase {
       return unify(currentVars, predicateValue, flattened);
     } else {
       // thePredicate is bound
-      if (predicateValue instanceof Struct) {
-        final Struct<?> struct = (Struct<?>) predicateValue;
+      if (predicateValue instanceof Struct<?> struct) {
         final int arity = struct.getArity();
         final ArrayList<Object> elems = new ArrayList<>(1 + arity);
         elems.add(struct.getName());
-        for (Object arg : struct.getArgs()) {
-          elems.add(arg);
-        }
+        Collections.addAll(elems, struct.getArgs());
         final Struct<?> plist = PrologLists.createPList(elems);
         return unify(currentVars, plist, theList);
       }
