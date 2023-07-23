@@ -5,10 +5,10 @@
 
   <groupId>org.logic2j</groupId>
   <artifactId>logic2j</artifactId>
-  <version>1.3.0-SNAPSHOT</version>
+  <version>1.3.0</version>
 
   <properties>
-    <logic2j-engine.version>1.2.0-SNAPSHOT</logic2j-engine.version>
+    <logic2j-engine.version>1.2.0</logic2j-engine.version>
 
     <slf4j-api.version>1.7.36</slf4j-api.version>
     <logback.version>1.2.12</logback.version>
@@ -120,4 +120,13 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>ltettoni Maven Packages on GitHub</name>
+      <url>https://maven.pkg.github.com/ltettoni/logic2j</url>
+    </repository>
+  </distributionManagement>
+
 </project>
