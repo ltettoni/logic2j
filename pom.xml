@@ -9,17 +9,22 @@
 
   <properties>
     <logic2j-engine.version>1.2.0-SNAPSHOT</logic2j-engine.version>
+
     <slf4j-api.version>1.7.36</slf4j-api.version>
+    <logback.version>1.2.12</logback.version>
+
     <poi.version>3.17</poi.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <derby.version>10.13.1.1</derby.version>
-    <logback.version>1.2.11</logback.version>
     <junit.version>4.13.2</junit.version>
-    <assertj.version>3.23.1</assertj.version>
+    <assertj.version>3.24.2</assertj.version>
 
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>17</maven.compiler.release> <!-- New way to configure cross-compiling -->
+    <maven.compiler.source>17</maven.compiler.source> <!-- IntelliJ will autoconfigure module source compatibility from this maven property -->
+    <maven.compiler.target>17</maven.compiler.target> <!-- IntelliJ will autoconfigure module source compatibility from this maven property -->
+
+    <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
   </properties>
 
   <description>
@@ -97,7 +102,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
+        <version>${maven-antrun-plugin.version}</version>
         <executions>
           <execution>
             <id>Prepare-test-resources</id>
