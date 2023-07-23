@@ -18,6 +18,8 @@
 package org.logic2j.contrib.excel;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
 import org.logic2j.core.PrologTestBase;
 
 class TabularDataTestBase extends PrologTestBase {
@@ -35,9 +37,7 @@ class TabularDataTestBase extends PrologTestBase {
     final String[] headers = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
     final String[] contents = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
     final Serializable[][] dataArray = new Serializable[LARGE_DATA_NB_ROWS][];
-    for (int row = 0; row < dataArray.length; row++) {
-      dataArray[row] = contents;
-    }
+    Arrays.fill(dataArray, contents);
     final TabularData tabData = new TabularData("largeData", headers, dataArray);
     tabData.setPrimaryKeyColumn(0);
     return tabData;
