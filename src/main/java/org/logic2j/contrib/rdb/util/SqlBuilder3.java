@@ -621,7 +621,7 @@ public class SqlBuilder3 {
   }
 
   /**
-   * Generate an "exists" criterion in the form "exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn".
+   * Generate an "exists" criterion in the form "exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn)".
    *
    * @param theColumnInThisSqlBuilder
    * @param theJoinedColumnInExistsSubquery
@@ -636,7 +636,7 @@ public class SqlBuilder3 {
   }
 
   /**
-   * Generate an "not exists" criterion in the form "not exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn".
+   * Generate a "not exists" criterion in the form "not exists(select * from theSubqueryTable where theCriterion and theSubqueryJoinColumn=theParentColumn)".
    *
    * @param theColumnInThisSqlBuilder
    * @param theJoinedColumnInExistsSubquery
@@ -1108,7 +1108,7 @@ public class SqlBuilder3 {
 
 
   /**
-   * A subselect expressed with a SQL query (and "?" placehoders), an a parameters array.
+   * A subselect expressed with a SQL query (and "?" placehoders), and a parameters array.
    * Note: the operator is always {@link Operator#IN}
    *
    * @version $Id$
@@ -1130,7 +1130,7 @@ public class SqlBuilder3 {
     @Override
     public String sql() {
       if (getOperand() != null) {
-        SqlBuilder3.this.parameters.addAll(Collections.singletonList(getOperand()));
+        SqlBuilder3.this.parameters.add(getOperand());
       }
       return getColumn().sql() + getOperator().getSql() + '(' + this.sql + ')';
     }
