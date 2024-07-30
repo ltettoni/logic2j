@@ -100,7 +100,7 @@ The core of Logic2j is ca. 70 Java types (classes, enums & interfaces), it perfo
 **  Static imports
 **  (no Java 8 closures yet)
 
-* Gradle build
+* Maven build
 
 == Programming with logic2j
 

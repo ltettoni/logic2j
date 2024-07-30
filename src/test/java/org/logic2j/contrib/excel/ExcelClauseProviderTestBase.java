@@ -43,7 +43,7 @@ public abstract class ExcelClauseProviderTestBase extends PrologTestBase {
 
   private void ensureResourceFile(File file) {
     if (!file.canRead()) {
-      throw new IllegalStateException("Test resource \"" + file + "\" missing - check " + this + ", check maven or gradle build or read documentation near test class");
+      throw new IllegalStateException("Test resource \"" + file + "\" missing - check " + this + ", check maven build or read documentation near test class");
     }
   }
 
