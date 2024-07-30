@@ -4,6 +4,8 @@ import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.util.TypeUtils;
 
@@ -236,11 +238,7 @@ public final class PrologLists {
   public static <Q, T extends Collection<Q>> T javaListFromPList(Struct<?> prologList, T theCollectionToFillOrNull, Class<Q> theElementRequiredClass,
                                                                  boolean recursive) {
     final T result;
-    if (theCollectionToFillOrNull == null) {
-      result = (T) new ArrayList<Q>();
-    } else {
-      result = theCollectionToFillOrNull;
-    }
+      result = Objects.requireNonNullElseGet(theCollectionToFillOrNull, () -> (T) new ArrayList<Q>());
     // In case not a list, we just add a single element to the collection to fill
     if (!isList(prologList)) {
       result.add(TypeUtils.safeCastNotNull("casting single value", prologList, theElementRequiredClass));

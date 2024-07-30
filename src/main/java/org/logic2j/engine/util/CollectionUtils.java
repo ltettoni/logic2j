@@ -114,7 +114,7 @@ public final class CollectionUtils {
     final Map<Class<?>, Integer> instancesByClass = new HashMap<>();
     final StringBuilder sb = new StringBuilder(label);
 
-    if (label.length() > 0) {
+    if (!label.isEmpty()) {
       sb.append(' ');
     }
 

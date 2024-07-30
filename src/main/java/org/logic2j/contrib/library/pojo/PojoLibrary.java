@@ -156,42 +156,47 @@ public class PojoLibrary extends LibraryBase {
 
     //
     Object currentValue = introspect(pojo, (String) propertyName);
-    if (currentValue == null) {
-      if (mode.hasOption("r")) {
-        // Null value means no solution (property does "not exist")
-        return Continuation.CONTINUE;
-      }
-      if (mode.hasOption("w")) {
-        // If value passed as argument is defined, will set
-        final Object newValue = currentVars.reify(theValue);
-        inject(pojo, (String) propertyName, newValue);
+      switch (currentValue) {
+          case null -> {
+              if (mode.hasOption("r")) {
+                  // Null value means no solution (property does "not exist")
+                  return Continuation.CONTINUE;
+              }
+              if (mode.hasOption("w")) {
+                  // If value passed as argument is defined, will set
+                  final Object newValue = currentVars.reify(theValue);
+                  inject(pojo, (String) propertyName, newValue);
 
-        return notifySolution(currentVars);
+                  return notifySolution(currentVars);
+              }
+              throw new PrologNonSpecificException("Option \"" + mode + "\" is not allowed");
+          }
+
+          // Collections will send multiple individual solutions
+          case Collection collection -> {
+              for (Object javaElem : collection) {
+                  final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
+                  final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
+                  if (result != Continuation.CONTINUE) {
+                      return result;
+                  }
+              }
+              return Continuation.CONTINUE;
+          }
+          case Object[] objects -> {
+              for (Object javaElem : objects) {
+                  final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
+                  final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
+                  if (result != Continuation.CONTINUE) {
+                      return result;
+                  }
+              }
+              return Continuation.CONTINUE;
+          }
+          default -> {
+          }
       }
-      throw new PrologNonSpecificException("Option \"" + mode + "\" is not allowed");
-    }
-    // Collections will send multiple individual solutions
-    if (currentValue instanceof Collection) {
-      for (Object javaElem : (Collection) currentValue) {
-        final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
-        if (result != Continuation.CONTINUE) {
-          return result;
-        }
-      }
-      return Continuation.CONTINUE;
-    }
-    if (currentValue instanceof Object[]) {
-      for (Object javaElem : (Object[]) currentValue) {
-        final Object prologRepresentation = getProlog().getTermAdapter().toTerm(javaElem, FactoryMode.ATOM);
-        final int result = unifyAndNotify(currentVars, prologRepresentation, theValue);
-        if (result != Continuation.CONTINUE) {
-          return result;
-        }
-      }
-      return Continuation.CONTINUE;
-    }
-    // Convert java objects to Prolog terms
+      // Convert java objects to Prolog terms
     final Object prologRepresentation = getProlog().getTermAdapter().toTerm(currentValue, FactoryMode.ATOM);
     return unifyAndNotify(currentVars, prologRepresentation, theValue);
   }

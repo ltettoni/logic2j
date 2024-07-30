@@ -56,8 +56,8 @@ public class SqlRunner {
   public List<Object[]> query(String theSelect, Object[] theParameters) throws SQLException {
     List<Object[]> result = null;
     if (DEBUG_ENABLED) {
-      logger.debug("SqlRunner SQL \"" + theSelect + '"');
-      logger.debug(" parameters=" + Arrays.asList(theParameters));
+      logger.debug("SqlRunner SQL \"{}\"", theSelect);
+      logger.debug(" parameters={}", Arrays.asList(theParameters));
     }
     try (final Connection conn = this.dataSource.getConnection(); //
          final PreparedStatement stmt = this.prepareStatement(conn, theSelect)) {
@@ -66,7 +66,7 @@ public class SqlRunner {
         result = handle(rs);
       } catch (final SQLException e) {
         if (DEBUG_ENABLED) {
-          logger.debug("Caught exception \"" + e + "\", going to rethrow");
+          logger.debug("Caught exception \"{}\", going to rethrow", e);
         }
         this.rethrow(e, theSelect, theParameters);
       }

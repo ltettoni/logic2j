@@ -113,7 +113,8 @@ public abstract class PrologTestBase {
     for (final CharSequence theGoal : theGoals) {
       try {
         this.prolog.solve(theGoal).isPresent();
-        fail("Goal should have failed and did not: \"" + theGoal + '"');
+          //noinspection MaskedAssertion
+          fail("Goal should have failed and did not: \"" + theGoal + '"');
       } catch (final Logic2jException | AssertionError e) {
         // Expected
       }

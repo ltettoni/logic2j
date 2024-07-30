@@ -63,7 +63,7 @@ public class Completer {
    */
   static CompletionData strip(String str) {
     final CompletionData result = new CompletionData(str);
-    if (str.length() > 0) {
+    if (!str.isEmpty()) {
       // Scan input from end towards beginning
       for (int pos = str.length() - 1; pos >= 0; pos--) {
         char c = str.charAt(pos);
@@ -144,86 +144,88 @@ public class Completer {
   public CompletionData complete(CharSequence partialInput) {
     final CompletionData completionData = strip(partialInput.toString());
     final Set<String> completions = new TreeSet<>();
-    if (partialInput.toString().endsWith(")")) {
-      // Nothing
-    } else if (completionData.getFunctor() != null) {
-      // Find arity
-      final Set<String> signatures = allSignatures(completionData.getFunctor());
-      if (signatures.isEmpty()) {
-        return completionData;
-      }
-      // find same predicate
-      for (String signature : signatures) {
-        if (termApi().functorFromSignature(signature).equals(completionData.getFunctor())) {
-          int arity = termApi().arityFromSignature(signature);
-
-          final int commaCount = commaCount(completionData.getPartialPredicate());
-          final String goal = buildGoal(completionData.getPartialPredicate(), arity);
-          logger.info("Going to execute: {}", goal);
-          final Object goalObj;
-          try {
-            goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
-          } catch (OutOfMemoryError e) {
-            // Under some conditions, for example in autocompleters, the Logic2j Parser and Tokenizer go to OOM we need to understand on which goals
-
-            // Here it's debatable if we should throw or just log and complete to nothing
-            // Eventually, it is clear that no completion can be proposed
-            final String message = "Logic2j failed parsing expression: \"" + goal + "\"";
-
-            throw new OutOfMemoryError(message + ": " + e);
-          }
-
-          SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<>(goalObj, COMPLETION_VAR, Object.class);
-          SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<>(stringSingleVarExtractor);
-          listener.setMaxFetch(MAX_FETCH);
-
-          try {
-            this.prolog.getSolver().solveGoal(goalObj, listener);
-          } catch (StackOverflowError e) {
-            // Typical completion for "member(" will try to solve "member(CompletionVar, _)" which has infinite solutions.
-            return completionData;
-          }
-          boolean hasVar = false;
-          final String termination = (arity > commaCount + 1) ? ", " : ")";
-          for (Object sol : listener.getResults()) {
-            String compl;
-            String envisagedCompletion;
-            if (sol instanceof Var<?>) {
-              hasVar = true;
-              envisagedCompletion = null;
-            } else if (sol instanceof Number) {
-              envisagedCompletion = sol.toString();
-            } else {
-              compl = String.valueOf(sol);
-              compl = termApi().quoteIfNeeded(compl).toString();
-              envisagedCompletion = compl;
+      if (!partialInput.toString().endsWith(")")) {
+          if (completionData.getFunctor() != null) {
+            // Find arity
+            final Set<String> signatures = allSignatures(completionData.getFunctor());
+            if (signatures.isEmpty()) {
+              return completionData;
             }
-            // FIXME: watch out - instead of using all the solutions, we must first make sure
-            // the solution matches the beginning of the text specified!
+            // find same predicate
+            for (String signature : signatures) {
+              if (termApi().functorFromSignature(signature).equals(completionData.getFunctor())) {
+                int arity = termApi().arityFromSignature(signature);
 
-            if (envisagedCompletion != null && envisagedCompletion.startsWith(completionData.getStripped())) {
-              completions.add(completionData.getOriginalBeforeStripped() + envisagedCompletion + termination);
+                final int commaCount = commaCount(completionData.getPartialPredicate());
+                final String goal = buildGoal(completionData.getPartialPredicate(), arity);
+                logger.info("Going to execute: {}", goal);
+                final Object goalObj;
+                try {
+                  goalObj = prolog.getTermUnmarshaller().unmarshall(goal);
+                } catch (OutOfMemoryError e) {
+                  // Under some conditions, for example in autocompleters, the Logic2j Parser and Tokenizer go to OOM we need to understand on which goals
+
+                  // Here it's debatable if we should throw or just log and complete to nothing
+                  // Eventually, it is clear that no completion can be proposed
+                  final String message = "Logic2j failed parsing expression: \"" + goal + "\"";
+
+                  throw new OutOfMemoryError(message + ": " + e);
+                }
+
+                SingleVarExtractor<Object> stringSingleVarExtractor = new SingleVarExtractor<>(goalObj, COMPLETION_VAR, Object.class);
+                SingleVarSolutionListener<Object> listener = new SingleVarSolutionListener<>(stringSingleVarExtractor);
+                listener.setMaxFetch(MAX_FETCH);
+
+                try {
+                  this.prolog.getSolver().solveGoal(goalObj, listener);
+                } catch (StackOverflowError e) {
+                  // Typical completion for "member(" will try to solve "member(CompletionVar, _)" which has infinite solutions.
+                  return completionData;
+                }
+                boolean hasVar = false;
+                final String termination = (arity > commaCount + 1) ? ", " : ")";
+                for (Object sol : listener.getResults()) {
+                  String compl;
+                  String envisagedCompletion;
+                  if (sol instanceof Var<?>) {
+                    hasVar = true;
+                    envisagedCompletion = null;
+                  } else if (sol instanceof Number) {
+                    envisagedCompletion = sol.toString();
+                  } else {
+                    compl = String.valueOf(sol);
+                    compl = termApi().quoteIfNeeded(compl).toString();
+                    envisagedCompletion = compl;
+                  }
+                  // FIXME: watch out - instead of using all the solutions, we must first make sure
+                  // the solution matches the beginning of the text specified!
+
+                  if (envisagedCompletion != null && envisagedCompletion.startsWith(completionData.getStripped())) {
+                    completions.add(completionData.getOriginalBeforeStripped() + envisagedCompletion + termination);
+                  }
+                }
+                if (hasVar) {
+                  completions.add(partialInput + "X" + termination);
+                  completions.add(partialInput + "_" + termination);
+                }
+              }
+            }
+
+          } else {
+            // Find all predicate's signatures starting with the stripped fragment
+            for (String signature : allSignatures(completionData.getStripped())) {
+              // Generate fragment from signature:  "append/3" -> "append("
+              final String functor = termApi().functorFromSignature(signature);
+              final String fragment = functor + '(';
+              if (fragment.startsWith(completionData.getStripped())) {
+                completions.add(completionData.getOriginalBeforeStripped() + fragment);
+              }
             }
           }
-          if (hasVar) {
-            completions.add(partialInput + "X" + termination);
-            completions.add(partialInput + "_" + termination);
-          }
-        }
+      } else {
+        // Nothing
       }
-
-    } else {
-      // Find all predicate's signatures starting with the stripped fragment
-      for (String signature : allSignatures(completionData.getStripped())) {
-        // Generate fragment from signature:  "append/3" -> "append("
-        final String functor = termApi().functorFromSignature(signature);
-        final String fragment = functor + '(';
-        if (fragment.startsWith(completionData.getStripped())) {
-          completions.add(completionData.getOriginalBeforeStripped() + fragment);
-        }
-      }
-    }
-    completionData.setCompletions(completions);
+      completionData.setCompletions(completions);
     return completionData;
   }
 

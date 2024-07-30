@@ -229,7 +229,7 @@ public class RDBLibrary extends LibraryBase {
       if (clausesOfOneJoinExpression.size() >= 2) {
         final List<SqlBuilder3.ColumnOperatorParameterCriterion> toJoin = new ArrayList<>(clausesOfOneJoinExpression);
         for (int i = 1; i < toJoin.size(); i++) {
-          builder.innerJoin(toJoin.get(0).getColumn(), toJoin.get(i).getColumn());
+          builder.innerJoin(toJoin.getFirst().getColumn(), toJoin.get(i).getColumn());
         }
       }
     }
@@ -261,11 +261,11 @@ public class RDBLibrary extends LibraryBase {
       if (countOnly.size() != 1) {
         throw new PrologNonSpecificException("Query for counting " + effectiveSql + "did not return a single result set row but " + countOnly.size());
       }
-      if (countOnly.get(0).length != 1) {
+      if (countOnly.getFirst().length != 1) {
         throw new PrologNonSpecificException(
-                "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.get(0).length);
+                "Query for counting " + effectiveSql + "did not return a single column set row but " + countOnly.getFirst().length);
       }
-      final Number resultSet = (Number) countOnly.get(0)[0];
+      final Number resultSet = (Number) countOnly.getFirst()[0];
       int number = resultSet.intValue();
       while (number-- > 0) {
         // Generates solutions without binding variables, just the right number of them

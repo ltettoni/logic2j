@@ -16,10 +16,13 @@
  */
 package org.logic2j.engine.exception;
 
+import java.io.Serial;
+
 /**
  * When a solution is not expected or not possible, depending on the calling context.
  */
 public class IllegalSolutionException extends Logic2jException {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   public IllegalSolutionException(CharSequence theMessage) {

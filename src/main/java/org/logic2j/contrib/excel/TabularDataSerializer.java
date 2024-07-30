@@ -46,29 +46,19 @@ public class TabularDataSerializer {
   }
 
   public TabularData read() throws IOException, ClassNotFoundException {
-    final InputStream in = new FileInputStream(this.file);
-    final BufferedInputStream buf = new BufferedInputStream(in, 102400); // Absolutely critical for perf!!!
-    final ObjectInput input = new ObjectInputStream(buf);
-    try {
-      final TabularData td = (TabularData) input.readObject();
-      return td;
-    } finally {
-      input.close();
-      buf.close();
-      in.close();
-    }
+      try (final InputStream in = new FileInputStream(this.file);
+           final BufferedInputStream buf = new BufferedInputStream(in, 102400); // Absolutely critical for perf!!!
+           final ObjectInput input = new ObjectInputStream(buf)) {
+          final TabularData td = (TabularData) input.readObject();
+          return td;
+      }
   }
 
   public void write(TabularData data) throws IOException {
-    final FileOutputStream out = new FileOutputStream(this.file);
-    final BufferedOutputStream buf = new BufferedOutputStream(out, 102400);
-    final ObjectOutputStream oos = new ObjectOutputStream(buf);
-    try {
-      oos.writeObject(data);
-    } finally {
-      oos.close();
-      buf.close();
-      out.close();
-    }
+      try (final FileOutputStream out = new FileOutputStream(this.file);
+           final BufferedOutputStream buf = new BufferedOutputStream(out, 102400);
+           final ObjectOutputStream oos = new ObjectOutputStream(buf)) {
+          oos.writeObject(data);
+      }
   }
 }

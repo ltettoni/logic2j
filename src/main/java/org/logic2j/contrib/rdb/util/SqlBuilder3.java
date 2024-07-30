@@ -150,7 +150,7 @@ public class SqlBuilder3 {
     for (Table tbl : this.tables) {
       if (!(classicTables.contains(tbl) || joinedTables.contains(tbl))) {
         classicTables.add(tbl);
-        classicFragments.add(0, tbl.declaration()); // It's necessary to prepend, otherwise table aliases can't be used in joins.
+        classicFragments.addFirst(tbl.declaration()); // It's necessary to prepend, otherwise table aliases can't be used in joins.
       }
     }
     // Generate SQL
@@ -654,23 +654,22 @@ public class SqlBuilder3 {
    * @return Multi-line description for debugging.
    */
   public String describe() {
-    final StringBuilder sb = new StringBuilder(this.toString());
-    sb.append('\n');
-    sb.append(" projections: ");
-    sb.append(this.projections);
-    sb.append('\n');
-    sb.append(" tables     : ");
-    sb.append(this.tables);
-    sb.append('\n');
-    sb.append(" joins      : ");
-    sb.append(this.join);
-    sb.append('\n');
-    sb.append(" criteria   : ");
-    sb.append(this.conjunctions);
-    sb.append('\n');
-    sb.append(" params : ");
-    sb.append(this.parameters);
-    return sb.toString();
+      String sb = this.toString() + '\n' +
+              " projections: " +
+              this.projections +
+              '\n' +
+              " tables     : " +
+              this.tables +
+              '\n' +
+              " joins      : " +
+              this.join +
+              '\n' +
+              " criteria   : " +
+              this.conjunctions +
+              '\n' +
+              " params : " +
+              this.parameters;
+    return sb;
   }
 
   //---------------------------------------------------------------------------
@@ -713,7 +712,7 @@ public class SqlBuilder3 {
      * @param theAlias
      */
     public Table(SqlBuilder3[] theSubQueries, boolean theOptionUnionAll, String theAlias) {
-      if (theAlias == null || theAlias.length() == 0) {
+      if (theAlias == null || theAlias.isEmpty()) {
         throw new IllegalArgumentException("Subtable alias name is required");
       }
       if (theSubQueries == null || theSubQueries.length == 0) {
@@ -1024,7 +1023,7 @@ public class SqlBuilder3 {
   /**
    * Column <operator> <immediate value>
    */
-  class ColumnOperatorLiteralCriterion extends ColumnOperatorCriterion {
+  private class ColumnOperatorLiteralCriterion extends ColumnOperatorCriterion {
 
     private final String literalValue;
 
@@ -1230,16 +1229,12 @@ public class SqlBuilder3 {
 
     public String format(Column theColumn, Operator theOperator, Object theOperand) {
       if (theOperand == null) {
-        switch (theOperator) {
-          case EQ_CASE_INSENSITIVE:
-          case EQ:
-            return theColumn.sql() + " is null";
-          case NOT_EQ:
-            return theColumn.sql() + " is not null";
-          default:
-            throw new UnsupportedOperationException(
-                    "Don't know how to format SQL binary operator \"" + theOperator + "\" when the operand value is null");
-        }
+          return switch (theOperator) {
+              case EQ_CASE_INSENSITIVE, EQ -> theColumn.sql() + " is null";
+              case NOT_EQ -> theColumn.sql() + " is not null";
+              default -> throw new UnsupportedOperationException(
+                      "Don't know how to format SQL binary operator \"" + theOperator + "\" when the operand value is null");
+          };
       }
       final String formattedOperand;
       if (theOperand instanceof Column) {

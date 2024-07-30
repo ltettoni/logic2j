@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.api.model;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
  * This class defines a tuProlog operator, in terms of a text, an associativity, and a priority.
  */
 public final class Operator implements Serializable {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   // TODO Probably this should become an enum

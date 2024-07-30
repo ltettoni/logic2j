@@ -17,6 +17,7 @@
 
 package org.logic2j.contrib.excel;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import org.logic2j.engine.exception.PrologNonSpecificException;
  * of Serializable elements.
  */
 public class TabularData implements Serializable {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private final String dataSetName;

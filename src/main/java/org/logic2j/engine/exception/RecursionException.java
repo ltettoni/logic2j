@@ -16,12 +16,15 @@
  */
 package org.logic2j.engine.exception;
 
+import java.io.Serial;
+
 /**
  * Indicate that recursion limit has been reached by the solver. Caused by either too many loops, or a JVM's {@link StackOverflowError} was
  * caught somewhere.
  */
 public class RecursionException extends Logic2jException {
 
+  @Serial
   private static final long serialVersionUID = -4416801118548866803L;
 
   public RecursionException(String theString) {

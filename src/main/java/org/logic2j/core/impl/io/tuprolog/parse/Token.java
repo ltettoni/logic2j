@@ -27,12 +27,14 @@ import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.LONG;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.OPERATOR;
 import static org.logic2j.core.impl.io.tuprolog.parse.MaskConstants.TYPEMASK;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * This class represents a token read by the prolog term tokenizer
  */
 class Token implements Serializable {
+  @Serial
   private static final long serialVersionUID = 1L;
   // token textual representation
   final String text;

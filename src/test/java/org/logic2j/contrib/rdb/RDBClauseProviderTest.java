@@ -21,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.sql.SQLException;
 import java.util.Iterator;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.unify.UnifyContext;
