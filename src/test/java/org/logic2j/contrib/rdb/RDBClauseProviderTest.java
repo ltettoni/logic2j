@@ -30,7 +30,7 @@ import org.logic2j.engine.unify.UnifyContext;
  * Test requires expanding the provided test Derby database, see
  * build.gradle, target "unzipTestDb".
  */
-@Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
+//@Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   private RDBClauseProvider provider;
 

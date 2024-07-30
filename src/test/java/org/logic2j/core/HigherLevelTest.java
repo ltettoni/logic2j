@@ -96,7 +96,7 @@ public class HigherLevelTest extends PrologTestBase {
    * N-Queens problem, heavy ones.
    * See {@link #queensLighter()}
    */
-  @Ignore("Very CPU intensive and quite long - enable when needed - does not bring much in functional testing")
+  //@Ignore("Very CPU intensive and quite long - enable when needed - does not bring much in functional testing")
   @Test
   public void queensHeavierForThePatientOne() {
     loadTheoryFromTestResourcesDir("queens.pro");
