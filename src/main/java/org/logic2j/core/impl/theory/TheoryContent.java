@@ -18,11 +18,8 @@ package org.logic2j.core.impl.theory;
 
 import static org.logic2j.engine.model.TermApiLocator.termApi;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.model.Var;
 import org.slf4j.Logger;
@@ -95,11 +92,8 @@ public class TheoryContent {
 
     final String clauseFamilyKey = termApi().predicateSignature(theGoalTerm);
     final List<Clause> family = this.clauses.get(clauseFamilyKey);
-    if (family == null) {
       // Predicate not registered in this theory clauses, return empty, it's not a failure condition
-      return Collections.emptyList();
-    }
-    return family;
+      return Objects.requireNonNullElse(family, Collections.emptyList());
   }
 
   public Object getInitializationGoal() {

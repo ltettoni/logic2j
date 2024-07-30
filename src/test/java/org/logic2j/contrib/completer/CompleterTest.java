@@ -77,7 +77,7 @@ public class CompleterTest extends PrologTestBase {
 
   @Ignore("so far library predicates are not returned.")
   @Test
-  public void writ() {
+  public void write() {
     CompletionData data = complete("writ");
     // logger.info("CompleterContext: {}", CompleterContextHolder.instance.get());
     assertThat(data.getCompletions()).containsExactly("write(");

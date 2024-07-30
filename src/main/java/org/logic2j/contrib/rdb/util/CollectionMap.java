@@ -16,6 +16,7 @@
  */
 package org.logic2j.contrib.rdb.util;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ import java.util.LinkedHashMap;
  * A {@link java.util.LinkedHashMap} whose values are {@link java.util.Collection}s of TypeValue.
  */
 public class CollectionMap<TypeKey, TypeValue> extends LinkedHashMap<TypeKey, Collection<TypeValue>> {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   /**

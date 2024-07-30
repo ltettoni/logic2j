@@ -193,8 +193,7 @@ public class Solver extends org.logic2j.engine.solver.Solver {
       }
     } // Iterate providers
     if (isDebug) {
-      logger
-              .debug(" +<< Exiting  solveAgainstClauseProviders#{}: last ClauseProvider iterated for: {}, result=" + result, inferenceCounter, goalTerm);
+      logger.debug(" +<< Exiting  solveAgainstClauseProviders#{}: last ClauseProvider iterated for: {}, result=" + result, inferenceCounter, goalTerm);
     }
     return result;
   }

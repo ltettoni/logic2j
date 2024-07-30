@@ -17,6 +17,7 @@
  */
 package org.logic2j.core.impl;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -28,6 +29,7 @@ import org.logic2j.engine.exception.PrologNonSpecificException;
  * Base implementation for OperatorManager
  */
 abstract class OperatorManagerBase implements OperatorManager, Serializable {
+  @Serial
   private static final long serialVersionUID = 1L;
 
   /**
@@ -70,6 +72,7 @@ abstract class OperatorManagerBase implements OperatorManager, Serializable {
    * @author ivar.orstavik@hist.no
    */
   static class OperatorRegister implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     // map of operators by name and type

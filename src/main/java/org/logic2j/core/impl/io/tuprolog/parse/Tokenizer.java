@@ -273,7 +273,7 @@ class Tokenizer extends StreamTokenizer {
             continue; // 2 baclslashes eaten
           }
           // Sneak peek at the first character following the backslash
-          if (svalb != null && svalb.length()>=1) {
+          if (svalb != null && !svalb.isEmpty()) {
             final char afterBackslash = svalb.charAt(0);
             switch (afterBackslash) {
               case 'n':

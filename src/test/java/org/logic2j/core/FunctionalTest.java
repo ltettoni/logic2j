@@ -94,14 +94,14 @@ public class FunctionalTest extends PrologTestBase {
 
   @Test
   public void appendWithFactorySolutions() {
-    final ObjectFactory<Integer> justLog = new ObjectFactory<Integer>() {
-      int counter = 0;
+    final ObjectFactory<Integer> justLog = new ObjectFactory<>() {
+        int counter = 0;
 
-      @Override
-      public Integer valueOf(Object[] values) {
-        logger.info("ObjectFactory called with values: {}", Arrays.asList(values));
-        return counter++;
-      }
+        @Override
+        public Integer valueOf(Object[] values) {
+            logger.info("ObjectFactory called with values: {}", Arrays.asList(values));
+            return counter++;
+        }
     };
     final List<Integer> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsToFactory(justLog).list();
     assertThat(list.size()).isEqualTo(5);

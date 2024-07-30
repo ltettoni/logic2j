@@ -125,65 +125,34 @@ public class CoreLibrary extends LibraryBase {
       }
     } else if (arity == 1) {
       final Object arg0 = goalStructArgs[0];
-      if (theMethodName == "not") {
-        result = not(currentVars, arg0);
-      } else if (theMethodName == "atom") {
-        result = atom(currentVars, arg0);
-      } else if (theMethodName == "atomic") {
-        result = atomic(currentVars, arg0);
-      } else if (theMethodName == "var") {
-        result = var(currentVars, arg0);
-      } else if (theMethodName == "exists") {
-        result = exists(currentVars, arg0);
-      } else if (theMethodName == "optional") {
-        result = optional(currentVars, arg0);
-      } else {
-        result = NO_DIRECT_INVOCATION_USE_REFLECTION;
-      }
+        result = switch (theMethodName) {
+            case "not" -> not(currentVars, arg0);
+            case "atom" -> atom(currentVars, arg0);
+            case "atomic" -> atomic(currentVars, arg0);
+            case "var" -> var(currentVars, arg0);
+            case "exists" -> exists(currentVars, arg0);
+            case "optional" -> optional(currentVars, arg0);
+            case null, default -> NO_DIRECT_INVOCATION_USE_REFLECTION;
+        };
     } else if (arity == 2) {
       final Object arg0 = goalStructArgs[0];
       final Object arg1 = goalStructArgs[1];
-      if (theMethodName == "unify") {
-        result = unify(currentVars, arg0, arg1);
-      } /*
-      else if (theMethodName == "expression_greater_equal_than") {
-        result = expression_greater_equal_than(currentVars, arg0, arg1);
-      }
-      else if (theMethodName == "expression_greater_than") {
-        result = expression_greater_than(currentVars, arg0, arg1);
-      } else if (theMethodName == "expression_lower_than") {
-        result = expression_lower_than(currentVars, arg0, arg1);
-      } else if (theMethodName == "expression_lower_equal_than") {
-        result = expression_lower_equal_than(currentVars, arg0, arg1);
-      }
-      */
-      else if (theMethodName == "expression_equals") {
-        result = expression_equals(currentVars, arg0, arg1);
-      } else if (theMethodName == "is") {
-        result = is(currentVars, arg0, arg1);
-      } else if (theMethodName == "plus") {
-        result = plus(currentVars, arg0, arg1);
-      } else if (theMethodName == "minus") {
-        result = minus(currentVars, arg0, arg1);
-      } else if (theMethodName == "multiply") {
-        result = multiply(currentVars, arg0, arg1);
-      } else if (theMethodName == "notUnify") {
-        result = notUnify(currentVars, arg0, arg1);
-      } else if (theMethodName == "clause") {
-        result = clause(currentVars, arg0, arg1);
-      } else if (theMethodName == "predicate2PList") {
-        result = predicate2PList(currentVars, arg0, arg1);
-      } else if (theMethodName == "atom_length") {
-        result = atom_length(currentVars, arg0, arg1);
-      } else if (theMethodName == "length") {
-        result = length(currentVars, arg0, arg1);
-      } else if (theMethodName == "count") {
-        result = count(currentVars, arg0, arg1);
-      } else if (theMethodName == "distinct") {
-        result = distinct(currentVars, arg0, arg1);
-      } else {
-        result = NO_DIRECT_INVOCATION_USE_REFLECTION;
-      }
+        result = switch (theMethodName) {
+            case "unify" -> unify(currentVars, arg0, arg1);
+            case "expression_equals" -> expression_equals(currentVars, arg0, arg1);
+            case "is" -> is(currentVars, arg0, arg1);
+            case "plus" -> plus(currentVars, arg0, arg1);
+            case "minus" -> minus(currentVars, arg0, arg1);
+            case "multiply" -> multiply(currentVars, arg0, arg1);
+            case "notUnify" -> notUnify(currentVars, arg0, arg1);
+            case "clause" -> clause(currentVars, arg0, arg1);
+            case "predicate2PList" -> predicate2PList(currentVars, arg0, arg1);
+            case "atom_length" -> atom_length(currentVars, arg0, arg1);
+            case "length" -> length(currentVars, arg0, arg1);
+            case "count" -> count(currentVars, arg0, arg1);
+            case "distinct" -> distinct(currentVars, arg0, arg1);
+            case null, default -> NO_DIRECT_INVOCATION_USE_REFLECTION;
+        };
     } else if (arity == 3) {
       final Object arg0 = goalStructArgs[0];
       final Object arg1 = goalStructArgs[1];

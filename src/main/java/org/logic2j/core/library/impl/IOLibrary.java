@@ -43,23 +43,16 @@ public class IOLibrary extends LibraryBase {
     final Object result;
     final Object[] args = theGoalStruct.getArgs();
     // Argument methodName is {@link String#intern()}alized so OK to check by reference
-    if (theMethodName == "write") {
-      result = write(currentVars, args);
-    } else if (theMethodName == "nl") {
-      result = nl(currentVars);
-    } else if (theMethodName == "nolog") {
-      result = nolog(currentVars, args);
-    } else if (theMethodName == "debug") {
-      result = debug(currentVars, args);
-    } else if (theMethodName == "info") {
-      result = info(currentVars, args);
-    } else if (theMethodName == "warn") {
-      result = warn(currentVars, args);
-    } else if (theMethodName == "error") {
-      result = error(currentVars, args);
-    } else {
-      result = NO_DIRECT_INVOCATION_USE_REFLECTION;
-    }
+      result = switch (theMethodName) {
+          case "write" -> write(currentVars, args);
+          case "nl" -> nl(currentVars);
+          case "nolog" -> nolog(currentVars, args);
+          case "debug" -> debug(currentVars, args);
+          case "info" -> info(currentVars, args);
+          case "warn" -> warn(currentVars, args);
+          case "error" -> error(currentVars, args);
+          case null, default -> NO_DIRECT_INVOCATION_USE_REFLECTION;
+      };
     return result;
   }
 

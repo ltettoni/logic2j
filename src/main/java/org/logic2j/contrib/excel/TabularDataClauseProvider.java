@@ -63,24 +63,26 @@ public class TabularDataClauseProvider implements ClauseProvider {
   @Override
   public Iterable<Clause> listMatchingClauses(Object theGoal, UnifyContext currentVars) {
     final String predicateSignature = termApi().predicateSignature(theGoal);
-    switch (this.mode) {
-      case EAV_NAMED:
-        if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {
-          return Collections.emptyList();
-        }
-        return this.clauses;
-      case EAVT:
-        if (!predicateSignature.equals(EAVT_4)) {
-          return Collections.emptyList();
-        }
-        return this.clauses;
-      case RECORD:
-        if (!predicateSignature.equals(this.tabularData.getDataSetName() + '/' + this.tabularData.getNbColumns())) {
-          return Collections.emptyList();
-        }
-        return this.clauses;
-      default:
-        throw new PrologNonSpecificException("Unknown mode " + this.mode);
-    }
+      return switch (this.mode) {
+          case EAV_NAMED -> {
+              if (!predicateSignature.equals(this.tabularData.getDataSetName() + "/3")) {
+                  yield Collections.emptyList();
+              }
+              yield this.clauses;
+          }
+          case EAVT -> {
+              if (!predicateSignature.equals(EAVT_4)) {
+                  yield Collections.emptyList();
+              }
+              yield this.clauses;
+          }
+          case RECORD -> {
+              if (!predicateSignature.equals(this.tabularData.getDataSetName() + '/' + this.tabularData.getNbColumns())) {
+                  yield Collections.emptyList();
+              }
+              yield this.clauses;
+          }
+          default -> throw new PrologNonSpecificException("Unknown mode " + this.mode);
+      };
   }
 }

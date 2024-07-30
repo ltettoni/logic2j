@@ -16,6 +16,8 @@
  */
 package org.logic2j.engine.exception;
 
+import java.io.Serial;
+
 /**
  * Indicate some condition that requires breaking the execution flow but for which
  * we do not YET have a proper Exception class.
@@ -25,6 +27,7 @@ package org.logic2j.engine.exception;
 @Deprecated
 public class PrologNonSpecificException extends Logic2jException {
 
+  @Serial
   private static final long serialVersionUID = 1;
 
   public PrologNonSpecificException(String theString) {
