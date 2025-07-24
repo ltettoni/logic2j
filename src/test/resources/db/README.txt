@@ -4,16 +4,11 @@ whose content is used to automate the testing of logic2j:
 - benchmarking and performance assessment of the relational databases clause providers
 - stress-loading and multi-threading of the engine on real data
 
-We use the Derby database engine in embedded mode and provide binary images
-of those public databases (so you won't have to load heaps of SQL), whenever possible.
+We use a H2 database engine in in-memory mode and provide a loading SQL script with DDL and DML.
 
 The Maven "test" target takes care of unzipping the voluminous binary images.
 
 The directory structure is, for a given DATABASE:
 
-- "src/test/db/DATABASE/README.txt"     Description, access information, credits, licensing information, of one database.
-- "src/test/db/DATABASE/sql"            SQL DDL and DML scripts adapted to Derby or, when not possible, 
-                                        download site and instructions to adapt them to Derby. 
-  
-- "src/test/db/DATABASE/derby-vN.zip"   A compressed image of the derby database, when possible.
-- "src/test/db/DATABASE/derby-vN/**"    An Maven auto-expanded image of the database, ready to connect to.
+- "src/test/resources/db/DATABASE/README.txt"     Description, access information, credits, licensing information, of one database.
+- "src/test/resources/db/DATABASE/sql"            SQL DDL and DML scripts adapted to H2.

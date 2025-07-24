@@ -16,11 +16,15 @@
  */
 package org.logic2j.contrib.rdb;
 
+import org.h2.jdbcx.JdbcDataSource;
+import org.logic2j.core.PrologTestBase;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import javax.sql.DataSource;
-import org.apache.derby.jdbc.EmbeddedDataSource;
-import org.logic2j.core.PrologTestBase;
+import java.util.UUID;
 
 /**
  * Common base class for testing the Prolog engine with data sources. Although it would be formally cleaner to instantiate data sources once
@@ -28,45 +32,50 @@ import org.logic2j.core.PrologTestBase;
  * reference databases.
  */
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
 
-  private static final String SRC_TEST_DB = "src/test/resources/db";
-  private static final String DERBY_VERSION_STRING = "v10.13.1.1";
-  private static final String ZIPCODES_DERBY_DIR = SRC_TEST_DB + "/zipcodes1/derby-" + DERBY_VERSION_STRING;
-  private static final String DERBY_USER = "APP"; // "APP" is a good default in Derby, see doc
-  private static final String DERBY_PWD = "APP"; // "APP" is a good default in Derby, see doc
+    private Connection zipcodesConnection = null;
 
-  private Connection zipcodesConnection = null;
+    /**
+     * @param h2LoadScriptResourcePath Relative path to the H2 initial load script.
+     * @return A new H2 in-memory {@link DataSource}
+     */
+    protected DataSource h2DataSource(String h2LoadScriptResourcePath) {
+        // Ensure proper exception message in case resource does not exist
+        try (final InputStream inputStream = getClass().getResourceAsStream(h2LoadScriptResourcePath)) {
+            if (inputStream == null) {
+                throw new RuntimeException("No classloadable resource at path \"" + h2LoadScriptResourcePath + '"');
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Could not autoclose classloadable resource");
+        }
 
-  /**
-   * @param theDerbyDatabaseDir Relative path to the derby binary directory, usually under "src/test/db/NAME"
-   * @return A new Derby EmbeddedDataSource
-   */
-  protected DataSource derbyDataSource(String theDerbyDatabaseDir) {
-    final EmbeddedDataSource ds = new EmbeddedDataSource();
-    ds.setDatabaseName(theDerbyDatabaseDir);
-    ds.setUser(DERBY_USER);
-    ds.setPassword(DERBY_PWD);
-    return ds;
-  }
+        String uniqueDbName = "testdb_" + UUID.randomUUID();
 
-  /**
-   * @return A {@link javax.sql.DataSource} to the "zipcodes" reference database.
-   */
-  protected DataSource zipcodesDataSource() {
-    return derbyDataSource(ZIPCODES_DERBY_DIR);
-  }
-
-  /**
-   * @return A (previously obtained and reused) {@link java.sql.Connection} to the "zipcodes" reference database.
-   * @throws java.sql.SQLException
-   */
-  protected Connection zipcodesConnection() throws SQLException {
-    if (this.zipcodesConnection == null) {
-      this.zipcodesConnection = zipcodesDataSource().getConnection();
-      logger.debug("Instantiated new connection to zipcodes DB");
+        final JdbcDataSource ds = new JdbcDataSource();
+        ds.setURL("jdbc:h2:mem:" + uniqueDbName + ";INIT=RUNSCRIPT FROM 'classpath:" + h2LoadScriptResourcePath + "'");
+        ds.setUser("");
+        ds.setPassword("");
+        return ds;
     }
-    return this.zipcodesConnection;
-  }
+
+    /**
+     * @return A {@link javax.sql.DataSource} to the "zipcodes" reference database.
+     */
+    protected DataSource zipcodesDataSource() {
+        return h2DataSource("/db/zipcodes1/sql/h2_init.sql");
+    }
+
+    /**
+     * @return A (previously obtained and reused) {@link java.sql.Connection} to the "zipcodes" reference database.
+     * @throws java.sql.SQLException
+     */
+    protected Connection zipcodesConnection() throws SQLException {
+        if (this.zipcodesConnection == null) {
+            this.zipcodesConnection = zipcodesDataSource().getConnection();
+            logger.debug("Instantiated new connection to zipcodes DB");
+        }
+        return this.zipcodesConnection;
+    }
 
 }
