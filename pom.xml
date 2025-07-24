@@ -109,9 +109,9 @@
             <id>Prepare-test-resources</id>
             <phase>generate-test-resources</phase>
             <configuration>
-              <tasks>
+              <target>
                 <unzip src="${project.basedir}/src/test/resources/db/zipcodes1/derby-v10.13.1.1.zip" dest="${project.basedir}/src/test/resources/db/zipcodes1"/>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
