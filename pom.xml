@@ -14,7 +14,7 @@
     <logback-classic.version>1.5.6</logback-classic.version>
 
     <poi.version>3.17</poi.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-beanutils.version>1.11.0</commons-beanutils.version>
     <derby.version>10.13.1.1</derby.version>
 
     <junit.version>4.13.2</junit.version>
