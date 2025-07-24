@@ -10,14 +10,15 @@
   <properties>
     <logic2j-engine.version>1.3.0</logic2j-engine.version>
 
-    <slf4j-api.version>2.0.12</slf4j-api.version>
-    <logback-classic.version>1.5.6</logback-classic.version>
+    <slf4j-api.version>2.0.17</slf4j-api.version>
+    <logback-classic.version>1.5.18</logback-classic.version>
 
+    <h2.version>2.3.232</h2.version>
     <poi.version>5.4.1</poi.version>
     <commons-beanutils.version>1.11.0</commons-beanutils.version>
 
     <junit.version>4.13.2</junit.version>
-    <assertj.version>3.26.3</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
@@ -25,7 +26,6 @@
     <maven.compiler.target>21</maven.compiler.target>
 
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
-    <h2.version>2.3.232</h2.version>
   </properties>
 
   <description>
