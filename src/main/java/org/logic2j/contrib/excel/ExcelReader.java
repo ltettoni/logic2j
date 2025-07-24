@@ -184,7 +184,7 @@ public class ExcelReader {
       final HSSFCell cell = row.getCell(c);
       Object value = null;
       if (cell != null) {
-        switch (cell.getCellTypeEnum()) {
+        switch (cell.getCellType()) {
           case FORMULA:
             value = cell.getCellFormula();
             break;
@@ -198,7 +198,7 @@ public class ExcelReader {
             break;
           default:
             throw new InvalidTermException(
-                    "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellTypeEnum() + " " + "not handled");
+                    "Excel cell at row=" + rowNumber + ", column=" + c + " of type " + cell.getCellType() + " " + "not handled");
         }
       }
       value = mapCellValue(value);

@@ -13,7 +13,7 @@
     <slf4j-api.version>2.0.12</slf4j-api.version>
     <logback-classic.version>1.5.6</logback-classic.version>
 
-    <poi.version>3.17</poi.version>
+    <poi.version>5.4.1</poi.version>
     <commons-beanutils.version>1.11.0</commons-beanutils.version>
     <derby.version>10.13.1.1</derby.version>
 
