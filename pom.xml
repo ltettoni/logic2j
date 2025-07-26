@@ -5,20 +5,20 @@
 
   <groupId>org.logic2j</groupId>
   <artifactId>logic2j</artifactId>
-  <version>1.4.0</version>
+  <version>1.3.1-SNAPSHOT</version>
 
   <properties>
-    <logic2j-engine.version>1.3.0</logic2j-engine.version>
+    <logic2j-engine.version>1.3.1</logic2j-engine.version>
 
-    <slf4j-api.version>2.0.12</slf4j-api.version>
-    <logback-classic.version>1.5.6</logback-classic.version>
+    <slf4j-api.version>2.0.17</slf4j-api.version>
+    <logback-classic.version>1.5.18</logback-classic.version>
 
-    <poi.version>3.17</poi.version>
-    <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <derby.version>10.13.1.1</derby.version>
+    <h2.version>2.3.232</h2.version>
+    <poi.version>5.4.1</poi.version>
+    <commons-beanutils.version>1.11.0</commons-beanutils.version>
 
     <junit.version>4.13.2</junit.version>
-    <assertj.version>3.26.3</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
@@ -91,33 +91,32 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>${derby.version}</version>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
+
+  <scm>
+    <connection>scm:git:git@github.com:ltettoni/logic2j.git</connection>
+    <developerConnection>scm:git:git@github.com:ltettoni/logic2j.git</developerConnection>
+    <url>https://github.com/ltettoni/logic2j.git</url>
+  </scm>
+
   <build>
     <plugins>
+      <!-- Manage releases -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${maven-antrun-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>Prepare-test-resources</id>
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <tasks>
-                <unzip src="${project.basedir}/src/test/resources/db/zipcodes1/derby-v10.13.1.1.zip" dest="${project.basedir}/src/test/resources/db/zipcodes1"/>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <preparationGoals>clean verify</preparationGoals>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+          <pushChanges>true</pushChanges>
+        </configuration>
       </plugin>
     </plugins>
   </build>

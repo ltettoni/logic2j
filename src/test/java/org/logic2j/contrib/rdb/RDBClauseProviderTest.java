@@ -26,9 +26,8 @@ import org.logic2j.core.api.model.Clause;
 import org.logic2j.engine.unify.UnifyContext;
 
 /**
- * Test requires the provided test Derby database from src/test/resources/db.
+ * Test requires the provided test H2 database from src/test/resources/db.
  */
-//@Ignore("It's a little slow - uncomment it if you are in frequent-testing mood - or necessity")
 public class RDBClauseProviderTest extends PrologWithDataSourcesTestBase {
   private RDBClauseProvider provider;
 

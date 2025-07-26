@@ -75,7 +75,7 @@ public class CompleterTest extends PrologTestBase {
   }
 
 
-  @Ignore("so far library predicates are not returned.")
+  @Ignore("So far library predicates are not returned.")
   @Test
   public void write() {
     CompletionData data = complete("writ");
