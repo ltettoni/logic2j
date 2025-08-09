@@ -17,15 +17,14 @@
 
 package org.logic2j.core.impl.theory;
 
-import java.io.File;
-import java.io.IOException;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
 import org.logic2j.core.impl.PrologReferenceImplementation;
 
-public class DefaultTheoryManagerTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTheoryManagerTest.class);
+import java.io.File;
+import java.io.IOException;
 
+public class DefaultTheoryManagerTest extends PrologTestBase {
   /**
    * Use a bare {@link org.logic2j.core.impl.PrologImplementation} for testing the {@link TheoryManager} and how theories are loaded.
    */
@@ -41,10 +40,8 @@ public class DefaultTheoryManagerTest extends PrologTestBase {
   public void loadAllTestTheories() throws IOException {
     final File[] allTheoryFilesFromTestResourceDir = allTheoryFilesFromTestResourceDir();
     for (final File theory : allTheoryFilesFromTestResourceDir) {
-      logger.info("Attempting to load theory at {}", theory);
       final TheoryManager theoryManager = new DefaultTheoryManager(this.prolog);
       final TheoryContent content = theoryManager.load(theory);
-      logger.info("Loaded library with content={}", content);
     }
   }
 }

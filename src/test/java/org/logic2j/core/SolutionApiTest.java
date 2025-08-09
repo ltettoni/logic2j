@@ -16,11 +16,6 @@
  */
 package org.logic2j.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.engine.exception.MissingSolutionException;
@@ -28,16 +23,19 @@ import org.logic2j.engine.exception.TooManySolutionsException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.holder.GoalHolder;
-import org.logic2j.engine.util.CollectionUtils;
 import org.logic2j.engine.util.ProfilingInfo;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test the solution API (and describe its use cases too).
  * Run this only after DefaultSolverTest is successful.
  */
 public class SolutionApiTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SolutionApiTest.class);
-
   @Before
   public void loadTheory() {
     loadTheoryFromTestResourcesDir("hex-chars.pro");
@@ -273,7 +271,6 @@ public class SolutionApiTest extends PrologTestBase {
     ProfilingInfo.setTimer1();
     final List<Object> solutions = holder.solution().list();
     ProfilingInfo.reportAll("list()");
-    logger.info(CollectionUtils.format("Solutions to " + goal + " are ", solutions, 10));
     assertThat(solutions.size()).isEqualTo(40320);
   }
 
@@ -285,10 +282,7 @@ public class SolutionApiTest extends PrologTestBase {
     final Iterator<Object> iter = holder.solution().iterator();
     int counter = 0;
     while (iter.hasNext()) {
-      final Object next = iter.next();
-      if (counter < 10) {
-        logger.info("Solution via iterator: {}", next);
-      }
+      iter.next();
       counter++;
     }
     ProfilingInfo.reportAll("iterator()");
@@ -302,7 +296,6 @@ public class SolutionApiTest extends PrologTestBase {
     ProfilingInfo.setTimer1();
     final List<Struct> values = holder.var("Q", Struct.class).list();
     ProfilingInfo.reportAll("var()");
-    logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
     assertThat(values.size()).isEqualTo(40320);
   }
 
@@ -313,7 +306,6 @@ public class SolutionApiTest extends PrologTestBase {
     ProfilingInfo.setTimer1();
     final Object[] values = holder.var("Q").array(new Object[]{});
     ProfilingInfo.reportAll("var()");
-    logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
     assertThat(values.length).isEqualTo(40320);
   }
 
@@ -325,10 +317,7 @@ public class SolutionApiTest extends PrologTestBase {
     final Iterator<Struct> iter = holder.var("Q", Struct.class).iterator();
     int counter = 0;
     while (iter.hasNext()) {
-      final Struct<?> next = iter.next();
-      if (counter < 10) {
-        logger.debug("Value via iterator: {}", next);
-      }
+      iter.next();
       counter++;
     }
     ProfilingInfo.reportAll("iterator()");
@@ -342,9 +331,6 @@ public class SolutionApiTest extends PrologTestBase {
     ProfilingInfo.setTimer1();
     int counter = 0;
     for (Struct<?> next : holder.var("Q", Struct.class)) {
-      if (counter < 10) {
-        logger.debug("Value via iterable: {}", next);
-      }
       counter++;
     }
     ProfilingInfo.reportAll("iterable()");
@@ -358,7 +344,6 @@ public class SolutionApiTest extends PrologTestBase {
     ProfilingInfo.setTimer1();
     final List<Map<Var<?>, Object>> values = holder.vars().list();
     ProfilingInfo.reportAll("vars()");
-    logger.info(CollectionUtils.format("Solutions to " + goal + " are ", values, 10));
     assertThat(values.size()).isEqualTo(40320);
   }
 
@@ -371,10 +356,7 @@ public class SolutionApiTest extends PrologTestBase {
     final Iterator<Map<Var<?>, Object>> iter = holder.vars().iterator();
     int counter = 0;
     while (iter.hasNext()) {
-      final Map<Var<?>, Object> next = iter.next();
-      if (counter < 10) {
-        logger.debug("Vars via iterator: {}", next);
-      }
+      iter.next();
       counter++;
     }
     ProfilingInfo.reportAll("iterator()");

@@ -32,8 +32,6 @@ import java.util.UUID;
  * reference databases.
  */
 public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologWithDataSourcesTestBase.class);
-
     private Connection zipcodesConnection = null;
 
     /**
@@ -73,7 +71,7 @@ public abstract class PrologWithDataSourcesTestBase extends PrologTestBase {
     protected Connection zipcodesConnection() throws SQLException {
         if (this.zipcodesConnection == null) {
             this.zipcodesConnection = zipcodesDataSource().getConnection();
-            logger.debug("Instantiated new connection to zipcodes DB");
+            // logger.debug("Instantiated new connection to zipcodes DB");
         }
         return this.zipcodesConnection;
     }

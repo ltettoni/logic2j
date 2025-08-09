@@ -17,21 +17,15 @@
 
 package org.logic2j.core;
 
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 import org.logic2j.engine.unify.UnifyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 /**
  * Used in test cases to extract number of solutions and solutions to a goal.
@@ -55,14 +49,11 @@ public class ExtractingSolutionListener extends CountingSolutionListener {
     this.varNames.add(Var.WHOLE_SOLUTION_VAR_NAME); // This pseudo var means the whole solution
 
     this.solutions = new ArrayList<>();
-
-    logger.info("Init listener for \"{}\"", theGoal);
   }
 
   @Override
   public int onSolution(UnifyContext currentVars) {
     final Object solution = currentVars.reify(goal);
-    logger.info(" solution: {}", solution);
 
     final Map<String, Object> solutionVars = new HashMap<>();
     solutionVars.put(Var.WHOLE_SOLUTION_VAR_NAME, solution); // The global solution

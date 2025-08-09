@@ -16,9 +16,6 @@
  */
 package org.logic2j.contrib.rdb.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
 import org.junit.Test;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Column;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Criterion;
@@ -26,9 +23,10 @@ import org.logic2j.contrib.rdb.util.SqlBuilder3.Operator;
 import org.logic2j.contrib.rdb.util.SqlBuilder3.Table;
 import org.logic2j.engine.util.CollectionUtils;
 
-public class SqlBuilder3Test {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SqlBuilder3Test.class);
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
+public class SqlBuilder3Test {
   public static SqlBuilder3 simple(String tbl, String col, Object value) {
     final SqlBuilder3 sb = new SqlBuilder3();
     final Table table = sb.table(tbl);
@@ -269,7 +267,6 @@ public class SqlBuilder3Test {
     final SqlBuilder3 sb = new SqlBuilder3();
     boolean all = false;
     sb.tableSubUnion("sub", all, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
-    // logger.debug("Union query: {}", sb.describe());
     assertThat(sb.getSelect()).isEqualTo(
             "select * /* no_proj_defined */ from (select t1.c1 from t1 where t1.c1=? union select t2.c2 from t2 where t2.c2=? union select t3.c3 from t3 where t3.c3=?) sub");
     assertThat(sb.getParameters().length).isEqualTo(3);
@@ -280,7 +277,6 @@ public class SqlBuilder3Test {
     final SqlBuilder3 sb = new SqlBuilder3();
     boolean all = true;
     sb.tableSubUnion("sub", all, simple("t1", "c1", 12), simple("t2", "c2", "x"), simple("t3", "c3", 34));
-    // logger.debug("Union query: {}", sb.describe());
     assertThat(sb.getSelect()).isEqualTo(
             "select * /* no_proj_defined */ from (select t1.c1 from t1 where t1.c1=? union all select t2.c2 from t2 where t2.c2=? union all select t3.c3 from t3 where t3.c3=?) sub");
     assertThat(sb.getParameters().length).isEqualTo(3);
@@ -291,7 +287,6 @@ public class SqlBuilder3Test {
     SqlBuilder3 sb = new SqlBuilder3();
     Column col = sb.column(sb.table("table"), "id");
     sb.addConjunction(sb.subselect(col, "my_sub_select of ? or ?", new Integer[]{5, 6}));
-    logger.debug("Union query: {}", sb.describe());
     assertThat(sb.getSelectCount()).isEqualTo("select count(*) from table where table.id in (my_sub_select of ? or ?)");
   }
 
@@ -307,7 +302,6 @@ public class SqlBuilder3Test {
     sb.addConjunction(sb.criterion(tgt, 8));
     sb.innerJoin(committeeId, src);
     sb.innerJoin(tgt, sb.column(sb.tableWithAutoAlias("person"), "id"));
-    logger.debug("apiUseCase1: {}", sb.describe());
     assertThat(sb.getSelectWithInlineParams()).isEqualTo(
             "select t2.tgt_id from committee t1 inner join apinav3_fw_cp t2 on t2.src_id=t1.id inner join person t3 on t3.id=t2.tgt_id where t1.id=9 and t2.tgt_id=8");
   }

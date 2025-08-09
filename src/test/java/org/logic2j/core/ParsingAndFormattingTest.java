@@ -16,18 +16,16 @@
  */
 package org.logic2j.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import org.logic2j.core.api.model.Operator;
 import org.logic2j.core.impl.PrologReferenceImplementation.InitLevel;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Test parsing and formatting.
  */
 public class ParsingAndFormattingTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ParsingAndFormattingTest.class);
-
   /**
    * No need for special init for only testing parsing and formatting.
    */
@@ -46,7 +44,6 @@ public class ParsingAndFormattingTest extends PrologTestBase {
   public void parseNarityOperator() {
     this.prolog.getOperatorManager().addOperator("oo", Operator.YFY, 1020);
     final Object t = unmarshall("a oo b oo c oo d");
-    logger.info("Result: {}", t);
     assertThat(marshall(t)).isEqualTo("oo(a, b, c, d)");
   }
 
@@ -59,7 +56,6 @@ public class ParsingAndFormattingTest extends PrologTestBase {
     assertThat(t.getClass()).isEqualTo(String.class);
     //
     t = unmarshall("t('A', b, 'C')");
-    logger.info("Formatted: {}", t);
     assertThat(marshall(t)).isEqualTo("t('A', b, 'C')");
   }
 

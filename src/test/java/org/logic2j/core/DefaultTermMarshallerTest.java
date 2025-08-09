@@ -17,18 +17,15 @@
 
 package org.logic2j.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-
 import org.junit.Test;
 import org.logic2j.core.impl.DefaultTermMarshaller;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.unify.UnifyContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
+
 public class DefaultTermMarshallerTest extends PrologTestBase {
-
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(DefaultTermMarshallerTest.class);
-
   private static final String REFERENCE_EXPRESSION = "a,b;c,d;e";
   private static final String EXPECTED_TOSTRING = "';'(','(a, b), ';'(','(c, d), e))";
 
@@ -36,7 +33,6 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
   public void simpleToString() {
     Object term = unmarshall(REFERENCE_EXPRESSION);
     String formatted = term.toString();
-    logger.info("toString: {}", formatted);
     assertThat(formatted).isEqualTo(EXPECTED_TOSTRING);
   }
 
@@ -44,7 +40,6 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
   public void defaultMarshallerUninitialized() {
     Object term = unmarshall(REFERENCE_EXPRESSION);
     CharSequence formatted = new DefaultTermMarshaller().marshall(term);
-    logger.info("uninitialized marshaller: {}", formatted);
     assertThat(formatted.toString()).isEqualTo("a , b ; c , d ; e");
   }
 
@@ -52,7 +47,6 @@ public class DefaultTermMarshallerTest extends PrologTestBase {
   public void defaultMarshaller() {
     Object term = unmarshall(REFERENCE_EXPRESSION);
     CharSequence formatted = getProlog().getTermMarshaller().marshall(term);
-    logger.info("prolog initialized marshaller: {}", formatted);
     assertThat(formatted).isEqualTo("a , b ; c , d ; e");
   }
 

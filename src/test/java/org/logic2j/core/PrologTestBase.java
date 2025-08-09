@@ -16,16 +16,6 @@
  */
 package org.logic2j.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.junit.Before;
 import org.logic2j.core.api.TermAdapter.FactoryMode;
 import org.logic2j.core.api.library.LibraryContent;
@@ -41,14 +31,23 @@ import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.solver.listener.CountingSolutionListener;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 /**
  * Base class for tests, initialize a fresh {@link org.logic2j.core.impl.PrologReferenceImplementation} on every method (level of init is
  * {@link org.logic2j.core.impl.PrologReferenceImplementation.InitLevel#L1_CORE_LIBRARY}), and
  * provides utility methods.
  */
 public abstract class PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PrologTestBase.class);
-
   protected static final File TEST_RESOURCES_DIR = new File("src/test/resources");
 
   /**
@@ -165,7 +164,6 @@ public abstract class PrologTestBase {
     assertThat(theGoals.length > 0).as("theGoals must not be empty for countOneSolution()").isTrue();
     GoalHolder result = null;
     for (final CharSequence goal : theGoals) {
-      logger.info("Expecting {} solution(s) when solving goal \"{}\"", theNumber, goal);
       result = this.prolog.solve(goal);
       // Now execute the goal - only extracting the number of solutions
       final int nbr = result.count();
@@ -241,7 +239,6 @@ public abstract class PrologTestBase {
     final TheoryContent load = manager.load(theFile);
     manager.addTheory(load);
 
-    logger.debug("Loaded theory from: {}", theFile);
   }
 
   /**

@@ -16,22 +16,19 @@
  */
 package org.logic2j.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Arrays;
-import java.util.List;
 import org.junit.Test;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.solver.extractor.ObjectFactory;
 import org.logic2j.engine.solver.holder.GoalHolder;
-import org.logic2j.engine.util.CollectionUtils;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Functional tests of the core features.
  */
 public class FunctionalTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(FunctionalTest.class);
-
   @Test
   public void rules() {
     loadTheoryFromTestResourcesDir("test-functional.pro");
@@ -63,7 +60,6 @@ public class FunctionalTest extends PrologTestBase {
   public void member() {
     countOneSolution("member(a, [a,b,c])", "member(b, [a,b,c])", "member(c, [a,b,c])");
     countNoSolution("member(d, [a,b,c])");
-    logger.info(CollectionUtils.format("All bindings: ", this.prolog.solve("member(X, [a,b,c])").vars().list(), 0));
 
     assertThat(uniqueSolution("append([1],[2,3],X)").var("X").unique().toString()).isEqualTo("[1,2,3]");
 
@@ -76,7 +72,6 @@ public class FunctionalTest extends PrologTestBase {
   @Test
   public void appendWithArraySolutions() {
     final List<Object[]> list = this.prolog.solve("append(X, Y, [a,b,c,d])").varsArray().list();
-    logger.info(CollectionUtils.format("All bindings as varsArray(): ", list, 0));
     assertThat(list.size()).isEqualTo(5);
     final Object[] rec0 = list.get(0);
     assertThat(rec0.length).isEqualTo(2);
@@ -99,7 +94,6 @@ public class FunctionalTest extends PrologTestBase {
 
         @Override
         public Integer valueOf(Object[] values) {
-            logger.info("ObjectFactory called with values: {}", Arrays.asList(values));
             return counter++;
         }
     };

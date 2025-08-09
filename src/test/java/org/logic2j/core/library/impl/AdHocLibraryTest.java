@@ -16,9 +16,6 @@
  */
 package org.logic2j.core.library.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.logic2j.engine.model.TermApiLocator.termApi;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.logic2j.core.PrologTestBase;
@@ -26,12 +23,11 @@ import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.solver.listener.SolutionListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.engine.model.TermApiLocator.termApi;
 
 public class AdHocLibraryTest extends PrologTestBase {
-  private static final Logger logger = LoggerFactory.getLogger(AdHocLibraryTest.class);
-
   @Before
   public void registerLibrary() {
     this.prolog.getLibraryManager().loadLibrary(new AdHocLibraryForTesting(this.prolog));
@@ -93,10 +89,7 @@ public class AdHocLibraryTest extends PrologTestBase {
     goalText = "int_range_multi(10, Q, 15) , int_range_multi(12, Q, 18)";
     Object goal = getProlog().getTermUnmarshaller().unmarshall(goalText);
     final Var<?> q = termApi().findVar(goal, "Q");
-    final SolutionListener listener = currentVars -> {
-      logger.info("App listener got one solution: {}", currentVars.reify(q));
-      return Continuation.CONTINUE;
-    };
+    final SolutionListener listener = currentVars -> Continuation.CONTINUE;
     getProlog().getSolver().solveGoal(goal, listener);
 
   }

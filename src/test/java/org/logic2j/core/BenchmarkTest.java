@@ -16,20 +16,19 @@
  */
 package org.logic2j.core;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.logic2j.engine.solver.holder.GoalHolder;
 import org.logic2j.engine.util.ProfilingInfo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * Performance benchmarks.
  */
 public class BenchmarkTest extends PrologTestBase {
-  private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BenchmarkTest.class);
-
   /**
    * Still failing with stack overflow if more than hanoi(8)! unless stack expanded with -Xss10m, for example, instead of the ridiculous
    * 512k
@@ -47,12 +46,12 @@ public class BenchmarkTest extends PrologTestBase {
     long t1 = System.currentTimeMillis();
     nSolutions(1000, "int10(_),int10(_),int10(_)");
     long t2 = System.currentTimeMillis();
-    logger.info("1000 iterations, elapse {}", t2 - t1);
+    // logger.info("100d0 iterations, elapse {}", t2 - t1);
     // Using ternary operator ","
     t1 = System.currentTimeMillis();
     nSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
     t2 = System.currentTimeMillis();
-    logger.info("1000 iterations, elapse {}", t2 - t1);
+    // logger.info("1000 iterations, elapse {}", t2 - t1);
   }
 
   @Test
@@ -61,7 +60,7 @@ public class BenchmarkTest extends PrologTestBase {
     final long t1 = System.currentTimeMillis();
     nSolutions(10000, "int10(_),int10(_),int10(_),int10(_)");
     final long t2 = System.currentTimeMillis();
-    logger.info("Elapse {}", t2 - t1);
+    // logger.info("Elapse {}", t2 - t1);
   }
 
   /**
@@ -74,12 +73,12 @@ public class BenchmarkTest extends PrologTestBase {
     long t1 = System.currentTimeMillis();
     nSolutions(10000000, "int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_)");
     long t2 = System.currentTimeMillis();
-    logger.info("1000000 iterations with binary AND, elapse {}", t2 - t1);
+    // logger.info("1000000 iterations with binary AND, elapse {}", t2 - t1);
     // Using n-ary operator ","
     t1 = System.currentTimeMillis();
     nSolutions(10000000, "','(int10(_),int10(_),int10(_),int10(_),int10(_),int10(_),int10(_))");
     t2 = System.currentTimeMillis();
-    logger.info("1000000 iterations with N-ary AND, elapse {}", t2 - t1);
+    // logger.info("1000000 iterations with N-ary AND, elapse {}", t2 - t1);
   }
 
   @Test
@@ -110,7 +109,7 @@ public class BenchmarkTest extends PrologTestBase {
       }
       final long startTime = System.currentTimeMillis();
       getProlog().solve(goal).count();
-      logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
+      // logger.info("Timing for {}: {}", goal, (System.currentTimeMillis() - startTime));
     }
   }
 

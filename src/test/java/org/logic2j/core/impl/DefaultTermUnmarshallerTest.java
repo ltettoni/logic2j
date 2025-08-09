@@ -17,22 +17,18 @@
 
 package org.logic2j.core.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.logic2j.core.impl.DefaultTermMarshallerTest.MARSHALLER;
-
 import org.junit.Test;
 import org.logic2j.engine.exception.InvalidTermException;
 import org.logic2j.engine.model.Struct;
 import org.logic2j.engine.model.Var;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.logic2j.core.impl.DefaultTermMarshallerTest.MARSHALLER;
 
 /**
  * Test both the DefaultTermUnmarshaller and DefaultTermMarshaller
  */
 public class DefaultTermUnmarshallerTest {
-  private static final Logger logger = LoggerFactory.getLogger(DefaultTermUnmarshallerTest.class);
-
   static final DefaultTermUnmarshaller UNMARSHALLER = new DefaultTermUnmarshaller();
 
   @Test
@@ -71,7 +67,6 @@ public class DefaultTermUnmarshallerTest {
   @Test
   public void normalization() {
     final Struct<?> term = (Struct<?>) UNMARSHALLER.unmarshall("f(a(1,2,X), Y, X, a(1,2,X))");
-    logger.info("raw: {}", term);
     assertThat(term.getArg(3)).isEqualTo(term.getArg(0));
   }
 

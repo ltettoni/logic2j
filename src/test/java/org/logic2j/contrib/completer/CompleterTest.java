@@ -79,7 +79,6 @@ public class CompleterTest extends PrologTestBase {
   @Test
   public void write() {
     CompletionData data = complete("writ");
-    // logger.info("CompleterContext: {}", CompleterContextHolder.instance.get());
     assertThat(data.getCompletions()).containsExactly("write(");
   }
 

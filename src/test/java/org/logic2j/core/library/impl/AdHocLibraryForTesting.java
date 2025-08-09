@@ -16,22 +16,21 @@
  */
 package org.logic2j.core.library.impl;
 
-import static org.logic2j.engine.solver.Continuation.CONTINUE;
-
-import java.util.ArrayList;
-import java.util.List;
 import org.logic2j.core.api.library.annotation.Predicate;
 import org.logic2j.core.impl.PrologImplementation;
 import org.logic2j.engine.model.Var;
 import org.logic2j.engine.solver.Continuation;
 import org.logic2j.engine.unify.UnifyContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.logic2j.engine.solver.Continuation.CONTINUE;
+
 /**
  * A small ad-hoc implementation of a {@link org.logic2j.core.api.library.PLibrary} just for testing.
  */
 public class AdHocLibraryForTesting extends LibraryBase {
-  static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AdHocLibraryForTesting.class);
-
   public AdHocLibraryForTesting(PrologImplementation theProlog) {
     super(theProlog);
   }
@@ -57,7 +56,6 @@ public class AdHocLibraryForTesting extends LibraryBase {
     final int upper = ((Number) upperBound).intValue();
 
     for (int iter = lower; iter < upper; iter++) {
-      logger.info("{} is going to unify an notify one solution: {}", this, iter);
       final int continuation = unifyAndNotify(currentVars, theIterable, iter);
       if (continuation != Continuation.CONTINUE) {
         return continuation;
@@ -94,7 +92,6 @@ public class AdHocLibraryForTesting extends LibraryBase {
         values.add(val);
       }
 
-      logger.info("{} is going to notify solutions: {}", this, values);
       for (int increment = min; increment < max; increment++) {
         final int cont = unifyAndNotify(currentVars, iterating, increment);
         if (cont != CONTINUE) {
