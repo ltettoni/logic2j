@@ -17,7 +17,7 @@
     <commons-beanutils.version>1.11.0</commons-beanutils.version>
 
     <junit.version>4.13.2</junit.version>
-    <assertj.version>3.27.3</assertj.version>
+    <assertj.version>3.27.7</assertj.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
